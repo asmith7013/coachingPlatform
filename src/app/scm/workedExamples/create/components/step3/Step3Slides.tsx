@@ -9,9 +9,8 @@ import { useGoogleOAuthStatus } from '@/hooks/auth/useGoogleOAuthStatus';
 import { useClerk } from '@clerk/nextjs';
 import { SlideThumbnails } from './SlideThumbnails';
 import { SlidesFooter } from './SlidesFooter';
-import { ExportSuccessView } from './ExportSuccessView';
+import { ExportSuccessModal } from './ExportSuccessModal';
 import { ReauthModal } from './ReauthModal';
-import { ExportProgressOverlay } from './ExportProgressOverlay';
 import { buildExportTitle } from '@/app/scm/workedExamples/presentations/utils';
 // import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 
@@ -66,6 +65,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const [optimizedCount, setOptimizedCount] = useState(0);
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
+  const [showExportSuccessModal, setShowExportSuccessModal] = useState(false);
 
   const { slides, selectedSlideIndex, slidesToEdit, contextSlides } = state;
   const currentSlide = slides[selectedSlideIndex];
@@ -246,7 +246,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
     // Initialize export state
     setExportProgress({ status: 'exporting', message: 'Starting export...' });
-    setExportPhase('analyzing');
+    setExportPhase('uploading'); // Skip directly to uploading (optimization disabled)
     setSlideExportStatuses(slides.map(() => ({ status: 'pending' })));
     setExportStartTime(Date.now());
     setOptimizedCount(0);
@@ -258,6 +258,14 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     // await downloadPptxLocally(slides, state.title || 'worked-example', state.mathConcept);
 
     try {
+      // Use original slides directly (SVG optimization disabled)
+      const slidesToExport = slides;
+
+      // SVG Optimization Step - DISABLED
+      // The optimization step was not effective enough to justify the added latency.
+      // Keeping the code commented out for potential future use.
+      // To re-enable: uncomment the block below and change slidesToExport back to `let`
+      /*
       // Step 0: Optimize slides via SSE streaming
       let slidesToExport = slides;
       let finalOptimizedCount = 0;
@@ -383,6 +391,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         console.warn('[Export] Slide optimization failed, continuing with original slides:', optimizeError);
         setSlideExportStatuses(slides.map(() => ({ status: 'skipped' })));
       }
+      */ // END SVG Optimization Step
 
       // Step 1: Export to Google Slides to get the URL
       setExportPhase('uploading');
@@ -464,7 +473,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       clearPersistedState();
       setExportProgress({ status: 'success', message: 'Exported!' });
       setExportStartTime(null);
-      window.open(url, '_blank');
+      setShowExportSuccessModal(true);
     } catch (error) {
       console.error('Export error:', error);
       setExportPhase('error');
@@ -530,21 +539,23 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     );
   }
 
-  // Success state after saving
-  if (savedSlug) {
-    return (
-      <ExportSuccessView
-        savedSlug={savedSlug}
-        googleSlidesUrl={googleSlidesUrl}
-        unitNumber={state.unitNumber}
-        lessonNumber={state.lessonNumber}
-        onCreateAnother={() => {
-          setSavedSlug(null);
-          wizard.reset();
-        }}
-      />
-    );
-  }
+  // Modal action handlers
+  const handleOpenSlides = () => {
+    if (googleSlidesUrl) {
+      window.open(googleSlidesUrl, '_blank');
+    }
+    setShowExportSuccessModal(false);
+  };
+
+  const handleOpenBrowserView = () => {
+    const slug = savedSlug || state.slug;
+    window.open(`/scm/workedExamples/viewer?view=${slug}`, '_blank');
+    setShowExportSuccessModal(false);
+  };
+
+  const handleKeepEditing = () => {
+    setShowExportSuccessModal(false);
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 pb-20">
@@ -555,11 +566,32 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
             Review the slides, make edits, then export or save.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-gray-600 text-sm">
-            Slide {selectedSlideIndex + 1} of {slides.length}
-          </span>
-        </div>
+        {/* Show export badges only after successful export */}
+        {savedSlug && (
+          <div className="flex items-center gap-2">
+            {googleSlidesUrl && (
+              <button
+                onClick={handleOpenSlides}
+                className="px-3 py-1.5 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-medium rounded-lg cursor-pointer flex items-center gap-1.5 border border-yellow-300"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+                </svg>
+                Open Slides
+              </button>
+            )}
+            <button
+              onClick={handleOpenBrowserView}
+              className="px-3 py-1.5 text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium rounded-lg cursor-pointer flex items-center gap-1.5 border border-blue-300"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              Browser View
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="flex gap-4" style={{ height: 'calc(100vh - 230px)', minHeight: '600px', maxHeight: '850px' }}>
@@ -613,19 +645,19 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
                 {currentSlide && (
                   <SlidePreview htmlContent={currentSlide.htmlContent} />
                 )}
-                {/* Export Progress Overlay */}
-                <ExportProgressOverlay
-                  isVisible={isAnyExporting}
-                  phase={exportPhase}
-                  slideStatuses={slideExportStatuses}
-                  elapsedTime={exportElapsed}
-                  message={exportProgress.message}
-                  optimizedCount={optimizedCount}
-                />
-                {/* Overlay Controls - Top Right */}
-                <div className="absolute top-2 right-2 flex flex-col gap-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 p-2">
-                  {/* Navigation Row */}
-                  <div className="flex items-center gap-1.5">
+                {/* Simple Export Loading Overlay */}
+                {isAnyExporting && (
+                  <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
+                    <svg className="w-12 h-12 text-yellow-500 animate-spin mb-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <p className="text-gray-700 font-medium">{exportProgress.message}</p>
+                  </div>
+                )}
+                {/* Overlay Controls - Top Right (hide during export) */}
+                {!isAnyExporting && (
+                  <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 p-2">
                     <button
                       onClick={goToPrevSlide}
                       disabled={selectedSlideIndex === 0}
@@ -660,21 +692,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
                       </svg>
                     </button>
                   </div>
-
-                  {/* Export Button */}
-                  <div className="pt-1 border-t border-gray-200">
-                    <button
-                      onClick={handleExportClick}
-                      disabled={isAnyExporting || slides.length === 0}
-                      className="w-full px-3 py-2 text-xs bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded cursor-pointer flex items-center justify-center gap-1.5"
-                    >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
-                      </svg>
-                      {exportProgress.status === 'success' ? 'Exported!' : 'Export to Slides'}
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           )}
@@ -710,26 +728,6 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         )
       )}
 
-      {/* Google Slides Success Message */}
-      {googleSlidesUrl && exportProgress.status !== 'exporting' && (
-        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mt-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            <span>Exported to Google Slides!</span>
-          </div>
-          <a
-            href={googleSlidesUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-green-700 hover:text-green-900 underline font-medium"
-          >
-            Open in Google Slides
-          </a>
-        </div>
-      )}
-
       {/* Sticky Footer - AI Edit or Export Progress */}
       <SlidesFooter
         isExporting={isAnyExporting}
@@ -745,6 +743,8 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         setAiEditPrompt={setAiEditPrompt}
         aiError={aiError}
         handleAiEdit={handleAiEdit}
+        handleExportClick={handleExportClick}
+        canExport={slides.length > 0}
         prevStep={prevStep}
       />
 
@@ -753,6 +753,15 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         isOpen={showReauthModal}
         onClose={() => setShowReauthModal(false)}
         onReauth={handleReauth}
+      />
+
+      {/* Export Success Modal */}
+      <ExportSuccessModal
+        isOpen={showExportSuccessModal}
+        googleSlidesUrl={googleSlidesUrl}
+        onOpenSlides={handleOpenSlides}
+        onOpenBrowserView={handleOpenBrowserView}
+        onKeepEditing={handleKeepEditing}
       />
     </div>
   );

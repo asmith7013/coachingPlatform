@@ -10,6 +10,7 @@ interface ExportProgress {
 interface SlidesFooterProps {
   isExporting: boolean;
   exportProgress: ExportProgress;
+  exportElapsed: number;
   isAiLoading: boolean;
   aiEditElapsed: number;
   slidesToEdit: number[];
@@ -20,12 +21,15 @@ interface SlidesFooterProps {
   setAiEditPrompt: (value: string) => void;
   aiError: string | null;
   handleAiEdit: () => void;
+  handleExportClick: () => void;
+  canExport: boolean;
   prevStep: () => void;
 }
 
 export function SlidesFooter({
   isExporting,
   exportProgress,
+  exportElapsed,
   isAiLoading,
   aiEditElapsed,
   slidesToEdit,
@@ -36,18 +40,23 @@ export function SlidesFooter({
   setAiEditPrompt,
   aiError,
   handleAiEdit,
+  handleExportClick,
+  canExport,
   prevStep,
 }: SlidesFooterProps) {
   return (
     <WizardStickyFooter theme={isExporting ? 'yellow' : 'purple'} isActive={isAiLoading || isExporting}>
       {isExporting ? (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <svg className="w-5 h-5 text-yellow-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
-          <span className="text-sm text-yellow-800 font-medium">
+          <span className="text-sm text-yellow-800 font-medium flex-1">
             {exportProgress.message}
+          </span>
+          <span className="text-sm text-yellow-600 font-mono tabular-nums">
+            {Math.floor(exportElapsed / 60)}:{(exportElapsed % 60).toString().padStart(2, '0')}
           </span>
         </div>
       ) : isAiLoading ? (
@@ -107,6 +116,17 @@ export function SlidesFooter({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
             Apply Edits
+          </button>
+          {/* Export to Google Slides Button */}
+          <button
+            onClick={handleExportClick}
+            disabled={!canExport}
+            className="px-4 py-2 text-sm bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg cursor-pointer flex items-center gap-1.5"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+            </svg>
+            Export to Slides
           </button>
         </div>
       )}

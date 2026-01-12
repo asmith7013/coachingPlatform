@@ -54,10 +54,10 @@ const GraphPlanSchema = z.object({
     endPoint: z.object({ x: z.number(), y: z.number() }),
   })),
   scale: z.object({
-    xMax: z.number(),
-    yMax: z.number(),
-    xAxisLabels: z.array(z.number()),
-    yAxisLabels: z.array(z.number()),
+    xMax: z.number().optional(),
+    yMax: z.number().optional(),
+    xAxisLabels: z.array(z.number()).optional(),
+    yAxisLabels: z.array(z.number()).optional(),
   }),
   keyPoints: z.array(z.object({
     label: z.string(),
