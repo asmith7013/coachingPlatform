@@ -49,13 +49,18 @@ Then follow the update patterns documented in the "Browser Wizard Architecture" 
 ├── reference/                              ← Pedagogy, styling, layout rules
 │   ├── pedagogy.md                         ← Educational principles
 │   ├── styling.md                          ← Colors, fonts, spacing
-│   └── layout-presets.md                   ← Layout presets + region definitions
+│   ├── layout-presets.md                   ← Layout presets + region definitions
+│   └── diagram-patterns.md                 ← Non-graph diagrams (shared Phase 1 & 3)
 ├── phases/                                 ← CLI workflow phases
 │   ├── 01-collect-and-analyze/
 │   ├── 02-confirm-and-plan/
 │   ├── 03-generate-slides/                 ← Phase 3 folder
-│   │   ├── index.md                        ← Main entry point
-│   │   ├── protocol.md                     ← Per-slide checkpoint protocol
+│   │   ├── 00-overview.md                  ← Phase purpose, reading order
+│   │   ├── 01-slide-by-slide.md            ← Per-slide protocol (PRIMARY)
+│   │   ├── 02-technical-rules.md           ← PPTX constraints, colors
+│   │   ├── 03-pedagogy.md                  ← Teaching principles, CFU rules
+│   │   ├── 04-svg-workflow.md              ← SVG pixel calculations
+│   │   ├── checklists/                     ← Pre-flight and completion
 │   │   ├── card-patterns/                  ← ATOMIC COMPONENT PATTERNS
 │   │   │   ├── simple-patterns/            ← Fill placeholders
 │   │   │   │   ├── title-zone.html         ← Badge + Title + Subtitle
@@ -66,7 +71,6 @@ Then follow the update patterns documented in the "Browser Wizard Architecture" 
 │   │   │       ├── annotation-snippet.html ← Y-intercept labels, arrows
 │   │   │       └── printable-slide-snippet.html
 │   │   └── visuals/                        ← Visual-specific docs
-│   │       ├── svg-graphs.md               ← Pixel calculations
 │   │       └── annotation-zones.md         ← Annotation positioning
 │   ├── 04-save-to-database.md
 │   └── 05-updating-decks/
@@ -117,7 +121,7 @@ src/skills/worked-example/                  ← AUTO-GENERATED (don't edit!)
 |-------------|-----------|--------------|
 | Analysis instructions | `phases/01-collect-and-analyze/analyze-problem.md` | `lib/prompts.ts` |
 | JSON schema | `phases/01-collect-and-analyze/analyze-problem.md` | `lib/prompts.ts` + `lib/types.ts` |
-| Slide generation | `phases/03-generate-slides/index.md` | `lib/prompts.ts` |
+| Slide generation | `phases/03-generate-slides/01-slide-by-slide.md` | `lib/prompts.ts` |
 | New data fields | `phases/*.md` | `lib/types.ts` + `lib/prompts.ts` |
 
 **The sync script does NOT update the browser wizard** - all files in `src/app/scm/workedExamples/create/` require manual updates.
@@ -164,7 +168,7 @@ This skill is divided into **4 main phases** for creating new decks, plus **Phas
                                      ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  PHASE 3: GENERATE SLIDES                                                   │
-│  Reference: phases/03-generate-slides/ (folder with index.md + protocol.md) │
+│  Reference: phases/03-generate-slides/ (numbered files 00-04)               │
 │                                                                             │
 │  Trigger: User confirms in Phase 2                                          │
 │  Actions: Create 9 PPTX-compatible HTML slides (960×540px)                  │
@@ -172,12 +176,12 @@ This skill is divided into **4 main phases** for creating new decks, plus **Phas
 │  Output: HTML files written to src/app/presentations/{slug}/                │
 │  Done when: All slide files are written                                     │
 │                                                                             │
-│  IMPORTANT: Read phases/03-generate-slides/protocol.md for:                 │
-│  - Per-slide checkpoint protocol                                            │
-│  - PPTX constraints (dimensions, fonts, layout classes)                     │
-│  - Atomic composition from card-patterns/                                   │
-│  - CFU/Answer animation (no duplicate slides needed)                        │
-│  - Pre-flight and completion checklists                                     │
+│  IMPORTANT: Read files in numbered order:                                   │
+│  - 00-overview.md      ← Phase purpose, reading order                       │
+│  - 01-slide-by-slide.md ← Per-slide protocol (PRIMARY)                      │
+│  - 02-technical-rules.md ← PPTX constraints, colors                         │
+│  - 03-pedagogy.md      ← Teaching principles, CFU rules                     │
+│  - 04-svg-workflow.md  ← Only if visual type = SVG                          │
 └─────────────────────────────────────────────────────────────────────────────┘
                                      │
                                      ▼
@@ -232,7 +236,7 @@ When the user asks to create a worked example:
 **STEP 1:** Read the core instruction files:
 ```
 Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/index.md
-Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/protocol.md
+Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/00-overview.md
 ```
 
 **STEP 2:** Follow the phase workflow below, using the prompts as your technical reference.
@@ -248,7 +252,7 @@ Use the Read tool to read these files to understand the quality bar:
 
 2. **Slide Generation Protocol** - Per-slide checkpoint protocol and PPTX patterns:
    ```
-   Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/protocol.md
+   Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/01-slide-by-slide.md
    ```
 
 3. **Pedagogical Framework** - The "why" behind the slide structure:
@@ -261,7 +265,7 @@ Use the Read tool to read these files to understand the quality bar:
    Read: .claude/skills/create-worked-example-sg/reference/styling.md
    ```
 
-The `phases/03-generate-slides/protocol.md` file is the **primary technical reference** for creating slides. It contains the per-slide checkpoint protocol, PPTX constraints, atomic composition workflow, CFU/Answer animation patterns, and checklists.
+The `phases/03-generate-slides/` folder contains the **primary technical reference** for creating slides. Read files in numbered order (00-overview → 01-slide-by-slide → 02-technical-rules → 03-pedagogy → 04-svg-workflow if needed).
 
 ## Reference Materials (Used in Phase 3)
 

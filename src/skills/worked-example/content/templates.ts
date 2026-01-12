@@ -3,37 +3,32 @@
  *
  * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
  *
- * Source of truth (Atomic Card-Patterns System):
- *   .claude/skills/create-worked-example-sg/phases/03-generate-slides/card-patterns/
- *     - simple-patterns/ → title-zone, content-box, cfu-answer-card (fill placeholders)
- *     - complex-patterns/ → graph-snippet, annotation-snippet, printable (copy & modify)
+ * Source of truth: .claude/skills/create-worked-example-sg/
+ * To update: Edit files there, then run: npm run sync-skill-content
  *
- * To update: Edit the HTML files in the source folder, then run:
- *   npx tsx scripts/sync-skill-content.ts
- *
- * PPTX CONSTRAINTS (from pptx.md):
- * - Dimensions: 960×540px (fixed)
- * - Fonts: Arial, Georgia only (no custom fonts)
- * - Layout: .row/.col classes (no inline flexbox)
- * - Theme: Light (white background, dark text)
- * - No JavaScript, no onclick, no animations
- *
- * Shared between:
- * - CLI skill: .claude/skills/create-worked-example-sg/
- * - Browser creator: src/app/scm/workedExamples/create/
+ * Synced files:
+ *   - phases/03-generate-slides/card-patterns/simple-patterns/title-zone.html → TITLE_ZONE
+ *   - phases/03-generate-slides/card-patterns/simple-patterns/content-box.html → CONTENT_BOX
+ *   - phases/03-generate-slides/card-patterns/simple-patterns/cfu-answer-card.html → CFU_ANSWER_CARD
+ *   - phases/03-generate-slides/card-patterns/simple-patterns/problem-reminder.html → PROBLEM_REMINDER
+ *   - phases/03-generate-slides/card-patterns/svg-card.html → SVG_CARD
+ *   - phases/03-generate-slides/card-patterns/complex-patterns/graph-snippet.html → GRAPH_SNIPPET
+ *   - phases/03-generate-slides/card-patterns/complex-patterns/annotation-snippet.html → ANNOTATION_SNIPPET
+ *   - phases/03-generate-slides/card-patterns/complex-patterns/printable-slide-snippet.html → PRINTABLE_TEMPLATE
+ *   - phases/03-generate-slides/card-patterns/complex-patterns/visual-card-layers.html → VISUAL_CARD_LAYERS
+ *   - archived/templates/slide-base.html → SLIDE_BASE_TEMPLATE
+ *   - archived/templates/slide-with-cfu.html → SLIDE_WITH_CFU_TEMPLATE
+ *   - archived/templates/slide-with-answer.html → SLIDE_WITH_ANSWER_TEMPLATE
+ *   - archived/templates/slide-two-column.html → SLIDE_TWO_COLUMN_TEMPLATE
+ *   - archived/templates/slide-learning-goal.html → SLIDE_LEARNING_GOAL_TEMPLATE
+ *   - archived/templates/slide-practice.html → SLIDE_PRACTICE_TEMPLATE
+ *   - archived/templates/slide-with-svg.html → SLIDE_WITH_SVG_TEMPLATE
  */
 
 // ============================================================================
-// ATOMIC CARD-PATTERNS (New System - 11 slides with PPTX animation)
+// ATOMIC CARD-PATTERNS (Current System)
 // ============================================================================
 
-/**
- * Title Zone - Top section of every slide
- * Contains: Badge + Title + Subtitle
- * Workflow: Fill placeholders ({{badge_text}}, {{title}}, {{subtitle}})
- *
- * Source: card-patterns/simple-patterns/title-zone.html
- */
 export const TITLE_ZONE = `
 <!--
   ============================================================
@@ -114,13 +109,6 @@ export const TITLE_ZONE = `
 <p style="...">PRACTICE</p>
 `;
 
-/**
- * Content Box - Main content area
- * Contains: Text, lists, equations, tables
- * Workflow: Fill placeholders
- *
- * Source: card-patterns/simple-patterns/content-box.html
- */
 export const CONTENT_BOX = `
 <!--
   ============================================================
@@ -274,13 +262,6 @@ export const CONTENT_BOX = `
 </div>
 `;
 
-/**
- * CFU/Answer Card - Animated overlays
- * Appears on click in PPTX (PPTX animation)
- * Workflow: Fill placeholders, add data-pptx-region attribute
- *
- * Source: card-patterns/simple-patterns/cfu-answer-card.html
- */
 export const CFU_ANSWER_CARD = `
 <!--
   ============================================================
@@ -348,13 +329,60 @@ export const CFU_ANSWER_CARD = `
 -->
 `;
 
-/**
- * SVG Card - Container for graphs and diagrams
- * Includes layering system for PPTX animations
- * Workflow: Fill placeholders, add SVG content inside layers
- *
- * Source: card-patterns/svg-card.html
- */
+export const PROBLEM_REMINDER = `
+<!--
+  PROBLEM REMINDER PATTERN
+
+  Purpose: Ultra-condensed problem summary for slides 2-8
+  Max: 15 words
+
+  Format: Short phrases, not full sentences
+
+  GOOD examples:
+    "30 nuggets total. 6 per student. How many students?"
+    "Turtle g travels at constant speed. Find when it catches turtle f."
+    "24 players. 4 equal teams. How many per team?"
+
+  BAD examples:
+    "A large box has 30 chicken nuggets. If each student gets 6 nuggets, how many students can have a snack?"
+    "Two turtles are racing. Turtle g travels at a constant speed. We need to find when turtle g catches up to turtle f."
+-->
+
+<!-- PROBLEM REMINDER BOX (place at top of left column, after title zone) -->
+<div data-pptx-region="problem-statement"
+     data-pptx-x="20" data-pptx-y="140"
+     data-pptx-w="368" data-pptx-h="60"
+     style="background: #f0f9ff; border-radius: 8px; padding: 12px 16px; border-left: 4px solid #1791e8;">
+  <p style="margin: 0; font-size: 15px; color: #1d1d1d; line-height: 1.4;">
+    <!-- MAX 15 WORDS - Use short phrases, not full sentences -->
+    {{condensed_problem}}
+  </p>
+</div>
+
+<!--
+  USAGE:
+
+  1. Take the original problem statement
+  2. Extract the key numbers and the question
+  3. Write as short phrases (fragments OK)
+  4. Count words - must be ≤15
+
+  TRANSFORMATION EXAMPLES:
+
+  Original: "A large box has 30 chicken nuggets. If each student gets 6 nuggets, how many students can have a snack?"
+  Condensed: "30 nuggets total. 6 per student. How many students?"
+  Word count: 9 ✓
+
+  Original: "Marcus has a drone that can fly at a constant rate. He recorded that it traveled 150 meters in 30 seconds. What is the drone's speed?"
+  Condensed: "Drone: 150m in 30 sec. Find the speed."
+  Word count: 8 ✓
+
+  Original: "The graph shows two lines representing the distances traveled by turtle f and turtle g over time. Both turtles start from the same point."
+  Condensed: "Two turtles racing. Which is faster?"
+  Word count: 5 ✓
+-->
+`;
+
 export const SVG_CARD = `
 <!--
   ============================================================
@@ -416,25 +444,6 @@ export const SVG_CARD = `
 </div>
 `;
 
-/**
- * Graph Snippet - Complete coordinate plane template
- * Workflow: Copy entire file, modify values, recalculate pixel positions
- *
- * Contains:
- * - Arrow marker definitions for axes and lines
- * - Complete grid with proper alignment
- * - Single "0" at origin
- * - Complete scale labels to the arrows
- * - Example data lines with extension arrows
- * - Layer structure for PPTX export
- *
- * HOW TO USE:
- * 1. Copy the <svg>...</svg> block
- * 2. Adjust X_MAX and Y_MAX for your data
- * 3. Recalculate positions using: pixelX = 40 + (dataX/X_MAX)*220, pixelY = 170 - (dataY/Y_MAX)*150
- *
- * Source: card-patterns/complex-patterns/graph-snippet.html
- */
 export const GRAPH_SNIPPET = `
 <!--
   ============================================================
@@ -494,15 +503,16 @@ export const GRAPH_SNIPPET = `
 
 <!-- SVG Container - Required wrapper for PPTX export -->
 <!-- Position can be svg-container (two-column right) or content (full-width) -->
+<!-- ⚠️ CRITICAL: Both container AND SVG need CSS height constraints to prevent overflow -->
 <div id="svg-container"
      data-pptx-region="svg-container"
      data-pptx-x="408" data-pptx-y="150"
      data-pptx-w="532" data-pptx-h="360"
      data-svg-region="true"
      class="col center"
-     style="background: #f5f5f5; border-radius: 8px; padding: 12px;">
+     style="background: #f5f5f5; border-radius: 8px; padding: 12px; max-height: 360px; overflow: hidden;">
 
-<svg viewBox="0 0 280 200" style="width: 100%; height: 340px;">
+<svg viewBox="0 0 280 200" style="width: 100%; height: 340px; max-height: 340px;">
     <!--
     ============================================================
     PPTX LAYER STRUCTURE - For multi-layer export
@@ -757,19 +767,6 @@ export const GRAPH_SNIPPET = `
 -->
 `;
 
-/**
- * Annotation Snippet - Y-intercept labels, arrows, line equations
- * Workflow: Copy elements, recalculate pixel positions
- *
- * Contains:
- * - Font styling rules (font-weight="normal", font-size="9")
- * - Position calculation formula from data values
- * - Arrow marker definition
- * - Examples for y-intercept labels, shift arrows, line equations
- * - Layer structure for PPTX export
- *
- * Source: card-patterns/complex-patterns/annotation-snippet.html
- */
 export const ANNOTATION_SNIPPET = `
 <!--
   ============================================================
@@ -959,19 +956,6 @@ export const ANNOTATION_SNIPPET = `
 </g>
 `;
 
-/**
- * Printable slide template - Use for worksheet slides
- * Workflow: Copy entire file, fill in problem content
- *
- * CRITICAL RULES:
- * 1. ALL practice problems go in ONE slide file with multiple print-page divs
- * 2. Each print-page div = one printed page (8.5in x 11in)
- * 3. Use white background, black text, Times New Roman font for printing
- * 4. Include ONLY: Header, Learning Goal, Problem content - NO strategy reminders
- * 5. NEVER create separate slide files for each problem
- *
- * Source: card-patterns/complex-patterns/printable-slide-snippet.html
- */
 export const PRINTABLE_TEMPLATE = `
 <!-- PRINTABLE WORKSHEET SLIDE TEMPLATE -->
 <!-- This slide is designed for teachers to print and distribute to students -->
@@ -1153,16 +1137,274 @@ export const PRINTABLE_TEMPLATE = `
 </style>
 `;
 
+export const VISUAL_CARD_LAYERS = `
+<!--
+  ============================================================
+  VISUAL CARD LAYERS - Granular Components for PPTX Export
+  ============================================================
+  Use this pattern for right-column content with MULTIPLE elements
+  that should be independently movable in PowerPoint.
+
+  THIS IS A "COMPLEX PATTERN" - COPY AND MODIFY, DON'T FILL PLACEHOLDERS
+
+  PROBLEM SOLVED:
+  When a right-column has multiple elements (table + equation card +
+  comparison arrows, etc.), they get rendered as ONE image. Teachers
+  can't adjust individual pieces.
+
+  SOLUTION:
+  Break the content into SEPARATE regions, each with its own
+  data-pptx-region and coordinates. Each becomes a separate PPTX object.
+
+  WHEN TO USE THIS PATTERN:
+  - Right column has 2+ distinct visual elements
+  - Elements might need repositioning in final presentation
+  - Content includes: table + card, equation + comparison, etc.
+
+  WHEN NOT TO USE:
+  - Single card or table (use simple-patterns/content-box.html)
+  - SVG graphs (use graph-snippet.html with data-pptx-layer)
+  - Simple text content
+
+  ============================================================
+  LAYER STRATEGY - Each element is its own pptx-region
+  ============================================================
+  Instead of ONE right-column region containing everything,
+  create MULTIPLE regions positioned within the right column area.
+
+  RIGHT COLUMN BOUNDS (standard two-column layout):
+    x: 408-940  (width: 532)
+    y: 140-510  (height: 370)
+
+  NAMING CONVENTION for regions:
+    data-pptx-region="visual-[N]" where N = 1, 2, 3...
+    Or use descriptive names: "visual-table", "visual-equation", etc.
+
+  EACH REGION NEEDS:
+    - data-pptx-region="visual-N"
+    - data-pptx-x, y, w, h (calculated within right column bounds)
+    - Proper background color (will be preserved in screenshot)
+  ============================================================
+-->
+
+<!-- ============================================================
+     EXAMPLE: Table + Equation Card + Comparison Note
+     Three separate elements, each independently movable in PPTX
+     ============================================================ -->
+
+<!-- WRAPPER: No pptx-region on wrapper - it's just for layout -->
+<div class="col center" style="width: 60%; padding: 12px; gap: 16px;">
+
+  <!-- LAYER 1: Table (top of right column) -->
+  <!-- Position: x=420, y=150, w=500, h=160 -->
+  <div data-pptx-region="visual-table"
+       data-pptx-x="420" data-pptx-y="150"
+       data-pptx-w="500" data-pptx-h="160"
+       style="background: #ffffff; border-radius: 8px; padding: 12px; width: 100%;">
+    <h4 style="font-size: 13px; font-weight: bold; margin: 0 0 8px 0; color: #1d1d1d;">Game A: XP Earned</h4>
+    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+      <thead>
+        <tr style="background: #1791e8; color: #ffffff;">
+          <th style="border: 1px solid #e5e7eb; padding: 8px; text-align: center;">Level</th>
+          <th style="border: 1px solid #e5e7eb; padding: 8px; text-align: center;">1</th>
+          <th style="border: 1px solid #e5e7eb; padding: 8px; text-align: center;">2</th>
+          <th style="border: 1px solid #e5e7eb; padding: 8px; text-align: center; background: #22c55e;">3</th>
+          <th style="border: 1px solid #e5e7eb; padding: 8px; text-align: center;">4</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background: #ffffff;">
+          <td style="border: 1px solid #e5e7eb; padding: 8px; text-align: center; font-weight: bold;">XP</td>
+          <td style="border: 1px solid #e5e7eb; padding: 8px; text-align: center;">100</td>
+          <td style="border: 1px solid #e5e7eb; padding: 8px; text-align: center;">400</td>
+          <td style="border: 1px solid #e5e7eb; padding: 8px; text-align: center; background: #dcfce7; font-weight: bold;">900</td>
+          <td style="border: 1px solid #e5e7eb; padding: 8px; text-align: center;">1600</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- LAYER 2: Equation Card (middle of right column) -->
+  <!-- Position: x=420, y=320, w=500, h=100 -->
+  <div data-pptx-region="visual-equation"
+       data-pptx-x="420" data-pptx-y="320"
+       data-pptx-w="500" data-pptx-h="100"
+       style="background: #e8f4fd; border-radius: 8px; padding: 16px; border-left: 4px solid #1791e8; width: 100%;">
+    <p style="margin: 0 0 8px 0; font-size: 13px; font-weight: bold; color: #1d1d1d;">Game B Equation:</p>
+    <p style="margin: 0; font-size: 18px; color: #1d1d1d; text-align: center; font-family: Georgia, serif;">XP = 250 &middot; L</p>
+    <p style="margin: 8px 0 0 0; font-size: 11px; color: #737373; text-align: center;">where L = level number</p>
+  </div>
+
+  <!-- LAYER 3: Comparison Note (bottom of right column) -->
+  <!-- Position: x=420, y=430, w=500, h=70 -->
+  <div data-pptx-region="visual-comparison"
+       data-pptx-x="420" data-pptx-y="430"
+       data-pptx-w="500" data-pptx-h="70"
+       style="background: #fff9e6; border-radius: 8px; padding: 12px; border-left: 4px solid #f59e0b; width: 100%;">
+    <p style="margin: 0; font-size: 13px; color: #92400e;">
+      <strong>Compare:</strong> At Level 3, Game A gives 900 XP. What about Game B?
+    </p>
+  </div>
+
+</div>
+
+
+<!--
+  ============================================================
+  POSITION CALCULATION GUIDE
+  ============================================================
+
+  RIGHT COLUMN STANDARD AREA:
+    Left edge:   x = 408
+    Top edge:    y = 140
+    Width:       532px (ends at x = 940)
+    Height:      370px (ends at y = 510)
+
+  SPACING RECOMMENDATIONS:
+    - Horizontal margin from edge: 12px (so content x starts at 420)
+    - Vertical gap between elements: 10-16px
+    - Content width: ~500px (leaves 16px margins on each side)
+
+  VERTICAL STACKING EXAMPLE (3 elements):
+    Element 1: y=150, h=160 (bottom at y=310)
+    Gap: 10px
+    Element 2: y=320, h=100 (bottom at y=420)
+    Gap: 10px
+    Element 3: y=430, h=70  (bottom at y=500)
+
+  SIDE-BY-SIDE EXAMPLE (2 elements):
+    Element 1: x=420, w=240 (right edge at x=660)
+    Gap: 20px
+    Element 2: x=680, w=240 (right edge at x=920)
+
+  ============================================================
+  CRITICAL RULES
+  ============================================================
+
+  1. EACH ELEMENT needs its own data-pptx-region
+     - Don't put multiple tables in one region
+     - Don't combine equation + table in one region
+
+  2. WRAPPER DIV has NO data-pptx-region
+     - The wrapper is just for HTML/CSS layout
+     - Only the individual elements get regions
+
+  3. BACKGROUNDS ARE PRESERVED
+     - Set background color on each element
+     - These become the screenshot backgrounds
+
+  4. COORDINATES MUST NOT OVERLAP
+     - Calculate y positions to stack without overlap
+     - Include gaps for visual breathing room
+
+  5. KEEP ELEMENTS SIMPLE
+     - Each layer should have ONE logical piece of content
+     - Complex nested structures can still be screenshotted
+     - But simpler = better quality
+
+  ============================================================
+  REGION NAMING CONVENTION
+  ============================================================
+
+  Use descriptive names when possible:
+    data-pptx-region="visual-table"
+    data-pptx-region="visual-equation"
+    data-pptx-region="visual-graph"
+    data-pptx-region="visual-comparison"
+    data-pptx-region="visual-result"
+
+  Or use numbers if order matters:
+    data-pptx-region="visual-1"
+    data-pptx-region="visual-2"
+    data-pptx-region="visual-3"
+
+  ============================================================
+-->
+
+
+<!-- ============================================================
+     ALTERNATIVE EXAMPLE: Side-by-Side Comparison
+     Two elements positioned horizontally
+     ============================================================ -->
+
+<!--
+<div class="row" style="width: 60%; padding: 12px; gap: 16px;">
+
+  <div data-pptx-region="visual-option-a"
+       data-pptx-x="420" data-pptx-y="150"
+       data-pptx-w="240" data-pptx-h="200"
+       style="background: #ffffff; border-radius: 8px; padding: 12px; flex: 1;">
+    <h4 style="font-size: 13px; font-weight: bold; margin: 0 0 8px 0;">Option A</h4>
+    <table>...</table>
+  </div>
+
+  <div data-pptx-region="visual-option-b"
+       data-pptx-x="680" data-pptx-y="150"
+       data-pptx-w="240" data-pptx-h="200"
+       style="background: #e8f4fd; border-radius: 8px; padding: 12px; flex: 1;">
+    <h4 style="font-size: 13px; font-weight: bold; margin: 0 0 8px 0;">Option B</h4>
+    <p style="font-family: Georgia, serif;">y = 3x + 5</p>
+  </div>
+
+</div>
+-->
+
+
+<!-- ============================================================
+     ELEMENT TYPE EXAMPLES
+     ============================================================ -->
+
+<!-- TABLE ELEMENT -->
+<!--
+<div data-pptx-region="visual-table"
+     data-pptx-x="420" data-pptx-y="150"
+     data-pptx-w="500" data-pptx-h="140"
+     style="background: #ffffff; border-radius: 8px; padding: 12px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    ...
+  </table>
+</div>
+-->
+
+<!-- EQUATION CARD ELEMENT -->
+<!--
+<div data-pptx-region="visual-equation"
+     data-pptx-x="420" data-pptx-y="300"
+     data-pptx-w="500" data-pptx-h="90"
+     style="background: #e8f4fd; border-radius: 8px; padding: 16px; border-left: 4px solid #1791e8;">
+  <p style="font-family: Georgia, serif; font-size: 18px; text-align: center;">y = mx + b</p>
+</div>
+-->
+
+<!-- HIGHLIGHT/RESULT BOX ELEMENT -->
+<!--
+<div data-pptx-region="visual-result"
+     data-pptx-x="420" data-pptx-y="400"
+     data-pptx-w="500" data-pptx-h="80"
+     style="background: #dcfce7; border-radius: 8px; padding: 12px; border-left: 4px solid #22c55e;">
+  <p style="font-weight: bold; color: #166534;">Result: 900 XP</p>
+</div>
+-->
+
+<!-- COMPARISON ARROW (using SVG inside a region) -->
+<!--
+<div data-pptx-region="visual-arrow"
+     data-pptx-x="560" data-pptx-y="280"
+     data-pptx-w="80" data-pptx-h="40"
+     style="background: transparent;">
+  <svg viewBox="0 0 80 40" style="width: 80px; height: 40px;">
+    <text x="40" y="18" text-anchor="middle" font-size="24" fill="#ef4444">&gt;</text>
+    <text x="40" y="36" text-anchor="middle" font-size="11" fill="#ef4444">greater</text>
+  </svg>
+</div>
+-->
+`;
+
 // ============================================================================
 // LEGACY TEMPLATES (Archived - for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use atomic card-patterns (TITLE_ZONE, CONTENT_BOX, etc.) instead
- * Base slide template - Foundation for all slides
- *
- * Source: archived/templates/slide-base.html
- */
+/** @deprecated Use atomic card-patterns instead */
 export const SLIDE_BASE_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">
@@ -1263,12 +1505,7 @@ export const SLIDE_BASE_TEMPLATE = `
 </html>
 `;
 
-/**
- * @deprecated Use CFU_ANSWER_CARD instead (with PPTX animation)
- * Slide with CFU (Check for Understanding) box visible
- *
- * Source: archived/templates/slide-with-cfu.html
- */
+/** @deprecated Use CFU_ANSWER_CARD instead */
 export const SLIDE_WITH_CFU_TEMPLATE = `
 <!--
   ============================================================
@@ -1388,12 +1625,7 @@ export const SLIDE_WITH_CFU_TEMPLATE = `
 </html>
 `;
 
-/**
- * @deprecated Use CFU_ANSWER_CARD instead (with PPTX animation)
- * Slide with Answer box visible
- *
- * Source: archived/templates/slide-with-answer.html
- */
+/** @deprecated Use CFU_ANSWER_CARD instead */
 export const SLIDE_WITH_ANSWER_TEMPLATE = `
 <!--
   ============================================================
@@ -1513,12 +1745,7 @@ export const SLIDE_WITH_ANSWER_TEMPLATE = `
 </html>
 `;
 
-/**
- * @deprecated Use atomic card-patterns instead
- * Two-column layout slide
- *
- * Source: archived/templates/slide-two-column.html
- */
+/** @deprecated Use atomic card-patterns instead */
 export const SLIDE_TWO_COLUMN_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">
@@ -1642,12 +1869,7 @@ export const SLIDE_TWO_COLUMN_TEMPLATE = `
 </html>
 `;
 
-/**
- * @deprecated Use atomic card-patterns instead
- * Learning Goal slide template
- *
- * Source: archived/templates/slide-learning-goal.html
- */
+/** @deprecated Use atomic card-patterns instead */
 export const SLIDE_LEARNING_GOAL_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">
@@ -1741,12 +1963,7 @@ export const SLIDE_LEARNING_GOAL_TEMPLATE = `
 </html>
 `;
 
-/**
- * @deprecated Use atomic card-patterns instead
- * Practice slide template
- *
- * Source: archived/templates/slide-practice.html
- */
+/** @deprecated Use atomic card-patterns instead */
 export const SLIDE_PRACTICE_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">
@@ -1858,12 +2075,7 @@ export const SLIDE_PRACTICE_TEMPLATE = `
 </html>
 `;
 
-/**
- * @deprecated Use GRAPH_SNIPPET instead
- * Slide with SVG visual
- *
- * Source: archived/templates/slide-with-svg.html
- */
+/** @deprecated Use GRAPH_SNIPPET instead */
 export const SLIDE_WITH_SVG_TEMPLATE = `
 <!DOCTYPE html>
 <html lang="en">

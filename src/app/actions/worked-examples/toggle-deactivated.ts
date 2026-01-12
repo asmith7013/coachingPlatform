@@ -2,26 +2,26 @@
 
 import { withDbConnection } from '@server/db/ensure-connection';
 import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
-import { currentUser } from '@clerk/nextjs/server';
+import { getAuthenticatedUser } from '@server/auth/getAuthenticatedUser';
 import { handleServerError } from '@error/handlers/server';
 
 /**
  * Toggle the deactivated status of a worked example deck.
- * Only the deck owner can deactivate/reactivate their decks.
+ * Only the deck owner or super admins can deactivate/reactivate decks.
  */
 export async function toggleDeckDeactivated(slug: string, deactivated: boolean) {
   return withDbConnection(async () => {
     try {
-      const user = await currentUser();
+      const authResult = await getAuthenticatedUser();
 
-      if (!user) {
+      if (!authResult.success) {
         return {
           success: false,
           error: 'You must be logged in to modify decks',
         };
       }
 
-      const userEmail = user.emailAddresses[0]?.emailAddress;
+      const { email: userEmail, isSuperAdmin } = authResult.data;
 
       const deck = await WorkedExampleDeck.findOne({ slug });
 
@@ -32,8 +32,9 @@ export async function toggleDeckDeactivated(slug: string, deactivated: boolean) 
         };
       }
 
-      // Only the owner can deactivate/reactivate (createdBy stores email)
-      if (deck.createdBy !== userEmail) {
+      // Super admins can always modify, otherwise only the owner
+      const isOwner = deck.createdBy === userEmail;
+      if (!isOwner && !isSuperAdmin) {
         return {
           success: false,
           error: 'You do not have permission to modify this deck',

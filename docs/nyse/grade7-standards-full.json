@@ -1,0 +1,3278 @@
+{
+  "grade": "7",
+  "source": "/Users/alexsmith/ai-coaching-platform/docs/nyse/standards7.html",
+  "standard_descriptions": {
+    "NY-7.G.1": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+    "NY-5.NBT.7": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+    "NY-5.NF.4": "Apply and extend previous understandings of multiplication to multiply a fraction by a whole number or a fraction.",
+    "NY-7.RP.2": "Recognize and represent proportional relationships between quantities.",
+    "NY-6.NS.3": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+    "NY-5.NBT.6": "Find whole-number quotients of whole numbers with up to four-digit dividends and two-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+    "NY-5.NF.5": "Interpret multiplication as scaling (resizing).",
+    "NY-6.NS.1": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+    "NY-6.G.1": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+    "NY-7.G.4": "Apply the formulas for the area and circumference of a circle to solve problems.",
+    "NY-7.G.6": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+    "NY-7.RP.2a": "Decide whether two quantities are in a proportional relationship.",
+    "NY-6.NS.2": "Fluently divide multi-digit numbers using a standard algorithm.",
+    "NY-6.RP.3b": "Solve unit rate problems.",
+    "NY-7.RP.2b": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+    "NY-3.NF.3": "Explain equivalence of fractions and compare fractions by reasoning about their size.",
+    "NY-5.NBT.3": "Read, write, and compare decimals to thousandths.",
+    "NY-6.RP.3d": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+    "NY-6.RP.3": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+    "NY-5.MD.1": "Convert among different-sized standard measurement units within a given measurement system when the conversion factor is given. Use these conversions in solving multi-step, real world problems.",
+    "NY-7.RP.2c": "Represent a proportional relationship using an equation.",
+    "NY-6.RP.2": "Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0 (b not equal to zero), and use rate language in the context of a ratio relationship.",
+    "NY-7.RP.1": "Compute unit rates associated with ratios of fractions.",
+    "NY-4.OA.5": "Generate a number or shape pattern that follows a given rule. Identify and informally explain apparent features of the pattern that were not explicit in the rule itself.",
+    "NY-6.EE.2": "Write, read, and evaluate expressions in which letters stand for numbers.",
+    "NY-6.NS.8": "Solve real-world and mathematical problems by graphing points on a coordinate plane. Include use of coordinates and absolute value to find distances between points with the same first coordinate or the same second coordinate.",
+    "NY-7.RP.2d": "Explain what a point (x, y) on the graph of a proportional relationship means in terms of the situation, with special attention to the points (0, 0) and (1, r) where r is the unit rate.",
+    "NY-6.SP.5c": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+    "NY-7.G.2": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle.",
+    "NY-6.RP.3c": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+    "NY-7.RP.3": "Use proportional relationships to solve multistep ratio and percent problems.",
+    "NY-6.G.2": "Find volumes of right rectangular prisms with fractional edge lengths in the context of solving real-world and mathematical problems.",
+    "NY-7.EE.3": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+    "NY-6.EE.3": "Apply the properties of operations to generate equivalent expressions.",
+    "NY-7.EE.2": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related.",
+    "NY-7.NS.2d": "Convert a fraction to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+    "NY-6.EE.2b": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+    "NY-2.MD.2": "Measure the length of an object twice, using different \"length units\" for the two measurements; describe how the two measurements relate to the size of the unit chosen.",
+    "NY-7.NS.1a": "Describe situations in which opposite quantities combine to make 0.",
+    "NY-7.NS.1b": "Understand addition of rational numbers; p + q is the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts.",
+    "NY-7.NS.1c": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+    "NY-7.NS.1d": "Apply properties of operations as strategies to add and subtract rational numbers.",
+    "NY-7.NS.1": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line.",
+    "NY-1.OA.4": "Understand subtraction as an unknown-addend problem within 20.",
+    "NY-7.EE.4a": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+    "NY-7.NS.3": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+    "NY-7.NS.2": "Apply and extend previous understandings of multiplication and division and of fractions to multiply and divide rational numbers.",
+    "NY-7.NS.2a": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts.",
+    "NY-7.NS.2c": "Apply properties of operations as strategies to multiply and divide rational numbers.",
+    "NY-7.NS.2b": "Understand that integers can be divided, provided that the divisor is not zero, and every quotient of integers (with non-zero divisor) is a rational number. If p and q are integers, then -(p/q) = -p/q = p/-q. Interpret quotients of rational numbers by describing real-world contexts.",
+    "NY-6.EE.2c": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+    "NY-7.EE.4": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities.",
+    "NY-6.EE.5": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+    "NY-6.EE.7": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+    "NY-6.EE.4": "Identify when two expressions are equivalent.",
+    "NY-7.EE.4b": "Solve word problems leading to inequalities of the form px + q &gt; r, px + q >= r, px + q <= r, or px + q &lt; r, where p, q, and r are rational numbers. Graph the solution set of the inequality on the number line and interpret it in the context of the problem.",
+    "NY-7.EE.1": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations.",
+    "NY-4.MD.6": "Measure angles in whole-number degrees using a protractor. Sketch angles of specified measure.",
+    "NY-4.MD.7": "Recognize angle measure as additive. When an angle is decomposed into non-overlapping parts, the angle measure of the whole is the sum of the angle measures of the parts. Solve addition and subtraction problems to find unknown angles on a diagram in real world and mathematical problems.",
+    "NY-7.G.5": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure.",
+    "NY-7.G.3": "Describe the two-dimensional shapes that result from slicing three-dimensional solids parallel or perpendicular to the base.",
+    "NY-3.MD.5b": "Recognize a plane figure which can be covered without gaps or overlaps by n unit squares is said to have an area of n square units.",
+    "NY-3.MD.8a": "Solve real world and mathematical problems involving perimeters of polygons, including finding the perimeter given the side lengths or finding one unknown side length given the perimeter and other side lengths.",
+    "NY-6.G.4": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+    "NY-6.SP.6": "Understand that the probability of a chance event is a number between 0 and 1 inclusive, that expresses the likelihood of the event occurring. Larger numbers indicate greater likelihood. A probability near 0 indicates an unlikely event, a probability around 1/2 indicates an event that is neither unlikely nor likely, and a probability near 1 indicates a likely event.",
+    "NY-6.SP.7": "Approximate the probability of a simple event by collecting data on the chance process that produces it and observing its long-run relative frequency, and predict the approximate relative frequency given the probability.",
+    "NY-6.SP.8a": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of simple events.",
+    "NY-6.NS.7b": "Write, interpret, and explain statements of order for rational numbers in real-world contexts.",
+    "NY-6.SP.5": "Summarize quantitative data sets in relation to their context.",
+    "NY-6.SP.8": "Develop a probability model and use it to find probabilities of simple events. Compare probabilities from a model to observed frequencies; if the agreement is not good, explain possible sources of the discrepancy.",
+    "NY-5.NBT.3b": "Compare two decimals to thousandths based on meanings of the digits in each place, using &gt;, =, and &lt; symbols to record the results of comparisons.",
+    "NY-7.SP.8c": "Design and use a simulation to generate frequencies for compound events.",
+    "NY-5.OA.1": "Apply the order of operations to evaluate numerical expressions.",
+    "NY-7.SP.8a": "Understand that, just as with simple events, the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs.",
+    "NY-7.SP.8b": "Represent sample spaces for compound events using methods such as organized lists, sample space tables, and tree diagrams. For an event described in everyday language, identify the outcomes in the sample space which compose the event.",
+    "NY-7.SP.1": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier.",
+    "NY-7.SP.3": "Informally assess the degree of visual overlap of two quantitative data distributions.",
+    "NY-5.NBT.2": "Use whole-number exponents to denote powers of 10. Explain patterns in the number of zeros of the product when multiplying a number by powers of 10, and explain patterns in the placement of the decimal point when a decimal is multiplied or divided by a power of 10.",
+    "NY-7.SP.4": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations.",
+    "NY-6.SP.5d": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+    "NY-6.SP.3": "Recognize that a measure of center for a quantitative data set summarizes all of its values with a single number while a measure of variation describes how its values vary with a single number.",
+    "NY-6.SP.4": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+    "NY-2.MD.1": "Measure the length of an object to the nearest whole by selecting and using appropriate tools such as rulers, yardsticks, meter sticks, and measuring tapes."
+  },
+  "lessons": [
+    {
+      "unit": 1,
+      "lesson": 1,
+      "lessonTitle": "What Are Scaled Copies?",
+      "standards": [
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 2,
+      "lessonTitle": "Corresponding Parts and Scale Factors",
+      "standards": [
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.4",
+          "text": "Apply and extend previous understandings of multiplication to multiply a fraction by a whole number or a fraction.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 3,
+      "lessonTitle": "Making Scaled Copies",
+      "standards": [
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 4,
+      "lessonTitle": "Scaled Relationships",
+      "standards": [
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 5,
+      "lessonTitle": "The Size of the Scale Factor",
+      "standards": [
+        {
+          "code": "NY-5.NBT.6",
+          "text": "Find whole-number quotients of whole numbers with up to four-digit dividends and two-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.4",
+          "text": "Apply and extend previous understandings of multiplication to multiply a fraction by a whole number or a fraction.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.5",
+          "text": "Interpret multiplication as scaling (resizing).",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 6,
+      "lessonTitle": "Scaling and Area",
+      "standards": [
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 7,
+      "lessonTitle": "Scale Drawings",
+      "standards": [
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 8,
+      "lessonTitle": "Scale Drawings and Maps",
+      "standards": [
+        {
+          "code": "NY-6.NS.2",
+          "text": "Fluently divide multi-digit numbers using a standard algorithm.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 9,
+      "lessonTitle": "Creating Scale Drawings",
+      "standards": [
+        {
+          "code": "NY-3.NF.3",
+          "text": "Explain equivalence of fractions and compare fractions by reasoning about their size.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.3",
+          "text": "Read, write, and compare decimals to thousandths.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 10,
+      "lessonTitle": "Changing Scales in Scale Drawings",
+      "standards": [
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 11,
+      "lessonTitle": "Scales without Units",
+      "standards": [
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 12,
+      "lessonTitle": "Units in Scale Drawings",
+      "standards": [
+        {
+          "code": "NY-6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 13,
+      "lessonTitle": "Draw It to Scale",
+      "standards": [
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 1,
+      "lessonTitle": "One of These Things Is Not Like the Others",
+      "standards": [
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 2,
+      "lessonTitle": "Introducing Proportional Relationships with Tables",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 3,
+      "lessonTitle": "More about Constant of Proportionality",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-5.MD.1",
+          "text": "Convert among different-sized standard measurement units within a given measurement system when the conversion factor is given. Use these conversions in solving multi-step, real world problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 4,
+      "lessonTitle": "Proportional Relationships and Equations",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.2c",
+          "text": "Represent a proportional relationship using an equation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 5,
+      "lessonTitle": "Two Equations for Each Relationship",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2c",
+          "text": "Represent a proportional relationship using an equation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 6,
+      "lessonTitle": "Writing Equations to Represent Relationships",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.2",
+          "text": "Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0 (b not equal to zero), and use rate language in the context of a ratio relationship.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.2c",
+          "text": "Represent a proportional relationship using an equation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 7,
+      "lessonTitle": "Comparing Relationships with Tables",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.1",
+          "text": "Compute unit rates associated with ratios of fractions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2c",
+          "text": "Represent a proportional relationship using an equation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 8,
+      "lessonTitle": "Comparing Relationships with Equations",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-4.OA.5",
+          "text": "Generate a number or shape pattern that follows a given rule. Identify and informally explain apparent features of the pattern that were not explicit in the rule itself.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.2",
+          "text": "Write, read, and evaluate expressions in which letters stand for numbers.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.1",
+          "text": "Compute unit rates associated with ratios of fractions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2c",
+          "text": "Represent a proportional relationship using an equation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 9,
+      "lessonTitle": "Solving Problems about Proportional Relationships",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 10,
+      "lessonTitle": "Introducing Graphs of Proportional Relationships",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.NS.8",
+          "text": "Solve real-world and mathematical problems by graphing points on a coordinate plane. Include use of coordinates and absolute value to find distances between points with the same first coordinate or the same second coordinate.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 11,
+      "lessonTitle": "Interpreting Graphs of Proportional Relationships",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2d",
+          "text": "Explain what a point (x, y) on the graph of a proportional relationship means in terms of the situation, with special attention to the points (0, 0) and (1, r) where r is the unit rate.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 12,
+      "lessonTitle": "Using Graphs to Compare Relationships",
+      "standards": [
+        {
+          "code": "NY-7.RP.1",
+          "text": "Compute unit rates associated with ratios of fractions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 13,
+      "lessonTitle": "Two Graphs for Each Relationship",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2c",
+          "text": "Represent a proportional relationship using an equation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2d",
+          "text": "Explain what a point (x, y) on the graph of a proportional relationship means in terms of the situation, with special attention to the points (0, 0) and (1, r) where r is the unit rate.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 14,
+      "lessonTitle": "Four Representations",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 15,
+      "lessonTitle": "Using Water Efficiently",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.2",
+          "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 1,
+      "lessonTitle": "How Well Can You Measure?",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 2,
+      "lessonTitle": "Exploring Circles",
+      "standards": [
+        {
+          "code": "NY-6.G.2",
+          "text": "Find volumes of right rectangular prisms with fractional edge lengths in the context of solving real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.G.2",
+          "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 3,
+      "lessonTitle": "Exploring Circumference",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 4,
+      "lessonTitle": "Applying Circumference",
+      "standards": [
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 5,
+      "lessonTitle": "Circumference and Wheels",
+      "standards": [
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2c",
+          "text": "Represent a proportional relationship using an equation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 6,
+      "lessonTitle": "Estimating Areas",
+      "standards": [
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 7,
+      "lessonTitle": "Exploring the Area of a Circle",
+      "standards": [
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 8,
+      "lessonTitle": "Relating Area to Circumference",
+      "standards": [
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 9,
+      "lessonTitle": "Applying Area of Circles",
+      "standards": [
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 10,
+      "lessonTitle": "Distinguishing Circumference and Area",
+      "standards": [
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 11,
+      "lessonTitle": "Stained-Glass Windows",
+      "standards": [
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.1",
+          "text": "Compute unit rates associated with ratios of fractions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.3",
+          "text": "Apply the properties of operations to generate equivalent expressions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.2",
+          "text": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.2d",
+          "text": "Convert a fraction to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-2.MD.2",
+          "text": "Measure the length of an object twice, using different \"length units\" for the two measurements; describe how the two measurements relate to the size of the unit chosen.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 1,
+      "lessonTitle": "Lots of Flags",
+      "standards": [
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.1",
+          "text": "Compute unit rates associated with ratios of fractions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 2,
+      "lessonTitle": "Ratios and Rates With Fractions",
+      "standards": [
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.1",
+          "text": "Compute unit rates associated with ratios of fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 3,
+      "lessonTitle": "Revisiting Proportional Relationships",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.1",
+          "text": "Compute unit rates associated with ratios of fractions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 4,
+      "lessonTitle": "More than That, Less than That",
+      "standards": [
+        {
+          "code": "NY-6.EE.3",
+          "text": "Apply the properties of operations to generate equivalent expressions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.1",
+          "text": "Compute unit rates associated with ratios of fractions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.2",
+          "text": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 5,
+      "lessonTitle": "Say It with Decimals",
+      "standards": [
+        {
+          "code": "NY-7.NS.2d",
+          "text": "Convert a fraction to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 6,
+      "lessonTitle": "Increasing and Decreasing",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 7,
+      "lessonTitle": "One Hundred Percent",
+      "standards": [
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 8,
+      "lessonTitle": "Percent Increase and Decrease with Equations",
+      "standards": [
+        {
+          "code": "NY-7.EE.2",
+          "text": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 9,
+      "lessonTitle": "Part of a Percent",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 10,
+      "lessonTitle": "Tax and Tip",
+      "standards": [
+        {
+          "code": "NY-7.EE.2",
+          "text": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 11,
+      "lessonTitle": "Percentage Contexts",
+      "standards": [
+        {
+          "code": "NY-6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 12,
+      "lessonTitle": "Solving Multi-step Percentage Problems",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 13,
+      "lessonTitle": "Measurement Error",
+      "standards": [
+        {
+          "code": "NY-2.MD.2",
+          "text": "Measure the length of an object twice, using different \"length units\" for the two measurements; describe how the two measurements relate to the size of the unit chosen.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 14,
+      "lessonTitle": "Percent Error",
+      "standards": [
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 16,
+      "lessonTitle": "Posing Percentage Problems",
+      "standards": [
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1b",
+          "text": "Understand addition of rational numbers; p + q is the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1",
+          "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line.",
+          "context": "current"
+        },
+        {
+          "code": "NY-1.OA.4",
+          "text": "Understand subtraction as an unknown-addend problem within 20.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.2",
+          "text": "Apply and extend previous understandings of multiplication and division and of fractions to multiply and divide rational numbers.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.NS.2b",
+          "text": "Understand that integers can be divided, provided that the divisor is not zero, and every quotient of integers (with non-zero divisor) is a rational number. If p and q are integers, then -(p/q) = -p/q = p/-q. Interpret quotients of rational numbers by describing real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4",
+          "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.7",
+          "text": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 1,
+      "lessonTitle": "Interpreting Negative Numbers",
+      "standards": [
+        {
+          "code": "NY-7.NS.1",
+          "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.NS.1b",
+          "text": "Understand addition of rational numbers; p + q is the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 2,
+      "lessonTitle": "Changing Temperatures",
+      "standards": [
+        {
+          "code": "NY-7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.NS.1b",
+          "text": "Understand addition of rational numbers; p + q is the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 3,
+      "lessonTitle": "Changing Elevation",
+      "standards": [
+        {
+          "code": "NY-7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1b",
+          "text": "Understand addition of rational numbers; p + q is the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 4,
+      "lessonTitle": "Money and Debts",
+      "standards": [
+        {
+          "code": "NY-7.NS.1",
+          "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 5,
+      "lessonTitle": "Representing Subtraction",
+      "standards": [
+        {
+          "code": "NY-1.OA.4",
+          "text": "Understand subtraction as an unknown-addend problem within 20.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 6,
+      "lessonTitle": "Finding Differences",
+      "standards": [
+        {
+          "code": "NY-7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 7,
+      "lessonTitle": "Adding and Subtracting to Solve Problems",
+      "standards": [
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 8,
+      "lessonTitle": "Multiplying Rational Numbers (Part 1)",
+      "standards": [
+        {
+          "code": "NY-7.NS.2",
+          "text": "Apply and extend previous understandings of multiplication and division and of fractions to multiply and divide rational numbers.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 9,
+      "lessonTitle": "Multiplying Rational Numbers (Part 2)",
+      "standards": [
+        {
+          "code": "NY-7.NS.2",
+          "text": "Apply and extend previous understandings of multiplication and division and of fractions to multiply and divide rational numbers.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 10,
+      "lessonTitle": "Multiply!",
+      "standards": [
+        {
+          "code": "NY-6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 11,
+      "lessonTitle": "Dividing Rational Numbers",
+      "standards": [
+        {
+          "code": "NY-7.NS.2",
+          "text": "Apply and extend previous understandings of multiplication and division and of fractions to multiply and divide rational numbers.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.2b",
+          "text": "Understand that integers can be divided, provided that the divisor is not zero, and every quotient of integers (with non-zero divisor) is a rational number. If p and q are integers, then -(p/q) = -p/q = p/-q. Interpret quotients of rational numbers by describing real-world contexts.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 12,
+      "lessonTitle": "Negative Rates",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 13,
+      "lessonTitle": "Expressions with Rational Numbers",
+      "standards": [
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 14,
+      "lessonTitle": "Solving Problems with Rational Numbers",
+      "standards": [
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.7",
+          "text": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 15,
+      "lessonTitle": "Solving Equations with Rational Numbers",
+      "standards": [
+        {
+          "code": "NY-7.EE.4",
+          "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 16,
+      "lessonTitle": "Representing Contexts with Equations",
+      "standards": [
+        {
+          "code": "NY-7.NS.1",
+          "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 17,
+      "lessonTitle": "The Stock Market",
+      "standards": [
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.2",
+          "text": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q &gt; r, px + q >= r, px + q <= r, or px + q &lt; r, where p, q, and r are rational numbers. Graph the solution set of the inequality on the number line and interpret it in the context of the problem.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.1",
+          "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 1,
+      "lessonTitle": "Relationships between Quantities",
+      "standards": [
+        {
+          "code": "NY-7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 2,
+      "lessonTitle": "Reasoning about Contexts with Tape Diagrams",
+      "standards": [
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 3,
+      "lessonTitle": "Reasoning about Equations with Tape Diagrams",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.2",
+          "text": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 4,
+      "lessonTitle": "Reasoning about Equations and Tape Diagrams (Part 1)",
+      "standards": [
+        {
+          "code": "NY-7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q &gt; r, px + q >= r, px + q <= r, or px + q &lt; r, where p, q, and r are rational numbers. Graph the solution set of the inequality on the number line and interpret it in the context of the problem.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 5,
+      "lessonTitle": "Reasoning about Equations and Tape Diagrams (Part 2)",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 6,
+      "lessonTitle": "Distinguishing between Two Types of Situations",
+      "standards": [
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 7,
+      "lessonTitle": "Reasoning about Solving Equations (Part 1)",
+      "standards": [
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 8,
+      "lessonTitle": "Reasoning about Solving Equations (Part 2)",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 9,
+      "lessonTitle": "Dealing with Negative Numbers",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 10,
+      "lessonTitle": "Different Options for Solving One Equation",
+      "standards": [
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 11,
+      "lessonTitle": "Using Equations to Solve Problems",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 12,
+      "lessonTitle": "Solving Problems about Percent Increase or Decrease",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.2",
+          "text": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.3",
+          "text": "Solve multi-step real-world and mathematical problems posed with positive and negative rational numbers in any form (whole numbers, fractions, and decimals), using tools strategically. Apply properties of operations to calculate with numbers in any form; convert between forms as appropriate. Assess the reasonableness of answers using mental computation and estimation strategies.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 13,
+      "lessonTitle": "Reintroducing Inequalities",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q &gt; r, px + q >= r, px + q <= r, or px + q &lt; r, where p, q, and r are rational numbers. Graph the solution set of the inequality on the number line and interpret it in the context of the problem.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 14,
+      "lessonTitle": "Finding Solutions to Inequalities in Context",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q &gt; r, px + q >= r, px + q <= r, or px + q &lt; r, where p, q, and r are rational numbers. Graph the solution set of the inequality on the number line and interpret it in the context of the problem.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 15,
+      "lessonTitle": "Efficiently Solving Inequalities",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q &gt; r, px + q >= r, px + q <= r, or px + q &lt; r, where p, q, and r are rational numbers. Graph the solution set of the inequality on the number line and interpret it in the context of the problem.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 16,
+      "lessonTitle": "Interpreting Inequalities",
+      "standards": [
+        {
+          "code": "NY-7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q &gt; r, px + q >= r, px + q <= r, or px + q &lt; r, where p, q, and r are rational numbers. Graph the solution set of the inequality on the number line and interpret it in the context of the problem.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 17,
+      "lessonTitle": "Modeling with Inequalities",
+      "standards": [
+        {
+          "code": "NY-7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q &gt; r, px + q >= r, px + q <= r, or px + q &lt; r, where p, q, and r are rational numbers. Graph the solution set of the inequality on the number line and interpret it in the context of the problem.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 18,
+      "lessonTitle": "Subtraction in Equivalent Expressions",
+      "standards": [
+        {
+          "code": "NY-7.EE.1",
+          "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 19,
+      "lessonTitle": "Expanding and Factoring",
+      "standards": [
+        {
+          "code": "NY-7.EE.1",
+          "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 20,
+      "lessonTitle": "Combining Like Terms (Part 1)",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.1",
+          "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 21,
+      "lessonTitle": "Combining Like Terms (Part 2)",
+      "standards": [
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.EE.1",
+          "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 22,
+      "lessonTitle": "Applications of Expressions",
+      "standards": [
+        {
+          "code": "NY-7.EE.1",
+          "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-4.MD.6",
+          "text": "Measure angles in whole-number degrees using a protractor. Sketch angles of specified measure.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.MD.7",
+          "text": "Recognize angle measure as additive. When an angle is decomposed into non-overlapping parts, the angle measure of the whole is the sum of the angle measures of the parts. Solve addition and subtraction problems to find unknown angles on a diagram in real world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.5",
+          "text": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4",
+          "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.1",
+          "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.G.2",
+          "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.3",
+          "text": "Describe the two-dimensional shapes that result from slicing three-dimensional solids parallel or perpendicular to the base.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-3.MD.5b",
+          "text": "Recognize a plane figure which can be covered without gaps or overlaps by n unit squares is said to have an area of n square units.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-3.MD.8a",
+          "text": "Solve real world and mathematical problems involving perimeters of polygons, including finding the perimeter given the side lengths or finding one unknown side length given the perimeter and other side lengths.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 1,
+      "lessonTitle": "Relationships of Angles",
+      "standards": [
+        {
+          "code": "NY-4.MD.6",
+          "text": "Measure angles in whole-number degrees using a protractor. Sketch angles of specified measure.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.MD.7",
+          "text": "Recognize angle measure as additive. When an angle is decomposed into non-overlapping parts, the angle measure of the whole is the sum of the angle measures of the parts. Solve addition and subtraction problems to find unknown angles on a diagram in real world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.5",
+          "text": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 2,
+      "lessonTitle": "Adjacent Angles",
+      "standards": [
+        {
+          "code": "NY-4.MD.6",
+          "text": "Measure angles in whole-number degrees using a protractor. Sketch angles of specified measure.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.MD.7",
+          "text": "Recognize angle measure as additive. When an angle is decomposed into non-overlapping parts, the angle measure of the whole is the sum of the angle measures of the parts. Solve addition and subtraction problems to find unknown angles on a diagram in real world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.5",
+          "text": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 3,
+      "lessonTitle": "Nonadjacent Angles",
+      "standards": [
+        {
+          "code": "NY-7.G.5",
+          "text": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 4,
+      "lessonTitle": "Solving for Unknown Angles",
+      "standards": [
+        {
+          "code": "NY-7.G.5",
+          "text": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 5,
+      "lessonTitle": "Using Equations to Solve for Unknown Angles",
+      "standards": [
+        {
+          "code": "NY-7.EE.4",
+          "text": "Use variables to represent quantities in a real-world or mathematical problem, and construct simple equations and inequalities to solve problems by reasoning about the quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.5",
+          "text": "Use facts about supplementary, complementary, vertical, and adjacent angles in a multi-step problem to write and solve simple equations for an unknown angle in a figure.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 6,
+      "lessonTitle": "Building Polygons (Part 1)",
+      "standards": [
+        {
+          "code": "NY-7.NS.1",
+          "text": "Apply and extend previous understandings of addition and subtraction to add and subtract rational numbers. Represent addition and subtraction on a horizontal or vertical number line.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.G.2",
+          "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 7,
+      "lessonTitle": "Building Polygons (Part 2)",
+      "standards": [
+        {
+          "code": "NY-7.G.2",
+          "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 8,
+      "lessonTitle": "Triangles with 3 Common Measures",
+      "standards": [
+        {
+          "code": "NY-7.G.2",
+          "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 9,
+      "lessonTitle": "Drawing Triangles (Part 1)",
+      "standards": [
+        {
+          "code": "NY-7.G.2",
+          "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 10,
+      "lessonTitle": "Drawing Triangles (Part 2)",
+      "standards": [
+        {
+          "code": "NY-7.G.2",
+          "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 11,
+      "lessonTitle": "Slicing Solids",
+      "standards": [
+        {
+          "code": "NY-7.G.3",
+          "text": "Describe the two-dimensional shapes that result from slicing three-dimensional solids parallel or perpendicular to the base.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 12,
+      "lessonTitle": "Volume of Right Prisms",
+      "standards": [
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 13,
+      "lessonTitle": "Decomposing Bases for Area",
+      "standards": [
+        {
+          "code": "NY-7.G.3",
+          "text": "Describe the two-dimensional shapes that result from slicing three-dimensional solids parallel or perpendicular to the base.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 14,
+      "lessonTitle": "Surface Area of Right Prisms",
+      "standards": [
+        {
+          "code": "NY-3.MD.5b",
+          "text": "Recognize a plane figure which can be covered without gaps or overlaps by n unit squares is said to have an area of n square units.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-3.MD.8a",
+          "text": "Solve real world and mathematical problems involving perimeters of polygons, including finding the perimeter given the side lengths or finding one unknown side length given the perimeter and other side lengths.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 15,
+      "lessonTitle": "Distinguishing Volume and Surface Area",
+      "standards": [
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 16,
+      "lessonTitle": "Applying Volume and Surface Area",
+      "standards": [
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 17,
+      "lessonTitle": "Building Prisms",
+      "standards": [
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.G.2",
+          "text": "Draw triangles when given measures of angles and/or sides, noticing when the conditions determine a unique triangle, more than one triangle, or no triangle.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.6",
+          "text": "Understand that the probability of a chance event is a number between 0 and 1 inclusive, that expresses the likelihood of the event occurring. Larger numbers indicate greater likelihood. A probability near 0 indicates an unlikely event, a probability around 1/2 indicates an event that is neither unlikely nor likely, and a probability near 1 indicates a likely event.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.7",
+          "text": "Approximate the probability of a simple event by collecting data on the chance process that produces it and observing its long-run relative frequency, and predict the approximate relative frequency given the probability.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.8a",
+          "text": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of simple events.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.5",
+          "text": "Summarize quantitative data sets in relation to their context.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.8",
+          "text": "Develop a probability model and use it to find probabilities of simple events. Compare probabilities from a model to observed frequencies; if the agreement is not good, explain possible sources of the discrepancy.",
+          "context": "current"
+        },
+        {
+          "code": "NY-5.NBT.3b",
+          "text": "Compare two decimals to thousandths based on meanings of the digits in each place, using &gt;, =, and &lt; symbols to record the results of comparisons.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.NS.2d",
+          "text": "Convert a fraction to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-5.OA.1",
+          "text": "Apply the order of operations to evaluate numerical expressions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.8a",
+          "text": "Understand that, just as with simple events, the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.SP.8b",
+          "text": "Represent sample spaces for compound events using methods such as organized lists, sample space tables, and tree diagrams. For an event described in everyday language, identify the outcomes in the sample space which compose the event.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.1",
+          "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.SP.3",
+          "text": "Informally assess the degree of visual overlap of two quantitative data distributions.",
+          "context": "current"
+        },
+        {
+          "code": "NY-5.NBT.2",
+          "text": "Use whole-number exponents to denote powers of 10. Explain patterns in the number of zeros of the product when multiplying a number by powers of 10, and explain patterns in the placement of the decimal point when a decimal is multiplied or divided by a power of 10.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.4",
+          "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 2,
+      "lessonTitle": "Chance Experiments",
+      "standards": [
+        {
+          "code": "NY-6.SP.6",
+          "text": "Understand that the probability of a chance event is a number between 0 and 1 inclusive, that expresses the likelihood of the event occurring. Larger numbers indicate greater likelihood. A probability near 0 indicates an unlikely event, a probability around 1/2 indicates an event that is neither unlikely nor likely, and a probability near 1 indicates a likely event.",
+          "context": "current"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 3,
+      "lessonTitle": "What Are Probabilities?",
+      "standards": [
+        {
+          "code": "NY-6.SP.7",
+          "text": "Approximate the probability of a simple event by collecting data on the chance process that produces it and observing its long-run relative frequency, and predict the approximate relative frequency given the probability.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.8a",
+          "text": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of simple events.",
+          "context": "current"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 4,
+      "lessonTitle": "Estimating Probabilities Through Repeated Experiments",
+      "standards": [
+        {
+          "code": "NY-6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.5",
+          "text": "Summarize quantitative data sets in relation to their context.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.8",
+          "text": "Develop a probability model and use it to find probabilities of simple events. Compare probabilities from a model to observed frequencies; if the agreement is not good, explain possible sources of the discrepancy.",
+          "context": "current"
+        },
+        {
+          "code": "NY-5.NBT.3b",
+          "text": "Compare two decimals to thousandths based on meanings of the digits in each place, using &gt;, =, and &lt; symbols to record the results of comparisons.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.NS.2d",
+          "text": "Convert a fraction to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 5,
+      "lessonTitle": "More Estimating Probabilities",
+      "standards": [
+        {
+          "code": "NY-6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.5",
+          "text": "Summarize quantitative data sets in relation to their context.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.8",
+          "text": "Develop a probability model and use it to find probabilities of simple events. Compare probabilities from a model to observed frequencies; if the agreement is not good, explain possible sources of the discrepancy.",
+          "context": "current"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 6,
+      "lessonTitle": "Estimating Probabilities Using Simulation",
+      "standards": [
+        {
+          "code": "NY-6.SP.6",
+          "text": "Understand that the probability of a chance event is a number between 0 and 1 inclusive, that expresses the likelihood of the event occurring. Larger numbers indicate greater likelihood. A probability near 0 indicates an unlikely event, a probability around 1/2 indicates an event that is neither unlikely nor likely, and a probability near 1 indicates a likely event.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.NS.2d",
+          "text": "Convert a fraction to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 7,
+      "lessonTitle": "Simulating Multi-step Experiments",
+      "standards": [
+        {
+          "code": "NY-7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 8,
+      "lessonTitle": "Keeping Track of All Possible Outcomes",
+      "standards": [
+        {
+          "code": "NY-7.SP.8b",
+          "text": "Represent sample spaces for compound events using methods such as organized lists, sample space tables, and tree diagrams. For an event described in everyday language, identify the outcomes in the sample space which compose the event.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 9,
+      "lessonTitle": "Multi-step Experiments",
+      "standards": [
+        {
+          "code": "NY-5.OA.1",
+          "text": "Apply the order of operations to evaluate numerical expressions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.8a",
+          "text": "Understand that, just as with simple events, the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.SP.8b",
+          "text": "Represent sample spaces for compound events using methods such as organized lists, sample space tables, and tree diagrams. For an event described in everyday language, identify the outcomes in the sample space which compose the event.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 10,
+      "lessonTitle": "Designing Simulations",
+      "standards": [
+        {
+          "code": "NY-5.OA.1",
+          "text": "Apply the order of operations to evaluate numerical expressions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 11,
+      "lessonTitle": "Comparing Groups",
+      "standards": [
+        {
+          "code": "NY-7.SP.3",
+          "text": "Informally assess the degree of visual overlap of two quantitative data distributions.",
+          "context": "current"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 12,
+      "lessonTitle": "Larger Populations",
+      "standards": [
+        {
+          "code": "NY-7.SP.1",
+          "text": "Construct and interpret box-plots, find the interquartile range, and determine if a data point is an outlier.",
+          "context": "current"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 13,
+      "lessonTitle": "What Makes a Good Sample?",
+      "standards": [
+        {
+          "code": "NY-5.NBT.2",
+          "text": "Use whole-number exponents to denote powers of 10. Explain patterns in the number of zeros of the product when multiplying a number by powers of 10, and explain patterns in the placement of the decimal point when a decimal is multiplied or divided by a power of 10.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 14,
+      "lessonTitle": "Sampling in a Fair Way",
+      "standards": [
+        {
+          "code": "NY-6.SP.8",
+          "text": "Develop a probability model and use it to find probabilities of simple events. Compare probabilities from a model to observed frequencies; if the agreement is not good, explain possible sources of the discrepancy.",
+          "context": "current"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 15,
+      "lessonTitle": "Estimating Population Measures of Center",
+      "standards": [
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.4",
+          "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 16,
+      "lessonTitle": "Estimating Population Proportions",
+      "standards": [
+        {
+          "code": "NY-7.SP.4",
+          "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.NS.2d",
+          "text": "Convert a fraction to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 17,
+      "lessonTitle": "More about Sampling Variability",
+      "standards": [
+        {
+          "code": "NY-6.SP.3",
+          "text": "Recognize that a measure of center for a quantitative data set summarizes all of its values with a single number while a measure of variation describes how its values vary with a single number.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 18,
+      "lessonTitle": "Comparing Populations Using Samples",
+      "standards": [
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.3",
+          "text": "Informally assess the degree of visual overlap of two quantitative data distributions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.SP.4",
+          "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 19,
+      "lessonTitle": "Comparing Populations With Friends",
+      "standards": [
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.4",
+          "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 20,
+      "lessonTitle": "Memory Test",
+      "standards": [
+        {
+          "code": "NY-6.SP.8a",
+          "text": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of simple events.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-7.SP.4",
+          "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.2d",
+          "text": "Convert a fraction to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.1",
+          "text": "Compute unit rates associated with ratios of fractions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.1",
+          "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.2",
+          "text": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-2.MD.1",
+          "text": "Measure the length of an object to the nearest whole by selecting and using appropriate tools such as rulers, yardsticks, meter sticks, and measuring tapes.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 1,
+      "lessonTitle": "Cost of a Meal",
+      "standards": [
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 2,
+      "lessonTitle": "Costs of Running a Restaurant",
+      "standards": [
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.SP.4",
+          "text": "Use measures of center and measures of variability for quantitative data from random samples or populations to draw informal comparative inferences about the populations.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 3,
+      "lessonTitle": "Restaurant Floor Plan",
+      "standards": [
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.NS.2d",
+          "text": "Convert a fraction to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 4,
+      "lessonTitle": "How Crowded Is This Neighborhood?",
+      "standards": [
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.1",
+          "text": "Compute unit rates associated with ratios of fractions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.2",
+          "text": "Recognize and represent proportional relationships between quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 5,
+      "lessonTitle": "Fermi Problems",
+      "standards": [
+        {
+          "code": "NY-7.NS.3",
+          "text": "Solve real-world and mathematical problems involving the four operations with rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 6,
+      "lessonTitle": "More Expressions and Equations",
+      "standards": [
+        {
+          "code": "NY-7.EE.1",
+          "text": "Add, subtract, factor, and expand linear expressions with rational coefficients by applying the properties of operations.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.2",
+          "text": "Understand that rewriting an expression in different forms in real-world and mathematical problems can reveal and explain how the quantities are related.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 7,
+      "lessonTitle": "Measurement Error",
+      "standards": [
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 8,
+      "lessonTitle": "Deforestation at Scale",
+      "standards": [
+        {
+          "code": "NY-7.G.1",
+          "text": "Solve problems involving scale drawings of geometric figures, including computing actual lengths and areas from a scale drawing and reproducing a scale drawing at a different scale.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-7.G.6",
+          "text": "Solve real-world and mathematical problems involving area of two-dimensional objects composed of triangles and trapezoids. Solve surface area problems involving right prisms and right pyramids composed of triangles and trapezoids. Find the volume of right triangular prisms, and solve volume problems involving three-dimensional objects composed of right rectangular prisms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 9,
+      "lessonTitle": "Measuring Long Distances over Uneven Terrain",
+      "standards": [
+        {
+          "code": "NY-2.MD.1",
+          "text": "Measure the length of an object to the nearest whole by selecting and using appropriate tools such as rulers, yardsticks, meter sticks, and measuring tapes.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 10,
+      "lessonTitle": "Building a Trundle Wheel",
+      "standards": [
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 11,
+      "lessonTitle": "Using a Trundle Wheel to Measure Distances",
+      "standards": [
+        {
+          "code": "NY-7.G.4",
+          "text": "Apply the formulas for the area and circumference of a circle to solve problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 12,
+      "lessonTitle": "Designing a 5K Course",
+      "standards": [
+        {
+          "code": "NY-7.RP.3",
+          "text": "Use proportional relationships to solve multistep ratio and percent problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    }
+  ]
+}

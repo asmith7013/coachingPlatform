@@ -263,6 +263,17 @@ export interface GraphPlan {
   }[];
 }
 
+// Diagram preview for visual confirmation (ASCII representation)
+export interface DiagramPreview {
+  // ASCII art representation of the visual structure
+  ascii: string;
+  // Key elements described
+  keyElements: {
+    element: string;
+    represents: string;
+  }[];
+}
+
 // Problem analysis from Claude
 export interface ProblemAnalysis {
   // Verbatim transcription of the problem from the image
@@ -284,6 +295,8 @@ export interface ProblemAnalysis {
   svgSubtype?: SvgSubtype;
   // Graph plan - required when svgSubtype is 'coordinate-graph'
   graphPlan?: GraphPlan;
+  // Diagram preview - ASCII representation for user confirmation (required for non-text-only visuals)
+  diagramPreview?: DiagramPreview;
 }
 
 // Strategy definition from Claude

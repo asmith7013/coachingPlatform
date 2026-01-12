@@ -1,11 +1,10 @@
 /**
- * Region default positions for PPTX slide layout.
+ * Region default positions, typography, and colors for PPTX slide layout.
  *
  * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
  *
  * Source of truth: .claude/skills/create-worked-example-sg/reference/region-defaults.md
- * To update: Edit the markdown file, then run:
- *   npm run sync-skill-content
+ * To update: Edit the markdown file, then run: npm run sync-skill-content
  */
 
 // Slide dimensions
@@ -25,6 +24,36 @@ export const REGION_DEFAULTS: Record<string, { x: number; y: number; w: number; 
   'svg-container': { x: 408, y: 150, w: 532, h: 360 },
   'cfu-box': { x: 653, y: 40, w: 280, h: 115 },
   'answer-box': { x: 653, y: 40, w: 280, h: 115 }
+};
+
+// Typography (shared between HTML generation and PPTX export)
+export const TYPOGRAPHY: Record<string, { size: number; bold: boolean; color: string }> = {
+  'badge': { size: 13, bold: true, color: 'FFFFFF' },
+  'title': { size: 28, bold: true, color: '1791E8' },
+  'subtitle': { size: 16, bold: false, color: '1D1D1D' },
+  'footnote': { size: 10, bold: false, color: '666666' },
+  'body': { size: 14, bold: false, color: '1D1D1D' },
+  'section-header': { size: 15, bold: true, color: '1D1D1D' },
+  'supporting': { size: 13, bold: false, color: '737373' },
+  'strategy-badge': { size: 12, bold: true, color: 'FFFFFF' },
+  'strategy-name': { size: 36, bold: false, color: '1D1D1D' },
+  'strategy-summary': { size: 18, bold: false, color: '737373' }
+};
+
+// Colors (shared between HTML generation and PPTX export)
+export const COLORS: Record<string, string> = {
+  'primary': '1791E8',
+  'surface': 'FFFFFF',
+  'foreground': '1D1D1D',
+  'muted-bg': 'F5F5F5',
+  'muted-text': '737373',
+  'cfu-bg': 'FEF3C7',
+  'cfu-border': 'F59E0B',
+  'cfu-text': '92400E',
+  'answer-bg': 'DCFCE7',
+  'answer-border': '22C55E',
+  'answer-text': '166534',
+  'border': 'E5E7EB'
 };
 
 // Bounds validation helpers

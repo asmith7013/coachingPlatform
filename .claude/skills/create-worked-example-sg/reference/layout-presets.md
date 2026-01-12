@@ -36,8 +36,10 @@ Slides are composed using **atomic components** placed in **regions** defined by
 | `full-width` | 100% | Text-only slides, summaries |
 | `two-column` | 40% / 60% | Text + visual side-by-side |
 | `graph-heavy` | 35% / 65% | Narrow text + large graph |
+| `centered` | stacked (main + support) | Equation/diagram as hero, text below |
 | `with-cfu` | 100% + overlay | Full-width + CFU question |
 | `two-column-with-cfu` | 40% / 60% + overlay | Two-column + CFU |
+| `centered-with-cfu` | stacked + overlay | Centered content + CFU |
 
 ## ⚠️ Column Content Rules (CRITICAL)
 
@@ -85,6 +87,7 @@ Run `npm run sync-skill-content` to propagate changes to TypeScript.
 | `full-width` | x=20, y=150, w=920 | — |
 | `two-column` | x=20, y=150, w=368 | x=408, y=150, w=532 |
 | `graph-heavy` | x=20, y=150, w=316 | x=356, y=150, w=584 |
+| `centered` | main: x=140, y=150, w=680 | support: x=140, y=380, w=680 |
 
 ## Slide Composition Flow
 
@@ -92,8 +95,17 @@ Run `npm run sync-skill-content` to propagate changes to TypeScript.
 
 Based on slide content needs:
 - Text only → `full-width`
-- Text + graph → `two-column` or `graph-heavy`
+- Text + graph side-by-side → `two-column` or `graph-heavy`
+- Equation/diagram as hero with text below → `centered`
 - Needs CFU → add `-with-cfu`
+
+**When to use `centered` vs `two-column`:**
+| Use `centered` when... | Use `two-column` when... |
+|------------------------|--------------------------|
+| The equation IS the visual | You need text explaining + separate visual |
+| A small diagram is self-explanatory | The visual needs space (coordinate graph) |
+| Step is simple (1 operation) | Step has multiple parts to show |
+| You want focus on ONE thing | You need to show relationship between text and visual |
 
 ### Step 2: Fill Title Zone
 
@@ -138,12 +150,37 @@ Every slide has:
   </ul>
 </div>
 
-<!-- Right: Visual -->
+<!-- Right: Visual (⚠️ CSS height constraint is REQUIRED) -->
 <div data-pptx-region="svg-container"
-     data-pptx-x="408" data-pptx-y="140" data-pptx-w="532" data-pptx-h="370">
-  <svg viewBox="0 0 520 360">
+     data-pptx-x="408" data-pptx-y="140" data-pptx-w="532" data-pptx-h="370"
+     style="max-height: 370px; overflow: hidden;">
+  <svg viewBox="0 0 520 360" style="width: 100%; height: 360px; max-height: 360px;">
     <!-- Graph content -->
   </svg>
+</div>
+```
+
+**Centered example (equation/diagram as hero):**
+```html
+<!-- Main: Centered hero content (equation, diagram, or both) -->
+<div data-pptx-region="content"
+     data-pptx-x="140" data-pptx-y="150" data-pptx-w="680" data-pptx-h="200"
+     style="text-align: center; max-height: 200px; overflow: hidden;">
+  <!-- Large equation -->
+  <p style="font-family: Georgia; font-size: 48px; margin-bottom: 20px;">
+    ? × 6 = 30
+  </p>
+  <!-- Or SVG diagram (⚠️ height constraint REQUIRED) -->
+  <svg viewBox="0 0 400 120" style="max-width: 400px; max-height: 180px;">
+    <!-- Tape diagram, etc. -->
+  </svg>
+</div>
+
+<!-- Support: Brief text below (optional) -->
+<div data-pptx-region="content-box"
+     data-pptx-x="140" data-pptx-y="380" data-pptx-w="680" data-pptx-h="120"
+     style="text-align: center;">
+  <p>How many students can share 30 nuggets if each gets 6?</p>
 </div>
 ```
 

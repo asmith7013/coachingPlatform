@@ -56,15 +56,16 @@
 
 <!-- SVG Container - Required wrapper for PPTX export -->
 <!-- Position can be svg-container (two-column right) or content (full-width) -->
+<!-- ⚠️ CRITICAL: Both container AND SVG need CSS height constraints to prevent overflow -->
 <div id="svg-container"
      data-pptx-region="svg-container"
      data-pptx-x="408" data-pptx-y="150"
      data-pptx-w="532" data-pptx-h="360"
      data-svg-region="true"
      class="col center"
-     style="background: #f5f5f5; border-radius: 8px; padding: 12px;">
+     style="background: #f5f5f5; border-radius: 8px; padding: 12px; max-height: 360px; overflow: hidden;">
 
-<svg viewBox="0 0 280 200" style="width: 100%; height: 340px;">
+<svg viewBox="0 0 280 200" style="width: 100%; height: 340px; max-height: 340px;">
     <!--
     ============================================================
     PPTX LAYER STRUCTURE - For multi-layer export

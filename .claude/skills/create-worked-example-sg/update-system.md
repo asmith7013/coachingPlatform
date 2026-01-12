@@ -38,7 +38,7 @@ The worked example system has TWO parallel implementations:
 |-------------|----------------|--------------|
 | Analysis instructions | `phases/01-collect-and-analyze/analyze-problem.md` | `lib/prompts.ts` (ANALYZE_PROBLEM_SYSTEM_PROMPT) |
 | JSON output schema | `phases/01-collect-and-analyze/analyze-problem.md` | `lib/prompts.ts` + `lib/types.ts` |
-| Slide generation | `phases/03-generate-slides/index.md` | `lib/prompts.ts` (buildGenerateSlidesPrompt) |
+| Slide generation | `phases/03-generate-slides/01-slide-by-slide.md` | `lib/prompts.ts` (buildGenerateSlidesPrompt) |
 | New data fields | `phases/*.md` | `lib/types.ts` + `lib/prompts.ts` |
 | UI display | N/A | `components/*.tsx` |
 | State management | N/A | `lib/types.ts` + `hooks/useWizardState.ts` |
@@ -94,7 +94,7 @@ When we added `graphPlan` to each scenario:
 ```
 Edit: phases/01-collect-and-analyze/analyze-problem.md  → Add graphPlan to scenario creation
 Edit: phases/02-confirm-and-plan/index.md               → Include graphPlan in output template
-Edit: phases/03-generate-slides/index.md                → Which graphPlan to use for which slides
+Edit: phases/03-generate-slides/01-slide-by-slide.md    → Which graphPlan to use for which slides
 ```
 
 **2. Browser Wizard (manual sync):**

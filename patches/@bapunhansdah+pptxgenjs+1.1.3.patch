@@ -1,0 +1,246 @@
+diff --git a/node_modules/@bapunhansdah/pptxgenjs/dist/pptxgen.cjs.js b/node_modules/@bapunhansdah/pptxgenjs/dist/pptxgen.cjs.js
+index 6fadde3..e6e5d65 100644
+--- a/node_modules/@bapunhansdah/pptxgenjs/dist/pptxgen.cjs.js
++++ b/node_modules/@bapunhansdah/pptxgenjs/dist/pptxgen.cjs.js
+@@ -7230,41 +7230,83 @@ function createTimingXml(animations) {
+     let cumulativeDelay = 0; // Track cumulative delay for afterPrevious animations
+     // Process each group
+     groups.forEach((group) => {
+-        // MAIN CLICK GROUP - Contains onClick and withPrevious
+-        xml += '<p:par>';
+-        xml += `<p:cTn id="${nodeId}" fill="hold">`;
+-        xml += '<p:stCondLst><p:cond delay="indefinite"/><p:cond evt="onBegin" delay="0"><p:tn val="2"/></p:cond></p:stCondLst>';
+-        xml += '<p:childTnLst>';
+-        nodeId++;
+-        // Inner wrapper for onClick and withPrevious animations
+-        xml += '<p:par>';
+-        xml += `<p:cTn id="${nodeId}" fill="hold">`;
+-        xml += '<p:stCondLst><p:cond delay="0"/></p:stCondLst>';
+-        xml += '<p:childTnLst>';
+-        nodeId++;
+-        // Generate onClick animation(s)
+-        group.onClick.forEach((shapeAnim) => {
++        // GOOGLE SLIDES FIX: Each animation needs its own click group
++        // Put onClick animation(s) in first click group
++        group.onClick.forEach((shapeAnim, idx) => {
++            xml += '<p:par>';
++            xml += `<p:cTn id="${nodeId}" fill="hold">`;
++            // First animation in the group gets click trigger (delay="indefinite")
++            // Subsequent onClick animations also get click triggers
++            xml += '<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>';
++            xml += '<p:childTnLst>';
++            nodeId++;
++
++            xml += '<p:par>';
++            xml += `<p:cTn id="${nodeId}" fill="hold">`;
++            xml += '<p:stCondLst><p:cond delay="0"/></p:stCondLst>';
++            xml += '<p:childTnLst>';
++            nodeId++;
++
+             const shapeId = shapeAnim.objectIndex + 2;
+             xml += genAnimationEffectXml(shapeAnim.animation, shapeId, nodeId);
+             nodeId += 10;
++
+             // Track duration for afterPrevious
+             const duration = shapeAnim.animation.duration || 1000;
+             const delay = shapeAnim.animation.delay || 0;
+             if (cumulativeDelay === 0) {
+                 cumulativeDelay = duration + delay;
+             }
++
++            // If this is the FIRST onClick and there are withPrevious animations,
++            // include them in the same click group
++            if (idx === 0 && group.withPrevious.length > 0) {
++                group.withPrevious.forEach((withPrevAnim) => {
++                    const withPrevShapeId = withPrevAnim.objectIndex + 2;
++                    xml += genAnimationEffectXml(withPrevAnim.animation, withPrevShapeId, nodeId);
++                    nodeId += 10;
++                });
++            }
++
++            xml += '</p:childTnLst>';
++            xml += '</p:cTn>';
++            xml += '</p:par>';
++
++            xml += '</p:childTnLst>';
++            xml += '</p:cTn>';
++            xml += '</p:par>';
+         });
+-        // Generate withPrevious animations (same level as onClick)
+-        group.withPrevious.forEach((shapeAnim) => {
+-            const shapeId = shapeAnim.objectIndex + 2;
+-            xml += genAnimationEffectXml(shapeAnim.animation, shapeId, nodeId);
+-            nodeId += 10;
+-        });
+-        xml += '</p:childTnLst>';
+-        xml += '</p:cTn>';
+-        xml += '</p:par>';
++
++        // If there were no onClick but there are withPrevious, create a click group for them
++        if (group.onClick.length === 0 && group.withPrevious.length > 0) {
++            xml += '<p:par>';
++            xml += `<p:cTn id="${nodeId}" fill="hold">`;
++            xml += '<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>';
++            xml += '<p:childTnLst>';
++            nodeId++;
++
++            xml += '<p:par>';
++            xml += `<p:cTn id="${nodeId}" fill="hold">`;
++            xml += '<p:stCondLst><p:cond delay="0"/></p:stCondLst>';
++            xml += '<p:childTnLst>';
++            nodeId++;
++
++            group.withPrevious.forEach((shapeAnim) => {
++                const shapeId = shapeAnim.objectIndex + 2;
++                xml += genAnimationEffectXml(shapeAnim.animation, shapeId, nodeId);
++                nodeId += 10;
++            });
++
++            xml += '</p:childTnLst>';
++            xml += '</p:cTn>';
++            xml += '</p:par>';
++
++            xml += '</p:childTnLst>';
++            xml += '</p:cTn>';
++            xml += '</p:par>';
++        }
++
+         // AFTER PREVIOUS ANIMATIONS - Each gets its own <p:par> as a sibling
+-        // These are SIBLINGS to the inner <p:par>, still children of the main click group
+         group.afterPrevious.forEach((shapeAnim) => {
+             xml += '<p:par>';
+             xml += `<p:cTn id="${nodeId}" fill="hold">`;
+@@ -7282,10 +7324,6 @@ function createTimingXml(animations) {
+             const delay = shapeAnim.animation.delay || 0;
+             cumulativeDelay += duration + delay;
+         });
+-        // Close the main click group
+-        xml += '</p:childTnLst>';
+-        xml += '</p:cTn>';
+-        xml += '</p:par>';
+     });
+     xml += '</p:childTnLst>';
+     xml += '</p:cTn>';
+diff --git a/node_modules/@bapunhansdah/pptxgenjs/dist/pptxgen.es.js b/node_modules/@bapunhansdah/pptxgenjs/dist/pptxgen.es.js
+index a3be90e..d38dafc 100644
+--- a/node_modules/@bapunhansdah/pptxgenjs/dist/pptxgen.es.js
++++ b/node_modules/@bapunhansdah/pptxgenjs/dist/pptxgen.es.js
+@@ -7228,41 +7228,83 @@ function createTimingXml(animations) {
+     let cumulativeDelay = 0; // Track cumulative delay for afterPrevious animations
+     // Process each group
+     groups.forEach((group) => {
+-        // MAIN CLICK GROUP - Contains onClick and withPrevious
+-        xml += '<p:par>';
+-        xml += `<p:cTn id="${nodeId}" fill="hold">`;
+-        xml += '<p:stCondLst><p:cond delay="indefinite"/><p:cond evt="onBegin" delay="0"><p:tn val="2"/></p:cond></p:stCondLst>';
+-        xml += '<p:childTnLst>';
+-        nodeId++;
+-        // Inner wrapper for onClick and withPrevious animations
+-        xml += '<p:par>';
+-        xml += `<p:cTn id="${nodeId}" fill="hold">`;
+-        xml += '<p:stCondLst><p:cond delay="0"/></p:stCondLst>';
+-        xml += '<p:childTnLst>';
+-        nodeId++;
+-        // Generate onClick animation(s)
+-        group.onClick.forEach((shapeAnim) => {
++        // GOOGLE SLIDES FIX: Each animation needs its own click group
++        // Put onClick animation(s) in first click group
++        group.onClick.forEach((shapeAnim, idx) => {
++            xml += '<p:par>';
++            xml += `<p:cTn id="${nodeId}" fill="hold">`;
++            // First animation in the group gets click trigger (delay="indefinite")
++            // Subsequent onClick animations also get click triggers
++            xml += '<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>';
++            xml += '<p:childTnLst>';
++            nodeId++;
++
++            xml += '<p:par>';
++            xml += `<p:cTn id="${nodeId}" fill="hold">`;
++            xml += '<p:stCondLst><p:cond delay="0"/></p:stCondLst>';
++            xml += '<p:childTnLst>';
++            nodeId++;
++
+             const shapeId = shapeAnim.objectIndex + 2;
+             xml += genAnimationEffectXml(shapeAnim.animation, shapeId, nodeId);
+             nodeId += 10;
++
+             // Track duration for afterPrevious
+             const duration = shapeAnim.animation.duration || 1000;
+             const delay = shapeAnim.animation.delay || 0;
+             if (cumulativeDelay === 0) {
+                 cumulativeDelay = duration + delay;
+             }
++
++            // If this is the FIRST onClick and there are withPrevious animations,
++            // include them in the same click group
++            if (idx === 0 && group.withPrevious.length > 0) {
++                group.withPrevious.forEach((withPrevAnim) => {
++                    const withPrevShapeId = withPrevAnim.objectIndex + 2;
++                    xml += genAnimationEffectXml(withPrevAnim.animation, withPrevShapeId, nodeId);
++                    nodeId += 10;
++                });
++            }
++
++            xml += '</p:childTnLst>';
++            xml += '</p:cTn>';
++            xml += '</p:par>';
++
++            xml += '</p:childTnLst>';
++            xml += '</p:cTn>';
++            xml += '</p:par>';
+         });
+-        // Generate withPrevious animations (same level as onClick)
+-        group.withPrevious.forEach((shapeAnim) => {
+-            const shapeId = shapeAnim.objectIndex + 2;
+-            xml += genAnimationEffectXml(shapeAnim.animation, shapeId, nodeId);
+-            nodeId += 10;
+-        });
+-        xml += '</p:childTnLst>';
+-        xml += '</p:cTn>';
+-        xml += '</p:par>';
++
++        // If there were no onClick but there are withPrevious, create a click group for them
++        if (group.onClick.length === 0 && group.withPrevious.length > 0) {
++            xml += '<p:par>';
++            xml += `<p:cTn id="${nodeId}" fill="hold">`;
++            xml += '<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>';
++            xml += '<p:childTnLst>';
++            nodeId++;
++
++            xml += '<p:par>';
++            xml += `<p:cTn id="${nodeId}" fill="hold">`;
++            xml += '<p:stCondLst><p:cond delay="0"/></p:stCondLst>';
++            xml += '<p:childTnLst>';
++            nodeId++;
++
++            group.withPrevious.forEach((shapeAnim) => {
++                const shapeId = shapeAnim.objectIndex + 2;
++                xml += genAnimationEffectXml(shapeAnim.animation, shapeId, nodeId);
++                nodeId += 10;
++            });
++
++            xml += '</p:childTnLst>';
++            xml += '</p:cTn>';
++            xml += '</p:par>';
++
++            xml += '</p:childTnLst>';
++            xml += '</p:cTn>';
++            xml += '</p:par>';
++        }
++
+         // AFTER PREVIOUS ANIMATIONS - Each gets its own <p:par> as a sibling
+-        // These are SIBLINGS to the inner <p:par>, still children of the main click group
+         group.afterPrevious.forEach((shapeAnim) => {
+             xml += '<p:par>';
+             xml += `<p:cTn id="${nodeId}" fill="hold">`;
+@@ -7280,10 +7322,6 @@ function createTimingXml(animations) {
+             const delay = shapeAnim.animation.delay || 0;
+             cumulativeDelay += duration + delay;
+         });
+-        // Close the main click group
+-        xml += '</p:childTnLst>';
+-        xml += '</p:cTn>';
+-        xml += '</p:par>';
+     });
+     xml += '</p:childTnLst>';
+     xml += '</p:cTn>';

@@ -31,14 +31,23 @@ import {
   // Legacy templates (deprecated)
   CFU_TOGGLE_TEMPLATE as SHARED_CFU_TOGGLE_TEMPLATE,
   ANSWER_TOGGLE_TEMPLATE as SHARED_ANSWER_TOGGLE_TEMPLATE,
-  // Prompt instructions
+  // Prompt instructions (Phase 1-3)
   ANALYZE_PROBLEM_INSTRUCTIONS as SHARED_ANALYZE_INSTRUCTIONS,
   GENERATE_SLIDES_INSTRUCTIONS as SHARED_GENERATE_INSTRUCTIONS,
+  // Phase 3 additional instructions (NEW - from sync script)
+  TECHNICAL_RULES as SHARED_TECHNICAL_RULES,
+  SLIDE_PEDAGOGY_RULES as SHARED_SLIDE_PEDAGOGY_RULES,
+  PRE_FLIGHT_CHECKLIST as SHARED_PRE_FLIGHT_CHECKLIST,
 } from '@/skills/worked-example';
 
 // Re-export shared content for backward compatibility
 export const PEDAGOGY_RULES = SHARED_PEDAGOGY_RULES;
 export const STYLING_GUIDE = SHARED_STYLING_GUIDE;
+
+// New Phase 3 instructions (for generate slides prompt)
+export const TECHNICAL_RULES = SHARED_TECHNICAL_RULES;
+export const SLIDE_PEDAGOGY_RULES = SHARED_SLIDE_PEDAGOGY_RULES;
+export const PRE_FLIGHT_CHECKLIST = SHARED_PRE_FLIGHT_CHECKLIST;
 export const SLIDE_STRUCTURE = SHARED_SLIDE_STRUCTURE;
 // PPTX-compatible templates (new)
 export const SLIDE_BASE_TEMPLATE = SHARED_SLIDE_BASE;
@@ -92,6 +101,12 @@ You MUST return valid JSON matching this exact structure:
     "answerFormat": "how answer should be presented",
     "visualType": "text-only" | "html-table" | "svg-visual",
     "svgSubtype": "coordinate-graph" | "diagram" | "shape" | "number-line" | "other",  // only if visualType is "svg-visual"
+    "diagramPreview": {
+      "ascii": "ASCII art representation of the visual structure for Scenario 1",
+      "keyElements": [
+        { "element": "element name", "represents": "what it represents mathematically" }
+      ]
+    },
     "graphPlan": {
       "equations": [
         {
@@ -158,12 +173,55 @@ You MUST return valid JSON matching this exact structure:
   ]
 }
 
-## When to Include graphPlan vs visualPlan
+## When to Include graphPlan vs visualPlan vs diagramPreview
 
 - **graphPlan**: Include ONLY when visualType is "svg-visual" and svgSubtype is "coordinate-graph"
 - **visualPlan**: Include for ALL OTHER visual types (tape-diagram, number-line, ratio-table, etc.)
+- **diagramPreview**: REQUIRED for ALL visual types EXCEPT "text-only". This shows the user an ASCII preview of the planned visual structure for Scenario 1.
 
 Each scenario's graphPlan/visualPlan uses THAT SCENARIO'S specific numbers.
+
+## Diagram Preview (REQUIRED for non-text-only visuals)
+
+When visualType is NOT "text-only", you MUST include a diagramPreview showing the visual structure for Scenario 1.
+
+**Example for Tape Diagram:**
+\`\`\`json
+"diagramPreview": {
+  "ascii": "┌────────┬────────┬────────┬────────┬────────┐\\n│   ?    │   6    │   6    │   6    │   6    │  = 30\\n└────────┴────────┴────────┴────────┴────────┘",
+  "keyElements": [
+    { "element": "Unknown (?) at start", "represents": "number of students" },
+    { "element": "Each box with 6", "represents": "6 nuggets per student" },
+    { "element": "= 30", "represents": "total of 30 nuggets" }
+  ]
+}
+\`\`\`
+
+**Example for Coordinate Graph:**
+\`\`\`json
+"diagramPreview": {
+  "ascii": "    y\\n  50│      ╱\\n  40│    ╱\\n  30│  ╱  ╱\\n  20│╱  ╱\\n  10│  ╱\\n   0└────────── x\\n    0  2  4  6  8",
+  "keyElements": [
+    { "element": "Blue line (lower)", "represents": "y = 5x (standard mode)" },
+    { "element": "Green line (upper)", "represents": "y = 5x + 20 (boost mode)" },
+    { "element": "Vertical gap", "represents": "+20 bonus points" }
+  ]
+}
+\`\`\`
+
+**Example for Hanger Diagram:**
+\`\`\`json
+"diagramPreview": {
+  "ascii": "        ┌───────────────┐\\n        │    HANGER     │\\n        └───────┬───────┘\\n                │\\n    ┌───────────┴───────────┐\\n    │                       │\\n  ┌─┴─┐                   ┌─┴─┐\\n  │△△△│                   │ 10│\\n  │ 1 │                   │   │\\n  └───┘                   └───┘",
+  "keyElements": [
+    { "element": "Left side (△△△ + 1)", "represents": "3x + 1" },
+    { "element": "Right side (10)", "represents": "the constant 10" },
+    { "element": "Balance", "represents": "equation 3x + 1 = 10" }
+  ]
+}
+\`\`\`
+
+This ASCII preview helps the user confirm the visual structure BEFORE slides are generated.
 
 ## VisualPlan Schemas by Type
 
@@ -402,11 +460,11 @@ export const GENERATE_SLIDES_SYSTEM_PROMPT = `You are an expert educational cont
 - **No JavaScript**: No onclick handlers, no toggles, no animations
 - **Text in proper tags**: All text MUST be in <p>, <h1-6>, <ul>, <ol> (NOT bare text in divs!)
 
-${PEDAGOGY_RULES}
+${TECHNICAL_RULES}
 
-${STYLING_GUIDE}
+${SLIDE_PEDAGOGY_RULES}
 
-${SLIDE_STRUCTURE}
+${PRE_FLIGHT_CHECKLIST}
 
 ${SHARED_GENERATE_INSTRUCTIONS}
 

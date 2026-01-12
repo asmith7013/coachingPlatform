@@ -71,9 +71,11 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[export-google-slides] Uploading to user\'s Google Drive...');
+    console.log('[export-google-slides] Display title:', result.displayTitle);
 
     // Upload to user's Google Drive and convert to Google Slides
-    const uploadResult = await uploadPptxToUserGoogleSlides(pptxBuffer, result.filename);
+    // Use displayTitle for human-readable name in Google Drive
+    const uploadResult = await uploadPptxToUserGoogleSlides(pptxBuffer, result.displayTitle);
 
     if (!uploadResult.success) {
       console.error('[export-google-slides] Upload failed:', uploadResult.error);

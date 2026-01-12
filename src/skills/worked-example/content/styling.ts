@@ -3,92 +3,23 @@
  *
  * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
  *
- * Source of truth: .claude/skills/create-worked-example-sg/reference/styling.md
- * To update: Edit the markdown file in the source folder, then run:
- *   npx tsx scripts/sync-skill-content.ts
+ * Source of truth: .claude/skills/create-worked-example-sg/
+ * To update: Edit files there, then run: npm run sync-skill-content
  *
- * PPTX CONSTRAINTS:
- * - Theme: Light (white background, dark text)
- * - Dimensions: 960×540px
- * - Fonts: Arial, Georgia only
+ * Synced files:
+ *   - reference/styling.md → STYLING_GUIDE
+ *   - reference/layout-presets.md → LAYOUT_PRESETS
+ *   - reference/pptx-requirements.md → PPTX_REQUIREMENTS
+ *   - reference/diagram-patterns.md → DIAGRAM_PATTERNS
+ *   - phases/03-generate-slides/04-svg-workflow.md → SVG_COORDINATE_PLANES
+ *   - phases/03-generate-slides/visuals/annotation-zones.md → ANNOTATION_ZONES
+ *   - phases/01-collect-and-analyze/graph-planning.md → GRAPH_PLANNING
  */
 
-/**
- * Color palette for light theme slides (PPTX-compatible)
- */
-export const COLOR_PALETTE = `
-## Color Palette (PPTX-Compatible)
+// ============================================================================
+// COMPLETE REFERENCE DOCUMENTS
+// ============================================================================
 
-Use HEX colors directly (not CSS variables on text elements):
-
-| Color | Hex | Usage |
-|
-`;
-
-/**
- * Typography guidelines (web-safe fonts)
- */
-export const TYPOGRAPHY = `
-## Typography Hierarchy
-
-\`\`\`
-Step Badge:      13px bold uppercase (in pill)
-Title (h1):      28px bold (primary color #1791e8)
-Subtitle (p):    16px regular (dark text #1d1d1d)
-Section Header:  15px bold
-Body Text:       14px regular
-Supporting:      13px regular
-Footnotes:       10pt (use pt not px)
-\`\`\`
-`;
-
-/**
- * Slide container structure (960×540px)
- */
-export const SLIDE_CONTAINER = `
-## Basic Slide Structure
-
-\`\`\`html
-<body class="col bg-surface" style="width: 960px; height: 540px; position: relative; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden;">
-
-  <!-- Title Zone: 0-120px -->
-  <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
-    <!-- Step Badge -->
-    <div class="row items-center gap-md" style="margin-bottom: 8px;">
-      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
-        <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">STEP 1</p>
-      </div>
-    </div>
-    <!-- Main Question/Action - PROMINENT -->
-    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">IDENTIFY the slope and y-intercept</h1>
-    <!-- Instruction Text -->
-    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">Look at the equation and find the values of m and b.</p>
-  </div>
-
-  <!-- Content Zone: 120-500px (380px height) -->
-  <div class="fill-height col" style="padding: 10px 20px;">
-    <!-- Main content here -->
-  </div>
-
-  <!-- Footnote Zone: 500-540px -->
-  <p style="position: absolute; bottom: 8px; left: 20px; font-size: 10pt; color: #666666; margin: 0;">
-    Lesson 4: Graphing Linear Equations
-  </p>
-
-</body>
-\`\`\`
-`;
-
-/**
- * Content box styling (CFU, Answer boxes)
- */
-export const CONTENT_BOXES = `
-
-`;
-
-/**
- * Complete styling guide for prompts
- */
 export const STYLING_GUIDE = `
 # Slide Styling Guide (PPTX-Compatible)
 
@@ -400,1576 +331,6 @@ The printable worksheet uses DIFFERENT styling:
 See \`printable-slide-snippet.html\` for the template.
 `;
 
-/**
- * SVG Coordinate Planes Reference
- *
- * CRITICAL: This contains the formulas and pre-calculated pixel tables
- * that ensure grid lines, labels, and data points align correctly.
- *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/svg-graphs.md
- */
-export const SVG_COORDINATE_PLANES = `
-# SVG Coordinate Plane Reference
-
-**Responsibility:** Pixel formulas, pre-calculated tables, and validation rules.
-
----
-
-## ⚠️ REQUIRED: Read the HTML Files First
-
-**Before using this reference, you MUST read these files:**
-
-\`\`\`
-READ: ../card-patterns/complex-patterns/graph-snippet.html
-READ: ../card-patterns/complex-patterns/annotation-snippet.html
-\`\`\`
-
-**This markdown file does NOT contain HTML code.** It contains only formulas and tables for calculating pixel positions. The HTML patterns you will copy and modify are in the files above.
-
----
-
-## Document Roles
-
-| File | Role | When to Read |
-|------|------|--------------|
-| **graph-snippet.html** | SOURCE OF TRUTH for SVG structure | READ FIRST, then COPY |
-| **annotation-snippet.html** | SOURCE OF TRUTH for annotation patterns | READ when adding labels |
-| **svg-graphs.md** (this file) | Calculation reference | READ when you need formulas |
-| **annotation-zones.md** | Zone diagram | QUICK LOOKUP for placement |
-
-**Workflow:**
-1. \`READ graph-snippet.html\` → COPY the SVG
-2. \`READ this file\` → Calculate your scale's pixel positions
-3. \`MODIFY\` the copied SVG with calculated values
-4. \`READ annotation-snippet.html\` → COPY annotation patterns
-
----
-
-## CRITICAL: Grid Alignment Rules
-
-**The #1 problem with SVG graphs is misaligned grids.** Follow these rules:
-
-### Rule 1: Use Consistent Spacing Formula
-
-All coordinate calculations MUST use the same linear interpolation formula:
-
-\`\`\`
-pixelX = ORIGIN_X + (dataX / X_MAX) * PLOT_WIDTH
-pixelY = ORIGIN_Y - (dataY / Y_MAX) * PLOT_HEIGHT
-\`\`\`
-
-Where:
-- \`ORIGIN_X\`, \`ORIGIN_Y\` = pixel coordinates of the origin (0,0) point
-- \`PLOT_WIDTH\` = width of the plot area in pixels
-- \`PLOT_HEIGHT\` = height of the plot area in pixels
-- \`X_MAX\`, \`Y_MAX\` = maximum data values on each axis
-
-### Rule 2: Grid Lines Must Match Labels
-
-If you place a label at x=40 for value "0", x=150 for value "5", and x=260 for value "10":
-- Grid lines MUST be at x=40, 150, 260 (NOT different values)
-- The spacing is (260-40)/(10-0) = 22 pixels per unit
-
-### Rule 3: Define Constants First
-
-Before writing any SVG, define these values:
-
-\`\`\`
-ORIGIN_X = 40      // Left edge of plot (after Y-axis labels)
-ORIGIN_Y = 170     // Bottom edge of plot (above X-axis labels)
-PLOT_WIDTH = 220   // Width from origin to right edge
-PLOT_HEIGHT = 150  // Height from origin to top edge
-X_MAX = 10         // Maximum X value
-Y_MAX = 100        // Maximum Y value
-\`\`\`
-
----
-
-## CRITICAL: Axis Requirements
-
-**Every coordinate plane MUST have all 5 elements:**
-
-### 1. Tick Marks at Each Label Position
-
-\`\`\`html
-<!-- X-axis ticks (5px below axis, from y=170 to y=175) -->
-<g stroke="#1e293b" stroke-width="1.5">
-    <line x1="40" y1="170" x2="40" y2="175"/>
-    <line x1="95" y1="170" x2="95" y2="175"/>
-    <line x1="150" y1="170" x2="150" y2="175"/>
-    <!-- ... one tick per label position -->
-</g>
-
-<!-- Y-axis ticks (5px left of axis, from x=35 to x=40) -->
-<g stroke="#1e293b" stroke-width="1.5">
-    <line x1="35" y1="170" x2="40" y2="170"/>
-    <line x1="35" y1="132.5" x2="40" y2="132.5"/>
-    <!-- ... one tick per label position -->
-</g>
-\`\`\`
-
-### 2. Arrowheads on Both Axes
-
-\`\`\`html
-<defs>
-  <marker id="axis-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-    <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b"/>
-  </marker>
-</defs>
-
-<!-- X-axis with arrow (extends 10px past last label) -->
-<line x1="40" y1="170" x2="275" y2="170" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
-
-<!-- Y-axis with arrow (extends 10px past last label) -->
-<line x1="40" y1="180" x2="40" y2="5" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
-\`\`\`
-
-### 3. Single "0" at Origin (NOT two separate zeros)
-
-\`\`\`html
-<!-- ONE zero label at origin, positioned to serve both axes -->
-<text x="33" y="182" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">0</text>
-\`\`\`
-
-**WRONG:**
-\`\`\`html
-<!-- DON'T do this - two separate zeros -->
-<text x="40" y="185">0</text>  <!-- X-axis zero -->
-<text x="35" y="174">0</text>  <!-- Y-axis zero - WRONG! -->
-\`\`\`
-
-### 3. Complete Scale Labels (to the arrows)
-
-Labels must go all the way to the last tick mark before the arrow:
-- X-axis: 0, 10, 20, 30, 40, 50 (if X_MAX=50)
-- Y-axis: 0, 10, 20, 30, 40, 50 (if Y_MAX=50)
-
-**Scale must be consistent** - use increments of 5, 10, 20, 25, 50, or 100.
-
-### 4. Axis Labels (Optional)
-
-If including axis labels like "x" and "y":
-\`\`\`html
-<text x="280" y="175" fill="#64748b" font-family="Arial" font-size="12" font-style="italic">x</text>
-<text x="45" y="8" fill="#64748b" font-family="Arial" font-size="12" font-style="italic">y</text>
-\`\`\`
-
----
-
-## CRITICAL: Line Extension Rules
-
-**Lines must extend to the edges of the plot area** with arrows showing they continue beyond.
-
-### How to Calculate Line Endpoints
-
-For a line y = mx + b within plot area (0, 0) to (X_MAX, Y_MAX):
-
-**Step 1: Calculate where line intersects plot boundaries**
-\`\`\`
-Left edge (x=0):    y = b
-Right edge (x=X_MAX): y = m × X_MAX + b
-Top edge (y=Y_MAX):   x = (Y_MAX - b) / m
-Bottom edge (y=0):    x = -b / m
-\`\`\`
-
-**Step 2: Determine entry point (where line enters plot area)**
-- If 0 ≤ b ≤ Y_MAX: entry is **(0, b)** on left edge
-- If b < 0: entry is **(-b/m, 0)** on bottom edge
-- If b > Y_MAX: entry is **((Y_MAX-b)/m, Y_MAX)** on top edge
-
-**Step 3: Determine exit point (where line exits plot area)**
-- Calculate y at x=X_MAX: \`y_exit = m × X_MAX + b\`
-- If 0 ≤ y_exit ≤ Y_MAX: exit is **(X_MAX, y_exit)** on right edge
-- If y_exit > Y_MAX: exit is **((Y_MAX-b)/m, Y_MAX)** on top edge
-- If y_exit < 0: exit is **(-b/m, 0)** on bottom edge
-
-**Step 4: Draw line with arrow at exit point**
-- Use \`marker-end="url(#line-arrow)"\` to show line continues
-
-### Line Arrow Marker (separate from axis arrows)
-
-\`\`\`html
-<defs>
-    <marker id="line-arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
-        <polygon points="0 0, 6 2, 0 4" fill="currentColor"/>
-    </marker>
-</defs>
-\`\`\`
-
-### Examples
-
-**Example 1: y = 10x (steep, hits top before right edge)**
-- X_MAX=8, Y_MAX=80
-- Entry: (0, 0) — starts at origin
-- At x=8: y=80 — exactly at corner
-- Exit: (8, 80) — right-top corner
-- Draw: \`<line x1="40" y1="170" x2="260" y2="20" ... marker-end="url(#line-arrow)"/>\`
-
-**Example 2: y = 5x + 20 (moderate slope, y-intercept at 20)**
-- X_MAX=8, Y_MAX=80
-- Entry: (0, 20) — left edge at y=20
-- At x=8: y=60 — still within Y_MAX
-- Exit: (8, 60) — right edge at y=60
-- Draw: from (0,20) to (8,60) with arrow
-
-**Example 3: y = 20x (very steep, exits through top)**
-- X_MAX=8, Y_MAX=80
-- Entry: (0, 0) — origin
-- At x=4: y=80 — hits top
-- Exit: (4, 80) — top edge at x=4
-- Draw: from (0,0) to (4,80) with arrow pointing up-right
-
-### Pixel Conversion for Line Endpoints
-
-After calculating data coordinates, convert to pixels:
-\`\`\`
-pixelX = 40 + (dataX / X_MAX) * 220
-pixelY = 170 - (dataY / Y_MAX) * 150
-\`\`\`
-
----
-
-## ⚠️ REMINDER: Start from graph-snippet.html
-
-**For a complete, copy-paste ready coordinate plane:**
-\`\`\`
-READ: ../card-patterns/complex-patterns/graph-snippet.html
-\`\`\`
-
-**DO NOT create graphs from scratch.** Copy and modify from graph-snippet.html.
-
----
-
-## Quick Reference: Pixel Calculations
-
-### Standard Plot Area (viewBox 280x200)
-
-| Constant | Value | Purpose |
-|----------|-------|---------|
-| ORIGIN_X | 40 | X pixel of origin |
-| ORIGIN_Y | 170 | Y pixel of origin |
-| PLOT_WIDTH | 220 | Pixels from x=0 to x=max |
-| PLOT_HEIGHT | 150 | Pixels from y=0 to y=max |
-| LABEL_Y_OFFSET | 185 | Y pixel for X-axis labels |
-| LABEL_X_OFFSET | 35 | X pixel for Y-axis labels |
-
-### Conversion Formulas
-
-\`\`\`javascript
-// Data to Pixel
-function dataToPixelX(dataX, xMax) {
-    return 40 + (dataX / xMax) * 220;
-}
-
-function dataToPixelY(dataY, yMax) {
-    return 170 - (dataY / yMax) * 150;
-}
-
-// Example: Point (6, 45) with X_MAX=10, Y_MAX=100
-// pixelX = 40 + (6/10)*220 = 40 + 132 = 172
-// pixelY = 170 - (45/100)*150 = 170 - 67.5 = 102.5
-\`\`\`
-
----
-
-## Common X-Axis Scales
-
-Use these pre-calculated values for common scales (ORIGIN_X=40, PLOT_WIDTH=220):
-
-### X: 0 to 4 (spacing = 55px per unit)
-| Data | Pixel |
-|------|-------|
-| 0 | 40 |
-| 1 | 95 |
-| 2 | 150 |
-| 3 | 205 |
-| 4 | 260 |
-
-### X: 0 to 5 (spacing = 44px per unit)
-| Data | Pixel |
-|------|-------|
-| 0 | 40 |
-| 1 | 84 |
-| 2 | 128 |
-| 3 | 172 |
-| 4 | 216 |
-| 5 | 260 |
-
-### X: 0 to 8 (spacing = 27.5px per unit)
-| Data | Pixel |
-|------|-------|
-| 0 | 40 |
-| 2 | 95 |
-| 4 | 150 |
-| 6 | 205 |
-| 8 | 260 |
-
-### X: 0 to 10 (spacing = 22px per unit)
-| Data | Pixel |
-|------|-------|
-| 0 | 40 |
-| 2 | 84 |
-| 4 | 128 |
-| 5 | 150 |
-| 6 | 172 |
-| 8 | 216 |
-| 10 | 260 |
-
-### X: 0 to 12 (spacing = 18.33px per unit)
-| Data | Pixel |
-|------|-------|
-| 0 | 40 |
-| 3 | 95 |
-| 6 | 150 |
-| 9 | 205 |
-| 12 | 260 |
-
-### X: 0 to 20 (spacing = 11px per unit)
-| Data | Pixel |
-|------|-------|
-| 0 | 40 |
-| 5 | 95 |
-| 10 | 150 |
-| 15 | 205 |
-| 20 | 260 |
-
----
-
-## Common Y-Axis Scales
-
-Use these pre-calculated values (ORIGIN_Y=170, PLOT_HEIGHT=150):
-
-### Y: 0 to 100 (spacing = 1.5px per unit)
-| Data | Pixel |
-|------|-------|
-| 0 | 170 |
-| 25 | 132.5 |
-| 50 | 95 |
-| 75 | 57.5 |
-| 100 | 20 |
-
-### Y: 0 to 80 (spacing = 1.875px per unit)
-| Data | Pixel |
-|------|-------|
-| 0 | 170 |
-| 20 | 132.5 |
-| 40 | 95 |
-| 60 | 57.5 |
-| 80 | 20 |
-
-### Y: 0 to 200 (spacing = 0.75px per unit)
-| Data | Pixel |
-|------|-------|
-| 0 | 170 |
-| 50 | 132.5 |
-| 100 | 95 |
-| 150 | 57.5 |
-| 200 | 20 |
-
-### Y: 0 to 400 (spacing = 0.375px per unit)
-| Data | Pixel |
-|------|-------|
-| 0 | 170 |
-| 100 | 132.5 |
-| 200 | 95 |
-| 300 | 57.5 |
-| 400 | 20 |
-
----
-
-## Checklist Before Finalizing
-
-Before finishing any SVG coordinate plane, verify:
-
-**Grid Alignment:**
-- [ ] **Grid vertical lines** use the same X values as the X-axis labels
-- [ ] **Grid horizontal lines** use the same Y values as the Y-axis labels
-- [ ] **Data points** are calculated using the same formula as grid lines
-- [ ] **Origin point** (data 0,0) renders at pixel (40, 170)
-- [ ] **Max point** (data X_MAX, Y_MAX) renders at pixel (260, 20)
-- [ ] **All intermediate points** lie exactly on grid intersections when they should
-
-**Element Overlap Prevention:**
-- [ ] **Arrow markers** use small size (markerWidth="6" markerHeight="4")
-- [ ] **Arrow stroke** uses stroke-width="2" (not 3)
-- [ ] **Point labels** don't overlap data points, axes, or each other
-- [ ] **Annotation text** is positioned away from arrows and points
-- [ ] **No elements** overlap the axis lines or labels
-
----
-
-## Common Mistakes to Avoid
-
-### WRONG: Hardcoded unrelated grid positions
-\`\`\`html
-<!-- BAD: Grid lines don't match labels -->
-<line x1="100" y1="20" x2="100" y2="170"/>  <!-- Grid at x=100 -->
-<text x="95" y="185">2</text>                 <!-- Label at x=95 - MISMATCH! -->
-\`\`\`
-
-### CORRECT: Grid and labels use same positions
-\`\`\`html
-<!-- GOOD: Grid lines match labels -->
-<line x1="95" y1="20" x2="95" y2="170"/>   <!-- Grid at x=95 -->
-<text x="95" y="185">2</text>               <!-- Label at x=95 - ALIGNED! -->
-\`\`\`
-
-### WRONG: Inconsistent spacing
-\`\`\`html
-<!-- BAD: Spacing not uniform -->
-<text x="40">0</text>   <!-- 0 at 40 -->
-<text x="100">2</text>  <!-- 2 at 100 (60px from 0) -->
-<text x="150">4</text>  <!-- 4 at 150 (50px from 2) - WRONG! -->
-\`\`\`
-
-### CORRECT: Uniform spacing
-\`\`\`html
-<!-- GOOD: Each tick is 55px apart -->
-<text x="40">0</text>   <!-- 0 at 40 -->
-<text x="95">2</text>   <!-- 2 at 95 (55px from 0) -->
-<text x="150">4</text>  <!-- 4 at 150 (55px from 2) -->
-\`\`\`
-
----
-
-## CRITICAL: Preventing Element Overlap
-
-**The #2 problem with SVG graphs is overlapping elements** - labels covering points, arrows blocking axes, annotations colliding with each other. Follow these rules:
-
-### Rule 1: Use Smaller Element Sizes
-
-Default sizes that prevent most overlaps:
-
-| Element | Recommended Size | Max Size |
-|---------|-----------------|----------|
-| Data point circles | r="4" to r="5" | r="6" |
-| Point labels | font-size="9" to "10" | font-size="11" |
-| Arrow stroke width | stroke-width="2" | stroke-width="3" |
-| Arrow markers | markerWidth="6" markerHeight="4" | markerWidth="8" markerHeight="5" |
-| Annotation text | font-size="9" | font-size="11" |
-
-### Rule 2: Arrow Marker Sizes
-
-Use small markers (defined in \`graph-snippet.html\` and \`annotation-snippet.html\`):
-- \`markerWidth="6" markerHeight="4"\` ✅ (correct)
-- \`markerWidth="10" markerHeight="7"\` ❌ (too large, overlaps)
-
-### Rule 3: Label Positioning Strategy
-
-**Point labels** - Position AWAY from other elements:
-- If point is in upper area: place label ABOVE (y - 10px)
-- If point is in lower area: place label BELOW (y + 15px)
-- If two points are close horizontally: stagger labels (one above, one below)
-- Never place labels directly on the axes
-
-**Annotation labels** (rise/run, change in y/x):
-- Position to the LEFT of vertical arrows (x - 25px)
-- Position BELOW horizontal arrows (y + 15px)
-- Use smaller font-size="9" for annotations
-
-### Rule 4: Check These Common Overlap Scenarios
-
-Before finalizing, verify NO overlaps between:
-
-- [ ] Point labels and data points
-- [ ] Point labels and axis labels
-- [ ] Point labels and grid lines (especially at intersections)
-- [ ] Arrow markers and data points
-- [ ] Arrow markers and axes
-- [ ] Annotation text and arrows
-- [ ] Two point labels (when points are close together)
-
-### Rule 5: Minimum Spacing Guidelines
-
-Maintain these minimum pixel distances:
-
-| Between | Minimum Distance |
-|---------|-----------------|
-| Point label and point center | 10px |
-| Point label and axis | 15px |
-| Two point labels | 20px |
-| Arrow end and target point | 5px gap |
-| Annotation text and arrow line | 3px |
-
-### Example
-
-See \`annotation-snippet.html\` for properly spaced annotation examples with correct sizing.
-
----
-
-## Printable Worksheet SVG
-
-For printable slides, use smaller dimensions and monochrome colors. See \`printable-slide-snippet.html\` for complete example.
-
-**Key differences from projection SVG:**
-- Smaller viewBox (200×150 vs 280×200)
-- Black on white colors only
-- No arrows/animation
-
----
-
-## PPTX Layer System
-
-Each SVG element that should be independently selectable needs \`data-pptx-layer\`:
-
-| Prefix | Use For | Example |
-|--------|---------|---------|
-| \`line-N\` | Data lines and their points | \`line-1\`, \`line-2\` |
-| \`label-X\` | Text annotations | \`label-b0\`, \`label-shift20\` |
-| \`arrow-X\` | Arrow annotations | \`arrow-shift\`, \`arrow-highlight\` |
-| \`eq-N\` | Equation labels | \`eq-line-1\`, \`eq-line-2\` |
-
-See \`graph-snippet.html\` for the complete layer structure implementation.
-
----
-
-## Workflow Summary
-
-1. **COPY** \`graph-snippet.html\` as your starting point
-2. **READ** this file for formulas and pre-calculated tables
-3. **CALCULATE** pixel positions for your specific scale
-4. **MODIFY** the copied HTML with calculated values
-5. **ADD** annotations from \`annotation-snippet.html\`
-6. **VERIFY** grid lines align with axis labels
-`;
-
-/**
- * Graph Planning Reference
- *
- * Semantic guidance for planning coordinate plane graphs:
- * - How to calculate X_MAX and Y_MAX from equations
- * - How to choose appropriate scales
- * - How to plan annotations (y-intercept shifts, parallel labels, etc.)
- *
- * This should be used BEFORE pixel implementation (SVG_COORDINATE_PLANES).
- *
- * Source: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/graph-planning.md
- */
-export const GRAPH_PLANNING = `
-# Graph Planning (Required for Coordinate Planes)
-
-**When to read this file:** You identified "SVG graphs" or "coordinate planes" as your visual type in Step 1.3e.
-
-**Purpose:** Complete semantic planning for your graph BEFORE any pixel-level implementation.
-
----
-
-## MANDATORY: Complete All Steps Below
-
-If you skip this planning, your graph will have incorrect scales or misplaced annotations.
-
----
-
-## Step 1: List Your Equations/Data
-
-Write out every line or data series that will appear on the graph:
-
-\`\`\`
-Line 1: [equation, e.g., y = 3x]
-Line 2: [equation, e.g., y = 3x + 50]
-Line 3: [if applicable]
-\`\`\`
-
----
-
-## Step 2: Calculate Data Ranges
-
-### Find X_MAX
-Choose the rightmost x-value you need to show. Common values: 4, 5, 6, 8, 10
-
-\`\`\`
-X_MAX = [your value]
-\`\`\`
-
-### Find Y_MAX
-For EACH line, calculate Y at x=0 and x=X_MAX:
-
-\`\`\`
-Line 1: y = [equation]
-  - At x=0: y = [calculate]
-  - At x=X_MAX: y = [calculate]
-
-Line 2: y = [equation]
-  - At x=0: y = [calculate]
-  - At x=X_MAX: y = [calculate]
-
-Largest Y value across all lines: [value]
-\`\`\`
-
-### Round Y_MAX Up
-
-**Choose the smallest Y_MAX that fits your data AND keeps ticks ≤10.**
-
-| If largest Y is... | Use Y_MAX | Increment | Ticks |
-|-------------------|-----------|-----------|-------|
-| ≤ 6 | 6 | 1 | 7 |
-| 7-8 | 8 | 1 | 9 |
-| 9 | 9 | 1 | 10 |
-| 10-16 | 16 | 2 | 9 |
-| 17-18 | 18 | 2 | 10 |
-| 19-36 | 36 | 4 | 10 |
-| 37-45 | 45 | 5 | 10 |
-| 46-72 | 72 | 8 | 10 |
-| 73-90 | 90 | 10 | 10 |
-| 91-180 | 180 | 20 | 10 |
-
-**Note:** These Y_MAX values are chosen to give exactly 9-10 ticks with clean increments.
-
-\`\`\`
-Y_MAX = [your rounded value]
-\`\`\`
-
----
-
-## Step 3: Determine Axis Labels and Scales
-
-### X-Axis Labels
-
-Based on your X_MAX, use these labels:
-
-| X_MAX | X-axis labels | X scale (increment) |
-|-------|---------------|---------------------|
-| 4 | 0, 1, 2, 3, 4 | 1 |
-| 5 | 0, 1, 2, 3, 4, 5 | 1 |
-| 6 | 0, 1, 2, 3, 4, 5, 6 | 1 |
-| 8 | 0, 2, 4, 6, 8 | 2 |
-| 10 | 0, 2, 4, 6, 8, 10 | 2 |
-| 12 | 0, 3, 6, 9, 12 | 3 |
-| 20 | 0, 5, 10, 15, 20 | 5 |
-
-\`\`\`
-X-axis labels: [your labels]
-X scale: [increment between labels]
-\`\`\`
-
-### Y-Axis Labels
-
-**⚠️ Y-axis labels MUST start at 0.** Don't start at the first increment (e.g., \`10, 20, 30...\` is WRONG; \`0, 10, 20, 30...\` is CORRECT).
-
-Based on your Y_MAX, use these labels. **Target: ≤10 ticks** (never exceed 10).
-
-**Priority:** Use smallest whole-number increment possible. Count by 1s or 2s when Y_MAX allows.
-
-**If you need more than 10 ticks, reduce Y_MAX slightly** to hit exactly 9-10 ticks.
-
-| Y_MAX | Y-axis labels (bottom to top) | Y scale (increment) | Ticks |
-|-------|------------------------------|---------------------|-------|
-| 6 | 0, 1, 2, 3, 4, 5, 6 | 1 | 7 |
-| 8 | 0, 1, 2, 3, 4, 5, 6, 7, 8 | 1 | 9 |
-| 9 | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 | 1 | 10 |
-| 16 | 0, 2, 4, 6, 8, 10, 12, 14, 16 | 2 | 9 |
-| 18 | 0, 2, 4, 6, 8, 10, 12, 14, 16, 18 | 2 | 10 |
-| 36 | 0, 4, 8, 12, 16, 20, 24, 28, 32, 36 | 4 | 10 |
-| 45 | 0, 5, 10, 15, 20, 25, 30, 35, 40, 45 | 5 | 10 |
-| 72 | 0, 8, 16, 24, 32, 40, 48, 56, 64, 72 | 8 | 10 |
-| 90 | 0, 10, 20, 30, 40, 50, 60, 70, 80, 90 | 10 | 10 |
-| 180 | 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 | 20 | 10 |
-
-**Formula:** For increment I, max Y_MAX = I × 9 (to get 10 ticks including 0)
-
-| Increment | Max Y_MAX for 10 ticks |
-|-----------|------------------------|
-| 1 | 9 |
-| 2 | 18 |
-| 4 | 36 |
-| 5 | 45 |
-| 8 | 72 |
-| 10 | 90 |
-| 20 | 180 |
-
-\`\`\`
-Y-axis labels: [your labels]
-Y scale: [increment between labels]
-\`\`\`
-
----
-
-## Step 4: Calculate Line Endpoints (CRITICAL)
-
-**This step ensures mathematically accurate line drawing.**
-
-For each line equation y = mx + b, calculate:
-- **Start point**: Where the line enters the plot (usually at x=0, the y-intercept)
-- **End point**: Where the line exits the plot (usually at x=X_MAX)
-
-### Formula
-
-\`\`\`
-Start Point: (x=0, y=b)              -- where b is the y-intercept
-End Point:   (x=X_MAX, y=m*X_MAX+b)  -- plug X_MAX into the equation
-\`\`\`
-
-### Example Calculations
-
-**Given:** Line 1: y = 5x, Line 2: y = 5x + 20, X_MAX = 8
-
-\`\`\`
-Line 1: y = 5x (slope=5, y-intercept=0)
-  - Start point: (0, 0)
-  - End point: (8, 5*8 + 0) = (8, 40)
-
-Line 2: y = 5x + 20 (slope=5, y-intercept=20)
-  - Start point: (0, 20)
-  - End point: (8, 5*8 + 20) = (8, 60)
-\`\`\`
-
-### Edge Cases
-
-If a line exits through the TOP of the plot before reaching X_MAX:
-- Calculate where y = Y_MAX: x = (Y_MAX - b) / m
-- Use that x value as the end point's x coordinate
-
-\`\`\`
-Example: y = 20x with X_MAX=8, Y_MAX=80
-  - At x=8: y = 160 (exceeds Y_MAX=80!)
-  - Line exits at top: x = (80 - 0) / 20 = 4
-  - End point: (4, 80) instead of (8, 160)
-\`\`\`
-
-### Record Your Line Endpoints
-
-\`\`\`
-Line 1: y = [equation]
-  - Start point: ([x], [y])
-  - End point: ([x], [y])
-
-Line 2: y = [equation]
-  - Start point: ([x], [y])
-  - End point: ([x], [y])
-\`\`\`
-
-**⚠️ These values will be used DIRECTLY in the SVG line element as x1, y1, x2, y2 coordinates (after pixel conversion).**
-
----
-
-## Step 5: Identify the Mathematical Relationship to Annotate
-
-What is the KEY mathematical concept this graph should emphasize?
-
-| If the problem involves... | Annotation type | What to show |
-|---------------------------|-----------------|--------------|
-| Two parallel lines (same slope, different y-intercepts) | Y-intercept shift | Vertical double-arrow between y-intercepts |
-| Two parallel lines | Parallel indicator | "PARALLEL" label or "Same slope = m" |
-| Two lines with different slopes | Slope comparison | Slope labels next to each line |
-| Lines that intersect | Intersection point | Highlighted point with coordinates |
-| Single line with slope focus | Slope triangle | Rise/run annotation |
-| Single line with intercept focus | Y-intercept point | Highlighted point at (0, b) |
-
-\`\`\`
-Key relationship: [what to emphasize]
-Annotation type: [from table above]
-\`\`\`
-
----
-
-## Step 5: Plan Annotation Position
-
-### For Y-Intercept Shift (Parallel Lines)
-
-The vertical arrow showing the shift goes **LEFT of the y-axis**:
-
-\`\`\`
-Arrow X position: ORIGIN_X - 15 pixels (left of axis)
-Arrow starts at: pixelY of first y-intercept
-Arrow ends at: pixelY of second y-intercept
-Label: the numerical difference (e.g., "50 units")
-\`\`\`
-
-### For Parallel/Slope Labels
-
-Place in **open space** away from:
-- The lines themselves
-- Axis labels
-- Other annotations
-
-Typical positions:
-- Upper right quadrant for legend
-- Near the lines but offset by 10-15px
-
-### For Intersection Points
-
-Highlight the intersection with:
-- A larger circle (r=6 or r=8)
-- Coordinate label offset by 10px
-
----
-
-## Step 6: Write Your Complete Graph Plan
-
-**Copy this template and fill it in:**
-
-\`\`\`
-GRAPH PLAN
-==========
-Equations:
-- Line 1: [equation] ([color])
-- Line 2: [equation] ([color])
-
-Scale:
-- X range: 0 to [X_MAX]
-- X-axis labels: [list]
-- X scale: [increment between labels]
-- Y range: 0 to [Y_MAX]
-- Y-axis labels: [list]
-- Y scale: [increment between labels]
-
-Annotation:
-- Relationship to show: [what mathematical concept]
-- Annotation type: [from Step 4 table]
-- Position: [from Step 5]
-
-Visual notes:
-- [any other visual elements needed]
-\`\`\`
-
----
-
-## Example: Comparing y = 3x and y = 3x + 15
-
-\`\`\`
-GRAPH PLAN
-==========
-Equations:
-- Line 1: y = 3x (blue)
-- Line 2: y = 3x + 15 (green)
-
-Scale:
-- X range: 0 to 6
-- X-axis labels: 0, 1, 2, 3, 4, 5, 6
-- X scale: 1
-- Calculations:
-  - Line 1 at x=6: y = 18
-  - Line 2 at x=6: y = 33
-  - Largest Y = 33 → use Y_MAX = 36 (from table: 19-36 → 36)
-- Y range: 0 to 36
-- Y-axis labels: 0, 4, 8, 12, 16, 20, 24, 28, 32, 36
-- Y scale: 4 (gives exactly 10 ticks)
-
-Annotation:
-- Relationship to show: Y-intercept shift (parallel lines)
-- Annotation type: Vertical double-arrow between y-intercepts
-- Position: Left of y-axis (x = ORIGIN_X - 15)
-- Arrow from: y=0 to y=15
-- Label: "+15"
-
-Visual notes:
-- Both lines should be clearly visible
-- 10 ticks on Y-axis for clear reading
-- "PARALLEL" label near the lines
-\`\`\`
-
----
-
-## Add Graph Plan to Your PROBLEM ANALYSIS
-
-After completing this planning, add the GRAPH PLAN section to your PROBLEM ANALYSIS output in Phase 1.
-
-This plan will be referenced in Phase 3 when you implement the SVG.
-
----
-
-## Pixel Implementation
-
-When you reach Phase 3 and need to convert your graph plan to actual SVG pixels, reference:
-
-\`\`\`
-Read: .claude/skills/create-worked-example-sg/reference/svg-pixel-tables.md
-\`\`\`
-
-That file contains the pixel lookup tables for converting your planned scale to actual SVG coordinates.
-`;
-
-/**
- * Diagram Patterns Reference (PRIMARY REFERENCE for non-graph SVGs)
- *
- * Visual structure reference for common middle school math representations:
- * - Double Number Lines (ratios, percentages)
- * - Tape Diagrams (part-whole, comparisons)
- * - Hanger Diagrams (equation solving, balance)
- * - Area Models (multiplication, distributive property)
- * - Input-Output Tables (functions, patterns)
- * - Ratio Tables (equivalent ratios)
- *
- * Based on Illustrative Mathematics (IM) curriculum representations.
- *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/diagram-patterns.md
- */
-export const DIAGRAM_PATTERNS = `
-# Diagram Patterns for Middle School Math
-
-Visual structure reference for common math representations used in Illustrative Mathematics (IM) curriculum.
-
-**This is the PRIMARY REFERENCE for all non-graph SVG diagrams.** When creating SVG visuals for worked examples, match these patterns to ensure students see familiar representations.
-
----
-
-## ⚠️ CRITICAL: Simple Visuals That Speak for Themselves
-
-**The visual should be immediately understandable WITHOUT text explanation.**
-
-### What This Means:
-- A tape diagram showing \`? × 6 = 30\` is self-explanatory
-- A graph with labeled axes and plotted points is self-explanatory
-- NO "Reading the graph: At point (6,12)..." info boxes needed
-- NO text boxes inside the SVG explaining what's already shown
-
-### The "Delete Test"
-If you can delete a text element and the visual still makes sense → delete it.
-
-### Labels vs. Explanations
-| ✅ ALLOWED (Labels) | ❌ NOT ALLOWED (Explanations) |
-|---------------------|-------------------------------|
-| "6" inside a box | "Each box represents 6 nuggets" |
-| "?" at start of tape | "The question mark shows what we're solving for" |
-| "y = 2x" next to line | "This line represents the equation y = 2x" |
-| Axis labels: "Time (sec)" | "The x-axis shows time in seconds" |
-
-### Size Within Column
-Visuals should **FILL their column** - use the full available width/height. Don't create small, cramped diagrams with excessive whitespace.
-
----
-
-## Double Number Line
-**Use for:** Ratios, percentages, proportional reasoning, unit rates
-**IM Grade Level:** Grade 6 Unit 2 (introduced), used through Grade 7
-
-\`\`\`
- 0        3        6        9       12   ← Quantity A (e.g., cups of flour)
- |--------|--------|--------|--------|
- |--------|--------|--------|--------|
- 0        2        4        6        8   ← Quantity B (e.g., pints of water)
-\`\`\`
-
-**Key features (from IM):**
-- Two parallel horizontal lines with **aligned tick marks**
-- Zero aligned on both lines (critical!)
-- **Distances are proportional**: distance from 0 to 12 is 3× distance from 0 to 4
-- Each line labeled with its quantity name
-- At least 6 equally spaced tick marks
-- Equivalent ratios line up **vertically**
-
-**IM context:** Students use this to find equivalent ratios, unit rates, and "how many of X per one Y"
-
----
-
-## Tape Diagram (Bar Model)
-**Use for:** Part-whole relationships, fractions, ratio comparison, "times as many", division with fractions
-**IM Grade Level:** Introduced Grade 2, used through middle school
-
-### Single tape (parts of a whole):
-\`\`\`
-┌──────────────┬──────────────┬──────────────┐
-│    Part A    │    Part B    │    Part C    │
-│      2x      │      3x      │      5x      │
-└──────────────┴──────────────┴──────────────┘
-├──────────────────── Total: 60 ────────────────┤
-\`\`\`
-
-### Comparison tape (two quantities):
-\`\`\`
-Maria:  ┌────────┬────────┬────────┐
-        │   x    │   x    │   x    │  ← 3 units
-        └────────┴────────┴────────┘
-
-Juan:   ┌────────┐
-        │   x    │  ← 1 unit
-        └────────┘
-\`\`\`
-
-### Compare problem (bigger/smaller/difference):
-\`\`\`
-Bigger:   ┌────────────────────────────────┐
-          │              45                │
-          └────────────────────────────────┘
-
-Smaller:  ┌────────────────────┐
-          │         28         │
-          └────────────────────┘
-                               ├─ ? ─┤  ← Difference
-\`\`\`
-
-**Key features (from IM):**
-- Rectangular bars (like bars in a bar graph)
-- **Same-length pieces = same value** (even if drawing is sloppy, label them)
-- Label pieces with numbers OR letters (x, y) to show known/relative values
-- Total or difference shown with bracket
-- For Compare problems: shows bigger amount, smaller amount, and difference
-
-**IM context:** Students see tape diagrams as a tool to "quickly visualize story problems" and connect to equations
-
----
-
-## Hanger Diagram (Balance)
-**Use for:** Equation solving, showing balance/equality, reasoning about operations
-**IM Grade Level:** Grade 6 Unit 6, Grade 7 Unit 6
-
-### Balanced hanger (equation):
-\`\`\`
-              ╱╲
-             ╱  ╲
-            ╱    ╲
-     ┌─────┴──────┴─────┐
-     │                  │
-  ┌──┴──┐            ┌──┴──┐
-  │     │            │     │
-  │ 3x  │            │ 12  │
-  │ +1  │            │     │
-  └─────┘            └─────┘
-   Left               Right
-   side               side
-\`\`\`
-
-### With shapes (for visual weight):
-\`\`\`
-              ╱╲
-             ╱  ╲
-            ╱    ╲
-     ┌─────┴──────┴─────┐
-     │                  │
-  ┌──┴──┐            ┌──┴──┐
-  │ △ △ │            │ □□□ │
-  │     │            │     │
-  └─────┘            └─────┘
-
-  △ = triangle (unknown x)
-  □ = square (value of 1)
-\`\`\`
-
-**Key features (from IM):**
-- Triangle fulcrum at top shows balance point
-- **Balanced = both sides equal** (like equal sign)
-- **Unbalanced = one side heavier** (inequality)
-- Shapes represent values: △ (triangles) for variables, □ (squares) for units
-- "What you do to one side, you do to the other side"
-
-**IM solving strategy:**
-- **Addition equations**: Solve by subtracting from both sides (remove equal weights)
-- **Multiplication equations**: Solve by dividing both sides (split into equal groups)
-- Students match hanger diagrams to equations, then solve
-
-**IM context:** Visualizes the rule "what you do to one side of the equation you have to do to the other side"
-
----
-
-## Number Line
-**Use for:** Integers, absolute value, inequalities, operations
-
-### Basic number line:
-\`\`\`
-  ←──┼────┼────┼────┼────┼────┼────┼────┼────┼──→
-    -4   -3   -2   -1    0    1    2    3    4
-\`\`\`
-
-### With points marked:
-\`\`\`
-  ←──┼────┼────┼────●────┼────┼────○────┼────┼──→
-    -4   -3   -2   -1    0    1    2    3    4
-                    ↑              ↑
-                   -1              2
-     ● = closed (included)    ○ = open (excluded)
-\`\`\`
-
-### With jump arrows (for operations):
-\`\`\`
-                    +5
-              ┌──────────────┐
-              ↓              ↓
-  ←──┼────┼────┼────┼────┼────┼────┼────┼────┼──→
-    -4   -3   -2   -1    0    1    2    3    4
-\`\`\`
-
-**Key features:**
-- Arrows on both ends (extends infinitely)
-- Evenly spaced tick marks
-- Zero clearly marked
-- Points: ● for included, ○ for excluded
-
----
-
-## Area Model
-**Use for:** Multiplication, distributive property a(b+c) = ab + ac, factoring
-**IM Grade Level:** Introduced in elementary, used through Algebra 1
-
-### For multiplication (23 × 15):
-\`\`\`
-              20          3
-         ┌──────────┬─────────┐
-      10 │   200    │   30    │
-         │          │         │
-         ├──────────┼─────────┤
-       5 │   100    │   15    │
-         │          │         │
-         └──────────┴─────────┘
-
-    Total: 200 + 30 + 100 + 15 = 345
-\`\`\`
-
-### For distributive property 6(40 + 7):
-\`\`\`
-                40           7
-         ┌──────────────┬─────────┐
-       6 │     240      │   42    │
-         │              │         │
-         └──────────────┴─────────┘
-
-    6(40 + 7) = 6×40 + 6×7 = 240 + 42 = 282
-\`\`\`
-
-### For algebra (x + 3)(x + 2):
-\`\`\`
-               x           3
-         ┌──────────┬─────────┐
-       x │    x²    │   3x    │
-         │          │         │
-         ├──────────┼─────────┤
-       2 │    2x    │    6    │
-         │          │         │
-         └──────────┴─────────┘
-
-    Total: x² + 3x + 2x + 6 = x² + 5x + 6
-\`\`\`
-
-**Key features (from IM):**
-- Rectangle divided into smaller rectangles (partial products)
-- **Dimensions on outside edges** (factors being multiplied)
-- **Products inside each section** (partial products)
-- Total shown below as sum of all sections
-- Shows that a(b + c) = ab + ac visually
-
-**IM context:** "The area of a rectangle can be found in two ways: a(b + c) or ab + ac. The equality of these two expressions is the distributive property."
-
----
-
-## Input-Output Table (Function Table)
-**Use for:** Functions, patterns, rules, describing relationships
-**IM Grade Level:** Grade 8 Functions (8.F.A.1)
-
-### Horizontal table (primary format):
-\`\`\`
-┌───────┬─────┬─────┬─────┬─────┬─────┐
-│ Input │  1  │  2  │  3  │  4  │  5  │
-├───────┼─────┼─────┼─────┼─────┼─────┤
-│Output │  5  │  8  │ 11  │ 14  │  ?  │
-└───────┴─────┴─────┴─────┴─────┴─────┘
-               Rule: ×3 + 2
-\`\`\`
-
-### With function machine visualization:
-\`\`\`
-                    Rule: ×3 + 2
-          ┌─────────────────────────────┐
-          │                             │
-Input →   │      [ FUNCTION MACHINE ]   │   → Output
-          │                             │
-          └─────────────────────────────┘
-
-┌───────┬─────┬─────┬─────┬─────┐
-│ Input │  1  │  2  │  3  │  ?  │
-├───────┼─────┼─────┼─────┼─────┤
-│Output │  5  │  8  │ 11  │ 20  │
-└───────┴─────┴─────┴─────┴─────┘
-\`\`\`
-
-**Key features (from IM):**
-- **Horizontal layout** with Input row on top, Output row below
-- Rule stated explicitly (as equation or in words)
-- At least 3-4 examples showing the pattern
-- One cell with "?" for student to solve
-- "A function is a rule that assigns to each input exactly one output"
-
-**IM context:** Students describe function rules in words, fill tables, and understand that each input produces exactly one output
-
----
-
-## Ratio Table
-**Use for:** Equivalent ratios, scaling, finding unknown values
-**IM Grade Level:** Grade 6 Unit 2 (alongside double number lines)
-
-\`\`\`
-┌────────────┬─────┬─────┬─────┬─────┐
-│  Apples    │  2  │  4  │  6  │  ?  │
-├────────────┼─────┼─────┼─────┼─────┤
-│  Oranges   │  3  │  6  │  9  │ 15  │
-└────────────┴─────┴─────┴─────┴─────┘
-               ×2    ×3    ×?
-\`\`\`
-
-### With scaling arrows:
-\`\`\`
-          ×2         ×3
-       ┌──────┐   ┌──────┐
-       │      │   │      │
-       ▼      │   ▼      │
-┌────────┬────┼───┬────┼───┬─────┐
-│ Miles  │ 5  │   │ 10 │   │ 15  │
-├────────┼────┴───┼────┴───┼─────┤
-│ Hours  │ 2  │   │  4 │   │  6  │
-└────────┴────────┴────────┴─────┘
-\`\`\`
-
-**Key features (from IM):**
-- Two rows (one per quantity in the ratio)
-- Columns show **equivalent ratios**
-- Scale factors can be shown with arrows between columns
-- At least one unknown to solve
-- More abstract than double number line (no visual proportions)
-
-**IM context:** Ratio tables are "more abstract and more general" than double number lines. Students progress from double number lines → ratio tables → equations
-
----
-
-## Grid Diagram
-**Use for:** Decomposing shapes into unit squares, finding area by counting
-**IM Grade Level:** Grade 6 Unit 1 (Area and Surface Area)
-
-### Basic grid (for area):
-\`\`\`
-┌───┬───┬───┬───┬───┐
-│ 1 │ 2 │ 3 │ 4 │ 5 │
-├───┼───┼───┼───┼───┤
-│ 6 │ 7 │ 8 │ 9 │10 │
-├───┼───┼───┼───┼───┤
-│11 │12 │13 │14 │15 │
-└───┴───┴───┴───┴───┘
-     Area = 15 square units
-\`\`\`
-
-### Decomposed shape (L-shape):
-\`\`\`
-┌───┬───┬───┐
-│   │   │   │  ← 3 units
-├───┼───┼───┤
-│   │   │   │  ← 3 units
-├───┼───┴───┘
-│   │          ← 2 units
-├───┤
-│   │
-└───┘
-  Total: 3 + 3 + 2 = 8 square units
-\`\`\`
-
-**Key features:**
-- Each cell represents 1 square unit
-- Can number cells for counting
-- Show decomposition into rectangles
-- Label dimensions on edges
-
----
-
-## Net Diagram
-**Use for:** Surface area of prisms and pyramids, visualizing 3D shapes unfolded
-**IM Grade Level:** Grade 6 Unit 1 (Area and Surface Area)
-
-### Net of rectangular prism:
-\`\`\`
-        ┌─────────┐
-        │   TOP   │
-        │  4 × 3  │
-┌───────┼─────────┼───────┬─────────┐
-│ LEFT  │  FRONT  │ RIGHT │  BACK   │
-│ 3 × 2 │  4 × 2  │ 3 × 2 │  4 × 2  │
-└───────┼─────────┼───────┴─────────┘
-        │ BOTTOM  │
-        │  4 × 3  │
-        └─────────┘
-\`\`\`
-
-### Net of triangular prism:
-\`\`\`
-        ╱╲
-       ╱  ╲
-      ╱ △  ╲   ← triangular face
-     ╱──────╲
-┌────────────────┐
-│                │
-│   RECTANGLE    │  ← rectangular face
-│                │
-└────────────────┘
-\`\`\`
-
-**Key features:**
-- Show all faces laid flat
-- Label each face with dimensions
-- Indicate which edges connect when folded
-- Use dotted lines for fold lines
-
----
-
-## Measurement Diagram
-**Use for:** Showing base, height, and other measurements on geometric shapes
-**IM Grade Level:** Grade 6 Unit 1 (Area and Surface Area)
-
-### Parallelogram with height:
-\`\`\`
-    ┌──────────────────┐
-   ╱│                 ╱
-  ╱ │ h = 4         ╱
- ╱  │              ╱
-╱   ↓             ╱
-└──────────────────┘
-    b = 8
-\`\`\`
-
-### Triangle with base and height:
-\`\`\`
-        ╱╲
-       ╱  ╲
-      ╱    ╲
-     ╱   │  ╲
-    ╱    │h  ╲
-   ╱     │    ╲
-  ╱      ↓     ╲
- ╱───────────────╲
-        b
-\`\`\`
-
-### Rectangle with dimensions:
-\`\`\`
-      6 cm
-  ┌──────────┐
-  │          │
-4 │          │ 4
-  │          │
-  └──────────┘
-      6 cm
-\`\`\`
-
-**Key features:**
-- Clearly mark base (b) and height (h)
-- Height is PERPENDICULAR to base (show right angle)
-- Use arrows to indicate measurements
-- Label with units when applicable
-
----
-
-## Discrete Diagram
-**Use for:** Showing objects/groups for ratio problems, "for every" relationships
-**IM Grade Level:** Grade 6 Unit 2 (Introducing Ratios)
-
-### Objects in groups:
-\`\`\`
-Apples:   🍎 🍎 🍎 🍎 🍎    (5 apples)
-
-Oranges:  🍊 🍊 🍊          (3 oranges)
-
-Ratio: 5 apples for every 3 oranges
-\`\`\`
-
-### With grouping brackets:
-\`\`\`
-┌─────────────┐  ┌─────────────┐
-│ ● ● ●       │  │ ● ● ●       │
-│    Group 1  │  │    Group 2  │
-└─────────────┘  └─────────────┘
-
-3 per group × 2 groups = 6 total
-\`\`\`
-
-### Array format:
-\`\`\`
-○ ○ ○ ○ ○   ← 5 circles
-○ ○ ○ ○ ○   ← 5 circles
-○ ○ ○ ○ ○   ← 5 circles
-─────────
-   15 total (3 rows × 5 columns)
-\`\`\`
-
-**Key features:**
-- Use simple shapes (●, ○, □) or emoji icons
-- Group related items visually
-- Show "for every" relationships clearly
-- Can use arrays for multiplication
-
----
-
-## Base-Ten Diagram
-**Use for:** Place value operations, addition/subtraction/multiplication with regrouping
-**IM Grade Level:** Grade 5-6 Unit 5 (Arithmetic in Base Ten)
-
-### Place value blocks:
-\`\`\`
-Hundreds (100)     Tens (10)      Ones (1)
-┌─────────┐       ┌─┐ ┌─┐        ●  ●
-│         │       │ │ │ │        ●
-│   100   │       │ │ │ │
-│         │       └─┘ └─┘
-└─────────┘        20             3
-
-         Number: 123
-\`\`\`
-
-### Addition with regrouping:
-\`\`\`
-    Tens    Ones
-    ┌─┐     ●●●●●
-    │ │     ●●●      = 38
-    └─┘
-
-  + ┌─┐     ●●●●
-    │ │     ●●●●●    = 29
-    └─┘
-
-  ──────────────────
-    ┌─┐┌─┐  ●●●●●
-    │ ││ │  ●●       = 67
-    └─┘└─┘
-
-(10 ones → 1 ten)
-\`\`\`
-
-### Expanded form:
-\`\`\`
-347 = 300 + 40 + 7
-
-┌─────────┐ ┌─────────┐ ┌─────────┐   ┌─┐┌─┐┌─┐┌─┐   ●●●●
-│   100   │ │   100   │ │   100   │   │ ││ ││ ││ │   ●●●
-└─────────┘ └─────────┘ └─────────┘   └─┘└─┘└─┘└─┘
-     3 hundreds              4 tens       7 ones
-\`\`\`
-
-**Key features:**
-- Large squares = hundreds (100)
-- Tall rectangles = tens (10)
-- Small dots/squares = ones (1)
-- Show regrouping with arrows
-- Label place values clearly
-
----
-
-## Creating Custom Diagrams
-
-If your problem doesn't fit these patterns, create a custom SVG following these rules:
-
-1. **Use the SVG container wrapper:**
-\`\`\`html
-<div data-pptx-region="svg-container"
-     data-pptx-x="408" data-pptx-y="150"
-     data-pptx-w="532" data-pptx-h="360">
-  <svg viewBox="0 0 280 200">
-    <!-- your diagram here -->
-  </svg>
-</div>
-\`\`\`
-
-2. **Use layers for animations:**
-\`\`\`html
-<g data-pptx-layer="base"><!-- always visible --></g>
-<g data-pptx-layer="step-1"><!-- appears on click --></g>
-\`\`\`
-
-3. **Text requirements:**
-- All \`<text>\` must have \`font-family="Arial"\`
-- Use readable font sizes (12-16px for labels)
-
-4. **Colors from styling guide:**
-- Primary: \`#1791e8\`
-- Success: \`#22c55e\`
-- Warning: \`#f59e0b\`
-- Text: \`#1d1d1d\`
-`;
-
-/**
- * Annotation Zones Reference
- *
- * Guide for placing annotations on graphs:
- * - Y-intercept labels and shift arrows
- * - Slope triangles
- * - Line equation labels
- * - Point labels
- *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/annotation-zones.md
- */
-export const ANNOTATION_ZONES = `
-# SVG Annotation Zones
-
-**Responsibility:** Quick zone reference for annotation placement.
-
----
-
-## ⚠️ REQUIRED: Read the HTML File First
-
-**Before using this reference, you MUST read:**
-
-\`\`\`
-READ: ../card-patterns/complex-patterns/annotation-snippet.html
-\`\`\`
-
-This markdown file contains ONLY the zone diagram and placement rules. The actual HTML patterns you will copy are in \`annotation-snippet.html\`.
-
----
-
-## Zone Diagram
-
-\`\`\`
-┌─────────────────────────────────────────────────────┐
-│                    ZONE A (Top)                      │
-│                    y: 0-15                           │
-├─────┬───────────────────────────────────────┬───────┤
-│     │                                       │       │
-│  B  │          PLOT AREA                    │   C   │
-│     │          (data only)                  │       │
-│ x:  │          40-260, 20-170               │  x:   │
-│ 0-38│                                       │262-280│
-│     │                                       │       │
-├─────┴───────────────────────────────────────┴───────┤
-│                    ZONE D (Bottom)                   │
-│                    y: 175-200                        │
-└─────────────────────────────────────────────────────┘
-\`\`\`
-
-| Zone | Use For |
-|------|---------|
-| A | Title, legend |
-| B | Y-intercept labels, vertical arrows |
-| C | Line labels (equations), endpoint annotations |
-| D | X-axis labels, horizontal annotations |
-| Plot | Data lines and points ONLY |
-
----
-
-## Zone Assignment
-
-| Annotation Type | Zone | X Position | Notes |
-|-----------------|------|------------|-------|
-| Y-intercept label | B | x="5" | Left-align, use line color |
-| Y-intercept arrow | B | x="25" | Points to y-axis |
-| Line equation | C | x="265" | Right side of graph |
-| Slope (rise) | B | x="5" to x="38" | Label left of arrow |
-| Slope (run) | D | y="180" to y="195" | Label below arrow |
-| Point label (upper) | Plot | y - 12 | Above point, centered |
-| Point label (lower) | Plot | y + 15 | Below point, centered |
-
----
-
-## Stacking Rules
-
-When multiple annotations compete for the same zone:
-- First annotation: natural y-position
-- Second annotation: offset by 15px
-- Third annotation: offset by 30px
-
----
-
-## Checklist
-
-- [ ] Y-intercept labels in Zone B (x < 38)
-- [ ] Line labels in Zone C (x > 262)
-- [ ] No text overlaps axes (x=40 or y=170)
-- [ ] Stacked annotations have 15px minimum spacing
-
-**For styling rules and HTML patterns, see \`annotation-snippet.html\`.**
-`;
-
-/**
- * Layout Presets Reference
- *
- * Standard slide layout patterns:
- * - full-width (learning goal slides)
- * - two-column (step slides with visual)
- * - graph-heavy (graph on right, minimal text)
- *
- * Source: .claude/skills/create-worked-example-sg/reference/layout-presets.md
- */
 export const LAYOUT_PRESETS = `
 # Layout Presets - Declarative Slide Composition
 
@@ -2009,8 +370,10 @@ Slides are composed using **atomic components** placed in **regions** defined by
 | \`full-width\` | 100% | Text-only slides, summaries |
 | \`two-column\` | 40% / 60% | Text + visual side-by-side |
 | \`graph-heavy\` | 35% / 65% | Narrow text + large graph |
+| \`centered\` | stacked (main + support) | Equation/diagram as hero, text below |
 | \`with-cfu\` | 100% + overlay | Full-width + CFU question |
 | \`two-column-with-cfu\` | 40% / 60% + overlay | Two-column + CFU |
+| \`centered-with-cfu\` | stacked + overlay | Centered content + CFU |
 
 ## ⚠️ Column Content Rules (CRITICAL)
 
@@ -2058,6 +421,7 @@ Run \`npm run sync-skill-content\` to propagate changes to TypeScript.
 | \`full-width\` | x=20, y=150, w=920 | — |
 | \`two-column\` | x=20, y=150, w=368 | x=408, y=150, w=532 |
 | \`graph-heavy\` | x=20, y=150, w=316 | x=356, y=150, w=584 |
+| \`centered\` | main: x=140, y=150, w=680 | support: x=140, y=380, w=680 |
 
 ## Slide Composition Flow
 
@@ -2065,8 +429,17 @@ Run \`npm run sync-skill-content\` to propagate changes to TypeScript.
 
 Based on slide content needs:
 - Text only → \`full-width\`
-- Text + graph → \`two-column\` or \`graph-heavy\`
+- Text + graph side-by-side → \`two-column\` or \`graph-heavy\`
+- Equation/diagram as hero with text below → \`centered\`
 - Needs CFU → add \`-with-cfu\`
+
+**When to use \`centered\` vs \`two-column\`:**
+| Use \`centered\` when... | Use \`two-column\` when... |
+|------------------------|--------------------------|
+| The equation IS the visual | You need text explaining + separate visual |
+| A small diagram is self-explanatory | The visual needs space (coordinate graph) |
+| Step is simple (1 operation) | Step has multiple parts to show |
+| You want focus on ONE thing | You need to show relationship between text and visual |
 
 ### Step 2: Fill Title Zone
 
@@ -2111,12 +484,37 @@ Every slide has:
   </ul>
 </div>
 
-<!-- Right: Visual -->
+<!-- Right: Visual (⚠️ CSS height constraint is REQUIRED) -->
 <div data-pptx-region="svg-container"
-     data-pptx-x="408" data-pptx-y="140" data-pptx-w="532" data-pptx-h="370">
-  <svg viewBox="0 0 520 360">
+     data-pptx-x="408" data-pptx-y="140" data-pptx-w="532" data-pptx-h="370"
+     style="max-height: 370px; overflow: hidden;">
+  <svg viewBox="0 0 520 360" style="width: 100%; height: 360px; max-height: 360px;">
     <!-- Graph content -->
   </svg>
+</div>
+\`\`\`
+
+**Centered example (equation/diagram as hero):**
+\`\`\`html
+<!-- Main: Centered hero content (equation, diagram, or both) -->
+<div data-pptx-region="content"
+     data-pptx-x="140" data-pptx-y="150" data-pptx-w="680" data-pptx-h="200"
+     style="text-align: center; max-height: 200px; overflow: hidden;">
+  <!-- Large equation -->
+  <p style="font-family: Georgia; font-size: 48px; margin-bottom: 20px;">
+    ? × 6 = 30
+  </p>
+  <!-- Or SVG diagram (⚠️ height constraint REQUIRED) -->
+  <svg viewBox="0 0 400 120" style="max-width: 400px; max-height: 180px;">
+    <!-- Tape diagram, etc. -->
+  </svg>
+</div>
+
+<!-- Support: Brief text below (optional) -->
+<div data-pptx-region="content-box"
+     data-pptx-x="140" data-pptx-y="380" data-pptx-w="680" data-pptx-h="120"
+     style="text-align: center;">
+  <p>How many students can share 30 nuggets if each gets 6?</p>
 </div>
 \`\`\`
 
@@ -2177,18 +575,6 @@ Region types recognized by PPTX export:
 - \`cfu-box\`, \`answer-box\`
 `;
 
-/**
- * PPTX Requirements Reference
- *
- * Complete PPTX export constraints:
- * - Slide dimensions (960×540px)
- * - Supported fonts (Arial, Georgia)
- * - Color palette
- * - Region positioning
- * - Animation/layer system
- *
- * Source: .claude/skills/create-worked-example-sg/reference/pptx-requirements.md
- */
 export const PPTX_REQUIREMENTS = `
 # HTML to PPTX Best Practices Guide
 
@@ -2980,4 +1366,1739 @@ Required packages (should be pre-installed):
 - **react-icons:** \`npm install -g react-icons react react-dom\`
 - **LibreOffice:** For PDF conversion (validation step)
 - **Poppler:** \`sudo apt-get install poppler-utils\` (for pdftoppm)
+`;
+
+export const DIAGRAM_PATTERNS = `
+# Diagram Patterns for Middle School Math
+
+Visual structure reference for common math representations used in Illustrative Mathematics (IM) curriculum.
+
+**This is the PRIMARY REFERENCE for all non-graph SVG diagrams.** When creating SVG visuals for worked examples, match these patterns to ensure students see familiar representations.
+
+---
+
+## ⚠️ CRITICAL: Simple Visuals That Speak for Themselves
+
+**The visual should be immediately understandable WITHOUT text explanation.**
+
+### What This Means:
+- A tape diagram showing \`? × 6 = 30\` is self-explanatory
+- A graph with labeled axes and plotted points is self-explanatory
+- NO "Reading the graph: At point (6,12)..." info boxes needed
+- NO text boxes inside the SVG explaining what's already shown
+
+### The "Delete Test"
+If you can delete a text element and the visual still makes sense → delete it.
+
+### Labels vs. Explanations
+| ✅ ALLOWED (Labels) | ❌ NOT ALLOWED (Explanations) |
+|---------------------|-------------------------------|
+| "6" inside a box | "Each box represents 6 nuggets" |
+| "?" at start of tape | "The question mark shows what we're solving for" |
+| "y = 2x" next to line | "This line represents the equation y = 2x" |
+| Axis labels: "Time (sec)" | "The x-axis shows time in seconds" |
+
+### Size Within Column
+Visuals should **FILL their column** - use the full available width/height. Don't create small, cramped diagrams with excessive whitespace.
+
+---
+
+## Double Number Line
+**Use for:** Ratios, percentages, proportional reasoning, unit rates
+**IM Grade Level:** Grade 6 Unit 2 (introduced), used through Grade 7
+
+\`\`\`
+ 0        3        6        9       12   ← Quantity A (e.g., cups of flour)
+ |--------|--------|--------|--------|
+ |--------|--------|--------|--------|
+ 0        2        4        6        8   ← Quantity B (e.g., pints of water)
+\`\`\`
+
+**Key features (from IM):**
+- Two parallel horizontal lines with **aligned tick marks**
+- Zero aligned on both lines (critical!)
+- **Distances are proportional**: distance from 0 to 12 is 3× distance from 0 to 4
+- Each line labeled with its quantity name
+- At least 6 equally spaced tick marks
+- Equivalent ratios line up **vertically**
+
+**IM context:** Students use this to find equivalent ratios, unit rates, and "how many of X per one Y"
+
+---
+
+## Tape Diagram (Bar Model)
+**Use for:** Part-whole relationships, fractions, ratio comparison, "times as many", division with fractions
+**IM Grade Level:** Introduced Grade 2, used through middle school
+
+### Single tape (parts of a whole):
+\`\`\`
+┌──────────────┬──────────────┬──────────────┐
+│    Part A    │    Part B    │    Part C    │
+│      2x      │      3x      │      5x      │
+└──────────────┴──────────────┴──────────────┘
+├──────────────────── Total: 60 ────────────────┤
+\`\`\`
+
+### Comparison tape (two quantities):
+\`\`\`
+Maria:  ┌────────┬────────┬────────┐
+        │   x    │   x    │   x    │  ← 3 units
+        └────────┴────────┴────────┘
+
+Juan:   ┌────────┐
+        │   x    │  ← 1 unit
+        └────────┘
+\`\`\`
+
+### Compare problem (bigger/smaller/difference):
+\`\`\`
+Bigger:   ┌────────────────────────────────┐
+          │              45                │
+          └────────────────────────────────┘
+
+Smaller:  ┌────────────────────┐
+          │         28         │
+          └────────────────────┘
+                               ├─ ? ─┤  ← Difference
+\`\`\`
+
+**Key features (from IM):**
+- Rectangular bars (like bars in a bar graph)
+- **Same-length pieces = same value** (even if drawing is sloppy, label them)
+- Label pieces with numbers OR letters (x, y) to show known/relative values
+- Total or difference shown with bracket
+- For Compare problems: shows bigger amount, smaller amount, and difference
+
+**IM context:** Students see tape diagrams as a tool to "quickly visualize story problems" and connect to equations
+
+---
+
+## Hanger Diagram (Balance)
+**Use for:** Equation solving, showing balance/equality, reasoning about operations
+**IM Grade Level:** Grade 6 Unit 6, Grade 7 Unit 6
+
+### Balanced hanger (equation):
+\`\`\`
+              ╱╲
+             ╱  ╲
+            ╱    ╲
+     ┌─────┴──────┴─────┐
+     │                  │
+  ┌──┴──┐            ┌──┴──┐
+  │     │            │     │
+  │ 3x  │            │ 12  │
+  │ +1  │            │     │
+  └─────┘            └─────┘
+   Left               Right
+   side               side
+\`\`\`
+
+### With shapes (for visual weight):
+\`\`\`
+              ╱╲
+             ╱  ╲
+            ╱    ╲
+     ┌─────┴──────┴─────┐
+     │                  │
+  ┌──┴──┐            ┌──┴──┐
+  │ △ △ │            │ □□□ │
+  │     │            │     │
+  └─────┘            └─────┘
+
+  △ = triangle (unknown x)
+  □ = square (value of 1)
+\`\`\`
+
+**Key features (from IM):**
+- Triangle fulcrum at top shows balance point
+- **Balanced = both sides equal** (like equal sign)
+- **Unbalanced = one side heavier** (inequality)
+- Shapes represent values: △ (triangles) for variables, □ (squares) for units
+- "What you do to one side, you do to the other side"
+
+**IM solving strategy:**
+- **Addition equations**: Solve by subtracting from both sides (remove equal weights)
+- **Multiplication equations**: Solve by dividing both sides (split into equal groups)
+- Students match hanger diagrams to equations, then solve
+
+**IM context:** Visualizes the rule "what you do to one side of the equation you have to do to the other side"
+
+---
+
+## Number Line
+**Use for:** Integers, absolute value, inequalities, operations
+
+### Basic number line:
+\`\`\`
+  ←──┼────┼────┼────┼────┼────┼────┼────┼────┼──→
+    -4   -3   -2   -1    0    1    2    3    4
+\`\`\`
+
+### With points marked:
+\`\`\`
+  ←──┼────┼────┼────●────┼────┼────○────┼────┼──→
+    -4   -3   -2   -1    0    1    2    3    4
+                    ↑              ↑
+                   -1              2
+     ● = closed (included)    ○ = open (excluded)
+\`\`\`
+
+### With jump arrows (for operations):
+\`\`\`
+                    +5
+              ┌──────────────┐
+              ↓              ↓
+  ←──┼────┼────┼────┼────┼────┼────┼────┼────┼──→
+    -4   -3   -2   -1    0    1    2    3    4
+\`\`\`
+
+**Key features:**
+- Arrows on both ends (extends infinitely)
+- Evenly spaced tick marks
+- Zero clearly marked
+- Points: ● for included, ○ for excluded
+
+---
+
+## Area Model
+**Use for:** Multiplication, distributive property a(b+c) = ab + ac, factoring
+**IM Grade Level:** Introduced in elementary, used through Algebra 1
+
+### For multiplication (23 × 15):
+\`\`\`
+              20          3
+         ┌──────────┬─────────┐
+      10 │   200    │   30    │
+         │          │         │
+         ├──────────┼─────────┤
+       5 │   100    │   15    │
+         │          │         │
+         └──────────┴─────────┘
+
+    Total: 200 + 30 + 100 + 15 = 345
+\`\`\`
+
+### For distributive property 6(40 + 7):
+\`\`\`
+                40           7
+         ┌──────────────┬─────────┐
+       6 │     240      │   42    │
+         │              │         │
+         └──────────────┴─────────┘
+
+    6(40 + 7) = 6×40 + 6×7 = 240 + 42 = 282
+\`\`\`
+
+### For algebra (x + 3)(x + 2):
+\`\`\`
+               x           3
+         ┌──────────┬─────────┐
+       x │    x²    │   3x    │
+         │          │         │
+         ├──────────┼─────────┤
+       2 │    2x    │    6    │
+         │          │         │
+         └──────────┴─────────┘
+
+    Total: x² + 3x + 2x + 6 = x² + 5x + 6
+\`\`\`
+
+**Key features (from IM):**
+- Rectangle divided into smaller rectangles (partial products)
+- **Dimensions on outside edges** (factors being multiplied)
+- **Products inside each section** (partial products)
+- Total shown below as sum of all sections
+- Shows that a(b + c) = ab + ac visually
+
+**IM context:** "The area of a rectangle can be found in two ways: a(b + c) or ab + ac. The equality of these two expressions is the distributive property."
+
+---
+
+## Input-Output Table (Function Table)
+**Use for:** Functions, patterns, rules, describing relationships
+**IM Grade Level:** Grade 8 Functions (8.F.A.1)
+
+### Horizontal table (primary format):
+\`\`\`
+┌───────┬─────┬─────┬─────┬─────┬─────┐
+│ Input │  1  │  2  │  3  │  4  │  5  │
+├───────┼─────┼─────┼─────┼─────┼─────┤
+│Output │  5  │  8  │ 11  │ 14  │  ?  │
+└───────┴─────┴─────┴─────┴─────┴─────┘
+               Rule: ×3 + 2
+\`\`\`
+
+### With function machine visualization:
+\`\`\`
+                    Rule: ×3 + 2
+          ┌─────────────────────────────┐
+          │                             │
+Input →   │      [ FUNCTION MACHINE ]   │   → Output
+          │                             │
+          └─────────────────────────────┘
+
+┌───────┬─────┬─────┬─────┬─────┐
+│ Input │  1  │  2  │  3  │  ?  │
+├───────┼─────┼─────┼─────┼─────┤
+│Output │  5  │  8  │ 11  │ 20  │
+└───────┴─────┴─────┴─────┴─────┘
+\`\`\`
+
+**Key features (from IM):**
+- **Horizontal layout** with Input row on top, Output row below
+- Rule stated explicitly (as equation or in words)
+- At least 3-4 examples showing the pattern
+- One cell with "?" for student to solve
+- "A function is a rule that assigns to each input exactly one output"
+
+**IM context:** Students describe function rules in words, fill tables, and understand that each input produces exactly one output
+
+---
+
+## Ratio Table
+**Use for:** Equivalent ratios, scaling, finding unknown values
+**IM Grade Level:** Grade 6 Unit 2 (alongside double number lines)
+
+\`\`\`
+┌────────────┬─────┬─────┬─────┬─────┐
+│  Apples    │  2  │  4  │  6  │  ?  │
+├────────────┼─────┼─────┼─────┼─────┤
+│  Oranges   │  3  │  6  │  9  │ 15  │
+└────────────┴─────┴─────┴─────┴─────┘
+               ×2    ×3    ×?
+\`\`\`
+
+### With scaling arrows:
+\`\`\`
+          ×2         ×3
+       ┌──────┐   ┌──────┐
+       │      │   │      │
+       ▼      │   ▼      │
+┌────────┬────┼───┬────┼───┬─────┐
+│ Miles  │ 5  │   │ 10 │   │ 15  │
+├────────┼────┴───┼────┴───┼─────┤
+│ Hours  │ 2  │   │  4 │   │  6  │
+└────────┴────────┴────────┴─────┘
+\`\`\`
+
+**Key features (from IM):**
+- Two rows (one per quantity in the ratio)
+- Columns show **equivalent ratios**
+- Scale factors can be shown with arrows between columns
+- At least one unknown to solve
+- More abstract than double number line (no visual proportions)
+
+**IM context:** Ratio tables are "more abstract and more general" than double number lines. Students progress from double number lines → ratio tables → equations
+
+---
+
+## Grid Diagram
+**Use for:** Decomposing shapes into unit squares, finding area by counting
+**IM Grade Level:** Grade 6 Unit 1 (Area and Surface Area)
+
+### Basic grid (for area):
+\`\`\`
+┌───┬───┬───┬───┬───┐
+│ 1 │ 2 │ 3 │ 4 │ 5 │
+├───┼───┼───┼───┼───┤
+│ 6 │ 7 │ 8 │ 9 │10 │
+├───┼───┼───┼───┼───┤
+│11 │12 │13 │14 │15 │
+└───┴───┴───┴───┴───┘
+     Area = 15 square units
+\`\`\`
+
+### Decomposed shape (L-shape):
+\`\`\`
+┌───┬───┬───┐
+│   │   │   │  ← 3 units
+├───┼───┼───┤
+│   │   │   │  ← 3 units
+├───┼───┴───┘
+│   │          ← 2 units
+├───┤
+│   │
+└───┘
+  Total: 3 + 3 + 2 = 8 square units
+\`\`\`
+
+**Key features:**
+- Each cell represents 1 square unit
+- Can number cells for counting
+- Show decomposition into rectangles
+- Label dimensions on edges
+
+---
+
+## Net Diagram
+**Use for:** Surface area of prisms and pyramids, visualizing 3D shapes unfolded
+**IM Grade Level:** Grade 6 Unit 1 (Area and Surface Area)
+
+### Net of rectangular prism:
+\`\`\`
+        ┌─────────┐
+        │   TOP   │
+        │  4 × 3  │
+┌───────┼─────────┼───────┬─────────┐
+│ LEFT  │  FRONT  │ RIGHT │  BACK   │
+│ 3 × 2 │  4 × 2  │ 3 × 2 │  4 × 2  │
+└───────┼─────────┼───────┴─────────┘
+        │ BOTTOM  │
+        │  4 × 3  │
+        └─────────┘
+\`\`\`
+
+### Net of triangular prism:
+\`\`\`
+        ╱╲
+       ╱  ╲
+      ╱ △  ╲   ← triangular face
+     ╱──────╲
+┌────────────────┐
+│                │
+│   RECTANGLE    │  ← rectangular face
+│                │
+└────────────────┘
+\`\`\`
+
+**Key features:**
+- Show all faces laid flat
+- Label each face with dimensions
+- Indicate which edges connect when folded
+- Use dotted lines for fold lines
+
+---
+
+## Measurement Diagram
+**Use for:** Showing base, height, and other measurements on geometric shapes
+**IM Grade Level:** Grade 6 Unit 1 (Area and Surface Area)
+
+### Parallelogram with height:
+\`\`\`
+    ┌──────────────────┐
+   ╱│                 ╱
+  ╱ │ h = 4         ╱
+ ╱  │              ╱
+╱   ↓             ╱
+└──────────────────┘
+    b = 8
+\`\`\`
+
+### Triangle with base and height:
+\`\`\`
+        ╱╲
+       ╱  ╲
+      ╱    ╲
+     ╱   │  ╲
+    ╱    │h  ╲
+   ╱     │    ╲
+  ╱      ↓     ╲
+ ╱───────────────╲
+        b
+\`\`\`
+
+### Rectangle with dimensions:
+\`\`\`
+      6 cm
+  ┌──────────┐
+  │          │
+4 │          │ 4
+  │          │
+  └──────────┘
+      6 cm
+\`\`\`
+
+**Key features:**
+- Clearly mark base (b) and height (h)
+- Height is PERPENDICULAR to base (show right angle)
+- Use arrows to indicate measurements
+- Label with units when applicable
+
+---
+
+## Discrete Diagram
+**Use for:** Showing objects/groups for ratio problems, "for every" relationships
+**IM Grade Level:** Grade 6 Unit 2 (Introducing Ratios)
+
+### Objects in groups:
+\`\`\`
+Apples:   🍎 🍎 🍎 🍎 🍎    (5 apples)
+
+Oranges:  🍊 🍊 🍊          (3 oranges)
+
+Ratio: 5 apples for every 3 oranges
+\`\`\`
+
+### With grouping brackets:
+\`\`\`
+┌─────────────┐  ┌─────────────┐
+│ ● ● ●       │  │ ● ● ●       │
+│    Group 1  │  │    Group 2  │
+└─────────────┘  └─────────────┘
+
+3 per group × 2 groups = 6 total
+\`\`\`
+
+### Array format:
+\`\`\`
+○ ○ ○ ○ ○   ← 5 circles
+○ ○ ○ ○ ○   ← 5 circles
+○ ○ ○ ○ ○   ← 5 circles
+─────────
+   15 total (3 rows × 5 columns)
+\`\`\`
+
+**Key features:**
+- Use simple shapes (●, ○, □) or emoji icons
+- Group related items visually
+- Show "for every" relationships clearly
+- Can use arrays for multiplication
+
+---
+
+## Base-Ten Diagram
+**Use for:** Place value operations, addition/subtraction/multiplication with regrouping
+**IM Grade Level:** Grade 5-6 Unit 5 (Arithmetic in Base Ten)
+
+### Place value blocks:
+\`\`\`
+Hundreds (100)     Tens (10)      Ones (1)
+┌─────────┐       ┌─┐ ┌─┐        ●  ●
+│         │       │ │ │ │        ●
+│   100   │       │ │ │ │
+│         │       └─┘ └─┘
+└─────────┘        20             3
+
+         Number: 123
+\`\`\`
+
+### Addition with regrouping:
+\`\`\`
+    Tens    Ones
+    ┌─┐     ●●●●●
+    │ │     ●●●      = 38
+    └─┘
+
+  + ┌─┐     ●●●●
+    │ │     ●●●●●    = 29
+    └─┘
+
+  ──────────────────
+    ┌─┐┌─┐  ●●●●●
+    │ ││ │  ●●       = 67
+    └─┘└─┘
+
+(10 ones → 1 ten)
+\`\`\`
+
+### Expanded form:
+\`\`\`
+347 = 300 + 40 + 7
+
+┌─────────┐ ┌─────────┐ ┌─────────┐   ┌─┐┌─┐┌─┐┌─┐   ●●●●
+│   100   │ │   100   │ │   100   │   │ ││ ││ ││ │   ●●●
+└─────────┘ └─────────┘ └─────────┘   └─┘└─┘└─┘└─┘
+     3 hundreds              4 tens       7 ones
+\`\`\`
+
+**Key features:**
+- Large squares = hundreds (100)
+- Tall rectangles = tens (10)
+- Small dots/squares = ones (1)
+- Show regrouping with arrows
+- Label place values clearly
+
+---
+
+## Creating Custom Diagrams
+
+If your problem doesn't fit these patterns, create a custom SVG following these rules:
+
+### 1. Use the SVG container wrapper with CSS height constraints
+
+\`\`\`html
+<!-- ⚠️ CRITICAL: Both container AND SVG need CSS height constraints -->
+<div data-pptx-region="svg-container"
+     data-pptx-x="408" data-pptx-y="150"
+     data-pptx-w="532" data-pptx-h="360"
+     style="max-height: 360px; overflow: hidden;">
+  <svg viewBox="0 0 280 200" style="width: 100%; height: 350px; max-height: 350px;">
+    <!-- your diagram here -->
+  </svg>
+</div>
+\`\`\`
+
+**Why both constraints?** \`data-pptx-h\` only affects PPTX export, NOT browser rendering. Without CSS \`max-height\`, SVGs overflow the slide boundary in the browser preview.
+
+### 2. ⚠️ CRITICAL: Use \`data-pptx-layer\` for EVERY Element Group
+
+**This is REQUIRED for elements to be independently clickable/editable in PowerPoint.**
+
+Without \`data-pptx-layer\`, all SVG content becomes ONE image. With layers, each element becomes a separate image that teachers can move, resize, or delete.
+
+**Rule: Wrap EVERY distinct visual element in its own \`<g>\` with a unique \`data-pptx-layer\`.**
+
+\`\`\`html
+<svg viewBox="0 0 280 200" style="width: 100%; height: 350px; max-height: 350px;">
+  <!-- Layer 1: Base elements (always visible) -->
+  <g data-pptx-layer="base">
+    <!-- Background, frames, static elements -->
+  </g>
+
+  <!-- Layer 2: Each shape/group gets its own layer -->
+  <g data-pptx-layer="shape-1">
+    <polygon points="..." fill="#22c55e"/>
+    <text x="..." y="...">1</text>
+  </g>
+
+  <g data-pptx-layer="shape-2">
+    <polygon points="..." fill="#22c55e"/>
+    <text x="..." y="...">2</text>
+  </g>
+
+  <!-- Layer 3: Labels get separate layers -->
+  <g data-pptx-layer="label-title">
+    <text x="..." y="..." font-size="16">5 groups of 1/6</text>
+  </g>
+
+  <!-- Layer 4: Annotations (arrows, lines) -->
+  <g data-pptx-layer="arrow-counting">
+    <path d="M... C..." stroke="#22c55e" fill="none"/>
+  </g>
+
+  <!-- Layer 5: Result labels -->
+  <g data-pptx-layer="label-result">
+    <text x="..." y="..." fill="#22c55e">5 triangles = 5/6</text>
+  </g>
+</svg>
+\`\`\`
+
+**Layer naming convention:**
+| Element Type | Layer Name Pattern | Example |
+|--------------|-------------------|---------|
+| Base structure | \`base\` | Grid, frames |
+| Individual shapes | \`shape-N\` | \`shape-1\`, \`shape-2\` |
+| Text labels | \`label-X\` | \`label-title\`, \`label-result\` |
+| Arrows/lines | \`arrow-X\` | \`arrow-counting\`, \`arrow-shift\` |
+| Points (dots) | \`point-X\` | \`point-solution\` |
+| Equation displays | \`eq-X\` | \`eq-line-1\` |
+
+**Why this works:** The PPTX export system:
+1. Detects all \`data-pptx-layer\` attributes in the SVG
+2. Screenshots each layer separately (hiding others)
+3. Adds each as an independent image to PowerPoint
+4. Teachers can then click, move, resize, or delete any element
+
+### 3. Text requirements
+- All \`<text>\` must have \`font-family="Arial"\`
+- Use readable font sizes (12-16px for labels)
+
+### 4. Colors from styling guide
+- Primary: \`#1791e8\`
+- Success: \`#22c55e\`
+- Warning: \`#f59e0b\`
+- Text: \`#1d1d1d\`
+
+---
+
+## Complete Custom Diagram Example
+
+Here's a complete example of a "5 groups" diagram with proper layers:
+
+\`\`\`html
+<div data-pptx-region="svg-container"
+     data-pptx-x="408" data-pptx-y="150"
+     data-pptx-w="532" data-pptx-h="360"
+     style="max-height: 360px; overflow: hidden;">
+  <svg viewBox="0 0 400 200" style="width: 100%; height: 350px; max-height: 350px;">
+
+    <!-- Title label - separate layer -->
+    <g data-pptx-layer="label-title">
+      <text x="200" y="30" font-family="Arial" font-size="18"
+            font-weight="bold" text-anchor="middle" fill="#1d1d1d">
+        5 groups of 1/6
+      </text>
+    </g>
+
+    <!-- Triangle 1 - separate layer -->
+    <g data-pptx-layer="shape-1">
+      <polygon points="50,120 80,60 110,120" fill="#22c55e" stroke="#1d1d1d" stroke-width="2"/>
+      <text x="80" y="105" font-family="Arial" font-size="14"
+            text-anchor="middle" fill="#ffffff" font-weight="bold">1</text>
+    </g>
+
+    <!-- Triangle 2 - separate layer -->
+    <g data-pptx-layer="shape-2">
+      <polygon points="120,120 150,60 180,120" fill="#22c55e" stroke="#1d1d1d" stroke-width="2"/>
+      <text x="150" y="105" font-family="Arial" font-size="14"
+            text-anchor="middle" fill="#ffffff" font-weight="bold">2</text>
+    </g>
+
+    <!-- Triangle 3 - separate layer -->
+    <g data-pptx-layer="shape-3">
+      <polygon points="190,120 220,60 250,120" fill="#22c55e" stroke="#1d1d1d" stroke-width="2"/>
+      <text x="220" y="105" font-family="Arial" font-size="14"
+            text-anchor="middle" fill="#ffffff" font-weight="bold">3</text>
+    </g>
+
+    <!-- Triangle 4 - separate layer -->
+    <g data-pptx-layer="shape-4">
+      <polygon points="260,120 290,60 320,120" fill="#22c55e" stroke="#1d1d1d" stroke-width="2"/>
+      <text x="290" y="105" font-family="Arial" font-size="14"
+            text-anchor="middle" fill="#ffffff" font-weight="bold">4</text>
+    </g>
+
+    <!-- Triangle 5 - separate layer -->
+    <g data-pptx-layer="shape-5">
+      <polygon points="330,120 360,60 390,120" fill="#22c55e" stroke="#1d1d1d" stroke-width="2"/>
+      <text x="360" y="105" font-family="Arial" font-size="14"
+            text-anchor="middle" fill="#ffffff" font-weight="bold">5</text>
+    </g>
+
+    <!-- Counting arrow - separate layer -->
+    <g data-pptx-layer="arrow-counting">
+      <path d="M 60,140 Q 220,180 370,140" stroke="#22c55e" stroke-width="3"
+            fill="none" marker-end="url(#arrow-green)"/>
+    </g>
+
+    <!-- Result label - separate layer -->
+    <g data-pptx-layer="label-result">
+      <text x="200" y="190" font-family="Arial" font-size="20"
+            font-weight="bold" text-anchor="middle" fill="#22c55e">
+        5 triangles = 5/6
+      </text>
+    </g>
+
+    <!-- Arrow marker definition -->
+    <defs>
+      <marker id="arrow-green" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <polygon points="0 0, 6 2, 0 4" fill="#22c55e"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+\`\`\`
+
+**Result in PowerPoint:** 8 separate images (title, 5 triangles, arrow, result) that can each be clicked, moved, or edited independently.
+`;
+
+export const SVG_COORDINATE_PLANES = `
+# SVG Graph Workflow
+
+**What this file covers:** Complete workflow for creating SVG coordinate graphs, pixel formulas, pre-calculated tables, and validation rules.
+
+**Only read this file if Visual Type = "SVG visual" (coordinate graphs).**
+
+For non-graph diagrams (tape diagrams, hangers, etc.), see \`../../reference/diagram-patterns.md\`.
+
+---
+
+## Workflow Overview
+
+**SVG graphs are the ONLY component that requires the clone-and-modify workflow.** All other card-patterns use simple placeholder replacement.
+
+\`\`\`
+Step 1: READ graph-snippet.html       ← Copy the complete SVG structure
+Step 2: READ this file                ← Get formulas and tables
+Step 3: CALCULATE pixel positions     ← For your specific scale
+Step 4: MODIFY the copied SVG         ← Replace values
+Step 5: READ annotation-snippet.html  ← Add labels and annotations
+Step 6: VERIFY grid alignment         ← Run the checklist
+\`\`\`
+
+**DO NOT create graphs from scratch.** Always copy and modify from graph-snippet.html.
+
+---
+
+## Required Reading (HTML Files)
+
+**Before using the formulas below, READ these HTML files:**
+
+\`\`\`
+READ: card-patterns/complex-patterns/graph-snippet.html      ← SOURCE OF TRUTH for SVG structure
+READ: card-patterns/complex-patterns/annotation-snippet.html ← SOURCE OF TRUTH for annotation patterns
+\`\`\`
+
+This markdown file contains only formulas and tables. The HTML patterns you copy and modify are in the files above.
+
+---
+
+## SVG Graph Checklist (VERIFY BEFORE WRITING SLIDE)
+
+**Structure:**
+- [ ] Started from graph-snippet.html (NOT from scratch)
+- [ ] SVG wrapped in container with \`data-pptx-region="svg-container"\`
+- [ ] Container has position attributes: \`data-pptx-x\`, \`data-pptx-y\`, \`data-pptx-w\`, \`data-pptx-h\`
+
+**Coordinate System:**
+- [ ] X_MAX and Y_MAX set correctly for your data
+- [ ] Grid lines align with axis labels (same pixel values)
+- [ ] Single "0" at origin (not two separate zeros)
+- [ ] Scale labels go to last tick before arrow
+
+**Axes & Lines:**
+- [ ] Axes have arrowheads (marker-end)
+- [ ] Data lines extend to plot edges with arrows
+- [ ] All lines use correct colors from styling.md
+
+**Annotations:**
+- [ ] All \`<text>\` elements have \`font-family="Arial"\`
+- [ ] Annotations use \`font-weight="normal"\` (NOT bold)
+- [ ] Annotation positions calculated using pixel formula
+
+**PPTX Export:**
+- [ ] Each line in its own \`data-pptx-layer\` group
+- [ ] Each annotation in its own \`data-pptx-layer\` group
+- [ ] Layer names follow convention: \`line-1\`, \`label-b0\`, \`arrow-shift\`, etc.
+
+---
+
+## Grid Alignment Rules (CRITICAL)
+
+**The #1 problem with SVG graphs is misaligned grids.**
+
+### Rule 1: Use Consistent Spacing Formula
+
+All coordinate calculations MUST use the same linear interpolation formula:
+
+\`\`\`
+pixelX = ORIGIN_X + (dataX / X_MAX) * PLOT_WIDTH
+pixelY = ORIGIN_Y - (dataY / Y_MAX) * PLOT_HEIGHT
+\`\`\`
+
+Where:
+- \`ORIGIN_X\`, \`ORIGIN_Y\` = pixel coordinates of the origin (0,0) point
+- \`PLOT_WIDTH\` = width of the plot area in pixels
+- \`PLOT_HEIGHT\` = height of the plot area in pixels
+- \`X_MAX\`, \`Y_MAX\` = maximum data values on each axis
+
+### Rule 2: Grid Lines Must Match Labels
+
+If you place a label at x=40 for value "0", x=150 for value "5", and x=260 for value "10":
+- Grid lines MUST be at x=40, 150, 260 (NOT different values)
+- The spacing is (260-40)/(10-0) = 22 pixels per unit
+
+### Rule 3: Define Constants First
+
+Before writing any SVG, define these values:
+
+\`\`\`
+ORIGIN_X = 40      // Left edge of plot (after Y-axis labels)
+ORIGIN_Y = 170     // Bottom edge of plot (above X-axis labels)
+PLOT_WIDTH = 220   // Width from origin to right edge
+PLOT_HEIGHT = 150  // Height from origin to top edge
+X_MAX = 10         // Maximum X value
+Y_MAX = 100        // Maximum Y value
+\`\`\`
+
+---
+
+## Axis Requirements
+
+**Every coordinate plane MUST have all 5 elements:**
+
+### 1. Tick Marks at Each Label Position
+
+\`\`\`html
+<!-- X-axis ticks (5px below axis, from y=170 to y=175) -->
+<g stroke="#1e293b" stroke-width="1.5">
+    <line x1="40" y1="170" x2="40" y2="175"/>
+    <line x1="95" y1="170" x2="95" y2="175"/>
+    <line x1="150" y1="170" x2="150" y2="175"/>
+    <!-- ... one tick per label position -->
+</g>
+
+<!-- Y-axis ticks (5px left of axis, from x=35 to x=40) -->
+<g stroke="#1e293b" stroke-width="1.5">
+    <line x1="35" y1="170" x2="40" y2="170"/>
+    <line x1="35" y1="132.5" x2="40" y2="132.5"/>
+    <!-- ... one tick per label position -->
+</g>
+\`\`\`
+
+### 2. Arrowheads on Both Axes
+
+\`\`\`html
+<defs>
+  <marker id="axis-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b"/>
+  </marker>
+</defs>
+
+<!-- X-axis with arrow (extends 10px past last label) -->
+<line x1="40" y1="170" x2="275" y2="170" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+
+<!-- Y-axis with arrow (extends 10px past last label) -->
+<line x1="40" y1="180" x2="40" y2="5" stroke="#1e293b" stroke-width="2" marker-end="url(#axis-arrow)"/>
+\`\`\`
+
+### 3. Single "0" at Origin (NOT two separate zeros)
+
+\`\`\`html
+<!-- ONE zero label at origin, positioned to serve both axes -->
+<text x="33" y="182" fill="#64748b" font-family="Arial" font-size="11" text-anchor="end">0</text>
+\`\`\`
+
+**WRONG:**
+\`\`\`html
+<!-- DON'T do this - two separate zeros -->
+<text x="40" y="185">0</text>  <!-- X-axis zero -->
+<text x="35" y="174">0</text>  <!-- Y-axis zero - WRONG! -->
+\`\`\`
+
+### 4. Complete Scale Labels (to the arrows)
+
+Labels must go all the way to the last tick mark before the arrow:
+- X-axis: 0, 10, 20, 30, 40, 50 (if X_MAX=50)
+- Y-axis: 0, 10, 20, 30, 40, 50 (if Y_MAX=50)
+
+**Scale must be consistent** - use increments of 5, 10, 20, 25, 50, or 100.
+
+### 5. Axis Labels (Optional)
+
+If including axis labels like "x" and "y":
+\`\`\`html
+<text x="280" y="175" fill="#64748b" font-family="Arial" font-size="12" font-style="italic">x</text>
+<text x="45" y="8" fill="#64748b" font-family="Arial" font-size="12" font-style="italic">y</text>
+\`\`\`
+
+---
+
+## Line Extension Rules
+
+**Lines must extend to the edges of the plot area** with arrows showing they continue beyond.
+
+### How to Calculate Line Endpoints
+
+For a line y = mx + b within plot area (0, 0) to (X_MAX, Y_MAX):
+
+**Step 1: Calculate where line intersects plot boundaries**
+\`\`\`
+Left edge (x=0):      y = b
+Right edge (x=X_MAX): y = m * X_MAX + b
+Top edge (y=Y_MAX):   x = (Y_MAX - b) / m
+Bottom edge (y=0):    x = -b / m
+\`\`\`
+
+**Step 2: Determine entry point (where line enters plot area)**
+- If 0 <= b <= Y_MAX: entry is **(0, b)** on left edge
+- If b < 0: entry is **(-b/m, 0)** on bottom edge
+- If b > Y_MAX: entry is **((Y_MAX-b)/m, Y_MAX)** on top edge
+
+**Step 3: Determine exit point (where line exits plot area)**
+- Calculate y at x=X_MAX: \`y_exit = m * X_MAX + b\`
+- If 0 <= y_exit <= Y_MAX: exit is **(X_MAX, y_exit)** on right edge
+- If y_exit > Y_MAX: exit is **((Y_MAX-b)/m, Y_MAX)** on top edge
+- If y_exit < 0: exit is **(-b/m, 0)** on bottom edge
+
+**Step 4: Draw line with arrow at exit point**
+- Use \`marker-end="url(#line-arrow)"\` to show line continues
+
+### Line Arrow Marker (separate from axis arrows)
+
+\`\`\`html
+<defs>
+    <marker id="line-arrow" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+        <polygon points="0 0, 6 2, 0 4" fill="currentColor"/>
+    </marker>
+</defs>
+\`\`\`
+
+### Examples
+
+**Example 1: y = 10x (steep, hits top before right edge)**
+- X_MAX=8, Y_MAX=80
+- Entry: (0, 0) - starts at origin
+- At x=8: y=80 - exactly at corner
+- Exit: (8, 80) - right-top corner
+- Draw: \`<line x1="40" y1="170" x2="260" y2="20" ... marker-end="url(#line-arrow)"/>\`
+
+**Example 2: y = 5x + 20 (moderate slope, y-intercept at 20)**
+- X_MAX=8, Y_MAX=80
+- Entry: (0, 20) - left edge at y=20
+- At x=8: y=60 - still within Y_MAX
+- Exit: (8, 60) - right edge at y=60
+- Draw: from (0,20) to (8,60) with arrow
+
+**Example 3: y = 20x (very steep, exits through top)**
+- X_MAX=8, Y_MAX=80
+- Entry: (0, 0) - origin
+- At x=4: y=80 - hits top
+- Exit: (4, 80) - top edge at x=4
+- Draw: from (0,0) to (4,80) with arrow pointing up-right
+
+### Pixel Conversion for Line Endpoints
+
+After calculating data coordinates, convert to pixels:
+\`\`\`
+pixelX = 40 + (dataX / X_MAX) * 220
+pixelY = 170 - (dataY / Y_MAX) * 150
+\`\`\`
+
+---
+
+## Quick Reference: Pixel Calculations
+
+### Standard Plot Area (viewBox 280x200)
+
+| Constant | Value | Purpose |
+|----------|-------|---------|
+| ORIGIN_X | 40 | X pixel of origin |
+| ORIGIN_Y | 170 | Y pixel of origin |
+| PLOT_WIDTH | 220 | Pixels from x=0 to x=max |
+| PLOT_HEIGHT | 150 | Pixels from y=0 to y=max |
+| LABEL_Y_OFFSET | 185 | Y pixel for X-axis labels |
+| LABEL_X_OFFSET | 35 | X pixel for Y-axis labels |
+
+### Conversion Formulas
+
+\`\`\`javascript
+// Data to Pixel
+function dataToPixelX(dataX, xMax) {
+    return 40 + (dataX / xMax) * 220;
+}
+
+function dataToPixelY(dataY, yMax) {
+    return 170 - (dataY / yMax) * 150;
+}
+
+// Example: Point (6, 45) with X_MAX=10, Y_MAX=100
+// pixelX = 40 + (6/10)*220 = 40 + 132 = 172
+// pixelY = 170 - (45/100)*150 = 170 - 67.5 = 102.5
+\`\`\`
+
+---
+
+## Common X-Axis Scales
+
+Use these pre-calculated values for common scales (ORIGIN_X=40, PLOT_WIDTH=220):
+
+### X: 0 to 4 (spacing = 55px per unit)
+| Data | Pixel |
+|------|-------|
+| 0 | 40 |
+| 1 | 95 |
+| 2 | 150 |
+| 3 | 205 |
+| 4 | 260 |
+
+### X: 0 to 5 (spacing = 44px per unit)
+| Data | Pixel |
+|------|-------|
+| 0 | 40 |
+| 1 | 84 |
+| 2 | 128 |
+| 3 | 172 |
+| 4 | 216 |
+| 5 | 260 |
+
+### X: 0 to 8 (spacing = 27.5px per unit)
+| Data | Pixel |
+|------|-------|
+| 0 | 40 |
+| 2 | 95 |
+| 4 | 150 |
+| 6 | 205 |
+| 8 | 260 |
+
+### X: 0 to 10 (spacing = 22px per unit)
+| Data | Pixel |
+|------|-------|
+| 0 | 40 |
+| 2 | 84 |
+| 4 | 128 |
+| 5 | 150 |
+| 6 | 172 |
+| 8 | 216 |
+| 10 | 260 |
+
+### X: 0 to 12 (spacing = 18.33px per unit)
+| Data | Pixel |
+|------|-------|
+| 0 | 40 |
+| 3 | 95 |
+| 6 | 150 |
+| 9 | 205 |
+| 12 | 260 |
+
+### X: 0 to 20 (spacing = 11px per unit)
+| Data | Pixel |
+|------|-------|
+| 0 | 40 |
+| 5 | 95 |
+| 10 | 150 |
+| 15 | 205 |
+| 20 | 260 |
+
+---
+
+## Common Y-Axis Scales
+
+Use these pre-calculated values (ORIGIN_Y=170, PLOT_HEIGHT=150):
+
+### Y: 0 to 100 (spacing = 1.5px per unit)
+| Data | Pixel |
+|------|-------|
+| 0 | 170 |
+| 25 | 132.5 |
+| 50 | 95 |
+| 75 | 57.5 |
+| 100 | 20 |
+
+### Y: 0 to 80 (spacing = 1.875px per unit)
+| Data | Pixel |
+|------|-------|
+| 0 | 170 |
+| 20 | 132.5 |
+| 40 | 95 |
+| 60 | 57.5 |
+| 80 | 20 |
+
+### Y: 0 to 200 (spacing = 0.75px per unit)
+| Data | Pixel |
+|------|-------|
+| 0 | 170 |
+| 50 | 132.5 |
+| 100 | 95 |
+| 150 | 57.5 |
+| 200 | 20 |
+
+### Y: 0 to 400 (spacing = 0.375px per unit)
+| Data | Pixel |
+|------|-------|
+| 0 | 170 |
+| 100 | 132.5 |
+| 200 | 95 |
+| 300 | 57.5 |
+| 400 | 20 |
+
+---
+
+## Scale Selection Reference
+
+**Target: 10 or fewer ticks per axis**
+
+**X-AXIS (ORIGIN_X=40, PLOT_WIDTH=220):**
+| X_MAX | Increment | Ticks | Pixel positions |
+|-------|-----------|-------|-----------------|
+| 4     | 1         | 5     | 0->40, 1->95, 2->150, 3->205, 4->260 |
+| 5     | 1         | 6     | 0->40, 1->84, 2->128, 3->172, 4->216, 5->260 |
+| 6     | 1         | 7     | 0->40, 1->77, 2->113, 3->150, 4->187, 5->223, 6->260 |
+| 8     | 2         | 5     | 0->40, 2->95, 4->150, 6->205, 8->260 |
+| 10    | 2         | 6     | 0->40, 2->84, 4->128, 6->172, 8->216, 10->260 |
+
+**Y-AXIS (ORIGIN_Y=170, PLOT_HEIGHT=150):**
+| Y_MAX | Increment | Ticks | Notes |
+|-------|-----------|-------|-------|
+| 9     | 1         | 10    | Max for counting by 1s |
+| 18    | 2         | 10    | Max for counting by 2s |
+| 36    | 4         | 10    | Count by 4s |
+| 45    | 5         | 10    | Count by 5s |
+| 72    | 8         | 10    | Count by 8s |
+| 90    | 10        | 10    | Count by 10s |
+
+**RULE: Grid lines at EVERY tick position. Never skip values!**
+
+---
+
+## Preventing Element Overlap (CRITICAL)
+
+**The #2 problem with SVG graphs is overlapping elements.**
+
+### Recommended Element Sizes
+
+| Element | Recommended Size | Max Size |
+|---------|-----------------|----------|
+| Data point circles | r="4" to r="5" | r="6" |
+| Point labels | font-size="9" to "10" | font-size="11" |
+| Arrow stroke width | stroke-width="2" | stroke-width="3" |
+| Arrow markers | markerWidth="6" markerHeight="4" | markerWidth="8" markerHeight="5" |
+| Annotation text | font-size="9" | font-size="11" |
+
+### Label Positioning Strategy
+
+**Point labels** - Position AWAY from other elements:
+- If point is in upper area: place label ABOVE (y - 10px)
+- If point is in lower area: place label BELOW (y + 15px)
+- If two points are close horizontally: stagger labels (one above, one below)
+- Never place labels directly on the axes
+
+**Annotation labels** (rise/run, change in y/x):
+- Position to the LEFT of vertical arrows (x - 25px)
+- Position BELOW horizontal arrows (y + 15px)
+- Use smaller font-size="9" for annotations
+
+### Minimum Spacing Guidelines
+
+| Between | Minimum Distance |
+|---------|-----------------|
+| Point label and point center | 10px |
+| Point label and axis | 15px |
+| Two point labels | 20px |
+| Arrow end and target point | 5px gap |
+| Annotation text and arrow line | 3px |
+
+### Overlap Scenarios to Check
+
+Before finalizing, verify NO overlaps between:
+- [ ] Point labels and data points
+- [ ] Point labels and axis labels
+- [ ] Point labels and grid lines (especially at intersections)
+- [ ] Arrow markers and data points
+- [ ] Arrow markers and axes
+- [ ] Annotation text and arrows
+- [ ] Two point labels (when points are close together)
+
+---
+
+## Common Mistakes to Avoid
+
+### WRONG: Hardcoded unrelated grid positions
+\`\`\`html
+<!-- BAD: Grid lines don't match labels -->
+<line x1="100" y1="20" x2="100" y2="170"/>  <!-- Grid at x=100 -->
+<text x="95" y="185">2</text>                 <!-- Label at x=95 - MISMATCH! -->
+\`\`\`
+
+### CORRECT: Grid and labels use same positions
+\`\`\`html
+<!-- GOOD: Grid lines match labels -->
+<line x1="95" y1="20" x2="95" y2="170"/>   <!-- Grid at x=95 -->
+<text x="95" y="185">2</text>               <!-- Label at x=95 - ALIGNED! -->
+\`\`\`
+
+### WRONG: Inconsistent spacing
+\`\`\`html
+<!-- BAD: Spacing not uniform -->
+<text x="40">0</text>   <!-- 0 at 40 -->
+<text x="100">2</text>  <!-- 2 at 100 (60px from 0) -->
+<text x="150">4</text>  <!-- 4 at 150 (50px from 2) - WRONG! -->
+\`\`\`
+
+### CORRECT: Uniform spacing
+\`\`\`html
+<!-- GOOD: Each tick is 55px apart -->
+<text x="40">0</text>   <!-- 0 at 40 -->
+<text x="95">2</text>   <!-- 2 at 95 (55px from 0) -->
+<text x="150">4</text>  <!-- 4 at 150 (55px from 2) -->
+\`\`\`
+
+---
+
+## PPTX Layer System
+
+Each SVG element that should be independently selectable needs \`data-pptx-layer\`:
+
+| Prefix | Use For | Example |
+|--------|---------|---------|
+| \`line-N\` | Data lines and their points | \`line-1\`, \`line-2\` |
+| \`label-X\` | Text annotations | \`label-b0\`, \`label-shift20\` |
+| \`arrow-X\` | Arrow annotations | \`arrow-shift\`, \`arrow-highlight\` |
+| \`eq-N\` | Equation labels | \`eq-line-1\`, \`eq-line-2\` |
+
+See \`card-patterns/complex-patterns/graph-snippet.html\` for the complete layer structure implementation.
+
+---
+
+## Printable Worksheet SVG
+
+For printable slides, use smaller dimensions and monochrome colors. See \`card-patterns/complex-patterns/printable-slide-snippet.html\` for complete example.
+
+**Key differences from projection SVG:**
+- Smaller viewBox (200x150 vs 280x200)
+- Black on white colors only
+- No arrows/animation
+
+---
+
+## Colors Reference
+
+| Use | Color | Hex |
+|-----|-------|-----|
+| Line 1 | Blue | #60a5fa |
+| Line 2 | Green | #22c55e |
+| Line 3 | Red | #ef4444 |
+| Axis/Grid | Slate | #1e293b |
+| Labels | Gray | #64748b |
+| Light grid | Slate | #e2e8f0 |
+`;
+
+export const ANNOTATION_ZONES = `
+# SVG Annotation Zones
+
+**Responsibility:** Quick zone reference for annotation placement.
+
+---
+
+## ⚠️ REQUIRED: Read the HTML File First
+
+**Before using this reference, you MUST read:**
+
+\`\`\`
+READ: ../card-patterns/complex-patterns/annotation-snippet.html
+\`\`\`
+
+This markdown file contains ONLY the zone diagram and placement rules. The actual HTML patterns you will copy are in \`annotation-snippet.html\`.
+
+---
+
+## Zone Diagram
+
+\`\`\`
+┌─────────────────────────────────────────────────────┐
+│                    ZONE A (Top)                      │
+│                    y: 0-15                           │
+├─────┬───────────────────────────────────────┬───────┤
+│     │                                       │       │
+│  B  │          PLOT AREA                    │   C   │
+│     │          (data only)                  │       │
+│ x:  │          40-260, 20-170               │  x:   │
+│ 0-38│                                       │262-280│
+│     │                                       │       │
+├─────┴───────────────────────────────────────┴───────┤
+│                    ZONE D (Bottom)                   │
+│                    y: 175-200                        │
+└─────────────────────────────────────────────────────┘
+\`\`\`
+
+| Zone | Use For |
+|------|---------|
+| A | Title, legend |
+| B | Y-intercept labels, vertical arrows |
+| C | Line labels (equations), endpoint annotations |
+| D | X-axis labels, horizontal annotations |
+| Plot | Data lines and points ONLY |
+
+---
+
+## Zone Assignment
+
+| Annotation Type | Zone | X Position | Notes |
+|-----------------|------|------------|-------|
+| Y-intercept label | B | x="5" | Left-align, use line color |
+| Y-intercept arrow | B | x="25" | Points to y-axis |
+| Line equation | C | x="265" | Right side of graph |
+| Slope (rise) | B | x="5" to x="38" | Label left of arrow |
+| Slope (run) | D | y="180" to y="195" | Label below arrow |
+| Point label (upper) | Plot | y - 12 | Above point, centered |
+| Point label (lower) | Plot | y + 15 | Below point, centered |
+
+---
+
+## Stacking Rules
+
+When multiple annotations compete for the same zone:
+- First annotation: natural y-position
+- Second annotation: offset by 15px
+- Third annotation: offset by 30px
+
+---
+
+## Checklist
+
+- [ ] Y-intercept labels in Zone B (x < 38)
+- [ ] Line labels in Zone C (x > 262)
+- [ ] No text overlaps axes (x=40 or y=170)
+- [ ] Stacked annotations have 15px minimum spacing
+
+**For styling rules and HTML patterns, see \`annotation-snippet.html\`.**
+`;
+
+export const GRAPH_PLANNING = `
+# Graph Planning (Required for Coordinate Planes)
+
+**When to read this file:** You identified "SVG graphs" or "coordinate planes" as your visual type in Step 1.3e.
+
+**Purpose:** Complete semantic planning for your graph BEFORE any pixel-level implementation.
+
+---
+
+## MANDATORY: Complete All Steps Below
+
+If you skip this planning, your graph will have incorrect scales or misplaced annotations.
+
+---
+
+## Step 1: List Your Equations/Data
+
+Write out every line or data series that will appear on the graph:
+
+\`\`\`
+Line 1: [equation, e.g., y = 3x]
+Line 2: [equation, e.g., y = 3x + 50]
+Line 3: [if applicable]
+\`\`\`
+
+---
+
+## Step 2: Calculate Data Ranges
+
+### Find X_MAX
+Choose the rightmost x-value you need to show. Common values: 4, 5, 6, 8, 10
+
+\`\`\`
+X_MAX = [your value]
+\`\`\`
+
+### Find Y_MAX
+For EACH line, calculate Y at x=0 and x=X_MAX:
+
+\`\`\`
+Line 1: y = [equation]
+  - At x=0: y = [calculate]
+  - At x=X_MAX: y = [calculate]
+
+Line 2: y = [equation]
+  - At x=0: y = [calculate]
+  - At x=X_MAX: y = [calculate]
+
+Largest Y value across all lines: [value]
+\`\`\`
+
+### Round Y_MAX Up
+
+**Choose the smallest Y_MAX that fits your data AND keeps ticks ≤10.**
+
+| If largest Y is... | Use Y_MAX | Increment | Ticks |
+|-------------------|-----------|-----------|-------|
+| ≤ 6 | 6 | 1 | 7 |
+| 7-8 | 8 | 1 | 9 |
+| 9 | 9 | 1 | 10 |
+| 10-16 | 16 | 2 | 9 |
+| 17-18 | 18 | 2 | 10 |
+| 19-36 | 36 | 4 | 10 |
+| 37-45 | 45 | 5 | 10 |
+| 46-72 | 72 | 8 | 10 |
+| 73-90 | 90 | 10 | 10 |
+| 91-180 | 180 | 20 | 10 |
+
+**Note:** These Y_MAX values are chosen to give exactly 9-10 ticks with clean increments.
+
+\`\`\`
+Y_MAX = [your rounded value]
+\`\`\`
+
+---
+
+## Step 3: Determine Axis Labels and Scales
+
+### X-Axis Labels
+
+Based on your X_MAX, use these labels:
+
+| X_MAX | X-axis labels | X scale (increment) |
+|-------|---------------|---------------------|
+| 4 | 0, 1, 2, 3, 4 | 1 |
+| 5 | 0, 1, 2, 3, 4, 5 | 1 |
+| 6 | 0, 1, 2, 3, 4, 5, 6 | 1 |
+| 8 | 0, 2, 4, 6, 8 | 2 |
+| 10 | 0, 2, 4, 6, 8, 10 | 2 |
+| 12 | 0, 3, 6, 9, 12 | 3 |
+| 20 | 0, 5, 10, 15, 20 | 5 |
+
+\`\`\`
+X-axis labels: [your labels]
+X scale: [increment between labels]
+\`\`\`
+
+### Y-Axis Labels
+
+**⚠️ Y-axis labels MUST start at 0.** Don't start at the first increment (e.g., \`10, 20, 30...\` is WRONG; \`0, 10, 20, 30...\` is CORRECT).
+
+Based on your Y_MAX, use these labels. **Target: ≤10 ticks** (never exceed 10).
+
+**Priority:** Use smallest whole-number increment possible. Count by 1s or 2s when Y_MAX allows.
+
+**If you need more than 10 ticks, reduce Y_MAX slightly** to hit exactly 9-10 ticks.
+
+| Y_MAX | Y-axis labels (bottom to top) | Y scale (increment) | Ticks |
+|-------|------------------------------|---------------------|-------|
+| 6 | 0, 1, 2, 3, 4, 5, 6 | 1 | 7 |
+| 8 | 0, 1, 2, 3, 4, 5, 6, 7, 8 | 1 | 9 |
+| 9 | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 | 1 | 10 |
+| 16 | 0, 2, 4, 6, 8, 10, 12, 14, 16 | 2 | 9 |
+| 18 | 0, 2, 4, 6, 8, 10, 12, 14, 16, 18 | 2 | 10 |
+| 36 | 0, 4, 8, 12, 16, 20, 24, 28, 32, 36 | 4 | 10 |
+| 45 | 0, 5, 10, 15, 20, 25, 30, 35, 40, 45 | 5 | 10 |
+| 72 | 0, 8, 16, 24, 32, 40, 48, 56, 64, 72 | 8 | 10 |
+| 90 | 0, 10, 20, 30, 40, 50, 60, 70, 80, 90 | 10 | 10 |
+| 180 | 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 | 20 | 10 |
+
+**Formula:** For increment I, max Y_MAX = I × 9 (to get 10 ticks including 0)
+
+| Increment | Max Y_MAX for 10 ticks |
+|-----------|------------------------|
+| 1 | 9 |
+| 2 | 18 |
+| 4 | 36 |
+| 5 | 45 |
+| 8 | 72 |
+| 10 | 90 |
+| 20 | 180 |
+
+\`\`\`
+Y-axis labels: [your labels]
+Y scale: [increment between labels]
+\`\`\`
+
+---
+
+## Step 4: Calculate Line Endpoints (CRITICAL)
+
+**This step ensures mathematically accurate line drawing.**
+
+For each line equation y = mx + b, calculate:
+- **Start point**: Where the line enters the plot (usually at x=0, the y-intercept)
+- **End point**: Where the line exits the plot (usually at x=X_MAX)
+
+### Formula
+
+\`\`\`
+Start Point: (x=0, y=b)              -- where b is the y-intercept
+End Point:   (x=X_MAX, y=m*X_MAX+b)  -- plug X_MAX into the equation
+\`\`\`
+
+### Example Calculations
+
+**Given:** Line 1: y = 5x, Line 2: y = 5x + 20, X_MAX = 8
+
+\`\`\`
+Line 1: y = 5x (slope=5, y-intercept=0)
+  - Start point: (0, 0)
+  - End point: (8, 5*8 + 0) = (8, 40)
+
+Line 2: y = 5x + 20 (slope=5, y-intercept=20)
+  - Start point: (0, 20)
+  - End point: (8, 5*8 + 20) = (8, 60)
+\`\`\`
+
+### Edge Cases
+
+If a line exits through the TOP of the plot before reaching X_MAX:
+- Calculate where y = Y_MAX: x = (Y_MAX - b) / m
+- Use that x value as the end point's x coordinate
+
+\`\`\`
+Example: y = 20x with X_MAX=8, Y_MAX=80
+  - At x=8: y = 160 (exceeds Y_MAX=80!)
+  - Line exits at top: x = (80 - 0) / 20 = 4
+  - End point: (4, 80) instead of (8, 160)
+\`\`\`
+
+### Record Your Line Endpoints
+
+\`\`\`
+Line 1: y = [equation]
+  - Start point: ([x], [y])
+  - End point: ([x], [y])
+
+Line 2: y = [equation]
+  - Start point: ([x], [y])
+  - End point: ([x], [y])
+\`\`\`
+
+**⚠️ These values will be used DIRECTLY in the SVG line element as x1, y1, x2, y2 coordinates (after pixel conversion).**
+
+---
+
+## Step 5: Identify the Mathematical Relationship to Annotate
+
+What is the KEY mathematical concept this graph should emphasize?
+
+| If the problem involves... | Annotation type | What to show |
+|---------------------------|-----------------|--------------|
+| Two parallel lines (same slope, different y-intercepts) | Y-intercept shift | Vertical double-arrow between y-intercepts |
+| Two parallel lines | Parallel indicator | "PARALLEL" label or "Same slope = m" |
+| Two lines with different slopes | Slope comparison | Slope labels next to each line |
+| Lines that intersect | Intersection point | Highlighted point with coordinates |
+| Single line with slope focus | Slope triangle | Rise/run annotation |
+| Single line with intercept focus | Y-intercept point | Highlighted point at (0, b) |
+
+\`\`\`
+Key relationship: [what to emphasize]
+Annotation type: [from table above]
+\`\`\`
+
+---
+
+## Step 5: Plan Annotation Position
+
+### For Y-Intercept Shift (Parallel Lines)
+
+The vertical arrow showing the shift goes **LEFT of the y-axis**:
+
+\`\`\`
+Arrow X position: ORIGIN_X - 15 pixels (left of axis)
+Arrow starts at: pixelY of first y-intercept
+Arrow ends at: pixelY of second y-intercept
+Label: the numerical difference (e.g., "50 units")
+\`\`\`
+
+### For Parallel/Slope Labels
+
+Place in **open space** away from:
+- The lines themselves
+- Axis labels
+- Other annotations
+
+Typical positions:
+- Upper right quadrant for legend
+- Near the lines but offset by 10-15px
+
+### For Intersection Points
+
+Highlight the intersection with:
+- A larger circle (r=6 or r=8)
+- Coordinate label offset by 10px
+
+---
+
+## Step 6: Write Your Complete Graph Plan
+
+**Copy this template and fill it in:**
+
+\`\`\`
+GRAPH PLAN
+==========
+Equations:
+- Line 1: [equation] ([color])
+- Line 2: [equation] ([color])
+
+Scale:
+- X range: 0 to [X_MAX]
+- X-axis labels: [list]
+- X scale: [increment between labels]
+- Y range: 0 to [Y_MAX]
+- Y-axis labels: [list]
+- Y scale: [increment between labels]
+
+Annotation:
+- Relationship to show: [what mathematical concept]
+- Annotation type: [from Step 4 table]
+- Position: [from Step 5]
+
+Visual notes:
+- [any other visual elements needed]
+\`\`\`
+
+---
+
+## Example: Comparing y = 3x and y = 3x + 15
+
+\`\`\`
+GRAPH PLAN
+==========
+Equations:
+- Line 1: y = 3x (blue)
+- Line 2: y = 3x + 15 (green)
+
+Scale:
+- X range: 0 to 6
+- X-axis labels: 0, 1, 2, 3, 4, 5, 6
+- X scale: 1
+- Calculations:
+  - Line 1 at x=6: y = 18
+  - Line 2 at x=6: y = 33
+  - Largest Y = 33 → use Y_MAX = 36 (from table: 19-36 → 36)
+- Y range: 0 to 36
+- Y-axis labels: 0, 4, 8, 12, 16, 20, 24, 28, 32, 36
+- Y scale: 4 (gives exactly 10 ticks)
+
+Annotation:
+- Relationship to show: Y-intercept shift (parallel lines)
+- Annotation type: Vertical double-arrow between y-intercepts
+- Position: Left of y-axis (x = ORIGIN_X - 15)
+- Arrow from: y=0 to y=15
+- Label: "+15"
+
+Visual notes:
+- Both lines should be clearly visible
+- 10 ticks on Y-axis for clear reading
+- "PARALLEL" label near the lines
+\`\`\`
+
+---
+
+## Add Graph Plan to Your PROBLEM ANALYSIS
+
+After completing this planning, add the GRAPH PLAN section to your PROBLEM ANALYSIS output in Phase 1.
+
+This plan will be referenced in Phase 3 when you implement the SVG.
+
+---
+
+## Pixel Implementation
+
+When you reach Phase 3 and need to convert your graph plan to actual SVG pixels, reference:
+
+\`\`\`
+Read: .claude/skills/create-worked-example-sg/reference/svg-pixel-tables.md
+\`\`\`
+
+That file contains the pixel lookup tables for converting your planned scale to actual SVG coordinates.
+`;
+
+// ============================================================================
+// EXTRACTED SECTIONS (backward compatibility)
+// ============================================================================
+
+export const COLOR_PALETTE = `
+## Color Palette (PPTX-Compatible)
+
+Use HEX colors directly (not CSS variables on text elements):
+
+| Color | Hex | Usage |
+|
+`;
+
+export const TYPOGRAPHY = `
+## Typography Hierarchy
+
+\`\`\`
+Step Badge:      13px bold uppercase (in pill)
+Title (h1):      28px bold (primary color #1791e8)
+Subtitle (p):    16px regular (dark text #1d1d1d)
+Section Header:  15px bold
+Body Text:       14px regular
+Supporting:      13px regular
+Footnotes:       10pt (use pt not px)
+\`\`\`
+`;
+
+export const SLIDE_CONTAINER = `
+## Basic Slide Structure
+
+\`\`\`html
+<body class="col bg-surface" style="width: 960px; height: 540px; position: relative; font-family: Arial, sans-serif; margin: 0; padding: 0; overflow: hidden;">
+
+  <!-- Title Zone: 0-120px -->
+  <div style="width: 920px; margin: 0 20px; padding-top: 16px;" class="fit">
+    <!-- Step Badge -->
+    <div class="row items-center gap-md" style="margin-bottom: 8px;">
+      <div style="background: #1791e8; color: #ffffff; padding: 6px 16px; border-radius: 20px; display: inline-block;">
+        <p style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">STEP 1</p>
+      </div>
+    </div>
+    <!-- Main Question/Action - PROMINENT -->
+    <h1 style="margin: 0; font-size: 28px; font-weight: bold; color: #1791e8; line-height: 1.2;">IDENTIFY the slope and y-intercept</h1>
+    <!-- Instruction Text -->
+    <p style="margin-top: 8px; color: #1d1d1d; font-size: 16px; line-height: 1.4;">Look at the equation and find the values of m and b.</p>
+  </div>
+
+  <!-- Content Zone: 120-500px (380px height) -->
+  <div class="fill-height col" style="padding: 10px 20px;">
+    <!-- Main content here -->
+  </div>
+
+  <!-- Footnote Zone: 500-540px -->
+  <p style="position: absolute; bottom: 8px; left: 20px; font-size: 10pt; color: #666666; margin: 0;">
+    Lesson 4: Graphing Linear Equations
+  </p>
+
+</body>
+\`\`\`
+`;
+
+export const CONTENT_BOXES = `
+
 `;

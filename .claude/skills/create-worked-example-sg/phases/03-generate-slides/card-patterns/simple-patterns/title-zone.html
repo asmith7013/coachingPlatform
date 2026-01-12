@@ -3,7 +3,7 @@
   TITLE ZONE - Top section of every slide
   ============================================================
   Contains: Badge + Title + Subtitle
-  Position: Fixed at top (y: 0-146px, includes 16px bottom padding)
+  Position: Fixed at top (y: 0-130px, with 24px margin below)
 
   Data attributes for PPTX export:
   - data-pptx-region: "badge" | "title" | "subtitle"
@@ -14,7 +14,7 @@
 -->
 
 <!-- Title Zone Container -->
-<div style="width: 920px; margin: 0 20px; padding-top: 16px; padding-bottom: 16px;" class="fit">
+<div style="width: 920px; margin: 0 20px; padding-top: 16px; margin-bottom: 24px;" class="fit">
 
   <!-- Badge + Title Row (same line) -->
   <div class="row items-center gap-md" style="margin-bottom: 8px;">
@@ -37,13 +37,14 @@
     </h1>
   </div>
 
-  <!-- Subtitle / Instruction (position FIXED: 20, 55, 920, 30) -->
+  <!-- Subtitle / Instruction (position FIXED: 20, 55, 920, 30)
   <p data-pptx-region="subtitle"
      data-pptx-x="20" data-pptx-y="55"
      data-pptx-w="920" data-pptx-h="30"
      style="margin: 0; color: #1d1d1d; font-size: 16px; line-height: 1.4;">
     {{subtitle}}
   </p>
+  -->
 
 </div>
 

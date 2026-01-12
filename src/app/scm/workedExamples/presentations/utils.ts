@@ -1,6 +1,27 @@
 import type { AnimatableBox } from './types';
 
 /**
+ * Build a formatted export title for Google Slides
+ * Format: "SGI 6.4.2: Strategy Name" or "SGI Strategy Name" if no lesson info
+ */
+export function buildExportTitle(params: {
+  gradeLevel?: string | null;
+  unitNumber?: number | null;
+  lessonNumber?: number | null;
+  title?: string | null;
+}): string {
+  const { gradeLevel, unitNumber, lessonNumber, title } = params;
+
+  const lessonPrefix = gradeLevel && unitNumber !== null && unitNumber !== undefined && lessonNumber !== null && lessonNumber !== undefined
+    ? `SGI ${gradeLevel}.${unitNumber}.${lessonNumber}: `
+    : 'SGI ';
+
+  const strategyName = title || 'Worked Example';
+
+  return `${lessonPrefix}${strategyName}`;
+}
+
+/**
  * Convert a Google Slides URL to an embeddable iframe URL
  */
 export function getGoogleSlidesEmbedUrl(url: string): string | null {

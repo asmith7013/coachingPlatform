@@ -59,9 +59,18 @@ export {
 } from './content/templates';
 
 // Shared prompt instructions (used by both CLI and browser)
+// ⚠️ AUTO-SYNCED from manifest - all Phase 1-3 instructions
 export {
   ANALYZE_PROBLEM_INSTRUCTIONS,
+  PHASE3_OVERVIEW,
   GENERATE_SLIDES_INSTRUCTIONS,
+  TECHNICAL_RULES,
+  SLIDE_PEDAGOGY_RULES,
+  PRE_FLIGHT_CHECKLIST,
+  COMPLETION_CHECKLIST,
+  PHASE2_CONFIRM_PLAN,
+  PHASE4_SAVE_EXPORT,
+  OPTIMIZE_FOR_EXPORT,
 } from './content/prompts';
 
 // Context-specific instructions

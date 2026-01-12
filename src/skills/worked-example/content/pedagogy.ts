@@ -4,20 +4,13 @@
  * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
  *
  * Source of truth: .claude/skills/create-worked-example-sg/reference/pedagogy.md
- * To update: Edit the markdown file in the source folder, then run:
- *   npx tsx scripts/sync-skill-content.ts
+ * To update: Edit the file there, then run: npm run sync-skill-content
  */
 
-/**
- * The Four Rules of worked example creation
- */
 export const FOUR_RULES = `
 
 `;
 
-/**
- * CFU (Check for Understanding) patterns
- */
 export const CFU_PATTERNS = `
 ## Check-for-Understanding (CFU) Question Patterns
 
@@ -41,9 +34,6 @@ export const CFU_PATTERNS = `
 **The difference**: Good questions are SHORT, ask about decision-making and strategy. Bad questions ask for calculations or are too wordy.
 `;
 
-/**
- * Slide structure guidelines
- */
 export const SLIDE_STRUCTURE = `
 ## Slide Structure (9 Slides)
 
@@ -94,9 +84,6 @@ export const SLIDE_STRUCTURE = `
 - Generated separately after slides 1-8 complete
 `;
 
-/**
- * Complete pedagogy document for prompts
- */
 export const PEDAGOGY_RULES = `
 # Pedagogical Framework for Worked Example Slide Decks
 
@@ -191,6 +178,56 @@ Implementation:
 - Slides 3-8 maintain that exact position
 - Add highlights, arrows, annotations AROUND the stationary element
 - Never reposition the core visual between slides
+
+#### Sub-Principle: Progressive Visual Revelation
+
+**"Stability" means POSITION is fixed, but CONTENT evolves.**
+
+Each step slide must ADD something new to the visual. If slides 3-8 show identical visuals, students see repetition instead of progression. The visual should tell a story that builds toward the answer.
+
+**The Pattern:**
+\`\`\`
+Slide 2 (Setup):    Visual shows the PROBLEM (unknowns visible)
+Slide 3-4 (Step 1): Visual shows Step 1 RESULT highlighted
+Slide 5-6 (Step 2): Visual shows Step 2 RESULT added
+Slide 7-8 (Step 3): Visual shows SOLUTION complete
+\`\`\`
+
+**What Changes vs. What Stays:**
+
+| Stays Fixed | Changes Each Step |
+|-------------|-------------------|
+| Visual position (x, y coordinates) | Highlighted elements |
+| Overall dimensions and scale | Annotations and labels |
+| Base structure (axes, boxes, shapes) | Revealed values |
+| Color scheme | Which parts are emphasized |
+
+**Examples by Visual Type:**
+
+| Visual Type | Step 1 Shows | Step 2 Shows | Step 3 Shows |
+|-------------|--------------|--------------|--------------|
+| **Tape diagram** | Unknown (?) and total | Boxes divided with values | Answer (box count) revealed |
+| **Coordinate graph** | Blank axes with scale | First line/point plotted | Second line, intersection labeled |
+| **Hanger diagram** | Initial equation on balance | One side simplified | Solution isolated |
+| **Double number line** | Both lines with some values | Unit rate marked | Unknown value found |
+| **Area model** | Dimensions labeled | Partial products filled | Total computed |
+| **Input-output table** | Some inputs/outputs | Pattern identified | Missing value filled |
+
+**Anti-Pattern (WRONG):**
+\`\`\`
+Slide 2: Shows "Two Possible Meanings" panel
+Slide 3: Shows SAME "Two Possible Meanings" panel  ❌ REPETITION
+Slide 4: Shows SAME "Two Possible Meanings" panel  ❌ REPETITION
+\`\`\`
+
+**Correct Pattern:**
+\`\`\`
+Slide 2: Shows problem setup (unknown visible)
+Slide 3: Shows Step 1 interpretation HIGHLIGHTED
+Slide 4: Shows Step 1 result with values FILLED IN
+Slide 5: Shows Step 2 operation on the visual
+...and so on, building toward the answer
+\`\`\`
 
 ### Rule 3: The "Real World" Rule
 **Use engaging, age-appropriate contexts**

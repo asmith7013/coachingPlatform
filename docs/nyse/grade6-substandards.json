@@ -1,0 +1,3217 @@
+{
+  "grade": "6",
+  "source": "docs/nyse/standards6.html",
+  "substandard_descriptions": {
+    "3.MD.5b": "A plane figure which can be covered without gaps or overlaps by n unit squares is said to have an area of n square units.",
+    "3.MD.7d": "Recognize area as additive. Find areas of rectilinear figures by decomposing them into non-overlapping rectangles and adding the areas of the non-overlapping parts, applying this technique to solve real world problems.",
+    "6.EE.2a": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y.",
+    "6.EE.2c": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2.",
+    "5.MD.3b": "A solid figure which can be packed without gaps or overlaps using n unit cubes is said to have a volume of n cubic units.",
+    "5.MD.5a": "Find the volume of a right rectangular prism with whole-number side lengths by packing it with unit cubes, and show that the volume is the same as would be found by multiplying the edge lengths, equivalently by multiplying the height by the area of the base. Represent threefold whole-number products as volumes, e.g., to represent the associative property of multiplication.",
+    "6.EE.2b": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms.",
+    "Nets and Surface Area": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents.",
+    "6.EEI.2b": "Evaluate expressions at specific values of the variables.",
+    "6.EEI.2c": "Evaluate non-negative rational number expressions.",
+    "6.GM.4a": "Represent three-dimensional figures using nets made up of rectangles and triangles.",
+    "6.GM.4b": "Use nets to find the surface area of three-dimensional figures whose sides are made up of rectangles and triangles.",
+    "6.RP.3b": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?",
+    "6.RP.3a": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+    "6.RP.3d": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+    "6.RP.3c": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent.",
+    "5.NF.4a": "Interpret the product (a/b) x q as a parts of a partition of q into b equal parts; equivalently, as the result of a sequence of operations a x q / b. For example, use a visual fraction model to show (2/3) x 4 = 8/3, and create a story context for this equation. Do the same with (2/3) x (4/5) = 8/15. (In general, (a/b) x (c/d) = ac/bd.)",
+    "5.NF.4b": "Find the area of a rectangle with fractional side lengths by tiling it with unit squares of the appropriate unit fraction side lengths, and show that the area is the same as would be found by multiplying the side lengths. Multiply fractional side lengths to find areas of rectangles, and represent fraction products as rectangular areas.",
+    "Model the World": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms.",
+    "6.NS.1a": "Solve problems involving division of fractions by fractions.",
+    "6.GM.2b": "Apply V = l * w * h and V = Bh to find the volume of right rectangular prisms.",
+    "3.MD.7c": "Use tiling to show in a concrete case that the area of a rectangle with whole-number side lengths a and b + c is the sum of a x b and a x c. Use area models to represent the distributive property in mathematical reasoning.",
+    "6.EEI.2a": "Identify parts of an expression using mathematical terminology.",
+    "6.EEI.2d": "Write and evaluate algebraic expressions.",
+    "6.EEI.9a": "Write an equation to express one quantity, the dependent variable, in terms of the other quantity, the independent variable.",
+    "6.EEI.9b": "Analyze the relationship between the dependent and independent variables using graphs, tables and equations and relate these representations to each other.",
+    "6.NS.6a": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite.",
+    "6.NS.6c": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane.",
+    "6.NS.7a": "Interpret statements of inequality as statements about the relative position of two numbers on a number line diagram. For example, interpret -3 > -7 as a statement that -3 is located to the right of -7 on a number line oriented from left to right.",
+    "6.NS.7b": "Write, interpret, and explain statements of order for rational numbers in real-world contexts. For example, write -3\u00b0 C > -7\u00b0 C to express the fact that -3\u00b0 C is warmer than -7\u00b0 C.",
+    "6.NS.7d": "Distinguish comparisons of absolute value from statements about order. For example, recognize that an account balance less than -30 dollars represents a debt greater than 30 dollars.",
+    "5.NBT.3b": "Compare two decimals to thousandths based on meanings of the digits in each place, using >, =, and < symbols to record the results of comparisons.",
+    "6.NS.7c": "Understand the absolute value of a rational number as its distance from 0 on the number line; interpret absolute value as magnitude for a positive or negative quantity in a real-world situation. For example, for an account balance of -30 dollars, write |-30| = 30 to describe the size of the debt in dollars.",
+    "6.NS.6b": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane; recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes.",
+    "6.EEI.8a": "Write an inequality of the form x > c, x < c, x \u201a\u00e2\u2022 c, or x \u201a\u00e2\u00a7 c to represent a constraint or condition.",
+    "6.EEI.8b": "Graph the solution set of an inequality.",
+    "6.GM.3a": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the Cartesian coordinate plane.",
+    "6.GM.3c": "Find distances between points with the same first coordinate or the same second coordinate.",
+    "6.NS.4a": "Find the greatest common factor (GCF) and the least common multiple (LCM).",
+    "6.SP.5a": "Reporting the number of observations.",
+    "6.SP.5b": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement.",
+    "6.SP.5c": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+    "6.SP.5d": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered.",
+    "Variability in Data": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations.",
+    "6.DSP.5b": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement.",
+    "6.DSP.5a": "Report the number of observations.",
+    "6.DSP.4a": "Use dot plots, histograms and box plots to display and interpret numerical data.",
+    "6.DSP.5c": "Give quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context of the data.",
+    "6.DSP.5d": "Analyze the choice of measures of center and variability based on the shape of the data distribution and/or the context of the data."
+  },
+  "lesson_substandards": [
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Grade 6 Unit 1 Block 2",
+      "substandards": [
+        {
+          "code": "3.MD.5b",
+          "text": "A plane figure which can be covered without gaps or overlaps by n unit squares is said to have an area of n square units.",
+          "tag": "Building On"
+        },
+        {
+          "code": "3.MD.7d",
+          "text": "Recognize area as additive. Find areas of rectilinear figures by decomposing them into non-overlapping rectangles and adding the areas of the non-overlapping parts, applying this technique to solve real world problems.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Grade 6 Unit 1 Block 3",
+      "substandards": [
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Grade 6 Unit 1 Block 4",
+      "substandards": [
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Grade 6 Unit 1 Block 5",
+      "substandards": [
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Grade 6 Unit 1 Block 6",
+      "substandards": [
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Grade 6 Unit 1 Block 8",
+      "substandards": [
+        {
+          "code": "5.MD.3b",
+          "text": "A solid figure which can be packed without gaps or overlaps using n unit cubes is said to have a volume of n cubic units.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Grade 6 Unit 1 Block 11",
+      "substandards": [
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "5.MD.5a",
+          "text": "Find the volume of a right rectangular prism with whole-number side lengths by packing it with unit cubes, and show that the volume is the same as would be found by multiplying the edge lengths, equivalently by multiplying the height by the area of the base. Represent threefold whole-number products as volumes, e.g., to represent the associative property of multiplication.",
+          "tag": "Building On"
+        },
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 1: Tiling the Plane",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 2: Finding Area by Decomposing and Rearranging",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "3.MD.5b",
+          "text": "A plane figure which can be covered without gaps or overlaps by n unit squares is said to have an area of n square units.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 3: Reasoning to Find Area",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "3.MD.7d",
+          "text": "Recognize area as additive. Find areas of rectilinear figures by decomposing them into non-overlapping rectangles and adding the areas of the non-overlapping parts, applying this technique to solve real world problems.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 4: Parallelograms",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 5: Bases and Heights of Parallelograms",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        },
+        {
+          "code": "6.EEI.2b",
+          "text": "Evaluate expressions at specific values of the variables."
+        },
+        {
+          "code": "6.EEI.2c",
+          "text": "Evaluate non-negative rational number expressions."
+        },
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 6: Area of Parallelograms",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        },
+        {
+          "code": "6.EEI.2b",
+          "text": "Evaluate expressions at specific values of the variables."
+        },
+        {
+          "code": "6.EEI.2c",
+          "text": "Evaluate non-negative rational number expressions."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 7: From Parallelograms to Triangles",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 8: Area of Triangles",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 9: Formula for the Area of a Triangle",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        },
+        {
+          "code": "6.EEI.2b",
+          "text": "Evaluate expressions at specific values of the variables."
+        },
+        {
+          "code": "6.EEI.2c",
+          "text": "Evaluate non-negative rational number expressions."
+        },
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 10: Bases and Heights of Triangles",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 11: Polygons",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 12: What is Surface Area?",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.GM.4a",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles."
+        },
+        {
+          "code": "6.GM.4b",
+          "text": "Use nets to find the surface area of three-dimensional figures whose sides are made up of rectangles and triangles."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 13: Polyhedra",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.GM.4a",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles."
+        },
+        {
+          "code": "6.GM.4b",
+          "text": "Use nets to find the surface area of three-dimensional figures whose sides are made up of rectangles and triangles."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 14: Nets and Surface Area",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.GM.4a",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles."
+        },
+        {
+          "code": "6.GM.4b",
+          "text": "Use nets to find the surface area of three-dimensional figures whose sides are made up of rectangles and triangles."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 15: More Nets, More Surface Area",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.GM.4a",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles."
+        },
+        {
+          "code": "6.GM.4b",
+          "text": "Use nets to find the surface area of three-dimensional figures whose sides are made up of rectangles and triangles."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 16: Distinguishing Between Surface Area and Volume",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.GM.4a",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles."
+        },
+        {
+          "code": "6.GM.4b",
+          "text": "Use nets to find the surface area of three-dimensional figures whose sides are made up of rectangles and triangles."
+        },
+        {
+          "code": "5.MD.3b",
+          "text": "A solid figure which can be packed without gaps or overlaps using n unit cubes is said to have a volume of n cubic units.",
+          "tag": "Building On"
+        },
+        {
+          "code": "5.MD.5a",
+          "text": "Find the volume of a right rectangular prism with whole-number side lengths by packing it with unit cubes, and show that the volume is the same as would be found by multiplying the edge lengths, equivalently by multiplying the height by the area of the base. Represent threefold whole-number products as volumes, e.g., to represent the associative property of multiplication.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 17: Squares and Cubes",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "5.MD.5a",
+          "text": "Find the volume of a right rectangular prism with whole-number side lengths by packing it with unit cubes, and show that the volume is the same as would be found by multiplying the edge lengths, equivalently by multiplying the height by the area of the base. Represent threefold whole-number products as volumes, e.g., to represent the associative property of multiplication.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 18: Surface Area of a Cube",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "6.GM.4b",
+          "text": "Use nets to find the surface area of three-dimensional figures whose sides are made up of rectangles and triangles."
+        },
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Area and Surface Area",
+      "lesson": "Lesson 19: All about Tents",
+      "substandards": [
+        {
+          "code": "Nets and Surface Area",
+          "text": "Build and decompose 3-D figures using nets to find surface area. Represent volume and area as expressions involving whole number exponents."
+        },
+        {
+          "code": "6.GM.4a",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles."
+        },
+        {
+          "code": "6.GM.4b",
+          "text": "Use nets to find the surface area of three-dimensional figures whose sides are made up of rectangles and triangles."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Ratios",
+      "lesson": "Grade 6 Unit 2 Block 5",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Ratios",
+      "lesson": "Grade 6 Unit 2 Block 6",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Ratios",
+      "lesson": "Grade 6 Unit 2 Block 7",
+      "substandards": [
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Ratios",
+      "lesson": "Grade 6 Unit 2 Block 8",
+      "substandards": [
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Ratios",
+      "lesson": "Lesson 8: How Much for One?",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Ratios",
+      "lesson": "Lesson 9: Constant Speed",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Ratios",
+      "lesson": "Lesson 10: Comparing Situations by Examining Ratios",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Ratios",
+      "lesson": "Lesson 11: Representing Ratios with Tables",
+      "substandards": [
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Ratios",
+      "lesson": "Lesson 12: Navigating a Table of Equivalent Ratios",
+      "substandards": [
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Ratios",
+      "lesson": "Lesson 13: Tables and Double Number Line Diagrams",
+      "substandards": [
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Grade 6 Unit 3 Block 1",
+      "substandards": [
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Grade 6 Unit 3 Block 2",
+      "substandards": [
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Grade 6 Unit 3 Block 3",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Grade 6 Unit 3 Block 4",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Grade 6 Unit 3 Block 5",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Grade 6 Unit 3 Block 6",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Grade 6 Unit 3 Block 7",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Grade 6 Unit 3 Block 8",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Grade 6 Unit 3 Block 9",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 1: Anchoring Units of Measurement",
+      "substandards": [
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        },
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 2: Measuring with Different-Size Units",
+      "substandards": [
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        },
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        },
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 3: Converting Units",
+      "substandards": [
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        },
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        },
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        },
+        {
+          "code": "5.NF.4a",
+          "text": "Interpret the product (a/b) x q as a parts of a partition of q into b equal parts; equivalently, as the result of a sequence of operations a x q / b. For example, use a visual fraction model to show (2/3) x 4 = 8/3, and create a story context for this equation. Do the same with (2/3) x (4/5) = 8/15. (In general, (a/b) x (c/d) = ac/bd.)",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 4: Comparing Speeds and Prices",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 5: Interpreting Rates",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 6: Equivalent Ratios Have the Same Unit Rates",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 7: More Rate Comparisons",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 8: Solving Rate Problems",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 9: More about Constant Speed",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 10: What Are Percentages?",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 11: Representing Percentages with Double Number Line Diagrams",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 12: Representing Percentages in Different Ways",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 13: Benchmark Percentages",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 14: Solving Percentage Problems",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 15: Finding This Percent of That",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "Lesson 16: Finding the Percentage",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Unit Rates and Percentages",
+      "lesson": "6.3.7 Digital Student task statements",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Grade 6 Unit 4 Block 1",
+      "substandards": [
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Grade 6 Unit 4 Block 8",
+      "substandards": [
+        {
+          "code": "5.NF.4b",
+          "text": "Find the area of a rectangle with fractional side lengths by tiling it with unit squares of the appropriate unit fraction side lengths, and show that the area is the same as would be found by multiplying the side lengths. Multiply fractional side lengths to find areas of rectangles, and represent fraction products as rectangular areas.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 1: Size of Divisor and Size of Quotient",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 2: Meanings of Division",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 3: Interpreting Division Situations",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 4: How Many Groups? (Part 1)",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 5: How Many Groups? (Part 2)",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 6: Using Diagrams to Find the Number of Groups",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 7: What Fraction of a Group?",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 8: How Much in Each Group? (Part 1)",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 9: How Much in Each Group? (Part 2)",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 10: Dividing by Unit and Non-Unit Fractions",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 11: Using an Algorithm to Divide Fractions",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 12: Fractional Lengths",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 13: Rectangles with Fractional Side Lengths",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        },
+        {
+          "code": "5.NF.4b",
+          "text": "Find the area of a rectangle with fractional side lengths by tiling it with unit squares of the appropriate unit fraction side lengths, and show that the area is the same as would be found by multiplying the side lengths. Multiply fractional side lengths to find areas of rectangles, and represent fraction products as rectangular areas.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 14: Fractional Lengths in Triangles and Prisms",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.GM.2b",
+          "text": "Apply V = l * w * h and V = Bh to find the volume of right rectangular prisms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 15: Volume of Prisms",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.GM.2b",
+          "text": "Apply V = l * w * h and V = Bh to find the volume of right rectangular prisms."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 16: Solving Problems Involving Fractions",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Dividing Fractions",
+      "lesson": "Lesson 17: Fitting Boxes into Boxes",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.GM.2b",
+          "text": "Apply V = l * w * h and V = Bh to find the volume of right rectangular prisms."
+        },
+        {
+          "code": "6.NS.1a",
+          "text": "Solve problems involving division of fractions by fractions."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 1: Using Decimals in a Shopping Context",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 2: Using Diagrams to Represent Addition and Subtraction",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 3: Adding and Subtracting Decimals with Few Non-Zero Digits",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 4: Adding and Subtracting Decimals with Many Non-Zero Digits",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 5: Using Fractions to Multiply Decimals",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 6: Methods for Multiplying Decimals",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 7: Using Diagrams to Represent Multiplication",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 8: Calculating Products of Decimals",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 9: Using Base-Ten Diagrams to Divide",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 10: Using Partial Quotients",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 11: Using Long Division",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 13: Dividing a Decimal by a Decimal",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 14: Solving Problems Involving Decimals",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Arithmetic in Base Ten",
+      "lesson": "Lesson 15: Making and Measuring Boxes",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Grade 6 Unit 6 Block 4",
+      "substandards": [
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Grade 6 Unit 6 Block 5",
+      "substandards": [
+        {
+          "code": "3.MD.7c",
+          "text": "Use tiling to show in a concrete case that the area of a rectangle with whole-number side lengths a and b + c is the sum of a x b and a x c. Use area models to represent the distributive property in mathematical reasoning.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Grade 6 Unit 6 Block 8",
+      "substandards": [
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Grade 6 Unit 6 Block 9",
+      "substandards": [
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 6: Percentages and Equations",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 7: Write Expressions with Variables",
+      "substandards": [
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "6.EEI.2a",
+          "text": "Identify parts of an expression using mathematical terminology."
+        },
+        {
+          "code": "6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers. For example, express the calculation \"Subtract y from 5\" as 5 - y."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 9: The Distributive Property, Part 1",
+      "substandards": [
+        {
+          "code": "3.MD.7c",
+          "text": "Use tiling to show in a concrete case that the area of a rectangle with whole-number side lengths a and b + c is the sum of a x b and a x c. Use area models to represent the distributive property in mathematical reasoning.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 10: The Distributive Property, Part 2",
+      "substandards": [
+        {
+          "code": "6.EEI.2d",
+          "text": "Write and evaluate algebraic expressions."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 11: The Distributive Property, Part 3",
+      "substandards": [
+        {
+          "code": "6.EEI.2d",
+          "text": "Write and evaluate algebraic expressions."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 14: Evaluating Expressions with Exponents",
+      "substandards": [
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        },
+        {
+          "code": "6.EEI.2b",
+          "text": "Evaluate expressions at specific values of the variables."
+        },
+        {
+          "code": "6.EEI.2c",
+          "text": "Evaluate non-negative rational number expressions."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 15: Equivalent Exponential Expressions",
+      "substandards": [
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        },
+        {
+          "code": "6.EEI.2b",
+          "text": "Evaluate expressions at specific values of the variables."
+        },
+        {
+          "code": "6.EEI.2c",
+          "text": "Evaluate non-negative rational number expressions."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 16: Two Related Quantities, Part 1",
+      "substandards": [
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.EEI.9a",
+          "text": "Write an equation to express one quantity, the dependent variable, in terms of the other quantity, the independent variable."
+        },
+        {
+          "code": "6.EEI.9b",
+          "text": "Analyze the relationship between the dependent and independent variables using graphs, tables and equations and relate these representations to each other."
+        },
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 17: Two Related Quantities, Part 2",
+      "substandards": [
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.EEI.9a",
+          "text": "Write an equation to express one quantity, the dependent variable, in terms of the other quantity, the independent variable."
+        },
+        {
+          "code": "6.EEI.9b",
+          "text": "Analyze the relationship between the dependent and independent variables using graphs, tables and equations and relate these representations to each other."
+        },
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        },
+        {
+          "code": "6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios."
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 18: More Relationships",
+      "substandards": [
+        {
+          "code": "6.EEI.9a",
+          "text": "Write an equation to express one quantity, the dependent variable, in terms of the other quantity, the independent variable."
+        },
+        {
+          "code": "6.EEI.9b",
+          "text": "Analyze the relationship between the dependent and independent variables using graphs, tables and equations and relate these representations to each other."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions and Equations",
+      "lesson": "Lesson 19: Tables, Equations, and Graphs, Oh My!",
+      "substandards": [
+        {
+          "code": "6.EEI.9a",
+          "text": "Write an equation to express one quantity, the dependent variable, in terms of the other quantity, the independent variable."
+        },
+        {
+          "code": "6.EEI.9b",
+          "text": "Analyze the relationship between the dependent and independent variables using graphs, tables and equations and relate these representations to each other."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Grade 6 Unit 7 Block 2",
+      "substandards": [
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        },
+        {
+          "code": "6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line diagram. For example, interpret -3 > -7 as a statement that -3 is located to the right of -7 on a number line oriented from left to right."
+        },
+        {
+          "code": "6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts. For example, write -3\u00b0 C > -7\u00b0 C to express the fact that -3\u00b0 C is warmer than -7\u00b0 C."
+        },
+        {
+          "code": "6.NS.7d",
+          "text": "Distinguish comparisons of absolute value from statements about order. For example, recognize that an account balance less than -30 dollars represents a debt greater than 30 dollars.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Grade 6 Unit 7 Block 3",
+      "substandards": [
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "5.NBT.3b",
+          "text": "Compare two decimals to thousandths based on meanings of the digits in each place, using >, =, and < symbols to record the results of comparisons.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Grade 6 Unit 7 Block 4",
+      "substandards": [
+        {
+          "code": "6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line diagram. For example, interpret -3 > -7 as a statement that -3 is located to the right of -7 on a number line oriented from left to right."
+        },
+        {
+          "code": "6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line; interpret absolute value as magnitude for a positive or negative quantity in a real-world situation. For example, for an account balance of -30 dollars, write |-30| = 30 to describe the size of the debt in dollars."
+        },
+        {
+          "code": "6.NS.7d",
+          "text": "Distinguish comparisons of absolute value from statements about order. For example, recognize that an account balance less than -30 dollars represents a debt greater than 30 dollars."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Grade 6 Unit 7 Block 5",
+      "substandards": [
+        {
+          "code": "6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line diagram. For example, interpret -3 > -7 as a statement that -3 is located to the right of -7 on a number line oriented from left to right."
+        },
+        {
+          "code": "6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts. For example, write -3\u00b0 C > -7\u00b0 C to express the fact that -3\u00b0 C is warmer than -7\u00b0 C."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Grade 6 Unit 7 Block 6",
+      "substandards": [
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms."
+        },
+        {
+          "code": "6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane; recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Grade 6 Unit 7 Block 7",
+      "substandards": [
+        {
+          "code": "6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane; recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        },
+        {
+          "code": "6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line; interpret absolute value as magnitude for a positive or negative quantity in a real-world situation. For example, for an account balance of -30 dollars, write |-30| = 30 to describe the size of the debt in dollars."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Grade 6 Unit 7 Block 8",
+      "substandards": [
+        {
+          "code": "6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane; recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 1: Positive and Negative Numbers",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 2: Points on the Number Line",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 3: Comparing Positive and Negative Numbers",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line diagram. For example, interpret -3 > -7 as a statement that -3 is located to the right of -7 on a number line oriented from left to right."
+        },
+        {
+          "code": "6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts. For example, write -3\u00b0 C > -7\u00b0 C to express the fact that -3\u00b0 C is warmer than -7\u00b0 C."
+        },
+        {
+          "code": "6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane; recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes."
+        },
+        {
+          "code": "6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line diagram. For example, interpret -3 > -7 as a statement that -3 is located to the right of -7 on a number line oriented from left to right."
+        },
+        {
+          "code": "6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts. For example, write -3\u00b0 C > -7\u00b0 C to express the fact that -3\u00b0 C is warmer than -7\u00b0 C."
+        },
+        {
+          "code": "5.NBT.3b",
+          "text": "Compare two decimals to thousandths based on meanings of the digits in each place, using >, =, and < symbols to record the results of comparisons.",
+          "tag": "Building On"
+        },
+        {
+          "code": "6.NS.7d",
+          "text": "Distinguish comparisons of absolute value from statements about order. For example, recognize that an account balance less than -30 dollars represents a debt greater than 30 dollars.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 4: Ordering Rational Numbers",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "5.NBT.3b",
+          "text": "Compare two decimals to thousandths based on meanings of the digits in each place, using >, =, and < symbols to record the results of comparisons.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 5: Using Negative Numbers to Make Sense of Contexts",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 6: Absolute Value of Numbers",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line; interpret absolute value as magnitude for a positive or negative quantity in a real-world situation. For example, for an account balance of -30 dollars, write |-30| = 30 to describe the size of the debt in dollars."
+        },
+        {
+          "code": "6.NS.7d",
+          "text": "Distinguish comparisons of absolute value from statements about order. For example, recognize that an account balance less than -30 dollars represents a debt greater than 30 dollars."
+        },
+        {
+          "code": "6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line; interpret absolute value as magnitude for a positive or negative quantity in a real-world situation. For example, for an account balance of -30 dollars, write |-30| = 30 to describe the size of the debt in dollars."
+        },
+        {
+          "code": "6.NS.7d",
+          "text": "Distinguish comparisons of absolute value from statements about order. For example, recognize that an account balance less than -30 dollars represents a debt greater than 30 dollars."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 7: Comparing Numbers and Distance from Zero",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line diagram. For example, interpret -3 > -7 as a statement that -3 is located to the right of -7 on a number line oriented from left to right."
+        },
+        {
+          "code": "6.NS.7d",
+          "text": "Distinguish comparisons of absolute value from statements about order. For example, recognize that an account balance less than -30 dollars represents a debt greater than 30 dollars."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "6.NS.7d",
+          "text": "Distinguish comparisons of absolute value from statements about order. For example, recognize that an account balance less than -30 dollars represents a debt greater than 30 dollars."
+        },
+        {
+          "code": "6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line; interpret absolute value as magnitude for a positive or negative quantity in a real-world situation. For example, for an account balance of -30 dollars, write |-30| = 30 to describe the size of the debt in dollars.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 8: Writing and Graphing Inequalities",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts. For example, write -3\u00b0 C > -7\u00b0 C to express the fact that -3\u00b0 C is warmer than -7\u00b0 C."
+        },
+        {
+          "code": "6.EEI.8a",
+          "text": "Write an inequality of the form x > c, x < c, x \u201a\u00e2\u2022 c, or x \u201a\u00e2\u00a7 c to represent a constraint or condition."
+        },
+        {
+          "code": "6.EEI.8b",
+          "text": "Graph the solution set of an inequality."
+        },
+        {
+          "code": "6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts. For example, write -3\u00b0 C > -7\u00b0 C to express the fact that -3\u00b0 C is warmer than -7\u00b0 C."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 9: Solutions of Inequalities",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line diagram. For example, interpret -3 > -7 as a statement that -3 is located to the right of -7 on a number line oriented from left to right."
+        },
+        {
+          "code": "6.EEI.8b",
+          "text": "Graph the solution set of an inequality."
+        },
+        {
+          "code": "6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line diagram. For example, interpret -3 > -7 as a statement that -3 is located to the right of -7 on a number line oriented from left to right."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 10: Interpreting Inequalities",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms."
+        },
+        {
+          "code": "6.EEI.2a",
+          "text": "Identify parts of an expression using mathematical terminology."
+        },
+        {
+          "code": "6.EEI.8a",
+          "text": "Write an inequality of the form x > c, x < c, x \u201a\u00e2\u2022 c, or x \u201a\u00e2\u00a7 c to represent a constraint or condition."
+        },
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 11: Points on the Coordinate Plane",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane; recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        },
+        {
+          "code": "6.GM.3a",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the Cartesian coordinate plane."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane; recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 12: Constructing the Coordinate Plane",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane; recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        },
+        {
+          "code": "6.GM.3a",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the Cartesian coordinate plane."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 13: Interpreting Points on a Coordinate Plane",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        },
+        {
+          "code": "6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line; interpret absolute value as magnitude for a positive or negative quantity in a real-world situation. For example, for an account balance of -30 dollars, write |-30| = 30 to describe the size of the debt in dollars."
+        },
+        {
+          "code": "6.GM.3a",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the Cartesian coordinate plane."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        },
+        {
+          "code": "6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line; interpret absolute value as magnitude for a positive or negative quantity in a real-world situation. For example, for an account balance of -30 dollars, write |-30| = 30 to describe the size of the debt in dollars."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 14: Distances in the Coordinate Plane",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane; recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane; recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 15: Shapes in the Coordinate Plane",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        },
+        {
+          "code": "6.GM.3c",
+          "text": "Find distances between points with the same first coordinate or the same second coordinate."
+        },
+        {
+          "code": "6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line; recognize that the opposite of the opposite of a number is the number itself, e.g., -(-3) = 3, and that 0 is its own opposite."
+        },
+        {
+          "code": "6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line diagram; find and position pairs of integers and other rational numbers on a coordinate plane."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 16: Common Factors",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.4a",
+          "text": "Find the greatest common factor (GCF) and the least common multiple (LCM)."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 17: Common Multiples",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.NS.4a",
+          "text": "Find the greatest common factor (GCF) and the least common multiple (LCM)."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 18: Using Common Multiples and Common Factors",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Rational Numbers",
+      "lesson": "Lesson 19: Drawing in the Coordinate Plane",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.GM.3c",
+          "text": "Find distances between points with the same first coordinate or the same second coordinate."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Grade 6 Unit 8 Block 2",
+      "substandards": [
+        {
+          "code": "6.SP.5a",
+          "text": "Reporting the number of observations."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Grade 6 Unit 8 Block 3",
+      "substandards": [
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Grade 6 Unit 8 Block 4",
+      "substandards": [
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Grade 6 Unit 8 Block 5",
+      "substandards": [
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Grade 6 Unit 8 Block 6",
+      "substandards": [
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Grade 6 Unit 8 Block 7",
+      "substandards": [
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Grade 6 Unit 8 Block 8",
+      "substandards": [
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Grade 6 Unit 8 Block 9",
+      "substandards": [
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 1: Got Data?",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 2: Statistical Questions",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.DSP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 3: Representing Data Graphically",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5a",
+          "text": "Reporting the number of observations."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.DSP.5a",
+          "text": "Report the number of observations."
+        },
+        {
+          "code": "6.DSP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 4: Dot Plots",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5a",
+          "text": "Reporting the number of observations."
+        },
+        {
+          "code": "6.DSP.4a",
+          "text": "Use dot plots, histograms and box plots to display and interpret numerical data."
+        },
+        {
+          "code": "6.DSP.5a",
+          "text": "Report the number of observations."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 5: Using Dot Plots to Answer Statistical Questions",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.DSP.4a",
+          "text": "Use dot plots, histograms and box plots to display and interpret numerical data."
+        },
+        {
+          "code": "6.DSP.5a",
+          "text": "Report the number of observations."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 6: Interpreting Histograms",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.DSP.4a",
+          "text": "Use dot plots, histograms and box plots to display and interpret numerical data."
+        },
+        {
+          "code": "6.DSP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 7: Using Histograms to Answer Statistical Questions",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.DSP.4a",
+          "text": "Use dot plots, histograms and box plots to display and interpret numerical data."
+        },
+        {
+          "code": "6.DSP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 8: Describing Distributions on Histograms",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.DSP.4a",
+          "text": "Use dot plots, histograms and box plots to display and interpret numerical data."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 9: Mean",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.DSP.5c",
+          "text": "Give quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context of the data."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 10: Finding and Interpreting the Mean as the Balance Point",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.DSP.5c",
+          "text": "Give quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context of the data."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 11: Variability and MAD",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.DSP.5c",
+          "text": "Give quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context of the data."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 12: Using Mean and MAD to Make Comparisons",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        },
+        {
+          "code": "6.DSP.5c",
+          "text": "Give quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context of the data."
+        },
+        {
+          "code": "6.DSP.5d",
+          "text": "Analyze the choice of measures of center and variability based on the shape of the data distribution and/or the context of the data."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 13: Median",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.DSP.5c",
+          "text": "Give quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context of the data."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 14: Comparing Mean and Median",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        },
+        {
+          "code": "6.DSP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.DSP.5c",
+          "text": "Give quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context of the data."
+        },
+        {
+          "code": "6.DSP.5d",
+          "text": "Analyze the choice of measures of center and variability based on the shape of the data distribution and/or the context of the data."
+        },
+        {
+          "code": "6.SP.5b",
+          "text": "Describing the nature of the attribute under investigation, including how it was measured and its units of measurement."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 15: Quartiles and Interquartile Range",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        },
+        {
+          "code": "6.DSP.5c",
+          "text": "Give quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context of the data."
+        },
+        {
+          "code": "6.DSP.5d",
+          "text": "Analyze the choice of measures of center and variability based on the shape of the data distribution and/or the context of the data."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 16: Box Plots",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        },
+        {
+          "code": "6.DSP.4a",
+          "text": "Use dot plots, histograms and box plots to display and interpret numerical data."
+        },
+        {
+          "code": "6.DSP.5c",
+          "text": "Give quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context of the data."
+        },
+        {
+          "code": "6.DSP.5d",
+          "text": "Analyze the choice of measures of center and variability based on the shape of the data distribution and/or the context of the data."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 17: Using Box Plots",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.DSP.4a",
+          "text": "Use dot plots, histograms and box plots to display and interpret numerical data."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Data Sets and Distributions",
+      "lesson": "Lesson 18: Using Data to Solve Problems",
+      "substandards": [
+        {
+          "code": "Variability in Data",
+          "text": "Investigate real world data sources, ask questions of data, start to understand variability - within data sets and across different forms of data, consider different types of data, and represent data with different representations."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        },
+        {
+          "code": "6.DSP.5c",
+          "text": "Give quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context of the data."
+        },
+        {
+          "code": "6.DSP.5d",
+          "text": "Analyze the choice of measures of center and variability based on the shape of the data distribution and/or the context of the data."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Grade 6 Unit 9 Block 1",
+      "substandards": [
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Grade 6 Unit 9 Block 3",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Grade 6 Unit 9 Block 4",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 1: Fermi Problems",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 2: Energy Flow",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        },
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 3: Making Paper",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 4: If Our Class Were the World",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 5: How Do We Choose?",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 6: More than Two Choices",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 7: Comparing Voting Systems",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 8: Picking Representatives",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 9: Designing Districts",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 10: Rectangle Madness",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 11: Rectangle Fractions",
+      "substandards": [
+        {
+          "code": "Model the World",
+          "text": "Solve and model real world problems. Add, subtract, multiply, and divide multi-digit numbers and decimals, in real-world and mathematical problems - with sense making and understanding, using visual models and algorithms."
+        }
+      ]
+    }
+  ]
+}

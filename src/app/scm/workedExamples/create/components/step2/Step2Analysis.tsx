@@ -8,6 +8,7 @@ import type { WizardStateHook } from '../../hooks/useWizardState';
 import type { HtmlSlide } from '@zod-schema/scm/worked-example';
 import { GraphPlanDisplay } from './GraphPlanDisplay';
 import { VisualPlanDisplay } from './VisualPlanDisplay';
+import { DiagramPreviewDisplay } from './DiagramPreviewDisplay';
 import { ScenarioEditor } from './ScenarioEditor';
 import { AnalysisFooter } from './AnalysisFooter';
 import type { SSEStartEvent, SSESlideEvent, SSECompleteEvent, SSEErrorEvent } from './types';
@@ -595,6 +596,20 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                   title: 'Graph Plan',
                   icon: null,
                   content: <GraphPlanDisplay graphPlan={scenarios[0].graphPlan!} compact />,
+                }] : []),
+                // Diagram Preview section (if exists - ASCII preview of planned visual)
+                ...(problemAnalysis.diagramPreview ? [{
+                  key: 'we-diagram-preview',
+                  title: 'Diagram Preview',
+                  icon: null,
+                  content: (
+                    <div>
+                      <p className="text-xs text-gray-500 mb-3">
+                        This preview shows the planned visual structure for the worked example.
+                      </p>
+                      <DiagramPreviewDisplay diagramPreview={problemAnalysis.diagramPreview!} />
+                    </div>
+                  ),
                 }] : []),
               ]}
             />

@@ -1,0 +1,2737 @@
+{
+  "grade": "7",
+  "source": "docs/nyse/standards7.html",
+  "substandard_descriptions": {
+    "7.RP.2b": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+    "6.RP.3d": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+    "7.RP.2a": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+    "6.RP.3b": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?",
+    "7.RP.2c": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn.",
+    "7.RP.2d": "Explain what a point (x, y) on the graph of a proportional relationship means in terms of the situation, with special attention to the points (0, 0) and (1, r) where r is the unit rate.",
+    "6.RP.3c": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent.",
+    "6.SP.5c": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+    "7.GM.4a": "Analyze the relationships among the circumference, the radius, the diameter, the area and Pi in a circle.",
+    "7.GM.4b": "Know and apply the formulas for circumference and area of circles to solve problems.",
+    "7.GM.6a": "Find the area of triangles, quadrilaterals and other polygons composed of triangles and rectangles.",
+    "7.NS.2d": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+    "6.EE.2b": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms.",
+    "Unit Rates in the World": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations.",
+    "7.NS.1a": "Describe situations in which opposite quantities combine to make 0. For example, a hydrogen atom has 0 charge because its two constituents are oppositely charged.",
+    "7.NS.1b": "Understand p + q as the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts.",
+    "7.NS.1d": "Apply properties of operations as strategies to add and subtract rational numbers.",
+    "7.NS.1c": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+    "7.NS.2a": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts.",
+    "7.NS.2c": "Apply properties of operations as strategies to multiply and divide rational numbers.",
+    "7.NS.2b": "Understand that integers can be divided, provided that the divisor is not zero, and every quotient of integers (with non-zero divisor) is a rational number. If p and q are integers, then -(p/q) = (-p)/q = p/(-q). Interpret quotients of rational numbers by describing real-world contexts.",
+    "7.EE.4a": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+    "6.EE.2c": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2.",
+    "7.EE.4b": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions.",
+    "7.EEI.4b": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem.",
+    "7.EEI.3a": "Convert between equivalent forms of the same number.",
+    "7.EEI.4c": "Write, solve and/or graph inequalities of the form px + q > r or px + q < r, where p, q and r are rational numbers.",
+    "7.GM.2b": "Construct special quadrilaterals given specific parameters.",
+    "7.GM.2a": "Determine if provided constraints will create a unique triangle through construction.",
+    "7.GM.6b": "Find the volume and surface area of prisms, pyramids and cylinders.",
+    "7.SP.7a": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of events. For example, if a student is selected at random from a class, find the probability that Jane will be selected and the probability that a girl will be selected.",
+    "7.SP.7b": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process. For example, find the approximate probability that a spinning penny will land heads up or that a tossed paper cup will land open-end down. Do the outcomes for the spinning penny appear to be equally likely based on the observed frequencies?",
+    "7.SP.8c": "Design and use a simulation to generate frequencies for compound events. For example, use random digits as a simulation tool to approximate the answer to the question: If 40% of donors have type A blood, what is the probability that it will take at least 4 donors to find one with type A blood?",
+    "7.SP.8a": "Understand that, just as with simple events, the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs.",
+    "7.SP.8b": "Represent sample spaces for compound events using methods such as organized lists, tables and tree diagrams. For an event described in everyday language (e.g., \"rolling double sixes\"), identify the outcomes in the sample space which compose the event.",
+    "6.SP.5d": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered.",
+    "7.DSP.6b": "Perform experiments that model theoretical probability.",
+    "7.DSP.5a": "Determine probabilities of simple events.",
+    "7.DSP.5b": "Understand that the probability of a chance event is a number between 0 and 1 that expresses the likelihood of the event occurring.",
+    "7.DSP.7a": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of events.",
+    "7.DSP.7b": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process.",
+    "7.DSP.6a": "Predict outcomes using theoretical probability.",
+    "7.DSP.6c": "Compare theoretical and experimental probabilities.",
+    "7.DSP.8b": "Design and use a simulation to generate frequencies for compound events.",
+    "7.DSP.8a": "Represent the sample space of a compound event.",
+    "7.DSP.1a": "Understand that a sample is a subset of a population.",
+    "7.DSP.1b": "Understand that generalizations from a sample are valid only if the sample is representative of the population.",
+    "7.DSP.1c": "Understand that random sampling is used to produce representative samples and support valid inferences.",
+    "PS.IS.1c": "Explain how changes in confidence level and sample size affect width of the confidence interval and margin of error.",
+    "7.EEI.4a": "Write and/or solve equations of the form x+p = q and px = q in which p and q are rational numbers."
+  },
+  "lesson_substandards": [
+    {
+      "unit": 1,
+      "unitName": "Scale Drawings",
+      "lesson": "Grade 7 Unit 1 Block 4",
+      "substandards": [
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Scale Drawings",
+      "lesson": "Grade 7 Unit 1 Block 6",
+      "substandards": [
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Scale Drawings",
+      "lesson": "Lesson 6: Scaling and Area",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Scale Drawings",
+      "lesson": "Lesson 8: Scale Drawings and Maps",
+      "substandards": [
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?",
+          "tag": "Building On"
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Scale Drawings",
+      "lesson": "Lesson 12: Units in Scale Drawings",
+      "substandards": [
+        {
+          "code": "6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Grade 7 Unit 2 Block 2",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Grade 7 Unit 2 Block 3",
+      "substandards": [
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Grade 7 Unit 2 Block 4",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Grade 7 Unit 2 Block 5",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Grade 7 Unit 2 Block 6",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2d",
+          "text": "Explain what a point (x, y) on the graph of a proportional relationship means in terms of the situation, with special attention to the points (0, 0) and (1, r) where r is the unit rate."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Grade 7 Unit 2 Block 7",
+      "substandards": [
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        },
+        {
+          "code": "7.RP.2d",
+          "text": "Explain what a point (x, y) on the graph of a proportional relationship means in terms of the situation, with special attention to the points (0, 0) and (1, r) where r is the unit rate."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Lesson 2: Introducing Proportional Relationships with Tables",
+      "substandards": [
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Lesson 3: More about Constant of Proportionality",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Lesson 4: Proportional Relationships and Equations",
+      "substandards": [
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Lesson 5: Two Equations for Each Relationship",
+      "substandards": [
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Lesson 6: Writing Equations to Represent Relationships",
+      "substandards": [
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Lesson 7: Comparing Relationships with Tables",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Lesson 8: Comparing Relationships with Equations",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Lesson 10: Introducing Graphs of Proportional Relationships",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Lesson 11: Interpreting Graphs of Proportional Relationships",
+      "substandards": [
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2d",
+          "text": "Explain what a point (x, y) on the graph of a proportional relationship means in terms of the situation, with special attention to the points (0, 0) and (1, r) where r is the unit rate."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        },
+        {
+          "code": "7.RP.2d",
+          "text": "Explain what a point (x, y) on the graph of a proportional relationship means in terms of the situation, with special attention to the points (0, 0) and (1, r) where r is the unit rate."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Introducing Proportional Relationships",
+      "lesson": "Lesson 13: Two Graphs for Each Relationship",
+      "substandards": [
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        },
+        {
+          "code": "7.RP.2d",
+          "text": "Explain what a point (x, y) on the graph of a proportional relationship means in terms of the situation, with special attention to the points (0, 0) and (1, r) where r is the unit rate."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        },
+        {
+          "code": "7.RP.2d",
+          "text": "Explain what a point (x, y) on the graph of a proportional relationship means in terms of the situation, with special attention to the points (0, 0) and (1, r) where r is the unit rate."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Grade 7 Unit 3 Block 1",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Grade 7 Unit 3 Block 2",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Grade 7 Unit 3 Block 4",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Lesson 1: How Well Can You Measure?",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Lesson 3: Exploring Circumference",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.GM.4a",
+          "text": "Analyze the relationships among the circumference, the radius, the diameter, the area and Pi in a circle."
+        },
+        {
+          "code": "7.GM.4b",
+          "text": "Know and apply the formulas for circumference and area of circles to solve problems."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Lesson 4: Applying Circumference",
+      "substandards": [
+        {
+          "code": "7.GM.4a",
+          "text": "Analyze the relationships among the circumference, the radius, the diameter, the area and Pi in a circle."
+        },
+        {
+          "code": "7.GM.4b",
+          "text": "Know and apply the formulas for circumference and area of circles to solve problems."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Lesson 5: Circumference and Wheels",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        },
+        {
+          "code": "7.GM.4a",
+          "text": "Analyze the relationships among the circumference, the radius, the diameter, the area and Pi in a circle."
+        },
+        {
+          "code": "7.GM.4b",
+          "text": "Know and apply the formulas for circumference and area of circles to solve problems."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2c",
+          "text": "Represent proportional relationships by equations. For example, if total cost t is proportional to the number n of items purchased at a constant price p, the relationship between the total cost and the number of items can be expressed as t = pn."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Lesson 6: Estimating Areas",
+      "substandards": [
+        {
+          "code": "7.GM.6a",
+          "text": "Find the area of triangles, quadrilaterals and other polygons composed of triangles and rectangles."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Lesson 7: Exploring the Area of a Circle",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.GM.4a",
+          "text": "Analyze the relationships among the circumference, the radius, the diameter, the area and Pi in a circle."
+        },
+        {
+          "code": "7.GM.4b",
+          "text": "Know and apply the formulas for circumference and area of circles to solve problems."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Lesson 8: Relating Area to Circumference",
+      "substandards": [
+        {
+          "code": "7.GM.4a",
+          "text": "Analyze the relationships among the circumference, the radius, the diameter, the area and Pi in a circle."
+        },
+        {
+          "code": "7.GM.4b",
+          "text": "Know and apply the formulas for circumference and area of circles to solve problems."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Lesson 9: Applying Area of Circles",
+      "substandards": [
+        {
+          "code": "7.GM.4a",
+          "text": "Analyze the relationships among the circumference, the radius, the diameter, the area and Pi in a circle."
+        },
+        {
+          "code": "7.GM.4b",
+          "text": "Know and apply the formulas for circumference and area of circles to solve problems."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Lesson 10: Distinguishing Circumference and Area",
+      "substandards": [
+        {
+          "code": "7.GM.4a",
+          "text": "Analyze the relationships among the circumference, the radius, the diameter, the area and Pi in a circle."
+        },
+        {
+          "code": "7.GM.4b",
+          "text": "Know and apply the formulas for circumference and area of circles to solve problems."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Measuring Circles",
+      "lesson": "Lesson 11: Stained-Glass Windows",
+      "substandards": [
+        {
+          "code": "7.GM.4a",
+          "text": "Analyze the relationships among the circumference, the radius, the diameter, the area and Pi in a circle."
+        },
+        {
+          "code": "7.GM.4b",
+          "text": "Know and apply the formulas for circumference and area of circles to solve problems."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Grade 7 Unit 4 Block 1",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Grade 7 Unit 4 Block 3",
+      "substandards": [
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Grade 7 Unit 4 Block 6",
+      "substandards": [
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms.",
+          "tag": "Building On"
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Grade 7 Unit 4 Block 8",
+      "substandards": [
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 1: Lots of Flags",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 2: Ratios and Rates With Fractions",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 3: Revisiting Proportional Relationships",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 4: More than That, Less than That",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 5: Say It with Decimals",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 6: Increasing and Decreasing",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 7: One Hundred Percent",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 8: Percent Increase and Decrease with Equations",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 9: Part of a Percent",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 10: Tax and Tip",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 11: Percentage Contexts",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms.",
+          "tag": "Building On"
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 12: Solving Multi-step Percentage Problems",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 13: Measurement Error",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 14: Percent Error",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100 (e.g., 30% of a quantity means 30/100 times the quantity); solve problems involving finding the whole, given a part and the percent.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 15: Changes on the Earth",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Proportional Relationships and Percentages",
+      "lesson": "Lesson 16: Posing Percentage Problems",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Grade 7 Unit 5 Block 2",
+      "substandards": [
+        {
+          "code": "7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0. For example, a hydrogen atom has 0 charge because its two constituents are oppositely charged."
+        },
+        {
+          "code": "7.NS.1b",
+          "text": "Understand p + q as the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Grade 7 Unit 5 Block 3",
+      "substandards": [
+        {
+          "code": "7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0. For example, a hydrogen atom has 0 charge because its two constituents are oppositely charged."
+        },
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Grade 7 Unit 5 Block 4",
+      "substandards": [
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts."
+        },
+        {
+          "code": "7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Grade 7 Unit 5 Block 5",
+      "substandards": [
+        {
+          "code": "7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers."
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Grade 7 Unit 5 Block 6",
+      "substandards": [
+        {
+          "code": "7.NS.2b",
+          "text": "Understand that integers can be divided, provided that the divisor is not zero, and every quotient of integers (with non-zero divisor) is a rational number. If p and q are integers, then -(p/q) = (-p)/q = p/(-q). Interpret quotients of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers."
+        },
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms.",
+          "tag": "Building On"
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Grade 7 Unit 5 Block 7",
+      "substandards": [
+        {
+          "code": "7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers."
+        },
+        {
+          "code": "7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Grade 7 Unit 5 Block 8",
+      "substandards": [
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Grade 7 Unit 5 Block 9",
+      "substandards": [
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 1: Interpreting Negative Numbers",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.1b",
+          "text": "Understand p + q as the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        },
+        {
+          "code": "7.NS.1b",
+          "text": "Understand p + q as the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts.",
+          "tag": "Building Towards"
+        },
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+          "tag": "Building Towards"
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 2: Changing Temperatures",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0. For example, a hydrogen atom has 0 charge because its two constituents are oppositely charged."
+        },
+        {
+          "code": "7.NS.1b",
+          "text": "Understand p + q as the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.1b",
+          "text": "Understand p + q as the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts."
+        },
+        {
+          "code": "7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0. For example, a hydrogen atom has 0 charge because its two constituents are oppositely charged."
+        },
+        {
+          "code": "7.NS.1b",
+          "text": "Understand p + q as the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 3: Changing Elevation",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0. For example, a hydrogen atom has 0 charge because its two constituents are oppositely charged."
+        },
+        {
+          "code": "7.NS.1b",
+          "text": "Understand p + q as the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers."
+        },
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts."
+        },
+        {
+          "code": "7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0. For example, a hydrogen atom has 0 charge because its two constituents are oppositely charged."
+        },
+        {
+          "code": "7.NS.1b",
+          "text": "Understand p + q as the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers."
+        },
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 4: Money and Debts",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.1a",
+          "text": "Describe situations in which opposite quantities combine to make 0. For example, a hydrogen atom has 0 charge because its two constituents are oppositely charged."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 5: Representing Subtraction",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts."
+        },
+        {
+          "code": "7.NS.1b",
+          "text": "Understand p + q as the number located a distance |q| from p, in the positive or negative direction depending on whether q is positive or negative. Show that a number and its opposite have a sum of 0 (are additive inverses). Interpret sums of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 6: Finding Differences",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts."
+        },
+        {
+          "code": "7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers."
+        },
+        {
+          "code": "7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 7: Adding and Subtracting to Solve Problems",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts."
+        },
+        {
+          "code": "7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 8: Multiplying Rational Numbers (Part 1)",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 9: Multiplying Rational Numbers (Part 2)",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers."
+        },
+        {
+          "code": "7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers."
+        },
+        {
+          "code": "6.RP.3b",
+          "text": "Solve unit rate problems including those involving unit pricing and constant speed. For example, if it took 7 hours to mow 4 lawns, then at that rate, how many lawns could be mowed in 35 hours? At what rate were lawns being mowed?",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 10: Multiply!",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers."
+        },
+        {
+          "code": "7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers."
+        },
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 11: Dividing Rational Numbers",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.2b",
+          "text": "Understand that integers can be divided, provided that the divisor is not zero, and every quotient of integers (with non-zero divisor) is a rational number. If p and q are integers, then -(p/q) = (-p)/q = p/(-q). Interpret quotients of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.NS.2b",
+          "text": "Understand that integers can be divided, provided that the divisor is not zero, and every quotient of integers (with non-zero divisor) is a rational number. If p and q are integers, then -(p/q) = (-p)/q = p/(-q). Interpret quotients of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 12: Negative Rates",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 13: Expressions with Rational Numbers",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.1d",
+          "text": "Apply properties of operations as strategies to add and subtract rational numbers."
+        },
+        {
+          "code": "7.NS.2c",
+          "text": "Apply properties of operations as strategies to multiply and divide rational numbers."
+        },
+        {
+          "code": "7.NS.2a",
+          "text": "Understand that multiplication is extended from fractions to rational numbers by requiring that operations continue to satisfy the properties of operations, particularly the distributive property, leading to products such as (-1)(-1) = 1 and the rules for multiplying signed numbers. Interpret products of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 14: Solving Problems with Rational Numbers",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 15: Solving Equations with Rational Numbers",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.2b",
+          "text": "Understand that integers can be divided, provided that the divisor is not zero, and every quotient of integers (with non-zero divisor) is a rational number. If p and q are integers, then -(p/q) = (-p)/q = p/(-q). Interpret quotients of rational numbers by describing real-world contexts."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 16: Representing Contexts with Equations",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Rational Number Arithmetic",
+      "lesson": "Lesson 17: The Stock Market",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Grade 7 Unit 6 Block 1",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building On"
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Grade 7 Unit 6 Block 3",
+      "substandards": [
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Grade 7 Unit 6 Block 4",
+      "substandards": [
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Grade 7 Unit 6 Block 5",
+      "substandards": [
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Grade 7 Unit 6 Block 6",
+      "substandards": [
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Grade 7 Unit 6 Block 7",
+      "substandards": [
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Grade 7 Unit 6 Block 8",
+      "substandards": [
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Grade 7 Unit 6 Block 9",
+      "substandards": [
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Grade 7 Unit 6 Block 10",
+      "substandards": [
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 1: Relationships between Quantities",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building On"
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 2: Reasoning about Contexts with Tape Diagrams",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 3: Reasoning about Equations with Tape Diagrams",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 4: Reasoning about Equations and Tape Diagrams (Part 1)",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EEI.4b",
+          "text": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 5: Reasoning about Equations and Tape Diagrams (Part 2)",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EEI.4b",
+          "text": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 6: Distinguishing between Two Types of Situations",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 7: Reasoning about Solving Equations (Part 1)",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EEI.4b",
+          "text": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 8: Reasoning about Solving Equations (Part 2)",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EEI.4b",
+          "text": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 9: Dealing with Negative Numbers",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EEI.4b",
+          "text": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 10: Different Options for Solving One Equation",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EEI.4b",
+          "text": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 11: Using Equations to Solve Problems",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EEI.4b",
+          "text": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 12: Solving Problems about Percent Increase or Decrease",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EEI.3a",
+          "text": "Convert between equivalent forms of the same number."
+        },
+        {
+          "code": "7.EEI.4b",
+          "text": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 13: Reintroducing Inequalities",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 14: Finding Solutions to Inequalities in Context",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions."
+        },
+        {
+          "code": "7.EEI.4c",
+          "text": "Write, solve and/or graph inequalities of the form px + q > r or px + q < r, where p, q and r are rational numbers."
+        },
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 15: Efficiently Solving Inequalities",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 16: Interpreting Inequalities",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions."
+        },
+        {
+          "code": "7.EEI.4c",
+          "text": "Write, solve and/or graph inequalities of the form px + q > r or px + q < r, where p, q and r are rational numbers."
+        },
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 17: Modeling with Inequalities",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions."
+        },
+        {
+          "code": "7.EEI.4c",
+          "text": "Write, solve and/or graph inequalities of the form px + q > r or px + q < r, where p, q and r are rational numbers."
+        },
+        {
+          "code": "7.EE.4b",
+          "text": "Solve word problems leading to inequalities of the form px + q > r or px + q < r, where p, q, and r are specific rational numbers. Graph the solution set of the inequality and interpret it in the context of the problem. For example: As a salesperson, you are paid $50 per week plus $3 per sale. This week you want your pay to be at least $100. Write an inequality for the number of sales you need to make, and describe the solutions."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 18: Subtraction in Equivalent Expressions",
+      "substandards": [
+        {
+          "code": "7.NS.1c",
+          "text": "Understand subtraction of rational numbers as adding the additive inverse, p - q = p + (-q). Show that the distance between two rational numbers on the number line is the absolute value of their difference, and apply this principle in real-world contexts."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 19: Expanding and Factoring",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 20: Combining Like Terms (Part 1)",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 21: Combining Like Terms (Part 2)",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "6.EE.2c",
+          "text": "Evaluate expressions at specific values of their variables. Include expressions that arise from formulas used in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order when there are no parentheses to specify a particular order (Order of Operations). For example, use the formulas V = s^3 and A = 6 s^2 to find the volume and surface area of a cube with sides of length s = 1/2.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Expressions, Equations, and Inequalities",
+      "lesson": "Lesson 22: Applications of Expressions",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Angles, Triangles, and Prisms",
+      "lesson": "Lesson 5: Using Equations to Solve for Unknown Angles",
+      "substandards": [
+        {
+          "code": "7.EEI.4b",
+          "text": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Angles, Triangles, and Prisms",
+      "lesson": "Lesson 6: Building Polygons (Part 1)",
+      "substandards": [
+        {
+          "code": "7.GM.2b",
+          "text": "Construct special quadrilaterals given specific parameters."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Angles, Triangles, and Prisms",
+      "lesson": "Lesson 7: Building Polygons (Part 2)",
+      "substandards": [
+        {
+          "code": "7.GM.2b",
+          "text": "Construct special quadrilaterals given specific parameters."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Angles, Triangles, and Prisms",
+      "lesson": "Lesson 9: Drawing Triangles (Part 1)",
+      "substandards": [
+        {
+          "code": "7.GM.2a",
+          "text": "Determine if provided constraints will create a unique triangle through construction."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Angles, Triangles, and Prisms",
+      "lesson": "Lesson 10: Drawing Triangles (Part 2)",
+      "substandards": [
+        {
+          "code": "7.GM.2a",
+          "text": "Determine if provided constraints will create a unique triangle through construction."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Angles, Triangles, and Prisms",
+      "lesson": "Lesson 13: Decomposing Bases for Area",
+      "substandards": [
+        {
+          "code": "7.GM.6a",
+          "text": "Find the area of triangles, quadrilaterals and other polygons composed of triangles and rectangles."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Angles, Triangles, and Prisms",
+      "lesson": "Lesson 14: Surface Area of Right Prisms",
+      "substandards": [
+        {
+          "code": "7.GM.6b",
+          "text": "Find the volume and surface area of prisms, pyramids and cylinders."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Angles, Triangles, and Prisms",
+      "lesson": "Lesson 15: Distinguishing Volume and Surface Area",
+      "substandards": [
+        {
+          "code": "7.GM.6b",
+          "text": "Find the volume and surface area of prisms, pyramids and cylinders."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Angles, Triangles, and Prisms",
+      "lesson": "Lesson 16: Applying Volume and Surface Area",
+      "substandards": [
+        {
+          "code": "7.GM.6b",
+          "text": "Find the volume and surface area of prisms, pyramids and cylinders."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Grade 7 Unit 8 Block 2",
+      "substandards": [
+        {
+          "code": "7.SP.7a",
+          "text": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of events. For example, if a student is selected at random from a class, find the probability that Jane will be selected and the probability that a girl will be selected."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Grade 7 Unit 8 Block 3",
+      "substandards": [
+        {
+          "code": "7.SP.7b",
+          "text": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process. For example, find the approximate probability that a spinning penny will land heads up or that a tossed paper cup will land open-end down. Do the outcomes for the spinning penny appear to be equally likely based on the observed frequencies?"
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Grade 7 Unit 8 Block 4",
+      "substandards": [
+        {
+          "code": "7.SP.7b",
+          "text": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process. For example, find the approximate probability that a spinning penny will land heads up or that a tossed paper cup will land open-end down. Do the outcomes for the spinning penny appear to be equally likely based on the observed frequencies?"
+        },
+        {
+          "code": "7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events. For example, use random digits as a simulation tool to approximate the answer to the question: If 40% of donors have type A blood, what is the probability that it will take at least 4 donors to find one with type A blood?"
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Grade 7 Unit 8 Block 5",
+      "substandards": [
+        {
+          "code": "7.SP.8a",
+          "text": "Understand that, just as with simple events, the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs."
+        },
+        {
+          "code": "7.SP.8b",
+          "text": "Represent sample spaces for compound events using methods such as organized lists, tables and tree diagrams. For an event described in everyday language (e.g., \"rolling double sixes\"), identify the outcomes in the sample space which compose the event."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Grade 7 Unit 8 Block 6",
+      "substandards": [
+        {
+          "code": "7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events. For example, use random digits as a simulation tool to approximate the answer to the question: If 40% of donors have type A blood, what is the probability that it will take at least 4 donors to find one with type A blood?"
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Grade 7 Unit 8 Block 9",
+      "substandards": [
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Grade 7 Unit 8 Block 10",
+      "substandards": [
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 2: Chance Experiments",
+      "substandards": [
+        {
+          "code": "7.DSP.6b",
+          "text": "Perform experiments that model theoretical probability."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 3: What Are Probabilities?",
+      "substandards": [
+        {
+          "code": "7.SP.7a",
+          "text": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of events. For example, if a student is selected at random from a class, find the probability that Jane will be selected and the probability that a girl will be selected."
+        },
+        {
+          "code": "7.DSP.5a",
+          "text": "Determine probabilities of simple events."
+        },
+        {
+          "code": "7.DSP.5b",
+          "text": "Understand that the probability of a chance event is a number between 0 and 1 that expresses the likelihood of the event occurring."
+        },
+        {
+          "code": "7.DSP.7a",
+          "text": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of events."
+        },
+        {
+          "code": "7.SP.7a",
+          "text": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of events. For example, if a student is selected at random from a class, find the probability that Jane will be selected and the probability that a girl will be selected."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 4: Estimating Probabilities Through Repeated Experiments",
+      "substandards": [
+        {
+          "code": "7.SP.7b",
+          "text": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process. For example, find the approximate probability that a spinning penny will land heads up or that a tossed paper cup will land open-end down. Do the outcomes for the spinning penny appear to be equally likely based on the observed frequencies?"
+        },
+        {
+          "code": "7.DSP.5a",
+          "text": "Determine probabilities of simple events."
+        },
+        {
+          "code": "7.DSP.5b",
+          "text": "Understand that the probability of a chance event is a number between 0 and 1 that expresses the likelihood of the event occurring."
+        },
+        {
+          "code": "7.DSP.7b",
+          "text": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process."
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 5: More Estimating Probabilities",
+      "substandards": [
+        {
+          "code": "7.SP.7b",
+          "text": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process. For example, find the approximate probability that a spinning penny will land heads up or that a tossed paper cup will land open-end down. Do the outcomes for the spinning penny appear to be equally likely based on the observed frequencies?"
+        },
+        {
+          "code": "7.DSP.5a",
+          "text": "Determine probabilities of simple events."
+        },
+        {
+          "code": "7.DSP.5b",
+          "text": "Understand that the probability of a chance event is a number between 0 and 1 that expresses the likelihood of the event occurring."
+        },
+        {
+          "code": "7.DSP.6a",
+          "text": "Predict outcomes using theoretical probability."
+        },
+        {
+          "code": "7.DSP.6c",
+          "text": "Compare theoretical and experimental probabilities."
+        },
+        {
+          "code": "7.SP.7b",
+          "text": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process. For example, find the approximate probability that a spinning penny will land heads up or that a tossed paper cup will land open-end down. Do the outcomes for the spinning penny appear to be equally likely based on the observed frequencies?"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 6: Estimating Probabilities Using Simulation",
+      "substandards": [
+        {
+          "code": "7.SP.7b",
+          "text": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process. For example, find the approximate probability that a spinning penny will land heads up or that a tossed paper cup will land open-end down. Do the outcomes for the spinning penny appear to be equally likely based on the observed frequencies?"
+        },
+        {
+          "code": "7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events. For example, use random digits as a simulation tool to approximate the answer to the question: If 40% of donors have type A blood, what is the probability that it will take at least 4 donors to find one with type A blood?"
+        },
+        {
+          "code": "7.DSP.6b",
+          "text": "Perform experiments that model theoretical probability."
+        },
+        {
+          "code": "7.DSP.7b",
+          "text": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process."
+        },
+        {
+          "code": "7.DSP.8b",
+          "text": "Design and use a simulation to generate frequencies for compound events."
+        },
+        {
+          "code": "7.SP.7b",
+          "text": "Develop a probability model (which may not be uniform) by observing frequencies in data generated from a chance process. For example, find the approximate probability that a spinning penny will land heads up or that a tossed paper cup will land open-end down. Do the outcomes for the spinning penny appear to be equally likely based on the observed frequencies?"
+        },
+        {
+          "code": "7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events. For example, use random digits as a simulation tool to approximate the answer to the question: If 40% of donors have type A blood, what is the probability that it will take at least 4 donors to find one with type A blood?"
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 7: Simulating Multi-step Experiments",
+      "substandards": [
+        {
+          "code": "7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events. For example, use random digits as a simulation tool to approximate the answer to the question: If 40% of donors have type A blood, what is the probability that it will take at least 4 donors to find one with type A blood?"
+        },
+        {
+          "code": "7.DSP.8b",
+          "text": "Design and use a simulation to generate frequencies for compound events."
+        },
+        {
+          "code": "7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events. For example, use random digits as a simulation tool to approximate the answer to the question: If 40% of donors have type A blood, what is the probability that it will take at least 4 donors to find one with type A blood?"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 8: Keeping Track of All Possible Outcomes",
+      "substandards": [
+        {
+          "code": "7.SP.8b",
+          "text": "Represent sample spaces for compound events using methods such as organized lists, tables and tree diagrams. For an event described in everyday language (e.g., \"rolling double sixes\"), identify the outcomes in the sample space which compose the event."
+        },
+        {
+          "code": "7.DSP.8a",
+          "text": "Represent the sample space of a compound event."
+        },
+        {
+          "code": "7.SP.8b",
+          "text": "Represent sample spaces for compound events using methods such as organized lists, tables and tree diagrams. For an event described in everyday language (e.g., \"rolling double sixes\"), identify the outcomes in the sample space which compose the event."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 9: Multi-step Experiments",
+      "substandards": [
+        {
+          "code": "7.SP.8a",
+          "text": "Understand that, just as with simple events, the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs."
+        },
+        {
+          "code": "7.SP.8b",
+          "text": "Represent sample spaces for compound events using methods such as organized lists, tables and tree diagrams. For an event described in everyday language (e.g., \"rolling double sixes\"), identify the outcomes in the sample space which compose the event."
+        },
+        {
+          "code": "7.DSP.8a",
+          "text": "Represent the sample space of a compound event."
+        },
+        {
+          "code": "7.SP.8a",
+          "text": "Understand that, just as with simple events, the probability of a compound event is the fraction of outcomes in the sample space for which the compound event occurs."
+        },
+        {
+          "code": "7.SP.8b",
+          "text": "Represent sample spaces for compound events using methods such as organized lists, tables and tree diagrams. For an event described in everyday language (e.g., \"rolling double sixes\"), identify the outcomes in the sample space which compose the event."
+        },
+        {
+          "code": "6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (sum, term, product, factor, quotient, coefficient); view one or more parts of an expression as a single entity. For example, describe the expression 2 (8 + 7) as a product of two factors; view (8 + 7) as both a single entity and a sum of two terms.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 10: Designing Simulations",
+      "substandards": [
+        {
+          "code": "7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events. For example, use random digits as a simulation tool to approximate the answer to the question: If 40% of donors have type A blood, what is the probability that it will take at least 4 donors to find one with type A blood?"
+        },
+        {
+          "code": "7.DSP.8b",
+          "text": "Design and use a simulation to generate frequencies for compound events."
+        },
+        {
+          "code": "7.SP.8c",
+          "text": "Design and use a simulation to generate frequencies for compound events. For example, use random digits as a simulation tool to approximate the answer to the question: If 40% of donors have type A blood, what is the probability that it will take at least 4 donors to find one with type A blood?"
+        },
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 12: Larger Populations",
+      "substandards": [
+        {
+          "code": "7.DSP.1a",
+          "text": "Understand that a sample is a subset of a population."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 13: What Makes a Good Sample?",
+      "substandards": [
+        {
+          "code": "7.DSP.1b",
+          "text": "Understand that generalizations from a sample are valid only if the sample is representative of the population."
+        },
+        {
+          "code": "7.DSP.1c",
+          "text": "Understand that random sampling is used to produce representative samples and support valid inferences."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 14: Sampling in a Fair Way",
+      "substandards": [
+        {
+          "code": "7.DSP.1c",
+          "text": "Understand that random sampling is used to produce representative samples and support valid inferences."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 15: Estimating Population Measures of Center",
+      "substandards": [
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 16: Estimating Population Proportions",
+      "substandards": [
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 17: More about Sampling Variability",
+      "substandards": [
+        {
+          "code": "PS.IS.1c",
+          "text": "Explain how changes in confidence level and sample size affect width of the confidence interval and margin of error."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 18: Comparing Populations Using Samples",
+      "substandards": [
+        {
+          "code": "6.SP.5c",
+          "text": "Giving quantitative measures of center (median and/or mean) and variability (interquartile range and/or mean absolute deviation), as well as describing any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Probability and Sampling",
+      "lesson": "Lesson 20: Memory Test",
+      "substandards": [
+        {
+          "code": "7.SP.7a",
+          "text": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of events. For example, if a student is selected at random from a class, find the probability that Jane will be selected and the probability that a girl will be selected."
+        },
+        {
+          "code": "7.DSP.7a",
+          "text": "Develop a uniform probability model by assigning equal probability to all outcomes, and use the model to determine probabilities of events."
+        },
+        {
+          "code": "6.SP.5d",
+          "text": "Relating the choice of measures of center and variability to the shape of the data distribution and the context in which the data were gathered.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Grade 7 Unit 9 Block 2",
+      "substandards": [
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Grade 7 Unit 9 Block 3",
+      "substandards": [
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 1: Cost of a Meal",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 2: Costs of Running a Restaurant",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 3: Restaurant Floor Plan",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        },
+        {
+          "code": "7.GM.4b",
+          "text": "Know and apply the formulas for circumference and area of circles to solve problems."
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        },
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 4: How Crowded Is This Neighborhood?",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 5: Fermi Problems",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 6: More Expressions and Equations",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        },
+        {
+          "code": "7.EEI.4a",
+          "text": "Write and/or solve equations of the form x+p = q and px = q in which p and q are rational numbers."
+        },
+        {
+          "code": "7.EEI.4b",
+          "text": "Write and/or solve two-step equations of the form px + q = r and p(x + q) = r, where p, q and r are rational numbers, and interpret the meaning of the solution in the context of the problem."
+        },
+        {
+          "code": "7.EE.4a",
+          "text": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r, where p, q, and r are specific rational numbers. Solve equations of these forms fluently. Compare an algebraic solution to an arithmetic solution, identifying the sequence of the operations used in each approach. For example, the perimeter of a rectangle is 54 cm. Its length is 6 cm. What is its width?"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 7: Measurement Error",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 8: Deforestation at Scale",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 9: Measuring Long Distances over Uneven Terrain",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 10: Building a Trundle Wheel",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 11: Using a Trundle Wheel to Measure Distances",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "unitName": "Putting it All Together",
+      "lesson": "Lesson 12: Designing a 5K Course",
+      "substandards": [
+        {
+          "code": "Unit Rates in the World",
+          "text": "Solve real world problems using equations and inequalities, and recognize the unit rate within representations."
+        }
+      ]
+    }
+  ]
+}

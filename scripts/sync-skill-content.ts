@@ -6,19 +6,22 @@
  * (.claude/skills/create-worked-example-sg/) to the TypeScript module
  * (src/skills/worked-example/).
  *
- * SOURCE OF TRUTH (Atomic Card-Patterns System):
- *   .claude/skills/create-worked-example-sg/phases/03-generate-slides/card-patterns/
- *     - simple-patterns/ → title-zone, content-box, cfu-answer-card (fill placeholders)
- *     - complex-patterns/ → graph-snippet, annotation-snippet, printable (copy & modify)
- *   .claude/skills/create-worked-example-sg/archived/templates/ → Legacy templates (reference only)
- *   .claude/skills/create-worked-example-sg/reference/*.md
- *   .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/*.md
+ * MANIFEST-BASED SYNC:
+ * - All synced files are explicitly listed in SYNC_MANIFEST
+ * - Script warns when new files are added that aren't in the manifest
+ * - Outputs a clear mapping report
+ *
+ * SOURCE OF TRUTH:
+ *   .claude/skills/create-worked-example-sg/
  *
  * GENERATED OUTPUT:
- *   src/skills/worked-example/content/templates.ts
- *   src/skills/worked-example/content/pedagogy.ts
- *   src/skills/worked-example/content/styling.ts
- *   src/skills/worked-example/content/prompts.ts
+ *   src/skills/worked-example/content/
+ *     - templates.ts (HTML card-patterns)
+ *     - prompts.ts (Phase 1 & 3 instructions)
+ *     - styling.ts (Visual rules, SVG, layout)
+ *     - pedagogy.ts (Teaching principles)
+ *   src/app/api/scm/worked-examples/export-pptx/helpers/
+ *     - region-constants.ts (PPTX region positions)
  *
  * Usage:
  *   npx tsx scripts/sync-skill-content.ts
@@ -33,255 +36,269 @@ const CLI_SKILL_DIR = path.join(ROOT, '.claude/skills/create-worked-example-sg')
 const TS_SKILL_DIR = path.join(ROOT, 'src/skills/worked-example/content');
 
 // ============================================================================
-// TEMPLATE SYNC (PPTX-Compatible)
+// SYNC MANIFEST - All files that should be synced
 // ============================================================================
 
-// Escape backticks and template expressions for safe template literals
+type SyncTarget = 'templates' | 'prompts' | 'styling' | 'pedagogy' | 'regions' | 'skip';
+
+interface ManifestEntry {
+  /** Relative path from CLI_SKILL_DIR */
+  source: string;
+  /** Which output file this syncs to */
+  target: SyncTarget;
+  /** Export name in the target file (for documentation) */
+  exportName?: string;
+  /** Why this file is skipped (if target is 'skip') */
+  skipReason?: string;
+}
+
+const SYNC_MANIFEST: ManifestEntry[] = [
+  // ============================================================================
+  // HTML TEMPLATES → templates.ts
+  // ============================================================================
+  // Simple patterns (fill placeholders)
+  { source: 'phases/03-generate-slides/card-patterns/simple-patterns/title-zone.html', target: 'templates', exportName: 'TITLE_ZONE' },
+  { source: 'phases/03-generate-slides/card-patterns/simple-patterns/content-box.html', target: 'templates', exportName: 'CONTENT_BOX' },
+  { source: 'phases/03-generate-slides/card-patterns/simple-patterns/cfu-answer-card.html', target: 'templates', exportName: 'CFU_ANSWER_CARD' },
+  { source: 'phases/03-generate-slides/card-patterns/simple-patterns/problem-reminder.html', target: 'templates', exportName: 'PROBLEM_REMINDER' },
+  // SVG card (in card-patterns root)
+  { source: 'phases/03-generate-slides/card-patterns/svg-card.html', target: 'templates', exportName: 'SVG_CARD' },
+  // Complex patterns (copy & modify)
+  { source: 'phases/03-generate-slides/card-patterns/complex-patterns/graph-snippet.html', target: 'templates', exportName: 'GRAPH_SNIPPET' },
+  { source: 'phases/03-generate-slides/card-patterns/complex-patterns/annotation-snippet.html', target: 'templates', exportName: 'ANNOTATION_SNIPPET' },
+  { source: 'phases/03-generate-slides/card-patterns/complex-patterns/printable-slide-snippet.html', target: 'templates', exportName: 'PRINTABLE_TEMPLATE' },
+  { source: 'phases/03-generate-slides/card-patterns/complex-patterns/visual-card-layers.html', target: 'templates', exportName: 'VISUAL_CARD_LAYERS' },
+  // Archived templates (legacy, for backward compatibility)
+  { source: 'archived/templates/slide-base.html', target: 'templates', exportName: 'SLIDE_BASE_TEMPLATE' },
+  { source: 'archived/templates/slide-with-cfu.html', target: 'templates', exportName: 'SLIDE_WITH_CFU_TEMPLATE' },
+  { source: 'archived/templates/slide-with-answer.html', target: 'templates', exportName: 'SLIDE_WITH_ANSWER_TEMPLATE' },
+  { source: 'archived/templates/slide-two-column.html', target: 'templates', exportName: 'SLIDE_TWO_COLUMN_TEMPLATE' },
+  { source: 'archived/templates/slide-learning-goal.html', target: 'templates', exportName: 'SLIDE_LEARNING_GOAL_TEMPLATE' },
+  { source: 'archived/templates/slide-practice.html', target: 'templates', exportName: 'SLIDE_PRACTICE_TEMPLATE' },
+  { source: 'archived/templates/slide-with-svg.html', target: 'templates', exportName: 'SLIDE_WITH_SVG_TEMPLATE' },
+
+  // ============================================================================
+  // PHASE 1 & 3 INSTRUCTIONS → prompts.ts
+  // ============================================================================
+  // Phase 1: Problem analysis
+  { source: 'phases/01-collect-and-analyze/analyze-problem.md', target: 'prompts', exportName: 'ANALYZE_PROBLEM_INSTRUCTIONS' },
+  // Phase 3: Slide generation
+  { source: 'phases/03-generate-slides/00-overview.md', target: 'prompts', exportName: 'PHASE3_OVERVIEW' },
+  { source: 'phases/03-generate-slides/01-slide-by-slide.md', target: 'prompts', exportName: 'GENERATE_SLIDES_INSTRUCTIONS' },
+  { source: 'phases/03-generate-slides/02-technical-rules.md', target: 'prompts', exportName: 'TECHNICAL_RULES' },
+  { source: 'phases/03-generate-slides/03-pedagogy.md', target: 'prompts', exportName: 'SLIDE_PEDAGOGY_RULES' },
+  // Checklists
+  { source: 'phases/03-generate-slides/checklists/pre-flight.md', target: 'prompts', exportName: 'PRE_FLIGHT_CHECKLIST' },
+  { source: 'phases/03-generate-slides/checklists/completion.md', target: 'prompts', exportName: 'COMPLETION_CHECKLIST' },
+  // Phase 2: Confirmation (for browser wizard)
+  { source: 'phases/02-confirm-and-plan/index.md', target: 'prompts', exportName: 'PHASE2_CONFIRM_PLAN' },
+
+  // ============================================================================
+  // VISUAL/STYLING RULES → styling.ts
+  // ============================================================================
+  { source: 'reference/styling.md', target: 'styling', exportName: 'STYLING_GUIDE' },
+  { source: 'reference/layout-presets.md', target: 'styling', exportName: 'LAYOUT_PRESETS' },
+  { source: 'reference/pptx-requirements.md', target: 'styling', exportName: 'PPTX_REQUIREMENTS' },
+  { source: 'reference/diagram-patterns.md', target: 'styling', exportName: 'DIAGRAM_PATTERNS' },
+  { source: 'phases/03-generate-slides/04-svg-workflow.md', target: 'styling', exportName: 'SVG_COORDINATE_PLANES' },
+  { source: 'phases/03-generate-slides/visuals/annotation-zones.md', target: 'styling', exportName: 'ANNOTATION_ZONES' },
+  { source: 'phases/01-collect-and-analyze/graph-planning.md', target: 'styling', exportName: 'GRAPH_PLANNING' },
+
+  // ============================================================================
+  // PEDAGOGY → pedagogy.ts
+  // ============================================================================
+  { source: 'reference/pedagogy.md', target: 'pedagogy', exportName: 'PEDAGOGY_RULES' },
+
+  // ============================================================================
+  // REGION POSITIONS → region-constants.ts
+  // ============================================================================
+  { source: 'reference/region-defaults.md', target: 'regions', exportName: 'REGION_DEFAULTS' },
+
+  // ============================================================================
+  // SKIPPED FILES (documented reasons)
+  // ============================================================================
+  { source: 'skill.md', target: 'skip', skipReason: 'CLI entry point, not needed for browser' },
+  { source: 'update-system.md', target: 'skip', skipReason: 'Internal documentation' },
+  { source: 'reference/conciseness-update-plan.md', target: 'skip', skipReason: 'Internal planning doc' },
+  { source: 'phases/01-collect-and-analyze/index.md', target: 'skip', skipReason: 'Phase overview, content in analyze-problem.md' },
+  { source: 'phases/03-generate-slides/card-patterns/README.md', target: 'skip', skipReason: 'Index doc, templates synced individually' },
+  { source: 'phases/04-save-to-database/index.md', target: 'prompts', exportName: 'PHASE4_SAVE_EXPORT' },
+  { source: 'phases/04-save-to-database/optimize-for-export.md', target: 'prompts', exportName: 'OPTIMIZE_FOR_EXPORT' },
+  { source: 'phases/05-updating-decks/index.md', target: 'skip', skipReason: 'Update flow, CLI-only' },
+  { source: 'templates/archived/cfu-toggle-snippet.html', target: 'skip', skipReason: 'Deprecated, use cfu-answer-card.html' },
+  { source: 'templates/archived/answer-toggle-snippet.html', target: 'skip', skipReason: 'Deprecated, use cfu-answer-card.html' },
+  { source: 'archived/templates/graph-snippet.html', target: 'skip', skipReason: 'Moved to card-patterns/complex-patterns/' },
+  { source: 'archived/templates/annotation-snippet.html', target: 'skip', skipReason: 'Moved to card-patterns/complex-patterns/' },
+];
+
+// ============================================================================
+// HELPERS
+// ============================================================================
+
 const escapeForTemplateLiteral = (s: string) => s.replace(/`/g, '\\`').replace(/\${/g, '\\${');
 
-// Helper to read a template file if it exists
-function readTemplateIfExists(templatesDir: string, filename: string): string {
-  const filepath = path.join(templatesDir, filename);
+function readFileIfExists(filepath: string): string {
   if (fs.existsSync(filepath)) {
-    return escapeForTemplateLiteral(fs.readFileSync(filepath, 'utf-8'));
+    return fs.readFileSync(filepath, 'utf-8');
   }
-  console.log(`  ⚠️  Template not found: ${filename}`);
   return '';
 }
 
+function readAndEscape(filepath: string): string {
+  const content = readFileIfExists(filepath);
+  return content ? escapeForTemplateLiteral(content) : '';
+}
+
+function getManifestEntries(target: SyncTarget): ManifestEntry[] {
+  return SYNC_MANIFEST.filter(e => e.target === target);
+}
+
+// ============================================================================
+// MANIFEST VALIDATION
+// ============================================================================
+
+function validateManifest(): { missing: string[]; extra: string[] } {
+  // Find all .md and .html files in skill directory
+  const allFiles: string[] = [];
+
+  function walkDir(dir: string, relativeTo: string) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      const relativePath = path.relative(relativeTo, fullPath);
+      if (entry.isDirectory()) {
+        walkDir(fullPath, relativeTo);
+      } else if (entry.name.endsWith('.md') || entry.name.endsWith('.html')) {
+        allFiles.push(relativePath);
+      }
+    }
+  }
+
+  walkDir(CLI_SKILL_DIR, CLI_SKILL_DIR);
+
+  const manifestSources = new Set(SYNC_MANIFEST.map(e => e.source));
+
+  // Files in directory but not in manifest
+  const extra = allFiles.filter(f => !manifestSources.has(f));
+
+  // Files in manifest but not in directory
+  const missing = SYNC_MANIFEST
+    .filter(e => !fs.existsSync(path.join(CLI_SKILL_DIR, e.source)))
+    .map(e => e.source);
+
+  return { missing, extra };
+}
+
+// ============================================================================
+// SYNC FUNCTIONS
+// ============================================================================
+
 function syncTemplates() {
-  // New atomic card-patterns system
-  const cardPatterns = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/card-patterns');
-  const simplePatterns = path.join(cardPatterns, 'simple-patterns');
-  const complexPatterns = path.join(cardPatterns, 'complex-patterns');
-  const archivedTemplates = path.join(CLI_SKILL_DIR, 'archived/templates');
+  const entries = getManifestEntries('templates');
   const outputFile = path.join(TS_SKILL_DIR, 'templates.ts');
 
-  // Read atomic card-patterns (new system)
-  const titleZone = readTemplateIfExists(simplePatterns, 'title-zone.html');
-  const contentBox = readTemplateIfExists(simplePatterns, 'content-box.html');
-  const cfuAnswerCard = readTemplateIfExists(simplePatterns, 'cfu-answer-card.html');
+  // Read all template files
+  const templates: Record<string, string> = {};
+  for (const entry of entries) {
+    const filepath = path.join(CLI_SKILL_DIR, entry.source);
+    const content = readAndEscape(filepath);
+    if (content) {
+      templates[entry.exportName!] = content.trim();
+    } else {
+      console.log(`  ⚠️  Template not found: ${entry.source}`);
+    }
+  }
 
-  // Read svg-card template (directly in card-patterns folder)
-  const svgCard = readTemplateIfExists(cardPatterns, 'svg-card.html');
-
-  // Read complex patterns (copy-and-modify)
-  const graphSnippet = readTemplateIfExists(complexPatterns, 'graph-snippet.html');
-  const annotationSnippet = readTemplateIfExists(complexPatterns, 'annotation-snippet.html');
-  const printable = readTemplateIfExists(complexPatterns, 'printable-slide-snippet.html');
-
-  // Read archived templates for backward compatibility (legacy exports)
-  const slideBase = readTemplateIfExists(archivedTemplates, 'slide-base.html');
-  const slideWithCfu = readTemplateIfExists(archivedTemplates, 'slide-with-cfu.html');
-  const slideWithAnswer = readTemplateIfExists(archivedTemplates, 'slide-with-answer.html');
-  const slideTwoColumn = readTemplateIfExists(archivedTemplates, 'slide-two-column.html');
-  const slideLearningGoal = readTemplateIfExists(archivedTemplates, 'slide-learning-goal.html');
-  const slidePractice = readTemplateIfExists(archivedTemplates, 'slide-practice.html');
-  const slideWithSvg = readTemplateIfExists(archivedTemplates, 'slide-with-svg.html');
-
-  // Generate TypeScript file
   const content = `/**
  * HTML templates for PPTX-compatible worked example slides.
  *
  * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
  *
- * Source of truth (Atomic Card-Patterns System):
- *   .claude/skills/create-worked-example-sg/phases/03-generate-slides/card-patterns/
- *     - simple-patterns/ → title-zone, content-box, cfu-answer-card (fill placeholders)
- *     - complex-patterns/ → graph-snippet, annotation-snippet, printable (copy & modify)
+ * Source of truth: .claude/skills/create-worked-example-sg/
+ * To update: Edit files there, then run: npm run sync-skill-content
  *
- * To update: Edit the HTML files in the source folder, then run:
- *   npx tsx scripts/sync-skill-content.ts
- *
- * PPTX CONSTRAINTS (from pptx.md):
- * - Dimensions: 960×540px (fixed)
- * - Fonts: Arial, Georgia only (no custom fonts)
- * - Layout: .row/.col classes (no inline flexbox)
- * - Theme: Light (white background, dark text)
- * - No JavaScript, no onclick, no animations
- *
- * Shared between:
- * - CLI skill: .claude/skills/create-worked-example-sg/
- * - Browser creator: src/app/scm/workedExamples/create/
+ * Synced files:
+${entries.map(e => ` *   - ${e.source} → ${e.exportName}`).join('\n')}
  */
 
 // ============================================================================
-// ATOMIC CARD-PATTERNS (New System - 11 slides with PPTX animation)
+// ATOMIC CARD-PATTERNS (Current System)
 // ============================================================================
 
-/**
- * Title Zone - Top section of every slide
- * Contains: Badge + Title + Subtitle
- * Workflow: Fill placeholders ({{badge_text}}, {{title}}, {{subtitle}})
- *
- * Source: card-patterns/simple-patterns/title-zone.html
- */
 export const TITLE_ZONE = \`
-${titleZone.trim()}
+${templates['TITLE_ZONE'] || ''}
 \`;
 
-/**
- * Content Box - Main content area
- * Contains: Text, lists, equations, tables
- * Workflow: Fill placeholders
- *
- * Source: card-patterns/simple-patterns/content-box.html
- */
 export const CONTENT_BOX = \`
-${contentBox.trim()}
+${templates['CONTENT_BOX'] || ''}
 \`;
 
-/**
- * CFU/Answer Card - Animated overlays
- * Appears on click in PPTX (PPTX animation)
- * Workflow: Fill placeholders, add data-pptx-region attribute
- *
- * Source: card-patterns/simple-patterns/cfu-answer-card.html
- */
 export const CFU_ANSWER_CARD = \`
-${cfuAnswerCard.trim()}
+${templates['CFU_ANSWER_CARD'] || ''}
 \`;
 
-/**
- * SVG Card - Container for graphs and diagrams
- * Includes layering system for PPTX animations
- * Workflow: Fill placeholders, add SVG content inside layers
- *
- * Source: card-patterns/svg-card.html
- */
+export const PROBLEM_REMINDER = \`
+${templates['PROBLEM_REMINDER'] || ''}
+\`;
+
 export const SVG_CARD = \`
-${svgCard.trim()}
+${templates['SVG_CARD'] || ''}
 \`;
 
-/**
- * Graph Snippet - Complete coordinate plane template
- * Workflow: Copy entire file, modify values, recalculate pixel positions
- *
- * Contains:
- * - Arrow marker definitions for axes and lines
- * - Complete grid with proper alignment
- * - Single "0" at origin
- * - Complete scale labels to the arrows
- * - Example data lines with extension arrows
- * - Layer structure for PPTX export
- *
- * HOW TO USE:
- * 1. Copy the <svg>...</svg> block
- * 2. Adjust X_MAX and Y_MAX for your data
- * 3. Recalculate positions using: pixelX = 40 + (dataX/X_MAX)*220, pixelY = 170 - (dataY/Y_MAX)*150
- *
- * Source: card-patterns/complex-patterns/graph-snippet.html
- */
 export const GRAPH_SNIPPET = \`
-${graphSnippet.trim()}
+${templates['GRAPH_SNIPPET'] || ''}
 \`;
 
-/**
- * Annotation Snippet - Y-intercept labels, arrows, line equations
- * Workflow: Copy elements, recalculate pixel positions
- *
- * Contains:
- * - Font styling rules (font-weight="normal", font-size="9")
- * - Position calculation formula from data values
- * - Arrow marker definition
- * - Examples for y-intercept labels, shift arrows, line equations
- * - Layer structure for PPTX export
- *
- * Source: card-patterns/complex-patterns/annotation-snippet.html
- */
 export const ANNOTATION_SNIPPET = \`
-${annotationSnippet.trim()}
+${templates['ANNOTATION_SNIPPET'] || ''}
 \`;
 
-/**
- * Printable slide template - Use for worksheet slides
- * Workflow: Copy entire file, fill in problem content
- *
- * CRITICAL RULES:
- * 1. ALL practice problems go in ONE slide file with multiple print-page divs
- * 2. Each print-page div = one printed page (8.5in x 11in)
- * 3. Use white background, black text, Times New Roman font for printing
- * 4. Include ONLY: Header, Learning Goal, Problem content - NO strategy reminders
- * 5. NEVER create separate slide files for each problem
- *
- * Source: card-patterns/complex-patterns/printable-slide-snippet.html
- */
 export const PRINTABLE_TEMPLATE = \`
-${printable.trim()}
+${templates['PRINTABLE_TEMPLATE'] || ''}
+\`;
+
+export const VISUAL_CARD_LAYERS = \`
+${templates['VISUAL_CARD_LAYERS'] || ''}
 \`;
 
 // ============================================================================
 // LEGACY TEMPLATES (Archived - for backward compatibility)
 // ============================================================================
 
-/**
- * @deprecated Use atomic card-patterns (TITLE_ZONE, CONTENT_BOX, etc.) instead
- * Base slide template - Foundation for all slides
- *
- * Source: archived/templates/slide-base.html
- */
+/** @deprecated Use atomic card-patterns instead */
 export const SLIDE_BASE_TEMPLATE = \`
-${slideBase.trim()}
+${templates['SLIDE_BASE_TEMPLATE'] || ''}
 \`;
 
-/**
- * @deprecated Use CFU_ANSWER_CARD instead (with PPTX animation)
- * Slide with CFU (Check for Understanding) box visible
- *
- * Source: archived/templates/slide-with-cfu.html
- */
+/** @deprecated Use CFU_ANSWER_CARD instead */
 export const SLIDE_WITH_CFU_TEMPLATE = \`
-${slideWithCfu.trim()}
+${templates['SLIDE_WITH_CFU_TEMPLATE'] || ''}
 \`;
 
-/**
- * @deprecated Use CFU_ANSWER_CARD instead (with PPTX animation)
- * Slide with Answer box visible
- *
- * Source: archived/templates/slide-with-answer.html
- */
+/** @deprecated Use CFU_ANSWER_CARD instead */
 export const SLIDE_WITH_ANSWER_TEMPLATE = \`
-${slideWithAnswer.trim()}
+${templates['SLIDE_WITH_ANSWER_TEMPLATE'] || ''}
 \`;
 
-/**
- * @deprecated Use atomic card-patterns instead
- * Two-column layout slide
- *
- * Source: archived/templates/slide-two-column.html
- */
+/** @deprecated Use atomic card-patterns instead */
 export const SLIDE_TWO_COLUMN_TEMPLATE = \`
-${slideTwoColumn.trim()}
+${templates['SLIDE_TWO_COLUMN_TEMPLATE'] || ''}
 \`;
 
-/**
- * @deprecated Use atomic card-patterns instead
- * Learning Goal slide template
- *
- * Source: archived/templates/slide-learning-goal.html
- */
+/** @deprecated Use atomic card-patterns instead */
 export const SLIDE_LEARNING_GOAL_TEMPLATE = \`
-${slideLearningGoal.trim()}
+${templates['SLIDE_LEARNING_GOAL_TEMPLATE'] || ''}
 \`;
 
-/**
- * @deprecated Use atomic card-patterns instead
- * Practice slide template
- *
- * Source: archived/templates/slide-practice.html
- */
+/** @deprecated Use atomic card-patterns instead */
 export const SLIDE_PRACTICE_TEMPLATE = \`
-${slidePractice.trim()}
+${templates['SLIDE_PRACTICE_TEMPLATE'] || ''}
 \`;
 
-/**
- * @deprecated Use GRAPH_SNIPPET instead
- * Slide with SVG visual
- *
- * Source: archived/templates/slide-with-svg.html
- */
+/** @deprecated Use GRAPH_SNIPPET instead */
 export const SLIDE_WITH_SVG_TEMPLATE = \`
-${slideWithSvg.trim()}
+${templates['SLIDE_WITH_SVG_TEMPLATE'] || ''}
 \`;
 
 // Legacy aliases
@@ -290,32 +307,204 @@ export const ANSWER_TOGGLE_TEMPLATE = SLIDE_WITH_ANSWER_TEMPLATE;
 `;
 
   fs.writeFileSync(outputFile, content);
-  console.log('✅ Synced templates.ts (PPTX-compatible)');
+  console.log(`✅ Synced templates.ts (${entries.length} templates)`);
 }
 
-// ============================================================================
-// PEDAGOGY SYNC
-// ============================================================================
+function syncPrompts() {
+  const entries = getManifestEntries('prompts');
+  const outputFile = path.join(TS_SKILL_DIR, 'prompts.ts');
 
-function syncPedagogy() {
-  const sourceFile = path.join(CLI_SKILL_DIR, 'reference/pedagogy.md');
-  const outputFile = path.join(TS_SKILL_DIR, 'pedagogy.ts');
-
-  if (!fs.existsSync(sourceFile)) {
-    console.log('⚠️  No pedagogy.md found, skipping');
-    return;
+  // Read all prompt files
+  const prompts: Record<string, string> = {};
+  for (const entry of entries) {
+    const filepath = path.join(CLI_SKILL_DIR, entry.source);
+    const content = readAndEscape(filepath);
+    if (content) {
+      prompts[entry.exportName!] = content.trim();
+    } else {
+      console.log(`  ⚠️  Prompt file not found: ${entry.source}`);
+    }
   }
 
-  const markdown = fs.readFileSync(sourceFile, 'utf-8');
+  const content = `/**
+ * Prompt instructions for worked example creation.
+ *
+ * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
+ *
+ * Source of truth: .claude/skills/create-worked-example-sg/
+ * To update: Edit files there, then run: npm run sync-skill-content
+ *
+ * Synced files:
+${entries.map(e => ` *   - ${e.source} → ${e.exportName}`).join('\n')}
+ */
 
-  // Extract specific sections (include the ## header in capture)
-  const fourRulesMatch = markdown.match(/(## The Four Rules[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
-  const cfuPatternsMatch = markdown.match(/(## Check-for-Understanding \(CFU\) Question Patterns[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
-  const slideStructureMatch = markdown.match(/(## Slide Structure[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
+// ============================================================================
+// PHASE 1: ANALYZE PROBLEM
+// ============================================================================
 
-  const fourRules = fourRulesMatch ? fourRulesMatch[1].trim() : '';
-  const cfuPatterns = cfuPatternsMatch ? cfuPatternsMatch[1].trim() : '';
-  const slideStructure = slideStructureMatch ? slideStructureMatch[1].trim() : '';
+export const ANALYZE_PROBLEM_INSTRUCTIONS = \`
+${prompts['ANALYZE_PROBLEM_INSTRUCTIONS'] || ''}
+\`;
+
+// ============================================================================
+// PHASE 2: CONFIRM AND PLAN
+// ============================================================================
+
+export const PHASE2_CONFIRM_PLAN = \`
+${prompts['PHASE2_CONFIRM_PLAN'] || ''}
+\`;
+
+// ============================================================================
+// PHASE 3: GENERATE SLIDES
+// ============================================================================
+
+export const PHASE3_OVERVIEW = \`
+${prompts['PHASE3_OVERVIEW'] || ''}
+\`;
+
+export const GENERATE_SLIDES_INSTRUCTIONS = \`
+${prompts['GENERATE_SLIDES_INSTRUCTIONS'] || ''}
+\`;
+
+export const TECHNICAL_RULES = \`
+${prompts['TECHNICAL_RULES'] || ''}
+\`;
+
+export const SLIDE_PEDAGOGY_RULES = \`
+${prompts['SLIDE_PEDAGOGY_RULES'] || ''}
+\`;
+
+// ============================================================================
+// CHECKLISTS
+// ============================================================================
+
+export const PRE_FLIGHT_CHECKLIST = \`
+${prompts['PRE_FLIGHT_CHECKLIST'] || ''}
+\`;
+
+export const COMPLETION_CHECKLIST = \`
+${prompts['COMPLETION_CHECKLIST'] || ''}
+\`;
+
+// ============================================================================
+// PHASE 4: SAVE & EXPORT
+// ============================================================================
+
+export const PHASE4_SAVE_EXPORT = \`
+${prompts['PHASE4_SAVE_EXPORT'] || ''}
+\`;
+
+export const OPTIMIZE_FOR_EXPORT = \`
+${prompts['OPTIMIZE_FOR_EXPORT'] || ''}
+\`;
+`;
+
+  fs.writeFileSync(outputFile, content);
+  console.log(`✅ Synced prompts.ts (${entries.length} files)`);
+}
+
+function syncStyling() {
+  const entries = getManifestEntries('styling');
+  const outputFile = path.join(TS_SKILL_DIR, 'styling.ts');
+
+  // Read all styling files
+  const styles: Record<string, string> = {};
+  for (const entry of entries) {
+    const filepath = path.join(CLI_SKILL_DIR, entry.source);
+    const content = readAndEscape(filepath);
+    if (content) {
+      styles[entry.exportName!] = content.trim();
+    } else {
+      console.log(`  ⚠️  Styling file not found: ${entry.source}`);
+    }
+  }
+
+  // Extract sections from styling.md for backward compatibility
+  const stylingMd = readFileIfExists(path.join(CLI_SKILL_DIR, 'reference/styling.md'));
+  const colorPaletteMatch = stylingMd.match(/(## Color Palette[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
+  const typographyMatch = stylingMd.match(/(## Typography[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
+  const slideContainerMatch = stylingMd.match(/(## Basic Slide Structure[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
+  const contentBoxesMatch = stylingMd.match(/(## Common Patterns[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
+
+  const content = `/**
+ * Styling guide for PPTX-compatible worked example slides.
+ *
+ * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
+ *
+ * Source of truth: .claude/skills/create-worked-example-sg/
+ * To update: Edit files there, then run: npm run sync-skill-content
+ *
+ * Synced files:
+${entries.map(e => ` *   - ${e.source} → ${e.exportName}`).join('\n')}
+ */
+
+// ============================================================================
+// COMPLETE REFERENCE DOCUMENTS
+// ============================================================================
+
+export const STYLING_GUIDE = \`
+${styles['STYLING_GUIDE'] || ''}
+\`;
+
+export const LAYOUT_PRESETS = \`
+${styles['LAYOUT_PRESETS'] || ''}
+\`;
+
+export const PPTX_REQUIREMENTS = \`
+${styles['PPTX_REQUIREMENTS'] || ''}
+\`;
+
+export const DIAGRAM_PATTERNS = \`
+${styles['DIAGRAM_PATTERNS'] || ''}
+\`;
+
+export const SVG_COORDINATE_PLANES = \`
+${styles['SVG_COORDINATE_PLANES'] || ''}
+\`;
+
+export const ANNOTATION_ZONES = \`
+${styles['ANNOTATION_ZONES'] || ''}
+\`;
+
+export const GRAPH_PLANNING = \`
+${styles['GRAPH_PLANNING'] || ''}
+\`;
+
+// ============================================================================
+// EXTRACTED SECTIONS (backward compatibility)
+// ============================================================================
+
+export const COLOR_PALETTE = \`
+${escapeForTemplateLiteral(colorPaletteMatch ? colorPaletteMatch[1].trim() : '')}
+\`;
+
+export const TYPOGRAPHY = \`
+${escapeForTemplateLiteral(typographyMatch ? typographyMatch[1].trim() : '')}
+\`;
+
+export const SLIDE_CONTAINER = \`
+${escapeForTemplateLiteral(slideContainerMatch ? slideContainerMatch[1].trim() : '')}
+\`;
+
+export const CONTENT_BOXES = \`
+${escapeForTemplateLiteral(contentBoxesMatch ? contentBoxesMatch[1].trim() : '')}
+\`;
+`;
+
+  fs.writeFileSync(outputFile, content);
+  console.log(`✅ Synced styling.ts (${entries.length} files)`);
+}
+
+function syncPedagogy() {
+  const entries = getManifestEntries('pedagogy');
+  const outputFile = path.join(TS_SKILL_DIR, 'pedagogy.ts');
+
+  const pedagogyMd = readFileIfExists(path.join(CLI_SKILL_DIR, 'reference/pedagogy.md'));
+
+  // Extract sections
+  const fourRulesMatch = pedagogyMd.match(/(## The Four Rules[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
+  const cfuPatternsMatch = pedagogyMd.match(/(## Check-for-Understanding \(CFU\) Question Patterns[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
+  const slideStructureMatch = pedagogyMd.match(/(## Slide Structure[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
 
   const content = `/**
  * Pedagogy rules for worked example slides.
@@ -323,324 +512,29 @@ function syncPedagogy() {
  * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
  *
  * Source of truth: .claude/skills/create-worked-example-sg/reference/pedagogy.md
- * To update: Edit the markdown file in the source folder, then run:
- *   npx tsx scripts/sync-skill-content.ts
+ * To update: Edit the file there, then run: npm run sync-skill-content
  */
 
-/**
- * The Four Rules of worked example creation
- */
 export const FOUR_RULES = \`
-${escapeForTemplateLiteral(fourRules)}
+${escapeForTemplateLiteral(fourRulesMatch ? fourRulesMatch[1].trim() : '')}
 \`;
 
-/**
- * CFU (Check for Understanding) patterns
- */
 export const CFU_PATTERNS = \`
-${escapeForTemplateLiteral(cfuPatterns)}
+${escapeForTemplateLiteral(cfuPatternsMatch ? cfuPatternsMatch[1].trim() : '')}
 \`;
 
-/**
- * Slide structure guidelines
- */
 export const SLIDE_STRUCTURE = \`
-${escapeForTemplateLiteral(slideStructure)}
+${escapeForTemplateLiteral(slideStructureMatch ? slideStructureMatch[1].trim() : '')}
 \`;
 
-/**
- * Complete pedagogy document for prompts
- */
 export const PEDAGOGY_RULES = \`
-${escapeForTemplateLiteral(markdown.trim())}
+${escapeForTemplateLiteral(pedagogyMd.trim())}
 \`;
 `;
 
   fs.writeFileSync(outputFile, content);
-  console.log('✅ Synced pedagogy.ts');
+  console.log(`✅ Synced pedagogy.ts`);
 }
-
-// ============================================================================
-// STYLING SYNC
-// ============================================================================
-
-function syncStyling() {
-  const sourceFile = path.join(CLI_SKILL_DIR, 'reference/styling.md');
-  const svgCoordFile = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/visuals/svg-graphs.md');
-  const graphPlanningFile = path.join(CLI_SKILL_DIR, 'phases/01-collect-and-analyze/graph-planning.md');
-  const diagramPatternsFile = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/visuals/diagram-patterns.md');
-  const annotationZonesFile = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/visuals/annotation-zones.md');
-  const layoutPresetsFile = path.join(CLI_SKILL_DIR, 'reference/layout-presets.md');
-  const pptxRequirementsFile = path.join(CLI_SKILL_DIR, 'reference/pptx-requirements.md');
-  const outputFile = path.join(TS_SKILL_DIR, 'styling.ts');
-
-  if (!fs.existsSync(sourceFile)) {
-    console.log('⚠️  No styling.md found, skipping');
-    return;
-  }
-
-  const markdown = fs.readFileSync(sourceFile, 'utf-8');
-
-  // Also read SVG coordinate planes reference (critical for graph alignment)
-  const svgCoordMarkdown = fs.existsSync(svgCoordFile)
-    ? fs.readFileSync(svgCoordFile, 'utf-8')
-    : '';
-
-  // Also read graph planning reference (semantic guidance for scale/annotations)
-  const graphPlanningMarkdown = fs.existsSync(graphPlanningFile)
-    ? fs.readFileSync(graphPlanningFile, 'utf-8')
-    : '';
-
-  // Also read diagram patterns reference (non-graph SVG visuals like tape diagrams, hangers, etc.)
-  const diagramPatternsMarkdown = fs.existsSync(diagramPatternsFile)
-    ? fs.readFileSync(diagramPatternsFile, 'utf-8')
-    : '';
-
-  // Also read annotation zones reference (y-intercept labels, shift arrows, etc.)
-  const annotationZonesMarkdown = fs.existsSync(annotationZonesFile)
-    ? fs.readFileSync(annotationZonesFile, 'utf-8')
-    : '';
-
-  // Also read layout presets reference (full-width, two-column, graph-heavy, etc.)
-  const layoutPresetsMarkdown = fs.existsSync(layoutPresetsFile)
-    ? fs.readFileSync(layoutPresetsFile, 'utf-8')
-    : '';
-
-  // Also read PPTX requirements reference (constraints, fonts, dimensions, etc.)
-  const pptxRequirementsMarkdown = fs.existsSync(pptxRequirementsFile)
-    ? fs.readFileSync(pptxRequirementsFile, 'utf-8')
-    : '';
-
-  // Extract sections from markdown (include the ## header)
-  const colorPaletteMatch = markdown.match(/(## Color Palette[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
-  const typographyMatch = markdown.match(/(## Typography[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
-  const slideContainerMatch = markdown.match(/(## Basic Slide Structure[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
-  const contentBoxesMatch = markdown.match(/(## Common Patterns[\s\S]*?)(?=\n## [A-Z]|---|\n$)/);
-
-  const colorPalette = colorPaletteMatch ? colorPaletteMatch[1].trim() : '';
-  const typography = typographyMatch ? typographyMatch[1].trim() : '';
-  const slideContainer = slideContainerMatch ? slideContainerMatch[1].trim() : '';
-  const contentBoxes = contentBoxesMatch ? contentBoxesMatch[1].trim() : '';
-
-  const content = `/**
- * Styling guide for PPTX-compatible worked example slides.
- *
- * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
- *
- * Source of truth: .claude/skills/create-worked-example-sg/reference/styling.md
- * To update: Edit the markdown file in the source folder, then run:
- *   npx tsx scripts/sync-skill-content.ts
- *
- * PPTX CONSTRAINTS:
- * - Theme: Light (white background, dark text)
- * - Dimensions: 960×540px
- * - Fonts: Arial, Georgia only
- */
-
-/**
- * Color palette for light theme slides (PPTX-compatible)
- */
-export const COLOR_PALETTE = \`
-${escapeForTemplateLiteral(colorPalette)}
-\`;
-
-/**
- * Typography guidelines (web-safe fonts)
- */
-export const TYPOGRAPHY = \`
-${escapeForTemplateLiteral(typography)}
-\`;
-
-/**
- * Slide container structure (960×540px)
- */
-export const SLIDE_CONTAINER = \`
-${escapeForTemplateLiteral(slideContainer)}
-\`;
-
-/**
- * Content box styling (CFU, Answer boxes)
- */
-export const CONTENT_BOXES = \`
-${escapeForTemplateLiteral(contentBoxes)}
-\`;
-
-/**
- * Complete styling guide for prompts
- */
-export const STYLING_GUIDE = \`
-${escapeForTemplateLiteral(markdown.trim())}
-\`;
-
-/**
- * SVG Coordinate Planes Reference
- *
- * CRITICAL: This contains the formulas and pre-calculated pixel tables
- * that ensure grid lines, labels, and data points align correctly.
- *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/svg-graphs.md
- */
-export const SVG_COORDINATE_PLANES = \`
-${escapeForTemplateLiteral(svgCoordMarkdown.trim())}
-\`;
-
-/**
- * Graph Planning Reference
- *
- * Semantic guidance for planning coordinate plane graphs:
- * - How to calculate X_MAX and Y_MAX from equations
- * - How to choose appropriate scales
- * - How to plan annotations (y-intercept shifts, parallel labels, etc.)
- *
- * This should be used BEFORE pixel implementation (SVG_COORDINATE_PLANES).
- *
- * Source: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/graph-planning.md
- */
-export const GRAPH_PLANNING = \`
-${escapeForTemplateLiteral(graphPlanningMarkdown.trim())}
-\`;
-
-/**
- * Diagram Patterns Reference (PRIMARY REFERENCE for non-graph SVGs)
- *
- * Visual structure reference for common middle school math representations:
- * - Double Number Lines (ratios, percentages)
- * - Tape Diagrams (part-whole, comparisons)
- * - Hanger Diagrams (equation solving, balance)
- * - Area Models (multiplication, distributive property)
- * - Input-Output Tables (functions, patterns)
- * - Ratio Tables (equivalent ratios)
- *
- * Based on Illustrative Mathematics (IM) curriculum representations.
- *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/diagram-patterns.md
- */
-export const DIAGRAM_PATTERNS = \`
-${escapeForTemplateLiteral(diagramPatternsMarkdown.trim())}
-\`;
-
-/**
- * Annotation Zones Reference
- *
- * Guide for placing annotations on graphs:
- * - Y-intercept labels and shift arrows
- * - Slope triangles
- * - Line equation labels
- * - Point labels
- *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/visuals/annotation-zones.md
- */
-export const ANNOTATION_ZONES = \`
-${escapeForTemplateLiteral(annotationZonesMarkdown.trim())}
-\`;
-
-/**
- * Layout Presets Reference
- *
- * Standard slide layout patterns:
- * - full-width (learning goal slides)
- * - two-column (step slides with visual)
- * - graph-heavy (graph on right, minimal text)
- *
- * Source: .claude/skills/create-worked-example-sg/reference/layout-presets.md
- */
-export const LAYOUT_PRESETS = \`
-${escapeForTemplateLiteral(layoutPresetsMarkdown.trim())}
-\`;
-
-/**
- * PPTX Requirements Reference
- *
- * Complete PPTX export constraints:
- * - Slide dimensions (960×540px)
- * - Supported fonts (Arial, Georgia)
- * - Color palette
- * - Region positioning
- * - Animation/layer system
- *
- * Source: .claude/skills/create-worked-example-sg/reference/pptx-requirements.md
- */
-export const PPTX_REQUIREMENTS = \`
-${escapeForTemplateLiteral(pptxRequirementsMarkdown.trim())}
-\`;
-`;
-
-  fs.writeFileSync(outputFile, content);
-  console.log('✅ Synced styling.ts');
-}
-
-// ============================================================================
-// PROMPTS SYNC
-// ============================================================================
-
-function syncPrompts() {
-  const outputFile = path.join(TS_SKILL_DIR, 'prompts.ts');
-
-  // Read prompt markdown files from their actual locations in phases/
-  // Phase 1: analyze-problem.md contains problem analysis instructions
-  const analyzePromptPath = path.join(CLI_SKILL_DIR, 'phases/01-collect-and-analyze/analyze-problem.md');
-  // Phase 3: protocol.md contains slide generation instructions (the primary technical reference)
-  const generatePromptPath = path.join(CLI_SKILL_DIR, 'phases/03-generate-slides/protocol.md');
-
-  const analyzePrompt = fs.existsSync(analyzePromptPath)
-    ? escapeForTemplateLiteral(fs.readFileSync(analyzePromptPath, 'utf-8'))
-    : '';
-  const generatePrompt = fs.existsSync(generatePromptPath)
-    ? escapeForTemplateLiteral(fs.readFileSync(generatePromptPath, 'utf-8'))
-    : '';
-
-  const content = `/**
- * Shared prompt instructions for PPTX-compatible worked example creation.
- *
- * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
- *
- * Source of truth:
- *   - .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/analyze-problem.md
- *   - .claude/skills/create-worked-example-sg/phases/03-generate-slides/protocol.md
- *
- * To update: Edit the markdown files in the source folder, then run:
- *   npx tsx scripts/sync-skill-content.ts
- *
- * PPTX CONSTRAINTS (from pptx.md):
- * - Dimensions: 960×540px
- * - Fonts: Arial, Georgia only
- * - Layout: .row/.col classes
- * - No JavaScript, no animations
- *
- * These prompts are used by both:
- * - CLI skill: .claude/skills/create-worked-example-sg/ (reads directly)
- * - Browser creator: src/app/scm/workedExamples/create/ (imports from here)
- */
-
-/**
- * Analyze Problem Instructions
- * Step-by-step guide for analyzing a mastery check question.
- *
- * Source: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/analyze-problem.md
- */
-export const ANALYZE_PROBLEM_INSTRUCTIONS = \`
-${analyzePrompt.trim()}
-\`;
-
-/**
- * Generate Slides Instructions (PPTX-Compatible)
- * Step-by-step guide for creating HTML slides.
- * Includes PPTX constraints, SVG patterns, and validation checklists.
- *
- * Source: .claude/skills/create-worked-example-sg/phases/03-generate-slides/protocol.md
- */
-export const GENERATE_SLIDES_INSTRUCTIONS = \`
-${generatePrompt.trim()}
-\`;
-`;
-
-  fs.writeFileSync(outputFile, content);
-  console.log('✅ Synced prompts.ts (PPTX-compatible)');
-}
-
-// ============================================================================
-// REGION DEFAULTS SYNC
-// ============================================================================
 
 function syncRegionDefaults() {
   const sourceFile = path.join(CLI_SKILL_DIR, 'reference/region-defaults.md');
@@ -654,7 +548,6 @@ function syncRegionDefaults() {
   const markdown = fs.readFileSync(sourceFile, 'utf-8');
 
   // Parse region positions from markdown
-  // Format: region: x, y, w, h
   const regionPattern = /^([\w-]+):\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\s*$/gm;
   const regions: Record<string, { x: number; y: number; w: number; h: number }> = {};
 
@@ -669,19 +562,52 @@ function syncRegionDefaults() {
     };
   }
 
-  // Generate TypeScript
+  // Parse typography from markdown
+  // Format: element: size, weight, color
+  const typographyPattern = /^([\w-]+):\s*(\d+),\s*(bold|regular),\s*([A-Fa-f0-9]{6})\s*$/gm;
+  const typography: Record<string, { size: number; bold: boolean; color: string }> = {};
+
+  while ((match = typographyPattern.exec(markdown)) !== null) {
+    const [, name, size, weight, color] = match;
+    typography[name] = {
+      size: parseInt(size, 10),
+      bold: weight === 'bold',
+      color,
+    };
+  }
+
+  // Parse colors from markdown
+  // Format: name: HEXCOLOR
+  const colorPattern = /^([\w-]+):\s*([A-Fa-f0-9]{6})\s*$/gm;
+  const colors: Record<string, string> = {};
+
+  while ((match = colorPattern.exec(markdown)) !== null) {
+    const [, name, color] = match;
+    // Skip typography entries (which also match this pattern)
+    if (!typography[name]) {
+      colors[name] = color;
+    }
+  }
+
   const regionEntries = Object.entries(regions)
     .map(([name, pos]) => `  '${name}': { x: ${pos.x}, y: ${pos.y}, w: ${pos.w}, h: ${pos.h} }`)
     .join(',\n');
 
+  const typographyEntries = Object.entries(typography)
+    .map(([name, t]) => `  '${name}': { size: ${t.size}, bold: ${t.bold}, color: '${t.color}' }`)
+    .join(',\n');
+
+  const colorEntries = Object.entries(colors)
+    .map(([name, color]) => `  '${name}': '${color}'`)
+    .join(',\n');
+
   const content = `/**
- * Region default positions for PPTX slide layout.
+ * Region default positions, typography, and colors for PPTX slide layout.
  *
  * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
  *
  * Source of truth: .claude/skills/create-worked-example-sg/reference/region-defaults.md
- * To update: Edit the markdown file, then run:
- *   npm run sync-skill-content
+ * To update: Edit the markdown file, then run: npm run sync-skill-content
  */
 
 // Slide dimensions
@@ -694,6 +620,16 @@ export const REGION_DEFAULTS: Record<string, { x: number; y: number; w: number; 
 ${regionEntries}
 };
 
+// Typography (shared between HTML generation and PPTX export)
+export const TYPOGRAPHY: Record<string, { size: number; bold: boolean; color: string }> = {
+${typographyEntries}
+};
+
+// Colors (shared between HTML generation and PPTX export)
+export const COLORS: Record<string, string> = {
+${colorEntries}
+};
+
 // Bounds validation helpers
 export const MAX_RIGHT = SLIDE_WIDTH - MARGIN; // 940
 export const MAX_BOTTOM = SLIDE_HEIGHT; // 540
@@ -704,7 +640,134 @@ export function isWithinBounds(x: number, y: number, w: number, h: number): bool
 `;
 
   fs.writeFileSync(outputFile, content);
-  console.log(`✅ Synced region-constants.ts (${Object.keys(regions).length} regions)`);
+  console.log(`✅ Synced region-constants.ts (${Object.keys(regions).length} regions, ${Object.keys(typography).length} typography, ${Object.keys(colors).length} colors)`);
+}
+
+// ============================================================================
+// AUTO-UPDATE INDEX.TS
+// ============================================================================
+
+function syncIndex() {
+  const indexFile = path.join(ROOT, 'src/skills/worked-example/index.ts');
+
+  // Get all prompt exports from manifest
+  const promptEntries = getManifestEntries('prompts');
+  const promptExports = promptEntries.map(e => e.exportName!);
+
+  const content = `/**
+ * Shared Worked Example Skill Content
+ *
+ * This module re-exports content used by both:
+ * - CLI skill: .claude/skills/create-worked-example-sg/
+ * - Browser creator: src/app/scm/workedExamples/create/
+ *
+ * ⚠️  SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/
+ *
+ * The content files (templates.ts, pedagogy.ts, styling.ts) are AUTO-GENERATED.
+ * To update pedagogy rules, styling, or templates:
+ *   1. Edit files in .claude/skills/create-worked-example-sg/ (templates/ or reference/)
+ *   2. Run: npm run sync-skill-content
+ *   3. The TypeScript files here will be regenerated
+ *
+ * @example
+ * \`\`\`typescript
+ * // In browser creator
+ * import { PEDAGOGY_RULES, STYLING_GUIDE, CFU_TOGGLE_TEMPLATE } from '@/skills/worked-example';
+ *
+ * // In prompts
+ * const systemPrompt = \`\${PEDAGOGY_RULES}\\n\\n\${STYLING_GUIDE}\`;
+ * \`\`\`
+ */
+
+// Pedagogy content
+export {
+  FOUR_RULES,
+  CFU_PATTERNS,
+  SLIDE_STRUCTURE,
+  PEDAGOGY_RULES,
+} from './content/pedagogy';
+
+// Styling content
+export {
+  COLOR_PALETTE,
+  TYPOGRAPHY,
+  SLIDE_CONTAINER,
+  CONTENT_BOXES,
+  STYLING_GUIDE,
+} from './content/styling';
+
+// HTML templates (PPTX-compatible)
+export {
+  SLIDE_BASE_TEMPLATE,
+  SLIDE_WITH_CFU_TEMPLATE,
+  SLIDE_WITH_ANSWER_TEMPLATE,
+  SLIDE_TWO_COLUMN_TEMPLATE,
+  SLIDE_LEARNING_GOAL_TEMPLATE,
+  SLIDE_PRACTICE_TEMPLATE,
+  SLIDE_WITH_SVG_TEMPLATE,
+  PRINTABLE_TEMPLATE,
+  // SVG snippets (copy-paste starting points for graphs)
+  GRAPH_SNIPPET,
+  ANNOTATION_SNIPPET,
+  // Legacy exports (deprecated)
+  CFU_TOGGLE_TEMPLATE,
+  ANSWER_TOGGLE_TEMPLATE,
+} from './content/templates';
+
+// Shared prompt instructions (used by both CLI and browser)
+// ⚠️ AUTO-SYNCED from manifest - all Phase 1-3 instructions
+export {
+${promptExports.map(e => `  ${e},`).join('\n')}
+} from './content/prompts';
+
+// Context-specific instructions
+export {
+  type ExecutionContext,
+  CLI_CONTEXT,
+  BROWSER_CONTEXT,
+  getContextInstructions,
+  COMMON_INSTRUCTIONS,
+} from './context';
+`;
+
+  fs.writeFileSync(indexFile, content);
+  console.log(`✅ Synced index.ts (${promptExports.length} prompt exports)`);
+}
+
+// ============================================================================
+// CHECK CONSUMER IMPORTS
+// ============================================================================
+
+function checkConsumerImports() {
+  const consumerFile = path.join(ROOT, 'src/app/scm/workedExamples/create/lib/prompts.ts');
+
+  if (!fs.existsSync(consumerFile)) {
+    console.log('⚠️  Consumer file not found: lib/prompts.ts');
+    return;
+  }
+
+  const consumerContent = fs.readFileSync(consumerFile, 'utf-8');
+
+  // Get all prompt exports from manifest
+  const promptEntries = getManifestEntries('prompts');
+  const missingImports: string[] = [];
+
+  for (const entry of promptEntries) {
+    const exportName = entry.exportName!;
+    // Check if it's imported (either directly or with alias)
+    if (!consumerContent.includes(exportName)) {
+      missingImports.push(exportName);
+    }
+  }
+
+  if (missingImports.length > 0) {
+    console.log('\n📦 Consumer file missing these imports:');
+    console.log(`   File: src/app/scm/workedExamples/create/lib/prompts.ts`);
+    missingImports.forEach(e => console.log(`   - ${e}`));
+    console.log('\n   To fix: Import and use these exports in your system prompts.');
+  } else {
+    console.log('✅ Consumer file has all prompt imports');
+  }
 }
 
 // ============================================================================
@@ -716,17 +779,60 @@ function main() {
   console.log(`   Source: ${CLI_SKILL_DIR}`);
   console.log(`   Output: ${TS_SKILL_DIR}\n`);
 
+  // Validate manifest first
+  console.log('📋 Validating manifest...');
+  const { missing, extra } = validateManifest();
+
+  if (missing.length > 0) {
+    console.log('\n⚠️  Files in manifest but missing from disk:');
+    missing.forEach(f => console.log(`   - ${f}`));
+  }
+
+  if (extra.length > 0) {
+    console.log('\n⚠️  Files on disk but not in manifest (add to SYNC_MANIFEST):');
+    extra.forEach(f => console.log(`   - ${f}`));
+  }
+
+  if (missing.length === 0 && extra.length === 0) {
+    console.log('   ✅ All files accounted for\n');
+  } else {
+    console.log('');
+  }
+
+  // Print sync mapping
+  console.log('📊 Sync mapping:');
+  const targets = ['templates', 'prompts', 'styling', 'pedagogy', 'regions'] as const;
+  for (const target of targets) {
+    const entries = getManifestEntries(target);
+    console.log(`   ${target}.ts: ${entries.length} files`);
+  }
+  const skipped = getManifestEntries('skip');
+  console.log(`   skipped: ${skipped.length} files\n`);
+
   try {
+    // Sync content files
     syncTemplates();
-    syncPedagogy();
-    syncStyling();
     syncPrompts();
+    syncStyling();
+    syncPedagogy();
     syncRegionDefaults();
 
+    // Auto-update index.ts with all prompt exports
+    syncIndex();
+
+    // Check consumer imports
+    console.log('\n🔍 Checking consumer imports...');
+    checkConsumerImports();
+
     console.log('\n✅ All content synced successfully!');
-    console.log('\n📝 PPTX-compatible templates are now available in the browser wizard.');
-    console.log('   Source of truth: .claude/skills/create-worked-example-sg/');
+    console.log('\n📝 Source of truth: .claude/skills/create-worked-example-sg/');
     console.log('   Edit files there, then run this script to propagate changes.\n');
+
+    // Final warning if there are untracked files
+    if (extra.length > 0) {
+      console.log('⚠️  WARNING: Some files are not tracked in the manifest.');
+      console.log('   Add them to SYNC_MANIFEST in scripts/sync-skill-content.ts\n');
+    }
   } catch (error) {
     console.error('❌ Sync failed:', error);
     process.exit(1);

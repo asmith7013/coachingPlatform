@@ -5,7 +5,7 @@
 **Delegates to:**
 - `card-patterns/simple-patterns/` → Title zones, content boxes, CFU/Answer
 - `card-patterns/complex-patterns/` → SVG graphs, annotations, printable slides
-- `visuals/svg-graphs.md` → Pixel calculation formulas
+- `04-svg-workflow.md` → Pixel calculation formulas
 
 ---
 
@@ -28,7 +28,8 @@
 
 ### For ANY Slide Edit
 ```
-READ: ../03-generate-slides/protocol.md
+READ: ../03-generate-slides/01-slide-by-slide.md
+READ: ../03-generate-slides/02-technical-rules.md
 ```
 
 ### For Text/Content Updates
@@ -41,7 +42,7 @@ READ: ../03-generate-slides/card-patterns/simple-patterns/cfu-answer-card.html
 ### For SVG Graph Updates
 ```
 READ: ../03-generate-slides/card-patterns/complex-patterns/graph-snippet.html
-READ: ../03-generate-slides/visuals/svg-graphs.md
+READ: ../03-generate-slides/04-svg-workflow.md
 ```
 
 ### For Printable Slide Updates (slide-9)
@@ -79,7 +80,7 @@ source .env.local && node .claude/skills/create-worked-example-sg/scripts/sync-t
 **Step 1:** Read these files FIRST:
 ```
 READ: ../03-generate-slides/card-patterns/complex-patterns/graph-snippet.html
-READ: ../03-generate-slides/visuals/svg-graphs.md
+READ: ../03-generate-slides/04-svg-workflow.md
 ```
 
 **Step 2:** Calculate new pixel positions using:
@@ -174,6 +175,6 @@ API: `POST /api/scm/worked-examples/edit-slides`
 | Title/Badge | `simple-patterns/title-zone.html` |
 | Content | `simple-patterns/content-box.html` |
 | CFU/Answer | `simple-patterns/cfu-answer-card.html` |
-| SVG Graph | `complex-patterns/graph-snippet.html` + `visuals/svg-graphs.md` |
+| SVG Graph | `complex-patterns/graph-snippet.html` + `04-svg-workflow.md` |
 | Annotations | `complex-patterns/annotation-snippet.html` |
 | Printable | `complex-patterns/printable-slide-snippet.html` |

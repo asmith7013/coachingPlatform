@@ -4,11 +4,47 @@
 Save the worked example to the database and export to PPTX or Google Slides for classroom use.
 
 ## Output Format
-All slides are **960×540px, light theme** (9 slides). CFU/Answer boxes use PPTX animation. See `03-generate-slides/protocol.md` for technical specs.
+All slides are **960×540px, light theme** (9 slides). CFU/Answer boxes use PPTX animation. See `03-generate-slides/02-technical-rules.md` for technical specs.
 
 ## Prerequisites
 - Phases 1-3 complete
 - All slide HTML generated
+
+---
+
+## Phase 4.0: Optimize for Export (NEW - Run First!)
+
+**Before saving or exporting, optimize slides for better PPTX quality.**
+
+See: **[optimize-for-export.md](./optimize-for-export.md)** for full instructions.
+
+### Quick Summary
+
+The optimization step converts simple SVGs to HTML, resulting in **editable PPTX elements** instead of static images:
+
+| Before Optimization | After Optimization |
+|---------------------|-------------------|
+| SVG rect + text → Screenshot (PNG) | HTML div + p → Native shapes/text |
+| Teacher can't edit | Teacher can move/resize/edit |
+
+### When to Convert SVGs
+
+| SVG Contains | Action |
+|--------------|--------|
+| Only `<rect>`, `<text>`, `<line>`, `<circle>` | **Convert to HTML** |
+| `<path>` with curves, gradients, graphs | Keep as SVG |
+
+### Browser Wizard: Automatic Optimization
+
+The browser wizard automatically runs optimization before export:
+1. Click "Export to Slides"
+2. System analyzes all slides for simple SVGs
+3. Simple SVGs converted to HTML `visual-*` regions
+4. Optimized slides exported to PPTX/Google Slides
+
+### CLI Mode: Manual Optimization
+
+Before saving, review each slide and convert simple SVGs manually following the patterns in `optimize-for-export.md`.
 
 ---
 

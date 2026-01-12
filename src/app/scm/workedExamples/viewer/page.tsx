@@ -3,12 +3,13 @@
 import { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { useClerk } from "@clerk/nextjs";
 import { useWorkedExampleDecks, useGradeUnitPairs, workedExampleDecksKeys } from "../hooks";
 import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { PresentationModal } from "../presentations";
 import { ConfirmationDialog } from "@/components/composed/dialogs/ConfirmationDialog";
-import { ChevronDownIcon, ChevronRightIcon, XMarkIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ChevronRightIcon, XMarkIcon, ArchiveBoxIcon, ArrowPathIcon, ShieldExclamationIcon } from "@heroicons/react/24/outline";
 import { deactivateDeck } from "@/app/actions/worked-examples";
 import Link from "next/link";
 
@@ -128,14 +129,25 @@ const GRADE_OPTIONS = [
   { value: "alg1", label: "Algebra 1", scopeSequenceTag: "Algebra 1" },
 ];
 
+// Grade selection cards for the landing view
+const GRADE_CARDS = [
+  { value: "6", label: "Grade 6", borderColor: "border-blue-300", hoverBg: "hover:bg-blue-50", textColor: "text-blue-700" },
+  { value: "7", label: "Grade 7", borderColor: "border-green-300", hoverBg: "hover:bg-green-50", textColor: "text-green-700" },
+  { value: "8", label: "Grade 8", borderColor: "border-purple-300", hoverBg: "hover:bg-purple-50", textColor: "text-purple-700" },
+  { value: "alg1", label: "Algebra 1", borderColor: "border-orange-300", hoverBg: "hover:bg-orange-50", textColor: "text-orange-700" },
+];
+
 export default function PresentationsList() {
   const [choiceModalDeck, setChoiceModalDeck] = useState<WorkedExampleDeck | null>(null);
   const [deactivateModalDeck, setDeactivateModalDeck] = useState<WorkedExampleDeck | null>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
+  const [showReauthModal, setShowReauthModal] = useState(false);
+  const [permissionError, setPermissionError] = useState<string | null>(null);
   const [openUnits, setOpenUnits] = useState<Set<string>>(new Set()); // Track open accordions - all closed by default
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
+  const clerk = useClerk();
   const openSlug = searchParams.get("view");
   const slideParam = searchParams.get("slide");
   const initialSlide = slideParam ? Math.max(0, parseInt(slideParam, 10) - 1) : 0; // Convert 1-indexed URL to 0-indexed
@@ -249,13 +261,27 @@ export default function PresentationsList() {
         queryClient.invalidateQueries({ queryKey: workedExampleDecksKeys.all });
         setDeactivateModalDeck(null);
       } else {
-        console.error('Failed to deactivate:', result.error);
+        setDeactivateModalDeck(null);
+        // Check if it's a session error (not logged in) vs permission error (not the owner)
+        if (result.error?.includes('logged in')) {
+          setShowReauthModal(true);
+        } else if (result.error?.includes('permission')) {
+          setPermissionError(result.error);
+        } else {
+          console.error('Failed to deactivate:', result.error);
+        }
       }
     } catch (error) {
       console.error('Error deactivating deck:', error);
     } finally {
       setIsDeactivating(false);
     }
+  };
+
+  const handleReauth = async () => {
+    const currentPath = window.location.pathname + window.location.search;
+    await clerk.signOut();
+    window.location.href = `/sign-in?redirect_url=${encodeURIComponent(currentPath)}`;
   };
 
   if (loading) {
@@ -274,42 +300,74 @@ export default function PresentationsList() {
     );
   }
 
+  // Show grade selection when no grade is selected AND no deck is being viewed
+  if (!gradeFilter && !openSlug) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Worked Example Presentations
+          </h1>
+          <p className="text-lg text-gray-600">
+            Select a grade level to browse scaffolded guidance slide decks
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-4xl mx-auto">
+          {GRADE_CARDS.map((grade) => (
+            <button
+              key={grade.value}
+              onClick={() => handleGradeChange(grade.value)}
+              className={`bg-white border-2 ${grade.borderColor} ${grade.hoverBg} rounded-xl shadow-sm p-8 text-center transition-all hover:shadow-md cursor-pointer`}
+            >
+              <div className={`text-2xl font-bold ${grade.textColor}`}>{grade.label}</div>
+            </button>
+          ))}
+        </div>
+
+        <div className="text-center mt-8">
+          <Link
+            href="/scm/workedExamples/deactivated"
+            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArchiveBoxIcon className="w-4 h-4" />
+            View Deactivated
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 flex justify-between items-start">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              {gradeFilter
-                ? GRADE_OPTIONS.find(o => o.value === gradeFilter)?.label || 'Worked Examples'
-                : 'Worked Example Presentations'}
+              {GRADE_OPTIONS.find(o => o.value === gradeFilter)?.label || 'Worked Examples'}
             </h1>
             <p className="text-gray-600">
               Browse and view scaffolded guidance slide decks
             </p>
           </div>
-          <Link
-            href="/scm/workedExamples/deactivated"
-            className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <ArchiveBoxIcon className="w-4 h-4" />
-            View Deactivated
-          </Link>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => handleGradeChange('')}
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+            >
+              ← All Grades
+            </button>
+            <Link
+              href="/scm/workedExamples/deactivated"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ArchiveBoxIcon className="w-4 h-4" />
+              View Deactivated
+            </Link>
+          </div>
         </div>
 
-        {decks.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg mb-4">
-              No presentations found
-            </p>
-            <p className="text-gray-400">
-              Create your first worked example using the skill:
-              <code className="ml-2 px-2 py-1 bg-gray-100 rounded">
-                /create-worked-example-sg
-              </code>
-            </p>
-          </div>
-        ) : filteredDecks.length === 0 ? (
+        {filteredDecks.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg mb-4">
               No presentations found for {GRADE_OPTIONS.find(o => o.value === gradeFilter)?.label || 'selected grade'}
@@ -318,7 +376,7 @@ export default function PresentationsList() {
               onClick={() => handleGradeChange('')}
               className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
             >
-              Show all grades
+              ← Back to all grades
             </button>
           </div>
         ) : (
@@ -536,6 +594,72 @@ export default function PresentationsList() {
         variant="danger"
         isLoading={isDeactivating}
       />
+
+      {/* Permission Error Modal */}
+      {permissionError && (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <ShieldExclamationIcon className="w-5 h-5 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Permission Denied
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">
+                  {permissionError}
+                </p>
+                <div className="mt-4">
+                  <button
+                    onClick={() => setPermissionError(null)}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors cursor-pointer"
+                  >
+                    OK
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Re-auth Modal for session errors */}
+      {showReauthModal && (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                <ArrowPathIcon className="w-5 h-5 text-amber-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Session Needs Refresh
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">
+                  Your session needs to be refreshed to modify this deck.
+                  You&apos;ll be signed out and redirected to sign back in.
+                </p>
+                <div className="mt-4 flex gap-3">
+                  <button
+                    onClick={handleReauth}
+                    className="flex-1 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <ArrowPathIcon className="w-4 h-4" />
+                    Sign In Again
+                  </button>
+                  <button
+                    onClick={() => setShowReauthModal(false)}
+                    className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

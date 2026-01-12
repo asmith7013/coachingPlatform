@@ -2,14 +2,15 @@ import pptxgen from '@bapunhansdah/pptxgenjs';
 import * as cheerio from 'cheerio';
 import { PptxElement } from '../types';
 import { extractColor, extractBgColor, getTextContent } from './utils';
+import { TYPOGRAPHY, COLORS } from '../region-constants';
 
 /**
  * Add a badge (rounded rect with text)
  */
 export function addBadge(slide: pptxgen.Slide, el: PptxElement, x: number, y: number, w: number, h: number): void {
   const $ = cheerio.load(el.content);
-  const bgColor = el.bgColor || extractBgColor($('body').children().first().attr('style')) || '1791E8';
-  const textColor = extractColor($('body').children().first().attr('style')) || 'FFFFFF';
+  const bgColor = el.bgColor || extractBgColor($('body').children().first().attr('style')) || COLORS['primary'];
+  const textColor = extractColor($('body').children().first().attr('style')) || TYPOGRAPHY['badge'].color;
   const text = $('body').text().trim();
 
   slide.addShape('roundRect', {
@@ -19,9 +20,9 @@ export function addBadge(slide: pptxgen.Slide, el: PptxElement, x: number, y: nu
   });
   slide.addText(text, {
     x, y, w, h,
-    fontSize: 11,
+    fontSize: TYPOGRAPHY['badge'].size,
     fontFace: 'Arial',
-    bold: true,
+    bold: TYPOGRAPHY['badge'].bold,
     color: textColor,
     align: 'center',
     valign: 'middle',
@@ -35,13 +36,13 @@ export function addTitle(slide: pptxgen.Slide, el: PptxElement, x: number, y: nu
   const $ = cheerio.load(el.content);
   const text = $('body').text().trim();
   const $first = $('body').children().first();
-  const color = extractColor($first.attr('style')) || '1791E8';
+  const color = extractColor($first.attr('style')) || TYPOGRAPHY['title'].color;
 
   slide.addText(text, {
     x, y, w, h,
-    fontSize: 24,
+    fontSize: TYPOGRAPHY['title'].size,
     fontFace: 'Arial',
-    bold: true,
+    bold: TYPOGRAPHY['title'].bold,
     color,
   });
 }
@@ -53,12 +54,13 @@ export function addSubtitle(slide: pptxgen.Slide, el: PptxElement, x: number, y:
   const $ = cheerio.load(el.content);
   const text = $('body').text().trim();
   const $first = $('body').children().first();
-  const color = extractColor($first.attr('style')) || '1D1D1D';
+  const color = extractColor($first.attr('style')) || TYPOGRAPHY['subtitle'].color;
 
   slide.addText(text, {
     x, y, w, h,
-    fontSize: 14,
+    fontSize: TYPOGRAPHY['subtitle'].size,
     fontFace: 'Arial',
+    bold: TYPOGRAPHY['subtitle'].bold,
     color,
   });
 }
@@ -70,12 +72,13 @@ export function addFootnote(slide: pptxgen.Slide, el: PptxElement, x: number, y:
   const $ = cheerio.load(el.content);
   const text = $('body').text().trim();
   const $first = $('body').children().first();
-  const color = extractColor($first.attr('style')) || '666666';
+  const color = extractColor($first.attr('style')) || TYPOGRAPHY['footnote'].color;
 
   slide.addText(text, {
     x, y, w, h,
-    fontSize: 9,
+    fontSize: TYPOGRAPHY['footnote'].size,
     fontFace: 'Arial',
+    bold: TYPOGRAPHY['footnote'].bold,
     color,
     align: 'right',
   });
@@ -89,13 +92,17 @@ export function addStrategyBadge(slide: pptxgen.Slide, el: PptxElement, x: numbe
 
   slide.addShape('roundRect', {
     x, y, w, h,
-    fill: { color: '1791E8' },
+    fill: { color: COLORS['primary'] },
     rectRadius: 0.15,
   });
   slide.addText(text, {
     x, y, w, h,
-    fontSize: 12, fontFace: 'Arial', bold: true, color: 'FFFFFF',
-    align: 'center', valign: 'middle',
+    fontSize: TYPOGRAPHY['strategy-badge'].size,
+    fontFace: 'Arial',
+    bold: TYPOGRAPHY['strategy-badge'].bold,
+    color: TYPOGRAPHY['strategy-badge'].color,
+    align: 'center',
+    valign: 'middle',
   });
 }
 
@@ -105,12 +112,16 @@ export function addStrategyBadge(slide: pptxgen.Slide, el: PptxElement, x: numbe
 export function addStrategyName(slide: pptxgen.Slide, el: PptxElement, x: number, y: number, w: number, h: number): void {
   const $ = cheerio.load(el.content);
   const text = $('body').text().trim();
-  const color = extractColor($('body').children().first().attr('style')) || '1D1D1D';
+  const color = extractColor($('body').children().first().attr('style')) || TYPOGRAPHY['strategy-name'].color;
 
   slide.addText(text, {
     x, y, w, h,
-    fontSize: 36, fontFace: 'Arial', bold: false, color,
-    align: 'center', valign: 'middle',
+    fontSize: TYPOGRAPHY['strategy-name'].size,
+    fontFace: 'Arial',
+    bold: TYPOGRAPHY['strategy-name'].bold,
+    color,
+    align: 'center',
+    valign: 'middle',
   });
 }
 
@@ -120,12 +131,16 @@ export function addStrategyName(slide: pptxgen.Slide, el: PptxElement, x: number
 export function addStrategySummary(slide: pptxgen.Slide, el: PptxElement, x: number, y: number, w: number, h: number): void {
   const $ = cheerio.load(el.content);
   const text = $('body').text().trim();
-  const color = extractColor($('body').children().first().attr('style')) || '737373';
+  const color = extractColor($('body').children().first().attr('style')) || TYPOGRAPHY['strategy-summary'].color;
 
   slide.addText(text, {
     x, y, w, h,
-    fontSize: 18, fontFace: 'Arial', color,
-    align: 'center', valign: 'top',
+    fontSize: TYPOGRAPHY['strategy-summary'].size,
+    fontFace: 'Arial',
+    bold: TYPOGRAPHY['strategy-summary'].bold,
+    color,
+    align: 'center',
+    valign: 'top',
   });
 }
 
@@ -146,12 +161,13 @@ export function addDefaultText(slide: pptxgen.Slide, el: PptxElement, x: number,
   const text = getTextContent(el.content);
   if (text && !text.includes('{{')) {
     const $ = cheerio.load(el.content);
-    const color = extractColor($('body').children().first().attr('style')) || '1D1D1D';
+    const color = extractColor($('body').children().first().attr('style')) || TYPOGRAPHY['body'].color;
 
     slide.addText(text, {
       x, y, w, h,
-      fontSize: 12,
+      fontSize: TYPOGRAPHY['body'].size,
       fontFace: 'Arial',
+      bold: TYPOGRAPHY['body'].bold,
       color,
       valign: 'top',
     });

@@ -1,0 +1,3356 @@
+{
+  "grade": "6",
+  "source": "/Users/alexsmith/ai-coaching-platform/docs/nyse/standards6.html",
+  "standard_descriptions": {
+    "NY-3.G.2": "Partition shapes into parts with equal areas. Express the area of each part as a unit fraction of the whole.",
+    "NY-6.G.1": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+    "NY-3.MD.5b": "Recognize a plane figure which can be covered without gaps or overlaps by n unit squares is said to have an area of n square units.",
+    "NY-3.MD.7d": "Recognize area as additive. Find areas of figures composed of non-overlapping rectangles, and apply this technique to solve real world problems.",
+    "NY-4.G.2b": "Identify and name all quadrilaterals with 2 pairs of parallel sides as parallelograms.",
+    "NY-4.G.2c": "Identify and name all quadrilaterals with four right angles as rectangles.",
+    "NY-5.G.4": "Classify two-dimensional figures in a hierarchy based on properties.",
+    "NY-6.EE.2a": "Write expressions that record operations with numbers and with letters standing for numbers.",
+    "NY-6.EE.2c": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+    "NY-3.OA.3": "Use multiplication and division within 100 to solve word problems in situations involving equal groups, arrays, and measurement quantities.",
+    "NY-4.G.2a": "Identify and name triangles based on angle size (right, obtuse, acute).",
+    "NY-5.G.3": "Understand that attributes belonging to a category of two-dimensional figures also belong to all subcategories of that category.",
+    "NY-6.G.4": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+    "NY-6.G.2": "Find volumes of right rectangular prisms with fractional edge lengths in the context of solving real-world and mathematical problems.",
+    "NY-4.MD.1": "Know relative sizes of measurement units: ft., in.; km, m, cm. Know the conversion factor and use it to convert measurements in a larger unit in terms of a smaller unit: ft., in.; km, m, cm; hr., min., sec. Given the conversion factor, convert all other measurements within a single system of measurement from a larger unit to a smaller unit. Record measurement equivalents in a two-column table.",
+    "NY-5.MD.3b": "Recognize that a solid figure which can be packed without gaps or overlaps using n unit cubes is said to have a volume of n cubic units.",
+    "NY-5.MD.4": "Measure volumes by counting unit cubes, using cubic cm, cubic in., cubic ft., and improvised units.",
+    "NY-5.MD.5a": "Find the volume of a right rectangular prism with whole-number side lengths by packing it with unit cubes, and show that the volume is the same as would be found by multiplying the edge lengths, equivalently by multiplying the height by the area of the base.",
+    "NY-4.MD.3": "Apply the area and perimeter formulas for rectangles in real world and mathematical problems.",
+    "NY-6.EE.1": "Write and evaluate numerical expressions involving whole-number exponents.",
+    "NY-3.MD.6": "Measure areas by counting unit squares.",
+    "NY-6.RP.1": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+    "NY-6.RP.3": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+    "NY-6.RP.3b": "Solve unit rate problems.",
+    "NY-4.NF.2": "Compare two fractions with different numerators and different denominators. Recognize that comparisons are valid only when the two fractions refer to the same whole. Record the results of comparisons with symbols &gt;, =, or &lt;, and justify the conclusions.",
+    "NY-5.NBT.6": "Find whole-number quotients of whole numbers with up to four-digit dividends and two-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+    "NY-5.NF.3": "Interpret a fraction as division of the numerator by the denominator (a/b = a / b). Solve word problems involving division of whole numbers leading to answers in the form of fractions or mixed numbers.",
+    "NY-6.RP.2": "Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0 (b not equal to zero), and use rate language in the context of a ratio relationship.",
+    "NY-6.RP.3a": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+    "NY-4.NF.4b": "Understand a multiple of a/b as a multiple of 1/b, and use this understanding to multiply a whole number by a fraction.",
+    "NY-3.OA.5": "Apply properties of operations as strategies to multiply and divide.",
+    "NY-5.NF.4a": "Interpret the product a/b * q as a parts of a partition of q into b equal parts; equivalently, as the result of a sequence of operations a * q / b.",
+    "NY-6.RP.3d": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+    "NY-2.MD.8b": "Solve real world and mathematical problems within one dollar involving quarters, dimes, nickels, and pennies, using the ¢ (cent) symbol appropriately.",
+    "NY-5.NBT.3a": "Read and write decimals to thousandths using base-ten numerals, number names, and expanded form.",
+    "NY-6.RP.3c": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+    "NY-5.NF.7a": "Interpret division of a unit fraction by a non-zero whole number, and compute such quotients.",
+    "NY-2.MD.3": "Estimate lengths using units of inches, feet, centimeters, and meters.",
+    "NY-5.MD.1": "Convert among different-sized standard measurement units within a given measurement system when the conversion factor is given. Use these conversions in solving multi-step, real world problems.",
+    "NY-2.MD.2": "Measure the length of an object twice, using different \"length units\" for the two measurements; describe how the two measurements relate to the size of the unit chosen.",
+    "NY-6.NS.1": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+    "NY-5.NF.7b": "Interpret division of a whole number by a unit fraction, and compute such quotients.",
+    "NY-5.NF.4b": "Find the area of a rectangle with fractional side lengths by tiling it with rectangles of the appropriate unit fraction side lengths, and show that the area is the same as would be found by multiplying the side lengths. Multiply fractional side lengths to find areas of rectangles, and represent fraction products as rectangular areas.",
+    "NY-6.EE.2b": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+    "NY-3.OA.2": "Interpret whole-number quotients of whole numbers.",
+    "NY-6.NS.3": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+    "NY-5.NBT.2": "Use whole-number exponents to denote powers of 10. Explain patterns in the number of zeros of the product when multiplying a number by powers of 10, and explain patterns in the placement of the decimal point when a decimal is multiplied or divided by a power of 10.",
+    "NY-5.NBT.7": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+    "NY-4.NBT.5": "Multiply a whole number of up to four digits by a one-digit whole number, and multiply two two-digit numbers, using strategies based on place value and the properties of operations. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+    "NY-4.NBT.6": "Find whole-number quotients and remainders with up to four-digit dividends and one-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+    "NY-6.NS.2": "Fluently divide multi-digit numbers using a standard algorithm.",
+    "NY-6.EE.4": "Identify when two expressions are equivalent.",
+    "NY-5.OA.2": "Write simple expressions that record calculations with numbers, and interpret numerical expressions without evaluating them.",
+    "NY-5.NBT.1": "Recognize that in a multi-digit number, a digit in one place represents 10 times as much as it represents in the place to its right and 110 of what it represents in the place to its left.",
+    "NY-6.EE.5": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+    "NY-6.EE.6": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+    "NY-6.EE.7": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+    "NY-3.MD.7c": "Use tiling to show in a concrete case that the area of a rectangle with whole-number side length a and side length b + c is the sum of a * b and a * c. Use area models to represent the distributive property in mathematical reasoning.",
+    "NY-6.EE.3": "Apply the properties of operations to generate equivalent expressions.",
+    "NY-6.EE.2": "Write, read, and evaluate expressions in which letters stand for numbers.",
+    "NY-6.EE.9": "Use variables to represent two quantities in a real-world problem that change in relationship to one another. Given a verbal context and an equation, identify the dependent variable, in terms of the other quantity, thought of as the independent variable. Analyze the relationship between the dependent and independent variables using graphs and tables, and relate these to the equation.",
+    "NY-6.NS.5": "Understand that positive and negative numbers are used together to describe quantities having opposite directions or values. Use positive and negative numbers to represent quantities in real-world contexts, explaining the meaning of 0 in each situation.",
+    "NY-6.NS.6": "Understand a rational number as a point on the number line. Use number lines and coordinate axes to represent points on a number line and in the coordinate plane with negative number coordinates.",
+    "NY-6.NS.6a": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line. Recognize that the opposite of the opposite of a number is the number itself, and that 0 is its own opposite.",
+    "NY-6.NS.6c": "Find and position integers and other rational numbers on a horizontal or vertical number line. Find and position pairs of integers and other rational numbers on a coordinate plane.",
+    "NY-6.NS.7a": "Interpret statements of inequality as statements about the relative position of two numbers on a number line.",
+    "NY-6.NS.7b": "Write, interpret, and explain statements of order for rational numbers in real-world contexts.",
+    "NY-6.NS.7c": "Understand the absolute value of a rational number as its distance from 0 on the number line. Interpret absolute value as magnitude for a positive or negative quantity in a real-world situation.",
+    "NY-4.NBT.2b": "Compare two multi-digit numbers based on meanings of the digits in each place, using &gt;, =, and &lt; symbols to record the results of comparisons.",
+    "NY-5.NBT.3b": "Compare two decimals to thousandths based on meanings of the digits in each place, using &gt;, =, and &lt; symbols to record the results of comparisons.",
+    "NY-6.NS.7": "Understand ordering and absolute value of rational numbers.",
+    "NY-6.NS.7d": "Distinguish comparisons of absolute value from statements about order.",
+    "NY-6.EE.8": "Write an inequality of the form x &gt; c, x >= c, x <= c, or x &lt; c to represent a constraint or condition in a real-world or mathematical problem. Recognize that inequalities of these forms have infinitely many solutions; represent solutions of such inequalities on a number line.",
+    "NY-5.G.1": "Use a pair of perpendicular number lines, called axes, to define a coordinate system, with the intersection of the lines (the origin) arranged to coincide with the 0 on each line and a given point in the plane located by using an ordered pair of numbers, called its coordinates. Understand that the first number indicates how far to travel from the origin in the direction of one axis, and the second number indicates how far to travel in the direction of the second axis, with the convention that the names of the two axes and the coordinates correspond.",
+    "NY-6.NS.6b": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane. Recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes.",
+    "NY-6.NS.8": "Solve real-world and mathematical problems by graphing points on a coordinate plane. Include use of coordinates and absolute value to find distances between points with the same first coordinate or the same second coordinate.",
+    "NY-6.NS.4": "Find the greatest common factor of two whole numbers less than or equal to 100. Use the distributive property to express a sum of two whole numbers 1-100 with a common factor as a multiple of a sum of two whole numbers with no common factor other than 1. Find the least common multiple of two whole numbers less than or equal to 12.",
+    "NY-6.G.3": "Draw polygons in the coordinate plane given coordinates for the vertices. Use coordinates to find the length of a side joining points with the same first coordinate or the same second coordinate. Apply these techniques in the context of solving real-world and mathematical problems.",
+    "NY-2.MD.9": "Generate measurement data by measuring lengths of several objects to the nearest whole unit, or by making repeated measurements of the same object. Present the measurement data in a line plot, where the horizontal scale is marked off in whole-number units.",
+    "NY-6.SP.4": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+    "NY-5.MD.2": "Make a line plot to display a data set of measurements in fractions of a unit (1/2, 1/4, 1/8). Use operations on fractions for this grade to solve problems involving information presented in line plots.",
+    "NY-6.SP.1a": "Recognize that a statistical question is one that anticipates variability in the data related to the question and accounts for it in the answers.",
+    "NY-6.SP.2": "Understand that a set of quantitative data collected to answer a statistical question has a distribution which can be described by its center, spread, and overall shape.",
+    "NY-6.SP.5a": "Report the number of observations.",
+    "NY-6.SP.5b": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement.",
+    "NY-6.SP.3": "Recognize that a measure of center for a quantitative data set summarizes all of its values with a single number while a measure of variation describes how its values vary with a single number.",
+    "NY-6.SP.5c": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+    "NY-6.SP.5d": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+    "NY-6.SP.5": "Summarize quantitative data sets in relation to their context.",
+    "NY-3.MD.3": "Draw a scaled picture graph and a scaled bar graph to represent a data set with several categories. Solve one- and two-step \"how many more\" and \"how many less\" problems using information presented in a scaled picture graph or a scaled bar graph."
+  },
+  "lessons": [
+    {
+      "unit": 1,
+      "lesson": 1,
+      "lessonTitle": "Tiling the Plane",
+      "standards": [
+        {
+          "code": "NY-3.G.2",
+          "text": "Partition shapes into parts with equal areas. Express the area of each part as a unit fraction of the whole.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 2,
+      "lessonTitle": "Finding Area by Decomposing and Rearranging",
+      "standards": [
+        {
+          "code": "NY-3.MD.5b",
+          "text": "Recognize a plane figure which can be covered without gaps or overlaps by n unit squares is said to have an area of n square units.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 3,
+      "lessonTitle": "Reasoning to Find Area",
+      "standards": [
+        {
+          "code": "NY-3.MD.7d",
+          "text": "Recognize area as additive. Find areas of figures composed of non-overlapping rectangles, and apply this technique to solve real world problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 4,
+      "lessonTitle": "Parallelograms",
+      "standards": [
+        {
+          "code": "NY-4.G.2b",
+          "text": "Identify and name all quadrilaterals with 2 pairs of parallel sides as parallelograms.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.G.2c",
+          "text": "Identify and name all quadrilaterals with four right angles as rectangles.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.G.4",
+          "text": "Classify two-dimensional figures in a hierarchy based on properties.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 5,
+      "lessonTitle": "Bases and Heights of Parallelograms",
+      "standards": [
+        {
+          "code": "NY-6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 6,
+      "lessonTitle": "Area of Parallelograms",
+      "standards": [
+        {
+          "code": "NY-3.OA.3",
+          "text": "Use multiplication and division within 100 to solve word problems in situations involving equal groups, arrays, and measurement quantities.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 7,
+      "lessonTitle": "From Parallelograms to Triangles",
+      "standards": [
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 8,
+      "lessonTitle": "Area of Triangles",
+      "standards": [
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 9,
+      "lessonTitle": "Formula for the Area of a Triangle",
+      "standards": [
+        {
+          "code": "NY-6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 10,
+      "lessonTitle": "Bases and Heights of Triangles",
+      "standards": [
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 11,
+      "lessonTitle": "Polygons",
+      "standards": [
+        {
+          "code": "NY-4.G.2a",
+          "text": "Identify and name triangles based on angle size (right, obtuse, acute).",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.G.2c",
+          "text": "Identify and name all quadrilaterals with four right angles as rectangles.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.G.3",
+          "text": "Understand that attributes belonging to a category of two-dimensional figures also belong to all subcategories of that category.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 12,
+      "lessonTitle": "What is Surface Area?",
+      "standards": [
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 13,
+      "lessonTitle": "Polyhedra",
+      "standards": [
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 14,
+      "lessonTitle": "Nets and Surface Area",
+      "standards": [
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 15,
+      "lessonTitle": "More Nets, More Surface Area",
+      "standards": [
+        {
+          "code": "NY-6.G.2",
+          "text": "Find volumes of right rectangular prisms with fractional edge lengths in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 16,
+      "lessonTitle": "Distinguishing Between Surface Area and Volume",
+      "standards": [
+        {
+          "code": "NY-3.MD.5b",
+          "text": "Recognize a plane figure which can be covered without gaps or overlaps by n unit squares is said to have an area of n square units.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.MD.1",
+          "text": "Know relative sizes of measurement units: ft., in.; km, m, cm. Know the conversion factor and use it to convert measurements in a larger unit in terms of a smaller unit: ft., in.; km, m, cm; hr., min., sec. Given the conversion factor, convert all other measurements within a single system of measurement from a larger unit to a smaller unit. Record measurement equivalents in a two-column table.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.MD.3b",
+          "text": "Recognize that a solid figure which can be packed without gaps or overlaps using n unit cubes is said to have a volume of n cubic units.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.MD.4",
+          "text": "Measure volumes by counting unit cubes, using cubic cm, cubic in., cubic ft., and improvised units.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.MD.5a",
+          "text": "Find the volume of a right rectangular prism with whole-number side lengths by packing it with unit cubes, and show that the volume is the same as would be found by multiplying the edge lengths, equivalently by multiplying the height by the area of the base.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 17,
+      "lessonTitle": "Squares and Cubes",
+      "standards": [
+        {
+          "code": "NY-4.MD.3",
+          "text": "Apply the area and perimeter formulas for rectangles in real world and mathematical problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.MD.5a",
+          "text": "Find the volume of a right rectangular prism with whole-number side lengths by packing it with unit cubes, and show that the volume is the same as would be found by multiplying the edge lengths, equivalently by multiplying the height by the area of the base.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.1",
+          "text": "Write and evaluate numerical expressions involving whole-number exponents.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 18,
+      "lessonTitle": "Surface Area of a Cube",
+      "standards": [
+        {
+          "code": "NY-6.EE.1",
+          "text": "Write and evaluate numerical expressions involving whole-number exponents.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "lesson": 19,
+      "lessonTitle": "All about Tents",
+      "standards": [
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 1,
+      "lessonTitle": "Introducing Ratios and Ratio Language",
+      "standards": [
+        {
+          "code": "NY-3.MD.6",
+          "text": "Measure areas by counting unit squares.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.1",
+          "text": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 2,
+      "lessonTitle": "Representing Ratios with Diagrams",
+      "standards": [
+        {
+          "code": "NY-6.RP.1",
+          "text": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 3,
+      "lessonTitle": "Recipes",
+      "standards": [
+        {
+          "code": "NY-6.RP.1",
+          "text": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 4,
+      "lessonTitle": "Color Mixtures",
+      "standards": [
+        {
+          "code": "NY-6.RP.1",
+          "text": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 5,
+      "lessonTitle": "Defining Equivalent Ratios",
+      "standards": [
+        {
+          "code": "NY-6.RP.1",
+          "text": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 6,
+      "lessonTitle": "Introducing Double Number Line Diagrams",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-3.OA.3",
+          "text": "Use multiplication and division within 100 to solve word problems in situations involving equal groups, arrays, and measurement quantities.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 7,
+      "lessonTitle": "Creating Double Number Line Diagrams",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-4.NF.2",
+          "text": "Compare two fractions with different numerators and different denominators. Recognize that comparisons are valid only when the two fractions refer to the same whole. Record the results of comparisons with symbols &gt;, =, or &lt;, and justify the conclusions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 8,
+      "lessonTitle": "How Much for One?",
+      "standards": [
+        {
+          "code": "NY-5.NBT.6",
+          "text": "Find whole-number quotients of whole numbers with up to four-digit dividends and two-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.3",
+          "text": "Interpret a fraction as division of the numerator by the denominator (a/b = a / b). Solve word problems involving division of whole numbers leading to answers in the form of fractions or mixed numbers.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 9,
+      "lessonTitle": "Constant Speed",
+      "standards": [
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 10,
+      "lessonTitle": "Comparing Situations by Examining Ratios",
+      "standards": [
+        {
+          "code": "NY-6.RP.2",
+          "text": "Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0 (b not equal to zero), and use rate language in the context of a ratio relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 11,
+      "lessonTitle": "Representing Ratios with Tables",
+      "standards": [
+        {
+          "code": "NY-6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 12,
+      "lessonTitle": "Navigating a Table of Equivalent Ratios",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-4.NF.4b",
+          "text": "Understand a multiple of a/b as a multiple of 1/b, and use this understanding to multiply a whole number by a fraction.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 13,
+      "lessonTitle": "Tables and Double Number Line Diagrams",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 14,
+      "lessonTitle": "Solving Equivalent Ratio Problems",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 15,
+      "lessonTitle": "Part-Part-Whole Ratios",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-3.OA.5",
+          "text": "Apply properties of operations as strategies to multiply and divide.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.NF.4b",
+          "text": "Understand a multiple of a/b as a multiple of 1/b, and use this understanding to multiply a whole number by a fraction.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.1",
+          "text": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 16,
+      "lessonTitle": "Solving More Ratio Problems",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "lesson": 17,
+      "lessonTitle": "A Fermi Problem",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-4.NF.4b",
+          "text": "Understand a multiple of a/b as a multiple of 1/b, and use this understanding to multiply a whole number by a fraction.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-5.NF.4a",
+          "text": "Interpret the product a/b * q as a parts of a partition of q into b equal parts; equivalently, as the result of a sequence of operations a * q / b.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.2",
+          "text": "Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0 (b not equal to zero), and use rate language in the context of a ratio relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-2.MD.8b",
+          "text": "Solve real world and mathematical problems within one dollar involving quarters, dimes, nickels, and pennies, using the ¢ (cent) symbol appropriately.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.3a",
+          "text": "Read and write decimals to thousandths using base-ten numerals, number names, and expanded form.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-5.NF.7a",
+          "text": "Interpret division of a unit fraction by a non-zero whole number, and compute such quotients.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.3",
+          "text": "Interpret a fraction as division of the numerator by the denominator (a/b = a / b). Solve word problems involving division of whole numbers leading to answers in the form of fractions or mixed numbers.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 1,
+      "lessonTitle": "Anchoring Units of Measurement",
+      "standards": [
+        {
+          "code": "NY-2.MD.3",
+          "text": "Estimate lengths using units of inches, feet, centimeters, and meters.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.MD.1",
+          "text": "Know relative sizes of measurement units: ft., in.; km, m, cm. Know the conversion factor and use it to convert measurements in a larger unit in terms of a smaller unit: ft., in.; km, m, cm; hr., min., sec. Given the conversion factor, convert all other measurements within a single system of measurement from a larger unit to a smaller unit. Record measurement equivalents in a two-column table.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.MD.1",
+          "text": "Convert among different-sized standard measurement units within a given measurement system when the conversion factor is given. Use these conversions in solving multi-step, real world problems.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 2,
+      "lessonTitle": "Measuring with Different-Size Units",
+      "standards": [
+        {
+          "code": "NY-2.MD.2",
+          "text": "Measure the length of an object twice, using different \"length units\" for the two measurements; describe how the two measurements relate to the size of the unit chosen.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 3,
+      "lessonTitle": "Converting Units",
+      "standards": [
+        {
+          "code": "NY-5.NF.4a",
+          "text": "Interpret the product a/b * q as a parts of a partition of q into b equal parts; equivalently, as the result of a sequence of operations a * q / b.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 4,
+      "lessonTitle": "Comparing Speeds and Prices",
+      "standards": [
+        {
+          "code": "NY-5.NF.3",
+          "text": "Interpret a fraction as division of the numerator by the denominator (a/b = a / b). Solve word problems involving division of whole numbers leading to answers in the form of fractions or mixed numbers.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.2",
+          "text": "Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0 (b not equal to zero), and use rate language in the context of a ratio relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 5,
+      "lessonTitle": "Interpreting Rates",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.2",
+          "text": "Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0 (b not equal to zero), and use rate language in the context of a ratio relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 6,
+      "lessonTitle": "Equivalent Ratios Have the Same Unit Rates",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.2",
+          "text": "Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0 (b not equal to zero), and use rate language in the context of a ratio relationship.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 7,
+      "lessonTitle": "More Rate Comparisons",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 8,
+      "lessonTitle": "Solving Rate Problems",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 9,
+      "lessonTitle": "More about Constant Speed",
+      "standards": [
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 10,
+      "lessonTitle": "What Are Percentages?",
+      "standards": [
+        {
+          "code": "NY-2.MD.8b",
+          "text": "Solve real world and mathematical problems within one dollar involving quarters, dimes, nickels, and pennies, using the ¢ (cent) symbol appropriately.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.3a",
+          "text": "Read and write decimals to thousandths using base-ten numerals, number names, and expanded form.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 11,
+      "lessonTitle": "Representing Percentages with Double Number Line Diagrams",
+      "standards": [
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 12,
+      "lessonTitle": "Representing Percentages in Different Ways",
+      "standards": [
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 13,
+      "lessonTitle": "Benchmark Percentages",
+      "standards": [
+        {
+          "code": "NY-5.NF.7a",
+          "text": "Interpret division of a unit fraction by a non-zero whole number, and compute such quotients.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 14,
+      "lessonTitle": "Solving Percentage Problems",
+      "standards": [
+        {
+          "code": "NY-5.NF.3",
+          "text": "Interpret a fraction as division of the numerator by the denominator (a/b = a / b). Solve word problems involving division of whole numbers leading to answers in the form of fractions or mixed numbers.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 15,
+      "lessonTitle": "Finding This Percent of That",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 16,
+      "lessonTitle": "Finding the Percentage",
+      "standards": [
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "lesson": 17,
+      "lessonTitle": "Painting a Room",
+      "standards": [
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.4",
+          "text": "Represent three-dimensional figures using nets made up of rectangles and triangles, and use the nets to find the surface area of these figures. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "current"
+        },
+        {
+          "code": "NY-5.NF.4a",
+          "text": "Interpret the product a/b * q as a parts of a partition of q into b equal parts; equivalently, as the result of a sequence of operations a * q / b.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.7b",
+          "text": "Interpret division of a whole number by a unit fraction, and compute such quotients.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.7a",
+          "text": "Interpret division of a unit fraction by a non-zero whole number, and compute such quotients.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.4b",
+          "text": "Find the area of a rectangle with fractional side lengths by tiling it with rectangles of the appropriate unit fraction side lengths, and show that the area is the same as would be found by multiplying the side lengths. Multiply fractional side lengths to find areas of rectangles, and represent fraction products as rectangular areas.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.2",
+          "text": "Find volumes of right rectangular prisms with fractional edge lengths in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 1,
+      "lessonTitle": "Size of Divisor and Size of Quotient",
+      "standards": [
+        {
+          "code": "NY-6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 2,
+      "lessonTitle": "Meanings of Division",
+      "standards": [
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "current"
+        },
+        {
+          "code": "NY-3.OA.2",
+          "text": "Interpret whole-number quotients of whole numbers.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.7b",
+          "text": "Interpret division of a whole number by a unit fraction, and compute such quotients.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 3,
+      "lessonTitle": "Interpreting Division Situations",
+      "standards": [
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "current"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 4,
+      "lessonTitle": "How Many Groups? (Part 1)",
+      "standards": [
+        {
+          "code": "NY-5.NF.4a",
+          "text": "Interpret the product a/b * q as a parts of a partition of q into b equal parts; equivalently, as the result of a sequence of operations a * q / b.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.7b",
+          "text": "Interpret division of a whole number by a unit fraction, and compute such quotients.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 5,
+      "lessonTitle": "How Many Groups? (Part 2)",
+      "standards": [
+        {
+          "code": "NY-5.NF.7b",
+          "text": "Interpret division of a whole number by a unit fraction, and compute such quotients.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 6,
+      "lessonTitle": "Using Diagrams to Find the Number of Groups",
+      "standards": [
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 7,
+      "lessonTitle": "What Fraction of a Group?",
+      "standards": [
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 8,
+      "lessonTitle": "How Much in Each Group? (Part 1)",
+      "standards": [
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 9,
+      "lessonTitle": "How Much in Each Group? (Part 2)",
+      "standards": [
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 10,
+      "lessonTitle": "Dividing by Unit and Non-Unit Fractions",
+      "standards": [
+        {
+          "code": "NY-5.NF.7a",
+          "text": "Interpret division of a unit fraction by a non-zero whole number, and compute such quotients.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 11,
+      "lessonTitle": "Using an Algorithm to Divide Fractions",
+      "standards": [
+        {
+          "code": "NY-5.NF.4a",
+          "text": "Interpret the product a/b * q as a parts of a partition of q into b equal parts; equivalently, as the result of a sequence of operations a * q / b.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 12,
+      "lessonTitle": "Fractional Lengths",
+      "standards": [
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 13,
+      "lessonTitle": "Rectangles with Fractional Side Lengths",
+      "standards": [
+        {
+          "code": "NY-5.NF.4b",
+          "text": "Find the area of a rectangle with fractional side lengths by tiling it with rectangles of the appropriate unit fraction side lengths, and show that the area is the same as would be found by multiplying the side lengths. Multiply fractional side lengths to find areas of rectangles, and represent fraction products as rectangular areas.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.2",
+          "text": "Find volumes of right rectangular prisms with fractional edge lengths in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 14,
+      "lessonTitle": "Fractional Lengths in Triangles and Prisms",
+      "standards": [
+        {
+          "code": "NY-6.G.1",
+          "text": "Find area of triangles, trapezoids, and other polygons by composing into rectangles or decomposing into triangles and quadrilaterals. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.G.2",
+          "text": "Find volumes of right rectangular prisms with fractional edge lengths in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 15,
+      "lessonTitle": "Volume of Prisms",
+      "standards": [
+        {
+          "code": "NY-6.G.2",
+          "text": "Find volumes of right rectangular prisms with fractional edge lengths in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 16,
+      "lessonTitle": "Solving Problems Involving Fractions",
+      "standards": [
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "lesson": 17,
+      "lessonTitle": "Fitting Boxes into Boxes",
+      "standards": [
+        {
+          "code": "NY-6.G.2",
+          "text": "Find volumes of right rectangular prisms with fractional edge lengths in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.1",
+          "text": "Interpret and compute quotients of fractions, and solve word problems involving division of fractions by fractions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-5.NBT.3a",
+          "text": "Read and write decimals to thousandths using base-ten numerals, number names, and expanded form.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-5.NBT.2",
+          "text": "Use whole-number exponents to denote powers of 10. Explain patterns in the number of zeros of the product when multiplying a number by powers of 10, and explain patterns in the placement of the decimal point when a decimal is multiplied or divided by a power of 10.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.4b",
+          "text": "Find the area of a rectangle with fractional side lengths by tiling it with rectangles of the appropriate unit fraction side lengths, and show that the area is the same as would be found by multiplying the side lengths. Multiply fractional side lengths to find areas of rectangles, and represent fraction products as rectangular areas.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.NBT.5",
+          "text": "Multiply a whole number of up to four digits by a one-digit whole number, and multiply two two-digit numbers, using strategies based on place value and the properties of operations. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.NBT.6",
+          "text": "Find whole-number quotients and remainders with up to four-digit dividends and one-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.6",
+          "text": "Find whole-number quotients of whole numbers with up to four-digit dividends and two-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.2",
+          "text": "Fluently divide multi-digit numbers using a standard algorithm.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "current"
+        },
+        {
+          "code": "NY-5.OA.2",
+          "text": "Write simple expressions that record calculations with numbers, and interpret numerical expressions without evaluating them.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 1,
+      "lessonTitle": "Using Decimals in a Shopping Context",
+      "standards": [
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 2,
+      "lessonTitle": "Using Diagrams to Represent Addition and Subtraction",
+      "standards": [
+        {
+          "code": "NY-5.NBT.1",
+          "text": "Recognize that in a multi-digit number, a digit in one place represents 10 times as much as it represents in the place to its right and 110 of what it represents in the place to its left.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 3,
+      "lessonTitle": "Adding and Subtracting Decimals with Few Non-Zero Digits",
+      "standards": [
+        {
+          "code": "NY-5.NBT.3a",
+          "text": "Read and write decimals to thousandths using base-ten numerals, number names, and expanded form.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 4,
+      "lessonTitle": "Adding and Subtracting Decimals with Many Non-Zero Digits",
+      "standards": [
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 5,
+      "lessonTitle": "Using Fractions to Multiply Decimals",
+      "standards": [
+        {
+          "code": "NY-5.NBT.2",
+          "text": "Use whole-number exponents to denote powers of 10. Explain patterns in the number of zeros of the product when multiplying a number by powers of 10, and explain patterns in the placement of the decimal point when a decimal is multiplied or divided by a power of 10.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 6,
+      "lessonTitle": "Methods for Multiplying Decimals",
+      "standards": [
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NF.4b",
+          "text": "Find the area of a rectangle with fractional side lengths by tiling it with rectangles of the appropriate unit fraction side lengths, and show that the area is the same as would be found by multiplying the side lengths. Multiply fractional side lengths to find areas of rectangles, and represent fraction products as rectangular areas.",
+          "context": "buildingOn"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 7,
+      "lessonTitle": "Using Diagrams to Represent Multiplication",
+      "standards": [
+        {
+          "code": "NY-4.NBT.5",
+          "text": "Multiply a whole number of up to four digits by a one-digit whole number, and multiply two two-digit numbers, using strategies based on place value and the properties of operations. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 8,
+      "lessonTitle": "Calculating Products of Decimals",
+      "standards": [
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 9,
+      "lessonTitle": "Using Base-Ten Diagrams to Divide",
+      "standards": [
+        {
+          "code": "NY-5.NBT.6",
+          "text": "Find whole-number quotients of whole numbers with up to four-digit dividends and two-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.2",
+          "text": "Fluently divide multi-digit numbers using a standard algorithm.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 10,
+      "lessonTitle": "Using Partial Quotients",
+      "standards": [
+        {
+          "code": "NY-4.NBT.6",
+          "text": "Find whole-number quotients and remainders with up to four-digit dividends and one-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.6",
+          "text": "Find whole-number quotients of whole numbers with up to four-digit dividends and two-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.2",
+          "text": "Fluently divide multi-digit numbers using a standard algorithm.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 11,
+      "lessonTitle": "Using Long Division",
+      "standards": [
+        {
+          "code": "NY-4.NBT.6",
+          "text": "Find whole-number quotients and remainders with up to four-digit dividends and one-digit divisors, using strategies based on place value, the properties of operations, and/or the relationship between multiplication and division. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.2",
+          "text": "Fluently divide multi-digit numbers using a standard algorithm.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 13,
+      "lessonTitle": "Dividing a Decimal by a Decimal",
+      "standards": [
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.NS.2",
+          "text": "Fluently divide multi-digit numbers using a standard algorithm.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 14,
+      "lessonTitle": "Solving Problems Involving Decimals",
+      "standards": [
+        {
+          "code": "NY-5.OA.2",
+          "text": "Write simple expressions that record calculations with numbers, and interpret numerical expressions without evaluating them.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.2",
+          "text": "Fluently divide multi-digit numbers using a standard algorithm.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "lesson": 15,
+      "lessonTitle": "Making and Measuring Boxes",
+      "standards": [
+        {
+          "code": "NY-6.NS.2",
+          "text": "Fluently divide multi-digit numbers using a standard algorithm.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.7",
+          "text": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-3.MD.7c",
+          "text": "Use tiling to show in a concrete case that the area of a rectangle with whole-number side length a and side length b + c is the sum of a * b and a * c. Use area models to represent the distributive property in mathematical reasoning.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.NBT.5",
+          "text": "Multiply a whole number of up to four digits by a one-digit whole number, and multiply two two-digit numbers, using strategies based on place value and the properties of operations. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.3",
+          "text": "Apply the properties of operations to generate equivalent expressions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2",
+          "text": "Write, read, and evaluate expressions in which letters stand for numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.1",
+          "text": "Write and evaluate numerical expressions involving whole-number exponents.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.1",
+          "text": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.9",
+          "text": "Use variables to represent two quantities in a real-world problem that change in relationship to one another. Given a verbal context and an equation, identify the dependent variable, in terms of the other quantity, thought of as the independent variable. Analyze the relationship between the dependent and independent variables using graphs and tables, and relate these to the equation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 1,
+      "lessonTitle": "Tape Diagrams and Equations",
+      "standards": [
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.7",
+          "text": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 2,
+      "lessonTitle": "Truth and Equations",
+      "standards": [
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 3,
+      "lessonTitle": "Staying in Balance",
+      "standards": [
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.7",
+          "text": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 4,
+      "lessonTitle": "Practice Solving Equations",
+      "standards": [
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.7",
+          "text": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 5,
+      "lessonTitle": "Represent Situations with Equations",
+      "standards": [
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.7",
+          "text": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 6,
+      "lessonTitle": "Percentages and Equations",
+      "standards": [
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.7",
+          "text": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 7,
+      "lessonTitle": "Write Expressions with Variables",
+      "standards": [
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 8,
+      "lessonTitle": "Equal and Equivalent",
+      "standards": [
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 9,
+      "lessonTitle": "The Distributive Property, Part 1",
+      "standards": [
+        {
+          "code": "NY-3.MD.7c",
+          "text": "Use tiling to show in a concrete case that the area of a rectangle with whole-number side length a and side length b + c is the sum of a * b and a * c. Use area models to represent the distributive property in mathematical reasoning.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.NBT.5",
+          "text": "Multiply a whole number of up to four digits by a one-digit whole number, and multiply two two-digit numbers, using strategies based on place value and the properties of operations. Illustrate and explain the calculation by using equations, rectangular arrays, and/or area models.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.7",
+          "text": "Using concrete models or drawings and strategies based on place value, properties of operations, and/or the relationship between operations: add and subtract decimals to hundredths; multiply and divide decimals to hundredths. Relate the strategy to a written method and explain the reasoning used.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.3",
+          "text": "Apply the properties of operations to generate equivalent expressions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 10,
+      "lessonTitle": "The Distributive Property, Part 2",
+      "standards": [
+        {
+          "code": "NY-6.EE.2",
+          "text": "Write, read, and evaluate expressions in which letters stand for numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.3",
+          "text": "Apply the properties of operations to generate equivalent expressions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 11,
+      "lessonTitle": "The Distributive Property, Part 3",
+      "standards": [
+        {
+          "code": "NY-6.EE.2",
+          "text": "Write, read, and evaluate expressions in which letters stand for numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.3",
+          "text": "Apply the properties of operations to generate equivalent expressions.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.4",
+          "text": "Identify when two expressions are equivalent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 12,
+      "lessonTitle": "Meaning of Exponents",
+      "standards": [
+        {
+          "code": "NY-6.EE.1",
+          "text": "Write and evaluate numerical expressions involving whole-number exponents.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 13,
+      "lessonTitle": "Expressions with Exponents",
+      "standards": [
+        {
+          "code": "NY-6.EE.1",
+          "text": "Write and evaluate numerical expressions involving whole-number exponents.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 14,
+      "lessonTitle": "Evaluating Expressions with Exponents",
+      "standards": [
+        {
+          "code": "NY-6.EE.1",
+          "text": "Write and evaluate numerical expressions involving whole-number exponents.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 15,
+      "lessonTitle": "Equivalent Exponential Expressions",
+      "standards": [
+        {
+          "code": "NY-6.EE.1",
+          "text": "Write and evaluate numerical expressions involving whole-number exponents.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 16,
+      "lessonTitle": "Two Related Quantities, Part 1",
+      "standards": [
+        {
+          "code": "NY-6.RP.1",
+          "text": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.9",
+          "text": "Use variables to represent two quantities in a real-world problem that change in relationship to one another. Given a verbal context and an equation, identify the dependent variable, in terms of the other quantity, thought of as the independent variable. Analyze the relationship between the dependent and independent variables using graphs and tables, and relate these to the equation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 17,
+      "lessonTitle": "Two Related Quantities, Part 2",
+      "standards": [
+        {
+          "code": "NY-6.EE.9",
+          "text": "Use variables to represent two quantities in a real-world problem that change in relationship to one another. Given a verbal context and an equation, identify the dependent variable, in terms of the other quantity, thought of as the independent variable. Analyze the relationship between the dependent and independent variables using graphs and tables, and relate these to the equation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3b",
+          "text": "Solve unit rate problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 18,
+      "lessonTitle": "More Relationships",
+      "standards": [
+        {
+          "code": "NY-6.EE.2c",
+          "text": "Evaluate expressions given specific values for their variables. Include expressions that arise from formulas in real-world problems. Perform arithmetic operations, including those involving whole-number exponents, in the conventional order (Order of Operations).",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.9",
+          "text": "Use variables to represent two quantities in a real-world problem that change in relationship to one another. Given a verbal context and an equation, identify the dependent variable, in terms of the other quantity, thought of as the independent variable. Analyze the relationship between the dependent and independent variables using graphs and tables, and relate these to the equation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "lesson": 19,
+      "lessonTitle": "Tables, Equations, and Graphs, Oh My!",
+      "standards": [
+        {
+          "code": "NY-6.EE.2",
+          "text": "Write, read, and evaluate expressions in which letters stand for numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.7",
+          "text": "Solve real-world and mathematical problems by writing and solving equations of the form x + p = q; x - p = q; px = q; and x/p = q for cases in which p, q, and x are all nonnegative rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.9",
+          "text": "Use variables to represent two quantities in a real-world problem that change in relationship to one another. Given a verbal context and an equation, identify the dependent variable, in terms of the other quantity, thought of as the independent variable. Analyze the relationship between the dependent and independent variables using graphs and tables, and relate these to the equation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.5",
+          "text": "Understand that positive and negative numbers are used together to describe quantities having opposite directions or values. Use positive and negative numbers to represent quantities in real-world contexts, explaining the meaning of 0 in each situation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.6",
+          "text": "Understand a rational number as a point on the number line. Use number lines and coordinate axes to represent points on a number line and in the coordinate plane with negative number coordinates.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line. Recognize that the opposite of the opposite of a number is the number itself, and that 0 is its own opposite.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line. Find and position pairs of integers and other rational numbers on a coordinate plane.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line. Interpret absolute value as magnitude for a positive or negative quantity in a real-world situation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-4.NBT.2b",
+          "text": "Compare two multi-digit numbers based on meanings of the digits in each place, using &gt;, =, and &lt; symbols to record the results of comparisons.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.3b",
+          "text": "Compare two decimals to thousandths based on meanings of the digits in each place, using &gt;, =, and &lt; symbols to record the results of comparisons.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.7",
+          "text": "Understand ordering and absolute value of rational numbers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-4.NF.2",
+          "text": "Compare two fractions with different numerators and different denominators. Recognize that comparisons are valid only when the two fractions refer to the same whole. Record the results of comparisons with symbols &gt;, =, or &lt;, and justify the conclusions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.7d",
+          "text": "Distinguish comparisons of absolute value from statements about order.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.8",
+          "text": "Write an inequality of the form x &gt; c, x >= c, x <= c, or x &lt; c to represent a constraint or condition in a real-world or mathematical problem. Recognize that inequalities of these forms have infinitely many solutions; represent solutions of such inequalities on a number line.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers.",
+          "context": "current"
+        },
+        {
+          "code": "NY-5.G.1",
+          "text": "Use a pair of perpendicular number lines, called axes, to define a coordinate system, with the intersection of the lines (the origin) arranged to coincide with the 0 on each line and a given point in the plane located by using an ordered pair of numbers, called its coordinates. Understand that the first number indicates how far to travel from the origin in the direction of one axis, and the second number indicates how far to travel in the direction of the second axis, with the convention that the names of the two axes and the coordinates correspond.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane. Recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.8",
+          "text": "Solve real-world and mathematical problems by graphing points on a coordinate plane. Include use of coordinates and absolute value to find distances between points with the same first coordinate or the same second coordinate.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.4",
+          "text": "Find the greatest common factor of two whole numbers less than or equal to 100. Use the distributive property to express a sum of two whole numbers 1-100 with a common factor as a multiple of a sum of two whole numbers with no common factor other than 1. Find the least common multiple of two whole numbers less than or equal to 12.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 1,
+      "lessonTitle": "Positive and Negative Numbers",
+      "standards": [
+        {
+          "code": "NY-6.NS.5",
+          "text": "Understand that positive and negative numbers are used together to describe quantities having opposite directions or values. Use positive and negative numbers to represent quantities in real-world contexts, explaining the meaning of 0 in each situation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.6",
+          "text": "Understand a rational number as a point on the number line. Use number lines and coordinate axes to represent points on a number line and in the coordinate plane with negative number coordinates.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 2,
+      "lessonTitle": "Points on the Number Line",
+      "standards": [
+        {
+          "code": "NY-6.NS.6",
+          "text": "Understand a rational number as a point on the number line. Use number lines and coordinate axes to represent points on a number line and in the coordinate plane with negative number coordinates.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line. Recognize that the opposite of the opposite of a number is the number itself, and that 0 is its own opposite.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line. Find and position pairs of integers and other rational numbers on a coordinate plane.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 3,
+      "lessonTitle": "Comparing Positive and Negative Numbers",
+      "standards": [
+        {
+          "code": "NY-6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line. Interpret absolute value as magnitude for a positive or negative quantity in a real-world situation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 4,
+      "lessonTitle": "Ordering Rational Numbers",
+      "standards": [
+        {
+          "code": "NY-6.NS.6",
+          "text": "Understand a rational number as a point on the number line. Use number lines and coordinate axes to represent points on a number line and in the coordinate plane with negative number coordinates.",
+          "context": "current"
+        },
+        {
+          "code": "NY-4.NBT.2b",
+          "text": "Compare two multi-digit numbers based on meanings of the digits in each place, using &gt;, =, and &lt; symbols to record the results of comparisons.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-5.NBT.3b",
+          "text": "Compare two decimals to thousandths based on meanings of the digits in each place, using &gt;, =, and &lt; symbols to record the results of comparisons.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line. Recognize that the opposite of the opposite of a number is the number itself, and that 0 is its own opposite.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7",
+          "text": "Understand ordering and absolute value of rational numbers.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 5,
+      "lessonTitle": "Using Negative Numbers to Make Sense of Contexts",
+      "standards": [
+        {
+          "code": "NY-6.NS.5",
+          "text": "Understand that positive and negative numbers are used together to describe quantities having opposite directions or values. Use positive and negative numbers to represent quantities in real-world contexts, explaining the meaning of 0 in each situation.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 6,
+      "lessonTitle": "Absolute Value of Numbers",
+      "standards": [
+        {
+          "code": "NY-6.NS.7",
+          "text": "Understand ordering and absolute value of rational numbers.",
+          "context": "current"
+        },
+        {
+          "code": "NY-4.NF.2",
+          "text": "Compare two fractions with different numerators and different denominators. Recognize that comparisons are valid only when the two fractions refer to the same whole. Record the results of comparisons with symbols &gt;, =, or &lt;, and justify the conclusions.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line. Recognize that the opposite of the opposite of a number is the number itself, and that 0 is its own opposite.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line. Interpret absolute value as magnitude for a positive or negative quantity in a real-world situation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7d",
+          "text": "Distinguish comparisons of absolute value from statements about order.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 7,
+      "lessonTitle": "Comparing Numbers and Distance from Zero",
+      "standards": [
+        {
+          "code": "NY-6.NS.6",
+          "text": "Understand a rational number as a point on the number line. Use number lines and coordinate axes to represent points on a number line and in the coordinate plane with negative number coordinates.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.NS.6a",
+          "text": "Recognize opposite signs of numbers as indicating locations on opposite sides of 0 on the number line. Recognize that the opposite of the opposite of a number is the number itself, and that 0 is its own opposite.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.NS.7",
+          "text": "Understand ordering and absolute value of rational numbers.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line. Interpret absolute value as magnitude for a positive or negative quantity in a real-world situation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7d",
+          "text": "Distinguish comparisons of absolute value from statements about order.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 8,
+      "lessonTitle": "Writing and Graphing Inequalities",
+      "standards": [
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.8",
+          "text": "Write an inequality of the form x &gt; c, x >= c, x <= c, or x &lt; c to represent a constraint or condition in a real-world or mathematical problem. Recognize that inequalities of these forms have infinitely many solutions; represent solutions of such inequalities on a number line.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7b",
+          "text": "Write, interpret, and explain statements of order for rational numbers in real-world contexts.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 9,
+      "lessonTitle": "Solutions of Inequalities",
+      "standards": [
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.8",
+          "text": "Write an inequality of the form x &gt; c, x >= c, x <= c, or x &lt; c to represent a constraint or condition in a real-world or mathematical problem. Recognize that inequalities of these forms have infinitely many solutions; represent solutions of such inequalities on a number line.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7a",
+          "text": "Interpret statements of inequality as statements about the relative position of two numbers on a number line.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 10,
+      "lessonTitle": "Interpreting Inequalities",
+      "standards": [
+        {
+          "code": "NY-6.EE.2a",
+          "text": "Write expressions that record operations with numbers and with letters standing for numbers.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.EE.2b",
+          "text": "Identify parts of an expression using mathematical terms (term, coefficient, sum, difference, product, factor, and quotient); view one or more parts of an expression as a single entity.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.5",
+          "text": "Understand solving an equation or inequality as a process of answering a question: which values from a specified set, if any, make the equation or inequality true? Use substitution to determine whether a given number in a specified set makes an equation or inequality true.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.6",
+          "text": "Use variables to represent numbers and write expressions when solving a real-world or mathematical problem. Understand that a variable can represent an unknown number, or, depending on the purpose at hand, any number in a specified set.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.EE.8",
+          "text": "Write an inequality of the form x &gt; c, x >= c, x <= c, or x &lt; c to represent a constraint or condition in a real-world or mathematical problem. Recognize that inequalities of these forms have infinitely many solutions; represent solutions of such inequalities on a number line.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 11,
+      "lessonTitle": "Points on the Coordinate Plane",
+      "standards": [
+        {
+          "code": "NY-5.G.1",
+          "text": "Use a pair of perpendicular number lines, called axes, to define a coordinate system, with the intersection of the lines (the origin) arranged to coincide with the 0 on each line and a given point in the plane located by using an ordered pair of numbers, called its coordinates. Understand that the first number indicates how far to travel from the origin in the direction of one axis, and the second number indicates how far to travel in the direction of the second axis, with the convention that the names of the two axes and the coordinates correspond.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane. Recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line. Find and position pairs of integers and other rational numbers on a coordinate plane.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.8",
+          "text": "Solve real-world and mathematical problems by graphing points on a coordinate plane. Include use of coordinates and absolute value to find distances between points with the same first coordinate or the same second coordinate.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 12,
+      "lessonTitle": "Constructing the Coordinate Plane",
+      "standards": [
+        {
+          "code": "NY-6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane. Recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line. Find and position pairs of integers and other rational numbers on a coordinate plane.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 13,
+      "lessonTitle": "Interpreting Points on a Coordinate Plane",
+      "standards": [
+        {
+          "code": "NY-6.NS.5",
+          "text": "Understand that positive and negative numbers are used together to describe quantities having opposite directions or values. Use positive and negative numbers to represent quantities in real-world contexts, explaining the meaning of 0 in each situation.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line. Find and position pairs of integers and other rational numbers on a coordinate plane.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.7c",
+          "text": "Understand the absolute value of a rational number as its distance from 0 on the number line. Interpret absolute value as magnitude for a positive or negative quantity in a real-world situation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.8",
+          "text": "Solve real-world and mathematical problems by graphing points on a coordinate plane. Include use of coordinates and absolute value to find distances between points with the same first coordinate or the same second coordinate.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 14,
+      "lessonTitle": "Distances in the Coordinate Plane",
+      "standards": [
+        {
+          "code": "NY-6.NS.6",
+          "text": "Understand a rational number as a point on the number line. Use number lines and coordinate axes to represent points on a number line and in the coordinate plane with negative number coordinates.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.NS.6b",
+          "text": "Understand signs of numbers in ordered pairs as indicating locations in quadrants of the coordinate plane. Recognize that when two ordered pairs differ only by signs, the locations of the points are related by reflections across one or both axes.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.8",
+          "text": "Solve real-world and mathematical problems by graphing points on a coordinate plane. Include use of coordinates and absolute value to find distances between points with the same first coordinate or the same second coordinate.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 15,
+      "lessonTitle": "Shapes in the Coordinate Plane",
+      "standards": [
+        {
+          "code": "NY-5.G.1",
+          "text": "Use a pair of perpendicular number lines, called axes, to define a coordinate system, with the intersection of the lines (the origin) arranged to coincide with the 0 on each line and a given point in the plane located by using an ordered pair of numbers, called its coordinates. Understand that the first number indicates how far to travel from the origin in the direction of one axis, and the second number indicates how far to travel in the direction of the second axis, with the convention that the names of the two axes and the coordinates correspond.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.G.3",
+          "text": "Draw polygons in the coordinate plane given coordinates for the vertices. Use coordinates to find the length of a side joining points with the same first coordinate or the same second coordinate. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.6c",
+          "text": "Find and position integers and other rational numbers on a horizontal or vertical number line. Find and position pairs of integers and other rational numbers on a coordinate plane.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.8",
+          "text": "Solve real-world and mathematical problems by graphing points on a coordinate plane. Include use of coordinates and absolute value to find distances between points with the same first coordinate or the same second coordinate.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 16,
+      "lessonTitle": "Common Factors",
+      "standards": [
+        {
+          "code": "NY-6.NS.4",
+          "text": "Find the greatest common factor of two whole numbers less than or equal to 100. Use the distributive property to express a sum of two whole numbers 1-100 with a common factor as a multiple of a sum of two whole numbers with no common factor other than 1. Find the least common multiple of two whole numbers less than or equal to 12.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 17,
+      "lessonTitle": "Common Multiples",
+      "standards": [
+        {
+          "code": "NY-6.NS.4",
+          "text": "Find the greatest common factor of two whole numbers less than or equal to 100. Use the distributive property to express a sum of two whole numbers 1-100 with a common factor as a multiple of a sum of two whole numbers with no common factor other than 1. Find the least common multiple of two whole numbers less than or equal to 12.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 18,
+      "lessonTitle": "Using Common Multiples and Common Factors",
+      "standards": [
+        {
+          "code": "NY-6.NS.4",
+          "text": "Find the greatest common factor of two whole numbers less than or equal to 100. Use the distributive property to express a sum of two whole numbers 1-100 with a common factor as a multiple of a sum of two whole numbers with no common factor other than 1. Find the least common multiple of two whole numbers less than or equal to 12.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "lesson": 19,
+      "lessonTitle": "Drawing in the Coordinate Plane",
+      "standards": [
+        {
+          "code": "NY-6.G.3",
+          "text": "Draw polygons in the coordinate plane given coordinates for the vertices. Use coordinates to find the length of a side joining points with the same first coordinate or the same second coordinate. Apply these techniques in the context of solving real-world and mathematical problems.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.8",
+          "text": "Solve real-world and mathematical problems by graphing points on a coordinate plane. Include use of coordinates and absolute value to find distances between points with the same first coordinate or the same second coordinate.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-2.MD.9",
+          "text": "Generate measurement data by measuring lengths of several objects to the nearest whole unit, or by making repeated measurements of the same object. Present the measurement data in a line plot, where the horizontal scale is marked off in whole-number units.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.MD.1",
+          "text": "Know relative sizes of measurement units: ft., in.; km, m, cm. Know the conversion factor and use it to convert measurements in a larger unit in terms of a smaller unit: ft., in.; km, m, cm; hr., min., sec. Given the conversion factor, convert all other measurements within a single system of measurement from a larger unit to a smaller unit. Record measurement equivalents in a two-column table.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-5.MD.2",
+          "text": "Make a line plot to display a data set of measurements in fractions of a unit (1/2, 1/4, 1/8). Use operations on fractions for this grade to solve problems involving information presented in line plots.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.SP.1a",
+          "text": "Recognize that a statistical question is one that anticipates variability in the data related to the question and accounts for it in the answers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.2",
+          "text": "Understand that a set of quantitative data collected to answer a statistical question has a distribution which can be described by its center, spread, and overall shape.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5a",
+          "text": "Report the number of observations.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.3",
+          "text": "Recognize that a measure of center for a quantitative data set summarizes all of its values with a single number while a measure of variation describes how its values vary with a single number.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5",
+          "text": "Summarize quantitative data sets in relation to their context.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 1,
+      "lessonTitle": "Got Data?",
+      "standards": [
+        {
+          "code": "NY-2.MD.9",
+          "text": "Generate measurement data by measuring lengths of several objects to the nearest whole unit, or by making repeated measurements of the same object. Present the measurement data in a line plot, where the horizontal scale is marked off in whole-number units.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-4.MD.1",
+          "text": "Know relative sizes of measurement units: ft., in.; km, m, cm. Know the conversion factor and use it to convert measurements in a larger unit in terms of a smaller unit: ft., in.; km, m, cm; hr., min., sec. Given the conversion factor, convert all other measurements within a single system of measurement from a larger unit to a smaller unit. Record measurement equivalents in a two-column table.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 2,
+      "lessonTitle": "Statistical Questions",
+      "standards": [
+        {
+          "code": "NY-5.MD.2",
+          "text": "Make a line plot to display a data set of measurements in fractions of a unit (1/2, 1/4, 1/8). Use operations on fractions for this grade to solve problems involving information presented in line plots.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.SP.1a",
+          "text": "Recognize that a statistical question is one that anticipates variability in the data related to the question and accounts for it in the answers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 3,
+      "lessonTitle": "Representing Data Graphically",
+      "standards": [
+        {
+          "code": "NY-3.MD.3",
+          "text": "Draw a scaled picture graph and a scaled bar graph to represent a data set with several categories. Solve one- and two-step \"how many more\" and \"how many less\" problems using information presented in a scaled picture graph or a scaled bar graph.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.SP.1a",
+          "text": "Recognize that a statistical question is one that anticipates variability in the data related to the question and accounts for it in the answers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.2",
+          "text": "Understand that a set of quantitative data collected to answer a statistical question has a distribution which can be described by its center, spread, and overall shape.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5a",
+          "text": "Report the number of observations.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 4,
+      "lessonTitle": "Dot Plots",
+      "standards": [
+        {
+          "code": "NY-6.SP.1a",
+          "text": "Recognize that a statistical question is one that anticipates variability in the data related to the question and accounts for it in the answers.",
+          "context": "buildingOn"
+        },
+        {
+          "code": "NY-6.SP.2",
+          "text": "Understand that a set of quantitative data collected to answer a statistical question has a distribution which can be described by its center, spread, and overall shape.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5a",
+          "text": "Report the number of observations.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 5,
+      "lessonTitle": "Using Dot Plots to Answer Statistical Questions",
+      "standards": [
+        {
+          "code": "NY-6.SP.2",
+          "text": "Understand that a set of quantitative data collected to answer a statistical question has a distribution which can be described by its center, spread, and overall shape.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.3",
+          "text": "Recognize that a measure of center for a quantitative data set summarizes all of its values with a single number while a measure of variation describes how its values vary with a single number.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 6,
+      "lessonTitle": "Interpreting Histograms",
+      "standards": [
+        {
+          "code": "NY-6.SP.1a",
+          "text": "Recognize that a statistical question is one that anticipates variability in the data related to the question and accounts for it in the answers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.3",
+          "text": "Recognize that a measure of center for a quantitative data set summarizes all of its values with a single number while a measure of variation describes how its values vary with a single number.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 7,
+      "lessonTitle": "Using Histograms to Answer Statistical Questions",
+      "standards": [
+        {
+          "code": "NY-6.SP.1a",
+          "text": "Recognize that a statistical question is one that anticipates variability in the data related to the question and accounts for it in the answers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.2",
+          "text": "Understand that a set of quantitative data collected to answer a statistical question has a distribution which can be described by its center, spread, and overall shape.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 8,
+      "lessonTitle": "Describing Distributions on Histograms",
+      "standards": [
+        {
+          "code": "NY-6.SP.2",
+          "text": "Understand that a set of quantitative data collected to answer a statistical question has a distribution which can be described by its center, spread, and overall shape.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 9,
+      "lessonTitle": "Mean",
+      "standards": [
+        {
+          "code": "NY-6.SP.3",
+          "text": "Recognize that a measure of center for a quantitative data set summarizes all of its values with a single number while a measure of variation describes how its values vary with a single number.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 10,
+      "lessonTitle": "Finding and Interpreting the Mean as the Balance Point",
+      "standards": [
+        {
+          "code": "NY-6.SP.3",
+          "text": "Recognize that a measure of center for a quantitative data set summarizes all of its values with a single number while a measure of variation describes how its values vary with a single number.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 11,
+      "lessonTitle": "Variability and MAD",
+      "standards": [
+        {
+          "code": "NY-6.SP.2",
+          "text": "Understand that a set of quantitative data collected to answer a statistical question has a distribution which can be described by its center, spread, and overall shape.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.3",
+          "text": "Recognize that a measure of center for a quantitative data set summarizes all of its values with a single number while a measure of variation describes how its values vary with a single number.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 12,
+      "lessonTitle": "Using Mean and MAD to Make Comparisons",
+      "standards": [
+        {
+          "code": "NY-6.SP.3",
+          "text": "Recognize that a measure of center for a quantitative data set summarizes all of its values with a single number while a measure of variation describes how its values vary with a single number.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 13,
+      "lessonTitle": "Median",
+      "standards": [
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 14,
+      "lessonTitle": "Comparing Mean and Median",
+      "standards": [
+        {
+          "code": "NY-6.SP.5b",
+          "text": "Describe the nature of the attribute under investigation, including how it was measured and its units of measurement.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 15,
+      "lessonTitle": "Quartiles and Interquartile Range",
+      "standards": [
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 16,
+      "lessonTitle": "Box Plots",
+      "standards": [
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 17,
+      "lessonTitle": "Using Box Plots",
+      "standards": [
+        {
+          "code": "NY-6.SP.1a",
+          "text": "Recognize that a statistical question is one that anticipates variability in the data related to the question and accounts for it in the answers.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.4",
+          "text": "Display quantitative data in plots on a number line, including dot plots, and histograms.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5",
+          "text": "Summarize quantitative data sets in relation to their context.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "lesson": 18,
+      "lessonTitle": "Using Data to Solve Problems",
+      "standards": [
+        {
+          "code": "NY-6.SP.2",
+          "text": "Understand that a set of quantitative data collected to answer a statistical question has a distribution which can be described by its center, spread, and overall shape.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5c",
+          "text": "Calculate range and measures of center, as well as describe any overall pattern and any striking deviations from the overall pattern with reference to the context in which the data were gathered.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.SP.5d",
+          "text": "Relate the range and the choice of measures of center to the shape of the data distribution and the context in which the data were gathered.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.1",
+          "text": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.2",
+          "text": "Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0 (b not equal to zero), and use rate language in the context of a ratio relationship.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+          "context": "current"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 2,
+      "lessonTitle": "Energy Flow",
+      "standards": [
+        {
+          "code": "NY-6.RP.3d",
+          "text": "Use ratio reasoning to convert measurement units; manipulate and transform units appropriately when multiplying or dividing quantities.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 5,
+      "lessonTitle": "How Do We Choose?",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.1",
+          "text": "Understand the concept of a ratio and use ratio language to describe a ratio relationship between two quantities.",
+          "context": "buildingTowards"
+        },
+        {
+          "code": "NY-6.RP.3c",
+          "text": "Find a percent of a quantity as a rate per 100. Solve problems that involve finding the whole given a part and the percent, and finding a part of a whole given the percent.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 6,
+      "lessonTitle": "More than Two Choices",
+      "standards": [
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "buildingTowards"
+        }
+      ]
+    },
+    {
+      "unit": 9,
+      "lesson": 8,
+      "lessonTitle": "Picking Representatives",
+      "standards": [
+        {
+          "code": "NY-6.NS.3",
+          "text": "Fluently add, subtract, multiply, and divide multi-digit decimals using a standard algorithm for each operation.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.2",
+          "text": "Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0 (b not equal to zero), and use rate language in the context of a ratio relationship.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3",
+          "text": "Use ratio and rate reasoning to solve real-world and mathematical problems.",
+          "context": "current"
+        },
+        {
+          "code": "NY-6.RP.3a",
+          "text": "Make tables of equivalent ratios relating quantities with whole-number measurements, find missing values in the tables, and plot the pairs of values on the coordinate plane. Use tables to compare ratios.",
+          "context": "current"
+        }
+      ]
+    }
+  ]
+}

@@ -2,7 +2,7 @@ import pptxgen from '@bapunhansdah/pptxgenjs';
 import * as cheerio from 'cheerio';
 import { PptxElement } from '../types';
 import { pxToInches } from '../constants';
-import { TextRun, extractColor, extractBgColor, hasBoldStyle, parseTextRuns } from './utils';
+import { TextRun, extractColor, extractBgColor, hasBoldStyle, extractFontSize, extractFontFamily, parseTextRuns } from './utils';
 
 /**
  * Arial character width ratios (relative to font size in points).
@@ -281,15 +281,21 @@ export function addColumnContent(slide: pptxgen.Slide, el: PptxElement): void {
 
           if (innerTag === 'p') {
             const text = $inner.text().trim();
-            const color = extractColor($inner.attr('style')) || '1D1D1D';
+            const style = $inner.attr('style') || '';
+            const color = extractColor(style) || '1D1D1D';
+            const fontSize = extractFontSize(style, 12);
+            const fontFace = extractFontFamily(style) || 'Arial';
+            const bold = hasBoldStyle(style);
+
             if (text && text.length > 2) {
-              const itemLines = estimateLines(text, colWidth, 12);
-              const itemHeight = itemLines * lineHeight;
+              const itemLines = estimateLines(text, colWidth, fontSize);
+              const scaledLineHeight = Math.max(lineHeight, fontSize / 72 * 1.4);
+              const itemHeight = itemLines * scaledLineHeight;
               slide.addText(text, {
                 x: baseX, y: currentY, w: colWidth, h: itemHeight,
-                fontSize: 12, fontFace: 'Arial', color,
+                fontSize, fontFace, color, bold, valign: 'top',
               });
-              currentY += itemHeight;
+              currentY += itemHeight + 0.05;
             }
           }
         });
@@ -299,15 +305,22 @@ export function addColumnContent(slide: pptxgen.Slide, el: PptxElement): void {
     // Handle standalone paragraphs
     else if (tagName === 'p') {
       const text = $child.text().trim();
-      const color = extractColor($child.attr('style')) || '1D1D1D';
+      const style = $child.attr('style') || '';
+      const color = extractColor(style) || '1D1D1D';
+      const fontSize = extractFontSize(style, 12);
+      const fontFace = extractFontFamily(style) || 'Arial';
+      const bold = hasBoldStyle(style);
+
       if (text && text.length > 2) {
-        const itemLines = estimateLines(text, colWidth, 12);
-        const itemHeight = itemLines * lineHeight;
+        const itemLines = estimateLines(text, colWidth, fontSize);
+        // Scale line height based on font size (larger fonts need more space)
+        const scaledLineHeight = Math.max(lineHeight, fontSize / 72 * 1.4);
+        const itemHeight = itemLines * scaledLineHeight;
         slide.addText(text, {
           x: baseX, y: currentY, w: colWidth, h: itemHeight,
-          fontSize: 12, fontFace: 'Arial', color,
+          fontSize, fontFace, color, bold, valign: 'top',
         });
-        currentY += itemHeight;
+        currentY += itemHeight + 0.05;
       }
     }
 

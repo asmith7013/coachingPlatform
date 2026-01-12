@@ -26,7 +26,8 @@
     "delete-all-students": "tsx scripts/delete-all-students.ts",
     "knip": "knip",
     "sync-skill-content": "tsx scripts/sync-skill-content.ts",
-    "prebuild": "npm run generate-css && tsc --noEmit --strict && npm run lint"
+    "prebuild": "npm run generate-css && tsc --noEmit --strict && npm run lint",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.63.0",
@@ -123,6 +124,7 @@
     "eslint": "^9.27.0",
     "eslint-config-next": "^15.2.0",
     "next": "^15.5.9",
+    "patch-package": "^8.0.1",
     "pg": "^8.15.6",
     "postcss": "^8.5.3",
     "prettier": "^3.6.2",

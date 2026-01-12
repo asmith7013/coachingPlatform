@@ -66,6 +66,50 @@ export function hasBoldStyle(style: string | undefined): boolean {
 }
 
 /**
+ * Extract font-size from inline style, returning value in points
+ * Supports px (converts to pt) and pt values
+ */
+export function extractFontSize(style: string | undefined, defaultSize: number = 12): number {
+  if (!style) return defaultSize;
+
+  // Match font-size with px or pt unit
+  const match = style.match(/font-size:\s*(\d+(?:\.\d+)?)(px|pt)/i);
+  if (match) {
+    const value = parseFloat(match[1]);
+    const unit = match[2].toLowerCase();
+
+    // Convert px to pt (1px ≈ 0.75pt, or 96dpi/72dpi)
+    if (unit === 'px') {
+      return Math.round(value * 0.75);
+    }
+    return Math.round(value);
+  }
+
+  return defaultSize;
+}
+
+/**
+ * Extract font-family from inline style
+ */
+export function extractFontFamily(style: string | undefined): string | undefined {
+  if (!style) return undefined;
+
+  // Match font-family (handles both single font and font stack)
+  const match = style.match(/font-family:\s*([^;]+)/i);
+  if (match) {
+    const family = match[1].trim();
+    // Return first font in the stack, cleaned up
+    const firstFont = family.split(',')[0].trim().replace(/['"]/g, '');
+    // Map common fonts to PPTX-safe equivalents
+    if (firstFont.toLowerCase() === 'georgia') return 'Georgia';
+    if (firstFont.toLowerCase().includes('serif') && !firstFont.toLowerCase().includes('sans')) return 'Georgia';
+    return 'Arial'; // Default to Arial for sans-serif and unknown fonts
+  }
+
+  return undefined;
+}
+
+/**
  * Parse a paragraph element into text runs with proper formatting
  * Handles mixed inline styles like <strong>Think:</strong> rest of text
  */
@@ -160,6 +204,32 @@ export function isSimpleTextContent(html: string): boolean {
 
   // Check for MathJax or KaTeX elements
   if ($('.MathJax').length > 0 || $('.katex').length > 0) {
+    return false;
+  }
+
+  // Check for nested divs with backgrounds (complex visual layout)
+  // This catches styled card layouts like "Meaning 1" / "Meaning 2" boxes
+  let hasNestedStyledDivs = false;
+  $('div').each((_, outerDiv) => {
+    const $outerDiv = $(outerDiv);
+    const outerStyle = $outerDiv.attr('style') || '';
+    const outerHasBg = outerStyle.includes('background');
+
+    // Check if this div has nested divs with backgrounds
+    $outerDiv.find('div').each((_, innerDiv) => {
+      const innerStyle = $(innerDiv).attr('style') || '';
+      if (innerStyle.includes('background') && outerHasBg) {
+        hasNestedStyledDivs = true;
+        return false; // break inner loop
+      }
+    });
+
+    if (hasNestedStyledDivs) {
+      return false; // break outer loop
+    }
+  });
+
+  if (hasNestedStyledDivs) {
     return false;
   }
 

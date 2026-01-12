@@ -278,13 +278,15 @@ export async function uploadToUserDrive(
 
 /**
  * Upload PPTX to user's Google Drive and convert to Google Slides
+ * @param pptxBuffer - The PPTX file content
+ * @param displayTitle - Human-readable title for the Google Slides presentation
  */
 export async function uploadPptxToUserGoogleSlides(
   pptxBuffer: Buffer,
-  filename: string
+  displayTitle: string
 ): Promise<{ success: true; fileId: string; url: string } | { success: false; error: string }> {
   console.log('[uploadPptxToUserGoogleSlides] Starting...');
-  console.log('[uploadPptxToUserGoogleSlides] filename:', filename);
+  console.log('[uploadPptxToUserGoogleSlides] displayTitle:', displayTitle);
   console.log('[uploadPptxToUserGoogleSlides] buffer size:', pptxBuffer.length, 'bytes');
 
   try {
@@ -299,11 +301,12 @@ export async function uploadPptxToUserGoogleSlides(
     console.log('[uploadPptxToUserGoogleSlides] Token obtained successfully');
 
     // Upload and convert to Google Slides
+    // Use the displayTitle directly as the presentation name (no sanitization needed for Google)
     console.log('[uploadPptxToUserGoogleSlides] Calling uploadToUserDrive...');
     const uploadResult = await uploadToUserDrive(
       tokenResult.accessToken,
       pptxBuffer,
-      filename.replace(/\.pptx$/i, ''),
+      displayTitle,
       'application/vnd.openxmlformats-officedocument.presentationml.presentation',
       { convertToGoogleFormat: true }
     );

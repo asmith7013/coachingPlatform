@@ -4,7 +4,7 @@
 Present your analysis to the user, get their confirmation, and plan the three scenarios - all using DIFFERENT contexts from the mastery check.
 
 ## Output Format: PPTX-Compatible HTML
-All slides will be **PPTX-compatible HTML** (960×540px, light theme, 9 slides). See `03-generate-slides/protocol.md` for technical specs.
+All slides will be **PPTX-compatible HTML** (960×540px, light theme, 9 slides). See `03-generate-slides/02-technical-rules.md` for technical specs.
 
 ## Prerequisites
 - Phase 1 complete
@@ -58,7 +58,33 @@ Based on the mastery check question you provided, here's my understanding:
 - Scenario 3 (practice): [different context]
 
 Note: These scenarios all teach the same skill as your mastery check but use different numbers and contexts, so students learn the strategy without seeing the actual answer.
+```
 
+### ⚠️ REQUIRED: Include Diagram Preview
+
+**Include the Diagram Preview you created in Phase 1.** This shows the user the visual structure for confirmation.
+
+The preview was already generated in Phase 1 using `reference/diagram-patterns.md` as a guide. Present it here so the user can confirm the visual structure is correct before proceeding.
+
+**Example:**
+```
+**Diagram Preview (Scenario 1 - Chicken Nuggets):**
+
+┌────────┬────────┬────────┬────────┬────────┐
+│   ?    │   6    │   6    │   6    │   6    │  = 30
+└────────┴────────┴────────┴────────┴────────┘
+
+Key elements:
+- Unknown (?) at start: number of students
+- Each box: 6 nuggets per student
+- Total: 30 nuggets
+
+Does this visual structure look right?
+```
+
+**Then ask for confirmation:**
+
+```
 Does this match what you're looking for? Should I proceed or adjust anything?
 ```
 
@@ -426,7 +452,7 @@ VisualPlan:
   labels: ["label 1", "label 2", ...]
   annotations: ["what to highlight or emphasize"]
 ```
-**Note:** For custom diagrams, reference `phases/03-generate-slides/visuals/diagram-patterns.md` for SVG implementation patterns.
+**Note:** For custom diagrams, reference `reference/diagram-patterns.md` for SVG implementation patterns.
 
 ---
 
@@ -456,6 +482,7 @@ Use the Read tool to read the current file, then use Edit to update only the cha
 
 Before proceeding, verify:
 - [ ] User has explicitly confirmed your understanding
+- [ ] User has approved the **Diagram Preview** (ASCII visual structure)
 - [ ] Three scenarios are defined
 - [ ] All scenarios use the SAME strategy as the mastery check
 - [ ] All scenarios have the SAME mathematical structure as the mastery check
@@ -472,7 +499,7 @@ Before proceeding, verify:
 
 Use the Read tool to read the Phase 3 instructions:
 ```
-Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/index.md
+Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/00-overview.md
 ```
 
 Do NOT proceed to Phase 3 until the user has explicitly confirmed.

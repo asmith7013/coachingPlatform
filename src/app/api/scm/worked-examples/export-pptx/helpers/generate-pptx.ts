@@ -24,6 +24,7 @@ export interface GeneratePptxOptions {
 export interface GeneratePptxResult {
   pptxBase64: string;
   filename: string;
+  displayTitle: string; // Human-readable title for Google Slides
 }
 
 /**
@@ -235,13 +236,18 @@ export async function generatePptxFromSlides(
     const pptxBase64 = await pptx.write({ outputType: 'base64' });
     console.log('[generatePptxFromSlides] pptx.write() complete, base64 length:', (pptxBase64 as string).length);
 
-    const filename = `${(title || 'worked-example').replace(/[^a-zA-Z0-9-]/g, '-')}.pptx`;
+    // Filename is sanitized for file systems (dashes only)
+    const filename = `${(title || 'worked-example').replace(/[^a-zA-Z0-9-]/g, '-').replace(/-+/g, '-')}.pptx`;
+    // Display title is human-readable for Google Slides
+    const displayTitle = title || 'Worked Example';
     console.log('[generatePptxFromSlides] filename:', filename);
+    console.log('[generatePptxFromSlides] displayTitle:', displayTitle);
 
     console.log('[generatePptxFromSlides] SUCCESS - returning result');
     return {
       pptxBase64: pptxBase64 as string,
       filename,
+      displayTitle,
     };
   } finally {
     // Always close browser session to clean up Chromium
@@ -280,87 +286,87 @@ async function processSlide(
       addPptxElement(slide, el);
     }
 
-    // Handle SVG content separately - must be rendered as image
+    // Handle SVG content - check if slide has SVG with layers
     const hasSvg = /<svg[\s>]/i.test(html);
     if (hasSvg) {
-      onProgress?.(slideIndex + 1, totalSlides, `Rendering graphics for slide ${slideIndex + 1}...`, 'rendering-svg');
-
       const parsed = parseSlideHtml(html);
-      if (parsed.svgRegion) {
+      if (parsed.svgRegion && parsed.svgRegion.layers && parsed.svgRegion.layers.length > 1) {
+        // SVG has multiple layers - render each layer separately for independent PPTX objects
+        onProgress?.(slideIndex + 1, totalSlides, `Rendering ${parsed.svgRegion.layers.length} SVG layers for slide ${slideIndex + 1}...`, 'rendering-svg');
+
         const region = parsed.svgRegion;
-        const imgX = pxToInches(region.x, 'w');
-        const imgY = pxToInches(region.y, 'h');
-        const imgW = pxToInches(region.width, 'w');
-        const imgH = pxToInches(region.height, 'h');
+        const layerImages = await renderSession.renderSvgLayers(
+          region.html,
+          region.width,
+          region.height,
+          region.layers!
+        );
 
-        if (region.layers && region.layers.length > 1) {
-          const layerImages = await renderSession.renderSvgLayers(
-            region.html,
-            region.width,
-            region.height,
-            region.layers
-          );
-          for (const layer of layerImages) {
-            const layerBase64 = layer.buffer.toString('base64');
+        for (const layer of layerImages) {
+          const layerBase64 = layer.buffer.toString('base64');
 
-            // Use tight bounds if available, otherwise use full SVG region
-            if (layer.bounds) {
-              // Position relative to SVG region origin + layer offset
-              const layerX = pxToInches(region.x + layer.bounds.x, 'w');
-              const layerY = pxToInches(region.y + layer.bounds.y, 'h');
-              const layerW = pxToInches(layer.bounds.width, 'w');
-              const layerH = pxToInches(layer.bounds.height, 'h');
+          if (layer.bounds) {
+            // Position relative to SVG region origin + layer offset
+            const layerX = pxToInches(region.x + layer.bounds.x, 'w');
+            const layerY = pxToInches(region.y + layer.bounds.y, 'h');
+            const layerW = pxToInches(layer.bounds.width, 'w');
+            const layerH = pxToInches(layer.bounds.height, 'h');
 
-              slide.addImage({
-                data: `data:image/png;base64,${layerBase64}`,
-                x: layerX,
-                y: layerY,
-                w: layerW,
-                h: layerH,
-              });
-            } else {
-              // Fallback: use full SVG region position
-              slide.addImage({
-                data: `data:image/png;base64,${layerBase64}`,
-                x: imgX,
-                y: imgY,
-                w: imgW,
-                h: imgH,
-              });
-            }
+            slide.addImage({
+              data: `data:image/png;base64,${layerBase64}`,
+              x: layerX,
+              y: layerY,
+              w: layerW,
+              h: layerH,
+            });
+          } else {
+            // Fallback: use full SVG region position
+            slide.addImage({
+              data: `data:image/png;base64,${layerBase64}`,
+              x: pxToInches(region.x, 'w'),
+              y: pxToInches(region.y, 'h'),
+              w: pxToInches(region.width, 'w'),
+              h: pxToInches(region.height, 'h'),
+            });
           }
-        } else {
-          const svgBuffer = await renderSession.renderSvg(
-            region.html,
-            region.width,
-            region.height
-          );
-          const svgBase64 = svgBuffer.toString('base64');
-          slide.addImage({
-            data: `data:image/png;base64,${svgBase64}`,
-            x: imgX,
-            y: imgY,
-            w: imgW,
-            h: imgH,
-          });
         }
+      } else if (parsed.svgRegion) {
+        // SVG without layers - render as single image
+        onProgress?.(slideIndex + 1, totalSlides, `Rendering SVG for slide ${slideIndex + 1}...`, 'rendering-svg');
+
+        const region = parsed.svgRegion;
+        const svgBuffer = await renderSession.renderSvg(
+          region.html,
+          region.width,
+          region.height
+        );
+        const svgBase64 = svgBuffer.toString('base64');
+
+        slide.addImage({
+          data: `data:image/png;base64,${svgBase64}`,
+          x: pxToInches(region.x, 'w'),
+          y: pxToInches(region.y, 'h'),
+          w: pxToInches(region.width, 'w'),
+          h: pxToInches(region.height, 'h'),
+        });
       }
     }
 
-    // Handle visual regions - these need screenshot for pixel-perfect export
-    // Supports three patterns:
-    // 1. Single right-column/problem-visual with complex content
-    // 2. Multiple visual-* regions (visual-table, visual-equation, etc.) for granular layers
+    // Handle non-SVG visual regions that need screenshot for pixel-perfect export
+    // This includes:
+    // 1. Regions with complex content (tables, nested styled divs, etc.)
+    // 2. Granular visual-* layers (visual-table, visual-equation, etc.)
     if (!hasSvg) {
-      // Find all visual regions that need screenshotting
-      // Pattern: visual-* (e.g., visual-table, visual-equation, visual-comparison)
-      // Also include right-column/problem-visual with complex content
       const visualElements = pptxElements.filter(el => {
         // Granular visual layers (from visual-card-layers pattern)
         if (el.regionType.startsWith('visual-')) {
           return true;
         }
-        // Legacy single-region pattern (only if complex content)
+        // SVG container without SVG - screenshot it
+        if (el.regionType === 'svg-container') {
+          return true;
+        }
+        // Right-column or problem-visual with complex content (tables, etc.)
         if ((el.regionType === 'right-column' || el.regionType === 'problem-visual') &&
             !isSimpleTextContent(el.content)) {
           return true;

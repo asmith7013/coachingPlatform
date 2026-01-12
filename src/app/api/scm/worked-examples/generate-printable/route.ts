@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Practice Problems</title>
 </head>
-<body style="margin: 0; padding: 0; width: 960px; height: 540px; overflow: hidden;">
+<body style="margin: 0; padding: 0;">
 ${htmlContent}
 </body>
 </html>`;

@@ -384,6 +384,7 @@ export async function createRenderSession(): Promise<RenderSession> {
       await page.setViewport({ width, height, deviceScaleFactor: 2 });
 
       // Include template CSS classes used in slide HTML
+      // IMPORTANT: Body should NOT override content styles - content has its own styling
       const fullHtml = `
         <!DOCTYPE html>
         <html>
@@ -406,23 +407,31 @@ export async function createRenderSession(): Promise<RenderSession> {
             .gap-lg { gap: 20px; }
             .rounded { border-radius: 8px; }
 
+            /* Body provides dimensions but doesn't override content styling */
             body {
               width: ${width}px;
               height: ${height}px;
               font-family: Arial, sans-serif;
-              background: #f5f5f5;
-              border-radius: 8px;
+              background: transparent;
+              margin: 0;
+              padding: 0;
+              overflow: hidden;
+            }
+
+            /* Wrapper fills the body and contains the content */
+            .render-wrapper {
+              width: 100%;
+              height: 100%;
               display: flex;
               flex-direction: column;
-              align-items: center;
-              padding: 20px;
             }
+
             table {
               border-collapse: collapse;
             }
           </style>
         </head>
-        <body>${html}</body>
+        <body><div class="render-wrapper">${html}</div></body>
         </html>
       `;
 

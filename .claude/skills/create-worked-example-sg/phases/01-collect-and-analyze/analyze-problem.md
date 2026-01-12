@@ -112,7 +112,7 @@ Example: If Scenario 1 uses "y = 25x + 50" and Scenario 2 uses "y = 15x + 30", e
 - **html-table**: Simple data tables with highlighting
 - **svg-visual**: ALL other graphics - this includes:
   - Coordinate planes and graphs (svgSubtype: "coordinate-graph") → use `graph-planning.md`
-  - **Non-graph diagrams** (svgSubtype: "diagram") → **use `diagram-patterns.md` as PRIMARY REFERENCE**
+  - **Non-graph diagrams** (svgSubtype: "diagram") → **use `reference/diagram-patterns.md` as PRIMARY REFERENCE**
     - Double number lines
     - Tape diagrams (bar models)
     - Hanger diagrams (balance equations)
@@ -123,7 +123,7 @@ Example: If Scenario 1 uses "y = 25x + 50" and Scenario 2 uses "y = 15x + 30", e
   - Number lines and bar models (svgSubtype: "number-line")
   - Any custom visual (svgSubtype: "other")
 
-**For non-graph SVGs:** READ `phases/03-generate-slides/visuals/diagram-patterns.md` to see the exact visual structure students expect from Illustrative Mathematics curriculum.
+**For non-graph SVGs:** READ `reference/diagram-patterns.md` to see the exact visual structure students expect from Illustrative Mathematics curriculum.
 
 ### STEP 7: SVG Planning (REQUIRED if Visual Type is "svg-visual")
 

@@ -4,7 +4,7 @@
 Gather all required information from the user, then deeply analyze the **mastery check question** to understand its mathematical structure and define ONE clear strategy.
 
 ## Output Format: PPTX-Compatible HTML
-All slides will be **PPTX-compatible HTML** (960×540px, light theme). See `03-generate-slides/protocol.md` for technical specs.
+All slides will be **PPTX-compatible HTML** (960×540px, light theme). See `03-generate-slides/02-technical-rules.md` for technical specs.
 
 ## Prerequisites
 - User has requested a worked example
@@ -166,6 +166,55 @@ Plan the visual elements:
 
 **IF you selected "Text-only" or "HTML table", skip to the output template.**
 
+### 1.3g: Diagram Preview (REQUIRED for ALL visual types except Text-only)
+
+**After planning the visual, create an ASCII preview showing the complete visual structure.**
+
+This preview shows users the "shape" of the visual at a glance. Users can confirm it's the right representation and spot structural issues early (wrong diagram type, incorrect number of elements, missing components).
+
+**Reference the canonical patterns:**
+```
+Read: .claude/skills/create-worked-example-sg/reference/diagram-patterns.md
+```
+
+Use the ASCII representations in that file as a guide for creating your preview. Generate an ASCII preview that matches the structure for your visual type.
+
+**Create a static preview for Scenario 1** showing the complete visual with all elements:
+
+```
+DIAGRAM PREVIEW (Scenario 1)
+============================
+
+[ASCII representation of the complete visual - generate based on diagram-patterns.md]
+
+Key elements:
+- [element 1]: [what it represents]
+- [element 2]: [what it represents]
+- [element 3]: [what it represents]
+
+Does this visual structure look right for your problem?
+```
+
+**Example (Tape Diagram):**
+```
+┌────────┬────────┬────────┬────────┬────────┐
+│   ?    │   6    │   6    │   6    │   6    │  = 30
+└────────┴────────┴────────┴────────┴────────┘
+
+Key elements:
+- Unknown (?) at start: number of students
+- Each box: 6 nuggets per student
+- Total: 30 nuggets
+```
+
+**Why this matters:**
+- Confirms the visual type is correct for this problem
+- Catches structural issues (wrong number of boxes, incorrect layout)
+- Low cost (ASCII is cheap) but high value (prevents rework)
+- Makes the abstract VisualPlan concrete
+
+**Note:** Step-by-step animation (what gets highlighted on each slide) is determined in Phase 3 when you read the slide generation protocol.
+
 ### Output Template (YOU MUST COMPLETE THIS):
 
 ```
@@ -229,6 +278,19 @@ Annotations across slides:
 - Slides 3-4: [Step 1 - what changes/highlights]
 - Slides 5-6: [Step 2 - what changes/highlights]
 - Slides 7-8: [Step 3 - what changes/highlights]
+
+DIAGRAM PREVIEW (Scenario 1) - REQUIRED for all non-text-only:
+==============================================================
+
+[ASCII representation of the complete visual structure
+ based on patterns from reference/diagram-patterns.md]
+
+Key elements:
+- [element 1]: [what it represents]
+- [element 2]: [what it represents]
+- [element 3]: [what it represents]
+
+Does this visual structure look right for your problem?
 ```
 
 ---

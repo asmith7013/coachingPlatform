@@ -1,0 +1,1347 @@
+{
+  "grade": "8",
+  "source": "docs/nyse/standards8.html",
+  "substandard_descriptions": {
+    "8.A.1a": "Lines are taken to lines, and line segments to line segments of the same length.",
+    "8.A.1b": "Angles are taken to angles of the same measure.",
+    "8.A.1c": "Parallel lines are taken to parallel lines.",
+    "8.GM.1a": "Verify that angle measure, betweeness, collinearity and distance are preserved under rigid transformations.",
+    "8.GM.1b": "Investigate if orientation is preserved under rigid transformations.",
+    "8.GM.5b": "Explore the relationship between the interior and exterior angles of a triangle.",
+    "8.GM.5c": "Construct and explore the angles created when parallel lines are cut by a transversal.",
+    "8.GM.5a": "Derive the sum of the interior angles of a triangle.",
+    "7.RP.2a": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+    "8.GM.2a": "Describe a possible sequence of rigid transformations between two congruent figures.",
+    "8.GM.4a": "Describe a possible sequence of transformations between two similar figures.",
+    "8.GM.5d": "Use the properties of similar figures to solve problems.",
+    "8.EEI.6a": "Explain why the slope (m) is the same between any two distinct points on a non-vertical line in the Cartesian coordinate plane.",
+    "8.EEI.6b": "Derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b.",
+    "7.RP.2b": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+    "8.EE.8a": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously.",
+    "8.EEI.5a": "Interpret the unit rate as the slope of the graph.",
+    "8.EEI.5b": "Compare two different proportional relationships.",
+    "8.EEI.8a": "Graph systems of linear equations and recognize the intersection as the solution to the system.",
+    "8.EE.7a": "Give examples of linear equations in one variable with one solution, infinitely many solutions, or no solutions. Show which of these possibilities is the case by successively transforming the given equation into simpler forms, until an equivalent equation of the form x = a, a = a, or a = b results (where a and b are different numbers).",
+    "8.EE.8b": "Solve systems of two linear equations in two variables algebraically, and estimate solutions by graphing the equations. Solve simple cases by inspection. For example, 3x + 2y = 5 and 3x + 2y = 6 have no solution because 3x + 2y cannot simultaneously be 5 and 6.",
+    "8.EE.8c": "Solve real-world and mathematical problems leading to two linear equations in two variables. For example, given coordinates for two pairs of points, determine whether the line through the first pair of points intersects the line through the second pair.",
+    "8.EEI.7b": "Solve linear equations and inequalities with rational number coefficients, including equations and inequalities whose solutions require expanding expressions using the distributive property and combining like terms.",
+    "8.EE.7b": "Solve linear equations with rational number coefficients, including equations whose solutions require expanding expressions using the distributive property and collecting like terms.",
+    "8.EEI.7a": "Create and identify linear equations with one solution, infinitely many solutions or no solutions.",
+    "8.EEI.8b": "Explain why solution(s) to a system of two linear equations in two variables correspond to point(s) of intersection of the graphs.",
+    "8.EEI.8c": "Explain why systems of linear equations can have one solution, no solution or infinitely many solutions.",
+    "8.EEI.8d": "Solve systems of two linear equations.",
+    "8.A.3b": "Recognize that the graph of a linear function has a constant rate of change.",
+    "8.B.4b": "Determine the parameters of a linear function.",
+    "8.B.4a": "Explain the parameters of a linear function based on the context of a problem.",
+    "8.GM.9b": "Understand the concepts of volume and find the volume of pyramids, cones and spheres.",
+    "8.A.3a": "Interpret the equation y = mx + b as defining a linear function, whose parameters are the slope (m) and the y-intercept (b).",
+    "8.A.3c": "Give examples of nonlinear functions.",
+    "8.DSP.4a": "Construct and interpret a two-way table summarizing data on two categorical variables collected from the same subjects.",
+    "8.DSP.4b": "Use relative frequencies calculated for rows or columns to describe possible association between the two variables.",
+    "5.NBT.3a": "Read and write decimals to thousandths using base-ten numerals, number names, and expanded form, e.g., 347.392 = 3 x 100 + 4 x 10 + 7 x 1 + 3 x (1/10) + 9 x (1/100) + 2 x (1/1000).",
+    "5.NF.5b": "Explaining why multiplying a given number by a fraction greater than 1 results in a product greater than the given number (recognizing multiplication by whole numbers greater than 1 as a familiar case); explaining why multiplying a given number by a fraction less than 1 results in a product smaller than the given number; and relating the principle of fraction equivalence a/b = (nxa)/(nxb) to the effect of multiplying a/b by 1.",
+    "8.EEI.4b": "Use scientific notation and choose units of appropriate size for measurements of very large or very small quantities.",
+    "8.EEI.4a": "Perform operations with numbers expressed in scientific notation, including problems where both decimal and scientific notation are used.",
+    "7.NS.2d": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+    "8.EEI.2b": "Evaluate square roots of perfect squares less than or equal to 625 and cube roots of perfect cubes less than or equal to 1000.",
+    "8.EE.2a": "Evaluate square roots of small perfect squares and cube roots of small perfect cubes. Know that \u221a2 is irrational.",
+    "8.EEI.2c": "Recognize that square roots of non-perfect squares are irrational.",
+    "8.EE.2b": "Simplify numerical radicals, limiting to square roots (i.e. nonperfect squares). For example, simplify \u221a8 to 2\u221a2.",
+    "8.EEI.2a": "Solve equations of the form x^2 = p and x^3 = p, where p is a positive rational number.",
+    "8.NS.1b": "Understand that all rational numbers have a decimal expansion that terminates or repeats.",
+    "8.NS.1c": "Convert decimals which repeat into fractions and fractions into repeating decimals."
+  },
+  "lesson_substandards": [
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Grade 8 Unit 1 Block 5",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        },
+        {
+          "code": "8.A.1c",
+          "text": "Parallel lines are taken to parallel lines.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Grade 8 Unit 1 Block 6",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        },
+        {
+          "code": "8.A.1c",
+          "text": "Parallel lines are taken to parallel lines."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Grade 8 Unit 1 Block 8",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Grade 8 Unit 1 Block 10",
+      "substandards": [
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Lesson 7: No Bending or Stretching",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        },
+        {
+          "code": "8.GM.1a",
+          "text": "Verify that angle measure, betweeness, collinearity and distance are preserved under rigid transformations."
+        },
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Lesson 8: Rotation Patterns",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        },
+        {
+          "code": "8.GM.1a",
+          "text": "Verify that angle measure, betweeness, collinearity and distance are preserved under rigid transformations."
+        },
+        {
+          "code": "8.GM.1b",
+          "text": "Investigate if orientation is preserved under rigid transformations."
+        },
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        },
+        {
+          "code": "8.A.1c",
+          "text": "Parallel lines are taken to parallel lines.",
+          "tag": "Building Towards"
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Lesson 9: Moves in Parallel",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        },
+        {
+          "code": "8.A.1c",
+          "text": "Parallel lines are taken to parallel lines."
+        },
+        {
+          "code": "8.GM.1a",
+          "text": "Verify that angle measure, betweeness, collinearity and distance are preserved under rigid transformations."
+        },
+        {
+          "code": "8.GM.1b",
+          "text": "Investigate if orientation is preserved under rigid transformations."
+        },
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        },
+        {
+          "code": "8.A.1c",
+          "text": "Parallel lines are taken to parallel lines."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Lesson 10: Composing Figures",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        },
+        {
+          "code": "8.GM.1a",
+          "text": "Verify that angle measure, betweeness, collinearity and distance are preserved under rigid transformations."
+        },
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Lesson 13: Congruence",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.GM.1a",
+          "text": "Verify that angle measure, betweeness, collinearity and distance are preserved under rigid transformations."
+        },
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Lesson 14: Alternate Interior Angles",
+      "substandards": [
+        {
+          "code": "8.GM.1a",
+          "text": "Verify that angle measure, betweeness, collinearity and distance are preserved under rigid transformations."
+        },
+        {
+          "code": "8.GM.5b",
+          "text": "Explore the relationship between the interior and exterior angles of a triangle."
+        },
+        {
+          "code": "8.GM.5c",
+          "text": "Construct and explore the angles created when parallel lines are cut by a transversal."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Lesson 15: Adding the Angles in a Triangle",
+      "substandards": [
+        {
+          "code": "8.GM.5a",
+          "text": "Derive the sum of the interior angles of a triangle."
+        }
+      ]
+    },
+    {
+      "unit": 1,
+      "unitName": "Rigid Transformations and Congruence",
+      "lesson": "Lesson 16: Parallel Lines and the Angles in a Triangle",
+      "substandards": [
+        {
+          "code": "8.GM.5a",
+          "text": "Derive the sum of the interior angles of a triangle."
+        },
+        {
+          "code": "8.GM.5b",
+          "text": "Explore the relationship between the interior and exterior angles of a triangle."
+        },
+        {
+          "code": "8.GM.5c",
+          "text": "Construct and explore the angles created when parallel lines are cut by a transversal."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Dilations, Similarity, and Introducing Slope",
+      "lesson": "Grade 8 Unit 2 Block 5",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Dilations, Similarity, and Introducing Slope",
+      "lesson": "Lesson 6: Similarity",
+      "substandards": [
+        {
+          "code": "8.GM.2a",
+          "text": "Describe a possible sequence of rigid transformations between two congruent figures."
+        },
+        {
+          "code": "8.GM.4a",
+          "text": "Describe a possible sequence of transformations between two similar figures."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Dilations, Similarity, and Introducing Slope",
+      "lesson": "Lesson 8: Similar Triangles",
+      "substandards": [
+        {
+          "code": "8.GM.5d",
+          "text": "Use the properties of similar figures to solve problems."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Dilations, Similarity, and Introducing Slope",
+      "lesson": "Lesson 10: Meet Slope",
+      "substandards": [
+        {
+          "code": "8.EEI.6a",
+          "text": "Explain why the slope (m) is the same between any two distinct points on a non-vertical line in the Cartesian coordinate plane."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Dilations, Similarity, and Introducing Slope",
+      "lesson": "Lesson 11: Writing Equations for Lines",
+      "substandards": [
+        {
+          "code": "8.EEI.6b",
+          "text": "Derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+        }
+      ]
+    },
+    {
+      "unit": 2,
+      "unitName": "Dilations, Similarity, and Introducing Slope",
+      "lesson": "Lesson 12: Using Equations for Lines",
+      "substandards": [
+        {
+          "code": "8.EEI.6b",
+          "text": "Derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Grade 8 Unit 3 Block 3",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Grade 8 Unit 3 Block 4",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building On"
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Grade 8 Unit 3 Block 5",
+      "substandards": [
+        {
+          "code": "8.A.1c",
+          "text": "Parallel lines are taken to parallel lines.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Grade 8 Unit 3 Block 7",
+      "substandards": [
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Grade 8 Unit 3 Block 8",
+      "substandards": [
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 2: Graphs of Proportional Relationships",
+      "substandards": [
+        {
+          "code": "8.EEI.5a",
+          "text": "Interpret the unit rate as the slope of the graph."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 4: Comparing Proportional Relationships",
+      "substandards": [
+        {
+          "code": "8.EEI.5a",
+          "text": "Interpret the unit rate as the slope of the graph."
+        },
+        {
+          "code": "8.EEI.5b",
+          "text": "Compare two different proportional relationships."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 5: Introduction to Linear Relationships",
+      "substandards": [
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 6: More Linear Relationships",
+      "substandards": [
+        {
+          "code": "8.EEI.5b",
+          "text": "Compare two different proportional relationships."
+        },
+        {
+          "code": "7.RP.2a",
+          "text": "Decide whether two quantities are in a proportional relationship, e.g., by testing for equivalent ratios in a table or graphing on a coordinate plane and observing whether the graph is a straight line through the origin.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 7: Representations of Linear Relationships",
+      "substandards": [
+        {
+          "code": "8.EEI.6a",
+          "text": "Explain why the slope (m) is the same between any two distinct points on a non-vertical line in the Cartesian coordinate plane."
+        },
+        {
+          "code": "8.EEI.6b",
+          "text": "Derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+        },
+        {
+          "code": "7.RP.2b",
+          "text": "Identify the constant of proportionality (unit rate) in tables, graphs, equations, diagrams, and verbal descriptions of proportional relationships.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 8: Translating to y = mx + b",
+      "substandards": [
+        {
+          "code": "8.EEI.6a",
+          "text": "Explain why the slope (m) is the same between any two distinct points on a non-vertical line in the Cartesian coordinate plane."
+        },
+        {
+          "code": "8.EEI.6b",
+          "text": "Derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+        },
+        {
+          "code": "8.A.1c",
+          "text": "Parallel lines are taken to parallel lines.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 10: Calculating Slope",
+      "substandards": [
+        {
+          "code": "8.EEI.6a",
+          "text": "Explain why the slope (m) is the same between any two distinct points on a non-vertical line in the Cartesian coordinate plane."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 11: Line Designs",
+      "substandards": [
+        {
+          "code": "8.EEI.6b",
+          "text": "Derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 12: Equations of All Kinds of Lines",
+      "substandards": [
+        {
+          "code": "8.EEI.6b",
+          "text": "Derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 14: More Solutions to Linear Equations",
+      "substandards": [
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        },
+        {
+          "code": "8.EEI.8a",
+          "text": "Graph systems of linear equations and recognize the intersection as the solution to the system."
+        },
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        }
+      ]
+    },
+    {
+      "unit": 3,
+      "unitName": "Linear Relationships",
+      "lesson": "Lesson 15: Using Linear Relations to Solve Problems",
+      "substandards": [
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        },
+        {
+          "code": "8.EEI.6b",
+          "text": "Derive the equation y = mx for a line through the origin and the equation y = mx + b for a line intercepting the vertical axis at b."
+        },
+        {
+          "code": "8.EEI.8a",
+          "text": "Graph systems of linear equations and recognize the intersection as the solution to the system."
+        },
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Grade 8 Unit 4 Block 4",
+      "substandards": [
+        {
+          "code": "8.EE.7a",
+          "text": "Give examples of linear equations in one variable with one solution, infinitely many solutions, or no solutions. Show which of these possibilities is the case by successively transforming the given equation into simpler forms, until an equivalent equation of the form x = a, a = a, or a = b results (where a and b are different numbers)."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Grade 8 Unit 4 Block 5",
+      "substandards": [
+        {
+          "code": "8.EE.7a",
+          "text": "Give examples of linear equations in one variable with one solution, infinitely many solutions, or no solutions. Show which of these possibilities is the case by successively transforming the given equation into simpler forms, until an equivalent equation of the form x = a, a = a, or a = b results (where a and b are different numbers)."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Grade 8 Unit 4 Block 7",
+      "substandards": [
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        },
+        {
+          "code": "8.EE.8b",
+          "text": "Solve systems of two linear equations in two variables algebraically, and estimate solutions by graphing the equations. Solve simple cases by inspection. For example, 3x + 2y = 5 and 3x + 2y = 6 have no solution because 3x + 2y cannot simultaneously be 5 and 6."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Grade 8 Unit 4 Block 8",
+      "substandards": [
+        {
+          "code": "8.EE.8c",
+          "text": "Solve real-world and mathematical problems leading to two linear equations in two variables. For example, given coordinates for two pairs of points, determine whether the line through the first pair of points intersects the line through the second pair."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Grade 8 Unit 4 Block 9",
+      "substandards": [
+        {
+          "code": "8.EE.8c",
+          "text": "Solve real-world and mathematical problems leading to two linear equations in two variables. For example, given coordinates for two pairs of points, determine whether the line through the first pair of points intersects the line through the second pair."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Lesson 5: Solving Any Linear Equation",
+      "substandards": [
+        {
+          "code": "8.EEI.7b",
+          "text": "Solve linear equations and inequalities with rational number coefficients, including equations and inequalities whose solutions require expanding expressions using the distributive property and combining like terms."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Lesson 6: Strategic Solving",
+      "substandards": [
+        {
+          "code": "8.EE.7b",
+          "text": "Solve linear equations with rational number coefficients, including equations whose solutions require expanding expressions using the distributive property and collecting like terms."
+        },
+        {
+          "code": "8.EE.7b",
+          "text": "Solve linear equations with rational number coefficients, including equations whose solutions require expanding expressions using the distributive property and collecting like terms."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Lesson 7: All, Some, or No Solutions",
+      "substandards": [
+        {
+          "code": "8.EE.7a",
+          "text": "Give examples of linear equations in one variable with one solution, infinitely many solutions, or no solutions. Show which of these possibilities is the case by successively transforming the given equation into simpler forms, until an equivalent equation of the form x = a, a = a, or a = b results (where a and b are different numbers)."
+        },
+        {
+          "code": "8.EEI.7a",
+          "text": "Create and identify linear equations with one solution, infinitely many solutions or no solutions."
+        },
+        {
+          "code": "8.EE.7a",
+          "text": "Give examples of linear equations in one variable with one solution, infinitely many solutions, or no solutions. Show which of these possibilities is the case by successively transforming the given equation into simpler forms, until an equivalent equation of the form x = a, a = a, or a = b results (where a and b are different numbers)."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Lesson 8: How Many Solutions?",
+      "substandards": [
+        {
+          "code": "8.EE.7a",
+          "text": "Give examples of linear equations in one variable with one solution, infinitely many solutions, or no solutions. Show which of these possibilities is the case by successively transforming the given equation into simpler forms, until an equivalent equation of the form x = a, a = a, or a = b results (where a and b are different numbers)."
+        },
+        {
+          "code": "8.EEI.7a",
+          "text": "Create and identify linear equations with one solution, infinitely many solutions or no solutions."
+        },
+        {
+          "code": "8.EE.7a",
+          "text": "Give examples of linear equations in one variable with one solution, infinitely many solutions, or no solutions. Show which of these possibilities is the case by successively transforming the given equation into simpler forms, until an equivalent equation of the form x = a, a = a, or a = b results (where a and b are different numbers)."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Lesson 12: Systems of Equations",
+      "substandards": [
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        },
+        {
+          "code": "8.EE.8b",
+          "text": "Solve systems of two linear equations in two variables algebraically, and estimate solutions by graphing the equations. Solve simple cases by inspection. For example, 3x + 2y = 5 and 3x + 2y = 6 have no solution because 3x + 2y cannot simultaneously be 5 and 6."
+        },
+        {
+          "code": "8.EEI.8a",
+          "text": "Graph systems of linear equations and recognize the intersection as the solution to the system."
+        },
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        },
+        {
+          "code": "8.EE.8b",
+          "text": "Solve systems of two linear equations in two variables algebraically, and estimate solutions by graphing the equations. Solve simple cases by inspection. For example, 3x + 2y = 5 and 3x + 2y = 6 have no solution because 3x + 2y cannot simultaneously be 5 and 6."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Lesson 13: Solving Systems of Equations",
+      "substandards": [
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        },
+        {
+          "code": "8.EEI.8a",
+          "text": "Graph systems of linear equations and recognize the intersection as the solution to the system."
+        },
+        {
+          "code": "8.EEI.8b",
+          "text": "Explain why solution(s) to a system of two linear equations in two variables correspond to point(s) of intersection of the graphs."
+        },
+        {
+          "code": "8.EEI.8c",
+          "text": "Explain why systems of linear equations can have one solution, no solution or infinitely many solutions."
+        },
+        {
+          "code": "8.EE.8a",
+          "text": "Understand that solutions to a system of two linear equations in two variables correspond to points of intersection of their graphs, because points of intersection satisfy both equations simultaneously."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Lesson 15: Writing Systems of Equations",
+      "substandards": [
+        {
+          "code": "8.EE.8b",
+          "text": "Solve systems of two linear equations in two variables algebraically, and estimate solutions by graphing the equations. Solve simple cases by inspection. For example, 3x + 2y = 5 and 3x + 2y = 6 have no solution because 3x + 2y cannot simultaneously be 5 and 6."
+        },
+        {
+          "code": "8.EE.8c",
+          "text": "Solve real-world and mathematical problems leading to two linear equations in two variables. For example, given coordinates for two pairs of points, determine whether the line through the first pair of points intersects the line through the second pair."
+        },
+        {
+          "code": "8.EE.8b",
+          "text": "Solve systems of two linear equations in two variables algebraically, and estimate solutions by graphing the equations. Solve simple cases by inspection. For example, 3x + 2y = 5 and 3x + 2y = 6 have no solution because 3x + 2y cannot simultaneously be 5 and 6."
+        },
+        {
+          "code": "8.EE.8c",
+          "text": "Solve real-world and mathematical problems leading to two linear equations in two variables. For example, given coordinates for two pairs of points, determine whether the line through the first pair of points intersects the line through the second pair."
+        }
+      ]
+    },
+    {
+      "unit": 4,
+      "unitName": "Linear Equations and Linear Systems",
+      "lesson": "Lesson 16: Solving Problems with Systems of Equations",
+      "substandards": [
+        {
+          "code": "8.EE.8c",
+          "text": "Solve real-world and mathematical problems leading to two linear equations in two variables. For example, given coordinates for two pairs of points, determine whether the line through the first pair of points intersects the line through the second pair."
+        },
+        {
+          "code": "8.EEI.8d",
+          "text": "Solve systems of two linear equations."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 1: Inputs and Outputs",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 2: Introduction to Functions",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 4: Tables, Equations, and Graphs of Functions",
+      "substandards": [
+        {
+          "code": "8.A.1a",
+          "text": "Lines are taken to lines, and line segments to line segments of the same length."
+        },
+        {
+          "code": "8.A.1b",
+          "text": "Angles are taken to angles of the same measure."
+        },
+        {
+          "code": "8.A.3b",
+          "text": "Recognize that the graph of a linear function has a constant rate of change."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 8: Linear Functions",
+      "substandards": [
+        {
+          "code": "8.A.3b",
+          "text": "Recognize that the graph of a linear function has a constant rate of change."
+        },
+        {
+          "code": "8.B.4b",
+          "text": "Determine the parameters of a linear function."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 10: Piecewise Linear Functions",
+      "substandards": [
+        {
+          "code": "8.B.4a",
+          "text": "Explain the parameters of a linear function based on the context of a problem."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 15: The Volume of a Cone",
+      "substandards": [
+        {
+          "code": "8.GM.9b",
+          "text": "Understand the concepts of volume and find the volume of pyramids, cones and spheres."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 16: Finding Cone Dimensions",
+      "substandards": [
+        {
+          "code": "8.GM.9b",
+          "text": "Understand the concepts of volume and find the volume of pyramids, cones and spheres."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 17: Scaling One Dimension",
+      "substandards": [
+        {
+          "code": "8.A.1c",
+          "text": "Parallel lines are taken to parallel lines."
+        },
+        {
+          "code": "8.A.3a",
+          "text": "Interpret the equation y = mx + b as defining a linear function, whose parameters are the slope (m) and the y-intercept (b)."
+        },
+        {
+          "code": "8.GM.9b",
+          "text": "Understand the concepts of volume and find the volume of pyramids, cones and spheres."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 18: Scaling Two Dimensions",
+      "substandards": [
+        {
+          "code": "8.A.3c",
+          "text": "Give examples of nonlinear functions."
+        },
+        {
+          "code": "8.GM.9b",
+          "text": "Understand the concepts of volume and find the volume of pyramids, cones and spheres."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 19: Estimating a Hemisphere",
+      "substandards": [
+        {
+          "code": "8.GM.9b",
+          "text": "Understand the concepts of volume and find the volume of pyramids, cones and spheres."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 20: The Volume of a Sphere",
+      "substandards": [
+        {
+          "code": "8.GM.9b",
+          "text": "Understand the concepts of volume and find the volume of pyramids, cones and spheres."
+        }
+      ]
+    },
+    {
+      "unit": 5,
+      "unitName": "Functions and Volume",
+      "lesson": "Lesson 21: Cylinders, Cones, and Spheres",
+      "substandards": [
+        {
+          "code": "8.GM.9b",
+          "text": "Understand the concepts of volume and find the volume of pyramids, cones and spheres."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Associations in Data",
+      "lesson": "Lesson 9: Looking for Associations",
+      "substandards": [
+        {
+          "code": "8.DSP.4a",
+          "text": "Construct and interpret a two-way table summarizing data on two categorical variables collected from the same subjects."
+        }
+      ]
+    },
+    {
+      "unit": 6,
+      "unitName": "Associations in Data",
+      "lesson": "Lesson 10: Using Data Displays to Find Associations",
+      "substandards": [
+        {
+          "code": "8.DSP.4a",
+          "text": "Construct and interpret a two-way table summarizing data on two categorical variables collected from the same subjects."
+        },
+        {
+          "code": "8.DSP.4b",
+          "text": "Use relative frequencies calculated for rows or columns to describe possible association between the two variables."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Exponents and Scientific Notation",
+      "lesson": "Grade 8 Unit 7 Block 2",
+      "substandards": [
+        {
+          "code": "5.NBT.3a",
+          "text": "Read and write decimals to thousandths using base-ten numerals, number names, and expanded form, e.g., 347.392 = 3 x 100 + 4 x 10 + 7 x 1 + 3 x (1/10) + 9 x (1/100) + 2 x (1/1000).",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Exponents and Scientific Notation",
+      "lesson": "Grade 8 Unit 7 Block 3",
+      "substandards": [
+        {
+          "code": "5.NF.5b",
+          "text": "Explaining why multiplying a given number by a fraction greater than 1 results in a product greater than the given number (recognizing multiplication by whole numbers greater than 1 as a familiar case); explaining why multiplying a given number by a fraction less than 1 results in a product smaller than the given number; and relating the principle of fraction equivalence a/b = (nxa)/(nxb) to the effect of multiplying a/b by 1.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Exponents and Scientific Notation",
+      "lesson": "Grade 8 Unit 7 Block 5",
+      "substandards": [
+        {
+          "code": "5.NBT.3a",
+          "text": "Read and write decimals to thousandths using base-ten numerals, number names, and expanded form, e.g., 347.392 = 3 x 100 + 4 x 10 + 7 x 1 + 3 x (1/10) + 9 x (1/100) + 2 x (1/1000).",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Exponents and Scientific Notation",
+      "lesson": "Lesson 2: Multiplying Powers of 10",
+      "substandards": [
+        {
+          "code": "5.NBT.3a",
+          "text": "Read and write decimals to thousandths using base-ten numerals, number names, and expanded form, e.g., 347.392 = 3 x 100 + 4 x 10 + 7 x 1 + 3 x (1/10) + 9 x (1/100) + 2 x (1/1000).",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Exponents and Scientific Notation",
+      "lesson": "Lesson 4: Dividing Powers of 10",
+      "substandards": [
+        {
+          "code": "5.NF.5b",
+          "text": "Explaining why multiplying a given number by a fraction greater than 1 results in a product greater than the given number (recognizing multiplication by whole numbers greater than 1 as a familiar case); explaining why multiplying a given number by a fraction less than 1 results in a product smaller than the given number; and relating the principle of fraction equivalence a/b = (nxa)/(nxb) to the effect of multiplying a/b by 1.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Exponents and Scientific Notation",
+      "lesson": "Lesson 9: Describing Large and Small Numbers Using Powers of 10",
+      "substandards": [
+        {
+          "code": "5.NBT.3a",
+          "text": "Read and write decimals to thousandths using base-ten numerals, number names, and expanded form, e.g., 347.392 = 3 x 100 + 4 x 10 + 7 x 1 + 3 x (1/10) + 9 x (1/100) + 2 x (1/1000).",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Exponents and Scientific Notation",
+      "lesson": "Lesson 14: Estimating with Scientific Notation",
+      "substandards": [
+        {
+          "code": "8.EEI.4b",
+          "text": "Use scientific notation and choose units of appropriate size for measurements of very large or very small quantities."
+        }
+      ]
+    },
+    {
+      "unit": 7,
+      "unitName": "Exponents and Scientific Notation",
+      "lesson": "Lesson 15: Adding and Subtracting with Scientific Notation",
+      "substandards": [
+        {
+          "code": "8.EEI.4a",
+          "text": "Perform operations with numbers expressed in scientific notation, including problems where both decimal and scientific notation are used."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Grade 8 Unit 8 Block 5",
+      "substandards": [
+        {
+          "code": "8.EE.7b",
+          "text": "Solve linear equations with rational number coefficients, including equations whose solutions require expanding expressions using the distributive property and collecting like terms.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Grade 8 Unit 8 Block 9",
+      "substandards": [
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "tag": "Building On"
+        },
+        {
+          "code": "8.EE.7b",
+          "text": "Solve linear equations with rational number coefficients, including equations whose solutions require expanding expressions using the distributive property and collecting like terms.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 2: Side Lengths and Areas",
+      "substandards": [
+        {
+          "code": "8.EEI.2b",
+          "text": "Evaluate square roots of perfect squares less than or equal to 625 and cube roots of perfect cubes less than or equal to 1000."
+        },
+        {
+          "code": "8.EE.2a",
+          "text": "Evaluate square roots of small perfect squares and cube roots of small perfect cubes. Know that \u221a2 is irrational."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 3: Square Roots",
+      "substandards": [
+        {
+          "code": "8.EEI.2c",
+          "text": "Recognize that square roots of non-perfect squares are irrational."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 4: Rational and Irrational Numbers",
+      "substandards": [
+        {
+          "code": "8.EEI.2c",
+          "text": "Recognize that square roots of non-perfect squares are irrational."
+        },
+        {
+          "code": "8.EE.2a",
+          "text": "Evaluate square roots of small perfect squares and cube roots of small perfect cubes. Know that \u221a2 is irrational."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 5: Square Roots on the Number Line",
+      "substandards": [
+        {
+          "code": "8.EE.2a",
+          "text": "Evaluate square roots of small perfect squares and cube roots of small perfect cubes. Know that \u221a2 is irrational."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 6: Reasoning about Square Roots",
+      "substandards": [
+        {
+          "code": "8.EE.2a",
+          "text": "Evaluate square roots of small perfect squares and cube roots of small perfect cubes. Know that \u221a2 is irrational."
+        },
+        {
+          "code": "8.EE.2b",
+          "text": "Simplify numerical radicals, limiting to square roots (i.e. nonperfect squares). For example, simplify \u221a8 to 2\u221a2."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 7: Finding Side Lengths of Triangles",
+      "substandards": [
+        {
+          "code": "8.EEI.2a",
+          "text": "Solve equations of the form x^2 = p and x^3 = p, where p is a positive rational number."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 8: A Proof of the Pythagorean Theorem",
+      "substandards": [
+        {
+          "code": "8.EE.7b",
+          "text": "Solve linear equations with rational number coefficients, including equations whose solutions require expanding expressions using the distributive property and collecting like terms.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 9: Finding Unknown Side Lengths",
+      "substandards": [
+        {
+          "code": "8.EEI.2a",
+          "text": "Solve equations of the form x^2 = p and x^3 = p, where p is a positive rational number."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 11: Applications of the Pythagorean Theorem",
+      "substandards": [
+        {
+          "code": "8.EE.2a",
+          "text": "Evaluate square roots of small perfect squares and cube roots of small perfect cubes. Know that \u221a2 is irrational."
+        },
+        {
+          "code": "8.EE.2b",
+          "text": "Simplify numerical radicals, limiting to square roots (i.e. nonperfect squares). For example, simplify \u221a8 to 2\u221a2."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 14: Edge Lengths and Volumes",
+      "substandards": [
+        {
+          "code": "8.NS.1b",
+          "text": "Understand that all rational numbers have a decimal expansion that terminates or repeats."
+        },
+        {
+          "code": "8.NS.1c",
+          "text": "Convert decimals which repeat into fractions and fractions into repeating decimals."
+        },
+        {
+          "code": "8.EE.2a",
+          "text": "Evaluate square roots of small perfect squares and cube roots of small perfect cubes. Know that \u221a2 is irrational."
+        },
+        {
+          "code": "8.EE.2b",
+          "text": "Simplify numerical radicals, limiting to square roots (i.e. nonperfect squares). For example, simplify \u221a8 to 2\u221a2."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 15: Cube Roots",
+      "substandards": [
+        {
+          "code": "8.EEI.2a",
+          "text": "Solve equations of the form x^2 = p and x^3 = p, where p is a positive rational number."
+        },
+        {
+          "code": "8.EEI.2b",
+          "text": "Evaluate square roots of perfect squares less than or equal to 625 and cube roots of perfect cubes less than or equal to 1000."
+        },
+        {
+          "code": "8.NS.1b",
+          "text": "Understand that all rational numbers have a decimal expansion that terminates or repeats."
+        },
+        {
+          "code": "8.NS.1c",
+          "text": "Convert decimals which repeat into fractions and fractions into repeating decimals."
+        },
+        {
+          "code": "8.EE.2a",
+          "text": "Evaluate square roots of small perfect squares and cube roots of small perfect cubes. Know that \u221a2 is irrational."
+        },
+        {
+          "code": "8.EE.2b",
+          "text": "Simplify numerical radicals, limiting to square roots (i.e. nonperfect squares). For example, simplify \u221a8 to 2\u221a2."
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 16: Decimal Representations of Rational Numbers",
+      "substandards": [
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "tag": "Building On"
+        }
+      ]
+    },
+    {
+      "unit": 8,
+      "unitName": "Pythagorean Theorem and Irrational Numbers",
+      "lesson": "Lesson 17: Infinite Decimal Expansions",
+      "substandards": [
+        {
+          "code": "7.NS.2d",
+          "text": "Convert a rational number to a decimal using long division; know that the decimal form of a rational number terminates in 0s or eventually repeats.",
+          "tag": "Building On"
+        },
+        {
+          "code": "8.EE.7b",
+          "text": "Solve linear equations with rational number coefficients, including equations whose solutions require expanding expressions using the distributive property and collecting like terms.",
+          "tag": "Building On"
+        }
+      ]
+    }
+  ]
+}
