@@ -73,8 +73,10 @@ export function QuestionCard({
                     </span>
                   )}
                 </div>
-                {/* Right side: year */}
-                <span className="text-xs text-gray-600">{question.examYear}</span>
+                {/* Right side: question number and year */}
+                <span className="text-xs text-gray-600">
+                  {question.questionNumber && `#${question.questionNumber} `}{question.examYear}
+                </span>
               </>
             ) : (
               <>
@@ -85,7 +87,7 @@ export function QuestionCard({
                   )}
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-600">
-                  <span>{question.examYear}</span>
+                  <span>{question.questionNumber && `#${question.questionNumber} `}{question.examYear}</span>
                   {question.points !== undefined && (
                     <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
                       {question.points}pt

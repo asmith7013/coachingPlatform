@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { QuestionCard } from "./QuestionCard";
 import { DOMAIN_COLORS, STANDARD_DESCRIPTIONS } from "../constants";
-import { extractDomain, normalizeStandard } from "../hooks";
+import { extractDomain, normalizeStandard, stripLetterSuffix } from "../hooks";
 import type { StateTestQuestion } from "../types";
 
 interface StandardAccordionProps {
@@ -12,6 +12,8 @@ interface StandardAccordionProps {
   isSecondaryMatch: Map<string, boolean>;
   /** When true, removes individual card styling (for use inside a container card) */
   contained?: boolean;
+  /** Dynamic standard descriptions from lesson data (supplements hardcoded STANDARD_DESCRIPTIONS) */
+  standardDescriptions?: Record<string, string>;
 }
 
 export function StandardAccordion({
@@ -19,6 +21,7 @@ export function StandardAccordion({
   questions,
   isSecondaryMatch,
   contained = false,
+  standardDescriptions = {},
 }: StandardAccordionProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -36,9 +39,10 @@ export function StandardAccordion({
   const domain = extractDomain(normalizeStandard(standard));
   const colors = DOMAIN_COLORS[domain] || DOMAIN_COLORS.Other;
 
-  // Get standard description - try both normalized and original standard
+  // Get standard description - dynamic from lessons first, then fall back to hardcoded
   const normalizedStd = normalizeStandard(standard);
-  const description = STANDARD_DESCRIPTIONS[normalizedStd] || STANDARD_DESCRIPTIONS[standard];
+  const parentStd = stripLetterSuffix(normalizedStd);
+  const description = standardDescriptions[normalizedStd] || standardDescriptions[parentStd] || STANDARD_DESCRIPTIONS[normalizedStd] || STANDARD_DESCRIPTIONS[standard] || STANDARD_DESCRIPTIONS[parentStd];
 
   const containerClasses = contained
     ? "bg-white" // No border, shadow, or rounded corners when contained
@@ -52,18 +56,18 @@ export function StandardAccordion({
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full flex items-center justify-between px-4 py-3 text-left ${colors.bg} hover:opacity-90 cursor-pointer transition-colors`}
       >
-        <div className="flex items-center gap-3">
-          <span className={`inline-flex items-center px-3 py-1.5 rounded text-base font-semibold ${colors.badge} text-white`}>
+        <div className="flex items-start gap-3 flex-1 mr-10">
+          <span className={`inline-flex items-center justify-center w-20 py-1.5 rounded text-base font-semibold ${colors.badge} text-white flex-shrink-0`}>
             {standard}
           </span>
           {description && (
-            <span className={`text-base ${colors.text}`}>
+            <span className={`text-sm ${colors.text}`}>
               {description}
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3">
-          <span className={`text-sm font-medium ${colors.text}`}>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <span className={`text-sm font-medium ${colors.text} whitespace-nowrap`}>
             {questions.length} {questions.length === 1 ? "question" : "questions"}
           </span>
           <svg

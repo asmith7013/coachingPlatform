@@ -118,11 +118,10 @@ export function StandardsUnitMatrix({
           const processedUnitStd = showSubstandards ? normalizedUnitStd : stripLetterSuffix(normalizedUnitStd);
 
           if (showSubstandards) {
-            // When showing substandards: match if unit has this exact substandard OR the parent standard
-            // e.g., question standard 7.RP.2a should match unit standard 7.RP.2a OR 7.RP.2
-            // But NOT 7.RP.2b (a different substandard)
-            const parentStd = stripLetterSuffix(std);
-            return normalizedUnitStd === std || normalizedUnitStd === parentStd;
+            // When showing substandards: only match exact substandard
+            // e.g., question standard 7.RP.2b matches ONLY if unit has 7.RP.2b
+            // No parent-to-child inheritance
+            return normalizedUnitStd === std;
           }
           // When combined: both are stripped, so direct comparison
           return processedUnitStd === std || standardMatches(processedUnitStd, std);

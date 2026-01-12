@@ -4,11 +4,17 @@ import { withDbConnection } from '@server/db/ensure-connection';
 import { handleServerError } from '@error/handlers/server';
 import { ScopeAndSequenceModel } from '@mongoose-schema/scm/scope-and-sequence/scope-and-sequence.model';
 
+export interface StandardWithText {
+  code: string;
+  text: string;
+}
+
 export interface UnitWithStandards {
   unitNumber: number;
   unitName: string;
   grade: string;
   standards: string[]; // All unique standard codes in this unit
+  standardsWithText?: StandardWithText[]; // Standards with their descriptions
 }
 
 export interface SectionWithStandards {
@@ -41,16 +47,32 @@ export async function getUnitsWithStandards(grade: string): Promise<GetUnitsResu
       // Map grade to scopeSequenceTag format
       const scopeSequenceTag = `Grade ${grade}`;
 
-      // Aggregate to get unique units with all their standards
-      // Group by unitNumber only and pick the first non-null unit name
+      // Aggregate to get unique units with their standards
+      // Include standards with context='current' or 'buildingTowards' (or no context, which defaults to current)
+      // Exclude 'buildingOn' standards (prior knowledge, not what the unit teaches)
       const unitsData = await ScopeAndSequenceModel.aggregate([
         { $match: { scopeSequenceTag } },
+        // Unwind standards array to filter by context
+        { $unwind: { path: '$standards', preserveNullAndEmptyArrays: true } },
+        // Filter to include 'current' and 'buildingTowards' standards
+        {
+          $match: {
+            $or: [
+              { 'standards.context': 'current' },
+              { 'standards.context': 'buildingTowards' },
+              { 'standards.context': { $exists: false } },
+              { standards: null } // Handle lessons with no standards
+            ]
+          }
+        },
         {
           $group: {
             _id: '$unitNumber',
             // Collect all unit names, filter out nulls, take first
             unitNames: { $addToSet: '$unit' },
-            standards: { $push: '$standards.code' }
+            standards: { $addToSet: '$standards.code' },
+            // Also collect full standard objects for text
+            standardObjects: { $push: '$standards' }
           }
         },
         {
@@ -65,12 +87,18 @@ export async function getUnitsWithStandards(grade: string): Promise<GetUnitsResu
                 }
               }
             },
-            // Flatten array of arrays and get unique values
+            // Filter out null values from standards array
             standards: {
-              $reduce: {
+              $filter: {
                 input: '$standards',
-                initialValue: [],
-                in: { $setUnion: ['$$value', '$$this'] }
+                cond: { $ne: ['$$this', null] }
+              }
+            },
+            // Filter out null values from standard objects
+            standardObjects: {
+              $filter: {
+                input: '$standardObjects',
+                cond: { $ne: ['$$this', null] }
               }
             }
           }
@@ -78,12 +106,23 @@ export async function getUnitsWithStandards(grade: string): Promise<GetUnitsResu
         { $sort: { unitNumber: 1 } }
       ]);
 
-      const units: UnitWithStandards[] = unitsData.map((u) => ({
-        unitNumber: u.unitNumber,
-        unitName: u.unitName,
-        grade,
-        standards: u.standards.filter((s: string | null) => s) // Remove nulls
-      }));
+      const units: UnitWithStandards[] = unitsData.map((u) => {
+        // Deduplicate standards with text by code
+        const standardsMap = new Map<string, string>();
+        (u.standardObjects || []).forEach((std: { code?: string; text?: string }) => {
+          if (std?.code && std?.text && !standardsMap.has(std.code)) {
+            standardsMap.set(std.code, std.text);
+          }
+        });
+
+        return {
+          unitNumber: u.unitNumber,
+          unitName: u.unitName,
+          grade,
+          standards: u.standards.filter((s: string | null) => s), // Remove nulls
+          standardsWithText: Array.from(standardsMap.entries()).map(([code, text]) => ({ code, text }))
+        };
+      });
 
       return { success: true, units };
     } catch (error) {
@@ -107,6 +146,7 @@ export async function getSectionsWithStandards(
       const scopeSequenceTag = `Grade ${grade}`;
 
       // Get all lessons in this unit grouped by section
+      // Include standards with context='current' or 'buildingTowards' (exclude buildingOn)
       const sectionsData = await ScopeAndSequenceModel.aggregate([
         {
           $match: {
@@ -114,11 +154,29 @@ export async function getSectionsWithStandards(
             unitNumber
           }
         },
+        // First, filter standards array to include current and buildingTowards
+        {
+          $addFields: {
+            currentStandards: {
+              $filter: {
+                input: '$standards',
+                as: 'std',
+                cond: {
+                  $or: [
+                    { $eq: ['$$std.context', 'current'] },
+                    { $eq: ['$$std.context', 'buildingTowards'] },
+                    { $not: { $ifNull: ['$$std.context', false] } } // No context = current
+                  ]
+                }
+              }
+            }
+          }
+        },
         {
           $group: {
             _id: { section: '$section', subsection: '$subsection' },
             lessonCount: { $sum: 1 },
-            standards: { $push: '$standards.code' }
+            standards: { $push: '$currentStandards.code' }
           }
         },
         {
