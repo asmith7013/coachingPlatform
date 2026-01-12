@@ -229,10 +229,10 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       // Step 1: Export to Google Slides to get the URL
       setExportProgress({ status: 'exporting', message: 'Uploading to Google Slides...' });
 
-      // Build concise title for Google Slides: "6.4.2 Strategy Name"
+      // Build concise title for Google Slides: "SGI 6.4.2: Strategy Name"
       const lessonPrefix = state.gradeLevel && state.unitNumber !== null && state.lessonNumber !== null
-        ? `${state.gradeLevel}.${state.unitNumber}.${state.lessonNumber} `
-        : '';
+        ? `SGI ${state.gradeLevel}.${state.unitNumber}.${state.lessonNumber}: `
+        : 'SGI ';
       const strategyName = state.strategyDefinition?.name || state.title || 'Worked Example';
       const exportTitle = `${lessonPrefix}${strategyName}`;
 
