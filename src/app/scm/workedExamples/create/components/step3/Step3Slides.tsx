@@ -58,11 +58,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
   // Export states
   const [exportProgress, setExportProgress] = useState<ExportProgress>({ status: 'idle', message: '' });
-  const [exportPhase, setExportPhase] = useState<ExportPhase>('idle');
-  const [slideExportStatuses, setSlideExportStatuses] = useState<SlideExportStatus[]>([]);
+  const [_exportPhase, setExportPhase] = useState<ExportPhase>('idle');
+  const [_slideExportStatuses, setSlideExportStatuses] = useState<SlideExportStatus[]>([]);
   const [exportStartTime, setExportStartTime] = useState<number | null>(null);
   const [exportElapsed, setExportElapsed] = useState(0);
-  const [optimizedCount, setOptimizedCount] = useState(0);
+  const [_optimizedCount, setOptimizedCount] = useState(0);
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
   const [showExportSuccessModal, setShowExportSuccessModal] = useState(false);
