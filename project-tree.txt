@@ -449,6 +449,8 @@
 │   │   │   │   ├── scope-and-sequence
 │   │   │   │   │   ├── im-lessons.ts
 │   │   │   │   │   └── scope-and-sequence.ts
+│   │   │   │   ├── scope-sequence-unit-order
+│   │   │   │   │   └── scope-sequence-unit-order.ts
 │   │   │   │   ├── student
 │   │   │   │   │   ├── attendance-import.ts
 │   │   │   │   │   ├── attendance-sync
@@ -1138,7 +1140,9 @@
 │   │   │   │   └── zearn
 │   │   │   │       └── page.tsx
 │   │   │   ├── scope-and-sequence
-│   │   │   │   ├── lesson-by-lesson
+│   │   │   │   ├── lessons
+│   │   │   │   │   ├── actions.ts
+│   │   │   │   │   ├── components
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── page.tsx
 │   │   │   │   ├── state-exam
@@ -1992,6 +1996,7 @@
 │   │   │   │   │   ├── podsie
 │   │   │   │   │   ├── roadmaps
 │   │   │   │   │   ├── scope-and-sequence
+│   │   │   │   │   ├── scope-sequence-unit-order
 │   │   │   │   │   ├── state-test-question.model.ts
 │   │   │   │   │   ├── storage.ts
 │   │   │   │   │   ├── student
@@ -2089,6 +2094,7 @@
 │   │   │       │   ├── podsie
 │   │   │       │   ├── roadmaps
 │   │   │       │   ├── scope-and-sequence
+│   │   │       │   ├── scope-sequence-unit-order
 │   │   │       │   ├── state-test-question.ts
 │   │   │       │   ├── storage.ts
 │   │   │       │   ├── student
@@ -2371,4 +2377,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-703 directories, 1669 files
+707 directories, 1671 files

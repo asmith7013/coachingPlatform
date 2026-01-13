@@ -89,7 +89,7 @@ export function SCMNav() {
       label: "Scope & Sequence",
       Icon: ListBulletIcon,
       items: [
-        { href: "/scm/scope-and-sequence/lesson-by-lesson", label: "Lesson by Lesson" },
+        { href: "/scm/scope-and-sequence/lessons", label: "Lesson by Lesson" },
         { href: "/scm/scope-and-sequence/units", label: "Units" },
         { href: "/scm/scope-and-sequence/state-exam", label: "State Exam Questions" },
       ],

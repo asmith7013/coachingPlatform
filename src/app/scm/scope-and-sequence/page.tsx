@@ -4,17 +4,17 @@ import Link from "next/link";
 import {
   ChevronRightIcon,
   ListBulletIcon,
-  CalendarDaysIcon,
   BookOpenIcon,
+  TableCellsIcon,
 } from '@heroicons/react/24/outline';
 
 export default function ScopeAndSequenceHomePage() {
   const pages = [
     {
-      title: "Lesson by Lesson",
-      href: "/scm/scope-and-sequence/lesson-by-lesson",
-      Icon: CalendarDaysIcon,
-      description: "See how skills progress across lessons in each unit."
+      title: "Lessons",
+      href: "/scm/scope-and-sequence/lessons",
+      Icon: TableCellsIcon,
+      description: "View all lessons in a curriculum with standards, learning targets, and skills."
     },
     {
       title: "Units",
