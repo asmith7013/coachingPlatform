@@ -144,7 +144,7 @@ export function LessonsTable({ units, skillMap, totalLessons }: LessonsTableProp
                         >
                           {/* Lesson Number */}
                           <td className="px-4 py-3 align-top">
-                            <span className="font-mono text-sm font-medium text-gray-900">
+                            <span className="text-sm font-medium text-gray-900">
                               {lesson.section?.length === 1 && `Lesson ` + lesson.unitLessonId.split('.')[1]}
                             </span>
                           </td>
@@ -161,17 +161,6 @@ export function LessonsTable({ units, skillMap, totalLessons }: LessonsTableProp
                             <p className="text-sm text-gray-900 font-medium">
                               {lesson.lessonTitle || lesson.lessonName}
                             </p>
-                            {lesson.lessonType && lesson.lessonType !== "lesson" && (
-                              <span className={`inline-flex items-center mt-1 px-1.5 py-0.5 rounded text-xs ${
-                                lesson.lessonType === "rampUp" ? "bg-amber-50 text-amber-700" :
-                                lesson.lessonType === "assessment" ? "bg-purple-50 text-purple-700" :
-                                "bg-gray-50 text-gray-700"
-                              }`}>
-                                {lesson.lessonType === "rampUp" ? "Ramp Up" :
-                                 lesson.lessonType === "assessment" ? "Assessment" :
-                                 lesson.lessonType}
-                              </span>
-                            )}
                           </td>
 
                           {/* Standards */}
