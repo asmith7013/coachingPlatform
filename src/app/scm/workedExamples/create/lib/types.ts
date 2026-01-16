@@ -421,6 +421,10 @@ export interface WizardState {
   mathStandard: string;
   isPublic: boolean;
 
+  // Edit mode - when editing an existing deck (via editSlug URL param)
+  // When set, changes should auto-save to the database
+  editSlug: string | null;
+
   // Status
   isLoading: boolean;
   loadingMessage: string;
@@ -450,6 +454,7 @@ export type WizardAction =
   | { type: 'UPDATE_BIG_IDEA'; payload: string }
   | { type: 'UPDATE_STRATEGY_MOVES'; payload: { verb: string; description: string; result: string }[] }
   | { type: 'UPDATE_SCENARIO'; payload: { index: number; scenario: Scenario } }
+  | { type: 'SET_EDIT_SLUG'; payload: string | null }
   | { type: 'SET_SLIDES'; payload: HtmlSlide[] }
   | { type: 'UPDATE_SLIDE'; payload: { index: number; htmlContent: string } }
   | { type: 'UPDATE_SLIDES_BATCH'; payload: { index: number; htmlContent: string }[] }
@@ -498,6 +503,7 @@ export const initialWizardState: WizardState = {
   mathConcept: '',
   mathStandard: '',
   isPublic: true,
+  editSlug: null,
   isLoading: false,
   loadingMessage: '',
   loadingProgress: {

@@ -1,8 +1,9 @@
 'use client';
 
-import { useReducer, useCallback, useEffect, useState } from 'react';
+import { useReducer, useCallback, useEffect, useState, useRef } from 'react';
 import type { WizardState, WizardAction, WizardStep, ProblemAnalysis, StrategyDefinition, Scenario, LoadingProgress } from '../lib/types';
 import { initialWizardState } from '../lib/types';
+import { updateDeckSlides } from '@/app/actions/worked-examples';
 
 // Local storage key prefix for persisting wizard state (per session)
 const STORAGE_KEY_PREFIX = 'worked-example-wizard-';
@@ -227,6 +228,9 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       const newScenarios = [...state.scenarios];
       newScenarios[action.payload.index] = action.payload.scenario;
       return { ...state, scenarios: newScenarios };
+
+    case 'SET_EDIT_SLUG':
+      return { ...state, editSlug: action.payload };
 
     case 'SET_SLIDES':
       return { ...state, slides: action.payload };
@@ -465,6 +469,66 @@ export function useWizardState() {
     setSavedSessions(getAllSavedSessions());
   }, [state, isHydrated]);
 
+  // Auto-save to database when in edit mode (editSlug is set)
+  // Uses debouncing to avoid excessive API calls
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastSavedSlidesRef = useRef<string>('');
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
+  useEffect(() => {
+    // Only auto-save when editSlug is set (editing existing deck)
+    if (!isHydrated || !state.editSlug || state.slides.length === 0) {
+      return;
+    }
+
+    // Serialize slides to compare with last saved state
+    const slidesJson = JSON.stringify(state.slides);
+
+    // Skip if slides haven't changed since last save
+    if (slidesJson === lastSavedSlidesRef.current) {
+      return;
+    }
+
+    // Clear any pending save
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Debounce: wait 2 seconds after last change before saving
+    autoSaveTimeoutRef.current = setTimeout(async () => {
+      setAutoSaveStatus('saving');
+
+      try {
+        const result = await updateDeckSlides({
+          slug: state.editSlug!,
+          htmlSlides: state.slides,
+        });
+
+        if (result.success) {
+          lastSavedSlidesRef.current = slidesJson;
+          setAutoSaveStatus('saved');
+          console.log('[useWizardState] Auto-saved slides to database');
+
+          // Reset status after 3 seconds
+          setTimeout(() => setAutoSaveStatus('idle'), 3000);
+        } else {
+          console.error('[useWizardState] Auto-save failed:', result.error);
+          setAutoSaveStatus('error');
+        }
+      } catch (error) {
+        console.error('[useWizardState] Auto-save error:', error);
+        setAutoSaveStatus('error');
+      }
+    }, 2000);
+
+    // Cleanup on unmount
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [isHydrated, state.editSlug, state.slides]);
+
   // Load a saved session explicitly (called from SavedDrafts UI)
   const loadSession = useCallback((sessionId: string) => {
     const persisted = loadPersistedState(sessionId);
@@ -673,6 +737,10 @@ export function useWizardState() {
     dispatch({ type: 'SET_IS_PUBLIC', payload: isPublic });
   }, []);
 
+  const setEditSlug = useCallback((editSlug: string | null) => {
+    dispatch({ type: 'SET_EDIT_SLUG', payload: editSlug });
+  }, []);
+
   const setLoading = useCallback((isLoading: boolean, message?: string) => {
     dispatch({ type: 'SET_LOADING', payload: { isLoading, message } });
   }, []);
@@ -751,12 +819,15 @@ export function useWizardState() {
     setMathConcept,
     setMathStandard,
     setIsPublic,
+    setEditSlug,
     // Status
     setLoading,
     setLoadingProgress,
     setError,
     reset,
     clearPersistedState,
+    // Auto-save status (for edit mode)
+    autoSaveStatus,
   };
 }
 

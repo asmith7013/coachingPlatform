@@ -55,6 +55,10 @@ export function WizardContainer() {
 
         const deck = result.data;
 
+        // Store the original editSlug for auto-save functionality
+        // This tells the wizard we're editing an existing deck (not creating new)
+        wizard.setEditSlug(editSlug);
+
         // Load basic deck info
         if (deck.gradeLevel) wizard.setGradeLevel(deck.gradeLevel as GradeLevel);
         if (deck.unitNumber != null) wizard.setUnitNumber(deck.unitNumber);
@@ -64,8 +68,8 @@ export function WizardContainer() {
 
         // Load title/slug/metadata
         if (deck.title) wizard.setTitle(deck.title);
-        // Use a new slug to create a new version
-        if (deck.slug) wizard.setSlug(`${deck.slug}-edit`);
+        // Keep the original slug (we're editing in place, not creating new version)
+        if (deck.slug) wizard.setSlug(deck.slug);
         if (deck.mathConcept) wizard.setMathConcept(deck.mathConcept);
         if (deck.mathStandard) wizard.setMathStandard(deck.mathStandard);
 
@@ -201,6 +205,7 @@ export function WizardContainer() {
       <WizardFooter
         isLoading={state.isLoading}
         loadingProgress={state.loadingProgress}
+        autoSaveStatus={wizard.autoSaveStatus}
       />
     </WizardContext.Provider>
   );
