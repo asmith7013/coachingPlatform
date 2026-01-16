@@ -58,7 +58,9 @@ export function SlideThumbnails({
                     onToggleSlideToEdit(index);
                   }
                 }}
-                className="absolute top-1 left-1 z-10 w-3.5 h-3.5 cursor-pointer accent-purple-600"
+                className={`absolute top-1 left-1 z-10 w-3.5 h-3.5 cursor-pointer ${
+                  isInContext ? 'accent-gray-800' : 'accent-purple-600'
+                }`}
               />
               {/* Thumbnail button */}
               <button
