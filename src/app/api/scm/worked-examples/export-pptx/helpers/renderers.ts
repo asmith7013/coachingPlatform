@@ -143,6 +143,7 @@ export async function createRenderSession(): Promise<RenderSession> {
         <html>
         <head>
           <meta charset="UTF-8">
+          <script src="https://d3js.org/d3.v7.min.js"></script>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
@@ -164,8 +165,9 @@ export async function createRenderSession(): Promise<RenderSession> {
       `;
 
       // Use domcontentloaded - faster than networkidle0 for inline content
+      // Wait 500ms for D3/p5.js visualizations to complete rendering
       await page.setContent(fullHtml, { waitUntil: 'domcontentloaded' });
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const screenshot = await page.screenshot({
         type: 'png',
@@ -184,6 +186,7 @@ export async function createRenderSession(): Promise<RenderSession> {
         <html>
         <head>
           <meta charset="UTF-8">
+          <script src="https://d3js.org/d3.v7.min.js"></script>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body {
@@ -205,8 +208,9 @@ export async function createRenderSession(): Promise<RenderSession> {
       `;
 
       // Use domcontentloaded - faster than networkidle0 for inline content
+      // Wait 500ms for D3/p5.js visualizations to complete rendering
       await page.setContent(fullHtml, { waitUntil: 'domcontentloaded' });
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Get SVG position for calculating relative bounds
       const svgRect = await page.evaluate(() => {
@@ -364,8 +368,9 @@ export async function createRenderSession(): Promise<RenderSession> {
       `;
 
       // Use domcontentloaded - faster than networkidle0 for inline content
+      // Wait 500ms for D3/p5.js visualizations to complete rendering
       await page.setContent(fullHtml, { waitUntil: 'domcontentloaded' });
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const screenshot = await page.screenshot({
         type: 'png',
@@ -435,8 +440,9 @@ export async function createRenderSession(): Promise<RenderSession> {
         </html>
       `;
 
+      // Wait 500ms for D3/p5.js visualizations to complete rendering
       await page.setContent(fullHtml, { waitUntil: 'domcontentloaded' });
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const screenshot = await page.screenshot({
         type: 'png',
@@ -473,8 +479,9 @@ export async function createRenderSession(): Promise<RenderSession> {
         deviceScaleFactor: 2,
       });
 
+      // Wait 500ms for D3/p5.js visualizations to complete rendering
       await page.setContent(html, { waitUntil: 'domcontentloaded' });
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Get the bounding rect of the specific print-page
       const bounds = await page.evaluate((idx: number) => {

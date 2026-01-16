@@ -4,6 +4,9 @@ import { handleAnthropicError } from '@error/handlers/anthropic';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
 import { EDIT_SLIDES_SYSTEM_PROMPT } from '@/app/scm/workedExamples/create/lib/prompts';
 
+// Extend timeout for AI processing (5 minutes)
+export const maxDuration = 300;
+
 interface SlideInput {
   slideNumber: number;
   htmlContent: string;
@@ -13,7 +16,18 @@ interface EditSlidesInput {
   slidesToEdit: SlideInput[];
   contextSlides?: SlideInput[];
   editInstructions: string;
+  images?: string[]; // Base64 data URLs
   strategyName?: string;
+}
+
+// Helper to parse base64 data URL and extract media type and data
+function parseDataUrl(dataUrl: string): { mediaType: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp'; data: string } | null {
+  const match = dataUrl.match(/^data:(image\/(jpeg|png|gif|webp));base64,(.+)$/);
+  if (!match) return null;
+  return {
+    mediaType: match[1] as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+    data: match[3],
+  };
 }
 
 interface EditedSlide {
@@ -29,11 +43,14 @@ export async function POST(request: NextRequest) {
   try {
     const input: EditSlidesInput = await request.json();
 
-    const { slidesToEdit, contextSlides = [], editInstructions, strategyName } = input;
+    const { slidesToEdit, contextSlides = [], editInstructions, images, strategyName } = input;
 
-    if (!slidesToEdit || slidesToEdit.length === 0 || !editInstructions) {
+    const hasText = editInstructions?.trim();
+    const hasImages = images && images.length > 0;
+
+    if (!slidesToEdit || slidesToEdit.length === 0 || (!hasText && !hasImages)) {
       return NextResponse.json(
-        { error: 'Missing required fields: slidesToEdit (non-empty array) and editInstructions' },
+        { error: 'Missing required fields: slidesToEdit (non-empty array) and either editInstructions or images' },
         { status: 400 }
       );
     }
@@ -63,7 +80,11 @@ export async function POST(request: NextRequest) {
           .join('\n\n')}`
       : '';
 
-    const userPrompt = `## Slides to Edit
+    const instructionsText = hasText
+      ? editInstructions
+      : 'Please analyze the attached image(s) and apply any corrections or changes shown to the slides.';
+
+    const userPromptText = `## Slides to Edit
 ${strategyName ? `\nStrategy: ${strategyName}\n` : ''}
 ${slidesToEditSection}
 
@@ -71,7 +92,7 @@ ${contextSlidesSection}
 
 ## Edit Instructions
 
-${editInstructions}
+${instructionsText}
 
 ---
 
@@ -91,14 +112,40 @@ IMPORTANT:
 - Each htmlContent must be complete, valid HTML
 - Return slides in order by slide number`;
 
+    // Build message content - can include images and text
+    const messageContent: Anthropic.MessageCreateParams['messages'][0]['content'] = [];
+
+    // Add images first if provided
+    if (hasImages) {
+      for (const dataUrl of images) {
+        const parsed = parseDataUrl(dataUrl);
+        if (parsed) {
+          messageContent.push({
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: parsed.mediaType,
+              data: parsed.data,
+            },
+          });
+        }
+      }
+    }
+
+    // Add text prompt
+    messageContent.push({
+      type: 'text',
+      text: userPromptText,
+    });
+
     const response = await anthropic.messages.create({
       model: MODEL_FOR_TASK.EDIT,
-      max_tokens: 16000, // More tokens for multiple slides
+      max_tokens: 32000, // More tokens for multiple slides with large HTML content
       system: EDIT_SLIDES_SYSTEM_PROMPT,
       messages: [
         {
           role: 'user',
-          content: userPrompt,
+          content: messageContent,
         },
       ],
     });

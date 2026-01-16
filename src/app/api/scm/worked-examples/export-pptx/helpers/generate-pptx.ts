@@ -279,6 +279,12 @@ async function processSlide(
     const overlayBoxes = pptxElements.filter(
       el => el.regionType === 'cfu-box' || el.regionType === 'answer-box'
     );
+    // Sort: CFU first (appears on first click), Answer second (appears on second click, overlays CFU)
+    overlayBoxes.sort((a, b) => {
+      if (a.regionType === 'cfu-box' && b.regionType === 'answer-box') return -1;
+      if (a.regionType === 'answer-box' && b.regionType === 'cfu-box') return 1;
+      return 0;
+    });
 
     // Render regular elements first (they'll be at the bottom of z-order)
     for (const el of regularElements) {

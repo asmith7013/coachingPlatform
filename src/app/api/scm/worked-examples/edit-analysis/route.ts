@@ -9,6 +9,7 @@ export const maxDuration = 300;
 
 interface EditAnalysisInput {
   editInstructions: string;
+  images?: string[]; // Base64 data URLs
   problemAnalysis: ProblemAnalysis;
   strategyDefinition: StrategyDefinition;
   scenarios: Scenario[];
@@ -18,7 +19,7 @@ const EDIT_ANALYSIS_SYSTEM_PROMPT = `You are an expert math education content ed
 
 You will receive:
 1. The current analysis (problem analysis, strategy definition, and scenarios)
-2. Edit instructions from the user
+2. Edit instructions from the user (may include text and/or images)
 
 Your job is to modify the analysis according to the instructions while maintaining the overall structure and validity.
 
@@ -28,6 +29,7 @@ IMPORTANT RULES:
 - Ensure the edited analysis remains internally consistent
 - Maintain mathematical accuracy
 - If the edit affects multiple parts (e.g., changing an answer should update solution steps), make all necessary related changes
+- If images are provided, carefully analyze them to understand what changes the user wants
 
 Return your response as valid JSON with this exact structure:
 {
@@ -42,8 +44,15 @@ function buildEditPrompt(
   editInstructions: string,
   problemAnalysis: ProblemAnalysis,
   strategyDefinition: StrategyDefinition,
-  scenarios: Scenario[]
+  scenarios: Scenario[],
+  hasImages = false
 ): string {
+  const instructionSection = editInstructions.trim()
+    ? `## Edit Instructions\n${editInstructions}`
+    : hasImages
+      ? '## Edit Instructions\nPlease analyze the attached image(s) and apply any corrections or changes shown to the analysis below.'
+      : '';
+
   return `## Current Analysis
 
 ### Problem Analysis
@@ -55,20 +64,33 @@ ${JSON.stringify(strategyDefinition, null, 2)}
 ### Scenarios
 ${JSON.stringify(scenarios, null, 2)}
 
-## Edit Instructions
-${editInstructions}
+${instructionSection}
 
 Please apply the edit instructions to the analysis and return the complete updated analysis as JSON.`;
+}
+
+// Helper to parse base64 data URL and extract media type and data
+function parseDataUrl(dataUrl: string): { mediaType: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp'; data: string } | null {
+  const match = dataUrl.match(/^data:(image\/(jpeg|png|gif|webp));base64,(.+)$/);
+  if (!match) return null;
+  return {
+    mediaType: match[1] as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+    data: match[3],
+  };
 }
 
 export async function POST(request: NextRequest) {
   try {
     const input: EditAnalysisInput = await request.json();
-    const { editInstructions, problemAnalysis, strategyDefinition, scenarios } = input;
+    const { editInstructions, images, problemAnalysis, strategyDefinition, scenarios } = input;
 
-    if (!editInstructions?.trim()) {
+    const hasText = editInstructions?.trim();
+    const hasImages = images && images.length > 0;
+
+    // Need either text instructions or images
+    if (!hasText && !hasImages) {
       return NextResponse.json(
-        { error: 'Edit instructions are required' },
+        { error: 'Edit instructions or images are required' },
         { status: 400 }
       );
     }
@@ -90,9 +112,36 @@ export async function POST(request: NextRequest) {
 
     const anthropic = new Anthropic({ apiKey });
 
-    const userPrompt = buildEditPrompt(editInstructions, problemAnalysis, strategyDefinition, scenarios);
+    // Build the text prompt
+    const textPrompt = buildEditPrompt(editInstructions || '', problemAnalysis, strategyDefinition, scenarios, hasImages);
 
-    console.log('[edit-analysis] Processing edit request:', editInstructions.substring(0, 100));
+    // Build message content - can include images and text
+    const messageContent: Anthropic.MessageCreateParams['messages'][0]['content'] = [];
+
+    // Add images first if provided
+    if (hasImages) {
+      for (const dataUrl of images) {
+        const parsed = parseDataUrl(dataUrl);
+        if (parsed) {
+          messageContent.push({
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: parsed.mediaType,
+              data: parsed.data,
+            },
+          });
+        }
+      }
+    }
+
+    // Add text prompt
+    messageContent.push({
+      type: 'text',
+      text: textPrompt,
+    });
+
+    console.log('[edit-analysis] Processing edit request:', editInstructions?.substring(0, 100) || '(image-only)', `with ${images?.length || 0} images`);
 
     const response = await anthropic.messages.create({
       model: MODEL_FOR_TASK.GENERATION,
@@ -101,7 +150,7 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: 'user',
-          content: userPrompt,
+          content: messageContent,
         },
       ],
     });

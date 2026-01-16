@@ -7,8 +7,19 @@ import { EDIT_SLIDE_SYSTEM_PROMPT } from '@/app/scm/workedExamples/create/lib/pr
 interface EditSlideInput {
   currentHtml: string;
   editInstructions: string;
+  images?: string[]; // Base64 data URLs
   slideNumber?: number;
   strategyName?: string;
+}
+
+// Helper to parse base64 data URL and extract media type and data
+function parseDataUrl(dataUrl: string): { mediaType: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp'; data: string } | null {
+  const match = dataUrl.match(/^data:(image\/(jpeg|png|gif|webp));base64,(.+)$/);
+  if (!match) return null;
+  return {
+    mediaType: match[1] as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+    data: match[3],
+  };
 }
 
 /**
@@ -19,11 +30,14 @@ export async function POST(request: NextRequest) {
   try {
     const input: EditSlideInput = await request.json();
 
-    const { currentHtml, editInstructions, slideNumber, strategyName } = input;
+    const { currentHtml, editInstructions, images, slideNumber, strategyName } = input;
 
-    if (!currentHtml || !editInstructions) {
+    const hasText = editInstructions?.trim();
+    const hasImages = images && images.length > 0;
+
+    if (!currentHtml || (!hasText && !hasImages)) {
       return NextResponse.json(
-        { error: 'Missing required fields: currentHtml and editInstructions' },
+        { error: 'Missing required fields: currentHtml and either editInstructions or images' },
         { status: 400 }
       );
     }
@@ -41,8 +55,12 @@ export async function POST(request: NextRequest) {
       timeout: 2 * 60 * 1000, // 2 minutes for single slide edit
     });
 
-    // Build the user prompt
-    const userPrompt = `## Current Slide HTML${slideNumber ? ` (Slide ${slideNumber})` : ''}${strategyName ? `\nStrategy: ${strategyName}` : ''}
+    // Build the user prompt text
+    const instructionsText = hasText
+      ? editInstructions
+      : 'Please analyze the attached image(s) and apply any corrections or changes shown to the slide.';
+
+    const userPromptText = `## Current Slide HTML${slideNumber ? ` (Slide ${slideNumber})` : ''}${strategyName ? `\nStrategy: ${strategyName}` : ''}
 
 \`\`\`html
 ${currentHtml}
@@ -50,11 +68,37 @@ ${currentHtml}
 
 ## Edit Instructions
 
-${editInstructions}
+${instructionsText}
 
 ---
 
 Apply the requested changes and return the complete edited HTML.`;
+
+    // Build message content - can include images and text
+    const messageContent: Anthropic.MessageCreateParams['messages'][0]['content'] = [];
+
+    // Add images first if provided
+    if (hasImages) {
+      for (const dataUrl of images) {
+        const parsed = parseDataUrl(dataUrl);
+        if (parsed) {
+          messageContent.push({
+            type: 'image',
+            source: {
+              type: 'base64',
+              media_type: parsed.mediaType,
+              data: parsed.data,
+            },
+          });
+        }
+      }
+    }
+
+    // Add text prompt
+    messageContent.push({
+      type: 'text',
+      text: userPromptText,
+    });
 
     const response = await anthropic.messages.create({
       model: MODEL_FOR_TASK.EDIT,
@@ -63,7 +107,7 @@ Apply the requested changes and return the complete edited HTML.`;
       messages: [
         {
           role: 'user',
-          content: userPrompt,
+          content: messageContent,
         },
       ],
     });
