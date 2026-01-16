@@ -38,7 +38,7 @@ export function SCMNav() {
   const { hasRole } = useAuthenticatedUser();
 
   const isSuperAdmin = hasRole('super_admin');
-  const isCoach = hasRole('coach');
+  const _isCoach = hasRole('coach');
 
   // Close dropdown when clicking outside
   useEffect(() => {
