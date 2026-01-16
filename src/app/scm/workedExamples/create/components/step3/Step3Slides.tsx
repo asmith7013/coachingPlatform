@@ -48,6 +48,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     prevStep,
     setError,
     clearPersistedState,
+    saveSlidesToDatabase,
   } = wizard;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -136,6 +137,13 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const handleSaveEdit = () => {
     updateSlide(selectedSlideIndex, editContent);
     setIsEditing(false);
+
+    // If in edit mode, also save to database
+    if (state.editSlug) {
+      const updatedSlides = [...slides];
+      updatedSlides[selectedSlideIndex] = { ...updatedSlides[selectedSlideIndex], htmlContent: editContent };
+      saveSlidesToDatabase(updatedSlides);
+    }
   };
 
   // Handle cancel edit
@@ -228,12 +236,21 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
         if (data.success && data.editedSlides) {
           // Batch update all edited slides
-          updateSlidesBatch(
-            data.editedSlides.map((s: { slideNumber: number; htmlContent: string }) => ({
-              index: s.slideNumber - 1,
-              htmlContent: s.htmlContent,
-            }))
-          );
+          const updates = data.editedSlides.map((s: { slideNumber: number; htmlContent: string }) => ({
+            index: s.slideNumber - 1,
+            htmlContent: s.htmlContent,
+          }));
+          updateSlidesBatch(updates);
+
+          // If in edit mode, also save to database
+          if (state.editSlug) {
+            const updatedSlides = [...slides];
+            updates.forEach(({ index, htmlContent }: { index: number; htmlContent: string }) => {
+              updatedSlides[index] = { ...updatedSlides[index], htmlContent };
+            });
+            saveSlidesToDatabase(updatedSlides);
+          }
+
           // Clear prompt and images on success
           setAiEditPrompt('');
           aiEditImages.forEach(img => URL.revokeObjectURL(img.preview));
@@ -263,6 +280,14 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
         if (data.success && data.editedHtml) {
           updateSlide(selectedSlideIndex, data.editedHtml);
+
+          // If in edit mode, also save to database
+          if (state.editSlug) {
+            const updatedSlides = [...slides];
+            updatedSlides[selectedSlideIndex] = { ...updatedSlides[selectedSlideIndex], htmlContent: data.editedHtml };
+            saveSlidesToDatabase(updatedSlides);
+          }
+
           // Clear prompt and images on success
           setAiEditPrompt('');
           aiEditImages.forEach(img => URL.revokeObjectURL(img.preview));

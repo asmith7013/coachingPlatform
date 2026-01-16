@@ -205,7 +205,6 @@ export function WizardContainer() {
       <WizardFooter
         isLoading={state.isLoading}
         loadingProgress={state.loadingProgress}
-        autoSaveStatus={wizard.autoSaveStatus}
       />
     </WizardContext.Provider>
   );
