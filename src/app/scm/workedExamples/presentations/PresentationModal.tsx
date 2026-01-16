@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { PresentationModalProps } from './types';
 import { usePresentationState } from './usePresentationState';
@@ -10,6 +10,9 @@ import {
   CloseButton,
   PrintButton,
   HtmlViewer,
+  SettingsButton,
+  PreparationPanel,
+  PlanningGuideButton,
 } from './components';
 import { PRINT_STYLES } from './utils';
 
@@ -21,6 +24,7 @@ export function PresentationModal({
   onSlideChange,
 }: PresentationModalProps) {
   const router = useRouter();
+  const [showPlanningGuide, setShowPlanningGuide] = useState(false);
   const {
     deck,
     currentSlide,
@@ -99,94 +103,62 @@ export function PresentationModal({
 
       {!loading && !error && deck && slide && (
         <>
-          <SlideContent slide={slide} currentRevealed={currentRevealed} />
+          {/* Main layout with optional side panel */}
+          <div className="flex h-full">
+            {/* Planning Guide Side Panel */}
+            {showPlanningGuide && (
+              <div className="w-72 flex-shrink-0 h-full z-[10000]">
+                <PreparationPanel onClose={() => setShowPlanningGuide(false)} />
+              </div>
+            )}
 
-          <CloseButton onClose={onClose} />
+            {/* Slide Content Area */}
+            <div className="flex-1 relative">
+              <SlideContent slide={slide} currentRevealed={currentRevealed} />
+            </div>
+          </div>
 
-          <NavigationControls
-            currentSlide={currentSlide}
-            totalSlides={totalSlides}
-            onPrevSlide={prevSlide}
-            onNextSlide={nextSlide}
-          />
+          {/* Top Right Controls - Close */}
+          <div className="print-hide fixed top-4 right-4 flex items-center gap-2 z-[10000]">
+            <CloseButton onClose={onClose} />
+          </div>
+
+          {/* Bottom Left Controls - Slide Navigation (shifts right when Planning Guide is open) */}
+          <div
+            className={`print-hide fixed bottom-4 flex items-center gap-2 z-[10000] transition-all duration-300 ${
+              showPlanningGuide ? 'left-[304px]' : 'left-4'
+            }`}
+          >
+            <NavigationControls
+              currentSlide={currentSlide}
+              totalSlides={totalSlides}
+              onPrevSlide={prevSlide}
+              onNextSlide={nextSlide}
+            />
+          </div>
+
+          {/* Bottom Right Controls - Planning Guide & Settings */}
+          <div className="print-hide fixed bottom-4 right-4 flex items-center gap-2 z-[10000]">
+            <PlanningGuideButton
+              isActive={showPlanningGuide}
+              onToggle={() => setShowPlanningGuide(!showPlanningGuide)}
+            />
+
+            <SettingsButton
+              onOpenHtmlViewer={() => setShowHtmlViewer(true)}
+              onEditSlides={() => {
+                onClose();
+                router.push(`/scm/workedExamples/create?editSlug=${slug}`);
+              }}
+              hasAnalysisData={hasAnalysisData}
+              googleSlidesUrl={googleSlidesUrl}
+            />
+          </div>
 
           {/* Print Button - only show on last slide */}
           {deck?.htmlSlides && currentSlide === deck.htmlSlides.length - 1 && (
             <PrintButton slide={slide} />
           )}
-
-          {/* Bottom Right - Edit Button + Google Slides Button + View HTML Button */}
-          <div className="print-hide fixed bottom-4 right-4 flex items-center gap-2 z-[10000]">
-            {/* Edit in Wizard Button - Only show if deck has analysis data */}
-            {hasAnalysisData && (
-              <button
-                onClick={() => {
-                  onClose();
-                  router.push(`/scm/workedExamples/create?editSlug=${slug}`);
-                }}
-                className="w-12 h-12 flex items-center justify-center bg-blue-600/90 hover:bg-blue-500/95 text-white rounded-full transition-colors cursor-pointer"
-                aria-label="Edit in Wizard"
-                title="Edit in Wizard"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                  />
-                </svg>
-              </button>
-            )}
-
-            {/* Open Google Slides - Only show if URL exists */}
-            {googleSlidesUrl && (
-              <button
-                onClick={() => window.open(googleSlidesUrl, '_blank')}
-                className="w-12 h-12 flex items-center justify-center bg-gray-700/80 hover:bg-gray-600/90 text-white rounded-full transition-colors cursor-pointer"
-                aria-label="Open Google Slides"
-                title="Open Google Slides"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                  className="w-6 h-6"
-                >
-                  <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
-                </svg>
-              </button>
-            )}
-
-            {/* View HTML Button */}
-            <button
-              onClick={() => setShowHtmlViewer(true)}
-              className="w-12 h-12 flex items-center justify-center bg-gray-700/80 hover:bg-gray-600/90 text-white rounded-full transition-colors cursor-pointer"
-              aria-label="View HTML"
-              title="View HTML"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"
-                />
-              </svg>
-            </button>
-          </div>
 
           {/* HTML Viewer Modal */}
           {showHtmlViewer && (

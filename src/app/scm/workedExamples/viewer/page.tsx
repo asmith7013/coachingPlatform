@@ -9,9 +9,10 @@ import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { PresentationModal } from "../presentations";
 import { ConfirmationDialog } from "@/components/composed/dialogs/ConfirmationDialog";
-import { ChevronDownIcon, ChevronRightIcon, XMarkIcon, ArchiveBoxIcon, ArrowPathIcon, ShieldExclamationIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ChevronRightIcon, XMarkIcon, ArchiveBoxIcon, ArrowPathIcon, ShieldExclamationIcon, BookOpenIcon } from "@heroicons/react/24/outline";
 import { deactivateDeck } from "@/app/actions/worked-examples";
 import Link from "next/link";
+import { PLANNING_STEPS } from "../presentations/planningSteps";
 
 // Choice modal for decks with Google Slides
 function ViewChoiceModal({
@@ -57,31 +58,7 @@ function ViewChoiceModal({
         </p>
 
         <div className="grid grid-cols-2 gap-4">
-          {/* Google Slides Option - Highlighted */}
-          <button
-            onClick={onOpenSlides}
-            className="flex flex-col items-center gap-3 p-6 bg-yellow-50 border-2 border-yellow-400 rounded-xl hover:bg-yellow-100 transition-colors cursor-pointer ring-2 ring-yellow-400 ring-offset-2"
-          >
-            <div className="w-16 h-16 flex items-center justify-center bg-yellow-400 rounded-xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="white"
-                viewBox="0 0 24 24"
-                className="w-8 h-8"
-              >
-                <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
-              </svg>
-            </div>
-            <div className="text-center">
-              <div className="font-semibold text-gray-900">Google Slides</div>
-              <div className="text-xs text-gray-500 mt-1">Opens in new tab</div>
-            </div>
-            <span className="absolute -top-2 -right-2 px-2 py-0.5 text-xs font-bold text-yellow-800 bg-yellow-300 rounded-full hidden">
-              Recommended
-            </span>
-          </button>
-
-          {/* HTML Option */}
+          {/* HTML Viewer Option */}
           <button
             onClick={onOpenHtml}
             className="flex flex-col items-center gap-3 p-6 bg-gray-50 border-2 border-gray-200 rounded-xl hover:bg-gray-100 hover:border-gray-300 transition-colors cursor-pointer"
@@ -105,6 +82,27 @@ function ViewChoiceModal({
             <div className="text-center">
               <div className="font-semibold text-gray-900">HTML Viewer</div>
               <div className="text-xs text-gray-500 mt-1">View on this site</div>
+            </div>
+          </button>
+
+          {/* Google Slides Option */}
+          <button
+            onClick={onOpenSlides}
+            className="flex flex-col items-center gap-3 p-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl hover:bg-yellow-100 hover:border-yellow-300 transition-colors cursor-pointer"
+          >
+            <div className="w-16 h-16 flex items-center justify-center bg-yellow-400 rounded-xl">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="white"
+                viewBox="0 0 24 24"
+                className="w-8 h-8"
+              >
+                <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+              </svg>
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-gray-900">Google Slides</div>
+              <div className="text-xs text-gray-500 mt-1">Opens in new tab</div>
             </div>
           </button>
         </div>
@@ -136,6 +134,67 @@ const GRADE_CARDS = [
   { value: "8", label: "Grade 8", borderColor: "border-purple-300", hoverBg: "hover:bg-purple-50", textColor: "text-purple-700" },
   { value: "alg1", label: "Algebra 1", borderColor: "border-orange-300", hoverBg: "hover:bg-orange-50", textColor: "text-orange-700" },
 ];
+
+// Planning Guide Accordion Component
+function PlanningGuide() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="mb-6 bg-blue-50 rounded-lg shadow-sm border border-blue-200 overflow-hidden">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between px-4 py-3 bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer"
+      >
+        <div className="flex items-center gap-3">
+          <BookOpenIcon className="w-5 h-5 text-blue-600" />
+          <h2 className="text-base font-semibold text-blue-800">Planning Guide</h2>
+        </div>
+        {isOpen ? (
+          <ChevronDownIcon className="w-5 h-5 text-blue-600" />
+        ) : (
+          <ChevronRightIcon className="w-5 h-5 text-blue-600" />
+        )}
+      </button>
+      {isOpen && (
+        <div className="p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {PLANNING_STEPS.map((step) => (
+              <div
+                key={step.step}
+                className="bg-white border border-blue-100 rounded-lg p-4 shadow-sm"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-sm font-bold">
+                    {step.step}
+                  </span>
+                  <h3 className="font-semibold text-gray-900 text-sm">{step.title}</h3>
+                </div>
+                <ul className="space-y-1.5">
+                  {step.items.map((item, idx) => (
+                    <li key={idx} className="flex items-start text-sm text-gray-600">
+                      <span className="mr-2 text-blue-400">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                  {step.subItems && (
+                    <ul className="ml-4 mt-1 space-y-1">
+                      {step.subItems.map((subItem, idx) => (
+                        <li key={idx} className="flex items-start text-sm text-gray-500">
+                          <span className="mr-2 text-gray-300">–</span>
+                          <span>{subItem}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function PresentationsList() {
   const [choiceModalDeck, setChoiceModalDeck] = useState<WorkedExampleDeck | null>(null);
@@ -366,6 +425,8 @@ export default function PresentationsList() {
             </Link>
           </div>
         </div>
+
+        <PlanningGuide />
 
         {filteredDecks.length === 0 ? (
           <div className="text-center py-12">
