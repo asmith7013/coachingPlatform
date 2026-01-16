@@ -1,12 +1,17 @@
 'use client';
 
 import { WizardStickyFooter } from '../shared/WizardStickyFooter';
+import { AiEditInput, type EditImage } from '../shared/AiEditInput';
+
+export type { EditImage };
 
 interface AnalysisFooterProps {
   isLoading: boolean;
   isAiEditing: boolean;
   aiEditPrompt: string;
   setAiEditPrompt: (value: string) => void;
+  aiEditImages: EditImage[];
+  setAiEditImages: (images: EditImage[]) => void;
   aiEditElapsed: number;
   aiEditError: string | null;
   handleAiEdit: () => void;
@@ -21,6 +26,8 @@ export function AnalysisFooter({
   isAiEditing,
   aiEditPrompt,
   setAiEditPrompt,
+  aiEditImages,
+  setAiEditImages,
   aiEditElapsed,
   aiEditError,
   handleAiEdit,
@@ -48,28 +55,21 @@ export function AnalysisFooter({
         <div className="flex gap-3 items-center">
           <button
             onClick={prevStep}
-            className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer border border-gray-300"
+            className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer border border-gray-300 flex-shrink-0"
           >
             Back
           </button>
-          <input
-            type="text"
-            value={aiEditPrompt}
-            onChange={(e) => setAiEditPrompt(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && aiEditPrompt.trim() && handleAiEdit()}
-            placeholder="AI Edit: describe corrections (e.g., 'The answer should be 42')"
-            className="flex-1 px-3 py-2 text-sm border border-purple-200 rounded-lg focus:ring-1 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white"
+
+          <AiEditInput
+            prompt={aiEditPrompt}
+            setPrompt={setAiEditPrompt}
+            images={aiEditImages}
+            setImages={setAiEditImages}
+            onSubmit={handleAiEdit}
+            placeholder="AI Edit: describe corrections or paste an image (e.g., 'The answer should be 42')"
+            submitLabel="Apply"
           />
-          <button
-            onClick={handleAiEdit}
-            disabled={!aiEditPrompt.trim()}
-            className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 disabled:bg-purple-300 text-white rounded-lg cursor-pointer disabled:cursor-not-allowed flex items-center gap-1.5"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            Apply
-          </button>
+
           <SlideActionButtons
             slideCount={slideCount}
             isLoading={isLoading}
@@ -97,7 +97,7 @@ function SlideActionButtons({
   nextStep: () => void;
   handleGenerateSlides: (testMode: boolean, mode: 'full' | 'continue') => void;
 }) {
-  if (slideCount >= 9) {
+  if (slideCount >= 7) {
     // All slides exist - show Review + Regenerate
     return (
       <>
@@ -129,7 +129,7 @@ function SlideActionButtons({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          Continue ({slideCount}/9)
+          Continue ({slideCount}/7)
         </button>
         <RegenerateButton isLoading={isLoading} onClick={() => handleGenerateSlides(false, 'full')} />
       </>

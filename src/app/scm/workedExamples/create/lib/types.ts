@@ -303,6 +303,7 @@ export interface ProblemAnalysis {
 export interface StrategyDefinition {
   name: string;
   oneSentenceSummary: string;
+  bigIdea: string; // The core mathematical concept in one sentence
   moves: {
     verb: string;
     description: string;
@@ -446,6 +447,8 @@ export type WizardAction =
   | { type: 'SET_ANALYSIS'; payload: { problemAnalysis: ProblemAnalysis; strategyDefinition: StrategyDefinition; scenarios: Scenario[] } }
   | { type: 'CLEAR_ANALYSIS' }
   | { type: 'UPDATE_STRATEGY_NAME'; payload: string }
+  | { type: 'UPDATE_BIG_IDEA'; payload: string }
+  | { type: 'UPDATE_STRATEGY_MOVES'; payload: { verb: string; description: string; result: string }[] }
   | { type: 'UPDATE_SCENARIO'; payload: { index: number; scenario: Scenario } }
   | { type: 'SET_SLIDES'; payload: HtmlSlide[] }
   | { type: 'UPDATE_SLIDE'; payload: { index: number; htmlContent: string } }

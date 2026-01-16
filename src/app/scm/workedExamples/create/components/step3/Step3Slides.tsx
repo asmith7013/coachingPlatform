@@ -8,9 +8,11 @@ import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-exampl
 import { useGoogleOAuthStatus } from '@/hooks/auth/useGoogleOAuthStatus';
 import { useClerk } from '@clerk/nextjs';
 import { SlideThumbnails } from './SlideThumbnails';
-import { SlidesFooter } from './SlidesFooter';
+import { SlidesFooter, type EditImage } from './SlidesFooter';
 import { ExportSuccessModal } from './ExportSuccessModal';
 import { ReauthModal } from './ReauthModal';
+import { EditContextCard } from '../shared/EditContextCard';
+import { EditConfirmModal } from './EditConfirmModal';
 import { buildExportTitle } from '@/app/scm/workedExamples/presentations/utils';
 // import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 
@@ -51,6 +53,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState('');
   const [aiEditPrompt, setAiEditPrompt] = useState('');
+  const [aiEditImages, setAiEditImages] = useState<EditImage[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiEditStartTime, setAiEditStartTime] = useState<number | null>(null);
@@ -66,6 +69,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
   const [showExportSuccessModal, setShowExportSuccessModal] = useState(false);
+  const [showEditConfirmModal, setShowEditConfirmModal] = useState(false);
 
   const { slides, selectedSlideIndex, slidesToEdit, contextSlides } = state;
   const currentSlide = slides[selectedSlideIndex];
@@ -140,9 +144,45 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     setEditContent('');
   };
 
+  // Handle removing an image from the list
+  const handleRemoveImage = useCallback((index: number) => {
+    const newImages = [...aiEditImages];
+    URL.revokeObjectURL(newImages[index].preview);
+    newImages.splice(index, 1);
+    setAiEditImages(newImages);
+  }, [aiEditImages]);
+
+  // Show confirmation modal before AI edit
+  const handleShowEditConfirm = () => {
+    const hasPrompt = aiEditPrompt.trim();
+    const hasImages = aiEditImages.length > 0;
+    if (!hasPrompt && !hasImages) return;
+    if (slidesToEdit.length === 0 && !currentSlide) return;
+    setShowEditConfirmModal(true);
+  };
+
+  // Confirm and execute AI edit
+  const handleConfirmEdit = () => {
+    setShowEditConfirmModal(false);
+    handleAiEdit();
+  };
+
   // Handle AI edit (single or batch)
+  // Convert a File to base64 data URL
+  const fileToBase64 = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleAiEdit = async () => {
-    if (!aiEditPrompt.trim()) return;
+    // Need either prompt text or images
+    const hasPrompt = aiEditPrompt.trim();
+    const hasImages = aiEditImages.length > 0;
+    if (!hasPrompt && !hasImages) return;
 
     // Determine which slides to edit
     const useMultiEdit = slidesToEdit.length > 0;
@@ -154,6 +194,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     setAiError(null);
 
     try {
+      // Convert images to base64
+      const imageDataUrls = await Promise.all(
+        aiEditImages.map(img => fileToBase64(img.file))
+      );
+
       if (useMultiEdit) {
         // Batch edit mode
         const response = await fetch('/api/scm/worked-examples/edit-slides', {
@@ -169,6 +214,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
               htmlContent: slides[i].htmlContent,
             })),
             editInstructions: aiEditPrompt,
+            images: imageDataUrls,
             strategyName: state.strategyDefinition?.name,
           }),
         });
@@ -188,7 +234,10 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
               htmlContent: s.htmlContent,
             }))
           );
+          // Clear prompt and images on success
           setAiEditPrompt('');
+          aiEditImages.forEach(img => URL.revokeObjectURL(img.preview));
+          setAiEditImages([]);
           clearSlideSelections();
         }
       } else {
@@ -199,6 +248,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           body: JSON.stringify({
             currentHtml: currentSlide!.htmlContent,
             editInstructions: aiEditPrompt,
+            images: imageDataUrls,
             slideNumber: selectedSlideIndex + 1,
             strategyName: state.strategyDefinition?.name,
           }),
@@ -213,7 +263,10 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
         if (data.success && data.editedHtml) {
           updateSlide(selectedSlideIndex, data.editedHtml);
+          // Clear prompt and images on success
           setAiEditPrompt('');
+          aiEditImages.forEach(img => URL.revokeObjectURL(img.preview));
+          setAiEditImages([]);
         }
       }
     } catch (error) {
@@ -728,6 +781,14 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         )
       )}
 
+      {/* Floating Edit Context Card - shows images and slide selections */}
+      <EditContextCard
+        images={aiEditImages}
+        onRemoveImage={handleRemoveImage}
+        slidesToEdit={slidesToEdit}
+        contextSlides={contextSlides}
+      />
+
       {/* Sticky Footer - AI Edit or Export Progress */}
       <SlidesFooter
         isExporting={isAnyExporting}
@@ -736,13 +797,14 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         isAiLoading={isAiLoading}
         aiEditElapsed={aiEditElapsed}
         slidesToEdit={slidesToEdit}
-        contextSlides={contextSlides}
         selectedSlideIndex={selectedSlideIndex}
         hasCurrentSlide={!!currentSlide}
         aiEditPrompt={aiEditPrompt}
         setAiEditPrompt={setAiEditPrompt}
+        aiEditImages={aiEditImages}
+        setAiEditImages={setAiEditImages}
         aiError={aiError}
-        handleAiEdit={handleAiEdit}
+        handleAiEdit={handleShowEditConfirm}
         handleExportClick={handleExportClick}
         canExport={slides.length > 0}
         prevStep={prevStep}
@@ -762,6 +824,18 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         onOpenSlides={handleOpenSlides}
         onOpenBrowserView={handleOpenBrowserView}
         onKeepEditing={handleKeepEditing}
+      />
+
+      {/* Edit Confirmation Modal */}
+      <EditConfirmModal
+        isOpen={showEditConfirmModal}
+        onClose={() => setShowEditConfirmModal(false)}
+        onConfirm={handleConfirmEdit}
+        slidesToEdit={slidesToEdit}
+        contextSlides={contextSlides}
+        instructions={aiEditPrompt}
+        images={aiEditImages}
+        currentSlideIndex={selectedSlideIndex}
       />
     </div>
   );

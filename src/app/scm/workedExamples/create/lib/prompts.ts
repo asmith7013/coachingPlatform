@@ -148,6 +148,7 @@ You MUST return valid JSON matching this exact structure:
   "strategyDefinition": {
     "name": "Clear Strategy Name (e.g., 'Balance and Isolate')",
     "oneSentenceSummary": "To solve this, we [VERB] the [OBJECT] to find [GOAL]",
+    "bigIdea": "The core mathematical concept in one sentence (e.g., 'Equations can be solved by keeping both sides balanced')",
     "moves": [
       { "verb": "VERB1", "description": "what this step does", "result": "what it accomplishes" }
     ],
@@ -472,16 +473,25 @@ ${SHARED_GENERATE_INSTRUCTIONS}
 
 ## HTML Templates to Use (PPTX-Compatible)
 
-### Learning Goal Slide (slide 1):
+### Teacher Instructions Slide (slide 1):
 ${SLIDE_LEARNING_GOAL_TEMPLATE}
+
+### Big Idea Slide (slide 2):
+Use a gradient blue background (linear-gradient from #1e40af to #3b82f6), centered layout with:
+- Grade/Unit/Lesson at top (white text, letter-spacing: 2px)
+- "BIG IDEA" badge (rounded pill, white/semi-transparent background)
+- Big Idea statement large and centered (36px white text)
 
 ### Two-Column Layout (for problem setup and steps):
 ${SLIDE_TWO_COLUMN_TEMPLATE}
 
-### CFU Slide (CFU box visible - for "Ask" slides):
+### Step Slide with Stacked CFU + Answer (for step slides 4-6):
+Include BOTH boxes on the SAME slide, stacked vertically on the right side:
+- CFU box at y=40 (top position, appears on first click)
+- Answer box at y=150 (below CFU, appears on second click)
+
 ${SLIDE_WITH_CFU_TEMPLATE}
 
-### Answer Slide (Answer box visible - for "Reveal" slides):
 ${SLIDE_WITH_ANSWER_TEMPLATE}
 
 ### Practice Slide (zero scaffolding):
@@ -757,34 +767,30 @@ ${gp.keyPoints.map(p => `  - ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixe
 
 ## Instructions - PPTX-Compatible Slides
 
-Generate exactly **8 PPTX-compatible HTML slides** following this structure:
+Generate exactly **6 PPTX-compatible HTML slides** following this structure:
 
 **All slides must be 960×540px, light theme (white background), Arial font, NO JavaScript.**
 
-**CFU/Answer boxes use PPTX animation** - they appear on click during presentation. Include them directly in the slide with \`data-pptx-region="cfu-box"\` or \`data-pptx-region="answer-box"\` attributes.
+**CFU and Answer boxes are STACKED on the SAME slide** - both use PPTX animation (appear sequentially on click). CFU appears first, then Answer appears on second click.
 
 **Intro (2 slides):**
-1. **Learning Goal** - Strategy name + summary (use SLIDE_LEARNING_GOAL_TEMPLATE)
-2. **Problem Setup** - Scenario 1 introduction with visual (use SLIDE_TWO_COLUMN_TEMPLATE)
+1. **Teacher Instructions** - Big Idea + Learning Targets + Strategy overview (teacher-facing, visually quiet)
+2. **Big Idea** - Grade/Unit/Lesson + Big Idea badge + statement (student-facing, gradient background)
 
-**Step 1 (2 slides):**
-3. **Step 1 Question + CFU** - Show problem, prompt for first step, include CFU box (animated)
-4. **Step 1 Answer** - Show the answer to step 1, include Answer box (animated)
+**Problem + Steps (4 slides):**
+3. **Problem Setup** - Scenario 1 introduction with visual (use SLIDE_TWO_COLUMN_TEMPLATE)
+4. **Step 1 + CFU + Answer** - Show step 1, both CFU and Answer at y=40 (Answer overlays CFU on second click)
+5. **Step 2 + CFU + Answer** - Show step 2 with step 1 complete, both CFU and Answer at y=40 (Answer overlays CFU)
+6. **Step 3 + CFU + Answer** - Show final step with steps 1-2 complete, both CFU and Answer at y=40 (Answer overlays CFU)
 
-**Step 2 (2 slides):**
-5. **Step 2 Question + CFU** - Show problem with step 1 complete, include CFU box (animated)
-6. **Step 2 Answer** - Show the answer to step 2, include Answer box (animated)
+**Note:** The printable worksheet (slide 7) is generated separately after these 6 slides.
 
-**Step 3 (2 slides):**
-7. **Step 3 Question + CFU** - Show problem with steps 1-2 complete, include CFU box (animated)
-8. **Step 3 Answer** - Show final answer, include Answer box (animated)
+## CFU/Answer Box PPTX Attributes (REQUIRED - SAME POSITION, ANSWER OVERLAYS CFU)
 
-**Note:** The printable worksheet (slide 9) is generated separately after these 8 slides.
-
-## CFU/Answer Box PPTX Attributes (REQUIRED)
-
-CFU boxes MUST include: \`data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"\`
-Answer boxes MUST include: \`data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"\`
+**Both CFU and Answer boxes go on the SAME slide at the SAME position (y=40):**
+- CFU box: \`data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"\`
+- Answer box: \`data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115"\`
+- Answer box has z-index: 101 (CFU has z-index: 100) so Answer visually overlays CFU when revealed
 
 These attributes enable PPTX animation (appear on click).
 
@@ -799,19 +805,17 @@ DO NOT include:
 
 The slides you output should contain ONLY valid HTML starting with \`<!DOCTYPE html>\` and ending with \`</html>\`.
 
-**Slide type reference (8 SLIDES):**
+**Slide type reference (6 SLIDES):**
 | # | Type | Has CFU/Answer? | Action |
 |---|------|-----------------|--------|
-| 1 | Learning Goal | No | generate-new |
-| 2 | Problem Setup | No | generate-new |
-| 3 | Step 1 Question + CFU | CFU box (animated) | generate-new |
-| 4 | Step 1 Answer | Answer box (animated) | generate-new |
-| 5 | Step 2 Question + CFU | CFU box (animated) | generate-new |
-| 6 | Step 2 Answer | Answer box (animated) | generate-new |
-| 7 | Step 3 Question + CFU | CFU box (animated) | generate-new |
-| 8 | Step 3 Answer | Answer box (animated) | generate-new |
+| 1 | Teacher Instructions | No | generate-new |
+| 2 | Big Idea | No | generate-new |
+| 3 | Problem Setup | No | generate-new |
+| 4 | Step 1 + CFU + Answer | Both boxes stacked (animated) | generate-new |
+| 5 | Step 2 + CFU + Answer | Both boxes stacked (animated) | generate-new |
+| 6 | Step 3 + CFU + Answer | Both boxes stacked (animated) | generate-new |
 
-(Slide 9 - Printable with practice problems - is generated separately)
+(Slide 7 - Printable with practice problems - is generated separately)
 
 Use ===SLIDE_SEPARATOR=== between each slide.
 Each slide MUST have body with width: 960px; height: 540px.`;

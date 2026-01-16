@@ -202,6 +202,26 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
         slug: generateSlug(action.payload, state.gradeLevel),
       };
 
+    case 'UPDATE_BIG_IDEA':
+      if (!state.strategyDefinition) return state;
+      return {
+        ...state,
+        strategyDefinition: {
+          ...state.strategyDefinition,
+          bigIdea: action.payload,
+        },
+      };
+
+    case 'UPDATE_STRATEGY_MOVES':
+      if (!state.strategyDefinition) return state;
+      return {
+        ...state,
+        strategyDefinition: {
+          ...state.strategyDefinition,
+          moves: action.payload,
+        },
+      };
+
     case 'UPDATE_SCENARIO':
       if (!state.scenarios) return state;
       const newScenarios = [...state.scenarios];
@@ -476,9 +496,9 @@ export function useWizardState() {
     if (persisted.slug) dispatch({ type: 'SET_SLUG', payload: persisted.slug });
 
     // Jump to appropriate step based on progress:
-    // - If all 9 slides exist (8 main + 1 printable), go straight to Step 3 (review slides)
+    // - If all 7 slides exist (6 main + 1 printable), go straight to Step 3 (review slides)
     // - Otherwise, restore the saved step
-    const EXPECTED_SLIDE_COUNT = 9;
+    const EXPECTED_SLIDE_COUNT = 7;
     if (persisted.slides?.length >= EXPECTED_SLIDE_COUNT) {
       dispatch({ type: 'SET_STEP', payload: 3 });
     } else if (persisted.currentStep) {
@@ -578,6 +598,17 @@ export function useWizardState() {
   const updateStrategyName = useCallback((name: string) => {
     dispatch({ type: 'UPDATE_STRATEGY_NAME', payload: name });
   }, []);
+
+  const updateBigIdea = useCallback((bigIdea: string) => {
+    dispatch({ type: 'UPDATE_BIG_IDEA', payload: bigIdea });
+  }, []);
+
+  const updateStrategyMoves = useCallback(
+    (moves: { verb: string; description: string; result: string }[]) => {
+      dispatch({ type: 'UPDATE_STRATEGY_MOVES', payload: moves });
+    },
+    []
+  );
 
   const updateScenario = useCallback(
     (index: number, scenario: Scenario) => {
@@ -701,6 +732,8 @@ export function useWizardState() {
     setAnalysis,
     clearAnalysis,
     updateStrategyName,
+    updateBigIdea,
+    updateStrategyMoves,
     updateScenario,
     // Step 3
     setSlides,
