@@ -16,6 +16,9 @@
  *   - phases/03-generate-slides/card-patterns/complex-patterns/annotation-snippet.html → ANNOTATION_SNIPPET
  *   - phases/03-generate-slides/card-patterns/complex-patterns/printable-slide-snippet.html → PRINTABLE_TEMPLATE
  *   - phases/03-generate-slides/card-patterns/complex-patterns/visual-card-layers.html → VISUAL_CARD_LAYERS
+ *   - phases/03-generate-slides/card-patterns/complex-patterns/d3-diagram-template.html → D3_DIAGRAM_TEMPLATE
+ *   - phases/03-generate-slides/card-patterns/complex-patterns/slide-teacher-instructions.html → SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE
+ *   - phases/03-generate-slides/card-patterns/complex-patterns/slide-big-idea.html → SLIDE_BIG_IDEA_TEMPLATE
  *   - archived/templates/slide-base.html → SLIDE_BASE_TEMPLATE
  *   - archived/templates/slide-with-cfu.html → SLIDE_WITH_CFU_TEMPLATE
  *   - archived/templates/slide-with-answer.html → SLIDE_WITH_ANSWER_TEMPLATE
@@ -35,7 +38,7 @@ export const TITLE_ZONE = `
   TITLE ZONE - Top section of every slide
   ============================================================
   Contains: Badge + Title + Subtitle
-  Position: Fixed at top (y: 0-146px, includes 16px bottom padding)
+  Position: Fixed at top (y: 0-130px, with 24px margin below)
 
   Data attributes for PPTX export:
   - data-pptx-region: "badge" | "title" | "subtitle"
@@ -46,7 +49,7 @@ export const TITLE_ZONE = `
 -->
 
 <!-- Title Zone Container -->
-<div style="width: 920px; margin: 0 20px; padding-top: 16px; padding-bottom: 16px;" class="fit">
+<div style="width: 920px; margin: 0 20px; padding-top: 16px; margin-bottom: 24px;" class="fit">
 
   <!-- Badge + Title Row (same line) -->
   <div class="row items-center gap-md" style="margin-bottom: 8px;">
@@ -69,13 +72,14 @@ export const TITLE_ZONE = `
     </h1>
   </div>
 
-  <!-- Subtitle / Instruction (position FIXED: 20, 55, 920, 30) -->
+  <!-- Subtitle / Instruction (position FIXED: 20, 55, 920, 30)
   <p data-pptx-region="subtitle"
      data-pptx-x="20" data-pptx-y="55"
      data-pptx-w="920" data-pptx-h="30"
      style="margin: 0; color: #1d1d1d; font-size: 16px; line-height: 1.4;">
     {{subtitle}}
   </p>
+  -->
 
 </div>
 
@@ -265,28 +269,34 @@ export const CONTENT_BOX = `
 export const CFU_ANSWER_CARD = `
 <!--
   ============================================================
-  CFU / ANSWER CARDS - Overlay boxes with PPTX ANIMATION
+  CFU + ANSWER CARDS - SAME POSITION with PPTX ANIMATION
   ============================================================
-  CFU (Check for Understanding): Yellow accent, appears on click
-  Answer: Green accent, appears on click
+  Both boxes occupy the SAME position on the same slide.
+  Animation reveals them sequentially - Answer overlays CFU.
+
+  CFU (Check for Understanding): Yellow accent, appears on FIRST click
+  Answer: Green accent, appears on SECOND click (overlays CFU)
 
   PPTX ANIMATION BEHAVIOR:
   ========================
   These boxes are ANIMATED in the exported PPTX/Google Slides:
-  - Box starts INVISIBLE when slide first displays
-  - Box APPEARS ON CLICK (teacher clicks to reveal)
-  - No duplicate slides needed - animation handles reveal
+  - Both boxes start INVISIBLE when slide first displays
+  - FIRST CLICK: CFU box appears (yellow)
+  - SECOND CLICK: Answer box appears (green, overlays yellow)
+  - Answer has higher z-index to visually layer on top
 
   Data attributes for PPTX export:
   - data-pptx-region: "cfu-box" | "answer-box" (triggers animation)
-  - data-pptx-x, y, w, h: Position in pixels
+  - data-pptx-x, y, w, h: Position in pixels (SAME for both boxes)
 
-  POSITION VALUES: See reference/region-defaults.md for current values.
+  POSITION VALUES (SAME for both):
+  - Both boxes: y=40, same x/w/h dimensions
+  - Answer box has z-index: 101 to layer on top of CFU (z-index: 100)
   ============================================================
 -->
 
 <!-- CFU Box (Check for Understanding) - Yellow accent -->
-<!-- Position is FIXED: always top-right corner (653, 40, 280, 115) -->
+<!-- Position: top-right corner, appears on FIRST click -->
 <div data-pptx-region="cfu-box"
      data-pptx-x="653" data-pptx-y="40"
      data-pptx-w="280" data-pptx-h="115"
@@ -298,11 +308,11 @@ export const CFU_ANSWER_CARD = `
 </div>
 
 <!-- Answer Box - Green accent -->
-<!-- Position is FIXED: always top-right corner (653, 40, 280, 115) -->
+<!-- Position: SAME as CFU, appears on SECOND click (overlays CFU) -->
 <div data-pptx-region="answer-box"
      data-pptx-x="653" data-pptx-y="40"
      data-pptx-w="280" data-pptx-h="115"
-     style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; z-index: 100;">
+     style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; z-index: 101;">
   <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
   <p style="margin: 0; font-size: 14px; color: #1d1d1d;">
     {{answer_explanation}}
@@ -311,20 +321,21 @@ export const CFU_ANSWER_CARD = `
 
 <!--
   ============================================================
-  HOW TO ADD CFU/ANSWER TO A SLIDE:
+  HOW TO ADD CFU+ANSWER TO A STEP SLIDE (slides 4, 5, 6):
   ============================================================
-  1. Add the CFU or Answer box BEFORE the closing </body> tag
-  2. The position is ABSOLUTE - it floats over existing content
-  3. In PPTX export, this box will be ANIMATED (appears on click)
+  1. Add BOTH boxes BEFORE the closing </body> tag
+  2. Both boxes occupy the SAME position (y=40) - Answer overlays CFU
+  3. In PPTX export, boxes are ANIMATED (appear sequentially on click)
 
-  ANIMATION IN PPTX:
-  - The data-pptx-region="cfu-box" or "answer-box" triggers animation
-  - Box starts hidden, appears when teacher clicks
-  - No duplicate slides needed - one slide handles question + reveal
+  ANIMATION SEQUENCE IN PPTX:
+  - Slide displays with content visible, both boxes hidden
+  - FIRST CLICK: CFU box appears (yellow, z-index: 100)
+  - SECOND CLICK: Answer box appears (green, z-index: 101, overlays CFU)
+  - Teacher controls reveal timing during presentation
 
-  NOTE: A slide can have EITHER a cfu-box OR an answer-box (not both).
-  - Question slides: use cfu-box
-  - Answer slides: use answer-box
+  LAYERING:
+  - Both at same position (y=40)
+  - Answer has higher z-index (101 vs 100) to cover CFU when revealed
   ============================================================
 -->
 `;
@@ -348,9 +359,9 @@ export const PROBLEM_REMINDER = `
     "Two turtles are racing. Turtle g travels at a constant speed. We need to find when turtle g catches up to turtle f."
 -->
 
-<!-- PROBLEM REMINDER BOX (place at top of left column, after title zone) -->
+<!-- PROBLEM REMINDER BOX (place at bottom left of card) -->
 <div data-pptx-region="problem-statement"
-     data-pptx-x="20" data-pptx-y="140"
+     data-pptx-x="20" data-pptx-y="450"
      data-pptx-w="368" data-pptx-h="60"
      style="background: #f0f9ff; border-radius: 8px; padding: 12px 16px; border-left: 4px solid #1791e8;">
   <p style="margin: 0; font-size: 15px; color: #1d1d1d; line-height: 1.4;">
@@ -966,7 +977,7 @@ export const PRINTABLE_TEMPLATE = `
 <!-- ============================================================== -->
 <!-- Each problem gets its own print-page div within the slide      -->
 <!-- DO NOT create separate slide files for each problem            -->
-<!-- This single slide-9.html contains ALL printable problems       -->
+<!-- This single slide-7.html contains ALL printable problems       -->
 <!-- Each print-page div = one printed page (8.5in x 11in)          -->
 <!-- ============================================================== -->
 

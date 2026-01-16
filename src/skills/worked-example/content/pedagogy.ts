@@ -35,17 +35,25 @@ export const CFU_PATTERNS = `
 `;
 
 export const SLIDE_STRUCTURE = `
-## Slide Structure (9 Slides)
+## Slide Structure (7 Slides)
 
-### Slide 1: Learning Goal
-**Purpose**: Introduce the strategy with student-friendly language
+### Slide 1: Teacher Instructions
+**Purpose**: Provide teacher with lesson overview (not shown to students)
 **Content**:
-- Strategy name (prominent, centered)
-- One-sentence summary ("To solve this, we [VERB] the [OBJECT] to find [GOAL]")
-- Learning goal box
-- No computation yet
+- Big Idea (core mathematical concept)
+- Learning Targets
+- Strategy overview (name + summary)
+- Visually quiet, informational design
 
-### Slide 2: Problem Setup (Scenario 1)
+### Slide 2: Big Idea
+**Purpose**: Introduce the core concept to students
+**Content**:
+- Grade/Unit/Lesson prominently displayed
+- "BIG IDEA" badge
+- Big Idea statement (large, centered)
+- Clean, student-facing design with gradient background
+
+### Slide 3: Problem Setup (Scenario 1)
 **Purpose**: Provide context and show complete problem
 **Content**:
 - Engaging scenario with theme icon
@@ -53,26 +61,21 @@ export const SLIDE_STRUCTURE = `
 - Visual representation (graph, table, diagram)
 - No solution yet
 
-### Slides 3-8: Step-by-Step with CFU
+### Slides 4-6: Step-by-Step with CFU + Answer (Stacked)
 
-**Each step becomes 2 slides:**
+**Each step is ONE slide with both CFU and Answer boxes (animated):**
 
-**Step N - ASK Slide** (e.g., Slide 3):
+**Step N Slide** (e.g., Slide 4):
 - Step badge: "STEP 1"
 - Title: The action question (e.g., "IDENTIFY the slope and y-intercept")
-- Visual with current state
-- CFU box visible at bottom (question about strategy)
-- Answer NOT shown yet
+- Visual with result highlighted/annotated
+- Problem reminder at bottom left corner
+- CFU box (appears on FIRST click)
+- Answer box (appears on SECOND click, overlays CFU)
 
-**Step N - ANSWER Slide** (e.g., Slide 4):
-- Same step badge and title
-- Same visual with result highlighted/annotated
-- Answer box visible (explains the "why")
-- Teacher advances to this slide after students predict
+**Number of Steps**: 3 steps = 3 slides
 
-**Number of Steps**: 2-3 maximum (4-6 step slides total)
-
-### Slide 9: Printable Worksheet (Final Slide)
+### Slide 7: Printable Worksheet (Final Slide)
 **Purpose**: Provide take-home practice
 **Content**:
 - ALL practice problems (Scenarios 2 and 3) in ONE slide with multiple print-page divs
@@ -81,7 +84,7 @@ export const SLIDE_STRUCTURE = `
 - 8.5in × 11in page format
 - @media print CSS
 - NO strategy reminders - students apply independently
-- Generated separately after slides 1-8 complete
+- Generated separately after slides 1-6 complete
 `;
 
 export const PEDAGOGY_RULES = `
@@ -89,13 +92,13 @@ export const PEDAGOGY_RULES = `
 
 This document explains the research-based framework behind the slide structure.
 
-## PPTX Format: Static Slides
+## PPTX Format: Static Slides with Animation
 
 **IMPORTANT**: Slides are designed for PPTX export (PowerPoint/Google Slides).
-- No JavaScript toggles or animations
-- "Reveal" happens by advancing to the next slide
-- Each Ask/Answer pair becomes TWO slides (not one with a toggle)
-- Total slide count: **9 slides** (8 worked example + 1 printable with practice problems)
+- No JavaScript toggles or animations in HTML
+- CFU and Answer boxes use PPTX animation (appear on click)
+- Both CFU and Answer are on the SAME slide (Answer overlays CFU on second click)
+- Total slide count: **7 slides** (6 worked example + 1 printable with practice problems)
 
 ## Core Principles
 
@@ -108,17 +111,25 @@ Separating questions from answers forces mental commitment before revealing solu
 ### 3. Transfer of Learning
 Independent practice (practice slides) tests whether students can apply logic to new contexts without scaffolding.
 
-## Slide Structure (9 Slides)
+## Slide Structure (7 Slides)
 
-### Slide 1: Learning Goal
-**Purpose**: Introduce the strategy with student-friendly language
+### Slide 1: Teacher Instructions
+**Purpose**: Provide teacher with lesson overview (not shown to students)
 **Content**:
-- Strategy name (prominent, centered)
-- One-sentence summary ("To solve this, we [VERB] the [OBJECT] to find [GOAL]")
-- Learning goal box
-- No computation yet
+- Big Idea (core mathematical concept)
+- Learning Targets
+- Strategy overview (name + summary)
+- Visually quiet, informational design
 
-### Slide 2: Problem Setup (Scenario 1)
+### Slide 2: Big Idea
+**Purpose**: Introduce the core concept to students
+**Content**:
+- Grade/Unit/Lesson prominently displayed
+- "BIG IDEA" badge
+- Big Idea statement (large, centered)
+- Clean, student-facing design with gradient background
+
+### Slide 3: Problem Setup (Scenario 1)
 **Purpose**: Provide context and show complete problem
 **Content**:
 - Engaging scenario with theme icon
@@ -126,26 +137,21 @@ Independent practice (practice slides) tests whether students can apply logic to
 - Visual representation (graph, table, diagram)
 - No solution yet
 
-### Slides 3-8: Step-by-Step with CFU
+### Slides 4-6: Step-by-Step with CFU + Answer (Stacked)
 
-**Each step becomes 2 slides:**
+**Each step is ONE slide with both CFU and Answer boxes (animated):**
 
-**Step N - ASK Slide** (e.g., Slide 3):
+**Step N Slide** (e.g., Slide 4):
 - Step badge: "STEP 1"
 - Title: The action question (e.g., "IDENTIFY the slope and y-intercept")
-- Visual with current state
-- CFU box visible at bottom (question about strategy)
-- Answer NOT shown yet
+- Visual with result highlighted/annotated
+- Problem reminder at bottom left corner
+- CFU box (appears on FIRST click)
+- Answer box (appears on SECOND click, overlays CFU)
 
-**Step N - ANSWER Slide** (e.g., Slide 4):
-- Same step badge and title
-- Same visual with result highlighted/annotated
-- Answer box visible (explains the "why")
-- Teacher advances to this slide after students predict
+**Number of Steps**: 3 steps = 3 slides
 
-**Number of Steps**: 2-3 maximum (4-6 step slides total)
-
-### Slide 9: Printable Worksheet (Final Slide)
+### Slide 7: Printable Worksheet (Final Slide)
 **Purpose**: Provide take-home practice
 **Content**:
 - ALL practice problems (Scenarios 2 and 3) in ONE slide with multiple print-page divs
@@ -154,22 +160,22 @@ Independent practice (practice slides) tests whether students can apply logic to
 - 8.5in × 11in page format
 - @media print CSS
 - NO strategy reminders - students apply independently
-- Generated separately after slides 1-8 complete
+- Generated separately after slides 1-6 complete
 
 ## The Five Rules
 
-### Rule 1: The "Two-Slide" Rule
-**Never show question and answer together**
+### Rule 1: The "Click-to-Reveal" Rule
+**CFU and Answer appear on click, in sequence**
 
 Why: Forces students to mentally commit to a strategy before seeing if they're correct. Passive reading becomes active prediction.
 
 PPTX Implementation:
-- ASK slide: Shows CFU question, no answer
-- ANSWER slide: Shows the answer after teacher advances
-- Teacher can pause, discuss, then reveal
+- CFU box appears on FIRST click
+- Answer box appears on SECOND click (overlays CFU)
+- Teacher can pause, discuss, then reveal each
 
 ### Rule 2: The "Visual Stability" Rule
-**Keep main visual in same position across slides 2-8**
+**Keep main visual in same position across slides 3-6**
 
 Why: Reduces cognitive load from visual searching. Mimics teacher at whiteboard who keeps problem visible while adding annotations.
 
@@ -250,8 +256,8 @@ Don't:
 
 Why: Tests true understanding vs. pattern matching.
 
-- Slides 2-8: Full scaffolding (step badges, CFU questions, highlighting)
-- Slide 9 (Printable): No scaffolding (just the raw problems + "Your Task")
+- Slides 3-6: Full scaffolding (step badges, CFU questions, highlighting)
+- Slide 7 (Printable): No scaffolding (just the raw problems + "Your Task")
 
 ### Rule 5: The "3-Second Scan" Rule
 **A student should understand the key point in 3 seconds**

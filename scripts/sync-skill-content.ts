@@ -68,6 +68,10 @@ const SYNC_MANIFEST: ManifestEntry[] = [
   { source: 'phases/03-generate-slides/card-patterns/complex-patterns/annotation-snippet.html', target: 'templates', exportName: 'ANNOTATION_SNIPPET' },
   { source: 'phases/03-generate-slides/card-patterns/complex-patterns/printable-slide-snippet.html', target: 'templates', exportName: 'PRINTABLE_TEMPLATE' },
   { source: 'phases/03-generate-slides/card-patterns/complex-patterns/visual-card-layers.html', target: 'templates', exportName: 'VISUAL_CARD_LAYERS' },
+  { source: 'phases/03-generate-slides/card-patterns/complex-patterns/d3-diagram-template.html', target: 'templates', exportName: 'D3_DIAGRAM_TEMPLATE' },
+  // New slide templates (Teacher Instructions, Big Idea)
+  { source: 'phases/03-generate-slides/card-patterns/complex-patterns/slide-teacher-instructions.html', target: 'templates', exportName: 'SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE' },
+  { source: 'phases/03-generate-slides/card-patterns/complex-patterns/slide-big-idea.html', target: 'templates', exportName: 'SLIDE_BIG_IDEA_TEMPLATE' },
   // Archived templates (legacy, for backward compatibility)
   { source: 'archived/templates/slide-base.html', target: 'templates', exportName: 'SLIDE_BASE_TEMPLATE' },
   { source: 'archived/templates/slide-with-cfu.html', target: 'templates', exportName: 'SLIDE_WITH_CFU_TEMPLATE' },

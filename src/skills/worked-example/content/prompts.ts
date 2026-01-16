@@ -103,6 +103,17 @@ These step verbs MUST:
 - Appear on every slide header ("STEP 1: [VERB]")
 - Be referenced in CFU questions
 
+**4e: State the Big Idea**
+One sentence that captures the core mathematical concept students will learn:
+- "To solve equations, we keep both sides balanced"
+- "Unit rates let us compare different quantities fairly"
+- "Parallel lines have the same slope but different y-intercepts"
+
+The Big Idea is:
+- More general than the one-sentence summary (strategy-agnostic)
+- A mathematical truth/principle students can remember
+- What ties together ALL the steps and scenarios
+
 ### STEP 5: Create Three Scenarios
 **ALL must use DIFFERENT contexts from the mastery check:**
 
@@ -212,6 +223,7 @@ What mathematical relationship to show?
 - [ ] Problem type is SPECIFIC (not vague like "algebra")
 - [ ] ONE clear strategy is named with 2-3 moves maximum
 - [ ] Strategy has a one-sentence student-facing summary
+- [ ] Big Idea is stated as a mathematical principle (not strategy-specific)
 - [ ] All step names use consistent verbs
 - [ ] CFU question templates reference strategy verbs
 - [ ] ALL 3 scenarios use DIFFERENT contexts from the mastery check
@@ -236,7 +248,7 @@ export const PHASE2_CONFIRM_PLAN = `
 Present your analysis to the user, get their confirmation, and plan the three scenarios - all using DIFFERENT contexts from the mastery check.
 
 ## Output Format: PPTX-Compatible HTML
-All slides will be **PPTX-compatible HTML** (960×540px, light theme, 9 slides). See \`03-generate-slides/02-technical-rules.md\` for technical specs.
+All slides will be **PPTX-compatible HTML** (960×540px, light theme, 7 slides). See \`03-generate-slides/02-technical-rules.md\` for technical specs.
 
 ## Prerequisites
 - Phase 1 complete
@@ -270,6 +282,7 @@ Use this exact template:
 Based on the mastery check question you provided, here's my understanding:
 
 **Problem Type:** [from PROBLEM ANALYSIS]
+**Big Idea:** [the core mathematical concept from STRATEGY DEFINITION]
 **Strategy I'll Use:** [strategy name from STRATEGY DEFINITION]
 **One-Sentence Summary:** [from STRATEGY DEFINITION]
 
@@ -746,9 +759,9 @@ export const PHASE3_OVERVIEW = `
 
 ## Purpose
 
-Create 9 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
+Create 7 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
 
-**Note:** Slides 1-8 are the worked example. Slide 9 (the printable worksheet with practice problems) is generated separately after the main slides complete.
+**Note:** Slides 1-6 are the worked example. Slide 7 (the printable worksheet with practice problems) is generated separately after the main slides complete.
 
 ## Output Format
 
@@ -781,7 +794,7 @@ All slides are **960x540px, light theme**. CFU/Answer boxes use PPTX animation (
 
 **Checklists (use during/after generation):**
 - \`checklists/pre-flight.md\` - Verify BEFORE writing each slide
-- \`checklists/completion.md\` - Verify AFTER all 9 slides done
+- \`checklists/completion.md\` - Verify AFTER all 7 slides done
 
 ---
 
@@ -797,8 +810,8 @@ STEP 3.1: Check Visual Type (from Phase 1)
 │   └── If "SVG visual" → Read 04-svg-workflow.md + graph-snippet.html
 │
 ▼
-STEP 3.2: Generate Slides 1-8
-│   For each slide N from 1 to 8:
+STEP 3.2: Generate Slides 1-6
+│   For each slide N from 1 to 6:
 │     1. Announce checkpoint (CLI mode only)
 │     2. Choose layout preset (full-width or two-column)
 │     3. Compose using card-patterns
@@ -806,8 +819,8 @@ STEP 3.2: Generate Slides 1-8
 │     5. Write HTML file
 │
 ▼
-STEP 3.3: Generate Printable (Slide 9)
-│   - Generated separately after slides 1-8 complete
+STEP 3.3: Generate Printable (Slide 7)
+│   - Generated separately after slides 1-6 complete
 │   - Uses printable-slide-snippet.html pattern
 │   - Contains practice problems from Scenarios 2 & 3
 │
@@ -843,13 +856,16 @@ Most slides use just 3 patterns:
 | Region | Pattern | Purpose |
 |--------|---------|---------|
 | Header | \`title-zone.html\` | Badge + Title + Subtitle |
-| Left column | \`content-box.html\` | Problem reminder, equations, text |
+| Left column | \`content-box.html\` | Equations, text (main content) |
+| Left column (bottom) | \`problem-reminder.html\` | Problem reminder at bottom left (≤15 words) |
 | Right column | \`svg-visual\` | Diagrams, graphs (see visuals/) |
 
 **Plus overlays and special cases:**
-- \`cfu-answer-card.html\` → CFU/Answer boxes (animated)
+- \`cfu-answer-card.html\` → CFU/Answer boxes stacked on same slide (animated, appear on click)
 - \`graph-snippet.html\` → Coordinate graphs (recalculate pixels)
-- \`printable-slide-snippet.html\` → Slide 9 only
+- \`slide-teacher-instructions.html\` → Slide 1 only (teacher-facing)
+- \`slide-big-idea.html\` → Slide 2 only (student-facing Big Idea)
+- \`printable-slide-snippet.html\` → Slide 7 only
 
 **Always READ and COPY from snippet files.** Never write HTML from scratch.
 
@@ -861,15 +877,13 @@ Write each slide to a separate file:
 
 \`\`\`
 src/app/presentations/{slug}/
-├── slide-1.html   (Learning Goal)
-├── slide-2.html   (Problem Setup)
-├── slide-3.html   (Step 1 Question + CFU)
-├── slide-4.html   (Step 1 Answer)
-├── slide-5.html   (Step 2 Question + CFU)
-├── slide-6.html   (Step 2 Answer)
-├── slide-7.html   (Step 3 Question + CFU)
-├── slide-8.html   (Step 3 Answer)
-└── slide-9.html   (Printable with Practice Problems 1 & 2)
+├── slide-1.html   (Teacher Instructions - Big Idea, Learning Targets, Strategy)
+├── slide-2.html   (Big Idea - student-facing)
+├── slide-3.html   (Problem Setup)
+├── slide-4.html   (Step 1 + CFU + Answer stacked)
+├── slide-5.html   (Step 2 + CFU + Answer stacked)
+├── slide-6.html   (Step 3 + CFU + Answer stacked)
+└── slide-7.html   (Printable with Practice Problems 1 & 2)
 \`\`\`
 
 Use the Write tool for each slide file.
@@ -962,16 +976,19 @@ Graph: Use card-patterns/svg-card.html → modify for X_MAX=10, Y_MAX=100
 
 ### Step 2: Determine Slide Type and Layout
 
-CFU/Answer boxes use PPTX animations (appear on click) - no duplicate slides needed.
+CFU and Answer boxes are now STACKED on the same slide (both appear, one after another on click).
 
 | Slide # | Type | Layout Options | Content |
 |---------|------|----------------|---------|
-| 1 | Learning Goal | \`full-width\` | content-box |
-| 2 | Problem Setup | \`two-column\` or \`centered\` | problem + visual |
-| 3-8 | Step slides | \`two-column\` or \`centered\` | step content + cfu/answer |
-| 9 | Printable | \`full-width\` | printable format |
+| 1 | Teacher Instructions | \`full-width\` | Big Idea + Learning Targets + Strategy (quiet, informational) |
+| 2 | Big Idea | \`centered\` | Grade/Unit/Lesson + Big Idea badge + statement |
+| 3 | Problem Setup | \`two-column\` or \`centered\` | problem + visual |
+| 4 | Step 1 | \`two-column\` or \`centered\` | step content + CFU + Answer (stacked) |
+| 5 | Step 2 | \`two-column\` or \`centered\` | step content + CFU + Answer (stacked) |
+| 6 | Step 3 | \`two-column\` or \`centered\` | step content + CFU + Answer (stacked) |
+| 7 | Printable | \`full-width\` | printable format |
 
-**Layout Selection (slides 2-8):**
+**Layout Selection (slides 3-6):**
 
 | Choose \`centered\` when... | Choose \`two-column\` when... |
 |---------------------------|----------------------------|
@@ -1002,9 +1019,10 @@ groups?"                   How many groups?"]
 ↑ This duplicates! The visual boxes say the same thing as the text. Use \`centered\` and let the diagram speak for itself with a brief subtitle.
 
 **For \`two-column\` layout (text + visual side-by-side):**
-- Left: Problem reminder (≤15 words) + main content (36-48px)
+- Left: Main content (36-48px) + Problem reminder at bottom left corner (≤15 words)
 - Right: SVG visual or diagram
 - **⚠️ Left and right must show DIFFERENT content**
+- Problem reminder uses \`card-patterns/simple-patterns/problem-reminder.html\` positioned at y=450
 
 **For \`centered\` layout (stacked hero content):**
 - Main: Large equation/diagram centered (hero element)
@@ -1013,43 +1031,44 @@ groups?"                   How many groups?"]
 
 See \`reference/layout-presets.md\` for pixel dimensions and HTML examples.
 
-**Note:** Practice problems are embedded directly in the Printable slide (slide 9) rather than having separate presentation slides.
+**Note:** Practice problems are embedded directly in the Printable slide (slide 7) rather than having separate presentation slides.
 
 ---
 
-### Step 3: Add CFU/Answer Boxes (PPTX Animation)
+### Step 3: Add CFU + Answer Boxes (Same Position, PPTX Animation)
 
-**CFU and Answer boxes use PPTX animation - they appear on click, no duplicate slides needed.**
+**CFU and Answer boxes occupy the SAME position on the same slide. Both use PPTX animation - CFU appears first, then Answer overlays it on the second click.**
 
-Add the appropriate box BEFORE the closing \`</body>\` tag:
+Add BOTH boxes BEFORE the closing \`</body>\` tag on Step slides (4, 5, 6):
 
-**CFU Box (for Question slides 3, 5, 7) - Appears on click:**
+**CFU Box (appears on first click):**
 \`\`\`html
-<div data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; z-index: 100;">
-  <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
-  <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[CFU question using strategy verb]</p>
+<div data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 12px; border-left: 4px solid #f59e0b; z-index: 100;">
+  <p style="font-weight: bold; margin: 0 0 6px 0; font-size: 12px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
+  <p style="margin: 0; font-size: 13px; color: #1d1d1d;">[CFU question using strategy verb]</p>
 </div>
 \`\`\`
 
-**Answer Box (for Answer slides 4, 6, 8) - Appears on click:**
+**Answer Box (SAME position, appears on second click and overlays CFU):**
 \`\`\`html
-<div data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; z-index: 100;">
-  <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
-  <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[Answer explanation]</p>
+<div data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 12px; border-left: 4px solid #22c55e; z-index: 101;">
+  <p style="font-weight: bold; margin: 0 0 6px 0; font-size: 12px; color: #166534;">ANSWER</p>
+  <p style="margin: 0; font-size: 13px; color: #1d1d1d;">[Answer explanation]</p>
 </div>
 \`\`\`
 
 **How animation works:**
-- \`data-pptx-region="cfu-box"\` or \`"answer-box"\` triggers animation in PPTX export
-- Box starts HIDDEN when slide displays
-- Box APPEARS when teacher clicks (during presentation)
+- Both boxes are on the SAME slide at the SAME position (y=40)
+- \`data-pptx-region="cfu-box"\` appears on FIRST click (yellow box)
+- \`data-pptx-region="answer-box"\` appears on SECOND click (green box overlays yellow)
+- Answer box has higher z-index (101) to visually layer on top
 - See \`card-patterns/simple-patterns/cfu-answer-card.html\` for full pattern
 
 ---
 
 ### Step 4: Compose Slides from Atomic Components
 
-**For ALL slides (1-8, printable generated separately):**
+**For ALL slides (1-6, printable generated separately as slide 7):**
 
 1. **ANNOUNCE** checkpoint to user (plain text, CLI mode only)
 2. **CHOOSE LAYOUT** from the table above (full-width or two-column)
@@ -1067,7 +1086,7 @@ Add the appropriate box BEFORE the closing \`</body>\` tag:
 
 ### Step 5: Repeat Protocol
 
-For each slide N from 1 to 8:
+For each slide N from 1 to 6:
 1. Return to Step 1
 2. Announce checkpoint (plain text to user, CLI mode only)
 3. Compose slide using card-patterns
@@ -1209,9 +1228,37 @@ export const TECHNICAL_RULES = `
 | Text | ALL text in \`<p>\`, \`<h1-6>\`, \`<ul>\`, \`<ol>\` (text in \`<div>\` disappears!) |
 | Backgrounds | Only on \`<div>\` elements (NOT on \`<p>\`, \`<h1>\`) |
 | Bullets | Use \`<ul>/<ol>\` (NEVER manual bullet characters like •, -, *) |
-| Interactivity | NO JavaScript, NO onclick, NO CSS animations |
+| Interactivity | NO onclick handlers, NO CSS animations. **D3.js allowed** for diagrams (see below) |
 | Theme | Light (white #ffffff background, dark #1d1d1d text) |
 | **SVG Layers** | **⚠️ EVERY SVG element in \`<g data-pptx-layer="...">\` (or becomes ONE image!)** |
+
+---
+
+## JavaScript Policy
+
+### Prohibited (breaks PPTX interactivity)
+- \`onclick\` handlers
+- Event listeners
+- CSS animations/transitions
+- Interactive toggles
+
+### Allowed (gets screenshotted before export)
+- **D3.js** for diagram rendering (recommended default for all non-graph diagrams)
+- **p5.js** for canvas-based diagrams (experimental)
+
+**Why this works:** The PPTX export uses Puppeteer to screenshot each slide. JavaScript executes fully before the screenshot is captured, so D3/p5 visualizations render correctly.
+
+**Requirement:** All D3/p5 content must be wrapped in \`<g data-pptx-layer="...">\` for proper layer export.
+
+**D3 is the recommended default** for all non-graph diagrams because it produces:
+- Automatic equal spacing and alignment
+- Proportional positioning (critical for number lines, ratios)
+- Consistent, professional visual quality
+- Easy adjustments without manual coordinate recalculation
+
+**What does NOT use D3:** Coordinate graphs (\`svgSubtype: coordinate-graph\`) continue to use the existing \`graph-snippet.html\` workflow with manual pixel calculations.
+
+**D3 template:** See \`card-patterns/complex-patterns/d3-diagram-template.html\`
 
 ---
 
@@ -1397,6 +1444,43 @@ See \`reference/diagram-patterns.md\` for complete examples with layers.
 - ALL \`<text>\` elements must have \`font-family="Arial"\`
 - Use \`font-weight="normal"\` for annotations (NOT bold)
 
+### ⚠️ Label Placement Rules (PREVENTS OVERLAPS)
+
+**The #1 cause of ugly SVG diagrams is labels overlapping with shapes or each other.** Follow these rules to prevent overlaps:
+
+| Scenario | \`text-anchor\` | X Offset | Y Offset | Why It Works |
+|----------|---------------|----------|----------|--------------|
+| Label RIGHT of point/shape | \`start\` | +8px | 0 | Text grows rightward, away from element |
+| Label LEFT of point/shape | \`end\` | -8px | 0 | Text grows leftward, away from element |
+| Label ABOVE element | \`middle\` | 0 | -10px | Text centered, positioned above |
+| Label BELOW element | \`middle\` | 0 | +16px | Text centered, positioned below (accounts for text height) |
+| Label INSIDE large shape (>60px) | \`middle\` | centered | centered | Only when shape is large enough |
+
+**Quadrant Rules for Coordinate Graphs:**
+- Points in upper-right quadrant: Label BELOW-LEFT (\`text-anchor="end"\`, dy=+12)
+- Points in upper-left quadrant: Label BELOW-RIGHT (\`text-anchor="start"\`, dy=+12)
+- Points in lower-right quadrant: Label ABOVE-LEFT (\`text-anchor="end"\`, dy=-8)
+- Points in lower-left quadrant: Label ABOVE-RIGHT (\`text-anchor="start"\`, dy=-8)
+- Points near axes: Always place label AWAY from the axis
+
+**Example - Label to the RIGHT of a circle (text grows away):**
+\`\`\`html
+<circle cx="100" cy="50" r="5" fill="#60a5fa"/>
+<text x="108" y="54" text-anchor="start" font-family="Arial" font-size="11">(4, 20)</text>
+\`\`\`
+
+**Example - Label to the LEFT of a circle:**
+\`\`\`html
+<circle cx="100" cy="50" r="5" fill="#60a5fa"/>
+<text x="92" y="54" text-anchor="end" font-family="Arial" font-size="11">(4, 20)</text>
+\`\`\`
+
+**Example - Label BELOW a circle:**
+\`\`\`html
+<circle cx="100" cy="50" r="5" fill="#60a5fa"/>
+<text x="100" y="70" text-anchor="middle" font-family="Arial" font-size="11">(4, 20)</text>
+\`\`\`
+
 See \`04-svg-workflow.md\` for coordinate graph SVG rules.
 
 ---
@@ -1425,7 +1509,7 @@ Use these instead of inline flexbox:
 - Start with \`<!DOCTYPE html>\` as the very first characters
 - Have \`<body>\` with exact dimensions: \`width: 960px; height: 540px\`
 - End with \`</html>\`
-- Contain NO JavaScript
+- Contain NO interactive JavaScript (D3.js for diagrams is allowed - see JavaScript Policy above)
 - Contain NO comments before \`<!DOCTYPE html>\`
 `;
 
@@ -1447,14 +1531,14 @@ export const SLIDE_PEDAGOGY_RULES = `
 
 ### 2. The "Visual Stability" Principle
 
-- Keep main visual (table, diagram) in SAME position across slides 2-8
+- Keep main visual (table, diagram) in SAME position across slides 3-6
 - Add annotations AROUND the stationary element
 - Mimics teacher at whiteboard - problem stays put, annotations appear
 
 ### 3. The "Scaffolding Removal" Principle
 
-- Slides 2-8: Maximum scaffolding (step-by-step, highlighting, CFU)
-- Printable slide 9: ZERO scaffolding (just practice problems with work space)
+- Slides 3-6: Maximum scaffolding (step-by-step, highlighting, CFU+Answer stacked)
+- Printable slide 7: ZERO scaffolding (just practice problems with work space)
 - Students must apply the strategy independently on the printable worksheet
 
 ### 4. The "Consistent Step Names" Principle
@@ -1480,7 +1564,7 @@ export const SLIDE_PEDAGOGY_RULES = `
 
 **This is the most important rule for student learning.**
 
-The main visual (graph, table, diagram) must stay in the SAME position across all step slides (2-8).
+The main visual (graph, table, diagram) must stay in the SAME position across all step slides (3-6).
 
 ### What "Consistency" Means
 
@@ -1495,14 +1579,14 @@ The main visual (graph, table, diagram) must stay in the SAME position across al
 
 ### Progressive Visual Revelation (REQUIRED)
 
-**Each step slide must ADD something new to the visual.** If slides 3-8 show identical visuals, students see repetition instead of progression.
+**Each step slide must ADD something new to the visual.** If slides 3-6 show identical visuals, students see repetition instead of progression.
 
 **The Visual Tells a Story:**
 \`\`\`
-Slide 2 (Setup):    Shows the PROBLEM → unknowns visible, nothing solved yet
-Slide 3-4 (Step 1): Shows Step 1 RESULT → first piece of solution highlighted
-Slide 5-6 (Step 2): Shows Step 2 RESULT → builds on Step 1
-Slide 7-8 (Step 3): Shows COMPLETE SOLUTION → answer visible on visual
+Slide 3 (Setup):  Shows the PROBLEM → unknowns visible, nothing solved yet
+Slide 4 (Step 1): Shows Step 1 RESULT → first piece of solution highlighted (CFU+Answer stacked)
+Slide 5 (Step 2): Shows Step 2 RESULT → builds on Step 1 (CFU+Answer stacked)
+Slide 6 (Step 3): Shows COMPLETE SOLUTION → answer visible on visual (CFU+Answer stacked)
 \`\`\`
 
 **Examples of What to ADD Each Step:**
@@ -1577,9 +1661,10 @@ Slide 7-8 (Step 3): Shows COMPLETE SOLUTION → answer visible on visual
 
 **The left column is for TEXT CONTENT ONLY. Keep it minimal.**
 
-### Problem Reminder Box (Slides 2-8)
+### Problem Reminder Box (Slides 3-6, bottom left corner)
 
 **Format:** Ultra-condensed summary, max 15 words
+**Position:** Bottom left corner (y=450) using \`problem-reminder.html\` pattern
 
 \`\`\`
 GOOD: "30 nuggets total. 6 per student. How many students?"
@@ -1728,7 +1813,7 @@ If not, it's too cluttered. Remove content until it passes.
 - [ ] Fonts: Arial, Georgia, Courier New only
 - [ ] **Colors: 6-digit hex ONLY (e.g., #ffffff) - NEVER rgb/rgba/named colors**
 - [ ] Backgrounds/borders on \`<div>\` only (NOT on \`<p>\`, \`<h1>\`)
-- [ ] No JavaScript, onclick, or animations
+- [ ] No onclick handlers or CSS animations (D3.js is allowed for diagrams)
 - [ ] Light theme (white #ffffff, dark text #1d1d1d)
 
 ---
@@ -1760,28 +1845,33 @@ If not, it's too cluttered. Remove content until it passes.
 - [ ] SVG container in SAME position as other step slides
 - [ ] **⚠️ EVERY element group wrapped in \`<g data-pptx-layer="...">\`** (REQUIRED for editability)
 - [ ] Layer names follow convention: \`label-X\`, \`shape-N\`, \`base\`, \`arrow-X\`
+- [ ] If using D3.js: visualization code creates layers with \`data-pptx-layer\` attributes
+- [ ] If using D3.js: include \`<script src="https://d3js.org/d3.v7.min.js"></script>\` in head
 
 ---
 
-## If Slide Has CFU/Answer Box
+## If Slide Has CFU/Answer Boxes (Step Slides 4-6)
 
-- [ ] Box has correct \`data-pptx-region\` attribute ("cfu-box" or "answer-box")
-- [ ] Box is positioned with absolute positioning (top-right overlay)
+- [ ] BOTH CFU and Answer boxes are on the SAME slide (stacked)
+- [ ] CFU box has \`data-pptx-region="cfu-box"\` at y=40
+- [ ] Answer box has \`data-pptx-region="answer-box"\` at y=150
+- [ ] Both are positioned with absolute positioning (top-right, stacked vertically)
 - [ ] CFU question references strategy verb
 - [ ] Answer is direct, <= 25 words
+- [ ] Problem reminder is at bottom left corner (y=450)
 `;
 
 export const COMPLETION_CHECKLIST = `
 # Completion Checklist
 
-**Verify AFTER all 9 slides are written.**
+**Verify AFTER all 7 slides are written.**
 
 ---
 
 ## All Slides
 
-- [ ] All 9 slides written to files (8 worked example + 1 printable)
-- [ ] Slides 1-8 are exactly 960x540px
+- [ ] All 7 slides written to files (6 worked example + 1 printable)
+- [ ] Slides 1-6 are exactly 960x540px
 - [ ] All text is in \`<p>\`, \`<h1-6>\`, \`<ul>\`, \`<ol>\` tags (NOT bare text in divs!)
 - [ ] Using \`.row\`/\`.col\` classes (NOT inline \`display: flex\`)
 - [ ] Web-safe fonts only: Arial, Georgia, Courier New
@@ -1791,21 +1881,26 @@ export const COMPLETION_CHECKLIST = `
 
 ## Content Quality
 
+- [ ] Slide 1 (Teacher Instructions) has Big Idea, Learning Targets, and Strategy
+- [ ] Slide 2 (Big Idea) shows Grade/Unit/Lesson and Big Idea statement
 - [ ] Step names match STRATEGY DEFINITION exactly
 - [ ] CFU questions reference strategy verbs
-- [ ] Visual stays in same position across slides 2-8
+- [ ] CFU and Answer boxes at same position on same slide (steps 4-6)
+- [ ] Visual stays in same position across slides 3-6
 - [ ] Each step slide ADDS something new to the visual
+- [ ] Problem reminder is at bottom left corner on step slides
 
 ---
 
 ## PPTX Export
 
 - [ ] CFU/Answer boxes have correct \`data-pptx-region\` attributes (for animation)
+- [ ] CFU box at y=40, Answer box at y=150 (stacked)
 - [ ] All key regions have position attributes
 
 ---
 
-## Printable Slide (Slide 9)
+## Printable Slide (Slide 7)
 
 - [ ] Has zero scaffolding (no step headers, no hints)
 - [ ] WHITE background (#ffffff)
@@ -1847,7 +1942,7 @@ export const PHASE4_SAVE_EXPORT = `
 Save the worked example to the database and export to PPTX or Google Slides for classroom use.
 
 ## Output Format
-All slides are **960×540px, light theme** (9 slides). CFU/Answer boxes use PPTX animation. See \`03-generate-slides/02-technical-rules.md\` for technical specs.
+All slides are **960×540px, light theme** (7 slides). CFU/Answer boxes use PPTX animation. See \`03-generate-slides/02-technical-rules.md\` for technical specs.
 
 ## Prerequisites
 - Phases 1-3 complete
