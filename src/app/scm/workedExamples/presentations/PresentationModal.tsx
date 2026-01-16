@@ -113,7 +113,7 @@ export function PresentationModal({
             )}
 
             {/* Slide Content Area */}
-            <div className="flex-1 relative">
+            <div className="flex-1 relative p-6">
               <SlideContent slide={slide} currentRevealed={currentRevealed} />
             </div>
           </div>
