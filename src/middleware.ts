@@ -13,9 +13,8 @@ const isPublicRoute = createRouteMatcher([
   '/api/webhooks/clerk',    // Clerk webhooks (fixed path)
   '/api/roadmaps/scrape',   // Scraper API (has own API key auth)
   '/api/timesheet',         // Timesheet API (has own API key auth)
-  '/examples/cap(.*)',      // ✅ All CAP examples (current and future)
-  '/313student(.*)',        // ✅ All 313 student ID routes (public access)
   '/scm/workedExamples/viewer(.*)',  // ✅ Worked examples viewer (public)
+  '/scm/content/state-exam(.*)',  // ✅ State exam questions (public)
 ])
 
 export default clerkMiddleware(async (auth, request) => {
