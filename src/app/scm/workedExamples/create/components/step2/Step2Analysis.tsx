@@ -10,8 +10,38 @@ import { GraphPlanDisplay } from './GraphPlanDisplay';
 import { VisualPlanDisplay } from './VisualPlanDisplay';
 import { DiagramPreviewDisplay } from './DiagramPreviewDisplay';
 import { ScenarioEditor } from './ScenarioEditor';
-import { AnalysisFooter } from './AnalysisFooter';
+import { AnalysisFooter, type EditImage } from './AnalysisFooter';
 import type { SSEStartEvent, SSESlideEvent, SSECompleteEvent, SSEErrorEvent } from './types';
+
+/**
+ * Get a descriptive name for each slide based on its position.
+ * Slide structure:
+ * 1. Teacher Instructions
+ * 2. Big Idea
+ * 3. Problem Setup
+ * 4-6. Step slides (with CFU + Answer)
+ * 7. Printable worksheet
+ */
+function getSlideTypeName(slideNum: number): string {
+  switch (slideNum) {
+    case 1:
+      return 'Teacher Instructions';
+    case 2:
+      return 'Big Idea';
+    case 3:
+      return 'Problem Setup';
+    case 4:
+      return 'Step 1';
+    case 5:
+      return 'Step 2';
+    case 6:
+      return 'Step 3';
+    case 7:
+      return 'Print Page';
+    default:
+      return `Slide ${slideNum}`;
+  }
+}
 
 interface Step2AnalysisProps {
   wizard: WizardStateHook;
@@ -20,7 +50,8 @@ interface Step2AnalysisProps {
 export function Step2Analysis({ wizard }: Step2AnalysisProps) {
   const {
     state,
-    updateStrategyName,
+    updateBigIdea,
+    updateStrategyMoves,
     updateScenario,
     setSlides,
     setLoadingProgress,
@@ -30,7 +61,10 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
   } = wizard;
 
   const [editingScenario, setEditingScenario] = useState<number | null>(null);
+  const [editingBigIdea, setEditingBigIdea] = useState(false);
+  const [editingStrategySteps, setEditingStrategySteps] = useState(false);
   const [aiEditPrompt, setAiEditPrompt] = useState('');
+  const [aiEditImages, setAiEditImages] = useState<EditImage[]>([]);
   const [isAiEditing, setIsAiEditing] = useState(false);
   const [aiEditError, setAiEditError] = useState<string | null>(null);
   const [aiEditStartTime, setAiEditStartTime] = useState<number | null>(null);
@@ -56,20 +90,39 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
     return () => clearInterval(interval);
   }, [isAiEditing, aiEditStartTime]);
 
+  // Convert a File to base64 data URL
+  const fileToBase64 = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   // Handle AI edit of analysis
   const handleAiEdit = async () => {
-    if (!aiEditPrompt.trim() || !problemAnalysis || !strategyDefinition || !scenarios) return;
+    // Need either prompt text or images
+    const hasPrompt = aiEditPrompt.trim();
+    const hasImages = aiEditImages.length > 0;
+    if ((!hasPrompt && !hasImages) || !problemAnalysis || !strategyDefinition || !scenarios) return;
 
     setIsAiEditing(true);
     setAiEditStartTime(Date.now());
     setAiEditError(null);
 
     try {
+      // Convert images to base64
+      const imageDataUrls = await Promise.all(
+        aiEditImages.map(img => fileToBase64(img.file))
+      );
+
       const response = await fetch('/api/scm/worked-examples/edit-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           editInstructions: aiEditPrompt,
+          images: imageDataUrls,
           problemAnalysis,
           strategyDefinition,
           scenarios,
@@ -90,7 +143,11 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
           strategyDefinition: data.strategyDefinition || strategyDefinition,
           scenarios: data.scenarios || scenarios,
         });
+        // Clear prompt and images on success
         setAiEditPrompt('');
+        // Revoke object URLs before clearing
+        aiEditImages.forEach(img => URL.revokeObjectURL(img.preview));
+        setAiEditImages([]);
       }
     } catch (error) {
       setAiEditError(error instanceof Error ? error.message : 'An error occurred');
@@ -112,9 +169,9 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
     setError(null);
     const startTime = Date.now();
-    // PPTX format: 8 worked example slides (Learning Goal, Setup, 6 step slides with animated CFU/Answer)
-    // Printable slide (9) is generated separately after main slides complete
-    const fullSlideCount = testMode ? 1 : 8;
+    // PPTX format: 6 worked example slides (Teacher Instructions, Big Idea, Setup, 3 step slides with stacked CFU/Answer)
+    // Printable slide (7) is generated separately after main slides complete
+    const fullSlideCount = testMode ? 1 : 6;
 
     // For continue mode, use accumulated slides from ref (not state, which may be stale during retries)
     // accumulatedSlidesRef always has the most up-to-date slides
@@ -256,17 +313,17 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
           return;
         }
 
-        // All 8 main slides complete - now generate printable (slide 9)
+        // All 6 main slides complete - now generate printable (slide 7)
         if (!testMode && scenarios) {
           console.log('[generate-slides] Main slides complete, generating printable...');
           setLoadingProgress({
             phase: 'generating',
-            message: 'Creating Slide 9 (printable worksheet)...',
-            detail: 'Generating practice problems sheet (slide 9)',
+            message: 'Creating Print Page...',
+            detail: 'Generating printable practice worksheet',
             startTime,
             slideProgress: {
-              currentSlide: 9,
-              estimatedTotal: 9,
+              currentSlide: 7,
+              estimatedTotal: 7,
             },
           });
 
@@ -402,7 +459,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
         setLoadingProgress({
           phase: 'generating',
-          message: `Creating slide ${displaySlideNumber} of ${fullSlideCount}...`,
+          message: `Creating ${getSlideTypeName(displaySlideNumber)}...`,
           detail: slideData.message,
           startTime,
           slideProgress: {
@@ -520,6 +577,36 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
         {/* Right Column - Accordions (70%) */}
         <div className="w-[70%] space-y-4">
+          {/* Big Idea Card - FIRST element in right column, EDITABLE */}
+          {strategyDefinition.bigIdea && (
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <span className="px-2 py-0.5 bg-white/20 rounded text-xs font-bold text-white uppercase tracking-wide">
+                  Big Idea
+                </span>
+                <button
+                  onClick={() => setEditingBigIdea(!editingBigIdea)}
+                  className="p-1 text-white/70 hover:text-white hover:bg-white/10 rounded cursor-pointer"
+                  title={editingBigIdea ? 'Done editing' : 'Edit Big Idea'}
+                >
+                  {editingBigIdea ? <CheckIcon className="h-4 w-4" /> : <PencilIcon className="h-4 w-4" />}
+                </button>
+              </div>
+              {editingBigIdea ? (
+                <textarea
+                  value={strategyDefinition.bigIdea}
+                  onChange={(e) => updateBigIdea(e.target.value)}
+                  className="w-full bg-white/10 text-white text-lg font-medium rounded p-2 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/30"
+                  rows={2}
+                />
+              ) : (
+                <p className="text-lg font-medium text-white">
+                  {strategyDefinition.bigIdea}
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Worked Example Accordion - Green header */}
           {scenarios[0] && (
             <SectionAccordion
@@ -580,6 +667,100 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                         <h4 className="text-sm font-semibold text-gray-700 mb-2">Problem Description</h4>
                         <p className="text-sm text-gray-600">{scenarios[0].description}</p>
                       </div>
+                    </div>
+                  ),
+                },
+                // Strategy Steps section (editable)
+                {
+                  key: 'we-strategy-steps',
+                  title: (
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-sm font-medium text-gray-700">Strategy Steps</span>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingStrategySteps(!editingStrategySteps);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            setEditingStrategySteps(!editingStrategySteps);
+                          }
+                        }}
+                        className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
+                        title={editingStrategySteps ? 'Done editing' : 'Edit strategy steps'}
+                      >
+                        {editingStrategySteps ? (
+                          <CheckIcon className="h-4 w-4" />
+                        ) : (
+                          <PencilIcon className="h-4 w-4" />
+                        )}
+                      </span>
+                    </div>
+                  ),
+                  icon: null,
+                  content: editingStrategySteps ? (
+                    <div className="space-y-4">
+                      {strategyDefinition.moves.map((move, i) => (
+                        <div key={i} className="bg-gray-50 rounded p-3 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Badge intent="primary" size="xs" rounded="full">{i + 1}</Badge>
+                            <input
+                              type="text"
+                              value={move.verb}
+                              onChange={(e) => {
+                                const updated = [...strategyDefinition.moves];
+                                updated[i] = { ...updated[i], verb: e.target.value };
+                                updateStrategyMoves(updated);
+                              }}
+                              className="font-semibold text-sm border border-gray-300 rounded px-2 py-1 w-32 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="Verb"
+                            />
+                          </div>
+                          <input
+                            type="text"
+                            value={move.description}
+                            onChange={(e) => {
+                              const updated = [...strategyDefinition.moves];
+                              updated[i] = { ...updated[i], description: e.target.value };
+                              updateStrategyMoves(updated);
+                            }}
+                            className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Description"
+                          />
+                          <input
+                            type="text"
+                            value={move.result}
+                            onChange={(e) => {
+                              const updated = [...strategyDefinition.moves];
+                              updated[i] = { ...updated[i], result: e.target.value };
+                              updateStrategyMoves(updated);
+                            }}
+                            className="w-full text-sm text-gray-500 border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Result (optional)"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {strategyDefinition.moves.map((move, i) => (
+                        <div key={i} className="flex items-start gap-3">
+                          <Badge intent="primary" size="xs" rounded="full">
+                            {i + 1}
+                          </Badge>
+                          <div className="flex-1 min-w-0">
+                            <span className="font-semibold text-gray-900 text-sm">{move.verb}</span>
+                            <span className="text-gray-600 text-sm">: {move.description}</span>
+                            {move.result && (
+                              <span className="text-gray-500 text-xs block mt-0.5">→ {move.result}</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ),
                 },
@@ -870,65 +1051,6 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
           }] : []),
         ]}
       />
-
-      {/* Strategy - Blue header */}
-      <SectionAccordion
-        title="Strategy"
-        subtitle={`${strategyDefinition.moves.length} steps`}
-        color="#3B82F6"
-        className="mb-0"
-        hideExpandAll
-        items={[
-          {
-            key: 'strategy-details',
-            title: strategyDefinition.name,
-            icon: null,
-            content: (
-              <div>
-                {/* Strategy Name */}
-                <div className="border-b border-gray-200 pb-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">Strategy Name</h4>
-                  <input
-                    type="text"
-                    value={strategyDefinition.name}
-                    onChange={(e) => updateStrategyName(e.target.value)}
-                    className="w-full bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                {/* One-Sentence Summary */}
-                <div className="border-b border-gray-200 py-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">One-Sentence Summary</h4>
-                  <p className="text-sm text-gray-600">
-                    {strategyDefinition.oneSentenceSummary}
-                  </p>
-                </div>
-
-                {/* Strategy Steps */}
-                <div className="pt-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Strategy Steps</h4>
-                  <div className="space-y-2">
-                    {strategyDefinition.moves.map((move, i) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <Badge intent="primary" size="xs" rounded="full">
-                          {i + 1}
-                        </Badge>
-                        <div className="flex-1 min-w-0">
-                          <span className="font-semibold text-gray-900 text-sm">{move.verb}</span>
-                          <span className="text-gray-600 text-sm">: {move.description}</span>
-                          {move.result && (
-                            <span className="text-gray-500 text-xs block mt-0.5">→ {move.result}</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ),
-          },
-        ]}
-      />
         </div>
       </div>
 
@@ -938,6 +1060,8 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
         isAiEditing={isAiEditing}
         aiEditPrompt={aiEditPrompt}
         setAiEditPrompt={setAiEditPrompt}
+        aiEditImages={aiEditImages}
+        setAiEditImages={setAiEditImages}
         aiEditElapsed={aiEditElapsed}
         aiEditError={aiEditError}
         handleAiEdit={handleAiEdit}

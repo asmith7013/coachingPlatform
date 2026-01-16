@@ -4,6 +4,39 @@ import { useState, useEffect } from 'react';
 import type { LoadingProgress } from '../../lib/types';
 import { WizardStickyFooter, type FooterTheme } from './WizardStickyFooter';
 
+/**
+ * Get a short label for each slide based on its position in the deck.
+ * Slide structure:
+ * 1. Teacher Instructions
+ * 2. Big Idea
+ * 3. Problem Setup
+ * 4-6. Step slides (with CFU + Answer)
+ * 7. Printable worksheet
+ */
+function getSlideLabel(slideNum: number, total: number): string {
+  // If this is the last slide and total suggests it's the printable
+  if (slideNum === total && total >= 7) {
+    return 'Print';
+  }
+
+  switch (slideNum) {
+    case 1:
+      return 'Teacher';
+    case 2:
+      return 'Big Idea';
+    case 3:
+      return 'Setup';
+    case 4:
+      return 'Step 1';
+    case 5:
+      return 'Step 2';
+    case 6:
+      return 'Step 3';
+    default:
+      return `Slide ${slideNum}`;
+  }
+}
+
 // Custom scale-pulse animation for the icon
 const scalePulseStyle = {
   animation: 'scalePulse 1.5s ease-in-out infinite',
@@ -100,23 +133,28 @@ export function WizardFooter({ isLoading, loadingProgress, children }: WizardFoo
                   </span>
                 )}
               </div>
-              {/* Row 2: Progress tiles */}
+              {/* Row 2: Progress tiles with labels */}
               <div className="flex gap-1">
                 {Array.from({ length: estimatedTotal }).map((_, i) => {
                   const slideNum = i + 1;
                   const isComplete = slideNum < currentSlide;
                   const isInProgress = slideNum === currentSlide && currentSlide > 0;
+                  const label = getSlideLabel(slideNum, estimatedTotal);
                   return (
-                    <div
-                      key={i}
-                      className={`flex-1 h-2 rounded-sm transition-all duration-300 ${
-                        isComplete
-                          ? 'bg-green-500'
-                          : isInProgress
-                          ? 'bg-green-300 animate-pulse'
-                          : 'bg-gray-200'
-                      }`}
-                    />
+                    <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                      <div
+                        className={`w-full h-2 rounded-sm transition-all duration-300 ${
+                          isComplete
+                            ? 'bg-green-500'
+                            : isInProgress
+                            ? 'bg-green-300 animate-pulse'
+                            : 'bg-gray-200'
+                        }`}
+                      />
+                      <span className="text-[9px] text-green-700 truncate max-w-full">
+                        {label}
+                      </span>
+                    </div>
                   );
                 })}
               </div>
