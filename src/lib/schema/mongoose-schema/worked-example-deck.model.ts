@@ -19,10 +19,10 @@ const solutionStepSchema = {
 };
 
 const diagramPreviewSchema = {
-  ascii: { type: String, required: true },
+  ascii: { type: String },
   keyElements: [{
-    element: { type: String, required: true },
-    represents: { type: String, required: true },
+    element: { type: String },
+    represents: { type: String },
   }],
 };
 
@@ -59,16 +59,16 @@ const graphPlanSchema = {
 };
 
 const problemAnalysisSchema = {
-  problemTranscription: { type: String, required: true },
-  problemType: { type: String, required: true },
-  mathematicalStructure: { type: String, required: true },
+  problemTranscription: { type: String },
+  problemType: { type: String },
+  mathematicalStructure: { type: String },
   solution: [solutionStepSchema],
-  answer: { type: String, required: true },
-  keyChallenge: { type: String, required: true },
+  answer: { type: String },
+  keyChallenge: { type: String },
   commonMistakes: [String],
   requiredPriorKnowledge: [String],
-  answerFormat: { type: String, required: true },
-  visualType: { type: String, enum: ['text-only', 'html-table', 'svg-visual'], required: true },
+  answerFormat: { type: String },
+  visualType: { type: String, enum: ['text-only', 'html-table', 'svg-visual'] },
   svgSubtype: { type: String, enum: ['coordinate-graph', 'diagram', 'shape', 'number-line', 'other'] },
   graphPlan: graphPlanSchema,
   diagramPreview: diagramPreviewSchema,
@@ -81,8 +81,8 @@ const strategyMoveSchema = {
 };
 
 const strategyDefinitionSchema = {
-  name: { type: String, required: true },
-  oneSentenceSummary: { type: String, required: true },
+  name: { type: String },
+  oneSentenceSummary: { type: String },
   moves: [strategyMoveSchema],
   slideHeaders: [String],
   cfuQuestionTemplates: [String],
