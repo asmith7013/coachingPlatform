@@ -7,10 +7,24 @@ import {
   ChartBarIcon,
   TableCellsIcon,
   ArrowTrendingUpIcon,
+  ListBulletIcon,
+  BookOpenIcon,
 } from '@heroicons/react/24/outline';
 
 export default function RoadmapsHomePage() {
   const pages = [
+    {
+      title: "Scope & Sequence",
+      href: "/scm/content/lessons",
+      Icon: ListBulletIcon,
+      description: "View all lessons in a curriculum with standards, learning targets, and skills."
+    },
+    {
+      title: "Units",
+      href: "/scm/roadmaps/units",
+      Icon: BookOpenIcon,
+      description: "View units by grade level with their target and support skills."
+    },
     {
       title: "Skills",
       href: "/scm/roadmaps/skills",

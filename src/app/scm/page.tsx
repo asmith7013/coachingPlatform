@@ -5,7 +5,6 @@ import {
   ChevronRightIcon,
   MapIcon,
   CalendarDaysIcon,
-  BookOpenIcon,
   ChartBarIcon,
   DocumentTextIcon,
   ClockIcon,
@@ -14,16 +13,10 @@ import {
   TableCellsIcon,
   ArrowTrendingUpIcon,
   PresentationChartBarIcon,
-  TruckIcon,
-  ListBulletIcon,
   ClipboardDocumentCheckIcon,
 } from '@heroicons/react/24/outline';
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
 export default function SCMHomePage() {
-  const { hasRole } = useAuthenticatedUser();
-  const isSuperAdmin = hasRole('super_admin');
-  const isCoach = hasRole('coach');
 
   const categories = [
     {
@@ -65,22 +58,28 @@ export default function SCMHomePage() {
       ]
     },
     {
-      title: "Scope & Sequence",
-      Icon: ListBulletIcon,
+      title: "Content",
+      Icon: DocumentTextIcon,
       iconType: "heroicon" as const,
-      description: "View curriculum structure and lesson progression",
+      description: "Curriculum content, scope and sequence, and scheduling tools",
       pages: [
         {
-          title: "Lesson by Lesson",
-          href: "/scm/scope-and-sequence/lesson-by-lesson",
-          Icon: CalendarDaysIcon,
-          description: "See how skills progress across lessons in each unit."
+          title: "Scope & Sequence",
+          href: "/scm/content/lessons",
+          Icon: TableCellsIcon,
+          description: "View all lessons in a curriculum with standards, learning targets, and skills."
         },
         {
-          title: "Units",
-          href: "/scm/scope-and-sequence/units",
-          Icon: BookOpenIcon,
-          description: "View units by grade level with their target and support skills."
+          title: "State Exam Questions",
+          href: "/scm/content/state-exam",
+          Icon: ClipboardDocumentCheckIcon,
+          description: "View state exam questions organized by standard and unit."
+        },
+        {
+          title: "Unit Calendar",
+          href: "/scm/content/calendar",
+          Icon: CalendarDaysIcon,
+          description: "Manage unit schedules and pacing for each class section."
         }
       ]
     },
@@ -150,21 +149,6 @@ export default function SCMHomePage() {
         }
       ]
     },
-    // Logistics - only shown for coaches
-    ...((isCoach || isSuperAdmin) ? [{
-      title: "Logistics",
-      Icon: TruckIcon,
-      iconType: "heroicon" as const,
-      description: "School calendars, scheduling, and operational tools",
-      pages: [
-        {
-          title: "Unit Calendar",
-          href: "/scm/logistics/calendar",
-          Icon: CalendarDaysIcon,
-          description: "Manage unit schedules and pacing for each class section."
-        }
-      ]
-    }] : []),
   ];
 
   return (

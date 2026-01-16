@@ -7,6 +7,10 @@ import {
   getStateTestStats,
   type ScrapeResult,
 } from '@/app/tools/state-test-scraper/actions/scrape';
+import {
+  replaceScreenshotsForYear,
+  type YearResult,
+} from '@/app/tools/state-test-scraper/actions/replace-screenshots';
 import type { StateTestQuestion } from '@/app/tools/state-test-scraper/lib/types';
 
 export default function StateTestPage() {
@@ -21,6 +25,10 @@ export default function StateTestPage() {
   } | null>(null);
   const [grade, setGrade] = useState('6');
   const [logs, setLogs] = useState<string[]>([]);
+  const [replaceResult, setReplaceResult] = useState<{
+    year: string;
+    result: YearResult;
+  } | null>(null);
 
   const addLog = (message: string) => {
     setLogs((prev) => [...prev, `[${new Date().toLocaleTimeString()}] ${message}`]);
@@ -70,6 +78,26 @@ export default function StateTestPage() {
     }
   };
 
+  const handleReplaceScreenshots = (year: string) => {
+    addLog(`Starting ${year} screenshot replacement...`);
+    setReplaceResult(null);
+
+    startTransition(async () => {
+      const res = await replaceScreenshotsForYear(year);
+      setReplaceResult({ year, result: res });
+
+      addLog(`Grade 6: ${res.grade6.replaced}/${res.grade6.total} ${res.grade6.success ? 'SUCCESS' : 'FAILED'}`);
+      addLog(`Grade 7: ${res.grade7.replaced}/${res.grade7.total} ${res.grade7.success ? 'SUCCESS' : 'FAILED'}`);
+      addLog(`Grade 8: ${res.grade8.replaced}/${res.grade8.total} ${res.grade8.success ? 'SUCCESS' : 'FAILED'}`);
+
+      if (res.grade6.success && res.grade7.success && res.grade8.success) {
+        addLog(`SUCCESS: All ${year} screenshots replaced!`);
+      } else {
+        addLog('ERROR: Some replacements failed. Check console for details.');
+      }
+    });
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">State Test Question Scraper</h1>
@@ -107,6 +135,56 @@ export default function StateTestPage() {
             className={`mt-3 p-3 rounded-md ${result.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}
           >
             {result.success ? `Successfully scraped ${result.count} questions` : result.error}
+          </div>
+        )}
+      </div>
+
+      {/* Replace Screenshots by Year */}
+      <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <h2 className="text-lg font-semibold mb-3">Replace Screenshots</h2>
+        <p className="text-sm text-gray-600 mb-3">
+          Replace existing screenshots (with answers) with new answer-free versions from local folders.
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={() => handleReplaceScreenshots('2023')}
+            disabled={isPending}
+            className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isPending ? 'Replacing...' : 'Replace 2023'}
+          </button>
+          <button
+            onClick={() => handleReplaceScreenshots('2024')}
+            disabled={isPending}
+            className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isPending ? 'Replacing...' : 'Replace 2024'}
+          </button>
+          <button
+            onClick={() => handleReplaceScreenshots('2025')}
+            disabled={isPending}
+            className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isPending ? 'Replacing...' : 'Replace 2025'}
+          </button>
+        </div>
+        {replaceResult && (
+          <div className="mt-3 p-3 rounded-md bg-gray-50 text-sm">
+            <p className="font-semibold mb-1">{replaceResult.year} Results:</p>
+            <p>Grade 6: {replaceResult.result.grade6.replaced}/{replaceResult.result.grade6.total} {replaceResult.result.grade6.success ? '✓' : '✗'}</p>
+            <p>Grade 7: {replaceResult.result.grade7.replaced}/{replaceResult.result.grade7.total} {replaceResult.result.grade7.success ? '✓' : '✗'}</p>
+            <p>Grade 8: {replaceResult.result.grade8.replaced}/{replaceResult.result.grade8.total} {replaceResult.result.grade8.success ? '✓' : '✗'}</p>
+            {/* Show errors if any */}
+            {(replaceResult.result.grade6.errors.length > 0 ||
+              replaceResult.result.grade7.errors.length > 0 ||
+              replaceResult.result.grade8.errors.length > 0) && (
+              <div className="mt-2 p-2 bg-red-50 text-red-800 rounded text-xs">
+                <p className="font-semibold">Errors:</p>
+                {replaceResult.result.grade6.errors.map((e, i) => <p key={`g6-${i}`}>G6: {e}</p>)}
+                {replaceResult.result.grade7.errors.map((e, i) => <p key={`g7-${i}`}>G7: {e}</p>)}
+                {replaceResult.result.grade8.errors.map((e, i) => <p key={`g8-${i}`}>G8: {e}</p>)}
+              </div>
+            )}
           </div>
         )}
       </div>

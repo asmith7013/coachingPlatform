@@ -9,11 +9,10 @@ import {
   GiftIcon,
   PresentationChartBarIcon,
   Cog6ToothIcon,
-  TruckIcon,
+  DocumentTextIcon,
   Bars3Icon,
   XMarkIcon,
   ChevronDownIcon,
-  ListBulletIcon,
 } from '@heroicons/react/24/outline';
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
@@ -86,12 +85,12 @@ export function SCMNav() {
       ],
     },
     {
-      label: "Scope & Sequence",
-      Icon: ListBulletIcon,
+      label: "Content",
+      Icon: DocumentTextIcon,
       items: [
-        { href: "/scm/scope-and-sequence/lessons", label: "Lesson by Lesson" },
-        { href: "/scm/scope-and-sequence/units", label: "Units" },
-        { href: "/scm/scope-and-sequence/state-exam", label: "State Exam Questions" },
+        { href: "/scm/content/lessons", label: "Scope & Sequence" },
+        { href: "/scm/content/state-exam", label: "State Exam Questions" },
+        { href: "/scm/content/calendar", label: "Unit Calendar" },
       ],
     },
     {
@@ -110,6 +109,8 @@ export function SCMNav() {
       label: "Roadmaps",
       Icon: MapIcon,
       items: [
+        { href: "/scm/content/lessons", label: "Scope & Sequence" },
+        { href: "/scm/roadmaps/units", label: "Units" },
         { href: "/scm/roadmaps/skills", label: "Skills" },
         { href: "/scm/roadmaps/mastery-grid", label: "Mastery Grid" },
         { href: "/scm/roadmaps/progress", label: "Progress" },
@@ -124,14 +125,6 @@ export function SCMNav() {
         { href: "/scm/incentives/table", label: "Table" },
       ],
     },
-    ...((isCoach || isSuperAdmin) ? [{
-      label: "Logistics",
-      Icon: TruckIcon,
-      items: [
-        { href: "/scm/logistics/calendar", label: "Unit Calendar" },
-        { href: "/scm/logistics/scope-and-sequence", label: "Edit Scope & Sequence" },
-      ],
-    }] : []),
     ...(isSuperAdmin ? [{
       label: "Admin",
       Icon: Cog6ToothIcon,
@@ -153,10 +146,10 @@ export function SCMNav() {
           ],
         },
         {
-          section: "Logistics",
+          section: "Content",
           items: [
-            { href: "/scm/logistics/calendar", label: "Unit Calendar", description: "Set unit schedule for each scope and sequence" },
-            { href: "/scm/logistics/scope-and-sequence", label: "Edit Scope & Sequence", description: "Manage curriculum scope and sequence entries" },
+            { href: "/scm/content/calendar", label: "Unit Calendar", description: "Set unit schedule for each scope and sequence" },
+            { href: "/scm/content/edit-scope-and-sequence", label: "Edit Scope & Sequence", description: "Manage curriculum scope and sequence entries" },
           ],
         },
       ],
