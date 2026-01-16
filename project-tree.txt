@@ -1,16 +1,6 @@
 .
-├── 161 WE.mp4
 ├── AGENTS.md
-├── ANALYTICS.md
-├── ANALYTICS_SETUP_COMPLETE.md
 ├── CLAUDE.md
-├── LESSON-NAMING-STANDARDIZATION.md
-├── WORKED_EXAMPLE_REQUEST_PLAN.md
-├── amplify
-│   ├── docs.md
-│   ├── scope.md
-│   └── template.md
-├── convert_to_json.py
 ├── docs
 │   ├── architecture
 │   │   ├── core-principles.md
@@ -154,96 +144,13 @@
 │       ├── manifest.json
 │       ├── popup.html
 │       └── popup.js
-├── docs-cursor
-│   ├── create-prd-new.mdc
-│   ├── create-prd.mdc
-│   ├── generate-tasks.mdc
-│   └── process-task-list.mdc
-├── docs-export
-│   └── claude-project-instructions.md
-├── docs-lib
-│   ├── boiler.md
-│   ├── file-rework.md
-│   ├── lib-catalog.md
-│   ├── lib-changes.md
-│   └── reference-system.md
-├── docs-plans
-│   └── calendar-react-query-migration.md
-├── docs-product-roadmap
-│   ├── 313
-│   │   ├── dashboard-tasks.md
-│   │   └── dashboard.md
-│   ├── core
-│   │   ├── cross-domain
-│   │   ├── cycle
-│   │   │   ├── PRD-cap2.md
-│   │   │   ├── cap.md
-│   │   │   ├── cap2.md
-│   │   │   ├── cap3.md
-│   │   │   └── cap4.md
-│   │   ├── school
-│   │   ├── staff
-│   │   └── visit
-│   │       ├── prd-schedule-3.md
-│   │       ├── prd-three-zone.md
-│   │       ├── schedule-refactoring-tasks.md
-│   │       ├── schedule.md
-│   │       ├── schedule2.md
-│   │       ├── tasks-three-zone-scheduling.md
-│   │       └── \23405new-schedule.md
-│   ├── integrations
-│   ├── operations
-│   │   ├── PRD-schedule.md
-│   │   ├── PRD-tasks-schedule-builder.md
-│   │   ├── coaching-features.md
-│   │   ├── schedule-ui.md
-│   │   ├── tasks-schedule-builder.md
-│   │   ├── tasks-ui-hooks-quality-improvement.md
-│   │   └── \23405tasks-schedule-builder.md
-│   ├── platform
-│   │   ├── admin-features.md
-│   │   ├── analytics-features.md
-│   │   ├── auth-features.md
-│   │   ├── react-form-plan.md
-│   │   └── react-form-tasks.md
-│   └── product-roadmap.md
-├── docs-product-tasks
-│   ├── core
-│   │   ├── cross-domain
-│   │   ├── cycle
-│   │   │   └── cap.md
-│   │   ├── cycle-features.md
-│   │   ├── school
-│   │   ├── school-features.md
-│   │   ├── staff
-│   │   └── staff-features.md
-│   ├── doc.md
-│   ├── integrations
-│   │   ├── api-features.md
-│   │   └── monday-features.md
-│   ├── operations
-│   │   ├── coaching-features.md
-│   │   ├── scheduling-features.md
-│   │   └── visit-features.md
-│   ├── platform
-│   │   ├── admin-features.md
-│   │   ├── analytics-features.md
-│   │   ├── auth-features.md
-│   │   └── forms-update.md
-│   └── product-roadmap.md
 ├── eslint.config.mjs
-├── exam_data_split_units.txt
-├── examples
 ├── next-env.d.ts
 ├── next.config.ts
 ├── package.json
 ├── patches
 │   └── @bapunhansdah+pptxgenjs+1.1.3.patch
 ├── postcss.config.mjs
-├── problem-attic
-│   ├── login.html
-│   ├── page.html
-│   └── text.md
 ├── project-tree.txt
 ├── public
 │   ├── file.svg
@@ -273,8 +180,6 @@
 │   │   └── tables.js -> /Users/alexsmith/ai-coaching-platform/.claude/skills/question-types/implement-table-question/snippets/tables.js
 │   ├── vercel.svg
 │   └── window.svg
-├── response_patterns.txt
-├── response_patterns_with_context.txt
 ├── scripts
 │   ├── MIGRATION-EXAMPLE.md
 │   ├── README-skill-migration.md
@@ -282,6 +187,7 @@
 │   ├── analyze-question-variants.py
 │   ├── analyze-question-variants.ts
 │   ├── combine-docs.ts
+│   ├── copy-standards-to-algebra1.js
 │   ├── create-algebra1-assessments.ts
 │   ├── create-section-configs.ts
 │   ├── create-unit-assessments.ts
@@ -290,6 +196,7 @@
 │   │   └── migrate-subsection-index.ts
 │   ├── debug-803-unit3.js
 │   ├── delete-all-students.ts
+│   ├── find-missing-standards.js
 │   ├── fix-remaining-imports.js
 │   ├── generate-theme-css.ts
 │   ├── im-curriculum
@@ -547,6 +454,9 @@
 │   │   │   │       └── route.ts
 │   │   │   ├── auth
 │   │   │   │   └── check-google-oauth
+│   │   │   │       └── route.ts
+│   │   │   ├── calendar
+│   │   │   │   └── days-off
 │   │   │   │       └── route.ts
 │   │   │   ├── coaching-action-plans
 │   │   │   │   ├── [id]
@@ -981,6 +891,28 @@
 │   │   │   ├── admin
 │   │   │   │   └── timesheet
 │   │   │   │       └── page.tsx
+│   │   │   ├── content
+│   │   │   │   ├── calendar
+│   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── edit-scope-and-sequence
+│   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── lessons
+│   │   │   │   │   ├── actions.ts
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── state-exam
+│   │   │   │       ├── actions.ts
+│   │   │   │       ├── components
+│   │   │   │       ├── constants.ts
+│   │   │   │       ├── edit
+│   │   │   │       ├── hooks.ts
+│   │   │   │       ├── page.tsx
+│   │   │   │       └── types.ts
 │   │   │   ├── incentives
 │   │   │   │   ├── data
 │   │   │   │   │   ├── TrackingTables.tsx
@@ -1002,16 +934,6 @@
 │   │   │   │   └── table
 │   │   │   │       └── page.tsx
 │   │   │   ├── layout.tsx
-│   │   │   ├── logistics
-│   │   │   │   ├── calendar
-│   │   │   │   │   ├── components
-│   │   │   │   │   ├── hooks
-│   │   │   │   │   └── page.tsx
-│   │   │   │   ├── page.tsx
-│   │   │   │   └── scope-and-sequence
-│   │   │   │       ├── components
-│   │   │   │       ├── hooks
-│   │   │   │       └── page.tsx
 │   │   │   ├── page.tsx
 │   │   │   ├── podsie
 │   │   │   │   ├── assessment
@@ -1138,22 +1060,6 @@
 │   │   │   │   │   ├── components
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── zearn
-│   │   │   │       └── page.tsx
-│   │   │   ├── scope-and-sequence
-│   │   │   │   ├── lessons
-│   │   │   │   │   ├── actions.ts
-│   │   │   │   │   ├── components
-│   │   │   │   │   └── page.tsx
-│   │   │   │   ├── page.tsx
-│   │   │   │   ├── state-exam
-│   │   │   │   │   ├── actions.ts
-│   │   │   │   │   ├── components
-│   │   │   │   │   ├── constants.ts
-│   │   │   │   │   ├── edit
-│   │   │   │   │   ├── hooks.ts
-│   │   │   │   │   ├── page.tsx
-│   │   │   │   │   └── types.ts
-│   │   │   │   └── units
 │   │   │   │       └── page.tsx
 │   │   │   ├── tools
 │   │   │   │   └── problem-attic-scraper
@@ -1284,6 +1190,7 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── state-test-scraper
 │   │   │   │   ├── actions
+│   │   │   │   │   ├── replace-screenshots.ts
 │   │   │   │   │   └── scrape.ts
 │   │   │   │   └── lib
 │   │   │   │       ├── scraper.ts
@@ -1690,6 +1597,11 @@
 │   │   │       │   └── useZearnBatchData.ts
 │   │   │       └── utils
 │   │   │           └── parseZearnData.ts
+│   │   ├── scm
+│   │   │   └── scope-and-sequence
+│   │   │       ├── StandardsUnitMatrix.tsx
+│   │   │       ├── index.ts
+│   │   │       └── standards-utils.ts
 │   │   └── ui
 │   │       └── card.tsx
 │   ├── debug
@@ -2134,6 +2046,7 @@
 │   │   │   │       ├── index.ts
 │   │   │   │       └── parse-query.ts
 │   │   │   ├── auth
+│   │   │   │   ├── api-key.ts
 │   │   │   │   ├── getAuthenticatedUser.ts
 │   │   │   │   └── index.ts
 │   │   │   ├── crud
@@ -2366,15 +2279,9 @@
 │       ├── clerk.d.ts
 │       └── dependency-overrides.d.ts
 ├── tailwind.config.ts
-├── tasks
-│   ├── tasks-coaching-action-plan-refactor.md
-│   └── tasks-prd-schedule-3.md
-├── temp-fix
-│   ├── complete-fix-summary.md
-│   └── react-fix.md
 ├── test-output.css
 ├── tsconfig.json
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-707 directories, 1671 files
+680 directories, 1605 files

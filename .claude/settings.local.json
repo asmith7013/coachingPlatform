@@ -1,6 +1,9 @@
 {
   "permissions": {
     "allow": [
+      "Read(**)",
+      "Write(**)",
+      "Edit(**)",
       "Bash(mkdir:*)",
       "Bash(mongosh:*)",
       "Bash(npm run prebuild:*)",

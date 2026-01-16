@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "/Users/alexsmith/Documents/GitHub/podsie"
+		},
+		{
+			"path": "/Users/alexsmith/ai-coaching-platform"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.cursorrules": "markdown"
+		},
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"typescript.experimental.useTsgo": false
+	}
+}
