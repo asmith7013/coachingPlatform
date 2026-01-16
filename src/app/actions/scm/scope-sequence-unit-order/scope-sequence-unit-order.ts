@@ -38,7 +38,7 @@ const scopeSequenceUnitOrderCrud = createCrudActions({
   schema: ScopeSequenceUnitOrderZodSchema as ZodType<ScopeSequenceUnitOrder>,
   inputSchema: ScopeSequenceUnitOrderInputZodSchema as ZodType<ScopeSequenceUnitOrderInput>,
   name: 'ScopeSequenceUnitOrder',
-  revalidationPaths: ['/scm/scope-and-sequence/lessons'],
+  revalidationPaths: ['/scm/content/lessons'],
   sortFields: ['scopeSequenceTag', 'createdAt', 'updatedAt'],
   defaultSortField: 'scopeSequenceTag',
   defaultSortOrder: 'asc'
@@ -141,7 +141,7 @@ export async function upsertUnitOrder(
         { upsert: true, new: true, runValidators: true }
       );
 
-      revalidatePath('/scm/scope-and-sequence/lessons');
+      revalidatePath('/scm/content/lessons');
 
       return {
         success: true,

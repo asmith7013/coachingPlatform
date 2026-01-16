@@ -781,7 +781,7 @@ export async function updateLessonSubsections(
       (config as unknown as Record<string, unknown>).updatedAt = new Date().toISOString();
       await config.save();
 
-      revalidatePath('/scm/logistics/calendar');
+      revalidatePath('/scm/content/calendar');
       revalidatePath('/scm/podsie/progress');
 
       return { success: true };
