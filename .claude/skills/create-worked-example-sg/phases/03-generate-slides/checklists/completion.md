@@ -1,13 +1,13 @@
 # Completion Checklist
 
-**Verify AFTER all 9 slides are written.**
+**Verify AFTER all 7 slides are written.**
 
 ---
 
 ## All Slides
 
-- [ ] All 9 slides written to files (8 worked example + 1 printable)
-- [ ] Slides 1-8 are exactly 960x540px
+- [ ] All 7 slides written to files (6 worked example + 1 printable)
+- [ ] Slides 1-6 are exactly 960x540px
 - [ ] All text is in `<p>`, `<h1-6>`, `<ul>`, `<ol>` tags (NOT bare text in divs!)
 - [ ] Using `.row`/`.col` classes (NOT inline `display: flex`)
 - [ ] Web-safe fonts only: Arial, Georgia, Courier New
@@ -17,21 +17,26 @@
 
 ## Content Quality
 
+- [ ] Slide 1 (Teacher Instructions) has Big Idea, Learning Targets, and Strategy
+- [ ] Slide 2 (Big Idea) shows Grade/Unit/Lesson and Big Idea statement
 - [ ] Step names match STRATEGY DEFINITION exactly
 - [ ] CFU questions reference strategy verbs
-- [ ] Visual stays in same position across slides 2-8
+- [ ] CFU and Answer boxes at same position on same slide (steps 4-6)
+- [ ] Visual stays in same position across slides 3-6
 - [ ] Each step slide ADDS something new to the visual
+- [ ] Problem reminder is at bottom left corner on step slides
 
 ---
 
 ## PPTX Export
 
 - [ ] CFU/Answer boxes have correct `data-pptx-region` attributes (for animation)
+- [ ] CFU box at y=40, Answer box at y=150 (stacked)
 - [ ] All key regions have position attributes
 
 ---
 
-## Printable Slide (Slide 9)
+## Printable Slide (Slide 7)
 
 - [ ] Has zero scaffolding (no step headers, no hints)
 - [ ] WHITE background (#ffffff)

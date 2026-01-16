@@ -6,6 +6,38 @@ Visual structure reference for common math representations used in Illustrative 
 
 ---
 
+## Two Approaches: D3.js vs Manual SVG
+
+### Option 1: D3.js (Recommended Default)
+- See `card-patterns/complex-patterns/d3-diagram-template.html` for the structure
+- D3 calculates all positions programmatically based on config data
+- Produces visually aligned, professional diagrams
+- Easy to adjust values without recalculating coordinates
+- Generate D3 code dynamically for any diagram type
+
+**Benefits of D3:**
+- Automatic equal spacing and alignment
+- Proportional positioning (critical for number lines, ratios)
+- Easy to change data values - positions update automatically
+- Consistent, professional visual quality
+- Handles any number of elements dynamically
+
+### Option 2: Manual SVG (Simple Cases Only)
+- Copy patterns from this document
+- Position elements manually
+- Use only for: Very simple diagrams with 2-3 fixed elements
+
+**D3 still requires `data-pptx-layer` attributes** on every element group. Create layers like:
+```javascript
+svg.append('g')
+  .attr('data-pptx-layer', 'shape-1')
+  .append('rect')...
+```
+
+**Note:** Coordinate graphs (`svgSubtype: coordinate-graph`) do NOT use D3 - they continue using the `graph-snippet.html` workflow with manual pixel calculations.
+
+---
+
 ## ⚠️ CRITICAL: Simple Visuals That Speak for Themselves
 
 **The visual should be immediately understandable WITHOUT text explanation.**

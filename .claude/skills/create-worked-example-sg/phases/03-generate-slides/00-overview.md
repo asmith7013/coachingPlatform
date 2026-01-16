@@ -2,9 +2,9 @@
 
 ## Purpose
 
-Create 9 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
+Create 7 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
 
-**Note:** Slides 1-8 are the worked example. Slide 9 (the printable worksheet with practice problems) is generated separately after the main slides complete.
+**Note:** Slides 1-6 are the worked example. Slide 7 (the printable worksheet with practice problems) is generated separately after the main slides complete.
 
 ## Output Format
 
@@ -37,7 +37,7 @@ All slides are **960x540px, light theme**. CFU/Answer boxes use PPTX animation (
 
 **Checklists (use during/after generation):**
 - `checklists/pre-flight.md` - Verify BEFORE writing each slide
-- `checklists/completion.md` - Verify AFTER all 9 slides done
+- `checklists/completion.md` - Verify AFTER all 7 slides done
 
 ---
 
@@ -53,8 +53,8 @@ STEP 3.1: Check Visual Type (from Phase 1)
 │   └── If "SVG visual" → Read 04-svg-workflow.md + graph-snippet.html
 │
 ▼
-STEP 3.2: Generate Slides 1-8
-│   For each slide N from 1 to 8:
+STEP 3.2: Generate Slides 1-6
+│   For each slide N from 1 to 6:
 │     1. Announce checkpoint (CLI mode only)
 │     2. Choose layout preset (full-width or two-column)
 │     3. Compose using card-patterns
@@ -62,8 +62,8 @@ STEP 3.2: Generate Slides 1-8
 │     5. Write HTML file
 │
 ▼
-STEP 3.3: Generate Printable (Slide 9)
-│   - Generated separately after slides 1-8 complete
+STEP 3.3: Generate Printable (Slide 7)
+│   - Generated separately after slides 1-6 complete
 │   - Uses printable-slide-snippet.html pattern
 │   - Contains practice problems from Scenarios 2 & 3
 │
@@ -99,13 +99,16 @@ Most slides use just 3 patterns:
 | Region | Pattern | Purpose |
 |--------|---------|---------|
 | Header | `title-zone.html` | Badge + Title + Subtitle |
-| Left column | `content-box.html` | Problem reminder, equations, text |
+| Left column | `content-box.html` | Equations, text (main content) |
+| Left column (bottom) | `problem-reminder.html` | Problem reminder at bottom left (≤15 words) |
 | Right column | `svg-visual` | Diagrams, graphs (see visuals/) |
 
 **Plus overlays and special cases:**
-- `cfu-answer-card.html` → CFU/Answer boxes (animated)
+- `cfu-answer-card.html` → CFU/Answer boxes stacked on same slide (animated, appear on click)
 - `graph-snippet.html` → Coordinate graphs (recalculate pixels)
-- `printable-slide-snippet.html` → Slide 9 only
+- `slide-teacher-instructions.html` → Slide 1 only (teacher-facing)
+- `slide-big-idea.html` → Slide 2 only (student-facing Big Idea)
+- `printable-slide-snippet.html` → Slide 7 only
 
 **Always READ and COPY from snippet files.** Never write HTML from scratch.
 
@@ -117,15 +120,13 @@ Write each slide to a separate file:
 
 ```
 src/app/presentations/{slug}/
-├── slide-1.html   (Learning Goal)
-├── slide-2.html   (Problem Setup)
-├── slide-3.html   (Step 1 Question + CFU)
-├── slide-4.html   (Step 1 Answer)
-├── slide-5.html   (Step 2 Question + CFU)
-├── slide-6.html   (Step 2 Answer)
-├── slide-7.html   (Step 3 Question + CFU)
-├── slide-8.html   (Step 3 Answer)
-└── slide-9.html   (Printable with Practice Problems 1 & 2)
+├── slide-1.html   (Teacher Instructions - Big Idea, Learning Targets, Strategy)
+├── slide-2.html   (Big Idea - student-facing)
+├── slide-3.html   (Problem Setup)
+├── slide-4.html   (Step 1 + CFU + Answer stacked)
+├── slide-5.html   (Step 2 + CFU + Answer stacked)
+├── slide-6.html   (Step 3 + CFU + Answer stacked)
+└── slide-7.html   (Printable with Practice Problems 1 & 2)
 ```
 
 Use the Write tool for each slide file.

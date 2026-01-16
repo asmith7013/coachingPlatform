@@ -45,7 +45,7 @@ If not, it's too cluttered. Remove content until it passes.
 - [ ] Fonts: Arial, Georgia, Courier New only
 - [ ] **Colors: 6-digit hex ONLY (e.g., #ffffff) - NEVER rgb/rgba/named colors**
 - [ ] Backgrounds/borders on `<div>` only (NOT on `<p>`, `<h1>`)
-- [ ] No JavaScript, onclick, or animations
+- [ ] No onclick handlers or CSS animations (D3.js is allowed for diagrams)
 - [ ] Light theme (white #ffffff, dark text #1d1d1d)
 
 ---
@@ -77,12 +77,17 @@ If not, it's too cluttered. Remove content until it passes.
 - [ ] SVG container in SAME position as other step slides
 - [ ] **⚠️ EVERY element group wrapped in `<g data-pptx-layer="...">`** (REQUIRED for editability)
 - [ ] Layer names follow convention: `label-X`, `shape-N`, `base`, `arrow-X`
+- [ ] If using D3.js: visualization code creates layers with `data-pptx-layer` attributes
+- [ ] If using D3.js: include `<script src="https://d3js.org/d3.v7.min.js"></script>` in head
 
 ---
 
-## If Slide Has CFU/Answer Box
+## If Slide Has CFU/Answer Boxes (Step Slides 4-6)
 
-- [ ] Box has correct `data-pptx-region` attribute ("cfu-box" or "answer-box")
-- [ ] Box is positioned with absolute positioning (top-right overlay)
+- [ ] BOTH CFU and Answer boxes are on the SAME slide (stacked)
+- [ ] CFU box has `data-pptx-region="cfu-box"` at y=40
+- [ ] Answer box has `data-pptx-region="answer-box"` at y=150
+- [ ] Both are positioned with absolute positioning (top-right, stacked vertically)
 - [ ] CFU question references strategy verb
 - [ ] Answer is direct, <= 25 words
+- [ ] Problem reminder is at bottom left corner (y=450)

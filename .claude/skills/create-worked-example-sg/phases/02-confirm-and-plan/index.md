@@ -4,7 +4,7 @@
 Present your analysis to the user, get their confirmation, and plan the three scenarios - all using DIFFERENT contexts from the mastery check.
 
 ## Output Format: PPTX-Compatible HTML
-All slides will be **PPTX-compatible HTML** (960×540px, light theme, 9 slides). See `03-generate-slides/02-technical-rules.md` for technical specs.
+All slides will be **PPTX-compatible HTML** (960×540px, light theme, 7 slides). See `03-generate-slides/02-technical-rules.md` for technical specs.
 
 ## Prerequisites
 - Phase 1 complete
@@ -38,6 +38,7 @@ Use this exact template:
 Based on the mastery check question you provided, here's my understanding:
 
 **Problem Type:** [from PROBLEM ANALYSIS]
+**Big Idea:** [the core mathematical concept from STRATEGY DEFINITION]
 **Strategy I'll Use:** [strategy name from STRATEGY DEFINITION]
 **One-Sentence Summary:** [from STRATEGY DEFINITION]
 

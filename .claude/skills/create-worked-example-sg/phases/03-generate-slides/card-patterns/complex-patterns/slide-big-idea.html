@@ -1,0 +1,101 @@
+<!--
+  ============================================================
+  SLIDE 2: BIG IDEA - Student-Facing, Clean Design
+  ============================================================
+  This slide introduces the Big Idea to students with:
+  - Prominent Grade/Unit/Lesson display
+  - Big Idea badge
+  - Large, centered statement
+
+  Design: Clean, focused, student-friendly.
+  Position: 960x540 coordinate system (PPTX standard)
+
+  Data attributes for PPTX export:
+  - data-pptx-region: Identifies the region type
+  - data-pptx-x, y, w, h: Position in pixels
+  ============================================================
+-->
+
+<!-- FULL SLIDE TEMPLATE -->
+<div data-pptx-slide="big-idea"
+     style="width: 960px; height: 540px; background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); font-family: system-ui, -apple-system, sans-serif; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+
+  <!-- Grade/Unit/Lesson Display -->
+  <div style="position: absolute; top: 40px; left: 0; right: 0; text-align: center;">
+    <span style="font-size: 18px; font-weight: 500; color: rgba(255, 255, 255, 0.9); letter-spacing: 2px;">
+      Grade {{grade}} &middot; Unit {{unit}} &middot; Lesson {{lesson}}
+    </span>
+  </div>
+
+  <!-- Big Idea Badge -->
+  <div style="margin-bottom: 24px;">
+    <span style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(4px); color: white; font-size: 14px; font-weight: 700; padding: 10px 24px; border-radius: 50px; text-transform: uppercase; letter-spacing: 2px; border: 2px solid rgba(255, 255, 255, 0.3);">
+      Big Idea
+    </span>
+  </div>
+
+  <!-- Big Idea Statement -->
+  <div style="max-width: 720px; padding: 0 40px;">
+    <p style="margin: 0; font-size: 36px; font-weight: 600; color: white; line-height: 1.4; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+      "{{bigIdea}}"
+    </p>
+  </div>
+
+  <!-- Decorative elements (optional) -->
+  <div style="position: absolute; bottom: 40px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px;">
+    <span style="width: 8px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 50%;"></span>
+    <span style="width: 8px; height: 8px; background: rgba(255,255,255,0.5); border-radius: 50%;"></span>
+    <span style="width: 8px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 50%;"></span>
+  </div>
+
+</div>
+
+
+<!--
+  ============================================================
+  ALTERNATIVE: Lighter theme version
+  ============================================================
+-->
+
+<!-- LIGHT THEME VERSION -->
+<div data-pptx-slide="big-idea-light"
+     style="width: 960px; height: 540px; background: #f8fafc; font-family: system-ui, -apple-system, sans-serif; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+
+  <!-- Grade/Unit/Lesson Display -->
+  <div style="position: absolute; top: 40px; left: 0; right: 0; text-align: center;">
+    <span style="font-size: 18px; font-weight: 500; color: #64748b; letter-spacing: 2px;">
+      Grade {{grade}} &middot; Unit {{unit}} &middot; Lesson {{lesson}}
+    </span>
+  </div>
+
+  <!-- Big Idea Badge -->
+  <div style="margin-bottom: 24px;">
+    <span style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; font-size: 14px; font-weight: 700; padding: 10px 24px; border-radius: 50px; text-transform: uppercase; letter-spacing: 2px;">
+      Big Idea
+    </span>
+  </div>
+
+  <!-- Big Idea Statement -->
+  <div style="max-width: 720px; padding: 0 40px;">
+    <p style="margin: 0; font-size: 36px; font-weight: 600; color: #1e293b; line-height: 1.4;">
+      "{{bigIdea}}"
+    </p>
+  </div>
+
+</div>
+
+
+<!--
+  ============================================================
+  USAGE NOTES
+  ============================================================
+  Replace placeholders:
+  - {{grade}}: e.g., "8"
+  - {{unit}}: e.g., "4"
+  - {{lesson}}: e.g., "1"
+  - {{bigIdea}}: e.g., "Equations can be solved by keeping both sides balanced"
+
+  Choose either the dark (gradient) or light theme based on deck style.
+  The dark theme is more impactful for the opening slide.
+  ============================================================
+-->

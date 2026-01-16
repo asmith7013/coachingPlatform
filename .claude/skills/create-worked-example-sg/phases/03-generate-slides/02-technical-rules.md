@@ -14,9 +14,37 @@
 | Text | ALL text in `<p>`, `<h1-6>`, `<ul>`, `<ol>` (text in `<div>` disappears!) |
 | Backgrounds | Only on `<div>` elements (NOT on `<p>`, `<h1>`) |
 | Bullets | Use `<ul>/<ol>` (NEVER manual bullet characters like •, -, *) |
-| Interactivity | NO JavaScript, NO onclick, NO CSS animations |
+| Interactivity | NO onclick handlers, NO CSS animations. **D3.js allowed** for diagrams (see below) |
 | Theme | Light (white #ffffff background, dark #1d1d1d text) |
 | **SVG Layers** | **⚠️ EVERY SVG element in `<g data-pptx-layer="...">` (or becomes ONE image!)** |
+
+---
+
+## JavaScript Policy
+
+### Prohibited (breaks PPTX interactivity)
+- `onclick` handlers
+- Event listeners
+- CSS animations/transitions
+- Interactive toggles
+
+### Allowed (gets screenshotted before export)
+- **D3.js** for diagram rendering (recommended default for all non-graph diagrams)
+- **p5.js** for canvas-based diagrams (experimental)
+
+**Why this works:** The PPTX export uses Puppeteer to screenshot each slide. JavaScript executes fully before the screenshot is captured, so D3/p5 visualizations render correctly.
+
+**Requirement:** All D3/p5 content must be wrapped in `<g data-pptx-layer="...">` for proper layer export.
+
+**D3 is the recommended default** for all non-graph diagrams because it produces:
+- Automatic equal spacing and alignment
+- Proportional positioning (critical for number lines, ratios)
+- Consistent, professional visual quality
+- Easy adjustments without manual coordinate recalculation
+
+**What does NOT use D3:** Coordinate graphs (`svgSubtype: coordinate-graph`) continue to use the existing `graph-snippet.html` workflow with manual pixel calculations.
+
+**D3 template:** See `card-patterns/complex-patterns/d3-diagram-template.html`
 
 ---
 
@@ -202,6 +230,43 @@ See `reference/diagram-patterns.md` for complete examples with layers.
 - ALL `<text>` elements must have `font-family="Arial"`
 - Use `font-weight="normal"` for annotations (NOT bold)
 
+### ⚠️ Label Placement Rules (PREVENTS OVERLAPS)
+
+**The #1 cause of ugly SVG diagrams is labels overlapping with shapes or each other.** Follow these rules to prevent overlaps:
+
+| Scenario | `text-anchor` | X Offset | Y Offset | Why It Works |
+|----------|---------------|----------|----------|--------------|
+| Label RIGHT of point/shape | `start` | +8px | 0 | Text grows rightward, away from element |
+| Label LEFT of point/shape | `end` | -8px | 0 | Text grows leftward, away from element |
+| Label ABOVE element | `middle` | 0 | -10px | Text centered, positioned above |
+| Label BELOW element | `middle` | 0 | +16px | Text centered, positioned below (accounts for text height) |
+| Label INSIDE large shape (>60px) | `middle` | centered | centered | Only when shape is large enough |
+
+**Quadrant Rules for Coordinate Graphs:**
+- Points in upper-right quadrant: Label BELOW-LEFT (`text-anchor="end"`, dy=+12)
+- Points in upper-left quadrant: Label BELOW-RIGHT (`text-anchor="start"`, dy=+12)
+- Points in lower-right quadrant: Label ABOVE-LEFT (`text-anchor="end"`, dy=-8)
+- Points in lower-left quadrant: Label ABOVE-RIGHT (`text-anchor="start"`, dy=-8)
+- Points near axes: Always place label AWAY from the axis
+
+**Example - Label to the RIGHT of a circle (text grows away):**
+```html
+<circle cx="100" cy="50" r="5" fill="#60a5fa"/>
+<text x="108" y="54" text-anchor="start" font-family="Arial" font-size="11">(4, 20)</text>
+```
+
+**Example - Label to the LEFT of a circle:**
+```html
+<circle cx="100" cy="50" r="5" fill="#60a5fa"/>
+<text x="92" y="54" text-anchor="end" font-family="Arial" font-size="11">(4, 20)</text>
+```
+
+**Example - Label BELOW a circle:**
+```html
+<circle cx="100" cy="50" r="5" fill="#60a5fa"/>
+<text x="100" y="70" text-anchor="middle" font-family="Arial" font-size="11">(4, 20)</text>
+```
+
 See `04-svg-workflow.md` for coordinate graph SVG rules.
 
 ---
@@ -230,5 +295,5 @@ Use these instead of inline flexbox:
 - Start with `<!DOCTYPE html>` as the very first characters
 - Have `<body>` with exact dimensions: `width: 960px; height: 540px`
 - End with `</html>`
-- Contain NO JavaScript
+- Contain NO interactive JavaScript (D3.js for diagrams is allowed - see JavaScript Policy above)
 - Contain NO comments before `<!DOCTYPE html>`

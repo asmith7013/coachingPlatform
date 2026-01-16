@@ -45,7 +45,7 @@ READ: ../03-generate-slides/card-patterns/complex-patterns/graph-snippet.html
 READ: ../03-generate-slides/04-svg-workflow.md
 ```
 
-### For Printable Slide Updates (slide-9)
+### For Printable Slide Updates (slide-7)
 ```
 READ: ../03-generate-slides/card-patterns/complex-patterns/printable-slide-snippet.html
 ```
@@ -104,7 +104,7 @@ pixelY = 170 - (dataY / Y_MAX) * 150
 
 ---
 
-### Procedure C: Printable Slide Updates (slide-9)
+### Procedure C: Printable Slide Updates (slide-7)
 
 **Step 1:** Read the pattern FIRST:
 ```

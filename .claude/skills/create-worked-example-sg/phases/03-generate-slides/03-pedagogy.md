@@ -15,14 +15,14 @@
 
 ### 2. The "Visual Stability" Principle
 
-- Keep main visual (table, diagram) in SAME position across slides 2-8
+- Keep main visual (table, diagram) in SAME position across slides 3-6
 - Add annotations AROUND the stationary element
 - Mimics teacher at whiteboard - problem stays put, annotations appear
 
 ### 3. The "Scaffolding Removal" Principle
 
-- Slides 2-8: Maximum scaffolding (step-by-step, highlighting, CFU)
-- Printable slide 9: ZERO scaffolding (just practice problems with work space)
+- Slides 3-6: Maximum scaffolding (step-by-step, highlighting, CFU+Answer stacked)
+- Printable slide 7: ZERO scaffolding (just practice problems with work space)
 - Students must apply the strategy independently on the printable worksheet
 
 ### 4. The "Consistent Step Names" Principle
@@ -48,7 +48,7 @@
 
 **This is the most important rule for student learning.**
 
-The main visual (graph, table, diagram) must stay in the SAME position across all step slides (2-8).
+The main visual (graph, table, diagram) must stay in the SAME position across all step slides (3-6).
 
 ### What "Consistency" Means
 
@@ -63,14 +63,14 @@ The main visual (graph, table, diagram) must stay in the SAME position across al
 
 ### Progressive Visual Revelation (REQUIRED)
 
-**Each step slide must ADD something new to the visual.** If slides 3-8 show identical visuals, students see repetition instead of progression.
+**Each step slide must ADD something new to the visual.** If slides 3-6 show identical visuals, students see repetition instead of progression.
 
 **The Visual Tells a Story:**
 ```
-Slide 2 (Setup):    Shows the PROBLEM → unknowns visible, nothing solved yet
-Slide 3-4 (Step 1): Shows Step 1 RESULT → first piece of solution highlighted
-Slide 5-6 (Step 2): Shows Step 2 RESULT → builds on Step 1
-Slide 7-8 (Step 3): Shows COMPLETE SOLUTION → answer visible on visual
+Slide 3 (Setup):  Shows the PROBLEM → unknowns visible, nothing solved yet
+Slide 4 (Step 1): Shows Step 1 RESULT → first piece of solution highlighted (CFU+Answer stacked)
+Slide 5 (Step 2): Shows Step 2 RESULT → builds on Step 1 (CFU+Answer stacked)
+Slide 6 (Step 3): Shows COMPLETE SOLUTION → answer visible on visual (CFU+Answer stacked)
 ```
 
 **Examples of What to ADD Each Step:**
@@ -145,9 +145,10 @@ Slide 7-8 (Step 3): Shows COMPLETE SOLUTION → answer visible on visual
 
 **The left column is for TEXT CONTENT ONLY. Keep it minimal.**
 
-### Problem Reminder Box (Slides 2-8)
+### Problem Reminder Box (Slides 3-6, bottom left corner)
 
 **Format:** Ultra-condensed summary, max 15 words
+**Position:** Bottom left corner (y=450) using `problem-reminder.html` pattern
 
 ```
 GOOD: "30 nuggets total. 6 per student. How many students?"

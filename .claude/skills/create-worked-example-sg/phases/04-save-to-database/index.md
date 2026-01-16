@@ -4,7 +4,7 @@
 Save the worked example to the database and export to PPTX or Google Slides for classroom use.
 
 ## Output Format
-All slides are **960×540px, light theme** (9 slides). CFU/Answer boxes use PPTX animation. See `03-generate-slides/02-technical-rules.md` for technical specs.
+All slides are **960×540px, light theme** (7 slides). CFU/Answer boxes use PPTX animation. See `03-generate-slides/02-technical-rules.md` for technical specs.
 
 ## Prerequisites
 - Phases 1-3 complete

@@ -77,6 +77,17 @@ These step verbs MUST:
 - Appear on every slide header ("STEP 1: [VERB]")
 - Be referenced in CFU questions
 
+**4e: State the Big Idea**
+One sentence that captures the core mathematical concept students will learn:
+- "To solve equations, we keep both sides balanced"
+- "Unit rates let us compare different quantities fairly"
+- "Parallel lines have the same slope but different y-intercepts"
+
+The Big Idea is:
+- More general than the one-sentence summary (strategy-agnostic)
+- A mathematical truth/principle students can remember
+- What ties together ALL the steps and scenarios
+
 ### STEP 5: Create Three Scenarios
 **ALL must use DIFFERENT contexts from the mastery check:**
 
@@ -186,6 +197,7 @@ What mathematical relationship to show?
 - [ ] Problem type is SPECIFIC (not vague like "algebra")
 - [ ] ONE clear strategy is named with 2-3 moves maximum
 - [ ] Strategy has a one-sentence student-facing summary
+- [ ] Big Idea is stated as a mathematical principle (not strategy-specific)
 - [ ] All step names use consistent verbs
 - [ ] CFU question templates reference strategy verbs
 - [ ] ALL 3 scenarios use DIFFERENT contexts from the mastery check

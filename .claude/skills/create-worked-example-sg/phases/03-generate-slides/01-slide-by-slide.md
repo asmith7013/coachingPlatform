@@ -60,16 +60,19 @@ Graph: Use card-patterns/svg-card.html → modify for X_MAX=10, Y_MAX=100
 
 ### Step 2: Determine Slide Type and Layout
 
-CFU/Answer boxes use PPTX animations (appear on click) - no duplicate slides needed.
+CFU and Answer boxes are now STACKED on the same slide (both appear, one after another on click).
 
 | Slide # | Type | Layout Options | Content |
 |---------|------|----------------|---------|
-| 1 | Learning Goal | `full-width` | content-box |
-| 2 | Problem Setup | `two-column` or `centered` | problem + visual |
-| 3-8 | Step slides | `two-column` or `centered` | step content + cfu/answer |
-| 9 | Printable | `full-width` | printable format |
+| 1 | Teacher Instructions | `full-width` | Big Idea + Learning Targets + Strategy (quiet, informational) |
+| 2 | Big Idea | `centered` | Grade/Unit/Lesson + Big Idea badge + statement |
+| 3 | Problem Setup | `two-column` or `centered` | problem + visual |
+| 4 | Step 1 | `two-column` or `centered` | step content + CFU + Answer (stacked) |
+| 5 | Step 2 | `two-column` or `centered` | step content + CFU + Answer (stacked) |
+| 6 | Step 3 | `two-column` or `centered` | step content + CFU + Answer (stacked) |
+| 7 | Printable | `full-width` | printable format |
 
-**Layout Selection (slides 2-8):**
+**Layout Selection (slides 3-6):**
 
 | Choose `centered` when... | Choose `two-column` when... |
 |---------------------------|----------------------------|
@@ -100,9 +103,10 @@ groups?"                   How many groups?"]
 ↑ This duplicates! The visual boxes say the same thing as the text. Use `centered` and let the diagram speak for itself with a brief subtitle.
 
 **For `two-column` layout (text + visual side-by-side):**
-- Left: Problem reminder (≤15 words) + main content (36-48px)
+- Left: Main content (36-48px) + Problem reminder at bottom left corner (≤15 words)
 - Right: SVG visual or diagram
 - **⚠️ Left and right must show DIFFERENT content**
+- Problem reminder uses `card-patterns/simple-patterns/problem-reminder.html` positioned at y=450
 
 **For `centered` layout (stacked hero content):**
 - Main: Large equation/diagram centered (hero element)
@@ -111,43 +115,44 @@ groups?"                   How many groups?"]
 
 See `reference/layout-presets.md` for pixel dimensions and HTML examples.
 
-**Note:** Practice problems are embedded directly in the Printable slide (slide 9) rather than having separate presentation slides.
+**Note:** Practice problems are embedded directly in the Printable slide (slide 7) rather than having separate presentation slides.
 
 ---
 
-### Step 3: Add CFU/Answer Boxes (PPTX Animation)
+### Step 3: Add CFU + Answer Boxes (Same Position, PPTX Animation)
 
-**CFU and Answer boxes use PPTX animation - they appear on click, no duplicate slides needed.**
+**CFU and Answer boxes occupy the SAME position on the same slide. Both use PPTX animation - CFU appears first, then Answer overlays it on the second click.**
 
-Add the appropriate box BEFORE the closing `</body>` tag:
+Add BOTH boxes BEFORE the closing `</body>` tag on Step slides (4, 5, 6):
 
-**CFU Box (for Question slides 3, 5, 7) - Appears on click:**
+**CFU Box (appears on first click):**
 ```html
-<div data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b; z-index: 100;">
-  <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
-  <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[CFU question using strategy verb]</p>
+<div data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 12px; border-left: 4px solid #f59e0b; z-index: 100;">
+  <p style="font-weight: bold; margin: 0 0 6px 0; font-size: 12px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
+  <p style="margin: 0; font-size: 13px; color: #1d1d1d;">[CFU question using strategy verb]</p>
 </div>
 ```
 
-**Answer Box (for Answer slides 4, 6, 8) - Appears on click:**
+**Answer Box (SAME position, appears on second click and overlays CFU):**
 ```html
-<div data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 16px; border-left: 4px solid #22c55e; z-index: 100;">
-  <p style="font-weight: bold; margin: 0 0 8px 0; font-size: 13px; color: #166534;">ANSWER</p>
-  <p style="margin: 0; font-size: 14px; color: #1d1d1d;">[Answer explanation]</p>
+<div data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 12px; border-left: 4px solid #22c55e; z-index: 101;">
+  <p style="font-weight: bold; margin: 0 0 6px 0; font-size: 12px; color: #166534;">ANSWER</p>
+  <p style="margin: 0; font-size: 13px; color: #1d1d1d;">[Answer explanation]</p>
 </div>
 ```
 
 **How animation works:**
-- `data-pptx-region="cfu-box"` or `"answer-box"` triggers animation in PPTX export
-- Box starts HIDDEN when slide displays
-- Box APPEARS when teacher clicks (during presentation)
+- Both boxes are on the SAME slide at the SAME position (y=40)
+- `data-pptx-region="cfu-box"` appears on FIRST click (yellow box)
+- `data-pptx-region="answer-box"` appears on SECOND click (green box overlays yellow)
+- Answer box has higher z-index (101) to visually layer on top
 - See `card-patterns/simple-patterns/cfu-answer-card.html` for full pattern
 
 ---
 
 ### Step 4: Compose Slides from Atomic Components
 
-**For ALL slides (1-8, printable generated separately):**
+**For ALL slides (1-6, printable generated separately as slide 7):**
 
 1. **ANNOUNCE** checkpoint to user (plain text, CLI mode only)
 2. **CHOOSE LAYOUT** from the table above (full-width or two-column)
@@ -165,7 +170,7 @@ Add the appropriate box BEFORE the closing `</body>` tag:
 
 ### Step 5: Repeat Protocol
 
-For each slide N from 1 to 8:
+For each slide N from 1 to 6:
 1. Return to Step 1
 2. Announce checkpoint (plain text to user, CLI mode only)
 3. Compose slide using card-patterns

@@ -322,6 +322,14 @@ These step names MUST:
 - Appear on every slide header
 - Be referenced in CFU questions
 
+### 1.4e: State the Big Idea
+One sentence that captures the core mathematical concept:
+- "To solve equations, we keep both sides balanced"
+- "Unit rates let us compare different quantities fairly"
+- "Parallel lines have the same slope but different y-intercepts"
+
+The Big Idea is more general than the strategy summary - it's the mathematical truth students will remember.
+
 ### Output Template (YOU MUST COMPLETE THIS):
 
 ```
@@ -329,6 +337,7 @@ STRATEGY DEFINITION
 ===================
 Strategy Name: "[Name]"
 One-Sentence Summary: "[Student-facing explanation]"
+Big Idea: "[The core mathematical concept in one sentence]"
 
 The Moves:
 1. [VERB]: [Description] → [Result]
