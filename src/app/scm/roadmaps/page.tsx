@@ -15,7 +15,7 @@ export default function RoadmapsHomePage() {
   const pages = [
     {
       title: "Scope & Sequence",
-      href: "/scm/content/lessons",
+      href: "/scm/roadmaps/scope-and-sequence",
       Icon: ListBulletIcon,
       description: "View all lessons in a curriculum with standards, learning targets, and skills."
     },
