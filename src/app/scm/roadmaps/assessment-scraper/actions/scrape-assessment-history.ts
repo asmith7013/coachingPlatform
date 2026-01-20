@@ -63,10 +63,12 @@ async function selectClass(page: Page, className: string): Promise<void> {
   for (const item of items) {
     // Get the text from the span element inside the li
     const spanText = await item.locator('span').textContent();
-    if (spanText?.trim() === className) {
+    const trimmedText = spanText?.trim() ?? '';
+    // Match if text equals className or starts with "className - " (class + teacher name format)
+    if (trimmedText === className || trimmedText.startsWith(className + ' - ')) {
       await item.click();
       found = true;
-      console.log(`  ✅ Class "${className}" selected`);
+      console.log(`  ✅ Class "${className}" selected (matched: "${trimmedText}")`);
       break;
     }
   }
