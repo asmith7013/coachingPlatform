@@ -6,7 +6,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useClerk } from "@clerk/nextjs";
 import { useWorkedExampleDecks, useGradeUnitPairs, workedExampleDecksKeys } from "../hooks";
 import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
-import { Spinner } from "@/components/core/feedback/Spinner";
 import { PresentationModal } from "../presentations";
 import { ConfirmationDialog } from "@/components/composed/dialogs/ConfirmationDialog";
 import { ChevronDownIcon, ChevronRightIcon, XMarkIcon, ArchiveBoxIcon, ArrowPathIcon, ShieldExclamationIcon, BookOpenIcon } from "@heroicons/react/24/outline";
@@ -135,6 +134,21 @@ const GRADE_CARDS = [
   { value: "alg1", label: "Algebra 1", borderColor: "border-orange-300", hoverBg: "hover:bg-orange-50", textColor: "text-orange-700" },
 ];
 
+// Skeleton loader for unit accordion
+function UnitAccordionSkeleton() {
+  return (
+    <div className="bg-gray-100 rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="px-4 py-3 flex items-center justify-between animate-pulse">
+        <div className="flex items-center gap-3">
+          <div className="h-6 w-48 bg-gray-300 rounded" />
+          <div className="h-5 w-16 bg-gray-300 rounded" />
+        </div>
+        <div className="h-5 w-5 bg-gray-300 rounded" />
+      </div>
+    </div>
+  );
+}
+
 // Planning Guide Accordion Component
 function PlanningGuide() {
   const [isOpen, setIsOpen] = useState(false);
@@ -219,7 +233,7 @@ export default function PresentationsList() {
 
   // Data fetching with React Query
   const { decks, loading, error } = useWorkedExampleDecks();
-  const { gradeUnitPairs } = useGradeUnitPairs(scopeSequenceTag);
+  const { gradeUnitPairs, loading: gradeUnitPairsLoading } = useGradeUnitPairs(scopeSequenceTag);
 
   // Filter decks based on grade/unit pairs
   const filteredDecks = useMemo(() => {
@@ -343,13 +357,8 @@ export default function PresentationsList() {
     window.location.href = `/sign-in?redirect_url=${encodeURIComponent(currentPath)}`;
   };
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-[400px]">
-        <Spinner size="lg" variant="primary" />
-      </div>
-    );
-  }
+  // Determine if we're in a loading state for the grade-filtered view
+  const isLoadingDecks = loading || (gradeFilter && gradeUnitPairsLoading);
 
   if (error) {
     return (
@@ -428,7 +437,14 @@ export default function PresentationsList() {
 
         <PlanningGuide />
 
-        {filteredDecks.length === 0 ? (
+        {isLoadingDecks ? (
+          <div className="space-y-4">
+            {/* Show skeleton loaders while loading */}
+            {[1, 2, 3].map((i) => (
+              <UnitAccordionSkeleton key={i} />
+            ))}
+          </div>
+        ) : filteredDecks.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg mb-4">
               No presentations found for {GRADE_OPTIONS.find(o => o.value === gradeFilter)?.label || 'selected grade'}
@@ -602,7 +618,18 @@ export default function PresentationsList() {
                               <div>
                                 <p className="text-xs font-medium text-gray-500 mb-1">Created:</p>
                                 <p className="text-sm text-gray-600">
-                                  {new Date(deck.createdAt!).toLocaleDateString()}
+                                  {(() => {
+                                    const date = new Date(deck.createdAt!);
+                                    const dateStr = date.toLocaleDateString();
+                                    const hours = date.getHours();
+                                    const minutes = date.getMinutes().toString().padStart(2, '0');
+                                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                                    const displayHours = hours % 12 || 12;
+                                    const timeStr = `${displayHours}:${minutes} ${ampm}`;
+                                    return (
+                                      <span title={`${dateStr} at ${timeStr}`}>{dateStr}</span>
+                                    );
+                                  })()}
                                   {deck.createdBy && (
                                     <span> by {deck.createdBy}</span>
                                   )}

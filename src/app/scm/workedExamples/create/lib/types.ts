@@ -263,7 +263,29 @@ export interface GraphPlan {
   }[];
 }
 
-// Diagram preview for visual confirmation (ASCII representation)
+// Diagram evolution - shows how the visual develops step-by-step across slides
+// This is generated during analysis and displayed to teachers for approval before slide generation
+// NOTE: This replaces the former DiagramPreview - it includes keyElements plus step-by-step evolution
+export interface DiagramEvolution {
+  // ASCII representation of the initial state (Problem Setup slide)
+  initialState: string;
+  // Key elements described (what each visual element represents mathematically)
+  keyElements: {
+    element: string;
+    represents: string;
+  }[];
+  // Step-by-step evolution - one entry per strategy move
+  steps: {
+    // Header matching the slide (e.g., "STEP 1: IDENTIFY")
+    header: string;
+    // ASCII showing the diagram state at this step (builds on previous steps)
+    ascii: string;
+    // What changed from the previous step (prefixed with + in display)
+    changes: string[];
+  }[];
+}
+
+// @deprecated Use DiagramEvolution instead - this is kept for backward compatibility
 export interface DiagramPreview {
   // ASCII art representation of the visual structure
   ascii: string;
@@ -295,7 +317,11 @@ export interface ProblemAnalysis {
   svgSubtype?: SvgSubtype;
   // Graph plan - required when svgSubtype is 'coordinate-graph'
   graphPlan?: GraphPlan;
-  // Diagram preview - ASCII representation for user confirmation (required for non-text-only visuals)
+  // Diagram evolution - shows how the visual develops step-by-step across slides
+  // Teachers can preview exactly how the diagram will evolve before slide generation
+  // This is REQUIRED for all worked examples (includes keyElements + step-by-step evolution)
+  diagramEvolution?: DiagramEvolution;
+  // @deprecated Use diagramEvolution instead - kept for backward compatibility
   diagramPreview?: DiagramPreview;
 }
 

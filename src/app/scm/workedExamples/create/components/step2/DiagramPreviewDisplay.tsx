@@ -7,6 +7,11 @@ interface DiagramPreviewDisplayProps {
   compact?: boolean;
 }
 
+/**
+ * @deprecated Use SlidePlanDisplay with DiagramEvolution instead.
+ * This component is kept for backward compatibility with existing decks
+ * that have diagramPreview but not diagramEvolution.
+ */
 export function DiagramPreviewDisplay({ diagramPreview, compact = false }: DiagramPreviewDisplayProps) {
   return (
     <div className={compact ? "space-y-3" : "space-y-4"}>

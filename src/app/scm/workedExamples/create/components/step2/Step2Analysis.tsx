@@ -9,6 +9,7 @@ import type { HtmlSlide } from '@zod-schema/scm/worked-example';
 import { GraphPlanDisplay } from './GraphPlanDisplay';
 import { VisualPlanDisplay } from './VisualPlanDisplay';
 import { DiagramPreviewDisplay } from './DiagramPreviewDisplay';
+import { SlidePlanDisplay } from './SlidePlanDisplay';
 import { ScenarioEditor } from './ScenarioEditor';
 import { AnalysisFooter, type EditImage } from './AnalysisFooter';
 import type { SSEStartEvent, SSESlideEvent, SSECompleteEvent, SSEErrorEvent } from './types';
@@ -343,6 +344,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
               body: JSON.stringify({
                 practiceScenarios: scenarios.slice(1), // Practice scenarios only (indices 1 and 2)
                 strategyName: strategyDefinition?.name || 'Strategy',
+                strategyMoves: strategyDefinition?.moves || [],
                 problemType: problemAnalysis?.problemType || 'Math Problem',
                 gradeLevel: state.gradeLevel || '8',
                 unitNumber: state.unitNumber,
@@ -579,14 +581,14 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
         <div className="w-[70%] space-y-4">
           {/* Big Idea Card - FIRST element in right column, EDITABLE */}
           {strategyDefinition.bigIdea && (
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 shadow-sm">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <span className="px-2 py-0.5 bg-white/20 rounded text-xs font-bold text-white uppercase tracking-wide">
+                <span className="px-2 py-0.5 bg-blue-100 rounded text-xs font-bold text-blue-700 uppercase tracking-wide">
                   Big Idea
                 </span>
                 <button
                   onClick={() => setEditingBigIdea(!editingBigIdea)}
-                  className="p-1 text-white/70 hover:text-white hover:bg-white/10 rounded cursor-pointer"
+                  className="p-1 text-blue-400 hover:text-blue-600 hover:bg-blue-100 rounded cursor-pointer"
                   title={editingBigIdea ? 'Done editing' : 'Edit Big Idea'}
                 >
                   {editingBigIdea ? <CheckIcon className="h-4 w-4" /> : <PencilIcon className="h-4 w-4" />}
@@ -596,11 +598,11 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                 <textarea
                   value={strategyDefinition.bigIdea}
                   onChange={(e) => updateBigIdea(e.target.value)}
-                  className="w-full bg-white/10 text-white text-lg font-medium rounded p-2 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/30"
+                  className="w-full bg-white text-blue-900 text-lg font-medium rounded p-2 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
                   rows={2}
                 />
               ) : (
-                <p className="text-lg font-medium text-white">
+                <p className="text-lg font-medium text-blue-900">
                   {strategyDefinition.bigIdea}
                 </p>
               )}
@@ -615,7 +617,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
               color="#10B981"
               className="mb-0"
               hideExpandAll
-              defaultOpenItems={['we-question', 'we-graph-plan']}
+              defaultOpenItems={['we-question', 'we-diagram-evolution', 'we-graph-plan']}
               items={[
                 // Question section
                 {
@@ -670,6 +672,20 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                     </div>
                   ),
                 },
+                // Diagram Evolution section (shows step-by-step visual progression)
+                ...(problemAnalysis.diagramEvolution ? [{
+                  key: 'we-diagram-evolution',
+                  title: 'Diagram Evolution',
+                  icon: null,
+                  content: (
+                    <SlidePlanDisplay
+                      diagramEvolution={problemAnalysis.diagramEvolution!}
+                      visualType={problemAnalysis.visualType}
+                      svgSubtype={problemAnalysis.svgSubtype}
+                      stepCount={strategyDefinition.moves.length}
+                    />
+                  ),
+                }] : []),
                 // Strategy Steps section (editable)
                 {
                   key: 'we-strategy-steps',
@@ -764,13 +780,6 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                     </div>
                   ),
                 },
-                // Visual Plan section (if exists - for non-graph visuals)
-                ...(scenarios[0].visualPlan ? [{
-                  key: 'we-visual-plan',
-                  title: 'Visual Plan',
-                  icon: null,
-                  content: <VisualPlanDisplay visualPlan={scenarios[0].visualPlan!} compact />,
-                }] : []),
                 // Graph Plan section (if exists - for coordinate graphs)
                 ...(scenarios[0].graphPlan ? [{
                   key: 'we-graph-plan',
@@ -778,10 +787,11 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                   icon: null,
                   content: <GraphPlanDisplay graphPlan={scenarios[0].graphPlan!} compact />,
                 }] : []),
-                // Diagram Preview section (if exists - ASCII preview of planned visual)
-                ...(problemAnalysis.diagramPreview ? [{
+                // Note: diagramPreview is now deprecated in favor of diagramEvolution (which includes keyElements)
+                // For backward compatibility, show diagramPreview only if diagramEvolution is NOT present
+                ...(!problemAnalysis.diagramEvolution && problemAnalysis.diagramPreview ? [{
                   key: 'we-diagram-preview',
-                  title: 'Diagram Preview',
+                  title: 'Visual Structure Preview (Legacy)',
                   icon: null,
                   content: (
                     <div>

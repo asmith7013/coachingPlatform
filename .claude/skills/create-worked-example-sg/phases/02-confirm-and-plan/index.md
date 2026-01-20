@@ -61,26 +61,42 @@ Based on the mastery check question you provided, here's my understanding:
 Note: These scenarios all teach the same skill as your mastery check but use different numbers and contexts, so students learn the strategy without seeing the actual answer.
 ```
 
-### ⚠️ REQUIRED: Include Diagram Preview
+### ⚠️ REQUIRED: Include Diagram Evolution
 
-**Include the Diagram Preview you created in Phase 1.** This shows the user the visual structure for confirmation.
+**Include the Diagram Evolution you created in Phase 1.** This shows the user how the visual will develop step-by-step across slides.
 
-The preview was already generated in Phase 1 using `reference/diagram-patterns.md` as a guide. Present it here so the user can confirm the visual structure is correct before proceeding.
+The evolution was already generated in Phase 1 using `reference/diagram-patterns.md` as a guide. Present it here so the user can confirm the visual progression is correct before proceeding.
 
 **Example:**
 ```
-**Diagram Preview (Scenario 1 - Chicken Nuggets):**
+**Diagram Evolution (Scenario 1 - Chicken Nuggets):**
 
+INITIAL STATE (Problem Setup):
+┌────────────────────────────────────────┐
+│                 30                     │
+└────────────────────────────────────────┘
+Total: 30 nuggets, Groups: 5 students, Find: ?
+
+STEP 1: PARTITION
 ┌────────┬────────┬────────┬────────┬────────┐
-│   ?    │   6    │   6    │   6    │   6    │  = 30
+│   ?    │   ?    │   ?    │   ?    │   ?    │  = 30
 └────────┴────────┴────────┴────────┴────────┘
++ Divide into 5 equal parts
++ Mark each with ?
+
+STEP 2: CALCULATE
+┌────────┬────────┬────────┬────────┬────────┐
+│   6    │   6    │   6    │   6    │   6    │  = 30 ✓
+└────────┴────────┴────────┴────────┴────────┘
++ Calculate: 30 ÷ 5 = 6
++ Fill in values
 
 Key elements:
-- Unknown (?) at start: number of students
-- Each box: 6 nuggets per student
+- Each box: nuggets per student
 - Total: 30 nuggets
+- Unknown (?): number per student
 
-Does this visual structure look right?
+Does this visual progression look right?
 ```
 
 **Then ask for confirmation:**
@@ -483,7 +499,7 @@ Use the Read tool to read the current file, then use Edit to update only the cha
 
 Before proceeding, verify:
 - [ ] User has explicitly confirmed your understanding
-- [ ] User has approved the **Diagram Preview** (ASCII visual structure)
+- [ ] User has approved the **Diagram Evolution** (step-by-step visual progression)
 - [ ] Three scenarios are defined
 - [ ] All scenarios use the SAME strategy as the mastery check
 - [ ] All scenarios have the SAME mathematical structure as the mastery check

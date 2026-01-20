@@ -973,24 +973,28 @@ export const PRINTABLE_TEMPLATE = `
 <!-- Uses white background, black text, and letter-sized pages for printing -->
 
 <!-- ============================================================== -->
-<!-- CRITICAL: ALL PRACTICE PROBLEMS GO IN ONE SLIDE FILE           -->
+<!-- CRITICAL: ALL CONTENT GOES IN ONE SLIDE FILE (3 PAGES)         -->
 <!-- ============================================================== -->
-<!-- Each problem gets its own print-page div within the slide      -->
-<!-- DO NOT create separate slide files for each problem            -->
-<!-- This single slide-7.html contains ALL printable problems       -->
+<!-- Page 1: Practice Problem 1 (student worksheet)                 -->
+<!-- Page 2: Practice Problem 2 (student worksheet)                 -->
+<!-- Page 3: Answer Key (for teacher use only)                      -->
+<!-- DO NOT create separate slide files for each page               -->
+<!-- This single slide-7.html contains ALL printable content        -->
 <!-- Each print-page div = one printed page (8.5in x 11in)          -->
 <!-- ============================================================== -->
 
 <!-- ============================================================== -->
 <!-- KEEP IT SIMPLE - ONLY INCLUDE WHAT'S LISTED BELOW              -->
 <!-- ============================================================== -->
-<!-- Goal: Reduce cognitive load. Include ONLY these elements:      -->
+<!-- Pages 1-2 (Student Worksheets):                                -->
 <!--   1. Header (lesson title, unit/lesson, name/date fields)      -->
 <!--   2. Learning Goal box                                         -->
 <!--   3. Problem content (scenario, visuals, task)                 -->
+<!--   DO NOT ADD: Strategy reminders, hints, extra scaffolding     -->
 <!--                                                                -->
-<!-- DO NOT ADD: Strategy reminders, hints, extra scaffolding, etc. -->
-<!-- Students should apply the strategy independently at this point -->
+<!-- Page 3 (Answer Key):                                           -->
+<!--   1. Header: "ANSWER KEY - For Teacher Use Only"               -->
+<!--   2. For each problem: strategy steps applied + final answer   -->
 <!-- ============================================================== -->
 
 <div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
@@ -1107,6 +1111,61 @@ export const PRINTABLE_TEMPLATE = `
                 </p>
                 <div style="margin-top: 15px; border: 1px solid #ccc; padding: 10px; min-height: 60px;">
                     <p style="font-size: 11px; color: #666; margin: 0;">Show your work:</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 3: ANSWER KEY (For Teacher Use Only) -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 20px auto 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">ANSWER KEY</h1>
+                <p style="font-size: 13px; color: #666; margin: 4px 0 0 0;">For Teacher Use Only | [LESSON TITLE]</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 13px; color: #333; margin: 0;">Unit [X] Lesson [Y]</p>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Grade [Z]</p>
+            </div>
+        </div>
+
+        <!-- Problem 1 Answer -->
+        <div style="margin-bottom: 30px;">
+            <h3 style="font-size: 16px; margin: 0 0 12px 0; font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 5px;">
+                Problem 1: [SCENARIO NAME]
+            </h3>
+            <div style="padding-left: 15px;">
+                <p style="font-size: 13px; margin: 0 0 8px 0; font-weight: bold;">Strategy Steps:</p>
+                <ol style="font-size: 13px; margin: 0 0 15px 0; padding-left: 20px; line-height: 1.6;">
+                    <li style="margin-bottom: 6px;"><strong>[VERB 1]:</strong> [Description with THIS problem's numbers] → [Result]</li>
+                    <li style="margin-bottom: 6px;"><strong>[VERB 2]:</strong> [Description with THIS problem's numbers] → [Result]</li>
+                    <li style="margin-bottom: 6px;"><strong>[VERB 3]:</strong> [Description with THIS problem's numbers] → [Result]</li>
+                </ol>
+                <div style="background: #e8f5e9; border: 2px solid #4caf50; padding: 12px 15px; border-radius: 4px;">
+                    <p style="font-size: 14px; margin: 0; font-weight: bold; color: #2e7d32;">
+                        Answer: [FINAL ANSWER with units and complete sentence]
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Problem 2 Answer -->
+        <div style="margin-bottom: 30px;">
+            <h3 style="font-size: 16px; margin: 0 0 12px 0; font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 5px;">
+                Problem 2: [SCENARIO NAME]
+            </h3>
+            <div style="padding-left: 15px;">
+                <p style="font-size: 13px; margin: 0 0 8px 0; font-weight: bold;">Strategy Steps:</p>
+                <ol style="font-size: 13px; margin: 0 0 15px 0; padding-left: 20px; line-height: 1.6;">
+                    <li style="margin-bottom: 6px;"><strong>[VERB 1]:</strong> [Description with THIS problem's numbers] → [Result]</li>
+                    <li style="margin-bottom: 6px;"><strong>[VERB 2]:</strong> [Description with THIS problem's numbers] → [Result]</li>
+                    <li style="margin-bottom: 6px;"><strong>[VERB 3]:</strong> [Description with THIS problem's numbers] → [Result]</li>
+                </ol>
+                <div style="background: #e8f5e9; border: 2px solid #4caf50; padding: 12px 15px; border-radius: 4px;">
+                    <p style="font-size: 14px; margin: 0; font-weight: bold; color: #2e7d32;">
+                        Answer: [FINAL ANSWER with units and complete sentence]
+                    </p>
                 </div>
             </div>
         </div>

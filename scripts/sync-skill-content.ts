@@ -86,6 +86,7 @@ const SYNC_MANIFEST: ManifestEntry[] = [
   // ============================================================================
   // Phase 1: Problem analysis
   { source: 'phases/01-collect-and-analyze/analyze-problem.md', target: 'prompts', exportName: 'ANALYZE_PROBLEM_INSTRUCTIONS' },
+  { source: 'phases/01-collect-and-analyze/output-schema.md', target: 'prompts', exportName: 'ANALYZE_OUTPUT_SCHEMA' },
   // Phase 3: Slide generation
   { source: 'phases/03-generate-slides/00-overview.md', target: 'prompts', exportName: 'PHASE3_OVERVIEW' },
   { source: 'phases/03-generate-slides/01-slide-by-slide.md', target: 'prompts', exportName: 'GENERATE_SLIDES_INSTRUCTIONS' },
@@ -348,6 +349,10 @@ ${entries.map(e => ` *   - ${e.source} → ${e.exportName}`).join('\n')}
 
 export const ANALYZE_PROBLEM_INSTRUCTIONS = \`
 ${prompts['ANALYZE_PROBLEM_INSTRUCTIONS'] || ''}
+\`;
+
+export const ANALYZE_OUTPUT_SCHEMA = \`
+${prompts['ANALYZE_OUTPUT_SCHEMA'] || ''}
 \`;
 
 // ============================================================================

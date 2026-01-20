@@ -384,6 +384,7 @@
 │   │   │       ├── list-decks.ts
 │   │   │       ├── save-deck.ts
 │   │   │       ├── toggle-deactivated.ts
+│   │   │       ├── update-deck.ts
 │   │   │       └── update-google-slides-url.ts
 │   │   ├── analytics
 │   │   │   ├── attendance
@@ -1085,6 +1086,7 @@
 │   │   │       │   ├── PresentationModal.tsx
 │   │   │       │   ├── components
 │   │   │       │   ├── index.ts
+│   │   │       │   ├── planningSteps.ts
 │   │   │       │   ├── types.ts
 │   │   │       │   ├── usePresentationState.ts
 │   │   │       │   └── utils.ts
@@ -2284,4 +2286,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-680 directories, 1605 files
+680 directories, 1607 files

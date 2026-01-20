@@ -2,6 +2,55 @@
 
 This document explains the research-based framework behind the slide structure.
 
+## Why ALL Worked Examples Need Visual Progression
+
+### Research Foundation
+
+Cognitive load theory and worked example research consistently demonstrate:
+
+1. **Dual Coding Theory** (Paivio, 1986): Information encoded both verbally AND visually is remembered better and understood more deeply. Students who see both text and diagrams outperform those who see text alone.
+
+2. **Cognitive Load Reduction**: Visuals offload working memory by externalizing mathematical structure. Instead of holding abstract relationships in their heads, students can see them on the slide.
+
+3. **Progressive Revelation**: Step-by-step visual changes (adding a line, filling in a value, highlighting an element) create clear mental models of the process. This is more effective than showing the final answer.
+
+4. **Transfer Support**: Seeing the same visual structure across different contexts helps students recognize underlying mathematical patterns. A tape diagram for division with stickers transfers to division with cookies.
+
+### Every Concept Has a Visual Form
+
+| Problem Type | Natural Visual Representation |
+|--------------|-------------------------------|
+| Linear equations | Coordinate graph or hanger diagram |
+| Division/multiplication | Tape diagram or area model |
+| Ratios/proportions | Double number line or ratio table |
+| Inequalities | Number line with shading |
+| Systems of equations | Coordinate graph with intersection |
+| Functions | Input-output table or graph |
+| Fractions | Area model or number line |
+| Solving equations | Balance/hanger diagram |
+
+### The Diagram Evolution Preview
+
+Before generating slides, teachers see a step-by-step ASCII preview of how the visual will develop:
+
+```
+INITIAL STATE (Problem Setup)
+─────────────────────────────
+[Visual showing the problem setup - unknowns visible]
+
+STEP 1: IDENTIFY
+────────────────
+[Visual after step 1 - first element added/highlighted]
++ What changed in this step
+
+STEP 2: CALCULATE
+─────────────────
+[Visual after step 2 - builds on step 1]
++ What changed in this step
+```
+
+This preview prevents surprises during slide generation and ensures the teacher approves the visual progression before committing.
+
 ## PPTX Format: Static Slides with Animation
 
 **IMPORTANT**: Slides are designed for PPTX export (PowerPoint/Google Slides).

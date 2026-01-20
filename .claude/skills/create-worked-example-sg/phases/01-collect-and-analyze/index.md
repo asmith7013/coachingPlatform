@@ -166,54 +166,39 @@ Plan the visual elements:
 
 **IF you selected "Text-only" or "HTML table", skip to the output template.**
 
-### 1.3g: Diagram Preview (REQUIRED for ALL visual types except Text-only)
+### 1.3g: Diagram Evolution (REQUIRED for ALL worked examples)
 
-**After planning the visual, create an ASCII preview showing the complete visual structure.**
+**⚠️ CRITICAL: This step is REQUIRED. Do NOT skip it.**
 
-This preview shows users the "shape" of the visual at a glance. Users can confirm it's the right representation and spot structural issues early (wrong diagram type, incorrect number of elements, missing components).
+Create a **Diagram Evolution** showing how the visual develops step-by-step across slides. This is what teachers need to visualize before approving generation.
 
 **Reference the canonical patterns:**
 ```
 Read: .claude/skills/create-worked-example-sg/reference/diagram-patterns.md
 ```
 
-Use the ASCII representations in that file as a guide for creating your preview. Generate an ASCII preview that matches the structure for your visual type.
+Use the ASCII representations in that file as a guide. Generate ASCII previews that match the structure for your visual type.
 
-**Create a static preview for Scenario 1** showing the complete visual with all elements:
-
+**Read the detailed instructions and output schema:**
 ```
-DIAGRAM PREVIEW (Scenario 1)
-============================
-
-[ASCII representation of the complete visual - generate based on diagram-patterns.md]
-
-Key elements:
-- [element 1]: [what it represents]
-- [element 2]: [what it represents]
-- [element 3]: [what it represents]
-
-Does this visual structure look right for your problem?
+Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/analyze-problem.md
+Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/output-schema.md
 ```
 
-**Example (Tape Diagram):**
-```
-┌────────┬────────┬────────┬────────┬────────┐
-│   ?    │   6    │   6    │   6    │   6    │  = 30
-└────────┴────────┴────────┴────────┴────────┘
+See the "STEP 8: Generate Diagram Evolution Preview" section in analyze-problem.md for complete instructions and examples.
 
-Key elements:
-- Unknown (?) at start: number of students
-- Each box: 6 nuggets per student
-- Total: 30 nuggets
-```
+**The Diagram Evolution MUST include:**
+1. **initialState**: ASCII showing the diagram on Problem Setup slide (empty axes, blank tape, etc.)
+2. **keyElements**: Array explaining each element and what it represents mathematically
+3. **steps**: Array with one entry per strategy move (2-3 entries), each containing:
+   - `header`: The slide header (e.g., "STEP 1: IDENTIFY")
+   - `ascii`: ASCII showing the diagram state AFTER that step (building cumulatively)
+   - `changes`: Array of what was added/changed from previous step
 
 **Why this matters:**
-- Confirms the visual type is correct for this problem
-- Catches structural issues (wrong number of boxes, incorrect layout)
-- Low cost (ASCII is cheap) but high value (prevents rework)
-- Makes the abstract VisualPlan concrete
-
-**Note:** Step-by-step animation (what gets highlighted on each slide) is determined in Phase 3 when you read the slide generation protocol.
+- Teachers can see EXACTLY how the visual will build across slides
+- Catches issues like "wrong step order" or "missing annotation" BEFORE slide generation
+- The number of steps MUST match `strategyDefinition.moves.length`
 
 ### Output Template (YOU MUST COMPLETE THIS):
 
@@ -279,7 +264,7 @@ Annotations across slides:
 - Slides 5-6: [Step 2 - what changes/highlights]
 - Slides 7-8: [Step 3 - what changes/highlights]
 
-DIAGRAM PREVIEW (Scenario 1) - REQUIRED for all non-text-only:
+DIAGRAM PREVIEW (Scenario 1) - REQUIRED for all worked examples:
 ==============================================================
 
 [ASCII representation of the complete visual structure
@@ -404,6 +389,7 @@ Before proceeding, verify you have:
 - [ ] STRATEGY DEFINITION template completed
 - [ ] Strategy has exactly 2-3 moves with consistent verbs
 - [ ] Visual type determined: Text-only, HTML table, or SVG visual
+- [ ] **Diagram Evolution preview created** showing step-by-step progression (how content builds across slides)
 - [ ] **IF visual type is SVG visual:** SVG PLAN completed (elements, layout, annotations per slide)
 - [ ] Progress file created at `src/app/presentations/{slug}/.worked-example-progress.json`
 

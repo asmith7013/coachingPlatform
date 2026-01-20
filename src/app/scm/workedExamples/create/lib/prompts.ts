@@ -33,6 +33,7 @@ import {
   ANSWER_TOGGLE_TEMPLATE as SHARED_ANSWER_TOGGLE_TEMPLATE,
   // Prompt instructions (Phase 1-3)
   ANALYZE_PROBLEM_INSTRUCTIONS as SHARED_ANALYZE_INSTRUCTIONS,
+  ANALYZE_OUTPUT_SCHEMA as SHARED_OUTPUT_SCHEMA,
   GENERATE_SLIDES_INSTRUCTIONS as SHARED_GENERATE_INSTRUCTIONS,
   // Phase 3 additional instructions (NEW - from sync script)
   TECHNICAL_RULES as SHARED_TECHNICAL_RULES,
@@ -82,236 +83,7 @@ ${SHARED_ANALYZE_INSTRUCTIONS}
 
 ---
 
-## Output Format
-
-You MUST return valid JSON matching this exact structure:
-
-{
-  "problemAnalysis": {
-    "problemTranscription": "EXACT verbatim transcription of everything in the image - all text, numbers, diagrams described, tables, etc. Be thorough and precise.",
-    "problemType": "specific type (e.g., 'solving two-step equations with variables on both sides')",
-    "mathematicalStructure": "description of relationships",
-    "solution": [
-      { "step": 1, "description": "what you do", "reasoning": "why you do it" }
-    ],
-    "answer": "final answer",
-    "keyChallenge": "what makes this hard for students",
-    "commonMistakes": ["mistake 1", "mistake 2"],
-    "requiredPriorKnowledge": ["prereq 1", "prereq 2"],
-    "answerFormat": "how answer should be presented",
-    "visualType": "text-only" | "html-table" | "svg-visual",
-    "svgSubtype": "coordinate-graph" | "diagram" | "shape" | "number-line" | "other",  // only if visualType is "svg-visual"
-    "diagramPreview": {
-      "ascii": "ASCII art representation of the visual structure for Scenario 1",
-      "keyElements": [
-        { "element": "element name", "represents": "what it represents mathematically" }
-      ]
-    },
-    "graphPlan": {
-      "equations": [
-        {
-          "label": "Line 1",
-          "equation": "y = mx + b",
-          "slope": 5,
-          "yIntercept": 0,
-          "color": "#60a5fa",
-          "startPoint": { "x": 0, "y": 0 },
-          "endPoint": { "x": 8, "y": 40 }
-        },
-        {
-          "label": "Line 2",
-          "equation": "y = mx + b",
-          "slope": 5,
-          "yIntercept": 20,
-          "color": "#22c55e",
-          "startPoint": { "x": 0, "y": 20 },
-          "endPoint": { "x": 8, "y": 60 }
-        }
-      ],
-      "scale": {
-        "xMax": 8,
-        "yMax": 50,
-        "xAxisLabels": [0, 2, 4, 6, 8],
-        "yAxisLabels": [0, 10, 20, 30, 40, 50]
-      },
-      "keyPoints": [
-        { "label": "y-intercept Line 1", "x": 0, "y": 0, "dataX": 0, "dataY": 0 },
-        { "label": "y-intercept Line 2", "x": 0, "y": 20, "dataX": 0, "dataY": 20 },
-        { "label": "Line 1 at x=4", "x": 4, "y": 20, "dataX": 4, "dataY": 20 },
-        { "label": "Line 2 at x=4", "x": 4, "y": 40, "dataX": 4, "dataY": 40 }
-      ],
-      "annotations": [
-        { "type": "y-intercept-shift", "from": 0, "to": 20, "label": "+20" }
-      ]
-    }
-  },
-  "strategyDefinition": {
-    "name": "Clear Strategy Name (e.g., 'Balance and Isolate')",
-    "oneSentenceSummary": "To solve this, we [VERB] the [OBJECT] to find [GOAL]",
-    "bigIdea": "The core mathematical concept in one sentence (e.g., 'Equations can be solved by keeping both sides balanced')",
-    "moves": [
-      { "verb": "VERB1", "description": "what this step does", "result": "what it accomplishes" }
-    ],
-    "slideHeaders": ["STEP 1: VERB1", "STEP 2: VERB2"],
-    "cfuQuestionTemplates": ["Why did I [VERB] first?", "How does [VERB]ing help?"]
-  },
-  "scenarios": [
-    {
-      "name": "Scenario name",
-      "context": "Brief description of the engaging context",
-      "themeIcon": "emoji representing the theme",
-      "numbers": "the specific numbers used",
-      "description": "Full problem description",
-      "problemReminder": "Short 15-word max summary for slides",
-      "graphPlan": {
-        "equations": [{ "label": "Line 1", "equation": "y = mx + b", "slope": 5, "yIntercept": 10, "color": "#60a5fa", "startPoint": { "x": 0, "y": 10 }, "endPoint": { "x": 8, "y": 50 } }],
-        "scale": { "xMax": 8, "yMax": 50, "xAxisLabels": [0, 2, 4, 6, 8], "yAxisLabels": [0, 10, 20, 30, 40, 50] },
-        "keyPoints": [{ "label": "y-intercept", "x": 0, "y": 10, "dataX": 0, "dataY": 10 }, { "label": "solution point", "x": 4, "y": 30, "dataX": 4, "dataY": 30 }],
-        "annotations": [{ "type": "y-intercept-shift", "label": "+10" }]
-      },
-      "visualPlan": { "type": "tape-diagram", "boxes": 6, "valuePerBox": 8, "total": 48, "unknownPosition": "box" }
-    }
-  ]
-}
-
-## When to Include graphPlan vs visualPlan vs diagramPreview
-
-- **graphPlan**: Include ONLY when visualType is "svg-visual" and svgSubtype is "coordinate-graph"
-- **visualPlan**: Include for ALL OTHER visual types (tape-diagram, number-line, ratio-table, etc.)
-- **diagramPreview**: REQUIRED for ALL visual types EXCEPT "text-only". This shows the user an ASCII preview of the planned visual structure for Scenario 1.
-
-Each scenario's graphPlan/visualPlan uses THAT SCENARIO'S specific numbers.
-
-## Diagram Preview (REQUIRED for non-text-only visuals)
-
-When visualType is NOT "text-only", you MUST include a diagramPreview showing the visual structure for Scenario 1.
-
-**Example for Tape Diagram:**
-\`\`\`json
-"diagramPreview": {
-  "ascii": "┌────────┬────────┬────────┬────────┬────────┐\\n│   ?    │   6    │   6    │   6    │   6    │  = 30\\n└────────┴────────┴────────┴────────┴────────┘",
-  "keyElements": [
-    { "element": "Unknown (?) at start", "represents": "number of students" },
-    { "element": "Each box with 6", "represents": "6 nuggets per student" },
-    { "element": "= 30", "represents": "total of 30 nuggets" }
-  ]
-}
-\`\`\`
-
-**Example for Coordinate Graph:**
-\`\`\`json
-"diagramPreview": {
-  "ascii": "    y\\n  50│      ╱\\n  40│    ╱\\n  30│  ╱  ╱\\n  20│╱  ╱\\n  10│  ╱\\n   0└────────── x\\n    0  2  4  6  8",
-  "keyElements": [
-    { "element": "Blue line (lower)", "represents": "y = 5x (standard mode)" },
-    { "element": "Green line (upper)", "represents": "y = 5x + 20 (boost mode)" },
-    { "element": "Vertical gap", "represents": "+20 bonus points" }
-  ]
-}
-\`\`\`
-
-**Example for Hanger Diagram:**
-\`\`\`json
-"diagramPreview": {
-  "ascii": "        ┌───────────────┐\\n        │    HANGER     │\\n        └───────┬───────┘\\n                │\\n    ┌───────────┴───────────┐\\n    │                       │\\n  ┌─┴─┐                   ┌─┴─┐\\n  │△△△│                   │ 10│\\n  │ 1 │                   │   │\\n  └───┘                   └───┘",
-  "keyElements": [
-    { "element": "Left side (△△△ + 1)", "represents": "3x + 1" },
-    { "element": "Right side (10)", "represents": "the constant 10" },
-    { "element": "Balance", "represents": "equation 3x + 1 = 10" }
-  ]
-}
-\`\`\`
-
-This ASCII preview helps the user confirm the visual structure BEFORE slides are generated.
-
-## VisualPlan Schemas by Type
-
-Include the appropriate visualPlan based on the problem's visual representation:
-
-**tape-diagram** (for division, multiplication, part-whole):
-\`\`\`json
-{ "type": "tape-diagram", "boxes": 6, "valuePerBox": 8, "total": 48, "unknownPosition": "start" | "box" | "total" }
-\`\`\`
-
-**double-number-line** (for ratios, unit rates):
-\`\`\`json
-{ "type": "double-number-line", "quantityA": { "label": "cups", "values": [0, 2, 4, 6] }, "quantityB": { "label": "servings", "values": [0, 3, 6, 9] }, "highlightPair": [4, 6] }
-\`\`\`
-
-**area-model** (for multiplication, distributive property):
-\`\`\`json
-{ "type": "area-model", "dimensions": [20, 15], "partialProducts": [[200, 100], [30, 15]] }
-\`\`\`
-
-**number-line** (for integers, inequalities):
-\`\`\`json
-{ "type": "number-line", "range": [-5, 10], "markedPoints": [{ "value": 3, "label": "x", "style": "closed" }], "arrows": [{ "from": 0, "to": 3, "label": "+3" }] }
-\`\`\`
-
-**ratio-table** (for equivalent ratios):
-\`\`\`json
-{ "type": "ratio-table", "rows": [{ "label": "apples", "values": [2, 4, 6, "?"] }], "scaleFactors": ["×2", "×3"] }
-\`\`\`
-
-**hanger-diagram** (for equation solving, balance):
-\`\`\`json
-{ "type": "hanger-diagram", "leftSide": "3x + 1", "rightSide": "10", "shapes": { "triangle": "x", "square": "1" } }
-\`\`\`
-
-**input-output-table** (for functions, patterns):
-\`\`\`json
-{ "type": "input-output-table", "rule": "×3 + 2", "inputs": [1, 2, 3, 4], "outputs": [5, 8, 11, 14], "unknownPosition": "output" }
-\`\`\`
-
-**grid-diagram** (for area by counting):
-\`\`\`json
-{ "type": "grid-diagram", "rows": 5, "cols": 8, "unitLabel": "sq cm", "showGrid": true }
-\`\`\`
-
-**discrete-diagram** (for objects in groups):
-\`\`\`json
-{ "type": "discrete-diagram", "groups": 4, "itemsPerGroup": 6, "totalItems": 24, "visualType": "circles", "arrangement": "rows" }
-\`\`\`
-
-**measurement-diagram** (for base/height):
-\`\`\`json
-{ "type": "measurement-diagram", "shapeType": "triangle", "measurements": [{ "label": "base", "value": 10 }, { "label": "height", "value": 6 }], "showRightAngle": true }
-\`\`\`
-
-**dot-plot** (for data distributions):
-\`\`\`json
-{ "type": "dot-plot", "dataPoints": [2, 3, 3, 4, 4, 4, 5, 5, 6], "axisLabel": "Number of pets", "axisRange": [0, 10], "title": "Pets Owned" }
-\`\`\`
-
-**box-plot** (for quartiles, variability):
-\`\`\`json
-{ "type": "box-plot", "min": 12, "q1": 18, "median": 25, "q3": 32, "max": 45, "outliers": [5, 52], "axisLabel": "Test Scores", "axisRange": [0, 60] }
-\`\`\`
-
-**bar-graph** (for comparing frequencies):
-\`\`\`json
-{ "type": "bar-graph", "categories": ["Red", "Blue", "Green"], "values": [12, 8, 15], "orientation": "vertical", "axisLabel": "Frequency", "title": "Favorite Colors" }
-\`\`\`
-
-**tree-diagram** (for probability, sample spaces):
-\`\`\`json
-{ "type": "tree-diagram", "levels": [{ "outcomes": ["Heads", "Tails"], "probabilities": [0.5, 0.5] }], "finalOutcomes": ["H", "T"], "highlightPath": ["Heads"] }
-\`\`\`
-
-**circle-diagram** (for circles with labeled parts):
-\`\`\`json
-{ "type": "circle-diagram", "radius": 5, "diameter": 10, "circumference": "10π", "showCenter": true, "labeledParts": ["radius", "diameter"], "unit": "cm" }
-\`\`\`
-
-**scale-drawing** (for maps, floor plans):
-\`\`\`json
-{ "type": "scale-drawing", "scaleFactor": "1 cm : 10 m", "drawingMeasurements": [{ "label": "length", "value": 5, "unit": "cm" }], "actualMeasurements": [{ "label": "length", "value": 50, "unit": "m" }], "drawingType": "floor-plan" }
-\`\`\`
-
-**scaled-figures** (for original vs copy comparison):
-\`\`\`json
-{ "type": "scaled-figures", "originalDimensions": [{ "label": "width", "value": 4 }], "scaleFactor": 2.5, "copyDimensions": [{ "label": "width", "value": 10 }], "shapeType": "rectangle" }
-\`\`\`
+${SHARED_OUTPUT_SCHEMA}
 
 Return ONLY valid JSON. Do not include any explanation or markdown formatting.
 `;
@@ -575,7 +347,16 @@ Instructions:
 2. Identify the mathematical structure and problem type
 3. Define ONE clear strategy with 2-3 moves
 4. Create 3 scenarios with DIFFERENT contexts (all different from the mastery check)
-${additionalContext ? '5. Apply the teacher\'s additional context preferences when creating scenarios and choosing strategy' : ''}
+5. **CRITICAL: Generate diagramEvolution** - Create ASCII art showing how the visual develops step-by-step:
+   - initialState: ASCII showing Problem Setup slide
+   - keyElements: Array explaining each visual element
+   - steps: One entry per strategy move (must match strategyDefinition.moves.length)
+${additionalContext ? '6. Apply the teacher\'s additional context preferences when creating scenarios and choosing strategy' : ''}
+
+**⚠️ REQUIRED FIELDS - Your response MUST include:**
+- problemAnalysis.diagramEvolution (with initialState, keyElements, and steps array)
+- strategyDefinition.moves (2-3 moves)
+- scenarios (exactly 3 with different contexts)
 
 Return ONLY valid JSON matching the schema described in the system prompt.`;
 }
@@ -607,6 +388,15 @@ export function buildGenerateSlidesPrompt(
       scale: { xMax: number; yMax: number; xAxisLabels: number[]; yAxisLabels: number[] };
       keyPoints: { label: string; x: number; y: number; dataX: number; dataY: number }[];
       annotations: { type: string; from?: number; to?: number; label: string; position?: string }[];
+    };
+    // Step-by-step diagram evolution plan (approved by teacher)
+    diagramEvolution?: {
+      initialState: string;
+      steps: {
+        header: string;
+        ascii: string;
+        changes: string[];
+      }[];
     };
   },
   strategyDefinition: {
@@ -726,7 +516,26 @@ Generate HTML slides for this worked example.
 - Visual Type: ${problemAnalysis.visualType}
 - Solution Steps:
 ${problemAnalysis.solution.map(s => `  ${s.step}. ${s.description} (${s.reasoning})`).join('\n')}
-${graphPlanSection}
+${graphPlanSection}${problemAnalysis.diagramEvolution ? `
+## 📊 DIAGRAM EVOLUTION (Teacher-Approved - FOLLOW THIS EXACTLY)
+
+**The teacher has approved this step-by-step visual progression. Your slides MUST follow this evolution.**
+
+### INITIAL STATE (Problem Setup - Slide 3)
+\`\`\`
+${problemAnalysis.diagramEvolution.initialState}
+\`\`\`
+
+${problemAnalysis.diagramEvolution.steps.map((step, i) => `### ${step.header} (Slide ${4 + i})
+\`\`\`
+${step.ascii}
+\`\`\`
+**Changes in this step:**
+${step.changes.map(c => `- ${c}`).join('\n')}
+`).join('\n')}
+
+**IMPORTANT:** Each slide's visual must match the corresponding evolution step above.
+` : ''}
 
 ## Strategy
 - Name: ${strategyDefinition.name}

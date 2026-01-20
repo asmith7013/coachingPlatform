@@ -33,13 +33,31 @@ const SolutionStepSchema = z.object({
   reasoning: z.string(),
 });
 
-// Diagram preview for visual confirmation
+// Key element schema (shared between DiagramEvolution and deprecated DiagramPreview)
+const KeyElementSchema = z.object({
+  element: z.string(),
+  represents: z.string(),
+});
+
+// Diagram evolution step schema
+const DiagramEvolutionStepSchema = z.object({
+  header: z.string(), // e.g., "STEP 1: IDENTIFY"
+  ascii: z.string(),  // ASCII showing diagram state at this step
+  changes: z.array(z.string()), // What changed from previous step
+});
+
+// Diagram evolution - shows how the visual develops step-by-step across slides
+// This replaces the former DiagramPreview - it includes keyElements plus step-by-step evolution
+const DiagramEvolutionSchema = z.object({
+  initialState: z.string(), // ASCII showing Problem Setup slide
+  keyElements: z.array(KeyElementSchema), // What each visual element represents
+  steps: z.array(DiagramEvolutionStepSchema), // One entry per strategy move
+});
+
+// @deprecated Use DiagramEvolution instead - kept for backward compatibility
 const DiagramPreviewSchema = z.object({
-  ascii: z.string(),
-  keyElements: z.array(z.object({
-    element: z.string(),
-    represents: z.string(),
-  })),
+  ascii: z.string().optional(),
+  keyElements: z.array(KeyElementSchema).optional(),
 });
 
 // Graph plan for coordinate graphs
@@ -89,6 +107,9 @@ export const ProblemAnalysisSchema = z.object({
   visualType: DeckVisualTypeSchema,
   svgSubtype: SvgSubtypeSchema.optional(),
   graphPlan: GraphPlanSchema.optional(),
+  // Diagram evolution - shows how visual develops step-by-step (includes keyElements)
+  diagramEvolution: DiagramEvolutionSchema.optional(),
+  // @deprecated Use diagramEvolution instead - kept for backward compatibility
   diagramPreview: DiagramPreviewSchema.optional(),
 });
 

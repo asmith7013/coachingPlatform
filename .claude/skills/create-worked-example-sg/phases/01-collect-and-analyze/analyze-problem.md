@@ -188,6 +188,73 @@ What mathematical relationship to show?
 
 **Include these calculated values in the graphPlan field of your output.**
 
+### STEP 8: Generate Diagram Evolution Preview (REQUIRED for ALL worked examples)
+
+**After planning the visual structure, create a step-by-step evolution showing how the diagram develops across slides.**
+
+This is the most important preview for teachers - it shows EXACTLY how the visual will build from initial state through each step of the solution.
+
+**8a: Create Initial State**
+Show the diagram as it appears on the Problem Setup slide (Slide 3):
+- For coordinate graphs: axes with scale labels, but no lines drawn yet
+- For tape diagrams: the total bar with the unknown marked
+- For hanger diagrams: the initial equation on the balance
+- For number lines: the empty line with range marked
+
+**8b: Create Step-by-Step Evolution**
+For EACH strategy move, show:
+1. The diagram state AFTER that step is completed (building cumulatively on previous steps)
+2. What was added/changed from the previous state
+3. Use ASCII art that matches the visual type
+
+**8c: Match Steps to Strategy Moves**
+The number of steps in diagramEvolution MUST match strategyDefinition.moves.length:
+- 2 moves = 2 evolution steps
+- 3 moves = 3 evolution steps
+
+**Example for Coordinate Graph (2-line system of equations):**
+```json
+"diagramEvolution": {
+  "initialState": "    y\n  50│\n    │\n  40│\n    │\n  30│\n    │\n  20│\n    │\n  10│\n    │\n   0└────┬────┬────┬────┬──── x\n        2    4    6    8",
+  "steps": [
+    {
+      "header": "STEP 1: IDENTIFY",
+      "ascii": "    y\n  50│              ╱\n    │            ╱\n  40│          ╱\n    │        ╱\n  30│      ╱\n    │    ╱\n  20├──●           ← y-intercept (0, 20)\n    │╱\n  10│\n    │\n   0└────┬────┬────┬────┬──── x\n        2    4    6    8",
+      "changes": ["Draw first line y = 5x + 20 (blue)", "Mark y-intercept at (0, 20)"]
+    },
+    {
+      "header": "STEP 2: COMPARE",
+      "ascii": "    y\n  50│              ╱\n    │            ╱\n  40│          ╱  ╲\n    │        ╱      ╲\n  30├──────●          ╲   ← y-intercept (0, 30)\n    │    ╱              ╲\n  20├──●\n    │╱\n  10│\n    │\n   0└────┬────┬────┬────┬──── x\n        2    4    6    8",
+      "changes": ["Draw second line y = 3x + 30 (green)", "Mark y-intercept at (0, 30)"]
+    },
+    {
+      "header": "STEP 3: SOLVE",
+      "ascii": "    y\n  50│              ╱\n  45├────────────★     ← intersection (5, 45)\n  40│          ╱╲\n    │        ╱    ╲\n  30├──────●        ╲\n    │    ╱            ╲\n  20├──●\n    │╱\n  10│\n    │\n   0└────┬────┬────┬────┬──── x\n        2    4    6    8",
+      "changes": ["Mark intersection point at (5, 45)", "Highlight: This is where both equations are equal"]
+    }
+  ]
+}
+```
+
+**Example for Tape Diagram (division problem):**
+```json
+"diagramEvolution": {
+  "initialState": "Total: 24 stickers to share among 4 friends\n\n┌────────────────────────────────────────┐\n│                 24                     │\n└────────────────────────────────────────┘",
+  "steps": [
+    {
+      "header": "STEP 1: PARTITION",
+      "ascii": "┌──────────┬──────────┬──────────┬──────────┐\n│    ?     │    ?     │    ?     │    ?     │ = 24\n└──────────┴──────────┴──────────┴──────────┘\n    ↑           ↑           ↑           ↑\n Friend 1   Friend 2   Friend 3   Friend 4",
+      "changes": ["Divide tape into 4 equal parts", "Mark each part with ? (unknown)"]
+    },
+    {
+      "header": "STEP 2: CALCULATE",
+      "ascii": "┌──────────┬──────────┬──────────┬──────────┐\n│    6     │    6     │    6     │    6     │ = 24 ✓\n└──────────┴──────────┴──────────┴──────────┘\n\n24 ÷ 4 = 6 stickers per friend",
+      "changes": ["Calculate: 24 ÷ 4 = 6", "Fill in each box with 6"]
+    }
+  ]
+}
+```
+
 ---
 
 ## Completion Checklist (Verify Before Responding)
@@ -202,6 +269,13 @@ What mathematical relationship to show?
 - [ ] CFU question templates reference strategy verbs
 - [ ] ALL 3 scenarios use DIFFERENT contexts from the mastery check
 - [ ] All scenarios use the SAME mathematical structure and strategy
+- [ ] **diagramEvolution is included** showing how content develops across slides:
+  - [ ] initialState shows the Problem Setup slide
+  - [ ] keyElements array explains each element and what it represents
+  - [ ] steps array has one entry per strategy move
+  - [ ] Each step's header matches the slide header ("STEP N: VERB")
+  - [ ] Steps build cumulatively (each shows previous + new additions)
+  - [ ] Changes array lists what was added/modified in that step
 - [ ] **IF visualType is "svg-visual":**
   - [ ] svgSubtype is specified (coordinate-graph, diagram, shape, number-line, or other)
   - [ ] **IF svgSubtype is "coordinate-graph":**
@@ -209,3 +283,32 @@ What mathematical relationship to show?
     - [ ] **EACH scenario has its own graphPlan** with that scenario's specific equations and values
     - [ ] All graphPlans have: equations with slope/y-intercept, proper scale, and annotations
     - [ ] **keyPoints array includes:** y-intercepts, solution points, and any points to be labeled on the graph
+
+---
+
+## ⚠️ CRITICAL: REQUIRED FIELDS (DO NOT OMIT)
+
+**Your response MUST include ALL of these fields or it will fail validation:**
+
+1. **problemAnalysis.diagramEvolution** - ALWAYS REQUIRED, no exceptions
+   - `initialState`: ASCII showing Problem Setup slide (axes, empty diagram, etc.)
+   - `keyElements`: Array explaining each element and what it represents mathematically
+   - `steps`: Array with one entry per strategy move (2-3 entries)
+   - Each step needs: `header`, `ascii`, `changes[]`
+
+2. **strategyDefinition.moves** - Must have 2-3 moves
+
+3. **scenarios** - Must have exactly 3 scenarios with different contexts
+
+**If you skip diagramEvolution, the teacher cannot preview how the slides will look!**
+
+---
+
+## Output Format
+
+**For the complete JSON output schema, see:**
+```
+Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/output-schema.md
+```
+
+Return ONLY valid JSON matching that schema. Do not include any explanation or markdown formatting.

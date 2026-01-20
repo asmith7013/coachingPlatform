@@ -82,7 +82,7 @@ export function PresentationModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-gray-200">
+    <div className="fixed inset-0 z-[9999] bg-white">
       {loading && (
         <div className="flex items-center justify-center w-full h-full">
           <div className="text-gray-700 text-2xl">Loading presentation...</div>

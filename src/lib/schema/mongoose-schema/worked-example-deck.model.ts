@@ -18,12 +18,27 @@ const solutionStepSchema = {
   reasoning: { type: String, required: true },
 };
 
+// Key element schema (shared)
+const keyElementSchema = {
+  element: { type: String },
+  represents: { type: String },
+};
+
+// Diagram evolution - shows how visual develops step-by-step (includes keyElements)
+const diagramEvolutionSchema = {
+  initialState: { type: String }, // ASCII showing Problem Setup slide
+  keyElements: [keyElementSchema], // What each visual element represents
+  steps: [{
+    header: { type: String }, // e.g., "STEP 1: IDENTIFY"
+    ascii: { type: String },  // ASCII showing diagram state at this step
+    changes: [String],        // What changed from previous step
+  }],
+};
+
+// @deprecated Use diagramEvolution instead - kept for backward compatibility
 const diagramPreviewSchema = {
   ascii: { type: String },
-  keyElements: [{
-    element: { type: String },
-    represents: { type: String },
-  }],
+  keyElements: [keyElementSchema],
 };
 
 const graphPlanSchema = {
@@ -71,6 +86,9 @@ const problemAnalysisSchema = {
   visualType: { type: String, enum: ['text-only', 'html-table', 'svg-visual'] },
   svgSubtype: { type: String, enum: ['coordinate-graph', 'diagram', 'shape', 'number-line', 'other'] },
   graphPlan: graphPlanSchema,
+  // Diagram evolution - shows how visual develops step-by-step (includes keyElements)
+  diagramEvolution: diagramEvolutionSchema,
+  // @deprecated Use diagramEvolution instead - kept for backward compatibility
   diagramPreview: diagramPreviewSchema,
 };
 

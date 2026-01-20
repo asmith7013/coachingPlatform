@@ -8,9 +8,16 @@ import { PRINTABLE_TEMPLATE, GRAPH_SNIPPET } from '@/skills/worked-example';
 // Extend max execution time for this API route (5 minutes)
 export const maxDuration = 300;
 
+interface StrategyMove {
+  verb: string;
+  description: string;
+  result: string;
+}
+
 interface GeneratePrintableInput {
   practiceScenarios: Scenario[];
   strategyName: string;
+  strategyMoves: StrategyMove[];
   problemType: string;
   gradeLevel: string;
   unitNumber: number | null;
@@ -20,7 +27,7 @@ interface GeneratePrintableInput {
 
 // Build system prompt using synced templates
 function buildSystemPrompt(): string {
-  return `You are generating a printable math worksheet. Create 2 practice problems in HTML format.
+  return `You are generating a printable math worksheet. Create 2 practice problem pages AND 1 answer key page (3 pages total) in HTML format.
 
 ## Printable Template
 Use this structure (replace [PLACEHOLDERS] with actual content):
@@ -37,6 +44,7 @@ ${GRAPH_SNIPPET}
 2. SVG graphs MUST have max-height: 360px to fit on the page
 3. The "Your Task" and "Show your work" sections MUST be visible on each page
 4. Keep all content within the 11in page height
+5. Page 3 (Answer Key) should clearly show strategy steps and final answers
 
 ## Output
 Return ONLY the HTML starting with <div class="slide-container">. No explanations, no markdown fences.
@@ -46,6 +54,7 @@ Return ONLY the HTML starting with <div class="slide-container">. No explanation
 function buildPrintablePrompt(
   scenarios: Scenario[],
   strategyName: string,
+  strategyMoves: StrategyMove[],
   problemType: string,
   gradeLevel: string,
   unitNumber: number | null,
@@ -107,7 +116,12 @@ ${gp.keyPoints.map(p => `- ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX
     return details;
   }).join('\n\n---\n');
 
-  return `Generate a printable worksheet with these 2 practice problems:
+  // Build strategy steps for answer key
+  const strategyStepsText = strategyMoves.length > 0
+    ? strategyMoves.map((m, i) => `${i + 1}. **${m.verb}**: ${m.description} → ${m.result}`).join('\n')
+    : `1. Apply ${strategyName} to solve the problem`;
+
+  return `Generate a printable worksheet with 2 practice problems AND an answer key page (3 pages total):
 
 ## Lesson Info
 - Grade Level: ${gradeLevel}
@@ -117,16 +131,28 @@ ${gp.keyPoints.map(p => `- ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX
 - Strategy: ${strategyName}
 - Problem Type: ${problemType}
 
+## Strategy Steps (apply to each problem for answer key)
+${strategyStepsText}
+
 ${scenarioDetails}
 
 ## Instructions
-1. Create one print-page div for each problem (2 total)
+1. Create one print-page div for each problem (2 total for student worksheets)
 2. Include the lesson header and learning goal on each page
 3. Show the problem description and any relevant visuals (tables, graphs if graphPlan provided)
 4. **For graphs: Use the PRE-CALCULATED pixel coordinates above - do NOT recalculate!**
 5. **Graph background MUST be white (#ffffff) for printing**
 6. Include a "Your Task" section with the specific question
 7. Include a "Show your work" box
+
+8. **CREATE A THIRD print-page div for the ANSWER KEY:**
+   - Header: "ANSWER KEY - For Teacher Use Only" with the lesson title
+   - For each problem, show:
+     a. Problem number and name (e.g., "Problem 1: ${scenarios[0]?.name || 'Practice Problem'}")
+     b. Strategy steps applied to THIS problem's specific numbers/context
+     c. Final answer clearly highlighted with a green background box (#e8f5e9 bg, #4caf50 border)
+   - Keep formatting clean and easy to scan
+   - Use the strategy steps above but substitute in each problem's actual values
 
 Output ONLY the HTML starting with <div class="slide-container">.`;
 }
@@ -142,6 +168,7 @@ export async function POST(request: NextRequest) {
     const {
       practiceScenarios,
       strategyName,
+      strategyMoves,
       problemType,
       gradeLevel,
       unitNumber,
@@ -172,6 +199,7 @@ export async function POST(request: NextRequest) {
     const userPrompt = buildPrintablePrompt(
       practiceScenarios,
       strategyName,
+      strategyMoves || [],
       problemType,
       gradeLevel,
       unitNumber,

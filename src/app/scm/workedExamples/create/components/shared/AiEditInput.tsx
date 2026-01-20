@@ -93,7 +93,7 @@ export function AiEditInput({
   const canSubmit = (prompt.trim() || images.length > 0) && !disabled;
 
   return (
-    <div className="flex gap-2 items-end flex-1">
+    <div className="flex gap-2 items-center flex-1">
       {/* Hidden file input */}
       <input
         ref={fileInputRef}

@@ -8,6 +8,7 @@
  *
  * Synced files:
  *   - phases/01-collect-and-analyze/analyze-problem.md → ANALYZE_PROBLEM_INSTRUCTIONS
+ *   - phases/01-collect-and-analyze/output-schema.md → ANALYZE_OUTPUT_SCHEMA
  *   - phases/03-generate-slides/00-overview.md → PHASE3_OVERVIEW
  *   - phases/03-generate-slides/01-slide-by-slide.md → GENERATE_SLIDES_INSTRUCTIONS
  *   - phases/03-generate-slides/02-technical-rules.md → TECHNICAL_RULES
@@ -214,6 +215,73 @@ What mathematical relationship to show?
 
 **Include these calculated values in the graphPlan field of your output.**
 
+### STEP 8: Generate Diagram Evolution Preview (REQUIRED for ALL worked examples)
+
+**After planning the visual structure, create a step-by-step evolution showing how the diagram develops across slides.**
+
+This is the most important preview for teachers - it shows EXACTLY how the visual will build from initial state through each step of the solution.
+
+**8a: Create Initial State**
+Show the diagram as it appears on the Problem Setup slide (Slide 3):
+- For coordinate graphs: axes with scale labels, but no lines drawn yet
+- For tape diagrams: the total bar with the unknown marked
+- For hanger diagrams: the initial equation on the balance
+- For number lines: the empty line with range marked
+
+**8b: Create Step-by-Step Evolution**
+For EACH strategy move, show:
+1. The diagram state AFTER that step is completed (building cumulatively on previous steps)
+2. What was added/changed from the previous state
+3. Use ASCII art that matches the visual type
+
+**8c: Match Steps to Strategy Moves**
+The number of steps in diagramEvolution MUST match strategyDefinition.moves.length:
+- 2 moves = 2 evolution steps
+- 3 moves = 3 evolution steps
+
+**Example for Coordinate Graph (2-line system of equations):**
+\`\`\`json
+"diagramEvolution": {
+  "initialState": "    y\n  50│\n    │\n  40│\n    │\n  30│\n    │\n  20│\n    │\n  10│\n    │\n   0└────┬────┬────┬────┬──── x\n        2    4    6    8",
+  "steps": [
+    {
+      "header": "STEP 1: IDENTIFY",
+      "ascii": "    y\n  50│              ╱\n    │            ╱\n  40│          ╱\n    │        ╱\n  30│      ╱\n    │    ╱\n  20├──●           ← y-intercept (0, 20)\n    │╱\n  10│\n    │\n   0└────┬────┬────┬────┬──── x\n        2    4    6    8",
+      "changes": ["Draw first line y = 5x + 20 (blue)", "Mark y-intercept at (0, 20)"]
+    },
+    {
+      "header": "STEP 2: COMPARE",
+      "ascii": "    y\n  50│              ╱\n    │            ╱\n  40│          ╱  ╲\n    │        ╱      ╲\n  30├──────●          ╲   ← y-intercept (0, 30)\n    │    ╱              ╲\n  20├──●\n    │╱\n  10│\n    │\n   0└────┬────┬────┬────┬──── x\n        2    4    6    8",
+      "changes": ["Draw second line y = 3x + 30 (green)", "Mark y-intercept at (0, 30)"]
+    },
+    {
+      "header": "STEP 3: SOLVE",
+      "ascii": "    y\n  50│              ╱\n  45├────────────★     ← intersection (5, 45)\n  40│          ╱╲\n    │        ╱    ╲\n  30├──────●        ╲\n    │    ╱            ╲\n  20├──●\n    │╱\n  10│\n    │\n   0└────┬────┬────┬────┬──── x\n        2    4    6    8",
+      "changes": ["Mark intersection point at (5, 45)", "Highlight: This is where both equations are equal"]
+    }
+  ]
+}
+\`\`\`
+
+**Example for Tape Diagram (division problem):**
+\`\`\`json
+"diagramEvolution": {
+  "initialState": "Total: 24 stickers to share among 4 friends\n\n┌────────────────────────────────────────┐\n│                 24                     │\n└────────────────────────────────────────┘",
+  "steps": [
+    {
+      "header": "STEP 1: PARTITION",
+      "ascii": "┌──────────┬──────────┬──────────┬──────────┐\n│    ?     │    ?     │    ?     │    ?     │ = 24\n└──────────┴──────────┴──────────┴──────────┘\n    ↑           ↑           ↑           ↑\n Friend 1   Friend 2   Friend 3   Friend 4",
+      "changes": ["Divide tape into 4 equal parts", "Mark each part with ? (unknown)"]
+    },
+    {
+      "header": "STEP 2: CALCULATE",
+      "ascii": "┌──────────┬──────────┬──────────┬──────────┐\n│    6     │    6     │    6     │    6     │ = 24 ✓\n└──────────┴──────────┴──────────┴──────────┘\n\n24 ÷ 4 = 6 stickers per friend",
+      "changes": ["Calculate: 24 ÷ 4 = 6", "Fill in each box with 6"]
+    }
+  ]
+}
+\`\`\`
+
 ---
 
 ## Completion Checklist (Verify Before Responding)
@@ -228,6 +296,13 @@ What mathematical relationship to show?
 - [ ] CFU question templates reference strategy verbs
 - [ ] ALL 3 scenarios use DIFFERENT contexts from the mastery check
 - [ ] All scenarios use the SAME mathematical structure and strategy
+- [ ] **diagramEvolution is included** showing how content develops across slides:
+  - [ ] initialState shows the Problem Setup slide
+  - [ ] keyElements array explains each element and what it represents
+  - [ ] steps array has one entry per strategy move
+  - [ ] Each step's header matches the slide header ("STEP N: VERB")
+  - [ ] Steps build cumulatively (each shows previous + new additions)
+  - [ ] Changes array lists what was added/modified in that step
 - [ ] **IF visualType is "svg-visual":**
   - [ ] svgSubtype is specified (coordinate-graph, diagram, shape, number-line, or other)
   - [ ] **IF svgSubtype is "coordinate-graph":**
@@ -235,6 +310,184 @@ What mathematical relationship to show?
     - [ ] **EACH scenario has its own graphPlan** with that scenario's specific equations and values
     - [ ] All graphPlans have: equations with slope/y-intercept, proper scale, and annotations
     - [ ] **keyPoints array includes:** y-intercepts, solution points, and any points to be labeled on the graph
+
+---
+
+## ⚠️ CRITICAL: REQUIRED FIELDS (DO NOT OMIT)
+
+**Your response MUST include ALL of these fields or it will fail validation:**
+
+1. **problemAnalysis.diagramEvolution** - ALWAYS REQUIRED, no exceptions
+   - \`initialState\`: ASCII showing Problem Setup slide (axes, empty diagram, etc.)
+   - \`keyElements\`: Array explaining each element and what it represents mathematically
+   - \`steps\`: Array with one entry per strategy move (2-3 entries)
+   - Each step needs: \`header\`, \`ascii\`, \`changes[]\`
+
+2. **strategyDefinition.moves** - Must have 2-3 moves
+
+3. **scenarios** - Must have exactly 3 scenarios with different contexts
+
+**If you skip diagramEvolution, the teacher cannot preview how the slides will look!**
+
+---
+
+## Output Format
+
+**For the complete JSON output schema, see:**
+\`\`\`
+Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/output-schema.md
+\`\`\`
+
+Return ONLY valid JSON matching that schema. Do not include any explanation or markdown formatting.
+`;
+
+export const ANALYZE_OUTPUT_SCHEMA = `
+# Output Schema for Problem Analysis
+
+**This file defines the JSON structure that must be returned by the analyze-problem phase.**
+
+## Required Output Format
+
+Return ONLY valid JSON matching this exact structure (no markdown, no explanation):
+
+\`\`\`json
+{
+  "problemAnalysis": {
+    "problemTranscription": "EXACT verbatim transcription of everything in the image - all text, numbers, diagrams described, tables, etc. Be thorough and precise.",
+    "problemType": "specific type (e.g., 'solving two-step equations with variables on both sides')",
+    "mathematicalStructure": "description of relationships",
+    "solution": [
+      { "step": 1, "description": "what you do", "reasoning": "why you do it" }
+    ],
+    "answer": "final answer",
+    "keyChallenge": "what makes this hard for students",
+    "commonMistakes": ["mistake 1", "mistake 2"],
+    "requiredPriorKnowledge": ["prereq 1", "prereq 2"],
+    "answerFormat": "how answer should be presented",
+    "visualType": "text-only | html-table | svg-visual",
+    "svgSubtype": "coordinate-graph | diagram | shape | number-line | other",
+    "diagramEvolution": {
+      "initialState": "ASCII showing the initial diagram state (Problem Setup slide)",
+      "keyElements": [
+        { "element": "element name", "represents": "what it represents mathematically" }
+      ],
+      "steps": [
+        {
+          "header": "STEP 1: VERB",
+          "ascii": "ASCII showing diagram after step 1 (builds on initial state)",
+          "changes": ["What was added or modified in this step"]
+        },
+        {
+          "header": "STEP 2: VERB",
+          "ascii": "ASCII showing diagram after step 2 (builds on step 1)",
+          "changes": ["What was added or modified in this step"]
+        },
+        {
+          "header": "STEP 3: VERB",
+          "ascii": "ASCII showing final diagram state with solution",
+          "changes": ["What was added or modified in this step"]
+        }
+      ]
+    },
+    "graphPlan": {
+      "equations": [
+        {
+          "label": "Line 1",
+          "equation": "y = mx + b",
+          "slope": 5,
+          "yIntercept": 0,
+          "color": "#60a5fa",
+          "startPoint": { "x": 0, "y": 0 },
+          "endPoint": { "x": 8, "y": 40 }
+        }
+      ],
+      "scale": {
+        "xMax": 8,
+        "yMax": 50,
+        "xAxisLabels": [0, 2, 4, 6, 8],
+        "yAxisLabels": [0, 10, 20, 30, 40, 50]
+      },
+      "keyPoints": [
+        { "label": "y-intercept Line 1", "x": 0, "y": 0, "dataX": 0, "dataY": 0 }
+      ],
+      "annotations": [
+        { "type": "y-intercept-shift | parallel-label | slope-comparison | intersection-point | slope-triangle | point-label", "from": 0, "to": 20, "label": "+20" }
+      ]
+    }
+  },
+  "strategyDefinition": {
+    "name": "Clear Strategy Name (e.g., 'Balance and Isolate')",
+    "oneSentenceSummary": "To solve this, we [VERB] the [OBJECT] to find [GOAL]",
+    "bigIdea": "The core mathematical concept in one sentence",
+    "moves": [
+      { "verb": "VERB1", "description": "what this step does", "result": "what it accomplishes" }
+    ],
+    "slideHeaders": ["STEP 1: VERB1", "STEP 2: VERB2"],
+    "cfuQuestionTemplates": ["Why did I [VERB] first?", "How does [VERB]ing help?"]
+  },
+  "scenarios": [
+    {
+      "name": "Scenario name (different context from mastery check)",
+      "context": "Real-world context description",
+      "themeIcon": "🎮",
+      "numbers": "specific numbers used",
+      "description": "Full problem statement",
+      "problemReminder": "≤15 word summary for slides",
+      "visualPlan": { "type": "appropriate-visual-type", "...": "..." },
+      "graphPlan": { "...": "only if coordinate-graph" }
+    }
+  ]
+}
+\`\`\`
+
+## Field Requirements
+
+### ⚠️ ALWAYS REQUIRED (no exceptions):
+
+| Field | Description |
+|-------|-------------|
+| \`problemAnalysis.diagramEvolution\` | Shows how visual develops step-by-step (includes initial state, key elements, and step progression) |
+| \`strategyDefinition.moves\` | 2-3 moves with verb, description, result |
+| \`scenarios\` | Exactly 3 scenarios with different contexts |
+
+### Conditional Fields:
+
+| Field | When Required |
+|-------|---------------|
+| \`problemAnalysis.svgSubtype\` | When \`visualType\` is \`"svg-visual"\` |
+| \`problemAnalysis.graphPlan\` | When \`svgSubtype\` is \`"coordinate-graph"\` |
+| \`scenario[].graphPlan\` | When \`svgSubtype\` is \`"coordinate-graph"\` |
+| \`scenario[].visualPlan\` | When \`svgSubtype\` is NOT \`"coordinate-graph"\` |
+
+## diagramEvolution Structure
+
+The \`diagramEvolution\` field is **CRITICAL** for teacher preview. It shows exactly how the diagram will evolve across slides.
+
+**Rules:**
+- \`initialState\`: Shows Problem Setup slide (empty axes, blank diagram, etc.)
+- \`steps.length\` MUST equal \`strategyDefinition.moves.length\`
+- Each step builds cumulatively on the previous
+- \`header\` must match the slide header ("STEP N: VERB")
+- \`changes\` lists what was added/modified in that step
+
+**Example for tape diagram:**
+\`\`\`json
+"diagramEvolution": {
+  "initialState": "┌────────────────────┐\n│        24          │\n└────────────────────┘\nTotal: 24, Groups: 4, Find: ?",
+  "steps": [
+    {
+      "header": "STEP 1: PARTITION",
+      "ascii": "┌─────┬─────┬─────┬─────┐\n│  ?  │  ?  │  ?  │  ?  │ = 24\n└─────┴─────┴─────┴─────┘",
+      "changes": ["Divide into 4 equal parts", "Mark each with ?"]
+    },
+    {
+      "header": "STEP 2: CALCULATE",
+      "ascii": "┌─────┬─────┬─────┬─────┐\n│  6  │  6  │  6  │  6  │ = 24 ✓\n└─────┴─────┴─────┴─────┘",
+      "changes": ["Calculate: 24 ÷ 4 = 6", "Fill in values"]
+    }
+  ]
+}
+\`\`\`
 `;
 
 // ============================================================================
@@ -305,26 +558,42 @@ Based on the mastery check question you provided, here's my understanding:
 Note: These scenarios all teach the same skill as your mastery check but use different numbers and contexts, so students learn the strategy without seeing the actual answer.
 \`\`\`
 
-### ⚠️ REQUIRED: Include Diagram Preview
+### ⚠️ REQUIRED: Include Diagram Evolution
 
-**Include the Diagram Preview you created in Phase 1.** This shows the user the visual structure for confirmation.
+**Include the Diagram Evolution you created in Phase 1.** This shows the user how the visual will develop step-by-step across slides.
 
-The preview was already generated in Phase 1 using \`reference/diagram-patterns.md\` as a guide. Present it here so the user can confirm the visual structure is correct before proceeding.
+The evolution was already generated in Phase 1 using \`reference/diagram-patterns.md\` as a guide. Present it here so the user can confirm the visual progression is correct before proceeding.
 
 **Example:**
 \`\`\`
-**Diagram Preview (Scenario 1 - Chicken Nuggets):**
+**Diagram Evolution (Scenario 1 - Chicken Nuggets):**
 
+INITIAL STATE (Problem Setup):
+┌────────────────────────────────────────┐
+│                 30                     │
+└────────────────────────────────────────┘
+Total: 30 nuggets, Groups: 5 students, Find: ?
+
+STEP 1: PARTITION
 ┌────────┬────────┬────────┬────────┬────────┐
-│   ?    │   6    │   6    │   6    │   6    │  = 30
+│   ?    │   ?    │   ?    │   ?    │   ?    │  = 30
 └────────┴────────┴────────┴────────┴────────┘
++ Divide into 5 equal parts
++ Mark each with ?
+
+STEP 2: CALCULATE
+┌────────┬────────┬────────┬────────┬────────┐
+│   6    │   6    │   6    │   6    │   6    │  = 30 ✓
+└────────┴────────┴────────┴────────┴────────┘
++ Calculate: 30 ÷ 5 = 6
++ Fill in values
 
 Key elements:
-- Unknown (?) at start: number of students
-- Each box: 6 nuggets per student
+- Each box: nuggets per student
 - Total: 30 nuggets
+- Unknown (?): number per student
 
-Does this visual structure look right?
+Does this visual progression look right?
 \`\`\`
 
 **Then ask for confirmation:**
@@ -727,7 +996,7 @@ Use the Read tool to read the current file, then use Edit to update only the cha
 
 Before proceeding, verify:
 - [ ] User has explicitly confirmed your understanding
-- [ ] User has approved the **Diagram Preview** (ASCII visual structure)
+- [ ] User has approved the **Diagram Evolution** (step-by-step visual progression)
 - [ ] Three scenarios are defined
 - [ ] All scenarios use the SAME strategy as the mastery check
 - [ ] All scenarios have the SAME mathematical structure as the mastery check
