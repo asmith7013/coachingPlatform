@@ -19,7 +19,7 @@ This folder contains atomic HTML patterns for composing slides. **Always copy fr
 
 | File | Purpose |
 |------|---------|
-| `complex-patterns/slide-teacher-instructions.html` | Teacher Instructions (slide 1) - Big Idea, Learning Targets, Strategy |
+| `complex-patterns/slide-teacher-instructions.html` | Teacher Instructions (slide 1) - **Teacher-only, students start on Slide 2.** Two-column: Big Idea + Learning Targets (left), Deck Overview (right) |
 | `complex-patterns/slide-big-idea.html` | Big Idea (slide 2) - student-facing with Grade/Unit/Lesson |
 | `complex-patterns/graph-snippet.html` | Complete coordinate plane - for coordinate graphs only |
 | `complex-patterns/annotation-snippet.html` | Graph annotations (labels, arrows) |

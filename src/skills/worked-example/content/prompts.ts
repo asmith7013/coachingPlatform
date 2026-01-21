@@ -1270,7 +1270,7 @@ CFU and Answer boxes are now STACKED on the same slide (both appear, one after a
 
 | Slide # | Type | Layout Options | Content |
 |---------|------|----------------|---------|
-| 1 | Teacher Instructions | \`full-width\` | Big Idea + Learning Targets + Strategy (quiet, informational) |
+| 1 | Teacher Instructions | \`two-column\` | **Teacher-only (students start on Slide 2).** Big Idea + Learning Targets + Deck Overview |
 | 2 | Big Idea | \`centered\` | Grade/Unit/Lesson + Big Idea badge + statement |
 | 3 | Problem Setup | \`two-column\` or \`centered\` | problem + visual |
 | 4 | Step 1 | \`two-column\` or \`centered\` | step content + CFU + Answer (stacked) |
