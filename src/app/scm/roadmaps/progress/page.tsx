@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { ChartBarIcon } from "@heroicons/react/24/outline";
+import React, { useState, useMemo } from "react";
+import { ChartBarIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import {
   SectionVisualizationLayout,
   SectionAccordion,
@@ -11,13 +11,26 @@ import {
 import { RoadmapBarChart } from "./components/RoadmapBarChart";
 import { SectionComparisonChart } from "./components/SectionComparisonChart";
 import { useSectionOptions, useRoadmapData } from "@/hooks/scm";
+import type { DateRange } from "@/hooks/scm/roadmaps/useRoadmapData";
+
+// Default date range: Sept 1, 2025 to today
+const DEFAULT_START_DATE = "2025-09-01";
+const getDefaultEndDate = () => new Date().toISOString().split("T")[0];
 
 export default function RoadmapCompletionsPage() {
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
+  const [startDate, setStartDate] = useState(DEFAULT_START_DATE);
+  const [endDate, setEndDate] = useState(getDefaultEndDate);
+
+  // Memoize date range to avoid unnecessary re-renders
+  const dateRange: DateRange = useMemo(
+    () => ({ startDate, endDate }),
+    [startDate, endDate]
+  );
 
   // Data fetching with React Query hooks
   const { sectionOptions, sectionColors, loading } = useSectionOptions();
-  const { roadmapData, loadingSectionIds } = useRoadmapData(selectedSections);
+  const { roadmapData, loadingSectionIds } = useRoadmapData(selectedSections, dateRange);
 
   // Handle section toggle
   const handleSectionToggle = (sectionId: string) => {
@@ -69,6 +82,37 @@ export default function RoadmapCompletionsPage() {
     );
   };
 
+  // Date range filter component
+  const dateRangeFilter = (
+    <div className="flex items-center gap-3">
+      <CalendarIcon className="h-5 w-5 text-gray-400" />
+      <div className="flex items-center gap-2">
+        <label htmlFor="startDate" className="text-sm text-gray-600">
+          From:
+        </label>
+        <input
+          type="date"
+          id="startDate"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <label htmlFor="endDate" className="text-sm text-gray-600">
+          To:
+        </label>
+        <input
+          type="date"
+          id="endDate"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+    </div>
+  );
+
   return (
     <SectionVisualizationLayout
       title="Roadmap Completions"
@@ -79,6 +123,7 @@ export default function RoadmapCompletionsPage() {
       sectionColors={sectionColors}
       isLoading={loading}
       loadingSectionIds={loadingSectionIds}
+      headerActions={dateRangeFilter}
       sharedVisualization={
         selectedSections.length > 0 && (
           <SectionComparisonChart

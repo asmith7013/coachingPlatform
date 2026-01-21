@@ -1,26 +1,31 @@
 import { useQueries } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { getRoadmapCompletionsBySection, type SectionRoadmapData } from "@/app/actions/scm/roadmaps/roadmap-completions";
+import { getRoadmapCompletionsBySection, type SectionRoadmapData, type DateRange } from "@/app/actions/scm/roadmaps/roadmap-completions";
 
-export type { SectionRoadmapData };
+export type { SectionRoadmapData, DateRange };
 
 /**
  * Query keys for roadmap data
  */
 export const roadmapDataKeys = {
   all: ["roadmap-data"] as const,
-  bySection: (sectionId: string) => [...roadmapDataKeys.all, sectionId] as const,
+  bySection: (sectionId: string, dateRange?: DateRange) =>
+    dateRange
+      ? [...roadmapDataKeys.all, sectionId, dateRange.startDate, dateRange.endDate] as const
+      : [...roadmapDataKeys.all, sectionId] as const,
 };
 
 /**
  * Hook for fetching roadmap completion data for selected sections using React Query
+ * @param selectedSections - Array of section IDs to fetch data for
+ * @param dateRange - Optional date range to filter skill performances
  */
-export function useRoadmapData(selectedSections: string[]) {
+export function useRoadmapData(selectedSections: string[], dateRange?: DateRange) {
   const queries = useQueries({
     queries: selectedSections.map((sectionId) => ({
-      queryKey: roadmapDataKeys.bySection(sectionId),
+      queryKey: roadmapDataKeys.bySection(sectionId, dateRange),
       queryFn: async (): Promise<SectionRoadmapData | null> => {
-        const result = await getRoadmapCompletionsBySection([sectionId]);
+        const result = await getRoadmapCompletionsBySection([sectionId], dateRange);
 
         if (!result.success) {
           console.error(`Failed to fetch roadmap data for ${sectionId}:`, result.error);
