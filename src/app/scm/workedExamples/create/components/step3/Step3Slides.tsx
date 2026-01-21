@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import type { WizardStateHook } from '../../hooks/useWizardState';
 import { SlidePreview } from '../shared/SlidePreview';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
+import { updateDeckSlides } from '@/app/actions/worked-examples/update-deck';
+import { updateDeckMetadata } from '@/app/actions/worked-examples/update-deck-metadata';
 import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
 import { useGoogleOAuthStatus } from '@/hooks/auth/useGoogleOAuthStatus';
 import { useClerk } from '@clerk/nextjs';
@@ -553,47 +555,87 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       setExportPhase('saving');
       setExportProgress({ status: 'exporting', message: 'Saving to database...' });
 
-      const deckData: CreateWorkedExampleDeckInput = {
-        title: title,
-        slug: state.slug,
-        mathConcept: state.mathConcept || state.problemAnalysis?.problemType || 'Math',
-        mathStandard: mathStandard || '',
-        gradeLevel: gradeLevel,
-        unitNumber: unitNumber ?? undefined,
-        lessonNumber: lessonNumber ?? undefined,
-        scopeAndSequenceId: state.scopeAndSequenceId ?? undefined,
-        htmlSlides: slides.map((slide) => ({
-          slideNumber: slide.slideNumber,
-          htmlContent: slide.htmlContent,
-          visualType: slide.visualType,
-          scripts: slide.scripts,
-        })),
-        learningGoals: state.learningGoals.length > 0 ? state.learningGoals : undefined,
-        // Analysis data for deck editing
-        // Cast to schema types (wizard types have more specific visualPlan union, schema stores as flexible JSON)
-        problemAnalysis: state.problemAnalysis as CreateWorkedExampleDeckInput['problemAnalysis'],
-        strategyDefinition: state.strategyDefinition as CreateWorkedExampleDeckInput['strategyDefinition'],
-        scenarios: state.scenarios as CreateWorkedExampleDeckInput['scenarios'],
-        generatedBy: 'ai',
-        sourceImage: state.masteryCheckImage.uploadedUrl ?? undefined,
-        createdBy: 'browser-creator',
-        isPublic: isPublic,
-        googleSlidesUrl: url, // Include the Google Slides URL
-        files: {
-          pageComponent: `src/app/scm/workedExamples/create/${state.slug}`,
-          dataFile: `browser-generated/${state.slug}`,
-        },
-      };
+      let finalSlug = state.slug;
 
-      const saveResult = await saveWorkedExampleDeck(deckData);
+      if (state.editSlug) {
+        // Edit mode: update the existing deck instead of creating a new one
+        // Update metadata
+        const metadataResult = await updateDeckMetadata(state.editSlug, {
+          title: title,
+          gradeLevel: gradeLevel,
+          unitNumber: unitNumber,
+          lessonNumber: lessonNumber,
+          mathStandard: mathStandard || undefined,
+          isPublic: isPublic,
+          learningGoals: state.learningGoals.length > 0 ? state.learningGoals : undefined,
+        });
 
-      if (!saveResult.success) {
-        throw new Error(saveResult.error || 'Failed to save deck');
+        if (!metadataResult.success) {
+          throw new Error(metadataResult.error || 'Failed to update deck metadata');
+        }
+
+        // Update slides
+        const slidesResult = await updateDeckSlides({
+          slug: state.editSlug,
+          htmlSlides: slides.map((slide) => ({
+            slideNumber: slide.slideNumber,
+            htmlContent: slide.htmlContent,
+            visualType: slide.visualType,
+            scripts: slide.scripts,
+          })),
+        });
+
+        if (!slidesResult.success) {
+          throw new Error(slidesResult.error || 'Failed to update deck slides');
+        }
+
+        finalSlug = state.editSlug;
+      } else {
+        // Create mode: save as a new deck
+        const deckData: CreateWorkedExampleDeckInput = {
+          title: title,
+          slug: state.slug,
+          mathConcept: state.mathConcept || state.problemAnalysis?.problemType || 'Math',
+          mathStandard: mathStandard || '',
+          gradeLevel: gradeLevel,
+          unitNumber: unitNumber ?? undefined,
+          lessonNumber: lessonNumber ?? undefined,
+          scopeAndSequenceId: state.scopeAndSequenceId ?? undefined,
+          htmlSlides: slides.map((slide) => ({
+            slideNumber: slide.slideNumber,
+            htmlContent: slide.htmlContent,
+            visualType: slide.visualType,
+            scripts: slide.scripts,
+          })),
+          learningGoals: state.learningGoals.length > 0 ? state.learningGoals : undefined,
+          // Analysis data for deck editing
+          // Cast to schema types (wizard types have more specific visualPlan union, schema stores as flexible JSON)
+          problemAnalysis: state.problemAnalysis as CreateWorkedExampleDeckInput['problemAnalysis'],
+          strategyDefinition: state.strategyDefinition as CreateWorkedExampleDeckInput['strategyDefinition'],
+          scenarios: state.scenarios as CreateWorkedExampleDeckInput['scenarios'],
+          generatedBy: 'ai',
+          sourceImage: state.masteryCheckImage.uploadedUrl ?? undefined,
+          createdBy: 'browser-creator',
+          isPublic: isPublic,
+          googleSlidesUrl: url, // Include the Google Slides URL
+          files: {
+            pageComponent: `src/app/scm/workedExamples/create/${state.slug}`,
+            dataFile: `browser-generated/${state.slug}`,
+          },
+        };
+
+        const saveResult = await saveWorkedExampleDeck(deckData);
+
+        if (!saveResult.success) {
+          throw new Error(saveResult.error || 'Failed to save deck');
+        }
+
+        finalSlug = saveResult.slug || state.slug;
       }
 
       // Success!
       setExportPhase('complete');
-      setSavedSlug(saveResult.slug || state.slug);
+      setSavedSlug(finalSlug);
       clearPersistedState();
       setExportProgress({ status: 'success', message: 'Exported!' });
       setExportStartTime(null);
