@@ -189,6 +189,7 @@ export function SCMNav() {
   return (
     <Disclosure
       as="nav"
+      id="scm-nav"
       className={`bg-gray-900 shadow-lg sticky top-0 z-50 transition-transform duration-300 ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
