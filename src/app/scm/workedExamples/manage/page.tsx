@@ -327,6 +327,9 @@ export default function ManageWorkedExamples() {
                 <th className="px-3 py-3 text-left font-medium text-gray-700 w-24">
                   Status
                 </th>
+                <th className="px-3 py-3 text-left font-medium text-gray-700 w-36">
+                  Created
+                </th>
                 <th className="px-3 py-3 text-right font-medium text-gray-700 w-32">
                   Actions
                 </th>
@@ -505,6 +508,36 @@ export default function ManageWorkedExamples() {
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">
                           Active
                         </span>
+                      )}
+                    </td>
+
+                    {/* Created */}
+                    <td className="px-3 py-2 text-gray-500 text-xs">
+                      {deck.createdAt ? (
+                        <>
+                          <div>
+                            {new Date(deck.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
+                          </div>
+                          <div className="text-gray-400">
+                            {new Date(deck.createdAt).toLocaleTimeString(
+                              "en-US",
+                              {
+                                hour: "numeric",
+                                minute: "2-digit",
+                                hour12: true,
+                              },
+                            )}
+                          </div>
+                        </>
+                      ) : (
+                        "-"
                       )}
                     </td>
 
