@@ -4,3 +4,4 @@ export { updateDeckSlides } from './update-deck';
 export { getDeckBySlug, getDeckById } from './get-deck';
 export { listWorkedExampleDecks } from './list-decks';
 export { deactivateDeck, reactivateDeck, toggleDeckDeactivated } from './toggle-deactivated';
+export { updateDeckMetadata } from './update-deck-metadata';

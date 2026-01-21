@@ -26,7 +26,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: "Solves Coaching",
-  description: "Your personal AI coaching platform",
+  description: "Studio Classroom Tools",
 };
 
 export default function RootLayout({

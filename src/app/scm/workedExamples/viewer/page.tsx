@@ -8,7 +8,7 @@ import { useWorkedExampleDecks, useGradeUnitPairs, workedExampleDecksKeys } from
 import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
 import { PresentationModal } from "../presentations";
 import { ConfirmationDialog } from "@/components/composed/dialogs/ConfirmationDialog";
-import { ChevronDownIcon, ChevronRightIcon, XMarkIcon, ArchiveBoxIcon, ArrowPathIcon, ShieldExclamationIcon, BookOpenIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ChevronRightIcon, XMarkIcon, ArchiveBoxIcon, ArrowPathIcon, ShieldExclamationIcon, BookOpenIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { deactivateDeck } from "@/app/actions/worked-examples";
 import Link from "next/link";
 import { PLANNING_STEPS } from "../presentations/planningSteps";
@@ -426,11 +426,18 @@ export default function PresentationsList() {
               ← All Grades
             </button>
             <Link
+              href="/scm/workedExamples/manage"
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <PencilSquareIcon className="w-4 h-4" />
+              Manage
+            </Link>
+            <Link
               href="/scm/workedExamples/deactivated"
               className="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <ArchiveBoxIcon className="w-4 h-4" />
-              View Deactivated
+              Deactivated
             </Link>
           </div>
         </div>
