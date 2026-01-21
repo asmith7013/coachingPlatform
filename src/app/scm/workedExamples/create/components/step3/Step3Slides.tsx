@@ -10,6 +10,7 @@ import { useClerk } from '@clerk/nextjs';
 import { SlideThumbnails } from './SlideThumbnails';
 import { SlidesFooter, type EditImage } from './SlidesFooter';
 import { ExportSuccessModal } from './ExportSuccessModal';
+import { ExportMetadataModal, type ExportMetadata } from './ExportMetadataModal';
 import { ReauthModal } from './ReauthModal';
 import { EditContextCard } from '../shared/EditContextCard';
 import { EditConfirmModal } from './EditConfirmModal';
@@ -70,6 +71,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
   const [showExportSuccessModal, setShowExportSuccessModal] = useState(false);
+  const [showExportMetadataModal, setShowExportMetadataModal] = useState(false);
   const [showEditConfirmModal, setShowEditConfirmModal] = useState(false);
 
   const { slides, selectedSlideIndex, slidesToEdit, contextSlides } = state;
@@ -122,6 +124,33 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       setShowReauthModal(true);
       return;
     }
+    // Show metadata modal before exporting
+    setShowExportMetadataModal(true);
+  };
+
+  const handleMetadataConfirm = (metadata: ExportMetadata) => {
+    // Update wizard state with edited metadata
+    if (metadata.title !== state.title) {
+      wizard.setTitle(metadata.title);
+    }
+    if (metadata.gradeLevel !== state.gradeLevel) {
+      wizard.setGradeLevel(metadata.gradeLevel);
+    }
+    if (metadata.unitNumber !== state.unitNumber) {
+      wizard.setUnitNumber(metadata.unitNumber);
+    }
+    if (metadata.lessonNumber !== state.lessonNumber) {
+      wizard.setLessonNumber(metadata.lessonNumber);
+    }
+    if (metadata.mathStandard !== state.mathStandard) {
+      wizard.setMathStandard(metadata.mathStandard);
+    }
+    if (metadata.isPublic !== state.isPublic) {
+      wizard.setIsPublic(metadata.isPublic);
+    }
+
+    // Close modal and proceed with export
+    setShowExportMetadataModal(false);
     handleExportToSlides();
   };
 
@@ -840,6 +869,21 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         isOpen={showReauthModal}
         onClose={() => setShowReauthModal(false)}
         onReauth={handleReauth}
+      />
+
+      {/* Export Metadata Modal */}
+      <ExportMetadataModal
+        isOpen={showExportMetadataModal}
+        onClose={() => setShowExportMetadataModal(false)}
+        onConfirm={handleMetadataConfirm}
+        initialValues={{
+          title: state.title,
+          gradeLevel: state.gradeLevel,
+          unitNumber: state.unitNumber,
+          lessonNumber: state.lessonNumber,
+          mathStandard: state.mathStandard || '',
+          isPublic: state.isPublic,
+        }}
       />
 
       {/* Export Success Modal */}
