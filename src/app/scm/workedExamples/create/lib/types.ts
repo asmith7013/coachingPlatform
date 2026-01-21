@@ -353,6 +353,9 @@ export interface Scenario {
   // Graph plan for coordinate graphs (kept for backward compatibility)
   // Only when visualType is 'svg-visual' and svgSubtype is 'coordinate-graph'
   graphPlan?: GraphPlan;
+  // Diagram evolution - shows how the visual develops step-by-step for THIS scenario's numbers
+  // Each scenario needs its own diagramEvolution with its specific values in the ASCII art
+  diagramEvolution?: DiagramEvolution;
 }
 
 // Response from analyze-problem action

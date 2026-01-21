@@ -426,6 +426,11 @@ export function buildGenerateSlidesPrompt(
       keyPoints: { label: string; x: number; y: number; dataX: number; dataY: number }[];
       annotations: { type: string; from?: number; to?: number; label: string; position?: string }[];
     };
+    diagramEvolution?: {
+      initialState: string;
+      keyElements: { element: string; represents: string }[];
+      steps: { header: string; ascii: string; changes: string[] }[];
+    };
   }[]
 ): string {
   // Build graph plan section if visualType is svg-visual with coordinate-graph subtype
@@ -433,6 +438,9 @@ export function buildGenerateSlidesPrompt(
   let graphPlanSection = '';
   const workedExampleGraphPlan = scenarios[0]?.graphPlan;
   const graphPlanToUse = workedExampleGraphPlan || problemAnalysis.graphPlan;
+
+  // CRITICAL: Use Scenario 1's diagramEvolution (worked example) for slides, NOT mastery check's
+  const diagramEvolutionToUse = scenarios[0]?.diagramEvolution;
 
   if (problemAnalysis.visualType === 'svg-visual' && problemAnalysis.svgSubtype === 'coordinate-graph' && graphPlanToUse) {
     const gp = graphPlanToUse;
@@ -516,17 +524,17 @@ Generate HTML slides for this worked example.
 - Visual Type: ${problemAnalysis.visualType}
 - Solution Steps:
 ${problemAnalysis.solution.map(s => `  ${s.step}. ${s.description} (${s.reasoning})`).join('\n')}
-${graphPlanSection}${problemAnalysis.diagramEvolution ? `
+${graphPlanSection}${diagramEvolutionToUse ? `
 ## 📊 DIAGRAM EVOLUTION (Teacher-Approved - FOLLOW THIS EXACTLY)
 
 **The teacher has approved this step-by-step visual progression. Your slides MUST follow this evolution.**
 
 ### INITIAL STATE (Problem Setup - Slide 3)
 \`\`\`
-${problemAnalysis.diagramEvolution.initialState}
+${diagramEvolutionToUse.initialState}
 \`\`\`
 
-${problemAnalysis.diagramEvolution.steps.map((step, i) => `### ${step.header} (Slide ${4 + i})
+${diagramEvolutionToUse.steps.map((step, i) => `### ${step.header} (Slide ${4 + i})
 \`\`\`
 ${step.ascii}
 \`\`\`

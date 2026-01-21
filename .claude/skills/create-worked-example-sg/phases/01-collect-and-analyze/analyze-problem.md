@@ -115,6 +115,14 @@ If the problem requires a coordinate graph (`visualType: svg-visual`, `svgSubtyp
 
 Example: If Scenario 1 uses "y = 25x + 50" and Scenario 2 uses "y = 15x + 30", each scenario needs its own complete graphPlan with those specific equations, calculated endpoints, and appropriate scale.
 
+**IMPORTANT: Scenario 1 Diagram Evolution**
+Scenario 1 is the worked example, so it MUST have its own `diagramEvolution` with its specific numbers in the ASCII art:
+- The `diagramEvolution` shows how the visual develops step-by-step for Scenario 1's context/numbers
+- Scenario 1's `diagramEvolution` will be used for the worked example slides (slides 3-6)
+- Scenarios 2 and 3 do NOT need `diagramEvolution` (they are practice problems on the printable slide)
+
+Example: If the mastery check divides 24 among 4 groups but Scenario 1 divides 30 nuggets among 5 students, Scenario 1 needs its own `diagramEvolution` showing 30 ÷ 5 = 6 in the ASCII art, NOT the mastery check's 24 ÷ 4 = 6.
+
 ### STEP 6: Determine Visual Type
 
 **CRITICAL: ALL graphics/diagrams MUST use SVG.** The only exception is simple HTML tables.
@@ -283,6 +291,7 @@ The number of steps in diagramEvolution MUST match strategyDefinition.moves.leng
     - [ ] **EACH scenario has its own graphPlan** with that scenario's specific equations and values
     - [ ] All graphPlans have: equations with slope/y-intercept, proper scale, and annotations
     - [ ] **keyPoints array includes:** y-intercepts, solution points, and any points to be labeled on the graph
+- [ ] **Scenario 1 has its own diagramEvolution** with Scenario 1's specific values in the ASCII art (not the mastery check's values)
 
 ---
 
@@ -290,8 +299,9 @@ The number of steps in diagramEvolution MUST match strategyDefinition.moves.leng
 
 **Your response MUST include ALL of these fields or it will fail validation:**
 
-1. **problemAnalysis.diagramEvolution** - ALWAYS REQUIRED, no exceptions
-   - `initialState`: ASCII showing Problem Setup slide (axes, empty diagram, etc.)
+1. **scenarios[0].diagramEvolution** - SCENARIO 1 MUST HAVE diagramEvolution (used for worked example slides)
+   - Scenario 1 is the worked example, so it needs `diagramEvolution` with its specific numbers
+   - `initialState`: ASCII showing Problem Setup slide for Scenario 1's numbers
    - `keyElements`: Array explaining each element and what it represents mathematically
    - `steps`: Array with one entry per strategy move (2-3 entries)
    - Each step needs: `header`, `ascii`, `changes[]`
@@ -300,7 +310,7 @@ The number of steps in diagramEvolution MUST match strategyDefinition.moves.leng
 
 3. **scenarios** - Must have exactly 3 scenarios with different contexts
 
-**If you skip diagramEvolution, the teacher cannot preview how the slides will look!**
+**If you skip diagramEvolution on Scenario 1, validation will fail!**
 
 ---
 

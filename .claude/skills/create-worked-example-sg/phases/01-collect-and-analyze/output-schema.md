@@ -90,7 +90,18 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
       "description": "Full problem statement",
       "problemReminder": "≤15 word summary for slides",
       "visualPlan": { "type": "appropriate-visual-type", "...": "..." },
-      "graphPlan": { "...": "only if coordinate-graph" }
+      "graphPlan": { "...": "only if coordinate-graph" },
+      "diagramEvolution": {
+        "initialState": "ASCII showing Problem Setup for THIS scenario's numbers",
+        "keyElements": [{ "element": "...", "represents": "..." }],
+        "steps": [
+          {
+            "header": "STEP 1: VERB",
+            "ascii": "ASCII showing this scenario's values after step 1",
+            "changes": ["What changed using this scenario's numbers"]
+          }
+        ]
+      }
     }
   ]
 }
@@ -102,9 +113,9 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
 
 | Field | Description |
 |-------|-------------|
-| `problemAnalysis.diagramEvolution` | Shows how visual develops step-by-step (includes initial state, key elements, and step progression) |
 | `strategyDefinition.moves` | 2-3 moves with verb, description, result |
 | `scenarios` | Exactly 3 scenarios with different contexts |
+| `scenarios[0].diagramEvolution` | Scenario 1 (worked example) needs its own diagramEvolution with its specific numbers in the ASCII art |
 
 ### Conditional Fields:
 

@@ -223,14 +223,23 @@ export async function analyzeProblem(input: AnalyzeProblemInput): Promise<Analyz
       };
     }
 
+    // Validate that Scenario 1 has diagramEvolution (required for slide generation)
+    if (!parsed.scenarios[0]?.diagramEvolution) {
+      console.log('[analyzeProblem] Error: Scenario 1 missing diagramEvolution');
+      return {
+        success: false,
+        error: 'Scenario 1 is missing diagramEvolution. Please re-analyze the problem.',
+      };
+    }
+
     console.log('[analyzeProblem] Success! Strategy:', parsed.strategyDefinition.name);
     console.log('[analyzeProblem] Scenarios count:', parsed.scenarios.length);
-    console.log('[analyzeProblem] Has diagramEvolution:', !!parsed.problemAnalysis.diagramEvolution);
+    console.log('[analyzeProblem] Scenario 1 has diagramEvolution:', !!parsed.scenarios[0]?.diagramEvolution);
     console.log('[analyzeProblem] Has diagramPreview (legacy):', !!parsed.problemAnalysis.diagramPreview);
-    if (parsed.problemAnalysis.diagramEvolution) {
-      console.log('[analyzeProblem] diagramEvolution.initialState length:', parsed.problemAnalysis.diagramEvolution.initialState?.length || 0);
-      console.log('[analyzeProblem] diagramEvolution.keyElements count:', parsed.problemAnalysis.diagramEvolution.keyElements?.length || 0);
-      console.log('[analyzeProblem] diagramEvolution.steps count:', parsed.problemAnalysis.diagramEvolution.steps?.length || 0);
+    if (parsed.scenarios[0]?.diagramEvolution) {
+      console.log('[analyzeProblem] diagramEvolution.initialState length:', parsed.scenarios[0].diagramEvolution.initialState?.length || 0);
+      console.log('[analyzeProblem] diagramEvolution.keyElements count:', parsed.scenarios[0].diagramEvolution.keyElements?.length || 0);
+      console.log('[analyzeProblem] diagramEvolution.steps count:', parsed.scenarios[0].diagramEvolution.steps?.length || 0);
     }
 
     return {
