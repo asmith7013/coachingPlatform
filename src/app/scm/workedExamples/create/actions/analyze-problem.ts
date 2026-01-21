@@ -190,6 +190,27 @@ export async function analyzeProblem(input: AnalyzeProblemInput): Promise<Analyz
       scenarios: Scenario[];
     };
 
+    // Sanitize any fields that should be strings but might be objects (defensive against LLM errors)
+    // This prevents React error #31 "Objects are not valid as a React child"
+    const sanitizeStringField = (value: unknown): string => {
+      if (value === null || value === undefined) return '';
+      if (typeof value === 'string') return value;
+      if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+      return JSON.stringify(value);
+    };
+
+    // Sanitize scenarios - ensure text fields are strings
+    if (parsed.scenarios && Array.isArray(parsed.scenarios)) {
+      parsed.scenarios = parsed.scenarios.map(scenario => ({
+        ...scenario,
+        name: sanitizeStringField(scenario.name),
+        context: sanitizeStringField(scenario.context),
+        themeIcon: sanitizeStringField(scenario.themeIcon),
+        numbers: sanitizeStringField(scenario.numbers),
+        description: sanitizeStringField(scenario.description),
+      }));
+    }
+
     // Validate required fields
     if (!parsed.problemAnalysis || !parsed.strategyDefinition || !parsed.scenarios) {
       console.log('[analyzeProblem] Error: Missing required fields');

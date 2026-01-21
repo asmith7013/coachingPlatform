@@ -8,6 +8,15 @@ interface GraphPlanDisplayProps {
   compact?: boolean;
 }
 
+// Helper to safely render a value that might be an object
+function safeRender(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  return JSON.stringify(value);
+}
+
 export function GraphPlanDisplay({ graphPlan, compact = false }: GraphPlanDisplayProps) {
   return (
     <div className={compact ? "space-y-3" : ""}>
@@ -22,12 +31,12 @@ export function GraphPlanDisplay({ graphPlan, compact = false }: GraphPlanDispla
               <div className="flex items-center gap-2 mb-1">
                 <span
                   className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: eq.color }}
+                  style={{ backgroundColor: typeof eq.color === 'string' ? eq.color : '#888' }}
                 />
                 <code className="text-gray-700 bg-white px-1.5 py-0.5 rounded text-xs border border-gray-200">
-                  {eq.equation}
+                  {safeRender(eq.equation)}
                 </code>
-                <span className="text-gray-400 text-xs">m={eq.slope}, b={eq.yIntercept}</span>
+                <span className="text-gray-400 text-xs">m={safeRender(eq.slope)}, b={safeRender(eq.yIntercept)}</span>
               </div>
               {/* Line Endpoints */}
               <div className="grid grid-cols-2 gap-2 text-xs ml-5">
@@ -35,7 +44,7 @@ export function GraphPlanDisplay({ graphPlan, compact = false }: GraphPlanDispla
                   <span className="text-gray-500">Start:</span>
                   {eq.startPoint ? (
                     <code className="text-green-700 bg-green-50 px-1 py-0.5 rounded text-xs">
-                      ({eq.startPoint.x}, {eq.startPoint.y})
+                      ({safeRender(eq.startPoint.x)}, {safeRender(eq.startPoint.y)})
                     </code>
                   ) : (
                     <span className="text-amber-600 text-xs">missing</span>
@@ -45,7 +54,7 @@ export function GraphPlanDisplay({ graphPlan, compact = false }: GraphPlanDispla
                   <span className="text-gray-500">End:</span>
                   {eq.endPoint ? (
                     <code className="text-blue-700 bg-blue-50 px-1 py-0.5 rounded text-xs">
-                      ({eq.endPoint.x}, {eq.endPoint.y})
+                      ({safeRender(eq.endPoint.x)}, {safeRender(eq.endPoint.y)})
                     </code>
                   ) : (
                     <span className="text-amber-600 text-xs">missing</span>
@@ -72,9 +81,9 @@ export function GraphPlanDisplay({ graphPlan, compact = false }: GraphPlanDispla
           <div className="space-y-1">
             {graphPlan.keyPoints.map((pt, ptIdx) => (
               <div key={ptIdx} className="text-sm text-gray-600 flex items-center gap-2">
-                <span className="font-medium">{pt.label}:</span>
+                <span className="font-medium">{safeRender(pt.label)}:</span>
                 <code className="text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded text-xs border border-purple-200">
-                  ({pt.x}, {pt.y})
+                  ({safeRender(pt.x)}, {safeRender(pt.y)})
                 </code>
               </div>
             ))}
@@ -89,10 +98,10 @@ export function GraphPlanDisplay({ graphPlan, compact = false }: GraphPlanDispla
           <div className="space-y-1">
             {graphPlan.annotations.map((ann, annIdx) => (
               <div key={annIdx} className="text-sm text-gray-600 flex items-center gap-2">
-                <Badge intent="info" size="xs">{ann.type}</Badge>
-                <span>{ann.label}</span>
+                <Badge intent="info" size="xs">{safeRender(ann.type)}</Badge>
+                <span>{safeRender(ann.label)}</span>
                 {ann.from !== undefined && ann.to !== undefined && (
-                  <span className="text-gray-500 text-xs">(y: {ann.from} → {ann.to})</span>
+                  <span className="text-gray-500 text-xs">(y: {safeRender(ann.from)} → {safeRender(ann.to)})</span>
                 )}
               </div>
             ))}

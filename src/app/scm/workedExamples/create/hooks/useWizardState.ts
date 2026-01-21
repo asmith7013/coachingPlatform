@@ -407,6 +407,13 @@ function loadPersistedState(scopeAndSequenceId: string | null): WizardState | nu
       }));
     }
 
+    // Type guard: ensure learningGoals contains only strings (filter out corrupted data)
+    if (parsed.learningGoals && Array.isArray(parsed.learningGoals)) {
+      parsed.learningGoals = parsed.learningGoals
+        .map((g: unknown) => (typeof g === 'string' ? g : null))
+        .filter((g: string | null): g is string => g !== null);
+    }
+
     return parsed;
   } catch {
     return null;

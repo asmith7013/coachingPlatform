@@ -569,7 +569,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                 <h4 className="text-sm font-semibold text-gray-700 mb-3">Learning Targets</h4>
                 <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
                   {state.learningGoals.map((goal, i) => (
-                    <li key={i}>{goal}</li>
+                    <li key={i}>{typeof goal === 'string' ? goal : JSON.stringify(goal)}</li>
                   ))}
                 </ul>
               </div>
