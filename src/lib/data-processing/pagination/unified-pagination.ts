@@ -92,7 +92,7 @@ export async function executePaginatedQuery<T extends BaseDocument>(
       query.exec(),
       model.countDocuments(cleanedFilters)
     ]);
-    
+
     // Apply toJSON() to each document to trigger transforms
     const transformedItems = documents.map(doc => doc.toJSON());
     

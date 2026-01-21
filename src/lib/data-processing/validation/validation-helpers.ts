@@ -1,10 +1,10 @@
 import { ZodSchema } from 'zod';
-import { validateSafe } from '@/lib/data-processing/validation/zod-validation';
+import { fromZodError } from 'zod-validation-error';
 import { handleClientError } from '@error/handlers/client';
 
 /**
  * Validates JSON string against schema with enhanced error handling
- * Reuses existing validateSafe from transformer core
+ * Returns human-readable validation errors
  */
 export function validateJsonString<T>(
   jsonString: string,
@@ -12,20 +12,22 @@ export function validateJsonString<T>(
 ): { success: true; data: T } | { success: false; error: string } {
   try {
     const parsed = JSON.parse(jsonString);
-    const validated = validateSafe(schema, parsed);
-    
-    if (!validated) {
-      return { 
-        success: false, 
-        error: 'Invalid data format. Please check required fields and data types.' 
+    const result = schema.safeParse(parsed);
+
+    if (!result.success) {
+      // Convert Zod error to human-readable format
+      const validationError = fromZodError(result.error);
+      return {
+        success: false,
+        error: validationError.message
       };
     }
-    
-    return { success: true, data: validated };
+
+    return { success: true, data: result.data };
   } catch (error) {
     const errorMessage = handleClientError(error, 'validateJsonString');
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: error instanceof SyntaxError ? 'Invalid JSON format' : errorMessage
     };
   }
@@ -33,7 +35,7 @@ export function validateJsonString<T>(
 
 /**
  * Validates array of items with partial success support
- * Uses existing validateSafe for individual items
+ * Returns human-readable errors for failed items
  */
 export function validateArrayWithPartialSuccess<T>(
   data: unknown[],
@@ -43,21 +45,29 @@ export function validateArrayWithPartialSuccess<T>(
     if (!Array.isArray(data)) {
       return { success: false, error: 'Data must be an array' };
     }
-    
-    // Use existing validateSafe for each item
-    const validatedItems = data
-      .map(item => validateSafe(schema, item))
-      .filter((item): item is T => item !== null);
-    
+
+    const validatedItems: T[] = [];
+    const errors: string[] = [];
+
+    for (let i = 0; i < data.length; i++) {
+      const result = schema.safeParse(data[i]);
+      if (result.success) {
+        validatedItems.push(result.data);
+      } else {
+        const validationError = fromZodError(result.error);
+        errors.push(`Item ${i + 1}: ${validationError.message}`);
+      }
+    }
+
     if (validatedItems.length === 0) {
-      return { 
-        success: false, 
-        error: 'No valid items found. Please check required fields and data types.' 
+      return {
+        success: false,
+        error: errors.length > 0 ? errors[0] : 'No valid items found'
       };
     }
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       data: validatedItems,
       validCount: validatedItems.length,
       totalCount: data.length

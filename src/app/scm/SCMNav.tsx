@@ -131,6 +131,12 @@ export function SCMNav() {
       items: [] as NavItem[],
       sections: [
         {
+          section: "Students",
+          items: [
+            { href: "/scm/admin/students", label: "Manage Students", description: "View, edit, and add students" },
+          ],
+        },
+        {
           section: "Podsie Bulk",
           items: [
             { href: "/scm/podsie/import-attendance", label: "Import Attendance", description: "Import attendance data from Podsie" },

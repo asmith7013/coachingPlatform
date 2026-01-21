@@ -188,16 +188,14 @@ export async function getRoadmapCompletionsBySection(
           ).length;
 
           // Skills from diagnostic (in masteredSkills but not in skillPerformances)
-          // Note: Diagnostic skills don't have dates, so we include them regardless of date range
+          // Always shown regardless of date range
           const skillPerformanceCodes = new Set(allSkillPerformances.map((sp) => sp.skillCode));
-          const masteredFromDiagnostic = dateRange
-            ? 0 // Don't count diagnostic skills when filtering by date
-            : [...masteredSkillsSet].filter((skill) => !skillPerformanceCodes.has(skill)).length;
+          const masteredFromDiagnostic = [...masteredSkillsSet].filter(
+            (skill) => !skillPerformanceCodes.has(skill)
+          ).length;
 
-          // Calculate total mastered within the date range
-          const totalMastered = dateRange
-            ? masteredFromPractice // Only count practice-mastered skills when filtering by date
-            : masteredSkillsSet.size;
+          // Total mastered = diagnostic baseline + practice-mastered within date range
+          const totalMastered = masteredFromDiagnostic + masteredFromPractice;
 
           return {
             id: student._id.toString(),

@@ -90,7 +90,7 @@ export function useEntityList<T extends BaseDocument>({
         success: true
       };
     }
-    
+
     // Transform paginated response
     const items = extractItems(data);
     const validatedItems = validateArraySafe(schema, items);
