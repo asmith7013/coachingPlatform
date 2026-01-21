@@ -150,8 +150,9 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     }
 
     // Close modal and proceed with export
+    // Pass metadata directly since state updates are async
     setShowExportMetadataModal(false);
-    handleExportToSlides();
+    handleExportToSlides(metadata);
   };
 
   // Handle starting edit
@@ -332,13 +333,23 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   };
 
   // Combined: Export to Google Slides + Save to database
-  const handleExportToSlides = async () => {
+  // Accepts optional metadata override for values edited in the modal
+  // (since React state updates are async, we pass them directly)
+  const handleExportToSlides = async (metadataOverride?: ExportMetadata) => {
+    // Use override values if provided, otherwise fall back to state
+    const title = metadataOverride?.title ?? state.title;
+    const gradeLevel = metadataOverride?.gradeLevel ?? state.gradeLevel;
+    const unitNumber = metadataOverride?.unitNumber ?? state.unitNumber;
+    const lessonNumber = metadataOverride?.lessonNumber ?? state.lessonNumber;
+    const mathStandard = metadataOverride?.mathStandard ?? state.mathStandard;
+    const isPublic = metadataOverride?.isPublic ?? state.isPublic;
+
     // Validate inputs
-    if (!state.gradeLevel) {
+    if (!gradeLevel) {
       setError('Grade level is required');
       return;
     }
-    if (!state.title.trim()) {
+    if (!title.trim()) {
       setError('Title is required');
       return;
     }
@@ -506,10 +517,10 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
       // Build concise title for Google Slides: "SGI 6.4.2: Strategy Name"
       const exportTitle = buildExportTitle({
-        gradeLevel: state.gradeLevel,
-        unitNumber: state.unitNumber,
-        lessonNumber: state.lessonNumber,
-        title: state.strategyDefinition?.name || state.title,
+        gradeLevel: gradeLevel,
+        unitNumber: unitNumber,
+        lessonNumber: lessonNumber,
+        title: state.strategyDefinition?.name || title,
       });
 
       const response = await fetch('/api/scm/worked-examples/export-google-slides', {
@@ -537,13 +548,13 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       setExportProgress({ status: 'exporting', message: 'Saving to database...' });
 
       const deckData: CreateWorkedExampleDeckInput = {
-        title: state.title,
+        title: title,
         slug: state.slug,
         mathConcept: state.mathConcept || state.problemAnalysis?.problemType || 'Math',
-        mathStandard: state.mathStandard || '',
-        gradeLevel: state.gradeLevel,
-        unitNumber: state.unitNumber ?? undefined,
-        lessonNumber: state.lessonNumber ?? undefined,
+        mathStandard: mathStandard || '',
+        gradeLevel: gradeLevel,
+        unitNumber: unitNumber ?? undefined,
+        lessonNumber: lessonNumber ?? undefined,
         scopeAndSequenceId: state.scopeAndSequenceId ?? undefined,
         htmlSlides: slides.map((slide) => ({
           slideNumber: slide.slideNumber,
@@ -560,7 +571,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         generatedBy: 'ai',
         sourceImage: state.masteryCheckImage.uploadedUrl ?? undefined,
         createdBy: 'browser-creator',
-        isPublic: state.isPublic,
+        isPublic: isPublic,
         googleSlidesUrl: url, // Include the Google Slides URL
         files: {
           pageComponent: `src/app/scm/workedExamples/create/${state.slug}`,
