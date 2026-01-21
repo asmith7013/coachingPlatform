@@ -384,6 +384,7 @@
 │   │   │       ├── list-decks.ts
 │   │   │       ├── save-deck.ts
 │   │   │       ├── toggle-deactivated.ts
+│   │   │       ├── update-deck-metadata.ts
 │   │   │       ├── update-deck.ts
 │   │   │       └── update-google-slides-url.ts
 │   │   ├── analytics
@@ -1081,6 +1082,8 @@
 │   │   │       │   ├── useDeactivatedDecks.ts
 │   │   │       │   ├── useGradeUnitPairs.ts
 │   │   │       │   └── useWorkedExampleDecks.ts
+│   │   │       ├── manage
+│   │   │       │   └── page.tsx
 │   │   │       ├── page.tsx
 │   │   │       ├── presentations
 │   │   │       │   ├── PresentationModal.tsx
@@ -2286,4 +2289,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-680 directories, 1607 files
+681 directories, 1609 files

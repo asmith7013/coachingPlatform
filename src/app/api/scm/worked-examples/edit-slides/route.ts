@@ -48,9 +48,16 @@ export async function POST(request: NextRequest) {
     const hasText = editInstructions?.trim();
     const hasImages = images && images.length > 0;
 
-    if (!slidesToEdit || slidesToEdit.length === 0 || (!hasText && !hasImages)) {
+    if (!slidesToEdit || slidesToEdit.length === 0) {
       return NextResponse.json(
-        { error: 'Missing required fields: slidesToEdit (non-empty array) and either editInstructions or images' },
+        { error: 'Please select at least one slide to edit. Click a slide thumbnail to select it for editing.' },
+        { status: 400 }
+      );
+    }
+
+    if (!hasText && !hasImages) {
+      return NextResponse.json(
+        { error: 'Please provide edit instructions or attach an image showing the changes you want.' },
         { status: 400 }
       );
     }
@@ -185,7 +192,7 @@ IMPORTANT:
     } catch {
       console.error('[edit-slides] Failed to parse response:', responseText.slice(0, 500));
       return NextResponse.json(
-        { error: 'Failed to parse AI response as JSON array' },
+        { error: 'The AI response could not be processed. Please try again with clearer edit instructions.' },
         { status: 500 }
       );
     }

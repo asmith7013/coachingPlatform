@@ -220,12 +220,18 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     // Need either prompt text or images
     const hasPrompt = aiEditPrompt.trim();
     const hasImages = aiEditImages.length > 0;
-    if (!hasPrompt && !hasImages) return;
+    if (!hasPrompt && !hasImages) {
+      setAiError('Please enter edit instructions or attach an image showing the changes you want.');
+      return;
+    }
 
     // Determine which slides to edit
     const useMultiEdit = slidesToEdit.length > 0;
 
-    if (!useMultiEdit && !currentSlide) return;
+    if (!useMultiEdit && !currentSlide) {
+      setAiError('Please select at least one slide to edit. Click a slide thumbnail to select it.');
+      return;
+    }
 
     setIsAiLoading(true);
     setAiEditStartTime(Date.now());
