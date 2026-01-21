@@ -76,7 +76,9 @@ function formatLessonDisplay(lesson: LessonOption): string {
 export function Step1Inputs({ wizard }: Step1InputsProps) {
   const { state, isHydrated, savedSessions, loadSession, deleteSession, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setSection, setScopeAndSequenceId, setLearningGoals, setMasteryImage, setUploadedImageUrl, addAdditionalImage, removeAdditionalImage, setAdditionalImageUrl, setAdditionalContext, setAnalysis, clearAnalysis, setLoadingProgress, setError, nextStep } = wizard;
 
-  const [learningGoalText, setLearningGoalText] = useState(state.learningGoals.join('\n'));
+  const [learningGoalText, setLearningGoalText] = useState(
+    state.learningGoals.map(g => typeof g === 'string' ? g : JSON.stringify(g)).join('\n')
+  );
   const [selectedLesson, setSelectedLesson] = useState<LessonOption | null>(null);
   const [draftViewState, setDraftViewState] = useState<DraftViewState>('initial');
   const [isEditingLearningTargets, setIsEditingLearningTargets] = useState(false);
@@ -635,7 +637,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                     onClick={() => {
                       if (!isEditingLearningTargets) {
                         // Entering edit mode - sync textarea with current targets
-                        setLearningGoalText(state.learningGoals.join('\n'));
+                        setLearningGoalText(state.learningGoals.map(g => typeof g === 'string' ? g : JSON.stringify(g)).join('\n'));
                       } else {
                         // Exiting edit mode - explicitly save changes
                         const goals = learningGoalText
@@ -672,7 +674,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                   // Always show state.learningGoals (includes user edits)
                   <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
                     {state.learningGoals.map((target, i) => (
-                      <li key={i}>{target}</li>
+                      <li key={i}>{typeof target === 'string' ? target : JSON.stringify(target)}</li>
                     ))}
                   </ul>
                 ) : (
