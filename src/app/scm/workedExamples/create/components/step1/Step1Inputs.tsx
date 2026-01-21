@@ -282,17 +282,25 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     [addAdditionalImage, setError]
   );
 
-  // Parse learning goals from textarea
+  // Parse learning goals from textarea - only update local state while typing
+  // The actual wizard state is updated on blur via handleLearningGoalsBlur
   const handleLearningGoalsChange = useCallback(
     (text: string) => {
       setLearningGoalText(text);
-      const goals = text
+    },
+    []
+  );
+
+  // Save learning goals to wizard state when user finishes editing (on blur)
+  const handleLearningGoalsBlur = useCallback(
+    () => {
+      const goals = learningGoalText
         .split('\n')
         .map((g) => g.trim())
         .filter((g) => g.length > 0);
       setLearningGoals(goals);
     },
-    [setLearningGoals]
+    [learningGoalText, setLearningGoals]
   );
 
   // Analyze the problem
@@ -652,6 +660,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                     <MarkdownTextarea
                       value={learningGoalText}
                       onChange={handleLearningGoalsChange}
+                      onBlur={handleLearningGoalsBlur}
                       label=""
                       placeholder="e.g., I can solve equations like **2x + 3 = 7** using inverse operations"
                       hint="One goal per line. Use markdown for formatting."
@@ -672,6 +681,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                     <MarkdownTextarea
                       value={learningGoalText}
                       onChange={handleLearningGoalsChange}
+                      onBlur={handleLearningGoalsBlur}
                       label="Add Learning Targets"
                       placeholder="e.g., I can solve equations like **2x + 3 = 7** using inverse operations"
                       hint="One goal per line. Use markdown for formatting."

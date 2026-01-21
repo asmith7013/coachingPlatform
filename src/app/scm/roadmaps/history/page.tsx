@@ -672,10 +672,10 @@ export default function AssessmentHistoryPage() {
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%]">
                         Section
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%]">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[12%]">
                         Skill
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[25%]">
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[23%]">
                         Date
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -699,12 +699,10 @@ export default function AssessmentHistoryPage() {
                           <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                             {row.section}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-900">
-                            <div className="truncate max-w-32" title={row.skillName}>
-                              {row.skillCode}
-                            </div>
+                          <td className="px-4 py-3 text-sm text-gray-900" title={row.skillName}>
+                            {row.skillCode}
                           </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-4 py-3 text-sm text-gray-500">
                             {row.dateCompleted ? (() => {
                               const date = new Date(row.dateCompleted);
                               const today = new Date();
@@ -818,7 +816,7 @@ export default function AssessmentHistoryPage() {
                               {row.lessonCode}
                             </span>
                           </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-4 py-3 text-sm text-gray-500">
                             {row.completionDate ? (() => {
                               // Parse MM/DD/YY format
                               const parts = row.completionDate.split('/');
@@ -933,7 +931,7 @@ export default function AssessmentHistoryPage() {
                               {row.unitLessonId || row.assignmentName}
                             </span>
                           </td>
-                          <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-4 py-3 text-sm text-gray-500">
                             {row.completedDate ? (() => {
                               const date = new Date(row.completedDate);
                               const today = new Date();

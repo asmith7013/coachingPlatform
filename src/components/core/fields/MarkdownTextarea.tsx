@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 interface MarkdownTextareaProps {
   value: string;
   onChange: (value: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   height?: number;
   label?: string;
@@ -19,6 +20,7 @@ interface MarkdownTextareaProps {
 export function MarkdownTextarea({
   value,
   onChange,
+  onBlur,
   placeholder,
   height = 150,
   label,
@@ -41,6 +43,9 @@ export function MarkdownTextarea({
     onUpdate: ({ editor }) => {
       // Get plain text with line breaks preserved
       onChange(editor.getText());
+    },
+    onBlur: () => {
+      onBlur?.();
     },
     editorProps: {
       attributes: {
