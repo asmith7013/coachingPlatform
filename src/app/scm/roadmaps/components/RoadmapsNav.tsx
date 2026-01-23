@@ -7,12 +7,12 @@ export function RoadmapsNav() {
   const pathname = usePathname();
 
   const navItems = [
-    { href: "/roadmaps/scope-and-sequence", label: "Lesson by Lesson" },
-    { href: "/roadmaps/units", label: "Units" },
-    { href: "/roadmaps/skills", label: "Skills" },
-    { href: "/roadmaps/mastery-grid", label: "Mastery Grid" },
-    { href: "/roadmaps/podsie-progress", label: "Podsie Progress" },
-    { href: "/roadmaps/history", label: "History" },
+    { href: "/scm/roadmaps/scope-and-sequence", label: "Lesson by Lesson" },
+    { href: "/scm/roadmaps/units", label: "Units" },
+    { href: "/scm/roadmaps/skills", label: "Skills" },
+    { href: "/scm/roadmaps/mastery-grid", label: "Mastery Grid" },
+    { href: "/scm/roadmaps/podsie-progress", label: "Podsie Progress" },
+    { href: "/scm/roadmaps/history", label: "History" },
   ];
 
   return (

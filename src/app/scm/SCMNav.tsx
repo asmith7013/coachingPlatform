@@ -109,7 +109,7 @@ export function SCMNav() {
       label: "Roadmaps",
       Icon: MapIcon,
       items: [
-        { href: "/scm/content/lessons", label: "Scope & Sequence" },
+        { href: "/scm/roadmaps/scope-and-sequence", label: "Scope & Sequence" },
         { href: "/scm/roadmaps/units", label: "Units" },
         { href: "/scm/roadmaps/skills", label: "Skills" },
         { href: "/scm/roadmaps/mastery-grid", label: "Mastery Grid" },
