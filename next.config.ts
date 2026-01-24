@@ -37,6 +37,14 @@ const nextConfig: NextConfig = {
     serverMinification: true,
   },
   webpack: (config, { isServer }) => {
+    // Import .html and .md files as raw strings (for AI prompt templates)
+    // Exclude archived folder to prevent build errors
+    config.module.rules.push({
+      test: /\.(html|md)$/,
+      exclude: /archived/,
+      type: 'asset/source',
+    });
+
     // Optimize for memory usage during build
     if (!isServer) {
       config.optimization = {
