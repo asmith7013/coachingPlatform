@@ -1,25 +1,36 @@
-'use client';
+"use client";
 
-import { useState, useCallback, useEffect } from 'react';
-import type { WizardStateHook } from '../../hooks/useWizardState';
-import { SlidePreview } from '../shared/SlidePreview';
-import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
-import { updateDeckSlides } from '@/app/actions/worked-examples/update-deck';
-import { updateDeckMetadata } from '@/app/actions/worked-examples/update-deck-metadata';
-import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
-import { useGoogleOAuthStatus } from '@/hooks/auth/useGoogleOAuthStatus';
-import { useClerk } from '@clerk/nextjs';
-import { SlideThumbnails } from './SlideThumbnails';
-import { SlidesFooter } from './SlidesFooter';
-import { ExportSuccessModal } from './ExportSuccessModal';
-import { ExportMetadataModal, type ExportMetadata } from './ExportMetadataModal';
-import { ReauthModal } from './ReauthModal';
-import { EditContextCard } from '../shared/EditContextCard';
-import { EditConfirmModal } from './EditConfirmModal';
-import { buildExportTitle } from '@/app/scm/workedExamples/presentations/utils';
-import { useElapsedTime } from '../../hooks/useElapsedTime';
-import { fileToBase64, revokeImagePreviews } from '../../lib/utils';
-import type { ExportProgress, ExportPhase, SlideExportStatus, EditImage } from '../../lib/types';
+import { useState, useCallback, useEffect } from "react";
+import type { WizardStateHook } from "../../hooks/useWizardState";
+import { SlidePreview } from "../shared/SlidePreview";
+import { saveWorkedExampleDeck } from "@/app/actions/worked-examples/save-deck";
+import { updateDeckSlides } from "@/app/actions/worked-examples/update-deck";
+import { updateDeckMetadata } from "@/app/actions/worked-examples/update-deck-metadata";
+import type { CreateWorkedExampleDeckInput } from "@zod-schema/scm/worked-example";
+import { useGoogleOAuthStatus } from "@/hooks/auth/useGoogleOAuthStatus";
+import { useClerk } from "@clerk/nextjs";
+import { SlideThumbnails } from "./SlideThumbnails";
+import {
+  WizardEditFooter,
+  footerButtonStyles,
+} from "../shared/WizardEditFooter";
+import { ExportSuccessModal } from "./ExportSuccessModal";
+import {
+  ExportMetadataModal,
+  type ExportMetadata,
+} from "./ExportMetadataModal";
+import { ReauthModal } from "./ReauthModal";
+import { EditContextCard } from "../shared/EditContextCard";
+import { EditConfirmModal } from "./EditConfirmModal";
+import { buildExportTitle } from "@/app/scm/workedExamples/presentations/utils";
+import { useElapsedTime } from "../../hooks/useElapsedTime";
+import { fileToBase64, revokeImagePreviews } from "../../lib/utils";
+import type {
+  ExportProgress,
+  ExportPhase,
+  SlideExportStatus,
+  EditImage,
+} from "../../lib/types";
 // import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 
 interface Step3SlidesProps {
@@ -43,16 +54,21 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   } = wizard;
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editContent, setEditContent] = useState('');
-  const [aiEditPrompt, setAiEditPrompt] = useState('');
+  const [editContent, setEditContent] = useState("");
+  const [aiEditPrompt, setAiEditPrompt] = useState("");
   const [aiEditImages, setAiEditImages] = useState<EditImage[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
 
   // Export states
-  const [exportProgress, setExportProgress] = useState<ExportProgress>({ status: 'idle', message: '' });
-  const [_exportPhase, setExportPhase] = useState<ExportPhase>('idle');
-  const [_slideExportStatuses, setSlideExportStatuses] = useState<SlideExportStatus[]>([]);
+  const [exportProgress, setExportProgress] = useState<ExportProgress>({
+    status: "idle",
+    message: "",
+  });
+  const [_exportPhase, setExportPhase] = useState<ExportPhase>("idle");
+  const [_slideExportStatuses, setSlideExportStatuses] = useState<
+    SlideExportStatus[]
+  >([]);
   const [_optimizedCount, setOptimizedCount] = useState(0);
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
@@ -63,14 +79,20 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const { slides, selectedSlideIndex, slidesToEdit, contextSlides } = state;
   const currentSlide = slides[selectedSlideIndex];
 
-  const isAnyExporting = exportProgress.status === 'exporting';
+  const isAnyExporting = exportProgress.status === "exporting";
 
   // Track elapsed time during AI editing and export
-  const { elapsed: aiEditElapsed, start: startAiEditTimer } = useElapsedTime(isAiLoading);
-  const { elapsed: exportElapsed, start: startExportTimer } = useElapsedTime(isAnyExporting);
+  const { elapsed: aiEditElapsed, start: startAiEditTimer } =
+    useElapsedTime(isAiLoading);
+  const { elapsed: exportElapsed, start: startExportTimer } =
+    useElapsedTime(isAnyExporting);
 
   // OAuth status for Google Slides export
-  const { isValid: oauthValid, needsReauth, isLoading: oauthLoading } = useGoogleOAuthStatus();
+  const {
+    isValid: oauthValid,
+    needsReauth,
+    isLoading: oauthLoading,
+  } = useGoogleOAuthStatus();
   const clerk = useClerk();
   const [showReauthModal, setShowReauthModal] = useState(false);
 
@@ -133,7 +155,10 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     // If in edit mode, also save to database
     if (state.editSlug) {
       const updatedSlides = [...slides];
-      updatedSlides[selectedSlideIndex] = { ...updatedSlides[selectedSlideIndex], htmlContent: editContent };
+      updatedSlides[selectedSlideIndex] = {
+        ...updatedSlides[selectedSlideIndex],
+        htmlContent: editContent,
+      };
       saveSlidesToDatabase(updatedSlides);
     }
   };
@@ -141,16 +166,19 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   // Handle cancel edit
   const handleCancelEdit = () => {
     setIsEditing(false);
-    setEditContent('');
+    setEditContent("");
   };
 
   // Handle removing an image from the list
-  const handleRemoveImage = useCallback((index: number) => {
-    const newImages = [...aiEditImages];
-    URL.revokeObjectURL(newImages[index].preview);
-    newImages.splice(index, 1);
-    setAiEditImages(newImages);
-  }, [aiEditImages]);
+  const handleRemoveImage = useCallback(
+    (index: number) => {
+      const newImages = [...aiEditImages];
+      URL.revokeObjectURL(newImages[index].preview);
+      newImages.splice(index, 1);
+      setAiEditImages(newImages);
+    },
+    [aiEditImages],
+  );
 
   // Show confirmation modal before AI edit
   const handleShowEditConfirm = () => {
@@ -173,7 +201,9 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     const hasPrompt = aiEditPrompt.trim();
     const hasImages = aiEditImages.length > 0;
     if (!hasPrompt && !hasImages) {
-      setAiError('Please enter edit instructions or attach an image showing the changes you want.');
+      setAiError(
+        "Please enter edit instructions or attach an image showing the changes you want.",
+      );
       return;
     }
 
@@ -181,7 +211,9 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     const useMultiEdit = slidesToEdit.length > 0;
 
     if (!useMultiEdit && !currentSlide) {
-      setAiError('Please select at least one slide to edit. Click a slide thumbnail to select it.');
+      setAiError(
+        "Please select at least one slide to edit. Click a slide thumbnail to select it.",
+      );
       return;
     }
 
@@ -192,20 +224,20 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     try {
       // Convert images to base64
       const imageDataUrls = await Promise.all(
-        aiEditImages.map(img => fileToBase64(img.file))
+        aiEditImages.map((img) => fileToBase64(img.file)),
       );
 
       if (useMultiEdit) {
         // Batch edit mode
-        const response = await fetch('/api/scm/worked-examples/edit-slides', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/scm/worked-examples/edit-slides", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            slidesToEdit: slidesToEdit.map(i => ({
+            slidesToEdit: slidesToEdit.map((i) => ({
               slideNumber: i + 1,
               htmlContent: slides[i].htmlContent,
             })),
-            contextSlides: contextSlides.map(i => ({
+            contextSlides: contextSlides.map((i) => ({
               slideNumber: i + 1,
               htmlContent: slides[i].htmlContent,
             })),
@@ -218,38 +250,48 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         const data = await response.json();
 
         if (!response.ok) {
-          setAiError(data.error || 'Failed to edit slides');
+          setAiError(data.error || "Failed to edit slides");
           return;
         }
 
         if (data.success && data.editedSlides) {
           // Batch update all edited slides
-          const updates = data.editedSlides.map((s: { slideNumber: number; htmlContent: string }) => ({
-            index: s.slideNumber - 1,
-            htmlContent: s.htmlContent,
-          }));
+          const updates = data.editedSlides.map(
+            (s: { slideNumber: number; htmlContent: string }) => ({
+              index: s.slideNumber - 1,
+              htmlContent: s.htmlContent,
+            }),
+          );
           updateSlidesBatch(updates);
 
           // If in edit mode, also save to database
           if (state.editSlug) {
             const updatedSlides = [...slides];
-            updates.forEach(({ index, htmlContent }: { index: number; htmlContent: string }) => {
-              updatedSlides[index] = { ...updatedSlides[index], htmlContent };
-            });
+            updates.forEach(
+              ({
+                index,
+                htmlContent,
+              }: {
+                index: number;
+                htmlContent: string;
+              }) => {
+                updatedSlides[index] = { ...updatedSlides[index], htmlContent };
+              },
+            );
             saveSlidesToDatabase(updatedSlides);
           }
 
           // Clear prompt and images on success
-          setAiEditPrompt('');
+          setAiEditPrompt("");
           revokeImagePreviews(aiEditImages);
           setAiEditImages([]);
           clearSlideSelections();
         }
       } else {
         // Single slide edit mode
-        const response = await fetch('/api/scm/worked-examples/edit-slide', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/scm/worked-examples/edit-slide", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             currentHtml: currentSlide!.htmlContent,
             editInstructions: aiEditPrompt,
@@ -262,7 +304,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         const data = await response.json();
 
         if (!response.ok) {
-          setAiError(data.error || 'Failed to edit slide');
+          setAiError(data.error || "Failed to edit slide");
           return;
         }
 
@@ -272,18 +314,21 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           // If in edit mode, also save to database
           if (state.editSlug) {
             const updatedSlides = [...slides];
-            updatedSlides[selectedSlideIndex] = { ...updatedSlides[selectedSlideIndex], htmlContent: data.editedHtml };
+            updatedSlides[selectedSlideIndex] = {
+              ...updatedSlides[selectedSlideIndex],
+              htmlContent: data.editedHtml,
+            };
             saveSlidesToDatabase(updatedSlides);
           }
 
           // Clear prompt and images on success
-          setAiEditPrompt('');
+          setAiEditPrompt("");
           revokeImagePreviews(aiEditImages);
           setAiEditImages([]);
         }
       }
     } catch (error) {
-      setAiError(error instanceof Error ? error.message : 'An error occurred');
+      setAiError(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setIsAiLoading(false);
     }
@@ -303,26 +348,26 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
     // Validate inputs
     if (!gradeLevel) {
-      setError('Grade level is required');
+      setError("Grade level is required");
       return;
     }
     if (!title.trim()) {
-      setError('Title is required');
+      setError("Title is required");
       return;
     }
     if (!state.slug.trim()) {
-      setError('Slug is required');
+      setError("Slug is required");
       return;
     }
     if (slides.length === 0) {
-      setError('No slides to export');
+      setError("No slides to export");
       return;
     }
 
     // Initialize export state
-    setExportProgress({ status: 'exporting', message: 'Starting export...' });
-    setExportPhase('uploading'); // Skip directly to uploading (optimization disabled)
-    setSlideExportStatuses(slides.map(() => ({ status: 'pending' })));
+    setExportProgress({ status: "exporting", message: "Starting export..." });
+    setExportPhase("uploading"); // Skip directly to uploading (optimization disabled)
+    setSlideExportStatuses(slides.map(() => ({ status: "pending" })));
     startExportTimer();
     setOptimizedCount(0);
     setError(null);
@@ -469,8 +514,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       */ // END SVG Optimization Step
 
       // Step 1: Export to Google Slides to get the URL
-      setExportPhase('uploading');
-      setExportProgress({ status: 'exporting', message: 'Uploading to Google Slides...' });
+      setExportPhase("uploading");
+      setExportProgress({
+        status: "exporting",
+        message: "Uploading to Google Slides...",
+      });
 
       // Build concise title for Google Slides: "SGI 6.4.2: Strategy Name"
       const exportTitle = buildExportTitle({
@@ -480,20 +528,23 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         title: state.strategyDefinition?.name || title,
       });
 
-      const response = await fetch('/api/scm/worked-examples/export-google-slides', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slides: slidesToExport,
-          title: exportTitle,
-          mathConcept: state.mathConcept,
-          slug: state.slug,
-        }),
-      });
+      const response = await fetch(
+        "/api/scm/worked-examples/export-google-slides",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            slides: slidesToExport,
+            title: exportTitle,
+            mathConcept: state.mathConcept,
+            slug: state.slug,
+          }),
+        },
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to export to Google Slides');
+        throw new Error(errorData.error || "Failed to export to Google Slides");
       }
 
       const googleData = await response.json();
@@ -501,8 +552,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       setGoogleSlidesUrl(url);
 
       // Step 2: Save to database with Google Slides URL included
-      setExportPhase('saving');
-      setExportProgress({ status: 'exporting', message: 'Saving to database...' });
+      setExportPhase("saving");
+      setExportProgress({
+        status: "exporting",
+        message: "Saving to database...",
+      });
 
       let finalSlug = state.slug;
 
@@ -516,11 +570,14 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           lessonNumber: lessonNumber,
           mathStandard: mathStandard || undefined,
           isPublic: isPublic,
-          learningGoals: state.learningGoals.length > 0 ? state.learningGoals : undefined,
+          learningGoals:
+            state.learningGoals.length > 0 ? state.learningGoals : undefined,
         });
 
         if (!metadataResult.success) {
-          throw new Error(metadataResult.error || 'Failed to update deck metadata');
+          throw new Error(
+            metadataResult.error || "Failed to update deck metadata",
+          );
         }
 
         // Update slides
@@ -535,7 +592,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         });
 
         if (!slidesResult.success) {
-          throw new Error(slidesResult.error || 'Failed to update deck slides');
+          throw new Error(slidesResult.error || "Failed to update deck slides");
         }
 
         finalSlug = state.editSlug;
@@ -544,8 +601,9 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         const deckData: CreateWorkedExampleDeckInput = {
           title: title,
           slug: state.slug,
-          mathConcept: state.mathConcept || state.problemAnalysis?.problemType || 'Math',
-          mathStandard: mathStandard || '',
+          mathConcept:
+            state.mathConcept || state.problemAnalysis?.problemType || "Math",
+          mathStandard: mathStandard || "",
           gradeLevel: gradeLevel,
           unitNumber: unitNumber ?? undefined,
           lessonNumber: lessonNumber ?? undefined,
@@ -556,15 +614,19 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
             visualType: slide.visualType,
             scripts: slide.scripts,
           })),
-          learningGoals: state.learningGoals.length > 0 ? state.learningGoals : undefined,
+          learningGoals:
+            state.learningGoals.length > 0 ? state.learningGoals : undefined,
           // Analysis data for deck editing
           // Cast to schema types (wizard types have more specific visualPlan union, schema stores as flexible JSON)
-          problemAnalysis: state.problemAnalysis as CreateWorkedExampleDeckInput['problemAnalysis'],
-          strategyDefinition: state.strategyDefinition as CreateWorkedExampleDeckInput['strategyDefinition'],
-          scenarios: state.scenarios as CreateWorkedExampleDeckInput['scenarios'],
-          generatedBy: 'ai',
+          problemAnalysis:
+            state.problemAnalysis as CreateWorkedExampleDeckInput["problemAnalysis"],
+          strategyDefinition:
+            state.strategyDefinition as CreateWorkedExampleDeckInput["strategyDefinition"],
+          scenarios:
+            state.scenarios as CreateWorkedExampleDeckInput["scenarios"],
+          generatedBy: "ai",
           sourceImage: state.masteryCheckImage.uploadedUrl ?? undefined,
-          createdBy: 'browser-creator',
+          createdBy: "browser-creator",
           isPublic: isPublic,
           googleSlidesUrl: url, // Include the Google Slides URL
           files: {
@@ -576,28 +638,28 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         const saveResult = await saveWorkedExampleDeck(deckData);
 
         if (!saveResult.success) {
-          throw new Error(saveResult.error || 'Failed to save deck');
+          throw new Error(saveResult.error || "Failed to save deck");
         }
 
         finalSlug = saveResult.slug || state.slug;
       }
 
       // Success!
-      setExportPhase('complete');
+      setExportPhase("complete");
       setSavedSlug(finalSlug);
       clearPersistedState();
-      setExportProgress({ status: 'success', message: 'Exported!' });
+      setExportProgress({ status: "success", message: "Exported!" });
       setShowExportSuccessModal(true);
     } catch (error) {
-      console.error('Export error:', error);
-      setExportPhase('error');
+      console.error("Export error:", error);
+      setExportPhase("error");
       setExportProgress({
-        status: 'error',
-        message: error instanceof Error ? error.message : 'Export failed'
+        status: "error",
+        message: error instanceof Error ? error.message : "Export failed",
       });
       setTimeout(() => {
-        setExportProgress({ status: 'idle', message: '' });
-        setExportPhase('idle');
+        setExportProgress({ status: "idle", message: "" });
+        setExportPhase("idle");
       }, 5000);
     }
   };
@@ -623,25 +685,27 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       // Don't navigate if editing or if focus is in an input/textarea
       if (isEditing) return;
       const target = e.target as HTMLElement;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
 
-      if (e.key === 'ArrowLeft') {
+      if (e.key === "ArrowLeft") {
         e.preventDefault();
         goToPrevSlide();
-      } else if (e.key === 'ArrowRight') {
+      } else if (e.key === "ArrowRight") {
         e.preventDefault();
         goToNextSlide();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isEditing, goToPrevSlide, goToNextSlide]);
 
   if (slides.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6 text-center py-12">
-        <p className="text-gray-600">No slides generated yet. Please go back and generate slides.</p>
+        <p className="text-gray-600">
+          No slides generated yet. Please go back and generate slides.
+        </p>
         <button
           onClick={prevStep}
           className="mt-4 text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
@@ -655,14 +719,14 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   // Modal action handlers
   const handleOpenSlides = () => {
     if (googleSlidesUrl) {
-      window.open(googleSlidesUrl, '_blank');
+      window.open(googleSlidesUrl, "_blank");
     }
     setShowExportSuccessModal(false);
   };
 
   const handleOpenBrowserView = () => {
     const slug = savedSlug || state.slug;
-    window.open(`/scm/workedExamples/viewer?view=${slug}`, '_blank');
+    window.open(`/scm/workedExamples/viewer?view=${slug}`, "_blank");
     setShowExportSuccessModal(false);
   };
 
@@ -674,7 +738,9 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     <div className="bg-white rounded-lg shadow-sm p-6 pb-20">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Step 3: Preview, Edit & Export</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            Step 3: Preview, Edit & Export
+          </h2>
           <p className="text-gray-600 text-sm mt-1">
             Review the slides, make edits, then export or save.
           </p>
@@ -687,7 +753,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
                 onClick={handleOpenSlides}
                 className="px-3 py-1.5 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-medium rounded-lg cursor-pointer flex items-center gap-1.5 border border-yellow-300"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
                 </svg>
                 Open Slides
@@ -697,9 +767,24 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
               onClick={handleOpenBrowserView}
               className="px-3 py-1.5 text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 font-medium rounded-lg cursor-pointer flex items-center gap-1.5 border border-blue-300"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
               </svg>
               Browser View
             </button>
@@ -707,7 +792,14 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         )}
       </div>
 
-      <div className="flex gap-4" style={{ height: 'calc(100vh - 230px)', minHeight: '600px', maxHeight: '850px' }}>
+      <div
+        className="flex gap-4"
+        style={{
+          height: "calc(100vh - 230px)",
+          minHeight: "600px",
+          maxHeight: "850px",
+        }}
+      >
         {/* Slide Thumbnails */}
         <SlideThumbnails
           slideCount={slides.length}
@@ -729,7 +821,9 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           {isEditing ? (
             <div className="flex-1 flex flex-col min-h-0">
               <div className="flex items-center justify-between mb-2 flex-shrink-0">
-                <span className="text-sm text-gray-600">Editing Slide {selectedSlideIndex + 1}</span>
+                <span className="text-sm text-gray-600">
+                  Editing Slide {selectedSlideIndex + 1}
+                </span>
                 <div className="flex gap-2">
                   <button
                     onClick={handleCancelEdit}
@@ -761,11 +855,28 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
                 {/* Simple Export Loading Overlay */}
                 {isAnyExporting && (
                   <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center">
-                    <svg className="w-12 h-12 text-yellow-500 animate-spin mb-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    <svg
+                      className="w-12 h-12 text-yellow-500 animate-spin mb-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
                     </svg>
-                    <p className="text-gray-700 font-medium">{exportProgress.message}</p>
+                    <p className="text-gray-700 font-medium">
+                      {exportProgress.message}
+                    </p>
                   </div>
                 )}
                 {/* Overlay Controls - Top Right (hide during export) */}
@@ -777,8 +888,18 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
                       className="p-1.5 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-300 text-gray-700 rounded cursor-pointer disabled:cursor-not-allowed"
                       title="Previous slide"
                     >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
                       </svg>
                     </button>
                     <span className="text-xs text-gray-600 min-w-[2.5rem] text-center font-medium">
@@ -790,8 +911,18 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
                       className="p-1.5 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-300 text-gray-700 rounded cursor-pointer disabled:cursor-not-allowed"
                       title="Next slide"
                     >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </button>
                     <div className="w-px h-5 bg-gray-300 mx-0.5" />
@@ -800,8 +931,18 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
                       className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded cursor-pointer"
                       title="Edit HTML"
                     >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -813,13 +954,25 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       </div>
 
       {/* Error/Warning Message */}
-      {state.error && (
-        state.error.includes('of') && state.error.includes('slides') && state.error.includes('continue') ? (
+      {state.error &&
+        (state.error.includes("of") &&
+        state.error.includes("slides") &&
+        state.error.includes("continue") ? (
           // Partial generation warning - show as amber with continue button
           <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg mt-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              <svg
+                className="w-5 h-5 text-amber-600 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
               </svg>
               <span>{state.error}</span>
             </div>
@@ -838,8 +991,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mt-4">
             {state.error}
           </div>
-        )
-      )}
+        ))}
 
       {/* Floating Edit Context Card - shows images and slide selections */}
       <EditContextCard
@@ -850,24 +1002,55 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       />
 
       {/* Sticky Footer - AI Edit or Export Progress */}
-      <SlidesFooter
-        isExporting={isAnyExporting}
-        exportProgress={exportProgress}
-        exportElapsed={exportElapsed}
-        isAiLoading={isAiLoading}
-        aiEditElapsed={aiEditElapsed}
-        slidesToEdit={slidesToEdit}
-        selectedSlideIndex={selectedSlideIndex}
-        hasCurrentSlide={!!currentSlide}
-        aiEditPrompt={aiEditPrompt}
-        setAiEditPrompt={setAiEditPrompt}
-        aiEditImages={aiEditImages}
-        setAiEditImages={setAiEditImages}
-        aiError={aiError}
-        handleAiEdit={handleShowEditConfirm}
-        handleExportClick={handleExportClick}
-        canExport={slides.length > 0}
-        prevStep={prevStep}
+      <WizardEditFooter
+        onBack={prevStep}
+        aiEdit={{
+          prompt: aiEditPrompt,
+          setPrompt: setAiEditPrompt,
+          images: aiEditImages,
+          setImages: setAiEditImages,
+          onSubmit: handleShowEditConfirm,
+          placeholder:
+            slidesToEdit.length > 0
+              ? `AI Edit: describe changes to ${slidesToEdit.length} slide${slidesToEdit.length > 1 ? "s" : ""}`
+              : "AI Edit: describe changes to this slide",
+          submitLabel: "Apply Edits",
+          disabled: !(
+            (aiEditPrompt.trim() || aiEditImages.length > 0) &&
+            (slidesToEdit.length > 0 || !!currentSlide)
+          ),
+        }}
+        error={aiError}
+        loading={
+          isAnyExporting
+            ? {
+                theme: "yellow",
+                message: exportProgress.message,
+                elapsed: exportElapsed,
+              }
+            : isAiLoading
+              ? {
+                  theme: "purple",
+                  message:
+                    slidesToEdit.length > 0
+                      ? `Editing ${slidesToEdit.length} slide${slidesToEdit.length > 1 ? "s" : ""}...`
+                      : `Editing slide ${selectedSlideIndex + 1}...`,
+                  elapsed: aiEditElapsed,
+                }
+              : null
+        }
+        rightActions={
+          <button
+            onClick={handleExportClick}
+            disabled={slides.length === 0}
+            className={footerButtonStyles.warning}
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
+            </svg>
+            Export to Slides
+          </button>
+        }
       />
 
       {/* Re-auth Modal */}
@@ -887,7 +1070,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           gradeLevel: state.gradeLevel,
           unitNumber: state.unitNumber,
           lessonNumber: state.lessonNumber,
-          mathStandard: state.mathStandard || '',
+          mathStandard: state.mathStandard || "",
           isPublic: state.isPublic,
         }}
       />
