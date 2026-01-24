@@ -1,30 +1,25 @@
 /**
  * Prompts module for the worked example creator.
  *
- * This module imports shared content from @/skills/worked-example
- * and re-exports it along with browser-specific prompt builders.
+ * This module imports content from the colocated ai/ directory
+ * and builds prompts for Claude API calls.
  *
- * SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/
- * To update pedagogy rules, styling, or templates:
- *   1. Edit files in .claude/skills/create-worked-example-sg/ (templates/ or reference/)
- *   2. Run: npm run sync-skill-content
+ * All AI content (pedagogy rules, styling, templates) is now
+ * colocated in ../ai/ for better organization.
  */
 
-// Import shared content from the centralized skill module
-// SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/
-// Run `npm run sync-skill-content` after editing source files
+// Import shared content from the colocated ai/ directory
 import {
   PEDAGOGY_RULES as SHARED_PEDAGOGY_RULES,
   STYLING_GUIDE as SHARED_STYLING_GUIDE,
   SLIDE_STRUCTURE as SHARED_SLIDE_STRUCTURE,
-  // PPTX-compatible templates (new)
+  // PPTX-compatible templates
   SLIDE_BASE_TEMPLATE as SHARED_SLIDE_BASE,
   SLIDE_WITH_CFU_TEMPLATE as SHARED_SLIDE_CFU,
   SLIDE_WITH_ANSWER_TEMPLATE as SHARED_SLIDE_ANSWER,
   SLIDE_TWO_COLUMN_TEMPLATE as SHARED_SLIDE_TWO_COLUMN,
   SLIDE_LEARNING_GOAL_TEMPLATE as SHARED_SLIDE_LEARNING_GOAL,
   SLIDE_PRACTICE_TEMPLATE as SHARED_SLIDE_PRACTICE,
-  // Note: PRINTABLE_TEMPLATE is NOT imported here - it's only used by the separate generate-printable API
   // SVG snippets for graphs
   GRAPH_SNIPPET as SHARED_GRAPH_SNIPPET,
   ANNOTATION_SNIPPET as SHARED_ANNOTATION_SNIPPET,
@@ -35,11 +30,11 @@ import {
   ANALYZE_PROBLEM_INSTRUCTIONS as SHARED_ANALYZE_INSTRUCTIONS,
   ANALYZE_OUTPUT_SCHEMA as SHARED_OUTPUT_SCHEMA,
   GENERATE_SLIDES_INSTRUCTIONS as SHARED_GENERATE_INSTRUCTIONS,
-  // Phase 3 additional instructions (NEW - from sync script)
+  // Phase 3 additional instructions
   TECHNICAL_RULES as SHARED_TECHNICAL_RULES,
   SLIDE_PEDAGOGY_RULES as SHARED_SLIDE_PEDAGOGY_RULES,
   PRE_FLIGHT_CHECKLIST as SHARED_PRE_FLIGHT_CHECKLIST,
-} from '@/skills/worked-example';
+} from '../ai';
 
 // Re-export shared content for backward compatibility
 export const PEDAGOGY_RULES = SHARED_PEDAGOGY_RULES;
@@ -71,7 +66,6 @@ export const ANSWER_TOGGLE_TEMPLATE = SHARED_ANSWER_TOGGLE_TEMPLATE;
 
 /**
  * System prompt for analyzing mastery check questions.
- * Uses shared instructions from SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/prompts/
  */
 export const ANALYZE_PROBLEM_SYSTEM_PROMPT = `You are an expert mathematics pedagogy specialist creating worked example slide decks.
 
@@ -218,7 +212,6 @@ IMPORTANT:
 
 /**
  * System prompt for generating PPTX-compatible HTML slides.
- * Uses shared instructions from SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/prompts/
  *
  * PPTX FORMAT: 960×540px, light theme, Arial font, no JavaScript toggles
  */
@@ -351,7 +344,7 @@ Instructions:
    - initialState: ASCII showing Problem Setup slide
    - keyElements: Array explaining each visual element
    - steps: One entry per strategy move (must match strategyDefinition.moves.length)
-${additionalContext ? '6. Apply the teacher\'s additional context preferences when creating scenarios and choosing strategy' : ''}
+${additionalContext ? "6. Apply the teacher's additional context preferences when creating scenarios and choosing strategy" : ''}
 
 **⚠️ REQUIRED FIELDS - Your response MUST include:**
 - problemAnalysis.diagramEvolution (with initialState, keyElements, and steps array)
@@ -385,9 +378,26 @@ export function buildGenerateSlidesPrompt(
         startPoint?: { x: number; y: number };
         endPoint?: { x: number; y: number };
       }[];
-      scale: { xMax: number; yMax: number; xAxisLabels: number[]; yAxisLabels: number[] };
-      keyPoints: { label: string; x: number; y: number; dataX: number; dataY: number }[];
-      annotations: { type: string; from?: number; to?: number; label: string; position?: string }[];
+      scale: {
+        xMax: number;
+        yMax: number;
+        xAxisLabels: number[];
+        yAxisLabels: number[];
+      };
+      keyPoints: {
+        label: string;
+        x: number;
+        y: number;
+        dataX: number;
+        dataY: number;
+      }[];
+      annotations: {
+        type: string;
+        from?: number;
+        to?: number;
+        label: string;
+        position?: string;
+      }[];
     };
     // Step-by-step diagram evolution plan (approved by teacher)
     diagramEvolution?: {
@@ -422,9 +432,26 @@ export function buildGenerateSlidesPrompt(
         startPoint?: { x: number; y: number };
         endPoint?: { x: number; y: number };
       }[];
-      scale: { xMax: number; yMax: number; xAxisLabels: number[]; yAxisLabels: number[] };
-      keyPoints: { label: string; x: number; y: number; dataX: number; dataY: number }[];
-      annotations: { type: string; from?: number; to?: number; label: string; position?: string }[];
+      scale: {
+        xMax: number;
+        yMax: number;
+        xAxisLabels: number[];
+        yAxisLabels: number[];
+      };
+      keyPoints: {
+        label: string;
+        x: number;
+        y: number;
+        dataX: number;
+        dataY: number;
+      }[];
+      annotations: {
+        type: string;
+        from?: number;
+        to?: number;
+        label: string;
+        position?: string;
+      }[];
     };
     diagramEvolution?: {
       initialState: string;
@@ -442,26 +469,35 @@ export function buildGenerateSlidesPrompt(
   // CRITICAL: Use Scenario 1's diagramEvolution (worked example) for slides, NOT mastery check's
   const diagramEvolutionToUse = scenarios[0]?.diagramEvolution;
 
-  if (problemAnalysis.visualType === 'svg-visual' && problemAnalysis.svgSubtype === 'coordinate-graph' && graphPlanToUse) {
+  if (
+    problemAnalysis.visualType === 'svg-visual' &&
+    problemAnalysis.svgSubtype === 'coordinate-graph' &&
+    graphPlanToUse
+  ) {
     const gp = graphPlanToUse;
     const xMax = gp.scale.xMax;
     const yMax = gp.scale.yMax;
 
     // Helper to convert data coordinates to pixel coordinates
-    const toPixelX = (dataX: number) => Math.round((40 + (dataX / xMax) * 220) * 100) / 100;
-    const toPixelY = (dataY: number) => Math.round((170 - (dataY / yMax) * 150) * 100) / 100;
+    const toPixelX = (dataX: number) =>
+      Math.round((40 + (dataX / xMax) * 220) * 100) / 100;
+    const toPixelY = (dataY: number) =>
+      Math.round((170 - (dataY / yMax) * 150) * 100) / 100;
 
     // Build explicit line drawing instructions with pre-calculated pixels
-    const lineInstructions = gp.equations.map(e => {
-      const startPixelX = toPixelX(e.startPoint?.x ?? 0);
-      const startPixelY = toPixelY(e.startPoint?.y ?? e.yIntercept);
-      const endPixelX = toPixelX(e.endPoint?.x ?? xMax);
-      const endPixelY = toPixelY(e.endPoint?.y ?? (e.slope * xMax + e.yIntercept));
+    const lineInstructions = gp.equations
+      .map((e) => {
+        const startPixelX = toPixelX(e.startPoint?.x ?? 0);
+        const startPixelY = toPixelY(e.startPoint?.y ?? e.yIntercept);
+        const endPixelX = toPixelX(e.endPoint?.x ?? xMax);
+        const endPixelY = toPixelY(
+          e.endPoint?.y ?? e.slope * xMax + e.yIntercept
+        );
 
-      return `### ${e.label}: ${e.equation} (${e.color})
+        return `### ${e.label}: ${e.equation} (${e.color})
 **Data coordinates:**
 - Start point: (${e.startPoint?.x ?? 0}, ${e.startPoint?.y ?? e.yIntercept})
-- End point: (${e.endPoint?.x ?? xMax}, ${e.endPoint?.y ?? (e.slope * xMax + e.yIntercept)})
+- End point: (${e.endPoint?.x ?? xMax}, ${e.endPoint?.y ?? e.slope * xMax + e.yIntercept})
 
 **PRE-CALCULATED PIXEL VALUES (use these EXACTLY):**
 - x1="${startPixelX}" y1="${startPixelY}"
@@ -471,7 +507,8 @@ export function buildGenerateSlidesPrompt(
 \`\`\`html
 <line x1="${startPixelX}" y1="${startPixelY}" x2="${endPixelX}" y2="${endPixelY}" stroke="${e.color}" stroke-width="3" marker-end="url(#line-arrow-${e.label.toLowerCase().replace(/\s+/g, '-')})"/>
 \`\`\``;
-    }).join('\n\n');
+      })
+      .join('\n\n');
 
     graphPlanSection = `
 ## 📊 GRAPH PLAN (PRE-CALCULATED - USE THESE EXACT VALUES)
@@ -498,10 +535,10 @@ ${lineInstructions}
 ---
 
 **Key Points (for data point circles/labels):**
-${gp.keyPoints.map(p => `- ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join('\n')}
+${gp.keyPoints.map((p) => `- ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join('\n')}
 
 **Annotations:**
-${gp.annotations.map(a => `- Type: ${a.type}, Label: "${a.label}"${a.from !== undefined ? `, from y=${a.from} to y=${a.to}` : ''}`).join('\n')}
+${gp.annotations.map((a) => `- Type: ${a.type}, Label: "${a.label}"${a.from !== undefined ? `, from y=${a.from} to y=${a.to}` : ''}`).join('\n')}
 `;
   }
 
@@ -523,8 +560,10 @@ Generate HTML slides for this worked example.
 - Structure: ${problemAnalysis.mathematicalStructure}
 - Visual Type: ${problemAnalysis.visualType}
 - Solution Steps:
-${problemAnalysis.solution.map(s => `  ${s.step}. ${s.description} (${s.reasoning})`).join('\n')}
-${graphPlanSection}${diagramEvolutionToUse ? `
+${problemAnalysis.solution.map((s) => `  ${s.step}. ${s.description} (${s.reasoning})`).join('\n')}
+${graphPlanSection}${
+    diagramEvolutionToUse
+      ? `
 ## 📊 DIAGRAM EVOLUTION (Teacher-Approved - FOLLOW THIS EXACTLY)
 
 **The teacher has approved this step-by-step visual progression. Your slides MUST follow this evolution.**
@@ -534,16 +573,22 @@ ${graphPlanSection}${diagramEvolutionToUse ? `
 ${diagramEvolutionToUse.initialState}
 \`\`\`
 
-${diagramEvolutionToUse.steps.map((step, i) => `### ${step.header} (Slide ${4 + i})
+${diagramEvolutionToUse.steps
+  .map(
+    (step, i) => `### ${step.header} (Slide ${4 + i})
 \`\`\`
 ${step.ascii}
 \`\`\`
 **Changes in this step:**
-${step.changes.map(c => `- ${c}`).join('\n')}
-`).join('\n')}
+${step.changes.map((c) => `- ${c}`).join('\n')}
+`
+  )
+  .join('\n')}
 
 **IMPORTANT:** Each slide's visual must match the corresponding evolution step above.
-` : ''}
+`
+      : ''
+  }
 
 ## Strategy
 - Name: ${strategyDefinition.name}
@@ -554,33 +599,37 @@ ${strategyDefinition.moves.map((m, i) => `  ${i + 1}. ${m.verb}: ${m.description
 - CFU Templates: ${strategyDefinition.cfuQuestionTemplates.join('; ')}
 
 ## Scenarios
-${scenarios.map((s, i) => {
-  let scenarioText = `
+${scenarios
+  .map((s, i) => {
+    let scenarioText = `
 ### Scenario ${i + 1}: ${s.name} ${s.themeIcon}
 Context: ${s.context}
 Numbers: ${s.numbers}
 Description: ${s.description}`;
 
-  // Include graphPlan for practice problems (scenarios 2 and 3)
-  if (s.graphPlan && i > 0) {
-    const gp = s.graphPlan;
-    const xMax = gp.scale.xMax;
-    const yMax = gp.scale.yMax;
-    const toPixelX = (dataX: number) => Math.round((40 + (dataX / xMax) * 220) * 100) / 100;
-    const toPixelY = (dataY: number) => Math.round((170 - (dataY / yMax) * 150) * 100) / 100;
+    // Include graphPlan for practice problems (scenarios 2 and 3)
+    if (s.graphPlan && i > 0) {
+      const gp = s.graphPlan;
+      const xMax = gp.scale.xMax;
+      const yMax = gp.scale.yMax;
+      const toPixelX = (dataX: number) =>
+        Math.round((40 + (dataX / xMax) * 220) * 100) / 100;
+      const toPixelY = (dataY: number) =>
+        Math.round((170 - (dataY / yMax) * 150) * 100) / 100;
 
-    scenarioText += `
+      scenarioText += `
 
 **Graph Plan for Practice ${i}:**
 - Scale: X_MAX=${xMax}, Y_MAX=${yMax}
 - Equations:
-${gp.equations.map(e => `  - ${e.label}: ${e.equation} (start: ${e.startPoint?.x ?? 0},${e.startPoint?.y ?? e.yIntercept} → end: ${e.endPoint?.x ?? xMax},${e.endPoint?.y ?? (e.slope * xMax + e.yIntercept)})`).join('\n')}
+${gp.equations.map((e) => `  - ${e.label}: ${e.equation} (start: ${e.startPoint?.x ?? 0},${e.startPoint?.y ?? e.yIntercept} → end: ${e.endPoint?.x ?? xMax},${e.endPoint?.y ?? e.slope * xMax + e.yIntercept})`).join('\n')}
 - Key Points:
-${gp.keyPoints.map(p => `  - ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join('\n')}`;
-  }
+${gp.keyPoints.map((p) => `  - ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join('\n')}`;
+    }
 
-  return scenarioText;
-}).join('\n')}
+    return scenarioText;
+  })
+  .join('\n')}
 
 ## Instructions - PPTX-Compatible Slides
 
@@ -644,7 +693,6 @@ Each slide MUST have body with width: 960px; height: 540px.`;
 
 /**
  * Types for context-aware generation
- * SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/prompts/generate-slides.md
  */
 export type GenerationMode = 'full' | 'continue' | 'update';
 
@@ -654,16 +702,13 @@ export interface HtmlSlideInput {
 }
 
 export interface UpdateInstructions {
-  slideNumbers: number[];  // Which slides to regenerate
-  changes: string;         // Description of changes to make
+  slideNumbers: number[]; // Which slides to regenerate
+  changes: string; // Description of changes to make
 }
 
 /**
  * Build user prompt for CONTINUE mode.
  * Resumes generation from where it was interrupted.
- *
- * SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/prompts/generate-slides.md
- * (See "Context-Aware Generation > Mode: Continue" section)
  */
 export function buildContinuePrompt(
   existingSlides: HtmlSlideInput[],
@@ -671,7 +716,9 @@ export function buildContinuePrompt(
   basePrompt: string
 ): string {
   const existingSlidesContext = existingSlides
-    .map((s, i) => `--- SLIDE ${i + 1} (ALREADY CREATED) ---\n${s.htmlContent}\n`)
+    .map(
+      (s, i) => `--- SLIDE ${i + 1} (ALREADY CREATED) ---\n${s.htmlContent}\n`
+    )
     .join('\n');
 
   return `You are CONTINUING slide generation for a worked example deck.
@@ -698,9 +745,6 @@ IMPORTANT:
 /**
  * Build user prompt for UPDATE mode.
  * Regenerates specific slides with targeted changes.
- *
- * SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/prompts/generate-slides.md
- * (See "Context-Aware Generation > Mode: Update" section)
  */
 export function buildUpdatePrompt(
   existingSlides: HtmlSlideInput[],

@@ -3,7 +3,10 @@ import Anthropic from '@anthropic-ai/sdk';
 import { handleAnthropicError } from '@error/handlers/anthropic';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
 import type { Scenario } from '@/app/scm/workedExamples/create/lib/types';
-import { PRINTABLE_TEMPLATE, GRAPH_SNIPPET } from '@/skills/worked-example';
+import {
+  PRINTABLE_TEMPLATE,
+  GRAPH_SNIPPET,
+} from '@/app/scm/workedExamples/create/ai';
 
 // Extend max execution time for this API route (5 minutes)
 export const maxDuration = 300;

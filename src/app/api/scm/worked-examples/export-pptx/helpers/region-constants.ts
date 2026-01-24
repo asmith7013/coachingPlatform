@@ -1,10 +1,7 @@
 /**
  * Region default positions, typography, and colors for PPTX slide layout.
  *
- * ⚠️  AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
- *
- * Source of truth: .claude/skills/create-worked-example-sg/reference/region-defaults.md
- * To update: Edit the markdown file, then run: npm run sync-skill-content
+ * Reference: src/app/scm/workedExamples/create/ai/reference/region-defaults.md
  */
 
 // Slide dimensions

@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { handleAnthropicError } from '@error/handlers/anthropic';
 import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
-import { OPTIMIZE_FOR_EXPORT } from '@/skills/worked-example';
+import { OPTIMIZE_FOR_EXPORT } from '@/app/scm/workedExamples/create/ai';
 
 // Extend Vercel function timeout for streaming
 export const maxDuration = 120; // 2 minutes
