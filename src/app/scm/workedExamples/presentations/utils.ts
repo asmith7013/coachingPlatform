@@ -63,7 +63,7 @@ export function generateAnimationCSS(currentRevealed: Set<string>): string {
     [data-pptx-region="cfu-box"],
     [data-pptx-region="answer-box"] {
       position: fixed !important;
-      bottom: 40px !important;
+      bottom: 72px !important;
       top: auto !important;
       /* Wider, compact sizing */
       width: clamp(280px, 35vw, 420px) !important;
@@ -73,7 +73,7 @@ export function generateAnimationCSS(currentRevealed: Set<string>): string {
       font-size: 16px !important;
       border-radius: 8px !important;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15) !important;
-      z-index: 1000 !important;
+      z-index: 10001 !important;
       transform: translateY(20px);
       opacity: 0;
       transition: transform 0.3s ease-out, opacity 0.3s ease-out;
@@ -132,11 +132,11 @@ export function generateAnimationCSS(currentRevealed: Set<string>): string {
       }
 
       [data-pptx-region="cfu-box"] {
-        bottom: 130px !important;
+        bottom: 162px !important;
       }
 
       [data-pptx-region="answer-box"] {
-        bottom: 40px !important;
+        bottom: 72px !important;
       }
 
       ${currentRevealed.has('cfu-box') ? `
