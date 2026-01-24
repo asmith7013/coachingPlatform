@@ -1,8 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
-import { handleAnthropicError } from '@error/handlers/anthropic';
-import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
-import type { ProblemAnalysis, StrategyDefinition, Scenario } from '@/app/scm/workedExamples/create/lib/types';
+import { NextRequest, NextResponse } from "next/server";
+import Anthropic from "@anthropic-ai/sdk";
+import { handleAnthropicError } from "@error/handlers/anthropic";
+import { MODEL_FOR_TASK } from "@/lib/api/integrations/claude/models";
+import type {
+  ProblemAnalysis,
+  StrategyDefinition,
+  Scenario,
+} from "@/app/scm/workedExamples/create/lib/types";
+import {
+  buildMessageContent,
+  extractTextContent,
+  stripMarkdownFences,
+} from "@/app/scm/workedExamples/create/lib/api-utils";
 
 // Extend timeout for AI processing (5 minutes like other routes)
 export const maxDuration = 300;
@@ -45,13 +54,13 @@ function buildEditPrompt(
   problemAnalysis: ProblemAnalysis,
   strategyDefinition: StrategyDefinition,
   scenarios: Scenario[],
-  hasImages = false
+  hasImages = false,
 ): string {
   const instructionSection = editInstructions.trim()
     ? `## Edit Instructions\n${editInstructions}`
     : hasImages
-      ? '## Edit Instructions\nPlease analyze the attached image(s) and apply any corrections or changes shown to the analysis below.'
-      : '';
+      ? "## Edit Instructions\nPlease analyze the attached image(s) and apply any corrections or changes shown to the analysis below."
+      : "";
 
   return `## Current Analysis
 
@@ -69,20 +78,16 @@ ${instructionSection}
 Please apply the edit instructions to the analysis and return the complete updated analysis as JSON.`;
 }
 
-// Helper to parse base64 data URL and extract media type and data
-function parseDataUrl(dataUrl: string): { mediaType: 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp'; data: string } | null {
-  const match = dataUrl.match(/^data:(image\/(jpeg|png|gif|webp));base64,(.+)$/);
-  if (!match) return null;
-  return {
-    mediaType: match[1] as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
-    data: match[3],
-  };
-}
-
 export async function POST(request: NextRequest) {
   try {
     const input: EditAnalysisInput = await request.json();
-    const { editInstructions, images, problemAnalysis, strategyDefinition, scenarios } = input;
+    const {
+      editInstructions,
+      images,
+      problemAnalysis,
+      strategyDefinition,
+      scenarios,
+    } = input;
 
     const hasText = editInstructions?.trim();
     const hasImages = images && images.length > 0;
@@ -90,58 +95,45 @@ export async function POST(request: NextRequest) {
     // Need either text instructions or images
     if (!hasText && !hasImages) {
       return NextResponse.json(
-        { error: 'Edit instructions or images are required' },
-        { status: 400 }
+        { error: "Edit instructions or images are required" },
+        { status: 400 },
       );
     }
 
     if (!problemAnalysis || !strategyDefinition || !scenarios) {
       return NextResponse.json(
-        { error: 'Missing analysis data' },
-        { status: 400 }
+        { error: "Missing analysis data" },
+        { status: 400 },
       );
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'ANTHROPIC_API_KEY not configured' },
-        { status: 500 }
+        { error: "ANTHROPIC_API_KEY not configured" },
+        { status: 500 },
       );
     }
 
     const anthropic = new Anthropic({ apiKey });
 
     // Build the text prompt
-    const textPrompt = buildEditPrompt(editInstructions || '', problemAnalysis, strategyDefinition, scenarios, hasImages);
+    const textPrompt = buildEditPrompt(
+      editInstructions || "",
+      problemAnalysis,
+      strategyDefinition,
+      scenarios,
+      hasImages,
+    );
 
-    // Build message content - can include images and text
-    const messageContent: Anthropic.MessageCreateParams['messages'][0]['content'] = [];
+    // Build message content with images and text
+    const messageContent = buildMessageContent(images, textPrompt);
 
-    // Add images first if provided
-    if (hasImages) {
-      for (const dataUrl of images) {
-        const parsed = parseDataUrl(dataUrl);
-        if (parsed) {
-          messageContent.push({
-            type: 'image',
-            source: {
-              type: 'base64',
-              media_type: parsed.mediaType,
-              data: parsed.data,
-            },
-          });
-        }
-      }
-    }
-
-    // Add text prompt
-    messageContent.push({
-      type: 'text',
-      text: textPrompt,
-    });
-
-    console.log('[edit-analysis] Processing edit request:', editInstructions?.substring(0, 100) || '(image-only)', `with ${images?.length || 0} images`);
+    console.log(
+      "[edit-analysis] Processing edit request:",
+      editInstructions?.substring(0, 100) || "(image-only)",
+      `with ${images?.length || 0} images`,
+    );
 
     const response = await anthropic.messages.create({
       model: MODEL_FOR_TASK.GENERATION,
@@ -149,56 +141,51 @@ export async function POST(request: NextRequest) {
       system: EDIT_ANALYSIS_SYSTEM_PROMPT,
       messages: [
         {
-          role: 'user',
+          role: "user",
           content: messageContent,
         },
       ],
     });
 
     // Extract text content
-    const textContent = response.content.find(block => block.type === 'text');
-    if (!textContent || textContent.type !== 'text') {
+    const textContent = extractTextContent(response);
+    if (!textContent) {
       return NextResponse.json(
-        { error: 'No text response from AI' },
-        { status: 500 }
+        { error: "No text response from AI" },
+        { status: 500 },
       );
     }
 
     // Parse JSON response
     let parsedResponse;
     try {
-      // Try to extract JSON from the response (handle potential markdown code blocks)
-      let jsonText = textContent.text.trim();
-
-      // Remove markdown code blocks if present
-      if (jsonText.startsWith('```json')) {
-        jsonText = jsonText.slice(7);
-      } else if (jsonText.startsWith('```')) {
-        jsonText = jsonText.slice(3);
-      }
-      if (jsonText.endsWith('```')) {
-        jsonText = jsonText.slice(0, -3);
-      }
-      jsonText = jsonText.trim();
-
+      // Strip markdown code blocks if present
+      const jsonText = stripMarkdownFences(textContent, "json");
       parsedResponse = JSON.parse(jsonText);
     } catch {
-      console.error('[edit-analysis] Failed to parse AI response:', textContent.text.substring(0, 500));
+      console.error(
+        "[edit-analysis] Failed to parse AI response:",
+        textContent.substring(0, 500),
+      );
       return NextResponse.json(
-        { error: 'Failed to parse AI response as JSON' },
-        { status: 500 }
+        { error: "Failed to parse AI response as JSON" },
+        { status: 500 },
       );
     }
 
     // Validate response structure
-    if (!parsedResponse.problemAnalysis || !parsedResponse.strategyDefinition || !parsedResponse.scenarios) {
+    if (
+      !parsedResponse.problemAnalysis ||
+      !parsedResponse.strategyDefinition ||
+      !parsedResponse.scenarios
+    ) {
       return NextResponse.json(
-        { error: 'AI response missing required fields' },
-        { status: 500 }
+        { error: "AI response missing required fields" },
+        { status: 500 },
       );
     }
 
-    console.log('[edit-analysis] Edit successful');
+    console.log("[edit-analysis] Edit successful");
 
     return NextResponse.json({
       success: true,
@@ -207,10 +194,10 @@ export async function POST(request: NextRequest) {
       scenarios: parsedResponse.scenarios,
     });
   } catch (error) {
-    console.error('[edit-analysis] Error:', error);
+    console.error("[edit-analysis] Error:", error);
     return NextResponse.json(
-      { error: handleAnthropicError(error, 'Edit analysis') },
-      { status: 500 }
+      { error: handleAnthropicError(error, "Edit analysis") },
+      { status: 500 },
     );
   }
 }

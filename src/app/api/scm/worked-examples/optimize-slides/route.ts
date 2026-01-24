@@ -1,8 +1,12 @@
-import { NextRequest } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
-import { handleAnthropicError } from '@error/handlers/anthropic';
-import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
-import { OPTIMIZE_FOR_EXPORT } from '@/app/scm/workedExamples/create/ai';
+import { NextRequest } from "next/server";
+import Anthropic from "@anthropic-ai/sdk";
+import { handleAnthropicError } from "@error/handlers/anthropic";
+import { MODEL_FOR_TASK } from "@/lib/api/integrations/claude/models";
+import { OPTIMIZE_FOR_EXPORT } from "@/app/scm/workedExamples/create/ai";
+import {
+  extractTextContent,
+  stripMarkdownFences,
+} from "@/app/scm/workedExamples/create/lib/api-utils";
 
 // Extend Vercel function timeout for streaming
 export const maxDuration = 120; // 2 minutes
@@ -51,8 +55,14 @@ export async function POST(request: NextRequest) {
   const encoder = new TextEncoder();
 
   // Helper to send SSE events
-  const sendEvent = (controller: ReadableStreamDefaultController, event: string, data: unknown) => {
-    controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+  const sendEvent = (
+    controller: ReadableStreamDefaultController,
+    event: string,
+    data: unknown,
+  ) => {
+    controller.enqueue(
+      encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`),
+    );
   };
 
   try {
@@ -60,17 +70,17 @@ export async function POST(request: NextRequest) {
     const { slides } = input;
 
     if (!slides || slides.length === 0) {
-      return new Response(
-        JSON.stringify({ error: 'No slides provided' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ error: "No slides provided" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       return new Response(
-        JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: "ANTHROPIC_API_KEY not configured" }),
+        { status: 500, headers: { "Content-Type": "application/json" } },
       );
     }
 
@@ -79,10 +89,10 @@ export async function POST(request: NextRequest) {
       async start(controller) {
         try {
           // Phase 1: Analyze which slides need optimization
-          sendEvent(controller, 'start', {
+          sendEvent(controller, "start", {
             totalSlides: slides.length,
-            phase: 'analyzing',
-            message: 'Analyzing slides for optimization...',
+            phase: "analyzing",
+            message: "Analyzing slides for optimization...",
           });
 
           // Check each slide for SVGs that might need optimization
@@ -90,17 +100,22 @@ export async function POST(request: NextRequest) {
           const slideOptimizationMap = new Map<number, boolean>();
 
           for (const slide of slides) {
-            sendEvent(controller, 'analyzing', {
+            sendEvent(controller, "analyzing", {
               slideNumber: slide.slideNumber,
               message: `Analyzing slide ${slide.slideNumber}...`,
             });
 
             // Check if slide has SVGs that could be optimized
-            const hasSvg = slide.htmlContent.includes('<svg');
-            const hasSimpleElements = slide.htmlContent.includes('<rect') || slide.htmlContent.includes('<text');
-            const hasComplexPaths = /<path\s+[^>]*d="[^"]*[cCsS]/.test(slide.htmlContent); // Curved paths
+            const hasSvg = slide.htmlContent.includes("<svg");
+            const hasSimpleElements =
+              slide.htmlContent.includes("<rect") ||
+              slide.htmlContent.includes("<text");
+            const hasComplexPaths = /<path\s+[^>]*d="[^"]*[cCsS]/.test(
+              slide.htmlContent,
+            ); // Curved paths
 
-            const needsOptimization = hasSvg && hasSimpleElements && !hasComplexPaths;
+            const needsOptimization =
+              hasSvg && hasSimpleElements && !hasComplexPaths;
             slideOptimizationMap.set(slide.slideNumber, needsOptimization);
 
             if (needsOptimization) {
@@ -108,31 +123,31 @@ export async function POST(request: NextRequest) {
             }
 
             // Small delay between analyses for visual feedback
-            await new Promise(resolve => setTimeout(resolve, 50));
+            await new Promise((resolve) => setTimeout(resolve, 50));
           }
 
           // If no slides need optimization, complete early
           if (slidesNeedingOptimization.length === 0) {
-            sendEvent(controller, 'complete', {
+            sendEvent(controller, "complete", {
               success: true,
-              slides: slides.map(s => ({
+              slides: slides.map((s) => ({
                 slideNumber: s.slideNumber,
                 htmlContent: s.htmlContent,
                 wasOptimized: false,
               })),
               optimizedCount: 0,
-              message: 'No slides required optimization',
+              message: "No slides required optimization",
             });
             controller.close();
             return;
           }
 
           // Phase 2: Optimize slides that need it
-          sendEvent(controller, 'start', {
+          sendEvent(controller, "start", {
             totalSlides: slides.length,
             slidesToOptimize: slidesNeedingOptimization.length,
-            phase: 'optimizing',
-            message: `Optimizing ${slidesNeedingOptimization.length} slide${slidesNeedingOptimization.length > 1 ? 's' : ''}...`,
+            phase: "optimizing",
+            message: `Optimizing ${slidesNeedingOptimization.length} slide${slidesNeedingOptimization.length > 1 ? "s" : ""}...`,
           });
 
           const anthropic = new Anthropic({
@@ -140,11 +155,14 @@ export async function POST(request: NextRequest) {
             timeout: 60 * 1000, // 1 minute per slide
           });
 
-          const optimizedSlides = new Map<number, { htmlContent: string; wasOptimized: boolean; changes?: string }>();
+          const optimizedSlides = new Map<
+            number,
+            { htmlContent: string; wasOptimized: boolean; changes?: string }
+          >();
 
           // Process each slide individually for streaming feedback
           for (const slide of slidesNeedingOptimization) {
-            sendEvent(controller, 'optimizing', {
+            sendEvent(controller, "optimizing", {
               slideNumber: slide.slideNumber,
               message: `Converting SVGs in slide ${slide.slideNumber}...`,
             });
@@ -156,26 +174,16 @@ export async function POST(request: NextRequest) {
                 system: OPTIMIZE_SINGLE_SLIDE_PROMPT,
                 messages: [
                   {
-                    role: 'user',
+                    role: "user",
                     content: `Optimize this slide by converting simple SVGs to HTML divs:\n\n${slide.htmlContent}`,
                   },
                 ],
               });
 
-              const textContent = response.content.find(c => c.type === 'text');
-              if (textContent && textContent.type === 'text') {
-                let optimizedHtml = textContent.text.trim();
-
+              const textContent = extractTextContent(response);
+              if (textContent) {
                 // Clean up markdown code fences if present
-                if (optimizedHtml.startsWith('```html')) {
-                  optimizedHtml = optimizedHtml.slice(7);
-                } else if (optimizedHtml.startsWith('```')) {
-                  optimizedHtml = optimizedHtml.slice(3);
-                }
-                if (optimizedHtml.endsWith('```')) {
-                  optimizedHtml = optimizedHtml.slice(0, -3);
-                }
-                optimizedHtml = optimizedHtml.trim();
+                const optimizedHtml = stripMarkdownFences(textContent, "html");
 
                 // Check if content actually changed
                 const wasOptimized = optimizedHtml !== slide.htmlContent;
@@ -183,13 +191,15 @@ export async function POST(request: NextRequest) {
                 optimizedSlides.set(slide.slideNumber, {
                   htmlContent: optimizedHtml,
                   wasOptimized,
-                  changes: wasOptimized ? 'Converted SVGs to HTML' : undefined,
+                  changes: wasOptimized ? "Converted SVGs to HTML" : undefined,
                 });
 
-                sendEvent(controller, 'slide', {
+                sendEvent(controller, "slide", {
                   slideNumber: slide.slideNumber,
                   wasOptimized,
-                  changes: wasOptimized ? 'Converted SVGs to native elements' : undefined,
+                  changes: wasOptimized
+                    ? "Converted SVGs to native elements"
+                    : undefined,
                   message: wasOptimized
                     ? `Slide ${slide.slideNumber}: Converted to native elements`
                     : `Slide ${slide.slideNumber}: No changes needed`,
@@ -201,21 +211,24 @@ export async function POST(request: NextRequest) {
                   wasOptimized: false,
                 });
 
-                sendEvent(controller, 'slide', {
+                sendEvent(controller, "slide", {
                   slideNumber: slide.slideNumber,
                   wasOptimized: false,
                   message: `Slide ${slide.slideNumber}: Kept original`,
                 });
               }
             } catch (slideError) {
-              console.error(`[optimize-slides] Error optimizing slide ${slide.slideNumber}:`, slideError);
+              console.error(
+                `[optimize-slides] Error optimizing slide ${slide.slideNumber}:`,
+                slideError,
+              );
               // Keep original on error
               optimizedSlides.set(slide.slideNumber, {
                 htmlContent: slide.htmlContent,
                 wasOptimized: false,
               });
 
-              sendEvent(controller, 'slide', {
+              sendEvent(controller, "slide", {
                 slideNumber: slide.slideNumber,
                 wasOptimized: false,
                 error: true,
@@ -225,7 +238,7 @@ export async function POST(request: NextRequest) {
           }
 
           // Build final slides array
-          const finalSlides = slides.map(originalSlide => {
+          const finalSlides = slides.map((originalSlide) => {
             const optimized = optimizedSlides.get(originalSlide.slideNumber);
             if (optimized) {
               return {
@@ -242,23 +255,26 @@ export async function POST(request: NextRequest) {
             };
           });
 
-          const optimizedCount = finalSlides.filter(s => s.wasOptimized).length;
+          const optimizedCount = finalSlides.filter(
+            (s) => s.wasOptimized,
+          ).length;
 
           // Phase 3: Complete
-          sendEvent(controller, 'complete', {
+          sendEvent(controller, "complete", {
             success: true,
             slides: finalSlides,
             optimizedCount,
-            message: optimizedCount > 0
-              ? `Optimized ${optimizedCount} slide${optimizedCount > 1 ? 's' : ''} for better export`
-              : 'No slides required optimization',
+            message:
+              optimizedCount > 0
+                ? `Optimized ${optimizedCount} slide${optimizedCount > 1 ? "s" : ""} for better export`
+                : "No slides required optimization",
           });
 
           controller.close();
         } catch (error) {
-          console.error('[optimize-slides] Stream error:', error);
-          sendEvent(controller, 'error', {
-            message: handleAnthropicError(error, 'Optimize slides'),
+          console.error("[optimize-slides] Stream error:", error);
+          sendEvent(controller, "error", {
+            message: handleAnthropicError(error, "Optimize slides"),
           });
           controller.close();
         }
@@ -267,16 +283,16 @@ export async function POST(request: NextRequest) {
 
     return new Response(stream, {
       headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
       },
     });
   } catch (error) {
-    console.error('[optimize-slides] Request error:', error);
+    console.error("[optimize-slides] Request error:", error);
     return new Response(
-      JSON.stringify({ error: handleAnthropicError(error, 'Optimize slides') }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: handleAnthropicError(error, "Optimize slides") }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 }
