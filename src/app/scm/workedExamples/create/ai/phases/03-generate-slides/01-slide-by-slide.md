@@ -70,9 +70,11 @@ CFU and Answer boxes are now STACKED on the same slide (both appear, one after a
 | 4 | Step 1 | `two-column` or `centered` | step content + CFU + Answer (stacked) |
 | 5 | Step 2 | `two-column` or `centered` | step content + CFU + Answer (stacked) |
 | 6 | Step 3 | `two-column` or `centered` | step content + CFU + Answer (stacked) |
-| 7 | Printable | `full-width` | printable format |
+| 7 | Practice Preview 1 | `two-column` or `centered` | Scenario 2 problem + visual + "Your Task" |
+| 8 | Practice Preview 2 | `two-column` or `centered` | Scenario 3 problem + visual + "Your Task" |
+| 9 | Printable | `full-width` | printable format |
 
-**Layout Selection (slides 3-6):**
+**Layout Selection (slides 3-8):**
 
 | Choose `centered` when... | Choose `two-column` when... |
 |---------------------------|----------------------------|
@@ -115,7 +117,9 @@ groups?"                   How many groups?"]
 
 See `reference/layout-presets.md` for pixel dimensions and HTML examples.
 
-**Note:** Practice problems are embedded directly in the Printable slide (slide 7) rather than having separate presentation slides.
+**Note:** Practice problems appear in TWO places:
+1. **Slides 7-8 (Preview)**: One problem per slide for whiteboard work (NO answers shown)
+2. **Slide 9 (Printable)**: Both problems with space for written work + answer key
 
 ---
 
@@ -152,7 +156,7 @@ Add BOTH boxes BEFORE the closing `</body>` tag on Step slides (4, 5, 6):
 
 ### Step 4: Compose Slides from Atomic Components
 
-**For ALL slides (1-6, printable generated separately as slide 7):**
+**For ALL slides (1-8, printable generated separately as slide 9):**
 
 1. **ANNOUNCE** checkpoint to user (plain text, CLI mode only)
 2. **CHOOSE LAYOUT** from the table above (full-width or two-column)
@@ -168,9 +172,20 @@ Add BOTH boxes BEFORE the closing `</body>` tag on Step slides (4, 5, 6):
 6. **VERIFY** the pre-flight checklist (see `checklists/pre-flight.md`)
 7. **WRITE** slide file using Write tool (file starts with `<!DOCTYPE html>`)
 
-### Step 5: Repeat Protocol
+### Step 5: Practice Problem Preview Slides (7-8)
 
-For each slide N from 1 to 6:
+**For Practice Preview slides, use the Problem Setup slide (3) as a template but:**
+- Change title zone to: "PRACTICE PROBLEM [1/2]: [Scenario Name] [Icon]"
+- Use the appropriate scenario's graphPlan/diagramEvolution:
+  - Slide 7: Use `scenarios[1]` (Scenario 2)
+  - Slide 8: Use `scenarios[2]` (Scenario 3)
+- Include "Your Task:" section prominently with the question to solve
+- **NO CFU/Answer boxes** - students work independently on whiteboards
+- Keep the same layout style as the worked example (two-column or centered)
+
+### Step 6: Repeat Protocol
+
+For each slide N from 1 to 8:
 1. Return to Step 1
 2. Announce checkpoint (plain text to user, CLI mode only)
 3. Compose slide using card-patterns
@@ -244,7 +259,9 @@ The mastery check (`problemAnalysis.graphPlan`) is for the student's exit ticket
 
 | Slides | Source | GraphPlan to Use |
 |--------|--------|------------------|
-| 2-8 (Worked Example) | Scenario 1 | `scenarios[0].graphPlan` |
+| 3-6 (Worked Example) | Scenario 1 | `scenarios[0].graphPlan` |
+| 7 (Practice Preview 1) | Scenario 2 | `scenarios[1].graphPlan` |
+| 8 (Practice Preview 2) | Scenario 3 | `scenarios[2].graphPlan` |
 | 9 (Printable - Practice 1 & 2) | Scenarios 2 & 3 | `scenarios[1].graphPlan` and `scenarios[2].graphPlan` |
 
 Each GRAPH PLAN contains the semantic decisions for that scenario:

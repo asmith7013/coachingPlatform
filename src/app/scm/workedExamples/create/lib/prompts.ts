@@ -584,7 +584,7 @@ ${gp.keyPoints.map((p) => `  - ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPi
 
 ## Instructions - PPTX-Compatible Slides
 
-Generate exactly **6 PPTX-compatible HTML slides** following this structure:
+Generate exactly **8 PPTX-compatible HTML slides** following this structure:
 
 **All slides must be 960×540px, light theme (white background), Arial font, NO JavaScript.**
 
@@ -594,13 +594,28 @@ Generate exactly **6 PPTX-compatible HTML slides** following this structure:
 1. **Teacher Instructions** - Big Idea + Learning Targets + Strategy overview (teacher-facing, visually quiet)
 2. **Big Idea** - Grade/Unit/Lesson + Big Idea badge + statement (student-facing, gradient background)
 
-**Problem + Steps (4 slides):**
+**Worked Example - Problem + Steps (4 slides):**
 3. **Problem Setup** - Scenario 1 introduction with visual (use two-column layout)
 4. **Step 1 + CFU + Answer** - Show step 1, both CFU and Answer at y=40 (Answer overlays CFU on second click)
 5. **Step 2 + CFU + Answer** - Show step 2 with step 1 complete, both CFU and Answer at y=40 (Answer overlays CFU)
 6. **Step 3 + CFU + Answer** - Show final step with steps 1-2 complete, both CFU and Answer at y=40 (Answer overlays CFU)
 
-**Note:** The printable worksheet (slide 7) is generated separately after these 6 slides.
+**Practice Problem Previews (2 slides):**
+7. **Practice Problem 1** - Scenario 2 for whiteboard work
+   - Title: "PRACTICE PROBLEM 1: [Scenario 2 Name] [Icon]"
+   - Problem context and description from scenarios[1]
+   - Visual using scenarios[1].graphPlan or scenarios[1].diagramEvolution
+   - "Your Task:" section with the question students must solve
+   - NO CFU/Answer boxes - students work independently on whiteboards
+
+8. **Practice Problem 2** - Scenario 3 for whiteboard work
+   - Title: "PRACTICE PROBLEM 2: [Scenario 3 Name] [Icon]"
+   - Problem context and description from scenarios[2]
+   - Visual using scenarios[2].graphPlan or scenarios[2].diagramEvolution
+   - "Your Task:" section with the question students must solve
+   - NO CFU/Answer boxes - students work independently on whiteboards
+
+**Note:** The printable worksheet (slide 9) is generated separately after these 8 slides.
 
 ## CFU/Answer Box PPTX Attributes (REQUIRED - SAME POSITION, ANSWER OVERLAYS CFU)
 
@@ -622,7 +637,7 @@ DO NOT include:
 
 The slides you output should contain ONLY valid HTML starting with \`<!DOCTYPE html>\` and ending with \`</html>\`.
 
-**Slide type reference (6 SLIDES):**
+**Slide type reference (8 SLIDES):**
 | # | Type | Has CFU/Answer? | Action |
 |---|------|-----------------|--------|
 | 1 | Teacher Instructions | No | generate-new |
@@ -631,8 +646,10 @@ The slides you output should contain ONLY valid HTML starting with \`<!DOCTYPE h
 | 4 | Step 1 + CFU + Answer | Both boxes stacked (animated) | generate-new |
 | 5 | Step 2 + CFU + Answer | Both boxes stacked (animated) | generate-new |
 | 6 | Step 3 + CFU + Answer | Both boxes stacked (animated) | generate-new |
+| 7 | Practice Problem 1 | No | generate-new |
+| 8 | Practice Problem 2 | No | generate-new |
 
-(Slide 7 - Printable with practice problems - is generated separately)
+(Slide 9 - Printable with practice problems - is generated separately)
 
 Use ===SLIDE_SEPARATOR=== between each slide.
 Each slide MUST have body with width: 960px; height: 540px.`;

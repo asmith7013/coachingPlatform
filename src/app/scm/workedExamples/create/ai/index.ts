@@ -158,7 +158,7 @@ export const CFU_PATTERNS = `
 
 // Slide structure section
 export const SLIDE_STRUCTURE = `
-## Slide Structure (7 Slides)
+## Slide Structure (9 Slides)
 
 ### Slide 1: Teacher Instructions
 **Purpose**: Provide teacher with lesson overview (not shown to students)
@@ -198,11 +198,30 @@ export const SLIDE_STRUCTURE = `
 
 **Number of Steps**: 3 steps = 3 slides
 
-### Slide 7: Printable Worksheet (Final Slide)
+### Slides 7-8: Practice Problem Previews
+
+**Purpose**: Display practice problems one at a time for whiteboard work
+
+**Slide 7: Practice Problem 1** (Scenario 2)
+- Title: "PRACTICE PROBLEM 1: [Scenario Name] [Icon]"
+- Problem context and description
+- Visual representation using Scenario 2's graphPlan/diagramEvolution
+- "Your Task:" section with the question
+- NO CFU/Answer boxes - students work independently
+
+**Slide 8: Practice Problem 2** (Scenario 3)
+- Title: "PRACTICE PROBLEM 2: [Scenario Name] [Icon]"
+- Problem context and description
+- Visual representation using Scenario 3's graphPlan/diagramEvolution
+- "Your Task:" section with the question
+- NO CFU/Answer boxes - students work independently
+
+### Slide 9: Printable Worksheet (Final Slide)
 **Purpose**: Provide take-home practice
 **Content**:
 - Practice Problem 1 (Scenario 2) with space for student work
 - Practice Problem 2 (Scenario 3) with space for student work
+- Answer Key page for teacher
 - Must be 8.5" × 11" for printing
 `;
 

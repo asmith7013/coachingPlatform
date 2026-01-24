@@ -14,7 +14,7 @@ import {
   PreparationPanel,
   PlanningGuideButton,
 } from './components';
-import { PRINT_STYLES } from './utils';
+import { PRINT_STYLES, isPrintableSlide } from './utils';
 
 export function PresentationModal({
   slug,
@@ -131,8 +131,8 @@ export function PresentationModal({
             <CloseButton onClose={onClose} />
           </div>
 
-          {/* Print Button - below close button, only show on last slide */}
-          {deck?.htmlSlides && currentSlide === deck.htmlSlides.length - 1 && (
+          {/* Print Button - below close button, only show on printable slide */}
+          {slide && isPrintableSlide(slide.htmlContent) && (
             <PrintButton slide={slide} />
           )}
 

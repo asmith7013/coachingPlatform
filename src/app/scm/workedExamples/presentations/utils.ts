@@ -1,6 +1,14 @@
 import type { AnimatableBox } from './types';
 
 /**
+ * Check if slide HTML is a printable worksheet (contains print-page class)
+ * Used to show the Print button only on the actual printable slide
+ */
+export function isPrintableSlide(htmlContent: string): boolean {
+  return /class=["'][^"']*print-page[^"']*["']/i.test(htmlContent);
+}
+
+/**
  * Build a formatted export title for Google Slides
  * Format: "SGI 6.4.2: Strategy Name" or "SGI Strategy Name" if no lesson info
  */
@@ -63,7 +71,7 @@ export function generateAnimationCSS(currentRevealed: Set<string>): string {
     [data-pptx-region="cfu-box"],
     [data-pptx-region="answer-box"] {
       position: fixed !important;
-      bottom: 72px !important;
+      bottom: 40px !important;
       top: auto !important;
       /* Wider, compact sizing */
       width: clamp(280px, 35vw, 420px) !important;

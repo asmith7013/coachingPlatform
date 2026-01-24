@@ -2,9 +2,9 @@
 
 ## Purpose
 
-Create 7 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
+Create 9 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
 
-**Note:** Slides 1-6 are the worked example. Slide 7 (the printable worksheet with practice problems) is generated separately after the main slides complete.
+**Note:** Slides 1-6 are the worked example, slides 7-8 are practice problem previews for whiteboard work, and slide 9 (the printable worksheet) is generated separately after the main slides complete.
 
 ## Output Format
 
@@ -37,7 +37,7 @@ All slides are **960x540px, light theme**. CFU/Answer boxes use PPTX animation (
 
 **Checklists (use during/after generation):**
 - `checklists/pre-flight.md` - Verify BEFORE writing each slide
-- `checklists/completion.md` - Verify AFTER all 7 slides done
+- `checklists/completion.md` - Verify AFTER all 9 slides done
 
 ---
 
@@ -53,7 +53,7 @@ STEP 3.1: Check Visual Type (from Phase 1)
 │   └── If "SVG visual" → Read 04-svg-workflow.md + graph-snippet.html
 │
 ▼
-STEP 3.2: Generate Slides 1-6
+STEP 3.2: Generate Slides 1-6 (Worked Example)
 │   For each slide N from 1 to 6:
 │     1. Announce checkpoint (CLI mode only)
 │     2. Choose layout preset (full-width or two-column)
@@ -62,13 +62,21 @@ STEP 3.2: Generate Slides 1-6
 │     5. Write HTML file
 │
 ▼
-STEP 3.3: Generate Printable (Slide 7)
-│   - Generated separately after slides 1-6 complete
-│   - Uses printable-slide-snippet.html pattern
-│   - Contains practice problems from Scenarios 2 & 3
+STEP 3.3: Generate Slides 7-8 (Practice Problem Previews)
+│   For each practice preview (7 and 8):
+│     1. Use Problem Setup slide as template
+│     2. Replace scenario with Scenario 2 (slide 7) or Scenario 3 (slide 8)
+│     3. Include "Your Task:" section with the question
+│     4. NO CFU/Answer boxes - students work on whiteboards
 │
 ▼
-STEP 3.4: Verify Completion Checklist
+STEP 3.4: Generate Printable (Slide 9)
+│   - Generated separately after slides 1-8 complete
+│   - Uses printable-slide-snippet.html pattern
+│   - Contains practice problems from Scenarios 2 & 3 + Answer Key
+│
+▼
+STEP 3.5: Verify Completion Checklist
           See checklists/completion.md
 ```
 
@@ -108,7 +116,7 @@ Most slides use just 3 patterns:
 - `graph-snippet.html` → Coordinate graphs (recalculate pixels)
 - `slide-teacher-instructions.html` → Slide 1 only (teacher-facing)
 - `slide-big-idea.html` → Slide 2 only (student-facing Big Idea)
-- `printable-slide-snippet.html` → Slide 7 only
+- `printable-slide-snippet.html` → Slide 9 only (printable worksheet)
 
 **Always READ and COPY from snippet files.** Never write HTML from scratch.
 
@@ -126,7 +134,9 @@ src/app/presentations/{slug}/
 ├── slide-4.html   (Step 1 + CFU + Answer stacked)
 ├── slide-5.html   (Step 2 + CFU + Answer stacked)
 ├── slide-6.html   (Step 3 + CFU + Answer stacked)
-└── slide-7.html   (Printable with Practice Problems 1 & 2)
+├── slide-7.html   (Practice Problem 1 Preview - Scenario 2)
+├── slide-8.html   (Practice Problem 2 Preview - Scenario 3)
+└── slide-9.html   (Printable with Practice Problems 1 & 2 + Answer Key)
 ```
 
 Use the Write tool for each slide file.

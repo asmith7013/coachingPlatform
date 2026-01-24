@@ -533,9 +533,9 @@ export function useWizardState() {
     if (persisted.slug) dispatch({ type: 'SET_SLUG', payload: persisted.slug });
 
     // Jump to appropriate step based on progress:
-    // - If all 7 slides exist (6 main + 1 printable), go straight to Step 3 (review slides)
+    // - If all 9 slides exist (6 main + 2 practice previews + 1 printable), go straight to Step 3 (review slides)
     // - Otherwise, restore the saved step
-    const EXPECTED_SLIDE_COUNT = 7;
+    const EXPECTED_SLIDE_COUNT = 9;
     if (persisted.slides?.length >= EXPECTED_SLIDE_COUNT) {
       dispatch({ type: 'SET_STEP', payload: 3 });
     } else if (persisted.currentStep) {
