@@ -28,14 +28,6 @@ import D3_DIAGRAM_TEMPLATE from './card-patterns/complex-patterns/d3-diagram-tem
 import SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE from './card-patterns/complex-patterns/slide-teacher-instructions.html';
 import SLIDE_BIG_IDEA_TEMPLATE from './card-patterns/complex-patterns/slide-big-idea.html';
 
-// Archived templates (legacy, for backward compatibility)
-import SLIDE_BASE_TEMPLATE from './archived/templates/slide-base.html';
-import SLIDE_WITH_CFU_TEMPLATE from './archived/templates/slide-with-cfu.html';
-import SLIDE_WITH_ANSWER_TEMPLATE from './archived/templates/slide-with-answer.html';
-import SLIDE_TWO_COLUMN_TEMPLATE from './archived/templates/slide-two-column.html';
-import SLIDE_LEARNING_GOAL_TEMPLATE from './archived/templates/slide-learning-goal.html';
-import SLIDE_PRACTICE_TEMPLATE from './archived/templates/slide-practice.html';
-import SLIDE_WITH_SVG_TEMPLATE from './archived/templates/slide-with-svg.html';
 
 // ============================================================================
 // PHASE 1 & 3 INSTRUCTIONS (Prompts)
@@ -106,14 +98,6 @@ export {
   D3_DIAGRAM_TEMPLATE,
   SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE,
   SLIDE_BIG_IDEA_TEMPLATE,
-  // Archived templates
-  SLIDE_BASE_TEMPLATE,
-  SLIDE_WITH_CFU_TEMPLATE,
-  SLIDE_WITH_ANSWER_TEMPLATE,
-  SLIDE_TWO_COLUMN_TEMPLATE,
-  SLIDE_LEARNING_GOAL_TEMPLATE,
-  SLIDE_PRACTICE_TEMPLATE,
-  SLIDE_WITH_SVG_TEMPLATE,
   // Phase 1
   ANALYZE_PROBLEM_INSTRUCTIONS,
   ANALYZE_OUTPUT_SCHEMA,
@@ -225,10 +209,6 @@ export const SLIDE_STRUCTURE = `
 // ============================================================================
 // LEGACY EXPORTS (for backward compatibility)
 // ============================================================================
-
-// Legacy templates (deprecated toggle-based approach)
-export const CFU_TOGGLE_TEMPLATE = SLIDE_WITH_CFU_TEMPLATE;
-export const ANSWER_TOGGLE_TEMPLATE = SLIDE_WITH_ANSWER_TEMPLATE;
 
 // Alias for FOUR_RULES (was empty in original)
 export const FOUR_RULES = '';

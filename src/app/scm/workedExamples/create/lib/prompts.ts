@@ -13,19 +13,9 @@ import {
   PEDAGOGY_RULES as SHARED_PEDAGOGY_RULES,
   STYLING_GUIDE as SHARED_STYLING_GUIDE,
   SLIDE_STRUCTURE as SHARED_SLIDE_STRUCTURE,
-  // PPTX-compatible templates
-  SLIDE_BASE_TEMPLATE as SHARED_SLIDE_BASE,
-  SLIDE_WITH_CFU_TEMPLATE as SHARED_SLIDE_CFU,
-  SLIDE_WITH_ANSWER_TEMPLATE as SHARED_SLIDE_ANSWER,
-  SLIDE_TWO_COLUMN_TEMPLATE as SHARED_SLIDE_TWO_COLUMN,
-  SLIDE_LEARNING_GOAL_TEMPLATE as SHARED_SLIDE_LEARNING_GOAL,
-  SLIDE_PRACTICE_TEMPLATE as SHARED_SLIDE_PRACTICE,
   // SVG snippets for graphs
   GRAPH_SNIPPET as SHARED_GRAPH_SNIPPET,
   ANNOTATION_SNIPPET as SHARED_ANNOTATION_SNIPPET,
-  // Legacy templates (deprecated)
-  CFU_TOGGLE_TEMPLATE as SHARED_CFU_TOGGLE_TEMPLATE,
-  ANSWER_TOGGLE_TEMPLATE as SHARED_ANSWER_TOGGLE_TEMPLATE,
   // Prompt instructions (Phase 1-3)
   ANALYZE_PROBLEM_INSTRUCTIONS as SHARED_ANALYZE_INSTRUCTIONS,
   ANALYZE_OUTPUT_SCHEMA as SHARED_OUTPUT_SCHEMA,
@@ -45,20 +35,9 @@ export const TECHNICAL_RULES = SHARED_TECHNICAL_RULES;
 export const SLIDE_PEDAGOGY_RULES = SHARED_SLIDE_PEDAGOGY_RULES;
 export const PRE_FLIGHT_CHECKLIST = SHARED_PRE_FLIGHT_CHECKLIST;
 export const SLIDE_STRUCTURE = SHARED_SLIDE_STRUCTURE;
-// PPTX-compatible templates (new)
-export const SLIDE_BASE_TEMPLATE = SHARED_SLIDE_BASE;
-export const SLIDE_WITH_CFU_TEMPLATE = SHARED_SLIDE_CFU;
-export const SLIDE_WITH_ANSWER_TEMPLATE = SHARED_SLIDE_ANSWER;
-export const SLIDE_TWO_COLUMN_TEMPLATE = SHARED_SLIDE_TWO_COLUMN;
-export const SLIDE_LEARNING_GOAL_TEMPLATE = SHARED_SLIDE_LEARNING_GOAL;
-export const SLIDE_PRACTICE_TEMPLATE = SHARED_SLIDE_PRACTICE;
-// Note: PRINTABLE_TEMPLATE is NOT exported here - it's only used by the separate generate-printable API
 // SVG snippets for graphs
 export const GRAPH_SNIPPET = SHARED_GRAPH_SNIPPET;
 export const ANNOTATION_SNIPPET = SHARED_ANNOTATION_SNIPPET;
-// Legacy templates (deprecated)
-export const CFU_TOGGLE_TEMPLATE = SHARED_CFU_TOGGLE_TEMPLATE;
-export const ANSWER_TOGGLE_TEMPLATE = SHARED_ANSWER_TOGGLE_TEMPLATE;
 
 // =============================================================================
 // SYSTEM PROMPTS
@@ -236,10 +215,12 @@ ${SHARED_GENERATE_INSTRUCTIONS}
 
 ---
 
-## HTML Templates to Use (PPTX-Compatible)
+## Slide Layout Guidelines (PPTX-Compatible)
 
 ### Teacher Instructions Slide (slide 1):
-${SLIDE_LEARNING_GOAL_TEMPLATE}
+- Clean, informational layout for teachers
+- Include: Big Idea, Learning Targets, Strategy overview
+- Visually quiet design (not student-facing)
 
 ### Big Idea Slide (slide 2):
 Use a gradient blue background (linear-gradient from #1e40af to #3b82f6), centered layout with:
@@ -248,19 +229,20 @@ Use a gradient blue background (linear-gradient from #1e40af to #3b82f6), center
 - Big Idea statement large and centered (36px white text)
 
 ### Two-Column Layout (for problem setup and steps):
-${SLIDE_TWO_COLUMN_TEMPLATE}
+- Left column: Visual representation (graph, table, diagram)
+- Right column: Text content, problem statement, or step explanation
+- Use .row and .col classes for layout
 
 ### Step Slide with Stacked CFU + Answer (for step slides 4-6):
-Include BOTH boxes on the SAME slide, stacked vertically on the right side:
-- CFU box at y=40 (top position, appears on first click)
-- Answer box at y=150 (below CFU, appears on second click)
-
-${SLIDE_WITH_CFU_TEMPLATE}
-
-${SLIDE_WITH_ANSWER_TEMPLATE}
+Include BOTH boxes on the SAME slide at the SAME position:
+- CFU box: data-pptx-region="cfu-box" at y=40, z-index: 100
+- Answer box: data-pptx-region="answer-box" at y=40, z-index: 101 (overlays CFU)
+- Both boxes use PPTX animation (appear sequentially on click)
 
 ### Practice Slide (zero scaffolding):
-${SLIDE_PRACTICE_TEMPLATE}
+- Show practice problems without step-by-step guidance
+- Include space for student work
+- Clean layout with problem statement and visual if needed
 
 ---
 
@@ -644,7 +626,7 @@ Generate exactly **6 PPTX-compatible HTML slides** following this structure:
 2. **Big Idea** - Grade/Unit/Lesson + Big Idea badge + statement (student-facing, gradient background)
 
 **Problem + Steps (4 slides):**
-3. **Problem Setup** - Scenario 1 introduction with visual (use SLIDE_TWO_COLUMN_TEMPLATE)
+3. **Problem Setup** - Scenario 1 introduction with visual (use two-column layout)
 4. **Step 1 + CFU + Answer** - Show step 1, both CFU and Answer at y=40 (Answer overlays CFU on second click)
 5. **Step 2 + CFU + Answer** - Show step 2 with step 1 complete, both CFU and Answer at y=40 (Answer overlays CFU)
 6. **Step 3 + CFU + Answer** - Show final step with steps 1-2 complete, both CFU and Answer at y=40 (Answer overlays CFU)
