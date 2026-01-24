@@ -1,0 +1,184 @@
+import { NextRequest, NextResponse } from "next/server";
+import { AssignmentPacingModel } from "@mongoose-schema/scm/podsie/assignment-pacing.model";
+import { handleServerError } from "@error/handlers/server";
+import { withDbConnection } from "@server/db/ensure-connection";
+import { validateApiKey } from "@server/auth/api-key";
+
+/**
+ * API endpoint for managing assignment pacing configuration
+ *
+ * Headers:
+ *   - Authorization: Bearer <SOLVES_COACHING_API_KEY>
+ *
+ * GET /api/podsie/lesson-progress?groupId=123&moduleId=456
+ *   Returns pacing config for a specific group + module
+ *
+ * POST /api/podsie/lesson-progress
+ *   Creates or updates pacing config
+ *   Body: { podsieGroupId, podsieModuleId, assignments: [...] }
+ *
+ * DELETE /api/podsie/lesson-progress?groupId=123&moduleId=456
+ *   Deletes pacing config for a specific group + module
+ */
+
+export async function GET(req: NextRequest) {
+  const authError = validateApiKey(req);
+  if (authError) return authError;
+
+  try {
+    const searchParams = new URL(req.url).searchParams;
+    const groupId = searchParams.get("groupId");
+    const moduleId = searchParams.get("moduleId");
+
+    if (!groupId || !moduleId) {
+      return NextResponse.json(
+        { success: false, error: "groupId and moduleId parameters are required" },
+        { status: 400 }
+      );
+    }
+
+    const podsieGroupId = parseInt(groupId, 10);
+    const podsieModuleId = parseInt(moduleId, 10);
+
+    if (isNaN(podsieGroupId) || isNaN(podsieModuleId)) {
+      return NextResponse.json(
+        { success: false, error: "groupId and moduleId must be valid integers" },
+        { status: 400 }
+      );
+    }
+
+    const result = await withDbConnection(async () => {
+      const pacingConfig = await AssignmentPacingModel.findOne({
+        podsieGroupId,
+        podsieModuleId,
+      }).lean();
+
+      return pacingConfig;
+    });
+
+    if (!result) {
+      return NextResponse.json(
+        { success: false, error: "No pacing config found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error in lesson-progress GET:", error);
+    return NextResponse.json(
+      { success: false, error: handleServerError(error) },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const authError = validateApiKey(req);
+  if (authError) return authError;
+
+  try {
+    const body = await req.json();
+    const { podsieGroupId, podsieModuleId, assignments } = body;
+
+    if (!podsieGroupId || !podsieModuleId) {
+      return NextResponse.json(
+        { success: false, error: "podsieGroupId and podsieModuleId are required" },
+        { status: 400 }
+      );
+    }
+
+    if (!Array.isArray(assignments)) {
+      return NextResponse.json(
+        { success: false, error: "assignments must be an array" },
+        { status: 400 }
+      );
+    }
+
+    const result = await withDbConnection(async () => {
+      const existingConfig = await AssignmentPacingModel.findOne({
+        podsieGroupId,
+        podsieModuleId,
+      });
+
+      if (existingConfig) {
+        // Update existing
+        existingConfig.assignments = assignments;
+        await existingConfig.save();
+        return { doc: existingConfig.toJSON(), created: false };
+      } else {
+        // Create new
+        const newConfig = new AssignmentPacingModel({
+          podsieGroupId,
+          podsieModuleId,
+          assignments,
+        });
+        await newConfig.save();
+        return { doc: newConfig.toJSON(), created: true };
+      }
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: result.doc,
+        created: result.created,
+      },
+      { status: result.created ? 201 : 200 }
+    );
+  } catch (error) {
+    console.error("Error in lesson-progress POST:", error);
+    return NextResponse.json(
+      { success: false, error: handleServerError(error) },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const authError = validateApiKey(req);
+  if (authError) return authError;
+
+  try {
+    const searchParams = new URL(req.url).searchParams;
+    const groupId = searchParams.get("groupId");
+    const moduleId = searchParams.get("moduleId");
+
+    if (!groupId || !moduleId) {
+      return NextResponse.json(
+        { success: false, error: "groupId and moduleId parameters are required" },
+        { status: 400 }
+      );
+    }
+
+    const podsieGroupId = parseInt(groupId, 10);
+    const podsieModuleId = parseInt(moduleId, 10);
+
+    if (isNaN(podsieGroupId) || isNaN(podsieModuleId)) {
+      return NextResponse.json(
+        { success: false, error: "groupId and moduleId must be valid integers" },
+        { status: 400 }
+      );
+    }
+
+    await withDbConnection(async () => {
+      await AssignmentPacingModel.deleteOne({
+        podsieGroupId,
+        podsieModuleId,
+      });
+    });
+
+    return NextResponse.json({
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error in lesson-progress DELETE:", error);
+    return NextResponse.json(
+      { success: false, error: handleServerError(error) },
+      { status: 500 }
+    );
+  }
+}
