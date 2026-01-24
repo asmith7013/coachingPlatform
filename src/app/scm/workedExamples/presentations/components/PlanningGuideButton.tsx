@@ -10,10 +10,10 @@ export function PlanningGuideButton({ isActive, onToggle }: PlanningGuideButtonP
     <div className="relative group">
       <button
         onClick={onToggle}
-        className={`print-hide w-12 h-12 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
+        className={`print-hide w-10 h-10 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
           isActive
             ? 'bg-blue-600 hover:bg-blue-700 text-white'
-            : 'bg-gray-700/80 hover:bg-gray-600/90 text-white'
+            : 'bg-gray-700 hover:bg-gray-600 text-white'
         }`}
         aria-label={isActive ? 'Hide Planning Guide' : 'Show Planning Guide'}
       >
@@ -23,7 +23,7 @@ export function PlanningGuideButton({ isActive, onToggle }: PlanningGuideButtonP
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="w-[18px] h-[18px]"
         >
           <path
             strokeLinecap="round"

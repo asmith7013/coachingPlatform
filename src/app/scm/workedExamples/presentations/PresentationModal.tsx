@@ -103,8 +103,8 @@ export function PresentationModal({
 
       {!loading && !error && deck && slide && (
         <>
-          {/* Main layout with optional side panel */}
-          <div className="flex h-full">
+          {/* Main Content Area - fills viewport minus footer */}
+          <div className="flex h-[calc(100vh-56px)] items-center justify-center overflow-hidden">
             {/* Planning Guide Side Panel */}
             {showPlanningGuide && (
               <div className="w-72 flex-shrink-0 h-full z-[10000]">
@@ -112,9 +112,17 @@ export function PresentationModal({
               </div>
             )}
 
-            {/* Slide Content Area */}
-            <div className="flex-1 relative p-6">
-              <SlideContent slide={slide} currentRevealed={currentRevealed} />
+            {/* Slide Content - scales to fill available space while maintaining aspect ratio */}
+            <div className="flex-1 h-full flex items-center justify-center overflow-hidden py-2 px-4">
+              <div
+                className="w-full h-full"
+                style={{
+                  maxWidth: 'calc((100vh - 56px - 16px) * 960 / 540)',
+                  aspectRatio: '960 / 540',
+                }}
+              >
+                <SlideContent slide={slide} currentRevealed={currentRevealed} />
+              </div>
             </div>
           </div>
 
@@ -123,42 +131,39 @@ export function PresentationModal({
             <CloseButton onClose={onClose} />
           </div>
 
-          {/* Bottom Left Controls - Slide Navigation (shifts right when Planning Guide is open) */}
-          <div
-            className={`print-hide fixed bottom-4 flex items-center gap-2 z-[10000] transition-all duration-300 ${
-              showPlanningGuide ? 'left-[304px]' : 'left-4'
-            }`}
-          >
+          {/* Print Button - below close button, only show on last slide */}
+          {deck?.htmlSlides && currentSlide === deck.htmlSlides.length - 1 && (
+            <PrintButton slide={slide} />
+          )}
+
+          {/* Footer */}
+          <div className="print-hide fixed bottom-0 left-0 right-0 h-14 flex items-center justify-between px-4 border-t border-gray-200 bg-white z-[10000]">
+            {/* Left: Navigation */}
             <NavigationControls
               currentSlide={currentSlide}
               totalSlides={totalSlides}
               onPrevSlide={prevSlide}
               onNextSlide={nextSlide}
             />
+
+            {/* Right: Planning Guide & Settings */}
+            <div className="flex items-center gap-2">
+              <PlanningGuideButton
+                isActive={showPlanningGuide}
+                onToggle={() => setShowPlanningGuide(!showPlanningGuide)}
+              />
+
+              <SettingsButton
+                onOpenHtmlViewer={() => setShowHtmlViewer(true)}
+                onEditSlides={() => {
+                  onClose();
+                  router.push(`/scm/workedExamples/create?editSlug=${slug}`);
+                }}
+                hasAnalysisData={hasAnalysisData}
+                googleSlidesUrl={googleSlidesUrl}
+              />
+            </div>
           </div>
-
-          {/* Bottom Right Controls - Planning Guide & Settings */}
-          <div className="print-hide fixed bottom-4 right-4 flex items-center gap-2 z-[10000]">
-            <PlanningGuideButton
-              isActive={showPlanningGuide}
-              onToggle={() => setShowPlanningGuide(!showPlanningGuide)}
-            />
-
-            <SettingsButton
-              onOpenHtmlViewer={() => setShowHtmlViewer(true)}
-              onEditSlides={() => {
-                onClose();
-                router.push(`/scm/workedExamples/create?editSlug=${slug}`);
-              }}
-              hasAnalysisData={hasAnalysisData}
-              googleSlidesUrl={googleSlidesUrl}
-            />
-          </div>
-
-          {/* Print Button - only show on last slide */}
-          {deck?.htmlSlides && currentSlide === deck.htmlSlides.length - 1 && (
-            <PrintButton slide={slide} />
-          )}
 
           {/* HTML Viewer Modal */}
           {showHtmlViewer && (

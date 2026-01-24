@@ -10,12 +10,12 @@ export function NavigationControls({
 }: NavigationControlsProps) {
   return (
     <div className="relative group">
-      <div className="print-hide h-12 flex items-center gap-2 bg-gray-700/80 px-3 rounded-full text-sm">
+      <div className="print-hide h-10 flex items-center gap-2 bg-gray-700 px-3 rounded-full text-sm">
         {/* Previous Button */}
         <button
           onClick={onPrevSlide}
           disabled={currentSlide === 0}
-          className="w-7 h-7 flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+          className="w-6 h-6 flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-600 rounded-full transition-colors cursor-pointer"
           aria-label="Previous slide"
         >
           <svg
@@ -35,7 +35,7 @@ export function NavigationControls({
         </button>
 
         {/* Slide Counter */}
-        <div className="text-white text-xs font-medium px-2">
+        <div className="text-white text-sm font-medium px-1">
           {currentSlide + 1}/{totalSlides}
         </div>
 
@@ -43,7 +43,7 @@ export function NavigationControls({
         <button
           onClick={onNextSlide}
           disabled={currentSlide === totalSlides - 1}
-          className="w-7 h-7 flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-700 rounded-full transition-colors cursor-pointer"
+          className="w-6 h-6 flex items-center justify-center text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-600 rounded-full transition-colors cursor-pointer"
           aria-label="Next slide"
         >
           <svg
@@ -62,9 +62,9 @@ export function NavigationControls({
           </svg>
         </button>
       </div>
-      {/* Tooltip - appears below */}
-      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-        Slide Navigation
+      {/* Tooltip - appears above for footer placement */}
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+        Previous (←) / Next (→)
       </div>
     </div>
   );

@@ -39,7 +39,7 @@ export function SettingsButton({
       {/* Settings Gear Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-12 h-12 flex items-center justify-center bg-gray-700/80 hover:bg-gray-600/90 text-white rounded-full transition-colors cursor-pointer"
+        className="w-10 h-10 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-full transition-colors cursor-pointer"
         aria-label="Settings"
       >
         <svg
@@ -48,7 +48,7 @@ export function SettingsButton({
           viewBox="0 0 24 24"
           strokeWidth={2}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="w-[18px] h-[18px]"
         >
           <path
             strokeLinecap="round"
