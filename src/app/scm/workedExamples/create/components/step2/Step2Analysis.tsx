@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { PencilIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { Badge } from '@/components/core/feedback/Badge';
 import { SectionAccordion } from '@/components/composed/section-visualization';
@@ -11,8 +11,11 @@ import { VisualPlanDisplay } from './VisualPlanDisplay';
 import { DiagramPreviewDisplay } from './DiagramPreviewDisplay';
 import { SlidePlanDisplay } from './SlidePlanDisplay';
 import { ScenarioEditor } from './ScenarioEditor';
-import { AnalysisFooter, type EditImage } from './AnalysisFooter';
+import { AnalysisFooter } from './AnalysisFooter';
 import type { SSEStartEvent, SSESlideEvent, SSECompleteEvent, SSEErrorEvent } from './types';
+import { useElapsedTime } from '../../hooks/useElapsedTime';
+import { fileToBase64, revokeImagePreviews } from '../../lib/utils';
+import type { EditImage } from '../../lib/types';
 
 /**
  * Get a descriptive name for each slide based on its position.
@@ -68,8 +71,6 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
   const [aiEditImages, setAiEditImages] = useState<EditImage[]>([]);
   const [isAiEditing, setIsAiEditing] = useState(false);
   const [aiEditError, setAiEditError] = useState<string | null>(null);
-  const [aiEditStartTime, setAiEditStartTime] = useState<number | null>(null);
-  const [aiEditElapsed, setAiEditElapsed] = useState(0);
   const abortControllerRef = useRef<AbortController | null>(null);
   const accumulatedSlidesRef = useRef<HtmlSlide[]>([]);
   const retryCountRef = useRef(0);
@@ -78,28 +79,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
   const { problemAnalysis, strategyDefinition, scenarios } = state;
 
   // Track elapsed time during AI editing
-  useEffect(() => {
-    if (!isAiEditing || !aiEditStartTime) {
-      setAiEditElapsed(0);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setAiEditElapsed(Math.floor((Date.now() - aiEditStartTime) / 1000));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isAiEditing, aiEditStartTime]);
-
-  // Convert a File to base64 data URL
-  const fileToBase64 = async (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
+  const { elapsed: aiEditElapsed, start: startAiEditTimer } = useElapsedTime(isAiEditing);
 
   // Handle AI edit of analysis
   const handleAiEdit = async () => {
@@ -109,7 +89,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
     if ((!hasPrompt && !hasImages) || !problemAnalysis || !strategyDefinition || !scenarios) return;
 
     setIsAiEditing(true);
-    setAiEditStartTime(Date.now());
+    startAiEditTimer();
     setAiEditError(null);
 
     try {
@@ -146,15 +126,13 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
         });
         // Clear prompt and images on success
         setAiEditPrompt('');
-        // Revoke object URLs before clearing
-        aiEditImages.forEach(img => URL.revokeObjectURL(img.preview));
+        revokeImagePreviews(aiEditImages);
         setAiEditImages([]);
       }
     } catch (error) {
       setAiEditError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsAiEditing(false);
-      setAiEditStartTime(null);
     }
   };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { WizardStateHook } from '../../hooks/useWizardState';
 import { SlidePreview } from '../shared/SlidePreview';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
@@ -10,32 +10,20 @@ import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-exampl
 import { useGoogleOAuthStatus } from '@/hooks/auth/useGoogleOAuthStatus';
 import { useClerk } from '@clerk/nextjs';
 import { SlideThumbnails } from './SlideThumbnails';
-import { SlidesFooter, type EditImage } from './SlidesFooter';
+import { SlidesFooter } from './SlidesFooter';
 import { ExportSuccessModal } from './ExportSuccessModal';
 import { ExportMetadataModal, type ExportMetadata } from './ExportMetadataModal';
 import { ReauthModal } from './ReauthModal';
 import { EditContextCard } from '../shared/EditContextCard';
 import { EditConfirmModal } from './EditConfirmModal';
 import { buildExportTitle } from '@/app/scm/workedExamples/presentations/utils';
+import { useElapsedTime } from '../../hooks/useElapsedTime';
+import { fileToBase64, revokeImagePreviews } from '../../lib/utils';
+import type { ExportProgress, ExportPhase, SlideExportStatus, EditImage } from '../../lib/types';
 // import { downloadPptxLocally } from '@/lib/utils/download-pptx';
 
 interface Step3SlidesProps {
   wizard: WizardStateHook;
-}
-
-type ExportStatus = 'idle' | 'exporting' | 'success' | 'error';
-type ExportPhase = 'idle' | 'analyzing' | 'optimizing' | 'uploading' | 'saving' | 'complete' | 'error';
-
-interface ExportProgress {
-  status: ExportStatus;
-  message: string;
-  currentSlide?: number;
-  totalSlides?: number;
-}
-
-interface SlideExportStatus {
-  status: 'pending' | 'analyzing' | 'optimizing' | 'done' | 'skipped' | 'error';
-  wasOptimized?: boolean;
 }
 
 export function Step3Slides({ wizard }: Step3SlidesProps) {
@@ -60,15 +48,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   const [aiEditImages, setAiEditImages] = useState<EditImage[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
-  const [aiEditStartTime, setAiEditStartTime] = useState<number | null>(null);
-  const [aiEditElapsed, setAiEditElapsed] = useState(0);
 
   // Export states
   const [exportProgress, setExportProgress] = useState<ExportProgress>({ status: 'idle', message: '' });
   const [_exportPhase, setExportPhase] = useState<ExportPhase>('idle');
   const [_slideExportStatuses, setSlideExportStatuses] = useState<SlideExportStatus[]>([]);
-  const [exportStartTime, setExportStartTime] = useState<number | null>(null);
-  const [exportElapsed, setExportElapsed] = useState(0);
   const [_optimizedCount, setOptimizedCount] = useState(0);
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
@@ -81,33 +65,9 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
   const isAnyExporting = exportProgress.status === 'exporting';
 
-  // Track elapsed time during AI editing
-  useEffect(() => {
-    if (!isAiLoading || !aiEditStartTime) {
-      setAiEditElapsed(0);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setAiEditElapsed(Math.floor((Date.now() - aiEditStartTime) / 1000));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isAiLoading, aiEditStartTime]);
-
-  // Track elapsed time during export
-  useEffect(() => {
-    if (!isAnyExporting || !exportStartTime) {
-      setExportElapsed(0);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setExportElapsed(Math.floor((Date.now() - exportStartTime) / 1000));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isAnyExporting, exportStartTime]);
+  // Track elapsed time during AI editing and export
+  const { elapsed: aiEditElapsed, start: startAiEditTimer } = useElapsedTime(isAiLoading);
+  const { elapsed: exportElapsed, start: startExportTimer } = useElapsedTime(isAnyExporting);
 
   // OAuth status for Google Slides export
   const { isValid: oauthValid, needsReauth, isLoading: oauthLoading } = useGoogleOAuthStatus();
@@ -208,16 +168,6 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
   };
 
   // Handle AI edit (single or batch)
-  // Convert a File to base64 data URL
-  const fileToBase64 = async (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
   const handleAiEdit = async () => {
     // Need either prompt text or images
     const hasPrompt = aiEditPrompt.trim();
@@ -236,7 +186,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     }
 
     setIsAiLoading(true);
-    setAiEditStartTime(Date.now());
+    startAiEditTimer();
     setAiError(null);
 
     try {
@@ -291,7 +241,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
           // Clear prompt and images on success
           setAiEditPrompt('');
-          aiEditImages.forEach(img => URL.revokeObjectURL(img.preview));
+          revokeImagePreviews(aiEditImages);
           setAiEditImages([]);
           clearSlideSelections();
         }
@@ -328,7 +278,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
           // Clear prompt and images on success
           setAiEditPrompt('');
-          aiEditImages.forEach(img => URL.revokeObjectURL(img.preview));
+          revokeImagePreviews(aiEditImages);
           setAiEditImages([]);
         }
       }
@@ -336,7 +286,6 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       setAiError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsAiLoading(false);
-      setAiEditStartTime(null);
     }
   };
 
@@ -374,7 +323,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     setExportProgress({ status: 'exporting', message: 'Starting export...' });
     setExportPhase('uploading'); // Skip directly to uploading (optimization disabled)
     setSlideExportStatuses(slides.map(() => ({ status: 'pending' })));
-    setExportStartTime(Date.now());
+    startExportTimer();
     setOptimizedCount(0);
     setError(null);
     setGoogleSlidesUrl(null);
@@ -638,7 +587,6 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       setSavedSlug(finalSlug);
       clearPersistedState();
       setExportProgress({ status: 'success', message: 'Exported!' });
-      setExportStartTime(null);
       setShowExportSuccessModal(true);
     } catch (error) {
       console.error('Export error:', error);
@@ -647,7 +595,6 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         status: 'error',
         message: error instanceof Error ? error.message : 'Export failed'
       });
-      setExportStartTime(null);
       setTimeout(() => {
         setExportProgress({ status: 'idle', message: '' });
         setExportPhase('idle');

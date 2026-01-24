@@ -503,6 +503,28 @@ export type WizardAction =
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'RESET' };
 
+// Export status types for Step 3 slides export
+export type ExportStatus = 'idle' | 'exporting' | 'success' | 'error';
+export type ExportPhase = 'idle' | 'analyzing' | 'optimizing' | 'uploading' | 'saving' | 'complete' | 'error';
+
+export interface ExportProgress {
+  status: ExportStatus;
+  message: string;
+  currentSlide?: number;
+  totalSlides?: number;
+}
+
+export interface SlideExportStatus {
+  status: 'pending' | 'analyzing' | 'optimizing' | 'done' | 'skipped' | 'error';
+  wasOptimized?: boolean;
+}
+
+// Edit image type for AI edit inputs
+export interface EditImage {
+  file: File;
+  preview: string;
+}
+
 // Initial state
 export const initialWizardState: WizardState = {
   currentStep: 1,

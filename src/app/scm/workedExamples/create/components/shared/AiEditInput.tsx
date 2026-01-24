@@ -2,11 +2,9 @@
 
 import { useRef, useEffect, useCallback } from 'react';
 import { PhotoIcon } from '@heroicons/react/24/outline';
+import type { EditImage } from '../../lib/types';
 
-export interface EditImage {
-  file: File;
-  preview: string;
-}
+export type { EditImage };
 
 interface AiEditInputProps {
   prompt: string;

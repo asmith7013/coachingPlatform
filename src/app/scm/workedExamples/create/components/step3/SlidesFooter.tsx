@@ -1,9 +1,10 @@
 'use client';
 
 import { WizardStickyFooter } from '../shared/WizardStickyFooter';
-import { AiEditInput, type EditImage } from '../shared/AiEditInput';
-
-export type { EditImage };
+import { AiEditInput } from '../shared/AiEditInput';
+import { LoadingSpinner } from '../shared/LoadingSpinner';
+import { formatElapsedTimeShort } from '../../lib/utils';
+import type { EditImage } from '../../lib/types';
 
 interface ExportProgress {
   status: 'idle' | 'exporting' | 'success' | 'error';
@@ -56,30 +57,24 @@ export function SlidesFooter({
     <WizardStickyFooter theme={isExporting ? 'yellow' : 'purple'} isActive={isAiLoading || isExporting}>
       {isExporting ? (
         <div className="flex items-center gap-3">
-          <svg className="w-5 h-5 text-yellow-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-          </svg>
+          <LoadingSpinner className="text-yellow-600" />
           <span className="text-sm text-yellow-800 font-medium flex-1">
             {exportProgress.message}
           </span>
           <span className="text-sm text-yellow-600 font-mono tabular-nums">
-            {Math.floor(exportElapsed / 60)}:{(exportElapsed % 60).toString().padStart(2, '0')}
+            {formatElapsedTimeShort(exportElapsed)}
           </span>
         </div>
       ) : isAiLoading ? (
         <div className="flex items-center gap-3">
-          <svg className="w-5 h-5 text-purple-600 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-          </svg>
+          <LoadingSpinner className="text-purple-600" />
           <span className="text-sm text-purple-800 flex-1 truncate">
             {slidesToEdit.length > 0
               ? `Editing ${slidesToEdit.length} slide${slidesToEdit.length > 1 ? 's' : ''}...`
               : `Editing slide ${selectedSlideIndex + 1}...`}
           </span>
           <span className="text-sm text-purple-600 font-mono tabular-nums">
-            {Math.floor(aiEditElapsed / 60)}:{(aiEditElapsed % 60).toString().padStart(2, '0')}
+            {formatElapsedTimeShort(aiEditElapsed)}
           </span>
         </div>
       ) : (
