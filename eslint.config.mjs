@@ -10,6 +10,14 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  // Global ignores (migrated from .eslintignore)
+  {
+    ignores: [
+      "src/app/actions/313/section-overview.ts",
+      "src/app/actions/313/podsie-sync/sync/sync-student.ts",
+    ],
+  },
+
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 
   {
