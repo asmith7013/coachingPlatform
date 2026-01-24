@@ -30,7 +30,7 @@ export const SLIDE_CONSTANTS = {
   CFU_BOX: { x: 653, y: 40, w: 280, h: 115 },
   ANSWER_BOX: { x: 653, y: 40, w: 280, h: 115 },
 
-  // Two-column layouts (from slide-two-column.html)
+  // Two-column layouts
   // 40% / 60% split with 20px gap
   TWO_COLUMN_40_60: {
     left: { x: 20, y: 140, w: 368, h: 370 },

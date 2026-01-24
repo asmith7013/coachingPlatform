@@ -215,37 +215,6 @@ ${SHARED_GENERATE_INSTRUCTIONS}
 
 ---
 
-## Slide Layout Guidelines (PPTX-Compatible)
-
-### Teacher Instructions Slide (slide 1):
-- Clean, informational layout for teachers
-- Include: Big Idea, Learning Targets, Strategy overview
-- Visually quiet design (not student-facing)
-
-### Big Idea Slide (slide 2):
-Use a gradient blue background (linear-gradient from #1e40af to #3b82f6), centered layout with:
-- Grade/Unit/Lesson at top (white text, letter-spacing: 2px)
-- "BIG IDEA" badge (rounded pill, white/semi-transparent background)
-- Big Idea statement large and centered (36px white text)
-
-### Two-Column Layout (for problem setup and steps):
-- Left column: Visual representation (graph, table, diagram)
-- Right column: Text content, problem statement, or step explanation
-- Use .row and .col classes for layout
-
-### Step Slide with Stacked CFU + Answer (for step slides 4-6):
-Include BOTH boxes on the SAME slide at the SAME position:
-- CFU box: data-pptx-region="cfu-box" at y=40, z-index: 100
-- Answer box: data-pptx-region="answer-box" at y=40, z-index: 101 (overlays CFU)
-- Both boxes use PPTX animation (appear sequentially on click)
-
-### Practice Slide (zero scaffolding):
-- Show practice problems without step-by-step guidance
-- Include space for student work
-- Clean layout with problem statement and visual if needed
-
----
-
 ## SVG GRAPH TEMPLATES (MANDATORY for coordinate planes)
 
 When the visual type is "SVG graphs", you MUST use these templates as your starting point.

@@ -48,9 +48,6 @@ src/app/scm/workedExamples/create/
 │   │   ├── layout-presets.md
 │   │   └── region-defaults.md
 │   │
-│   ├── archived/               ← Legacy templates (backward compat)
-│   │   └── templates/
-│   │
 │   └── index.ts                ← Content loader (exports all as strings)
 │
 ├── lib/

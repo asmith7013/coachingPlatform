@@ -41,21 +41,21 @@ export const LayoutPresetSchema = z.object({
 });
 export type LayoutPreset = z.infer<typeof LayoutPresetSchema>;
 
-// Predefined layout presets (derived from existing templates)
+// Predefined layout presets
 export const LAYOUT_PRESETS: Record<LayoutPresetName, LayoutPreset> = {
-  // Full width content area (slide-base.html)
+  // Full width content area
   'full-width': {
     name: 'full-width',
     topRow: { height: 130, leftRatio: 1.0, rightRatio: 0 },
     bottomRow: { height: 360, leftRatio: 1.0, rightRatio: 0 },
   },
-  // Two-column 40/60 split (slide-two-column.html)
+  // Two-column 40/60 split
   'two-column': {
     name: 'two-column',
     topRow: { height: 130, leftRatio: 1.0, rightRatio: 0 },
     bottomRow: { height: 370, leftRatio: 0.4, rightRatio: 0.6 },
   },
-  // Two-column with CFU overlay (slide-two-column.html + cfu-box)
+  // Two-column with CFU overlay
   'two-column-with-cfu': {
     name: 'two-column-with-cfu',
     topRow: { height: 130, leftRatio: 0.67, rightRatio: 0.33 },
