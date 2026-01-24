@@ -2,172 +2,146 @@
  * AI Content Loader
  *
  * This module exports all AI prompting content (markdown and HTML files)
- * for the worked example creator. Content is loaded directly from the
- * colocated ai/ directory.
- *
- * Previously, content was synced from .claude/skills/create-worked-example-sg/
- * via a sync script. Now everything is colocated here.
- *
- * NOTE: This module uses synchronous file reads at module load time.
- * This is fine for Next.js server components/actions where this runs server-side.
+ * for the worked example creator. Content is imported at build time using
+ * Webpack's asset/source loader.
  */
-
-import * as fs from 'fs';
-import * as path from 'path';
-
-const AI_DIR = path.dirname(__filename);
-
-/**
- * Read a file from the ai/ directory and return its contents.
- */
-function readContent(relativePath: string): string {
-  const fullPath = path.join(AI_DIR, relativePath);
-  return fs.readFileSync(fullPath, 'utf-8');
-}
 
 // ============================================================================
 // HTML TEMPLATES (Card Patterns)
 // ============================================================================
 
 // Simple patterns (fill placeholders)
-export const TITLE_ZONE = readContent(
-  'card-patterns/simple-patterns/title-zone.html'
-);
-export const CONTENT_BOX = readContent(
-  'card-patterns/simple-patterns/content-box.html'
-);
-export const CFU_ANSWER_CARD = readContent(
-  'card-patterns/simple-patterns/cfu-answer-card.html'
-);
-export const PROBLEM_REMINDER = readContent(
-  'card-patterns/simple-patterns/problem-reminder.html'
-);
+import TITLE_ZONE from './card-patterns/simple-patterns/title-zone.html';
+import CONTENT_BOX from './card-patterns/simple-patterns/content-box.html';
+import CFU_ANSWER_CARD from './card-patterns/simple-patterns/cfu-answer-card.html';
+import PROBLEM_REMINDER from './card-patterns/simple-patterns/problem-reminder.html';
 
 // SVG card
-export const SVG_CARD = readContent('card-patterns/svg-card.html');
+import SVG_CARD from './card-patterns/svg-card.html';
 
 // Complex patterns (copy & modify)
-export const GRAPH_SNIPPET = readContent(
-  'card-patterns/complex-patterns/graph-snippet.html'
-);
-export const ANNOTATION_SNIPPET = readContent(
-  'card-patterns/complex-patterns/annotation-snippet.html'
-);
-export const PRINTABLE_TEMPLATE = readContent(
-  'card-patterns/complex-patterns/printable-slide-snippet.html'
-);
-export const VISUAL_CARD_LAYERS = readContent(
-  'card-patterns/complex-patterns/visual-card-layers.html'
-);
-export const D3_DIAGRAM_TEMPLATE = readContent(
-  'card-patterns/complex-patterns/d3-diagram-template.html'
-);
-export const SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE = readContent(
-  'card-patterns/complex-patterns/slide-teacher-instructions.html'
-);
-export const SLIDE_BIG_IDEA_TEMPLATE = readContent(
-  'card-patterns/complex-patterns/slide-big-idea.html'
-);
+import GRAPH_SNIPPET from './card-patterns/complex-patterns/graph-snippet.html';
+import ANNOTATION_SNIPPET from './card-patterns/complex-patterns/annotation-snippet.html';
+import PRINTABLE_TEMPLATE from './card-patterns/complex-patterns/printable-slide-snippet.html';
+import VISUAL_CARD_LAYERS from './card-patterns/complex-patterns/visual-card-layers.html';
+import D3_DIAGRAM_TEMPLATE from './card-patterns/complex-patterns/d3-diagram-template.html';
+import SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE from './card-patterns/complex-patterns/slide-teacher-instructions.html';
+import SLIDE_BIG_IDEA_TEMPLATE from './card-patterns/complex-patterns/slide-big-idea.html';
 
 // Archived templates (legacy, for backward compatibility)
-export const SLIDE_BASE_TEMPLATE = readContent(
-  'archived/templates/slide-base.html'
-);
-export const SLIDE_WITH_CFU_TEMPLATE = readContent(
-  'archived/templates/slide-with-cfu.html'
-);
-export const SLIDE_WITH_ANSWER_TEMPLATE = readContent(
-  'archived/templates/slide-with-answer.html'
-);
-export const SLIDE_TWO_COLUMN_TEMPLATE = readContent(
-  'archived/templates/slide-two-column.html'
-);
-export const SLIDE_LEARNING_GOAL_TEMPLATE = readContent(
-  'archived/templates/slide-learning-goal.html'
-);
-export const SLIDE_PRACTICE_TEMPLATE = readContent(
-  'archived/templates/slide-practice.html'
-);
-export const SLIDE_WITH_SVG_TEMPLATE = readContent(
-  'archived/templates/slide-with-svg.html'
-);
+import SLIDE_BASE_TEMPLATE from './archived/templates/slide-base.html';
+import SLIDE_WITH_CFU_TEMPLATE from './archived/templates/slide-with-cfu.html';
+import SLIDE_WITH_ANSWER_TEMPLATE from './archived/templates/slide-with-answer.html';
+import SLIDE_TWO_COLUMN_TEMPLATE from './archived/templates/slide-two-column.html';
+import SLIDE_LEARNING_GOAL_TEMPLATE from './archived/templates/slide-learning-goal.html';
+import SLIDE_PRACTICE_TEMPLATE from './archived/templates/slide-practice.html';
+import SLIDE_WITH_SVG_TEMPLATE from './archived/templates/slide-with-svg.html';
 
 // ============================================================================
 // PHASE 1 & 3 INSTRUCTIONS (Prompts)
 // ============================================================================
 
 // Phase 1: Problem analysis
-export const ANALYZE_PROBLEM_INSTRUCTIONS = readContent(
-  'phases/01-collect-and-analyze/analyze-problem.md'
-);
-export const ANALYZE_OUTPUT_SCHEMA = readContent(
-  'phases/01-collect-and-analyze/output-schema.md'
-);
+import ANALYZE_PROBLEM_INSTRUCTIONS from './phases/01-collect-and-analyze/analyze-problem.md';
+import ANALYZE_OUTPUT_SCHEMA from './phases/01-collect-and-analyze/output-schema.md';
 
 // Phase 2: Confirmation
-export const PHASE2_CONFIRM_PLAN = readContent(
-  'phases/02-confirm-and-plan/index.md'
-);
+import PHASE2_CONFIRM_PLAN from './phases/02-confirm-and-plan/index.md';
 
 // Phase 3: Slide generation
-export const PHASE3_OVERVIEW = readContent(
-  'phases/03-generate-slides/00-overview.md'
-);
-export const GENERATE_SLIDES_INSTRUCTIONS = readContent(
-  'phases/03-generate-slides/01-slide-by-slide.md'
-);
-export const TECHNICAL_RULES = readContent(
-  'phases/03-generate-slides/02-technical-rules.md'
-);
-export const SLIDE_PEDAGOGY_RULES = readContent(
-  'phases/03-generate-slides/03-pedagogy.md'
-);
+import PHASE3_OVERVIEW from './phases/03-generate-slides/00-overview.md';
+import GENERATE_SLIDES_INSTRUCTIONS from './phases/03-generate-slides/01-slide-by-slide.md';
+import TECHNICAL_RULES from './phases/03-generate-slides/02-technical-rules.md';
+import SLIDE_PEDAGOGY_RULES from './phases/03-generate-slides/03-pedagogy.md';
 
 // Checklists
-export const PRE_FLIGHT_CHECKLIST = readContent(
-  'phases/03-generate-slides/checklists/pre-flight.md'
-);
-export const COMPLETION_CHECKLIST = readContent(
-  'phases/03-generate-slides/checklists/completion.md'
-);
+import PRE_FLIGHT_CHECKLIST from './phases/03-generate-slides/checklists/pre-flight.md';
+import COMPLETION_CHECKLIST from './phases/03-generate-slides/checklists/completion.md';
 
 // Phase 4: Save & export
-export const PHASE4_SAVE_EXPORT = readContent(
-  'phases/04-save-to-database/index.md'
-);
-export const OPTIMIZE_FOR_EXPORT = readContent(
-  'phases/04-save-to-database/optimize-for-export.md'
-);
+import PHASE4_SAVE_EXPORT from './phases/04-save-to-database/index.md';
+import OPTIMIZE_FOR_EXPORT from './phases/04-save-to-database/optimize-for-export.md';
 
 // ============================================================================
 // VISUAL/STYLING RULES
 // ============================================================================
 
-export const STYLING_GUIDE = readContent('reference/styling.md');
-export const LAYOUT_PRESETS = readContent('reference/layout-presets.md');
-export const PPTX_REQUIREMENTS = readContent('reference/pptx-requirements.md');
-export const DIAGRAM_PATTERNS = readContent('reference/diagram-patterns.md');
-export const SVG_COORDINATE_PLANES = readContent(
-  'phases/03-generate-slides/04-svg-workflow.md'
-);
-export const ANNOTATION_ZONES = readContent(
-  'phases/03-generate-slides/visuals/annotation-zones.md'
-);
-export const GRAPH_PLANNING = readContent(
-  'phases/01-collect-and-analyze/graph-planning.md'
-);
+import STYLING_GUIDE from './reference/styling.md';
+import LAYOUT_PRESETS from './reference/layout-presets.md';
+import PPTX_REQUIREMENTS from './reference/pptx-requirements.md';
+import DIAGRAM_PATTERNS from './reference/diagram-patterns.md';
+import SVG_COORDINATE_PLANES from './phases/03-generate-slides/04-svg-workflow.md';
+import ANNOTATION_ZONES from './phases/03-generate-slides/visuals/annotation-zones.md';
+import GRAPH_PLANNING from './phases/01-collect-and-analyze/graph-planning.md';
 
 // ============================================================================
 // PEDAGOGY
 // ============================================================================
 
-export const PEDAGOGY_RULES = readContent('reference/pedagogy.md');
+import PEDAGOGY_RULES from './reference/pedagogy.md';
 
 // ============================================================================
 // REGION POSITIONS (for PPTX export)
 // ============================================================================
 
-export const REGION_DEFAULTS = readContent('reference/region-defaults.md');
+import REGION_DEFAULTS from './reference/region-defaults.md';
+
+// ============================================================================
+// RE-EXPORTS
+// ============================================================================
+
+export {
+  // Simple patterns
+  TITLE_ZONE,
+  CONTENT_BOX,
+  CFU_ANSWER_CARD,
+  PROBLEM_REMINDER,
+  // SVG card
+  SVG_CARD,
+  // Complex patterns
+  GRAPH_SNIPPET,
+  ANNOTATION_SNIPPET,
+  PRINTABLE_TEMPLATE,
+  VISUAL_CARD_LAYERS,
+  D3_DIAGRAM_TEMPLATE,
+  SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE,
+  SLIDE_BIG_IDEA_TEMPLATE,
+  // Archived templates
+  SLIDE_BASE_TEMPLATE,
+  SLIDE_WITH_CFU_TEMPLATE,
+  SLIDE_WITH_ANSWER_TEMPLATE,
+  SLIDE_TWO_COLUMN_TEMPLATE,
+  SLIDE_LEARNING_GOAL_TEMPLATE,
+  SLIDE_PRACTICE_TEMPLATE,
+  SLIDE_WITH_SVG_TEMPLATE,
+  // Phase 1
+  ANALYZE_PROBLEM_INSTRUCTIONS,
+  ANALYZE_OUTPUT_SCHEMA,
+  // Phase 2
+  PHASE2_CONFIRM_PLAN,
+  // Phase 3
+  PHASE3_OVERVIEW,
+  GENERATE_SLIDES_INSTRUCTIONS,
+  TECHNICAL_RULES,
+  SLIDE_PEDAGOGY_RULES,
+  PRE_FLIGHT_CHECKLIST,
+  COMPLETION_CHECKLIST,
+  // Phase 4
+  PHASE4_SAVE_EXPORT,
+  OPTIMIZE_FOR_EXPORT,
+  // Visual/styling
+  STYLING_GUIDE,
+  LAYOUT_PRESETS,
+  PPTX_REQUIREMENTS,
+  DIAGRAM_PATTERNS,
+  SVG_COORDINATE_PLANES,
+  ANNOTATION_ZONES,
+  GRAPH_PLANNING,
+  // Pedagogy
+  PEDAGOGY_RULES,
+  // Region defaults
+  REGION_DEFAULTS,
+};
 
 // ============================================================================
 // EXTRACTED SECTIONS (from pedagogy.md)
