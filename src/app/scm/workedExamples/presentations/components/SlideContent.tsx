@@ -52,7 +52,7 @@ export function SlideContent({ slide, currentRevealed }: SlideContentProps) {
 
       {/* Slide Content - apply background styles from body tag if present */}
       <div
-        className="w-full h-full"
+        className="w-full h-full relative"
         style={backgroundStyles}
         dangerouslySetInnerHTML={{ __html: slide.htmlContent }}
       />
