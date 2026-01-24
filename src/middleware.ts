@@ -13,6 +13,8 @@ const isPublicRoute = createRouteMatcher([
   '/api/webhooks/clerk',    // Clerk webhooks (fixed path)
   '/api/roadmaps/scrape',   // Scraper API (has own API key auth)
   '/api/timesheet',         // Timesheet API (has own API key auth)
+  '/api/podsie/(.*)',       // Podsie API (has own API key auth)
+  '/api/scm/(.*)',          // SCM API (has own API key auth)
   '/scm/workedExamples/viewer(.*)',  // ✅ Worked examples viewer (public)
   '/scm/content/state-exam(.*)',  // ✅ State exam questions (public)
 ])
