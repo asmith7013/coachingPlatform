@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AssignmentPacingModel } from "@mongoose-schema/scm/podsie/assignment-pacing.model";
+import { LessonProgressModel } from "@mongoose-schema/scm/podsie/lesson-progress.model";
 import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { validateApiKey } from "@server/auth/api-key";
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
 
     const result = await withDbConnection(async () => {
       // Get source pacing config
-      const sourceConfig = await AssignmentPacingModel.findOne({
+      const sourceConfig = await LessonProgressModel.findOne({
         podsieGroupId: sourceGroupId,
         podsieModuleId: sourceModuleId,
       }).lean();
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
         // Skip if trying to copy to self
         if (targetGroupId === sourceGroupId) continue;
 
-        await AssignmentPacingModel.findOneAndUpdate(
+        await LessonProgressModel.findOneAndUpdate(
           {
             podsieGroupId: targetGroupId,
             podsieModuleId: sourceModuleId,

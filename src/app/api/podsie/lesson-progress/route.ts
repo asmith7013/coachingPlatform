@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AssignmentPacingModel } from "@mongoose-schema/scm/podsie/assignment-pacing.model";
+import { LessonProgressModel } from "@mongoose-schema/scm/podsie/lesson-progress.model";
 import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { validateApiKey } from "@server/auth/api-key";
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
     }
 
     const result = await withDbConnection(async () => {
-      const pacingConfig = await AssignmentPacingModel.findOne({
+      const pacingConfig = await LessonProgressModel.findOne({
         podsieGroupId,
         podsieModuleId,
       }).lean();
@@ -99,19 +99,19 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await withDbConnection(async () => {
-      const existingConfig = await AssignmentPacingModel.findOne({
+      const existingConfig = await LessonProgressModel.findOne({
         podsieGroupId,
         podsieModuleId,
       });
 
       if (existingConfig) {
-        // Update existing
-        existingConfig.assignments = assignments;
+        // Update existing - use set() for proper Mongoose subdocument handling
+        existingConfig.set('assignments', assignments);
         await existingConfig.save();
         return { doc: existingConfig.toJSON(), created: false };
       } else {
         // Create new
-        const newConfig = new AssignmentPacingModel({
+        const newConfig = new LessonProgressModel({
           podsieGroupId,
           podsieModuleId,
           assignments,
@@ -165,7 +165,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     await withDbConnection(async () => {
-      await AssignmentPacingModel.deleteOne({
+      await LessonProgressModel.deleteOne({
         podsieGroupId,
         podsieModuleId,
       });
