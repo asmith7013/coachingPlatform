@@ -4,7 +4,17 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { createSectionConfig } from "./actions";
 import { Spinner } from "@/components/core/feedback/Spinner";
-import { Schools, SCOPE_SEQUENCE_TAG_OPTIONS, SpecialPopulations, AllSections } from "@schema/enum/scm";
+import {
+  Schools,
+  SCOPE_SEQUENCE_TAG_OPTIONS,
+  SpecialPopulations,
+  AllSections,
+  type SchoolsType,
+  type AllSectionsType,
+  type ScopeSequenceTagType,
+  type SpecialPopulationType,
+} from "@schema/enum/scm";
+import type { Grade } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 interface PodsieGroupInfo {
   id: number;
@@ -27,11 +37,13 @@ export default function NewSectionPage() {
   const [success, setSuccess] = useState<string | null>(null);
 
   // Form state
-  const [school, setSchool] = useState<string>("");
-  const [classSection, setClassSection] = useState<string>(podsieGroupCode || "");
-  const [gradeLevel, setGradeLevel] = useState<string>("");
-  const [scopeSequenceTag, setScopeSequenceTag] = useState<string>("");
-  const [specialPopulations, setSpecialPopulations] = useState<string[]>([]);
+  const [school, setSchool] = useState<SchoolsType | "">("");
+  const [classSection, setClassSection] = useState<AllSectionsType | "">(
+    (podsieGroupCode as AllSectionsType) || ""
+  );
+  const [gradeLevel, setGradeLevel] = useState<Grade | "">("");
+  const [scopeSequenceTag, setScopeSequenceTag] = useState<ScopeSequenceTagType | "">("");
+  const [specialPopulations, setSpecialPopulations] = useState<SpecialPopulationType[]>([]);
 
   // Podsie group info (from URL params)
   const [groupInfo] = useState<PodsieGroupInfo | null>(
@@ -48,11 +60,11 @@ export default function NewSectionPage() {
   // Update classSection when groupCode changes
   useEffect(() => {
     if (podsieGroupCode && !classSection) {
-      setClassSection(podsieGroupCode);
+      setClassSection(podsieGroupCode as AllSectionsType);
     }
   }, [podsieGroupCode, classSection]);
 
-  const handleSpecialPopulationToggle = (population: string) => {
+  const handleSpecialPopulationToggle = (population: SpecialPopulationType) => {
     setSpecialPopulations((prev) =>
       prev.includes(population)
         ? prev.filter((p) => p !== population)
@@ -65,6 +77,13 @@ export default function NewSectionPage() {
     setLoading(true);
     setError(null);
     setSuccess(null);
+
+    // Validate required fields (TypeScript guard)
+    if (!school || !classSection || !gradeLevel) {
+      setError("Please fill in all required fields");
+      setLoading(false);
+      return;
+    }
 
     try {
       const result = await createSectionConfig({
@@ -154,7 +173,7 @@ export default function NewSectionPage() {
               </label>
               <select
                 value={school}
-                onChange={(e) => setSchool(e.target.value)}
+                onChange={(e) => setSchool(e.target.value as SchoolsType | "")}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
@@ -174,7 +193,7 @@ export default function NewSectionPage() {
               </label>
               <select
                 value={classSection}
-                onChange={(e) => setClassSection(e.target.value)}
+                onChange={(e) => setClassSection(e.target.value as AllSectionsType | "")}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
@@ -199,7 +218,7 @@ export default function NewSectionPage() {
               </label>
               <select
                 value={gradeLevel}
-                onChange={(e) => setGradeLevel(e.target.value)}
+                onChange={(e) => setGradeLevel(e.target.value as Grade | "")}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
@@ -218,7 +237,7 @@ export default function NewSectionPage() {
               </label>
               <select
                 value={scopeSequenceTag}
-                onChange={(e) => setScopeSequenceTag(e.target.value)}
+                onChange={(e) => setScopeSequenceTag(e.target.value as ScopeSequenceTagType | "")}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select (optional)...</option>
@@ -269,7 +288,7 @@ export default function NewSectionPage() {
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <Spinner size="sm" variant="white" />
+                    <Spinner size="sm" className="border-white/30 border-t-white" />
                     Creating...
                   </span>
                 ) : (
