@@ -21,6 +21,9 @@ const lessonProgressFields = {
   podsieGroupId: { type: Number, required: true, index: true },
   podsieModuleId: { type: Number, required: true, index: true },
 
+  // Start date for the module/unit - used to calculate Section A's active period
+  moduleStartDate: { type: String, required: false }, // "YYYY-MM-DD" format
+
   // Pacing configuration - array of assignment entries
   assignments: { type: [lessonProgressEntrySchema], default: [] },
 

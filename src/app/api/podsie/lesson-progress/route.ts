@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { podsieGroupId, podsieModuleId, assignments } = body;
+    const { podsieGroupId, podsieModuleId, moduleStartDate, assignments } = body;
 
     if (!podsieGroupId || !podsieModuleId) {
       return NextResponse.json(
@@ -106,6 +106,9 @@ export async function POST(req: NextRequest) {
 
       if (existingConfig) {
         // Update existing - use set() for proper Mongoose subdocument handling
+        if (moduleStartDate !== undefined) {
+          existingConfig.set('moduleStartDate', moduleStartDate);
+        }
         existingConfig.set('assignments', assignments);
         await existingConfig.save();
         return { doc: existingConfig.toJSON(), created: false };
@@ -114,6 +117,7 @@ export async function POST(req: NextRequest) {
         const newConfig = new LessonProgressModel({
           podsieGroupId,
           podsieModuleId,
+          moduleStartDate,
           assignments,
         });
         await newConfig.save();
