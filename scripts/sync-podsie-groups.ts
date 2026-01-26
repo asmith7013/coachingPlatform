@@ -107,7 +107,7 @@ async function fetchGroupsFromPodsie(): Promise<PodsieGroup[]> {
     throw new Error('Missing PODSIE_BASE_URL or PODSIE_API_TOKEN environment variable');
   }
 
-  const url = `${baseUrl}/api/groups/sync`;
+  const url = `${baseUrl}/api/sandbox/groups/sync`;
   console.log(`📥 Fetching groups from ${url}...`);
 
   const response = await fetch(url, {
