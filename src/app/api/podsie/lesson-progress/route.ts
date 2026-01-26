@@ -13,6 +13,9 @@ import { validateApiKey } from "@server/auth/api-key";
  * GET /api/podsie/lesson-progress?groupId=123&moduleId=456
  *   Returns pacing config for a specific group + module
  *
+ * GET /api/podsie/lesson-progress?groupId=123
+ *   Returns all pacing configs for a group (across all modules)
+ *
  * POST /api/podsie/lesson-progress
  *   Creates or updates pacing config
  *   Body: { podsieGroupId, podsieModuleId, assignments: [...] }
@@ -30,42 +33,65 @@ export async function GET(req: NextRequest) {
     const groupId = searchParams.get("groupId");
     const moduleId = searchParams.get("moduleId");
 
-    if (!groupId || !moduleId) {
+    if (!groupId) {
       return NextResponse.json(
-        { success: false, error: "groupId and moduleId parameters are required" },
+        { success: false, error: "groupId parameter is required" },
         { status: 400 }
       );
     }
 
     const podsieGroupId = parseInt(groupId, 10);
-    const podsieModuleId = parseInt(moduleId, 10);
-
-    if (isNaN(podsieGroupId) || isNaN(podsieModuleId)) {
+    if (isNaN(podsieGroupId)) {
       return NextResponse.json(
-        { success: false, error: "groupId and moduleId must be valid integers" },
+        { success: false, error: "groupId must be a valid integer" },
         { status: 400 }
       );
     }
 
-    const result = await withDbConnection(async () => {
-      const pacingConfig = await LessonProgressModel.findOne({
+    // If moduleId is provided, return single config; otherwise return all for group
+    if (moduleId) {
+      const podsieModuleId = parseInt(moduleId, 10);
+      if (isNaN(podsieModuleId)) {
+        return NextResponse.json(
+          { success: false, error: "moduleId must be a valid integer" },
+          { status: 400 }
+        );
+      }
+
+      const result = await withDbConnection(async () => {
+        const pacingConfig = await LessonProgressModel.findOne({
+          podsieGroupId,
+          podsieModuleId,
+        }).lean();
+
+        return pacingConfig;
+      });
+
+      if (!result) {
+        return NextResponse.json(
+          { success: false, error: "No pacing config found" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: result,
+      });
+    }
+
+    // No moduleId - return all pacing configs for this group
+    const results = await withDbConnection(async () => {
+      const pacingConfigs = await LessonProgressModel.find({
         podsieGroupId,
-        podsieModuleId,
       }).lean();
 
-      return pacingConfig;
+      return pacingConfigs;
     });
-
-    if (!result) {
-      return NextResponse.json(
-        { success: false, error: "No pacing config found" },
-        { status: 404 }
-      );
-    }
 
     return NextResponse.json({
       success: true,
-      data: result,
+      data: results,
     });
   } catch (error) {
     console.error("Error in lesson-progress GET:", error);
