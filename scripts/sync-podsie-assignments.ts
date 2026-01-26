@@ -17,17 +17,33 @@
 
 // Load environment variables from .env.local for local development
 import { config } from 'dotenv';
+import { z } from 'zod';
 config({ path: '.env.local' });
 
 const NOTIFICATION_EMAIL = 'asmith7013@gmail.com';
 
-interface PodsieAssignment {
-  id: number;
-  title: string;
-  moduleId: number | null;
-  moduleOrder: number | null;
-  state: string | null;
-}
+// Zod schemas for external API response validation
+const PodsieAssignmentSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  moduleId: z.number().nullable(),
+  moduleOrder: z.number().nullable(),
+  state: z.string().nullable(),
+});
+
+const PodsieApiResponseSchema = z.object({
+  success: z.literal(true),
+  assignments: z.array(PodsieAssignmentSchema),
+});
+
+const CoachingPlatformSyncResponseSchema = z.object({
+  success: z.literal(true),
+  upsertedCount: z.number().optional().default(0),
+  insertedCount: z.number().optional().default(0),
+  modifiedCount: z.number().optional().default(0),
+});
+
+type PodsieAssignment = z.infer<typeof PodsieAssignmentSchema>;
 
 interface SyncResult {
   success: boolean;
@@ -93,11 +109,12 @@ async function fetchAssignmentsFromPodsie(): Promise<PodsieAssignment[]> {
 
   const data = await response.json();
 
-  if (!data.success || !Array.isArray(data.assignments)) {
-    throw new Error('Invalid response format from Podsie');
+  const parsed = PodsieApiResponseSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error(`Invalid response format from Podsie: ${parsed.error.message}`);
   }
 
-  return data.assignments;
+  return parsed.data.assignments;
 }
 
 async function syncToCoachingPlatform(assignments: PodsieAssignment[]): Promise<{
@@ -144,14 +161,15 @@ async function syncToCoachingPlatform(assignments: PodsieAssignment[]): Promise<
 
   const data = await response.json();
 
-  if (!data.success) {
-    throw new Error(`Sync failed: ${data.error || 'Unknown error'}`);
+  const parsed = CoachingPlatformSyncResponseSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error(`Invalid response format from Coaching Platform: ${parsed.error.message}`);
   }
 
   return {
-    upsertedCount: data.upsertedCount || 0,
-    insertedCount: data.insertedCount || 0,
-    modifiedCount: data.modifiedCount || 0,
+    upsertedCount: parsed.data.upsertedCount,
+    insertedCount: parsed.data.insertedCount,
+    modifiedCount: parsed.data.modifiedCount,
   };
 }
 
