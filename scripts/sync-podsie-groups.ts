@@ -24,7 +24,7 @@ import { z } from 'zod';
 import mongoose from 'mongoose';
 config({ path: '.env.local' });
 
-const NOTIFICATION_EMAIL = 'asmith7013@gmail.com';
+const NOTIFICATION_EMAIL = process.env.ALERT_EMAIL || 'asmith7013@gmail.com';
 const ADMIN_PAGE_URL = process.env.COACHING_PLATFORM_URL
   ? `${process.env.COACHING_PLATFORM_URL}/scm/podsie/sections/new`
   : 'http://localhost:3000/scm/podsie/sections/new';

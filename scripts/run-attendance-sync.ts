@@ -29,7 +29,7 @@ config({ path: '.env.local' });
 
 import type { SyncAllAttendanceResult } from '../src/app/actions/scm/student/attendance-sync/scheduled/sync-all-attendance';
 
-const NOTIFICATION_EMAIL = 'asmith7013@gmail.com';
+const NOTIFICATION_EMAIL = process.env.ALERT_EMAIL || 'asmith7013@gmail.com';
 
 async function sendFailureEmail(school: string | undefined, result: SyncAllAttendanceResult, easternTime: string) {
   try {

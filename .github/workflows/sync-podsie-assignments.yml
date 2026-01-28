@@ -35,6 +35,7 @@ jobs:
           COACHING_PLATFORM_URL: ${{ secrets.COACHING_PLATFORM_URL }}
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
         run: |
           echo "📦 Syncing Podsie assignments..."
           npx tsx scripts/sync-podsie-assignments.ts

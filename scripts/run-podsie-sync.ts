@@ -27,7 +27,7 @@ config({ path: '.env.local' });
 
 import type { SyncCurrentUnitsResult } from '../src/app/actions/scm/podsie/scheduled/sync-current-units';
 
-const NOTIFICATION_EMAIL = 'asmith7013@gmail.com';
+const NOTIFICATION_EMAIL = process.env.ALERT_EMAIL || 'asmith7013@gmail.com';
 
 async function sendFailureEmail(school: string | undefined, result: SyncCurrentUnitsResult, easternTime: string) {
   try {

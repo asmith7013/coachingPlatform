@@ -20,7 +20,7 @@ import { config } from 'dotenv';
 import { z } from 'zod';
 config({ path: '.env.local' });
 
-const NOTIFICATION_EMAIL = 'asmith7013@gmail.com';
+const NOTIFICATION_EMAIL = process.env.ALERT_EMAIL || 'asmith7013@gmail.com';
 
 // Zod schemas for external API response validation
 const PodsieAssignmentSchema = z.object({
