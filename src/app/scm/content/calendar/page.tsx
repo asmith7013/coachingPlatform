@@ -75,7 +75,7 @@ export default function Calendar2Page() {
 
   // Scope & sequence data for AddEntryModal
   const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
-  const { data: scopeSequenceData } = useScopeSequenceList({ grade: selectedGrade, limit: 500 });
+  const { data: scopeSequenceData } = useScopeSequenceList({ grade: selectedGrade, scopeSequenceTag: scopeTag, limit: 500 });
   const createScopeSequence = useCreateScopeSequence();
 
   // Selection state for interactive date picking

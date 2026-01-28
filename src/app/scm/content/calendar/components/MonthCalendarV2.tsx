@@ -165,6 +165,7 @@ export function MonthCalendarV2({
 
           const hasSectionEvent = sectionDayOffInfo.isDayOff && sectionDayOffInfo.event;
           const hasScheduleBadge = scheduleInfo && !weekend && !dayOff;
+          const isInactiveUnit = hasScheduleBadge && scheduleInfo.unitIndex !== selectedUnitIndex;
           const cellHeight = hasSectionEvent || hasScheduleBadge ? "h-10" : "h-7";
 
           const badgeColor = dateColor?.base ?? "#9CA3AF";
@@ -186,7 +187,7 @@ export function MonthCalendarV2({
                 />
               )}
               <span>{date.getDate()}</span>
-              {hasScheduleBadge && (
+              {hasScheduleBadge && !isInactiveUnit && (
                 <Tooltip
                   content={
                     scheduleInfo.section.subsection !== undefined
@@ -204,6 +205,14 @@ export function MonthCalendarV2({
                     color={badgeColor}
                   />
                 </Tooltip>
+              )}
+              {isInactiveUnit && (
+                <span
+                  className="text-[7px] font-bold leading-none px-1 py-0.5 rounded"
+                  style={{ backgroundColor: "white", color: INACTIVE_COLOR.base }}
+                >
+                  Unit {scheduleInfo.unit.unitNumber}
+                </span>
               )}
               {hasSectionEvent && (
                 <span className="text-[8px] leading-tight truncate w-full text-center px-0.5">
