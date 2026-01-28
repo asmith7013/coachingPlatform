@@ -8,22 +8,19 @@ import {
   AddDayOffModal,
   DeleteDayOffModal,
   CopyToSectionsModal,
+  UnitCard,
+  MonthCalendar,
+  UNIT_COLORS,
   type SectionConfigOption,
   type SelectionMode,
   type LessonForSubsection,
   type SubsectionsModalState,
-} from "../calendar-old/components";
-import { SubsectionsModal } from "../calendar-old/components/SubsectionsModal";
-import { useCalendarPageData, type SavedUnitSchedule } from "../calendar-old/hooks/useCalendarPageData";
-import { SimplifiedUnitView, SECTION_COLORS } from "./components/SimplifiedUnitView";
-import { MonthCalendarV2 } from "./components/MonthCalendarV2";
-import { AddEntryModal } from "../edit-scope-and-sequence/components/AddEntryModal";
-import { useCreateScopeSequence } from "@/hooks/scm/scope-and-sequence/mutations";
-import { useScopeSequenceList } from "@/hooks/scm/scope-and-sequence/queries";
-import type { ScopeAndSequenceInput } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
+} from "./components";
+import { SubsectionsModal } from "./components/SubsectionsModal";
+import { useCalendarPageData, type SavedUnitSchedule } from "./hooks/useCalendarPageData";
 
 // localStorage key for persisting user selections
-const CALENDAR2_STORAGE_KEY = "roadmaps-calendar2-selection";
+const CALENDAR_STORAGE_KEY = "roadmaps-calendar-selection";
 
 // Default school year
 const DEFAULT_SCHOOL_YEAR = "2025-2026";
@@ -36,11 +33,10 @@ const GRADE_OPTIONS = [
   { value: "Algebra 1", label: "Algebra 1" },
 ];
 
-export default function Calendar2Page() {
+export default function CalendarPage() {
   const [schoolYear] = useState(DEFAULT_SCHOOL_YEAR);
   const [selectedGrade, setSelectedGrade] = useState("6");
   const [selectedSection, setSelectedSection] = useState<SectionConfigOption | null>(null);
-  const [selectedUnitIndex, setSelectedUnitIndex] = useState(0);
 
   // Use the React Query powered hook
   const {
@@ -71,12 +67,6 @@ export default function Calendar2Page() {
   const [showDeleteDayOffModal, setShowDeleteDayOffModal] = useState(false);
   const [dayOffToDelete, setDayOffToDelete] = useState<{ date: string; name: string } | null>(null);
   const [subsectionsModal, setSubsectionsModal] = useState<SubsectionsModalState | null>(null);
-  const [showAddLessonModal, setShowAddLessonModal] = useState(false);
-
-  // Scope & sequence data for AddEntryModal
-  const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
-  const { data: scopeSequenceData } = useScopeSequenceList({ grade: selectedGrade, limit: 500 });
-  const createScopeSequence = useCreateScopeSequence();
 
   // Selection state for interactive date picking
   const [selectionMode, setSelectionMode] = useState<SelectionMode>(null);
@@ -94,14 +84,18 @@ export default function Calendar2Page() {
   // Load saved selection from localStorage on mount
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(CALENDAR2_STORAGE_KEY);
+      const saved = localStorage.getItem(CALENDAR_STORAGE_KEY);
       if (saved) {
         const data = JSON.parse(saved);
-        if (data.grade) setSelectedGrade(data.grade);
-        if (data.sectionKey) setPendingSectionKey(data.sectionKey);
+        if (data.grade) {
+          setSelectedGrade(data.grade);
+        }
+        if (data.sectionKey) {
+          setPendingSectionKey(data.sectionKey);
+        }
       }
     } catch (error) {
-      console.error("Error loading saved calendar2 selection:", error);
+      console.error("Error loading saved calendar selection:", error);
     }
   }, []);
 
@@ -112,9 +106,9 @@ export default function Calendar2Page() {
         grade: selectedGrade,
         sectionKey: selectedSection ? `${selectedSection.school}|${selectedSection.classSection}` : null,
       };
-      localStorage.setItem(CALENDAR2_STORAGE_KEY, JSON.stringify(data));
+      localStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify(data));
     } catch (error) {
-      console.error("Error saving calendar2 selection:", error);
+      console.error("Error saving calendar selection:", error);
     }
   }, [selectedGrade, selectedSection]);
 
@@ -135,19 +129,7 @@ export default function Calendar2Page() {
     setHasAttemptedRestore(true);
   }, [pendingSectionKey, sectionConfigs, selectedGrade, hasAttemptedRestore]);
 
-  // Reset unit index when grade or section changes
-  useEffect(() => {
-    setSelectedUnitIndex(0);
-  }, [selectedGrade, selectedSection]);
-
-  // Clamp unit index when unitSchedules changes
-  useEffect(() => {
-    if (unitSchedules.length > 0 && selectedUnitIndex >= unitSchedules.length) {
-      setSelectedUnitIndex(0);
-    }
-  }, [unitSchedules, selectedUnitIndex]);
-
-  // Calculate school days between two dates
+  // Calculate school days between two dates (excludes weekends, days off, and section events without math)
   const calculateSchoolDays = useCallback(
     (startDate: string, endDate: string): number => {
       if (!startDate || !endDate) return 0;
@@ -156,6 +138,7 @@ export default function Calendar2Page() {
       const end = new Date(endDate + "T12:00:00");
       const daysOffSet = new Set(daysOff);
 
+      // Skip all section events (regardless of whether math happens)
       for (const event of sectionDaysOff) {
         daysOffSet.add(event.date);
       }
@@ -179,10 +162,12 @@ export default function Calendar2Page() {
     [daysOff, sectionDaysOff]
   );
 
+  // Handle clicking a section to start date selection
   const startDateSelection = (unitKey: string, sectionId: string, type: "start" | "end", subsection?: number) => {
     setSelectionMode({ type, unitKey, sectionId, subsection });
   };
 
+  // Find existing schedule for a unit
   const findExistingSchedule = useCallback(
     (grade: string, unitNumber: number): SavedUnitSchedule | undefined => {
       if (selectedSection) {
@@ -199,6 +184,7 @@ export default function Calendar2Page() {
     [savedSchedules, selectedSection]
   );
 
+  // Handle clearing section dates
   const handleClearSectionDates = useCallback(
     (unitKey: string, sectionId: string, subsection?: number) => {
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
@@ -218,6 +204,7 @@ export default function Calendar2Page() {
     [unitSchedules, findExistingSchedule, clearSectionDates]
   );
 
+  // Handle updating unit-level dates
   const handleUnitDateChange = useCallback(
     (unitKey: string, field: "startDate" | "endDate", value: string) => {
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
@@ -239,12 +226,14 @@ export default function Calendar2Page() {
     [unitSchedules, findExistingSchedule, updateUnitDates]
   );
 
+  // Handle clicking a date in the calendar
   const handleDateClick = useCallback(
     (dateStr: string) => {
       if (!selectionMode) return;
 
       const { type, unitKey, sectionId, subsection, pendingStartDate } = selectionMode;
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
+      // Find section matching both sectionId and subsection
       const section = unit?.sections.find(
         (s) => s.sectionId === sectionId && s.subsection === subsection
       );
@@ -256,6 +245,8 @@ export default function Calendar2Page() {
 
       const existingSchedule = findExistingSchedule(unit.grade, unit.unitNumber);
 
+      // When setting end date, use pendingStartDate if available (from auto-switch)
+      // This handles the case where optimistic update hasn't propagated yet
       const startDate = type === "start"
         ? dateStr
         : (section.startDate || pendingStartDate || "");
@@ -273,6 +264,8 @@ export default function Calendar2Page() {
         existingScheduleId: existingSchedule?._id,
       });
 
+      // Auto-switch to end date selection after setting start date
+      // Store the start date we just set in case optimistic update hasn't propagated
       if (type === "start") {
         setSelectionMode({ type: "end", unitKey, sectionId, subsection, pendingStartDate: dateStr });
       } else {
@@ -282,6 +275,7 @@ export default function Calendar2Page() {
     [selectionMode, unitSchedules, findExistingSchedule, updateSectionDates]
   );
 
+  // Handle copying schedules to other sections
   const handleCopyToSections = useCallback((unitNumbers: number[]) => {
     if (!selectedSection || copyTargets.size === 0 || unitNumbers.length === 0) return;
 
@@ -302,6 +296,7 @@ export default function Calendar2Page() {
     );
   }, [selectedSection, selectedGrade, sectionConfigs, copyTargets, copySchedules]);
 
+  // Handle adding a section day off
   const handleAddDayOff = useCallback(
     async (
       date: string,
@@ -316,6 +311,7 @@ export default function Calendar2Page() {
     [addDayOff]
   );
 
+  // Handle deleting a section day off
   const handleDeleteDayOff = useCallback(
     async (date: string, shiftSchedule: boolean) => {
       await deleteDayOff.mutateAsync({ date, shiftSchedule });
@@ -325,6 +321,7 @@ export default function Calendar2Page() {
     [deleteDayOff]
   );
 
+  // Handle opening subsections modal
   const handleOpenSubsections = useCallback(
     (unitKey: string, sectionId: string, sectionName: string, lessons: LessonForSubsection[]) => {
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
@@ -342,6 +339,7 @@ export default function Calendar2Page() {
     [unitSchedules]
   );
 
+  // Handle saving subsections
   const handleSaveSubsections = useCallback(
     async (updates: LessonForSubsection[]) => {
       if (!subsectionsModal || !selectedSection) {
@@ -349,7 +347,10 @@ export default function Calendar2Page() {
         return;
       }
 
+      // Normalize section ID: "Ramp Up" in schedules = "Ramp Ups" in scope-and-sequence
       const scopeSection = subsectionsModal.sectionId === "Ramp Up" ? "Ramp Ups" : subsectionsModal.sectionId;
+
+      // Parse unitKey to get unit number (format: "grade-unitNumber")
       const unitKeyParts = subsectionsModal.unitKey.split("-");
       const unitNumber = parseInt(unitKeyParts[unitKeyParts.length - 1], 10);
 
@@ -363,12 +364,14 @@ export default function Calendar2Page() {
             subsection: lesson.subsection ?? null,
             grade: subsectionsModal.grade,
           })),
+          // Pass schedule sync info to also update the unit-schedule document
           scheduleSync: {
             schoolYear,
             unitNumber,
             sectionId: subsectionsModal.sectionId,
           },
         });
+        console.log("[handleSaveSubsections] Success");
         setSubsectionsModal(null);
       } catch (error) {
         console.error("[handleSaveSubsections] Error:", error);
@@ -377,6 +380,7 @@ export default function Calendar2Page() {
     [subsectionsModal, selectedSection, updateSubsections, schoolYear]
   );
 
+  // Get unit/section info for a date (only when a section is selected)
   const getScheduleForDate = useCallback(
     (dateStr: string) => {
       if (!selectedSection) return null;
@@ -393,37 +397,6 @@ export default function Calendar2Page() {
       return null;
     },
     [selectedSection, unitSchedules]
-  );
-
-  // Map (sectionId, subsection) to its color index for the selected unit
-  // Matches SimplifiedUnitView flat ordering: split sections get one color per subsection
-  const getSectionColorIndex = useCallback(
-    (unitIndex: number, sectionId: string, subsection?: number): number => {
-      if (unitIndex >= unitSchedules.length) return 0;
-      const unit = unitSchedules[unitIndex];
-      const seenSectionIds = new Set<string>();
-      let colorIdx = 0;
-
-      for (const section of unit.sections) {
-        if (!seenSectionIds.has(section.sectionId)) {
-          seenSectionIds.add(section.sectionId);
-          const sectionsForId = unit.sections.filter(s => s.sectionId === section.sectionId);
-          const isSplit = sectionsForId.length > 1;
-
-          if (isSplit) {
-            for (const sub of sectionsForId) {
-              if (sub.sectionId === sectionId && sub.subsection === subsection) return colorIdx;
-              colorIdx++;
-            }
-          } else {
-            if (section.sectionId === sectionId) return colorIdx;
-            colorIdx++;
-          }
-        }
-      }
-      return 0;
-    },
-    [unitSchedules]
   );
 
   const getEventsForDate = useCallback(
@@ -472,45 +445,11 @@ export default function Calendar2Page() {
     setShowDeleteDayOffModal(true);
   }, []);
 
+  // Matching sections for the current grade
   const matchingSections = useMemo(() => {
     const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
     return sectionConfigs.filter((s) => s.scopeSequenceTag === scopeTag);
   }, [sectionConfigs, selectedGrade]);
-
-  const selectedUnit = unitSchedules[selectedUnitIndex] ?? null;
-
-  // Build legend entries matching the flat section/subsection layout of the selected unit
-  const legendEntries = useMemo(() => {
-    if (!selectedUnit) return [];
-    const entries: { key: string; label: string; colorIndex: number }[] = [];
-    const seenSectionIds = new Set<string>();
-    let colorIdx = 0;
-
-    for (const section of selectedUnit.sections) {
-      if (!seenSectionIds.has(section.sectionId)) {
-        seenSectionIds.add(section.sectionId);
-        const sectionsForId = selectedUnit.sections.filter(s => s.sectionId === section.sectionId);
-        const isSplit = sectionsForId.length > 1;
-        const baseName = section.name
-          .replace(/ \(Part \d+\)$/, "")
-          .replace(/ \(Unassigned\)$/, "");
-
-        if (isSplit) {
-          for (const sub of sectionsForId) {
-            const subLabel = sub.subsection !== undefined
-              ? `${baseName} Pt.${sub.subsection}`
-              : `${baseName} (Unassigned)`;
-            entries.push({ key: `${sub.sectionId}-${sub.subsection ?? "u"}`, label: subLabel, colorIndex: colorIdx });
-            colorIdx++;
-          }
-        } else {
-          entries.push({ key: section.sectionId, label: baseName, colorIndex: colorIdx });
-          colorIdx++;
-        }
-      }
-    }
-    return entries;
-  }, [selectedUnit]);
 
   if (isInitialLoading) {
     return (
@@ -540,7 +479,6 @@ export default function Calendar2Page() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            {/* Grade selector */}
             <select
               value={selectedGrade}
               onChange={(e) => {
@@ -587,21 +525,6 @@ export default function Calendar2Page() {
                   ))}
                 </select>
 
-                {/* Unit selector - only when section is selected */}
-                {selectedSection && unitSchedules.length > 0 && (
-                  <select
-                    value={selectedUnitIndex}
-                    onChange={(e) => setSelectedUnitIndex(Number(e.target.value))}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm cursor-pointer"
-                  >
-                    {unitSchedules.map((u, i) => (
-                      <option key={u.unitKey} value={i}>
-                        {u.unitName}
-                      </option>
-                    ))}
-                  </select>
-                )}
-
                 {selectedSection && matchingSections.length > 1 && (
                   <button
                     onClick={() => setShowCopyModal(true)}
@@ -638,10 +561,10 @@ export default function Calendar2Page() {
         </div>
       </div>
 
-      {/* Main content - two columns: narrow left, wide right */}
+      {/* Main content - two columns */}
       <div className="flex h-[calc(100vh-80px)]">
-        {/* Left column - Selected unit only */}
-        <div className="w-1/3 p-4 overflow-y-auto border-r border-gray-200 relative">
+        {/* Left column - Unit cards */}
+        <div className="w-1/2 p-4 overflow-y-auto border-r border-gray-200 relative">
           {(isContentLoading || (pendingSectionKey && sectionConfigs.length === 0)) && (
             <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
               <div className="flex items-center gap-2 text-blue-600">
@@ -674,25 +597,29 @@ export default function Calendar2Page() {
                 </p>
               </div>
             </div>
-          ) : selectedSection && selectedUnit ? (
-            <SimplifiedUnitView
-              unit={selectedUnit}
-              unitIndex={selectedUnitIndex}
-              selectionMode={selectionMode}
-              calculateSchoolDays={calculateSchoolDays}
-              onOpenSubsections={handleOpenSubsections}
-              onStartDateSelection={startDateSelection}
-              onClearSectionDates={handleClearSectionDates}
-              onUnitDateChange={handleUnitDateChange}
-              onAddLesson={() => setShowAddLessonModal(true)}
-            />
+          ) : selectedSection ? (
+            <div className="space-y-3">
+              {unitSchedules.map((unit, unitIndex) => (
+                <UnitCard
+                  key={`unit-card-${unit.unitKey}`}
+                  unit={unit}
+                  unitIndex={unitIndex}
+                  selectionMode={selectionMode}
+                  calculateSchoolDays={calculateSchoolDays}
+                  onOpenSubsections={handleOpenSubsections}
+                  onStartDateSelection={startDateSelection}
+                  onClearSectionDates={handleClearSectionDates}
+                  onUnitDateChange={handleUnitDateChange}
+                />
+              ))}
+            </div>
           ) : (
             <div className="h-full" />
           )}
         </div>
 
-        {/* Right column - Calendar (wider) */}
-        <div className="w-2/3 p-4 overflow-y-auto bg-gray-100 relative">
+        {/* Right column - Calendar */}
+        <div className="w-1/2 p-4 overflow-y-auto bg-gray-100 relative">
           {isLoadingGradeData && (
             <div className="absolute inset-0 bg-gray-100/70 flex items-center justify-center z-10">
               <div className="flex items-center gap-2 text-blue-600">
@@ -702,12 +629,6 @@ export default function Calendar2Page() {
             </div>
           )}
 
-          {!selectedUnit?.startDate ? (
-            <div className="h-full flex items-center justify-center">
-              <p className="text-sm text-gray-400">Select a unit start date to view the calendar</p>
-            </div>
-          ) : (
-          <>
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-4 bg-white rounded-lg shadow px-4 py-2">
             <button onClick={prevMonth} className="p-1 hover:bg-gray-100 rounded cursor-pointer">
@@ -725,13 +646,11 @@ export default function Calendar2Page() {
           {[0, 1, 2].map((offset) => {
             const monthDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + offset, 1);
             return (
-              <MonthCalendarV2
+              <MonthCalendar
                 key={monthDate.toISOString()}
                 monthDate={monthDate}
                 selectionMode={selectionMode}
-                selectedUnitIndex={selectedUnitIndex}
                 getScheduleForDate={getScheduleForDate}
-                getSectionColorIndex={getSectionColorIndex}
                 getEventsForDate={getEventsForDate}
                 isDayOff={isDayOff}
                 isSectionDayOff={isSectionDayOff}
@@ -742,39 +661,29 @@ export default function Calendar2Page() {
             );
           })}
 
-          </>
-          )}
-        </div>
-      </div>
-
-      {/* Sticky footer legend - full width across page */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-2 z-20">
-        <div className="flex flex-wrap items-center gap-3 text-xs">
-          <span className="text-gray-500 font-semibold mr-1">Legend</span>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-gray-100 rounded border border-gray-300" />
-            <span>Weekend / No School / No Math</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-gray-500 rounded" />
-            <span>Event (Math Happens)</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-gray-100 rounded border border-gray-300" />
-            <span className="text-gray-400">Other Units</span>
-          </div>
-          {legendEntries.map((entry) => {
-            const color = SECTION_COLORS[entry.colorIndex % SECTION_COLORS.length];
-            return (
-              <div key={entry.key} className="flex items-center gap-1">
-                <div
-                  className="w-3 h-3 rounded"
-                  style={{ backgroundColor: color.light, border: `1px solid ${color.base}` }}
-                />
-                <span style={{ color: color.base }}>{entry.label}</span>
+          {/* Legend */}
+          <div className="bg-white rounded-lg shadow p-3 mt-4">
+            <h4 className="text-xs font-semibold text-gray-500 mb-2">Legend</h4>
+            <div className="flex flex-wrap gap-3 text-xs">
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-gray-100 rounded border border-gray-300" />
+                <span>Weekend / No School / No Math</span>
               </div>
-            );
-          })}
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 bg-gray-500 rounded" />
+                <span>Event (Math Happens)</span>
+              </div>
+              {unitSchedules.slice(0, 6).map((unit, index) => (
+                <div key={unit.unitNumber} className="flex items-center gap-1">
+                  <div
+                    className="w-3 h-3 rounded"
+                    style={{ backgroundColor: UNIT_COLORS[index % UNIT_COLORS.length].light }}
+                  />
+                  <span>U{unit.unitNumber}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -839,22 +748,6 @@ export default function Calendar2Page() {
           isSaving={updateSubsections.isPending}
         />
       )}
-
-      {/* Add Lesson Modal */}
-      <AddEntryModal
-        isOpen={showAddLessonModal}
-        onClose={() => setShowAddLessonModal(false)}
-        onSubmit={(data: ScopeAndSequenceInput) => {
-          createScopeSequence.mutate(data, {
-            onSuccess: () => setShowAddLessonModal(false),
-          });
-        }}
-        isLoading={createScopeSequence.isPending}
-        defaultTag={scopeTag}
-        defaultGrade={selectedGrade}
-        defaultUnit={selectedUnit?.unitNumber}
-        existingEntries={scopeSequenceData ?? []}
-      />
     </div>
   );
 }
