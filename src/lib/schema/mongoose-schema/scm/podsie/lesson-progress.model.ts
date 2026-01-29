@@ -24,6 +24,10 @@ const lessonProgressFields = {
   // Start date for the module/unit - used to calculate Section A's active period
   moduleStartDate: { type: String, required: false }, // "YYYY-MM-DD" format
 
+  // Points reward: goal and description (e.g. 750 points → "Pizza party")
+  pointsRewardGoal: { type: Number, required: false },
+  pointsRewardDescription: { type: String, required: false },
+
   // Pacing configuration - array of assignment entries
   assignments: { type: [lessonProgressEntrySchema], default: [] },
 

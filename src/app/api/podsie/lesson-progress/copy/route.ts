@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
       copyGroups = true,
       copyDueDates = true,
       copyStartDate = true,
+      copyPointsReward = true,
     } = body;
 
     if (!sourceGroupId || !sourceModuleId) {
@@ -95,6 +96,10 @@ export async function POST(req: NextRequest) {
             podsieModuleId: sourceModuleId,
             assignments: assignmentsToWrite,
             ...(copyStartDate && { moduleStartDate: sourceConfig.moduleStartDate }),
+            ...(copyPointsReward && {
+              pointsRewardGoal: sourceConfig.pointsRewardGoal,
+              pointsRewardDescription: sourceConfig.pointsRewardDescription,
+            }),
           },
           { upsert: true, new: true }
         );
