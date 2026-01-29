@@ -7,6 +7,7 @@ import { useSectionOptions } from "@/hooks/scm";
 import { getScopeTagForSection } from "../progress/utils/sectionHelpers";
 import { SectionAssessmentAccordion } from "./components/SectionAssessmentAccordion";
 import { ScopeSummaryTable } from "./components/ScopeSummaryTable";
+import { DeprecationModal } from "../components/DeprecationModal";
 
 interface SectionOption {
   id: string;
@@ -78,6 +79,7 @@ export default function AssessmentPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <DeprecationModal links={[{ label: "Go to Assessment Data on Podsie", url: "https://www.podsie.org/teacher/sandbox/assessmentMultiSection" }]} />
       <div className="mx-auto" style={{ maxWidth: "1600px" }}>
         {/* Page Title */}
         <div className="mb-6">

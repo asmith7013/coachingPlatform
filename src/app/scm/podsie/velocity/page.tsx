@@ -23,6 +23,7 @@ import {
   type AccordionItemConfig,
 } from "@/components/composed/section-visualization";
 import { useSectionOptions, useDaysOff, useVelocityData } from "@/hooks/scm";
+import { DeprecationModal } from "../components/DeprecationModal";
 
 // Default school year
 const DEFAULT_SCHOOL_YEAR = "2025-2026";
@@ -319,6 +320,8 @@ export default function VelocityPage() {
   };
 
   return (
+    <>
+    <DeprecationModal links={[{ label: "Go to Velocity on Podsie", url: "https://www.podsie.org/teacher/sandbox/velocity" }]} />
     <SectionVisualizationLayout
       title="Class Velocity Tracker"
       subtitle={`${schoolYear} School Year`}
@@ -355,5 +358,6 @@ export default function VelocityPage() {
       emptyStateMessage="No Sections Selected"
       emptyStateDescription="Select one or more sections above to view velocity graphs, calendars, and track class progress over time."
     />
+    </>
   );
 }

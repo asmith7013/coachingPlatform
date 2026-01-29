@@ -26,6 +26,7 @@ import { useLessons } from "./hooks/useLessons";
 import { useProgressData } from "./hooks/useProgressData";
 import { usePacingData } from "./hooks/usePacingData";
 import { useLocalStorageString } from "./hooks/useLocalStorage";
+import { DeprecationModal } from "../components/DeprecationModal";
 import type { LessonConfig } from "./types";
 
 // Helper to get/set per-section localStorage values
@@ -385,6 +386,7 @@ export default function PodsieProgressPage() {
   // Render: Main Page
   return (
     <div className="min-h-screen bg-gray-50">
+      <DeprecationModal links={[{ label: "Go to Lesson Progress on Podsie", url: "https://www.podsie.org/teacher/sandbox/lessonProgress" }, { label: "Go to Smartboard on Podsie", url: "https://www.podsie.org/teacher/sandbox/smartboard" }]} />
       <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
         {/* Header and Filters */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">

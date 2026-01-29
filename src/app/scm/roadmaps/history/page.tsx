@@ -12,6 +12,7 @@ import {
   useZearnCompletions,
   usePodsieCompletions,
 } from "@/hooks/scm";
+import { DeprecationModal } from "@/app/scm/podsie/components/DeprecationModal";
 
 const SECTION_OPTIONS: Array<{ value: string; label: string; grade?: string }> = [
   { value: "", label: "All Sections" },
@@ -390,6 +391,7 @@ export default function AssessmentHistoryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <DeprecationModal links={[{ label: "Go to History on Podsie", url: "https://www.podsie.org/teacher/sandbox/history" }]} />
       <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
 
         {/* Title */}

@@ -7,6 +7,7 @@ import type { CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { SectionPacingCard, SectionSummaryCard } from "./components";
 import { useSectionOptions, useCurrentUnits } from "@/hooks/scm";
+import { DeprecationModal } from "../components/DeprecationModal";
 
 interface SectionOption {
   id: string;
@@ -111,6 +112,7 @@ export default function PacePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <DeprecationModal links={[{ label: "Go to Pacing on Podsie", url: "https://www.podsie.org/teacher/sandbox/pacing" }]} />
       <div className="mx-auto" style={{ maxWidth: "1600px" }}>
         {/* Page Title */}
         <div className="mb-6">
