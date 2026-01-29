@@ -27,7 +27,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { sourceGroupId, sourceModuleId, targetGroupIds } = body;
+    const {
+      sourceGroupId,
+      sourceModuleId,
+      targetGroupIds,
+      copyGroups = true,
+      copyDueDates = true,
+      copyStartDate = true,
+    } = body;
 
     if (!sourceGroupId || !sourceModuleId) {
       return NextResponse.json(
@@ -72,6 +79,12 @@ export async function POST(req: NextRequest) {
         // Skip if trying to copy to self
         if (targetGroupId === sourceGroupId) continue;
 
+        const assignmentsToWrite = sourceConfig.assignments.map((a: Record<string, unknown>) => ({
+          ...a,
+          ...(!copyDueDates && { dueDate: undefined }),
+          ...(!copyGroups && { groupNumber: undefined, groupLabel: undefined }),
+        }));
+
         await LessonProgressModel.findOneAndUpdate(
           {
             podsieGroupId: targetGroupId,
@@ -80,7 +93,8 @@ export async function POST(req: NextRequest) {
           {
             podsieGroupId: targetGroupId,
             podsieModuleId: sourceModuleId,
-            assignments: sourceConfig.assignments,
+            assignments: assignmentsToWrite,
+            ...(copyStartDate && { moduleStartDate: sourceConfig.moduleStartDate }),
           },
           { upsert: true, new: true }
         );
