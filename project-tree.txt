@@ -204,6 +204,7 @@
 │   │   ├── course-config.js
 │   │   ├── pdf-downloader.js
 │   │   └── scraper.ts
+│   ├── import-diagnostic-mastery.ts
 │   ├── link-question-type-scripts.sh
 │   ├── migrate-assessment-activity-types.ts
 │   ├── migrate-lesson-naming.ts
@@ -219,7 +220,8 @@
 │   ├── scrape-standards-full.py
 │   ├── snorkl-comprehensive-scraper.ts
 │   ├── snorkl-simple-scraper.ts
-│   ├── sync-skill-content.ts
+│   ├── sync-podsie-assignments.ts
+│   ├── sync-podsie-groups.ts
 │   ├── test-json-parse.js
 │   ├── test-migrate-one-skill.ts
 │   ├── test-monday-token.mjs
@@ -474,6 +476,12 @@
 │   │   │   ├── look-fors
 │   │   │   │   └── bulk-upload
 │   │   │   │       └── route.ts
+│   │   │   ├── podsie
+│   │   │   │   ├── assignments
+│   │   │   │   │   └── sync
+│   │   │   │   └── lesson-progress
+│   │   │   │       ├── copy
+│   │   │   │       └── route.ts
 │   │   │   ├── presentations
 │   │   │   │   └── html
 │   │   │   │       └── [slug]
@@ -487,7 +495,14 @@
 │   │   │   ├── schools
 │   │   │   │   └── route.ts
 │   │   │   ├── scm
+│   │   │   │   ├── history
+│   │   │   │   │   ├── podsie
+│   │   │   │   │   ├── roadmaps
+│   │   │   │   │   └── zearn
+│   │   │   │   ├── podsie
+│   │   │   │   │   └── worked-examples
 │   │   │   │   └── worked-examples
+│   │   │   │       ├── [slug]
 │   │   │   │       ├── edit-analysis
 │   │   │   │       ├── edit-slide
 │   │   │   │       ├── edit-slides
@@ -496,7 +511,8 @@
 │   │   │   │       ├── export-pptx-stream
 │   │   │   │       ├── generate-printable
 │   │   │   │       ├── generate-slides
-│   │   │   │       └── optimize-slides
+│   │   │   │       ├── optimize-slides
+│   │   │   │       └── route.ts
 │   │   │   ├── setup
 │   │   │   │   └── initial-user
 │   │   │   │       └── route.ts
@@ -891,10 +907,15 @@
 │   │   │   ├── PublicSCMNav.tsx
 │   │   │   ├── SCMNav.tsx
 │   │   │   ├── admin
+│   │   │   │   ├── students
+│   │   │   │   │   └── page.tsx
 │   │   │   │   └── timesheet
 │   │   │   │       └── page.tsx
 │   │   │   ├── content
 │   │   │   │   ├── calendar
+│   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── calendar-old
 │   │   │   │   │   ├── components
 │   │   │   │   │   ├── hooks
 │   │   │   │   │   └── page.tsx
@@ -973,6 +994,8 @@
 │   │   │   │   ├── section-overview
 │   │   │   │   │   ├── components
 │   │   │   │   │   └── page.tsx
+│   │   │   │   ├── sections
+│   │   │   │   │   └── new
 │   │   │   │   ├── state-test
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── variations
@@ -987,6 +1010,10 @@
 │   │   │   │       ├── hooks
 │   │   │   │       └── page.tsx
 │   │   │   ├── roadmaps
+│   │   │   │   ├── 6th.txt
+│   │   │   │   ├── 7th.txt
+│   │   │   │   ├── 805.txt
+│   │   │   │   ├── 8th.txt
 │   │   │   │   ├── assessment-scraper
 │   │   │   │   │   ├── actions
 │   │   │   │   │   ├── components
@@ -1069,7 +1096,9 @@
 │   │   │   └── workedExamples
 │   │   │       ├── create
 │   │   │       │   ├── README.md
+│   │   │       │   ├── _deprecated
 │   │   │       │   ├── actions
+│   │   │       │   ├── ai
 │   │   │       │   ├── components
 │   │   │       │   ├── hooks
 │   │   │       │   ├── layout.tsx
@@ -2269,18 +2298,10 @@
 │   │   ├── drop-old-scope-sequence-index.ts
 │   │   ├── migrate-assessment-status.ts
 │   │   └── seed-activity-types.ts
-│   ├── skills
-│   │   └── worked-example
-│   │       ├── content
-│   │       │   ├── pedagogy.ts
-│   │       │   ├── prompts.ts
-│   │       │   ├── styling.ts
-│   │       │   └── templates.ts
-│   │       ├── context.ts
-│   │       └── index.ts
 │   ├── styles
 │   │   └── theme.css
 │   └── types
+│       ├── assets.d.ts
 │       ├── clerk.d.ts
 │       └── dependency-overrides.d.ts
 ├── tailwind.config.ts
@@ -2289,4 +2310,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-681 directories, 1609 files
+697 directories, 1614 files

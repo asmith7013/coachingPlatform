@@ -1,0 +1,160 @@
+| Unit | Skill Name | Skill Code | Skill Grade | Standard(s) | Demonstrated | Attempted But Not Passed | Not Started | AYBAR, NASHLA | CAPELLAN, ADRIEL | GONZALEZ, JUNIOR | JORGE, ALYSSON | KEA, KAYDEN | MADERA RODRIGUEZ, AMELIA | MAYERS, KEIVIN | MOHAMMED, MALA | MOLINA, DYLAN | ORTIZ, AMAURI | PEREZ GREEN, ISAC | PEREZ, KAIDEN | PIMENTEL, JOSE | PINA MARTINEZ, ANTHONELLA | POLANCO DUARTE, DASHA | PROANO CRUZ, NELSON | ROBINSON, AVERY | SARMIENTO, MARCOS | VARGAS, ELADIO | VASQUEZ, XANDER | WILLIAMS, SERENITY | JAQUEZ, EURICH | SIMMONS, STEPHON |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Target Skills |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 01 - Area and Surface Area |  |  |  |  |  |  |  | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 |
+| Unit 01 - Area and Surface Area | Triangle Area | 120 | 6th Grade | 6.G.1 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 01 - Area and Surface Area | Nets of 3-D Shapes | 122 | 6th Grade | 6.G.4 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 01 - Area and Surface Area | Nets & Surface Area | 508 | 6th Grade | 6.G.4 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 01 - Area and Surface Area | Area of Parallelograms | 646 | 6th Grade | 6.G.1 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 01 - Area and Surface Area | Area by Decomposition | 647 | 6th Grade | 6.G.1 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 01 - Area and Surface Area | Polygons on Coordinate Plane | 648 | 6th Grade | 6.G.3 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 01 - Area and Surface Area | Coordinate Plane Distances | 731 | 6th Grade | 6.G.3, 6.NS.8 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 02 - Introducing Ratios |  |  |  |  |  |  |  | 0/2 | 0/2 | 0/2 | 0/2 | 1/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 |
+| Unit 02 - Introducing Ratios | Equivalent Ratios | 117 | 6th Grade | 6.RP.3a | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 02 - Introducing Ratios | Ratios | 213 | 6th Grade | 6.RP.1 | 1 | 0 | 20 |  |  |  |  | PO |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 03 - Unit Rates and Percentages |  |  |  |  |  |  |  | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 | 0/6 |
+| Unit 03 - Unit Rates and Percentages | Find Percentages From Ratios | 141 | 6th Grade | 6.RP.3c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 03 - Unit Rates and Percentages | Unit Rates | 226 | 6th Grade | 6.RP.2, 6.RP.3b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 03 - Unit Rates and Percentages | Real World Percents | 292 | 6th Grade | 6.RP.3c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 03 - Unit Rates and Percentages | Ratio Reasoning & Unit Conversion | 317 | 6th Grade | 6.RP.3d | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 03 - Unit Rates and Percentages | Constant Rates | 523 | 6th Grade | 6.RP.3b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 03 - Unit Rates and Percentages | Represent Percents | 588 | 6th Grade | 6.RP.3c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 04 - Dividing Fractions |  |  |  |  |  |  |  | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 | 0/3 |
+| Unit 04 - Dividing Fractions | Divide Fractions | 318 | 6th Grade | 6.NS.1 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 04 - Dividing Fractions | Fractional Volume | 487 | 6th Grade | 6.G.2 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 04 - Dividing Fractions | Divide Fractions with Models | 644 | 6th Grade | 6.NS.1 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 05 - Arithmetic in Base 10 |  |  |  |  |  |  |  | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 | 0/4 |
+| Unit 05 - Arithmetic in Base 10 | Multiply Decimals - Standard Algorithm | 186 | 6th Grade | 6.NS.3 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 05 - Arithmetic in Base 10 | Divide Decimals - Standard Algorithm | 216 | 6th Grade | 6.NS.3 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 05 - Arithmetic in Base 10 | Add & Subtract Large Decimals | 233 | 6th Grade | 6.NS.3 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 05 - Arithmetic in Base 10 | Divide Whole - Standard Algorithm | 532 | 6th Grade | 6.NS.2 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 06 - Expressions and Equations |  |  |  |  |  |  |  | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 0/10 | 1/10 | 0/10 | 0/10 | 0/10 | 0/10 |
+| Unit 06 - Expressions and Equations | Evaluate Algebraic Expressions | 116 | 6th Grade | 6.EE.2c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 06 - Expressions and Equations | Order of Operations - Including Exponents | 138 | 6th Grade | 6.EE.1 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 06 - Expressions and Equations | Substitution | 203 | 6th Grade | 6.EE.2c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 06 - Expressions and Equations | Solve 1-Step Equations | 222 | 6th Grade | 6.EE.7 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 06 - Expressions and Equations | Represent Linear Relationships | 228 | 6th Grade | 6.EE.9 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 06 - Expressions and Equations | Understand Exponents | 265 | 6th Grade | 6.EE.1 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Unit 06 - Expressions and Equations | Variables & Expressions | 290 | 6th Grade | 6.EE.2a, 6.EE.2b, 6.EE.6 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 06 - Expressions and Equations | Equivalent Expressions | 478 | 6th Grade | 6.EE.3, 6.EE.4 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 06 - Expressions and Equations | 1-Step Equations Word Problems | 524 | 6th Grade | 6.EE.7 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 06 - Expressions and Equations | Understanding Equations | 659 | 6th Grade | 6.EE.5 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 07 - Rational Numbers |  |  |  |  |  |  |  | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 0/7 | 1/7 | 0/7 | 0/7 | 0/7 | 0/7 |
+| Unit 07 - Rational Numbers | Least Common Multiple | 170 | 6th Grade | 6.NS.4 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 07 - Rational Numbers | Write & Graph Inequalities | 177 | 6th Grade | 6.EE.5, 6.EE.8 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 07 - Rational Numbers | Coordinate Plane in 4 Quadrants | 209 | 6th Grade | 6.NS.6a, 6.NS.6b, 6.NS.6c, 6.NS.8 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Unit 07 - Rational Numbers | Greatest Common Factor Whole Numbers | 247 | 6th Grade | 6.NS.4 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 07 - Rational Numbers | Understand Absolute Value | 304 | 6th Grade | 6.NS.7c, 6.NS.7d | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 07 - Rational Numbers | Ordering +/- Rational Numbers | 499 | 6th Grade | 6.NS.5, 6.NS.6a, 6.NS.7a, 6.NS.7b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 07 - Rational Numbers | Represent Positive and Negative Numbers | 567 | 6th Grade | 6.NS.5, 6.NS.6a, 6.NS.6c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions |  |  |  |  |  |  |  | 0/12 | 0/12 | 0/12 | 0/12 | 0/12 | 0/12 | 0/12 | 0/12 | 0/12 | 1/12 | 0/12 | 0/12 | 0/12 | 0/12 | 0/12 | 0/12 | 0/12 | 0/12 | 1/12 | 0/12 | 0/12 | 0/12 | 0/12 |
+| Unit 08 - Data Sets and Distributions | Mean of Data Sets | 105 | 6th Grade | 6.SP.5b | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Simple Probability | 119 | 6th Grade | 6.SP.6, 6.SP.8a | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Box & Whisker Plots | 123 | 7th Grade | 7.SP.1 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Create and Read Histograms | 140 | 6th Grade | 6.SP.4, 6.SP.5a | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Sampling Methods | 199 | 6th Grade | 6.SP.1b, 6.SP.1c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Predict Outcomes | 219 | 6th Grade | 6.SP.7, 6.SP.8b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Dot & Line Plots | 225 | 6th Grade | 6.SP.4, 6.SP.5a | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Median & Mode | 293 | 6th Grade | 6.SP.5b | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Measure of Center | 302 | 6th Grade | 6.SP.2, 6.SP.3, 6.SP.5b, 6.SP.5d | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Random Sample Data | 502 | 6th Grade | 6.SP.1c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Describe Data Sets | 537 | 6th Grade | 6.SP.2, 6.SP.5a, 6.SP.5b, 6.SP.5c, 6.SP.5d | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Unit 08 - Data Sets and Distributions | Statistical Questions | 732 | 6th Grade | 6.SP.1a | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Support Skills |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| 7th Grade Skills |  |  |  |  |  |  |  | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 | 0/2 |
+| Units 08 | Represent Fractions as Decimals | 231 | 7th Grade | 7.NS.2d | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 08 | Represent Rational Numbers | 250 | 7th Grade | 7.EE.3 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| 5th Grade Skills |  |  |  |  |  |  |  | 0/30 | 0/30 | 0/30 | 1/30 | 4/30 | 0/30 | 0/30 | 0/30 | 1/30 | 0/30 | 0/30 | 0/30 | 0/30 | 0/30 | 0/30 | 0/30 | 0/30 | 0/30 | 15/30 | 0/30 | 0/30 | 0/30 | 0/30 |
+| Units 03, 05 | Multiply & Divide by Powers of 10 | 101 | 5th Grade | 5.NBT.2 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04 | Multiply Fractions | 107 | 5th Grade | 5.NF.4a, 5.NF.6 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04, 01 | Volume of a Rectangular Prism | 112 | 5th Grade | 5.MD.5a, 5.MD.5b | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 05, 07 | Compare Decimals | 176 | 5th Grade | 5.NBT.3b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 01 | Classify Quadrilaterals | 184 | 5th Grade | 4.G.2b, 4.G.2c, 5.G.3, 5.G.4 | 2 | 0 | 19 |  |  |  | PO |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04 | Multiply Mixed Numbers | 187 | 5th Grade | 5.NF.4a, 5.NF.6 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03, 05, 06, 08 | Multiply Whole Numbers | 192 | 5th Grade | 5.NBT.5 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 05 | Rounding Decimals | 196 | 5th Grade | 5.NBT.4 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 03 | Convert Customary Units | 223 | 5th Grade | 5.MD.1 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03 | Convert Metric Units | 229 | 5th Grade | 5.MD.1 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03, 06 | Order of Operations - without Exponents | 274 | 5th Grade | 5.OA.1 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 05 | Read & Write Decimals | 277 | 5th Grade | 5.NBT.3a | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 03, 05, 08 | Divide Large Whole Numbers | 282 | 5th Grade | 5.NBT.6 | 1 | 0 | 20 |  |  |  |  | PO |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 01 | Classify Triangles | 301 | 5th Grade | 4.G.2a, 5.G.4 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04 | Divide Fractions by Whole Numbers | 505 | 5th Grade | 5.NF.7a, 5.NF.7c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 04 | Divide Whole Numbers by Fractions | 506 | 5th Grade | 5.NF.7b, 5.NF.7c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 06 | Numerical Patterns | 516 | 5th Grade | 5.OA.3 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 02, 06, 07, 01 | Coordinate Plane | 517 | 5th Grade | 5.G.1 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 03, 08 | Fractions as Division | 518 | 5th Grade | 5.NF.3 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04 | Multiply Fractions with Models | 527 | 5th Grade | 5.NF.4b, 5.NF.6 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 05 | Add & Subtract Decimals | 533 | 5th Grade | 5.NBT.7 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03, 05 | Multiply Decimals by Whole Numbers | 534 | 5th Grade | 5.NBT.7 | 1 | 0 | 20 |  |  |  |  | PO |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03, 05 | Divide Decimals by Whole Numbers | 535 | 5th Grade | 5.NBT.7 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 05 | Multiply Decimals by Decimals | 577 | 5th Grade | 5.NBT.7 | 1 | 0 | 20 |  |  |  |  | PO |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03, 05 | Multiply by Powers of 10 | 578 | 5th Grade | 5.NBT.2 | 3 | 0 | 18 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 05 | Divide Decimals by Decimals | 583 | 5th Grade | 5.NBT.7 | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03, 05 | Decimal Place Value | 616 | 5th Grade | 5.NBT.1 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04, 01 | Understanding Volume | 633 | 5th Grade | 5.MD.3a, 5.MD.3b, 5.MD.4 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 06 | Coordinate Plane Problems | 643 | 5th Grade | 5.G.2 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04 | Unit Fraction & Whole Number Division | 658 | 5th Grade | 5.NF.7c | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| 4th Grade Skills |  |  |  |  |  |  |  | 1/36 | 0/36 | 0/36 | 2/36 | 17/36 | 2/36 | 7/36 | 10/36 | 17/36 | 1/36 | 0/36 | 1/36 | 0/36 | 0/36 | 14/36 | 14/36 | 4/36 | 0/36 | 30/36 | 0/36 | 0/36 | 1/36 | 0/36 |
+| Units 02, 06 | Generate Patterns | 108 | 4th Grade | 4.OA.5 | 6 | 0 | 15 |  |  |  |  | PO |  |  | PO | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| Units 04, 03, 06, 08, 01 | Decompose Fractions | 109 | 4th Grade | 4.NF.3a, 4.NF.3b | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04, 07 | Compare Fractions | 110 | 4th Grade | 4.NF.2 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04, 02, 03, 06, 07, 08, 01 | Equivalent Fractions | 126 | 4th Grade | 4.NF.1 | 3 | 0 | 18 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 05 | Round Whole Numbers | 142 | 4th Grade | 4.NBT.3 | 7 | 0 | 14 |  |  |  |  | PO |  | PO | PO | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| Units 01 | Perimeter & Area of Rectangles | 153 | 4th Grade | 3.MD.8b, 4.MD.3 | 3 | 0 | 18 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 05, 07 | Compare Large Whole Numbers | 169 | 4th Grade | 4.NBT.2b | 5 | 0 | 16 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| Units 04, 03, 06, 08, 01 | Add & Subtract Like Fractions | 171 | 4th Grade | 4.NF.3c, 4.NF.3d | 10 | 0 | 11 |  |  |  | PO | PO | PO | PO | PO | PO |  |  |  |  |  | PO | PO | PO |  | PO |  |  |  |  |
+| Units 01 | Draw & Measure Angles | 172 | 4th Grade | 4.G.1, 4.MD.6 | 4 | 0 | 17 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  | PO |  |  |  | PO |  |  |  |  |
+| Units 06, 07 | Identify Factors of Whole Numbers | 220 | 4th Grade | 4.OA.4 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 02, 06, 07, 08 | Multiples of Whole Numbers | 238 | 4th Grade | 4.OA.4 | 5 | 0 | 16 |  |  |  |  |  |  |  | PO | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| Units 04, 03 | Simplify Fractions | 239 | 4th Grade | 4.NF.1 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 03, 05, 06, 08 | Multiply Large Whole Numbers | 288 | 4th Grade | 4.NBT.5 | 4 | 0 | 17 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  |  | PO |  |  | PO |  |  |  |  |
+| Units 03, 05, 07, 08 | Understand Decimals | 295 | 4th Grade | 4.NF.6 | 5 | 0 | 16 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| Units 03, 05, 08 | Division & Remainders | 390 | 4th Grade | 4.NBT.6 | 2 | 0 | 19 |  |  |  |  | PO |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04, 06, 08, 01 | Multiply Whole Numbers by Fractions | 391 | 4th Grade | 4.NF.4c | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 08 | Add Large Whole Numbers | 528 | 4th Grade | 4.NBT.4 | 8 | 0 | 13 |  |  |  |  | PO |  | PO | PO | PO |  |  |  |  |  | PO | PO | PO |  | PO |  |  |  |  |
+| Units 06 | Whole Number Word Problems | 529 | 4th Grade | 4.OA.3a, 4.OA.3b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 05 | Read & Write Large Whole Numbers | 576 | 4th Grade | 4.NBT.2a | 7 | 0 | 14 |  |  |  |  | PO |  | PO | PO | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| Units 03, 05, 06, 08 | Multiply 2-digit Whole Numbers | 632 | 4th Grade | 4.NBT.5 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 03, 05, 06, 07 | Multiplicative Comparisons | 639 | 4th Grade | 4.OA.1, 4.OA.2 | 5 | 0 | 16 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| Units 04, 06, 08, 01 | Fractions & Unit Fractions | 655 | 4th Grade | 4.NF.4a, 4.NF.4c | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04, 06, 08, 01 | Equivalent Fraction Products | 656 | 4th Grade | 4.NF.4b, 4.NF.4c | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 05, 07 | Compare Decimals with Models | 657 | 4th Grade | 4.NF.7 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 01 | Lines, Segments, Rays & Angles | 660 | 4th Grade | 4.G.1 | 7 | 0 | 14 |  |  |  |  | PO |  | PO | PO | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| Units 03, 05 | Comparing Place Values | 662 | 4th Grade | 4.NBT.1 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 03 | Customary Length | 663 | 4th Grade | 4.MD.1, 4.MD.2a, 4.MD.2b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03 | Customary Weight | 664 | 4th Grade | 4.MD.1, 4.MD.2a, 4.MD.2b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03 | Customary Capacity | 665 | 4th Grade | 4.MD.1, 4.MD.2a, 4.MD.2b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03 | Metric Length | 666 | 4th Grade | 4.MD.1, 4.MD.2a, 4.MD.2b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 03 | Metric Weight & Capacity | 667 | 4th Grade | 4.MD.1, 4.MD.2a, 4.MD.2b | 0 | 0 | 21 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| Units 01 | Angles as Part of a Circle | 669 | 4th Grade | 4.MD.5a, 4.MD.5b | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04, 03, 06, 08, 01 | Add & Subtract Fractions w/Models | 671 | 4th Grade | 4.NF.3b, 4.NF.3c, 4.NF.3d | 8 | 0 | 13 |  |  |  |  | PO |  | PO | PO | PO |  |  |  |  |  | PO | PO | PO |  | PO |  |  |  |  |
+| Units 03, 05, 07, 08 | Fractions with Denominators of 10 & 100 | 672 | 4th Grade | 4.NF.5 | 6 | 0 | 15 |  |  |  |  | PO |  |  | PO | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| Units 03, 05, 07, 08 | Denominators of 10 & 100 | 710 | 4th Grade | 4.NF.5 | 13 | 0 | 8 | PO |  |  | PO | PO | PO | PO | PO | PO | PO |  | PO |  |  | PO | PO | PO |  | PO |  |  | PO |  |
+| Units 06, 07 | Write Algebraic Equations (× & ÷) | 713 | 4th Grade | 4.OA.1, 4.OA.2 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| 3rd Grade Skills |  |  |  |  |  |  |  | 5/19 | 0/19 | 0/19 | 6/19 | 16/19 | 9/19 | 13/19 | 13/19 | 16/19 | 7/19 | 0/19 | 7/19 | 1/19 | 0/19 | 14/19 | 14/19 | 12/19 | 1/19 | 19/19 | 3/19 | 3/19 | 6/19 | 2/19 |
+| Units 03, 05, 06, 08 | Multiply by Multiples of 10 | 115 | 3rd Grade | 3.NBT.3 | 15 | 0 | 6 | PO |  |  | PO | PO | PO | PO | PO | PO | PO |  | PO |  |  | PO | PO | PO |  | PO | PO | PO | PO |  |
+| Units 08 | Interpret Graphs | 135 | 3rd Grade | 3.MD.3 | 9 | 0 | 12 |  |  |  | PO | PO | PO | PO |  | PO |  |  | PO |  |  | PO | PO |  |  | PO |  |  | PO |  |
+| Units 04, 02, 03, 05, 06, 07, 08, 01 | Describe Fractions | 147 | 3rd Grade | 3.G.2, 3.NF.1, 3.NF.2 | 15 | 0 | 6 | PO |  |  | PO | PO | PO | PO | PO | PO | PO |  | PO |  |  | PO | PO | PO |  | PO | PO | PO | PO | PO |
+| Units 03, 05, 06, 07 | Multiplication & Division Equations | 149 | 3rd Grade | 3.OA.3, 3.OA.4, 3.OA.7a | 8 | 0 | 13 |  |  |  |  | PO |  | PO | PO | PO |  |  |  |  |  | PO | PO | PO |  | PO |  |  |  |  |
+| Units 04, 03, 05, 06, 07, 08, 01 | Distributive Property | 185 | 3rd Grade | 3.MD.7c, 3.OA.5 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 03, 06 | Operation Properties | 212 | 3rd Grade | 1.OA.3, 3.OA.5 | 3 | 0 | 18 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04, 03, 05, 06, 07, 08, 01 | Rectangular Area | 248 | 3rd Grade | 3.MD.7a, 3.MD.7b | 10 | 0 | 11 |  |  |  |  | PO | PO | PO | PO | PO | PO |  |  |  |  | PO | PO | PO |  | PO |  |  | PO |  |
+| Units 04, 03, 05, 06, 07, 08, 01 | Understand Multiplication | 272 | 3rd Grade | 3.OA.1, 3.OA.7a, 3.OA.7b | 16 | 0 | 5 | PO |  |  | PO | PO | PO | PO | PO | PO | PO |  | PO | PO |  | PO | PO | PO | PO | PO | PO |  | PO | PO |
+| Units 03, 05, 06, 07, 08 | Division As Equal Shares | 530 | 3rd Grade | 3.OA.2, 3.OA.7a | 12 | 0 | 9 |  |  |  |  | PO | PO | PO | PO | PO | PO |  | PO |  |  | PO | PO | PO |  | PO |  | PO |  |  |
+| Units 04, 02, 03, 06, 07, 08, 01 | Represent Fractions | 579 | 3rd Grade | 3.NF.1, 3.NF.2 | 13 | 0 | 8 | PO |  |  | PO | PO | PO | PO | PO | PO | PO |  | PO |  |  | PO | PO | PO |  | PO |  |  | PO |  |
+| Units 01 | Additive Area | 589 | 3rd Grade | 3.MD.7d | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 04, 07 | Compare Fractions with Like Denominators | 619 | 3rd Grade | 3.NF.3d | 7 | 0 | 14 |  |  |  |  | PO |  |  | PO | PO |  |  |  |  |  | PO | PO | PO |  | PO |  |  |  |  |
+| Units 04, 03, 05, 06, 07, 08, 01 | Understanding Area | 631 | 3rd Grade | 3.MD.5, 3.MD.6 | 13 | 0 | 8 | PO |  |  | PO | PO | PO | PO | PO | PO | PO |  | PO |  |  | PO | PO | PO |  | PO |  |  |  |  |
+| Units 05, 08 | Add 3-Digit Numbers | 634 | 3rd Grade | 3.NBT.2 | 3 | 0 | 18 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 05 | Subtract 3-Digit Numbers | 638 | 3rd Grade | 3.NBT.2 | 1 | 0 | 20 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | PO |  |  |  |  |
+| Units 03, 05, 06, 07 | Multiplication & Division Word Problems | 640 | 3rd Grade | 3.OA.3 | 8 | 0 | 13 |  |  |  |  | PO |  | PO | PO | PO |  |  |  |  |  | PO | PO | PO |  | PO |  |  |  |  |
+| Units 04, 02, 03, 06, 07, 08, 01 | Equivalent Fractions with Visual Models | 641 | 3rd Grade | 3.NF.3a, 3.NF.3b | 9 | 0 | 12 |  |  |  |  | PO | PO | PO | PO | PO |  |  |  |  |  | PO | PO | PO |  | PO |  |  |  |  |
+| Units 04, 02, 03, 06, 07, 08, 01 | Fractions = Whole Numbers | 642 | 3rd Grade | 3.NF.3c | 8 | 0 | 13 |  |  |  |  | PO |  | PO | PO | PO |  |  |  |  |  | PO | PO | PO |  | PO |  |  |  |  |
+| Units 06 | 2-Step Word Problems | 654 | 3rd Grade | 3.OA.8a, 3.OA.8b | 7 | 0 | 14 |  |  |  |  | PO |  | PO | PO | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| 2nd Grade Skills |  |  |  |  |  |  |  | 4/5 | 0/5 | 0/5 | 4/5 | 5/5 | 4/5 | 4/5 | 4/5 | 5/5 | 4/5 | 1/5 | 4/5 | 2/5 | 1/5 | 5/5 | 5/5 | 4/5 | 3/5 | 5/5 | 4/5 | 4/5 | 4/5 | 3/5 |
+| Units 03, 06 | Addition & Subtraction Equations | 133 | 2nd Grade | 2.NBT.5, 2.OA.1a | 5 | 0 | 16 |  |  |  |  | PO |  |  |  | PO |  |  |  |  |  | PO | PO |  |  | PO |  |  |  |  |
+| Units 05 | Read & Write Whole Numbers | 580 | 2nd Grade | 2.NBT.3 | 19 | 0 | 2 | PO |  |  | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO | PO |
+| Units 03, 05, 06, 08 | Add & Subtract on a Number Line | 581 | 2nd Grade | 2.MD.6 | 17 | 0 | 4 | PO |  |  | PO | PO | PO | PO | PO | PO | PO |  | PO | PO |  | PO | PO | PO | PO | PO | PO | PO | PO | PO |
+| Units 05, 07 | Compare Small Whole Numbers | 582 | 2nd Grade | 2.NBT.4 | 15 | 0 | 6 | PO |  |  | PO | PO | PO | PO | PO | PO | PO |  | PO |  |  | PO | PO | PO |  | PO | PO | PO | PO |  |
+| Units 04, 02, 03, 05, 06, 07, 08, 01 | Partition Shapes into Fractions | 653 | 2nd Grade | 2.G.3 | 16 | 0 | 5 | PO |  |  | PO | PO | PO | PO | PO | PO | PO |  | PO |  |  | PO | PO | PO | PO | PO | PO | PO | PO | PO |
