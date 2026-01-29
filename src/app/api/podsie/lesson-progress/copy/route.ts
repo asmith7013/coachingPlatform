@@ -80,7 +80,8 @@ export async function POST(req: NextRequest) {
         // Skip if trying to copy to self
         if (targetGroupId === sourceGroupId) continue;
 
-        const assignmentsToWrite = sourceConfig.assignments.map((a: Record<string, unknown>) => ({
+        const assignments = sourceConfig.assignments as unknown as Record<string, unknown>[];
+        const assignmentsToWrite = assignments.map((a) => ({
           ...a,
           ...(!copyDueDates && { dueDate: undefined }),
           ...(!copyGroups && { groupNumber: undefined, groupLabel: undefined }),
