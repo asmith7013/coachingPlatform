@@ -83,10 +83,11 @@ interface CopySchedulesInput {
 export function useUpdateSectionDatesMutation(
   schoolYear: string,
   selectedGrade: string,
-  selectedSection: SectionConfigOption | null
+  selectedSection: SectionConfigOption | null,
 ) {
   const queryClient = useQueryClient();
-  const scopeTag = selectedSection?.scopeSequenceTag ||
+  const scopeTag =
+    selectedSection?.scopeSequenceTag ||
     (selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`);
 
   const queryKey = selectedSection
@@ -94,11 +95,16 @@ export function useUpdateSectionDatesMutation(
         schoolYear,
         scopeTag,
         selectedSection.school,
-        selectedSection.classSection
+        selectedSection.classSection,
       )
     : calendarKeys.gradeSchedules(schoolYear, selectedGrade);
 
-  return useOptimisticMutation<UpdateSectionDatesInput, SavedUnitSchedule, Error, { previousData: SavedUnitSchedule[] | undefined }>(
+  return useOptimisticMutation<
+    UpdateSectionDatesInput,
+    SavedUnitSchedule,
+    Error,
+    { previousData: SavedUnitSchedule[] | undefined }
+  >(
     async (input) => {
       // Check if the TARGET section being updated has a subsection
       // We only need upsert when updating a subsection row (Part 1, Part 2, etc.)
@@ -114,7 +120,11 @@ export function useUpdateSectionDatesMutation(
         endDate: input.endDate,
         willUseUpsert: !input.existingScheduleId || targetHasSubsection,
         sectionsCount: input.sections.length,
-        sections: input.sections.map(s => ({ sectionId: s.sectionId, subsection: s.subsection, name: s.name })),
+        sections: input.sections.map((s) => ({
+          sectionId: s.sectionId,
+          subsection: s.subsection,
+          name: s.name,
+        })),
       });
 
       if (input.existingScheduleId && !targetHasSubsection) {
@@ -131,7 +141,7 @@ export function useUpdateSectionDatesMutation(
               input.sectionId,
               input.startDate,
               input.endDate,
-              input.subsection
+              input.subsection,
             )
           : await updateSectionDates(
               schoolYear,
@@ -140,14 +150,21 @@ export function useUpdateSectionDatesMutation(
               input.sectionId,
               input.startDate,
               input.endDate,
-              input.subsection
+              input.subsection,
             );
 
-        if (!result.success) {
-          throw new Error(result.error || "Failed to update section dates");
+        if (result.success) {
+          return result.data as unknown as SavedUnitSchedule;
         }
-        return result.data as unknown as SavedUnitSchedule;
-      } else {
+        // Positional update failed — section may not exist in DB yet (e.g. newly added Ramp Up).
+        // Fall through to upsert path which will recreate the sections array.
+        console.log(
+          "[mutations] positional update failed, falling through to upsert:",
+          result.error,
+        );
+      }
+
+      {
         // Create/update schedule using upsert (replaces entire sections array)
         // This handles: new schedules, and updates to subsection rows (Part 1, Part 2, etc.)
         //
@@ -167,8 +184,16 @@ export function useUpdateSectionDatesMutation(
                 sectionId: s.sectionId,
                 subsection: s.subsection,
                 name: s.name,
-                startDate: s.sectionId === input.sectionId && s.subsection === input.subsection ? input.startDate : s.startDate,
-                endDate: s.sectionId === input.sectionId && s.subsection === input.subsection ? input.endDate : s.endDate,
+                startDate:
+                  s.sectionId === input.sectionId &&
+                  s.subsection === input.subsection
+                    ? input.startDate
+                    : s.startDate,
+                endDate:
+                  s.sectionId === input.sectionId &&
+                  s.subsection === input.subsection
+                    ? input.endDate
+                    : s.endDate,
                 lessonCount: s.lessonCount,
               })),
             })
@@ -181,13 +206,24 @@ export function useUpdateSectionDatesMutation(
                 sectionId: s.sectionId,
                 subsection: s.subsection,
                 name: s.name,
-                startDate: s.sectionId === input.sectionId && s.subsection === input.subsection ? input.startDate : s.startDate,
-                endDate: s.sectionId === input.sectionId && s.subsection === input.subsection ? input.endDate : s.endDate,
+                startDate:
+                  s.sectionId === input.sectionId &&
+                  s.subsection === input.subsection
+                    ? input.startDate
+                    : s.startDate,
+                endDate:
+                  s.sectionId === input.sectionId &&
+                  s.subsection === input.subsection
+                    ? input.endDate
+                    : s.endDate,
                 lessonCount: s.lessonCount,
               })),
             });
 
-        console.log("[mutations] upsert result:", { success: result.success, error: result.error });
+        console.log("[mutations] upsert result:", {
+          success: result.success,
+          error: result.error,
+        });
         if (!result.success) {
           throw new Error(result.error || "Failed to create schedule");
         }
@@ -198,19 +234,35 @@ export function useUpdateSectionDatesMutation(
       invalidateQueries: [queryKey],
       onMutate: async (input) => {
         await queryClient.cancelQueries({ queryKey });
-        const previousData = queryClient.getQueryData<SavedUnitSchedule[]>(queryKey);
+        const previousData =
+          queryClient.getQueryData<SavedUnitSchedule[]>(queryKey);
 
         // Optimistically update the cache
         queryClient.setQueryData<SavedUnitSchedule[]>(queryKey, (old) => {
           if (!old) return old;
           return old.map((schedule) => {
-            if (schedule.grade === input.grade && schedule.unitNumber === input.unitNumber) {
+            if (
+              schedule.grade === input.grade &&
+              schedule.unitNumber === input.unitNumber
+            ) {
               return {
                 ...schedule,
-                sections: schedule.sections.map((s: { sectionId: string; subsection?: number; name: string; startDate?: string; endDate?: string }) =>
-                  s.sectionId === input.sectionId && s.subsection === input.subsection
-                    ? { ...s, startDate: input.startDate, endDate: input.endDate }
-                    : s
+                sections: schedule.sections.map(
+                  (s: {
+                    sectionId: string;
+                    subsection?: number;
+                    name: string;
+                    startDate?: string;
+                    endDate?: string;
+                  }) =>
+                    s.sectionId === input.sectionId &&
+                    s.subsection === input.subsection
+                      ? {
+                          ...s,
+                          startDate: input.startDate,
+                          endDate: input.endDate,
+                        }
+                      : s,
                 ),
               };
             }
@@ -226,7 +278,7 @@ export function useUpdateSectionDatesMutation(
         }
       },
       errorContext: "Update section dates",
-    }
+    },
   );
 }
 
@@ -236,10 +288,11 @@ export function useUpdateSectionDatesMutation(
 export function useUpdateUnitDatesMutation(
   schoolYear: string,
   selectedGrade: string,
-  selectedSection: SectionConfigOption | null
+  selectedSection: SectionConfigOption | null,
 ) {
   const queryClient = useQueryClient();
-  const scopeTag = selectedSection?.scopeSequenceTag ||
+  const scopeTag =
+    selectedSection?.scopeSequenceTag ||
     (selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`);
 
   const queryKey = selectedSection
@@ -247,11 +300,16 @@ export function useUpdateUnitDatesMutation(
         schoolYear,
         scopeTag,
         selectedSection.school,
-        selectedSection.classSection
+        selectedSection.classSection,
       )
     : calendarKeys.gradeSchedules(schoolYear, selectedGrade);
 
-  return useOptimisticMutation<UpdateUnitDatesInput, SavedUnitSchedule, Error, { previousData: SavedUnitSchedule[] | undefined }>(
+  return useOptimisticMutation<
+    UpdateUnitDatesInput,
+    SavedUnitSchedule,
+    Error,
+    { previousData: SavedUnitSchedule[] | undefined }
+  >(
     async (input) => {
       if (input.existingScheduleId) {
         // Update existing schedule
@@ -264,14 +322,14 @@ export function useUpdateUnitDatesMutation(
               selectedSection.classSection,
               input.unitNumber,
               input.startDate,
-              input.endDate
+              input.endDate,
             )
           : await updateUnitDates(
               schoolYear,
               input.grade,
               input.unitNumber,
               input.startDate,
-              input.endDate
+              input.endDate,
             );
 
         if (!result.success) {
@@ -325,13 +383,17 @@ export function useUpdateUnitDatesMutation(
       invalidateQueries: [queryKey],
       onMutate: async (input) => {
         await queryClient.cancelQueries({ queryKey });
-        const previousData = queryClient.getQueryData<SavedUnitSchedule[]>(queryKey);
+        const previousData =
+          queryClient.getQueryData<SavedUnitSchedule[]>(queryKey);
 
         // Optimistically update the cache
         queryClient.setQueryData<SavedUnitSchedule[]>(queryKey, (old) => {
           if (!old) return old;
           return old.map((schedule) => {
-            if (schedule.grade === input.grade && schedule.unitNumber === input.unitNumber) {
+            if (
+              schedule.grade === input.grade &&
+              schedule.unitNumber === input.unitNumber
+            ) {
               return {
                 ...schedule,
                 startDate: input.startDate,
@@ -350,7 +412,7 @@ export function useUpdateUnitDatesMutation(
         }
       },
       errorContext: "Update unit dates",
-    }
+    },
   );
 }
 
@@ -361,10 +423,11 @@ export function useAddDayOffMutation(
   schoolYear: string,
   selectedGrade: string,
   selectedSection: SectionConfigOption | null,
-  globalDaysOff: string[]
+  globalDaysOff: string[],
 ) {
   const queryClient = useQueryClient();
-  const scopeTag = selectedSection?.scopeSequenceTag ||
+  const scopeTag =
+    selectedSection?.scopeSequenceTag ||
     (selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`);
 
   return useOptimisticMutation<AddDayOffInput, void, Error, void>(
@@ -391,7 +454,7 @@ export function useAddDayOffMutation(
             target.school,
             target.classSection,
             input.date,
-            globalDaysOff
+            globalDaysOff,
           );
         }
       }
@@ -404,7 +467,7 @@ export function useAddDayOffMutation(
             queryKey: calendarKeys.sectionDaysOff(
               schoolYear,
               selectedSection.school,
-              selectedSection.classSection
+              selectedSection.classSection,
             ),
           });
           // Invalidate schedules (in case they were shifted)
@@ -413,13 +476,13 @@ export function useAddDayOffMutation(
               schoolYear,
               scopeTag,
               selectedSection.school,
-              selectedSection.classSection
+              selectedSection.classSection,
             ),
           });
         }
       },
       errorContext: "Add day off",
-    }
+    },
   );
 }
 
@@ -430,13 +493,19 @@ export function useDeleteDayOffMutation(
   schoolYear: string,
   selectedGrade: string,
   selectedSection: SectionConfigOption | null,
-  globalDaysOff: string[]
+  globalDaysOff: string[],
 ) {
   const queryClient = useQueryClient();
-  const scopeTag = selectedSection?.scopeSequenceTag ||
+  const scopeTag =
+    selectedSection?.scopeSequenceTag ||
     (selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`);
 
-  return useOptimisticMutation<DeleteDayOffInput, void, Error, { previousDaysOff: SectionDayOffEvent[] | undefined }>(
+  return useOptimisticMutation<
+    DeleteDayOffInput,
+    void,
+    Error,
+    { previousDaysOff: SectionDayOffEvent[] | undefined }
+  >(
     async (input) => {
       if (!selectedSection) {
         throw new Error("No section selected");
@@ -447,7 +516,7 @@ export function useDeleteDayOffMutation(
         schoolYear,
         input.date,
         selectedSection.school,
-        selectedSection.classSection
+        selectedSection.classSection,
       );
 
       // Shift schedule back if requested
@@ -458,7 +527,7 @@ export function useDeleteDayOffMutation(
           selectedSection.school,
           selectedSection.classSection,
           input.date,
-          globalDaysOff
+          globalDaysOff,
         );
       }
     },
@@ -469,10 +538,11 @@ export function useDeleteDayOffMutation(
         const queryKey = calendarKeys.sectionDaysOff(
           schoolYear,
           selectedSection.school,
-          selectedSection.classSection
+          selectedSection.classSection,
         );
         await queryClient.cancelQueries({ queryKey });
-        const previousDaysOff = queryClient.getQueryData<SectionDayOffEvent[]>(queryKey);
+        const previousDaysOff =
+          queryClient.getQueryData<SectionDayOffEvent[]>(queryKey);
 
         // Optimistically remove the day off
         queryClient.setQueryData<SectionDayOffEvent[]>(queryKey, (old) => {
@@ -488,9 +558,9 @@ export function useDeleteDayOffMutation(
             calendarKeys.sectionDaysOff(
               schoolYear,
               selectedSection.school,
-              selectedSection.classSection
+              selectedSection.classSection,
             ),
-            context.previousDaysOff
+            context.previousDaysOff,
           );
         }
       },
@@ -502,13 +572,13 @@ export function useDeleteDayOffMutation(
               schoolYear,
               scopeTag,
               selectedSection.school,
-              selectedSection.classSection
+              selectedSection.classSection,
             ),
           });
         }
       },
       errorContext: "Delete day off",
-    }
+    },
   );
 }
 
@@ -518,10 +588,11 @@ export function useDeleteDayOffMutation(
 export function useCopySchedulesMutation(
   schoolYear: string,
   selectedGrade: string,
-  selectedSection: SectionConfigOption | null
+  selectedSection: SectionConfigOption | null,
 ) {
   const queryClient = useQueryClient();
-  const scopeTag = selectedSection?.scopeSequenceTag ||
+  const scopeTag =
+    selectedSection?.scopeSequenceTag ||
     (selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`);
 
   return useOptimisticMutation<CopySchedulesInput, void, Error, void>(
@@ -539,7 +610,7 @@ export function useCopySchedulesMutation(
           selectedSection.classSection,
           target.school,
           target.classSection,
-          input.unitNumbers
+          input.unitNumbers,
         );
       }
     },
@@ -559,7 +630,7 @@ export function useCopySchedulesMutation(
         });
       },
       errorContext: "Copy schedules",
-    }
+    },
   );
 }
 
@@ -569,10 +640,11 @@ export function useCopySchedulesMutation(
 export function useClearSectionDatesMutation(
   schoolYear: string,
   selectedGrade: string,
-  selectedSection: SectionConfigOption | null
+  selectedSection: SectionConfigOption | null,
 ) {
   const queryClient = useQueryClient();
-  const scopeTag = selectedSection?.scopeSequenceTag ||
+  const scopeTag =
+    selectedSection?.scopeSequenceTag ||
     (selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`);
 
   const queryKey = selectedSection
@@ -580,11 +652,22 @@ export function useClearSectionDatesMutation(
         schoolYear,
         scopeTag,
         selectedSection.school,
-        selectedSection.classSection
+        selectedSection.classSection,
       )
     : calendarKeys.gradeSchedules(schoolYear, selectedGrade);
 
-  return useOptimisticMutation<{ unitKey: string; grade: string; unitNumber: number; sectionId: string; subsection?: number }, SavedUnitSchedule, Error, { previousData: SavedUnitSchedule[] | undefined }>(
+  return useOptimisticMutation<
+    {
+      unitKey: string;
+      grade: string;
+      unitNumber: number;
+      sectionId: string;
+      subsection?: number;
+    },
+    SavedUnitSchedule,
+    Error,
+    { previousData: SavedUnitSchedule[] | undefined }
+  >(
     async (input) => {
       const result = selectedSection
         ? await updateSectionUnitDates(
@@ -597,7 +680,7 @@ export function useClearSectionDatesMutation(
             input.sectionId,
             "",
             "",
-            input.subsection
+            input.subsection,
           )
         : await updateSectionDates(
             schoolYear,
@@ -606,7 +689,7 @@ export function useClearSectionDatesMutation(
             input.sectionId,
             "",
             "",
-            input.subsection
+            input.subsection,
           );
 
       if (!result.success) {
@@ -618,19 +701,31 @@ export function useClearSectionDatesMutation(
       invalidateQueries: [queryKey],
       onMutate: async (input) => {
         await queryClient.cancelQueries({ queryKey });
-        const previousData = queryClient.getQueryData<SavedUnitSchedule[]>(queryKey);
+        const previousData =
+          queryClient.getQueryData<SavedUnitSchedule[]>(queryKey);
 
         // Optimistically clear the dates
         queryClient.setQueryData<SavedUnitSchedule[]>(queryKey, (old) => {
           if (!old) return old;
           return old.map((schedule) => {
-            if (schedule.grade === input.grade && schedule.unitNumber === input.unitNumber) {
+            if (
+              schedule.grade === input.grade &&
+              schedule.unitNumber === input.unitNumber
+            ) {
               return {
                 ...schedule,
-                sections: schedule.sections.map((s: { sectionId: string; subsection?: number; name: string; startDate?: string; endDate?: string }) =>
-                  s.sectionId === input.sectionId && s.subsection === input.subsection
-                    ? { ...s, startDate: "", endDate: "" }
-                    : s
+                sections: schedule.sections.map(
+                  (s: {
+                    sectionId: string;
+                    subsection?: number;
+                    name: string;
+                    startDate?: string;
+                    endDate?: string;
+                  }) =>
+                    s.sectionId === input.sectionId &&
+                    s.subsection === input.subsection
+                      ? { ...s, startDate: "", endDate: "" }
+                      : s,
                 ),
               };
             }
@@ -646,7 +741,7 @@ export function useClearSectionDatesMutation(
         }
       },
       errorContext: "Clear section dates",
-    }
+    },
   );
 }
 
@@ -676,7 +771,7 @@ interface UpdateSubsectionsInput {
  * Also syncs the unit-schedule document to keep sections in sync for proper copying
  */
 export function useUpdateSubsectionsMutation(
-  selectedSection: SectionConfigOption | null
+  selectedSection: SectionConfigOption | null,
 ) {
   const queryClient = useQueryClient();
 
@@ -690,7 +785,7 @@ export function useUpdateSubsectionsMutation(
       const result = await updateLessonSubsections(
         selectedSection.school,
         selectedSection.classSection,
-        input.updates
+        input.updates,
       );
 
       if (!result.success) {
@@ -700,13 +795,18 @@ export function useUpdateSubsectionsMutation(
       // Then, sync the unit-schedule document if scheduleSync info provided
       if (input.scheduleSync && selectedSection.scopeSequenceTag) {
         // Group lessons by their subsection assignment
-        const subsectionGroups = new Map<number | undefined, Array<{ subsection: number | undefined; name: string }>>();
+        const subsectionGroups = new Map<
+          number | undefined,
+          Array<{ subsection: number | undefined; name: string }>
+        >();
         for (const update of input.updates) {
           const sub = update.subsection ?? undefined;
           if (!subsectionGroups.has(sub)) {
             subsectionGroups.set(sub, []);
           }
-          subsectionGroups.get(sub)!.push({ subsection: sub, name: update.lessonName });
+          subsectionGroups
+            .get(sub)!
+            .push({ subsection: sub, name: update.lessonName });
         }
 
         // Build subsections array for the sync
@@ -719,20 +819,24 @@ export function useUpdateSubsectionsMutation(
           .map(([sub, lessons]) => ({
             subsection: sub,
             lessonCount: lessons.length,
-            name: sub !== undefined
-              ? `Section ${input.scheduleSync!.sectionId} (Part ${sub})`
-              : `Section ${input.scheduleSync!.sectionId} (Unassigned)`,
+            name:
+              sub !== undefined
+                ? `Section ${input.scheduleSync!.sectionId} (Part ${sub})`
+                : `Section ${input.scheduleSync!.sectionId} (Unassigned)`,
           }));
 
         // If there's only one group with no subsection, don't create Unassigned
         // Instead, create a single entry without subsection
-        const allUnassigned = subsections.length === 1 && subsections[0].subsection === undefined;
+        const allUnassigned =
+          subsections.length === 1 && subsections[0].subsection === undefined;
         const normalizedSubsections = allUnassigned
-          ? [{
-              subsection: undefined,
-              lessonCount: subsections[0].lessonCount,
-              name: `Section ${input.scheduleSync!.sectionId}`,
-            }]
+          ? [
+              {
+                subsection: undefined,
+                lessonCount: subsections[0].lessonCount,
+                name: `Section ${input.scheduleSync!.sectionId}`,
+              },
+            ]
           : subsections;
 
         await syncScheduleSubsections({
@@ -754,11 +858,13 @@ export function useUpdateSubsectionsMutation(
           await queryClient.invalidateQueries({
             queryKey: calendarKeys.assignmentContent(
               selectedSection.school,
-              selectedSection.classSection
+              selectedSection.classSection,
             ),
           });
           // Also invalidate schedules cache since we might have synced them
-          const scopeTag = selectedSection.scopeSequenceTag || `Grade ${selectedSection.gradeLevel}`;
+          const scopeTag =
+            selectedSection.scopeSequenceTag ||
+            `Grade ${selectedSection.gradeLevel}`;
           await queryClient.invalidateQueries({
             predicate: (query) => {
               const key = query.queryKey;
@@ -774,6 +880,6 @@ export function useUpdateSubsectionsMutation(
         }
       },
       errorContext: "Update subsections",
-    }
+    },
   );
 }
