@@ -74,7 +74,11 @@ export default function Calendar2Page() {
         />
       </div>
 
-      <CalendarLegend legendEntries={state.legendEntries} />
+      <CalendarLegend
+        legendEntries={state.legendEntries}
+        showEventButton={!!state.selectedSection}
+        onShowAddDayOff={() => state.setShowAddDayOffModal(true)}
+      />
 
       <CalendarModals
         showCopyModal={state.showCopyModal}
