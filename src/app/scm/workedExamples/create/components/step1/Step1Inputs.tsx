@@ -117,6 +117,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
   const [lessons, setLessons] = useState<LessonOption[]>([]);
   const [isLoadingUnits, setIsLoadingUnits] = useState(false);
   const [isLoadingLessons, setIsLoadingLessons] = useState(false);
+  const [selectedUnitGrade, setSelectedUnitGrade] = useState<string | null>(null);
 
   // Get scope sequence tag from grade
   const scopeSequenceTag = useMemo(() => {
@@ -150,7 +151,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
 
   // Fetch lessons when unit changes
   useEffect(() => {
-    if (!state.gradeLevel || !state.unitNumber) {
+    if (!state.gradeLevel || !state.unitNumber || !selectedUnitGrade) {
       setLessons([]);
       return;
     }
@@ -158,7 +159,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     async function loadLessons() {
       setIsLoadingLessons(true);
       try {
-        const result = await fetchLessonsForUnit(state.gradeLevel!, state.unitNumber!, scopeSequenceTag || undefined);
+        const result = await fetchLessonsForUnit(selectedUnitGrade!, state.unitNumber!, scopeSequenceTag || undefined);
         if (typeof result !== 'string' && result.success && result.data) {
           // Filter out assessments
           const filtered = (result.data as LessonOption[]).filter(
@@ -174,7 +175,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     }
 
     loadLessons();
-  }, [state.gradeLevel, state.unitNumber, scopeSequenceTag]);
+  }, [state.gradeLevel, state.unitNumber, selectedUnitGrade, scopeSequenceTag]);
 
   // Sort lessons for display
   const sortedLessons = useMemo(() => sortLessons(lessons), [lessons]);
@@ -430,12 +431,20 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     setUnitNumber(null);
     setLessonNumber(null);
     setSelectedLesson(null);
+    setSelectedUnitGrade(null);
     setLessons([]);
   }, [setGradeLevel, setUnitNumber, setLessonNumber]);
 
   // Handle unit change - reset lesson
-  const handleUnitChange = useCallback((unitNumber: number | null) => {
-    setUnitNumber(unitNumber);
+  const handleUnitChange = useCallback((value: string | null) => {
+    if (!value) {
+      setUnitNumber(null);
+      setSelectedUnitGrade(null);
+    } else {
+      const [grade, unitNum] = value.split('::');
+      setUnitNumber(parseInt(unitNum));
+      setSelectedUnitGrade(grade);
+    }
     setLessonNumber(null);
     setSelectedLesson(null);
   }, [setUnitNumber, setLessonNumber]);
@@ -499,13 +508,13 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                 </div>
               ) : (
                 <select
-                  value={state.unitNumber || ''}
-                  onChange={(e) => handleUnitChange(e.target.value ? parseInt(e.target.value) : null)}
+                  value={selectedUnitGrade && state.unitNumber ? `${selectedUnitGrade}::${state.unitNumber}` : ''}
+                  onChange={(e) => handleUnitChange(e.target.value || null)}
                   className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
                 >
                   <option value="">Select unit...</option>
                   {units.map((unit) => (
-                    <option key={unit.unitNumber} value={unit.unitNumber}>
+                    <option key={`${unit.grade}::${unit.unitNumber}`} value={`${unit.grade}::${unit.unitNumber}`}>
                       {unit.unitNumber}. {unit.unitName}
                     </option>
                   ))}

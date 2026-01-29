@@ -634,21 +634,20 @@ export async function fetchAllUnitsByScopeTag(scopeSequenceTag: string, grade?: 
         { $match: matchCriteria },
         {
           $group: {
-            _id: '$unitNumber',
+            _id: { grade: '$grade', unitNumber: '$unitNumber' },
             unit: { $first: '$unit' },
-            grade: { $first: '$grade' },
             lessonCount: { $sum: 1 }
           }
         },
-        { $sort: { _id: 1 } }
+        { $sort: { '_id.grade': 1, '_id.unitNumber': 1 } }
       ]);
 
       return {
         success: true,
         data: units.map(u => ({
-          unitNumber: u._id,
+          unitNumber: u._id.unitNumber,
           unitName: u.unit,
-          grade: u.grade,
+          grade: u._id.grade,
           lessonCount: u.lessonCount || 0
         }))
       };
