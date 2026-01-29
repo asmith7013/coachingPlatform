@@ -65,11 +65,11 @@ const GraphPlanSchema = z.object({
   equations: z.array(z.object({
     label: z.string(),
     equation: z.string(),
-    slope: z.number(),
-    yIntercept: z.number(),
+    slope: z.number().optional(),
+    yIntercept: z.number().optional(),
     color: z.string(),
-    startPoint: z.object({ x: z.number(), y: z.number() }),
-    endPoint: z.object({ x: z.number(), y: z.number() }),
+    startPoint: z.object({ x: z.number(), y: z.number() }).optional(),
+    endPoint: z.object({ x: z.number(), y: z.number() }).optional(),
   })),
   scale: z.object({
     xMax: z.number().optional(),
@@ -81,8 +81,8 @@ const GraphPlanSchema = z.object({
     label: z.string(),
     x: z.number(),
     y: z.number(),
-    dataX: z.number(),
-    dataY: z.number(),
+    dataX: z.number().optional(),
+    dataY: z.number().optional(),
   })),
   annotations: z.array(z.object({
     type: z.enum(['y-intercept-shift', 'parallel-label', 'slope-comparison', 'intersection-point', 'slope-triangle', 'point-label']),

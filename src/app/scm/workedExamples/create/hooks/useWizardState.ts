@@ -319,7 +319,15 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       return { ...state, title: action.payload };
 
     case 'SET_SLUG':
-      return { ...state, slug: action.payload };
+      return {
+        ...state,
+        slug: action.payload
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim(),
+      };
 
     case 'SET_MATH_CONCEPT':
       return { ...state, mathConcept: action.payload };
@@ -379,7 +387,9 @@ function generateSlug(strategyName: string | undefined | null, gradeLevel: strin
     .replace(/-+/g, '-')
     .trim();
 
-  const grade = gradeLevel ? `-grade${gradeLevel.replace(/\s+/g, '')}` : '';
+  const grade = gradeLevel
+    ? `-grade${gradeLevel.toLowerCase().replace(/[^a-z0-9]/g, '')}`
+    : '';
   return `${base}${grade}`;
 }
 
