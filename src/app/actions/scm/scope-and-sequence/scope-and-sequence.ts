@@ -626,7 +626,7 @@ export async function fetchAllUnitsByScopeTag(scopeSequenceTag: string, grade?: 
     try {
       // Build match criteria
       const matchCriteria: Record<string, unknown> = { scopeSequenceTag };
-      if (grade) {
+      if (grade && grade !== 'Algebra 1') {
         matchCriteria.grade = grade;
       }
 
