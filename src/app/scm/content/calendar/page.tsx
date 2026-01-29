@@ -2,7 +2,12 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import type { CalendarEvent } from "@zod-schema/calendar";
-import { ChevronLeftIcon, ChevronRightIcon, DocumentDuplicateIcon, PlusIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  DocumentDuplicateIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import {
   AddDayOffModal,
@@ -14,8 +19,16 @@ import {
   type SubsectionsModalState,
 } from "../calendar-old/components";
 import { SubsectionsModal } from "../calendar-old/components/SubsectionsModal";
-import { useCalendarPageData, type SavedUnitSchedule } from "../calendar-old/hooks/useCalendarPageData";
-import { SimplifiedUnitView, SECTION_COLORS } from "./components/SimplifiedUnitView";
+import {
+  useCalendarPageData,
+  type SavedUnitSchedule,
+} from "../calendar-old/hooks/useCalendarPageData";
+import { calendarKeys } from "../calendar-old/hooks/queries";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  SimplifiedUnitView,
+  SECTION_COLORS,
+} from "./components/SimplifiedUnitView";
 import { MonthCalendarV2 } from "./components/MonthCalendarV2";
 import { AddEntryModal } from "../edit-scope-and-sequence/components/AddEntryModal";
 import { useCreateScopeSequence } from "@/hooks/scm/scope-and-sequence/mutations";
@@ -24,6 +37,7 @@ import type { ScopeAndSequenceInput } from "@zod-schema/scm/scope-and-sequence/s
 
 // localStorage key for persisting user selections
 const CALENDAR2_STORAGE_KEY = "roadmaps-calendar2-selection";
+const CALENDAR2_UNITS_KEY = "roadmaps-calendar2-unit-by-section";
 
 // Default school year
 const DEFAULT_SCHOOL_YEAR = "2025-2026";
@@ -37,9 +51,11 @@ const GRADE_OPTIONS = [
 ];
 
 export default function Calendar2Page() {
+  const queryClient = useQueryClient();
   const [schoolYear] = useState(DEFAULT_SCHOOL_YEAR);
   const [selectedGrade, setSelectedGrade] = useState("6");
-  const [selectedSection, setSelectedSection] = useState<SectionConfigOption | null>(null);
+  const [selectedSection, setSelectedSection] =
+    useState<SectionConfigOption | null>(null);
   const [selectedUnitIndex, setSelectedUnitIndex] = useState(0);
 
   // Use the React Query powered hook
@@ -69,13 +85,22 @@ export default function Calendar2Page() {
   const [selectedUnits, setSelectedUnits] = useState<Set<number>>(new Set());
   const [showAddDayOffModal, setShowAddDayOffModal] = useState(false);
   const [showDeleteDayOffModal, setShowDeleteDayOffModal] = useState(false);
-  const [dayOffToDelete, setDayOffToDelete] = useState<{ date: string; name: string } | null>(null);
-  const [subsectionsModal, setSubsectionsModal] = useState<SubsectionsModalState | null>(null);
+  const [dayOffToDelete, setDayOffToDelete] = useState<{
+    date: string;
+    name: string;
+  } | null>(null);
+  const [subsectionsModal, setSubsectionsModal] =
+    useState<SubsectionsModalState | null>(null);
   const [showAddLessonModal, setShowAddLessonModal] = useState(false);
 
   // Scope & sequence data for AddEntryModal
-  const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
-  const { data: scopeSequenceData } = useScopeSequenceList({ grade: selectedGrade, scopeSequenceTag: scopeTag, limit: 500 });
+  const scopeTag =
+    selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
+  const { data: scopeSequenceData } = useScopeSequenceList({
+    grade: selectedGrade,
+    scopeSequenceTag: scopeTag,
+    limit: 500,
+  });
   const createScopeSequence = useCreateScopeSequence();
 
   // Selection state for interactive date picking
@@ -88,7 +113,9 @@ export default function Calendar2Page() {
   });
 
   // Track pending section restore
-  const [pendingSectionKey, setPendingSectionKey] = useState<string | null>(null);
+  const [pendingSectionKey, setPendingSectionKey] = useState<string | null>(
+    null,
+  );
   const [hasAttemptedRestore, setHasAttemptedRestore] = useState(false);
 
   // Load saved selection from localStorage on mount
@@ -110,7 +137,9 @@ export default function Calendar2Page() {
     try {
       const data = {
         grade: selectedGrade,
-        sectionKey: selectedSection ? `${selectedSection.school}|${selectedSection.classSection}` : null,
+        sectionKey: selectedSection
+          ? `${selectedSection.school}|${selectedSection.classSection}`
+          : null,
       };
       localStorage.setItem(CALENDAR2_STORAGE_KEY, JSON.stringify(data));
     } catch (error) {
@@ -120,14 +149,21 @@ export default function Calendar2Page() {
 
   // Restore pending section once configs are loaded
   useEffect(() => {
-    if (hasAttemptedRestore || !pendingSectionKey || sectionConfigs.length === 0) return;
+    if (
+      hasAttemptedRestore ||
+      !pendingSectionKey ||
+      sectionConfigs.length === 0
+    )
+      return;
 
     const [school, classSection] = pendingSectionKey.split("|");
     const section = sectionConfigs.find(
-      (s: SectionConfigOption) => s.school === school && s.classSection === classSection
+      (s: SectionConfigOption) =>
+        s.school === school && s.classSection === classSection,
     );
     if (section) {
-      const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
+      const scopeTag =
+        selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
       if (section.scopeSequenceTag === scopeTag) {
         setSelectedSection(section);
       }
@@ -135,10 +171,40 @@ export default function Calendar2Page() {
     setHasAttemptedRestore(true);
   }, [pendingSectionKey, sectionConfigs, selectedGrade, hasAttemptedRestore]);
 
-  // Reset unit index when grade or section changes
+  // Restore saved unit index when section changes, or reset to 0
   useEffect(() => {
+    if (selectedSection) {
+      try {
+        const sectionKey = `${selectedSection.school}|${selectedSection.classSection}`;
+        const saved = localStorage.getItem(CALENDAR2_UNITS_KEY);
+        if (saved) {
+          const map = JSON.parse(saved);
+          const savedIndex = map[sectionKey];
+          if (typeof savedIndex === "number" && savedIndex >= 0) {
+            setSelectedUnitIndex(savedIndex);
+            return;
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
     setSelectedUnitIndex(0);
   }, [selectedGrade, selectedSection]);
+
+  // Save unit index per section to localStorage
+  useEffect(() => {
+    if (!selectedSection) return;
+    try {
+      const sectionKey = `${selectedSection.school}|${selectedSection.classSection}`;
+      const saved = localStorage.getItem(CALENDAR2_UNITS_KEY);
+      const map = saved ? JSON.parse(saved) : {};
+      map[sectionKey] = selectedUnitIndex;
+      localStorage.setItem(CALENDAR2_UNITS_KEY, JSON.stringify(map));
+    } catch {
+      // ignore
+    }
+  }, [selectedSection, selectedUnitIndex]);
 
   // Clamp unit index when unitSchedules changes
   useEffect(() => {
@@ -176,10 +242,15 @@ export default function Calendar2Page() {
 
       return count;
     },
-    [daysOff, sectionDaysOff]
+    [daysOff, sectionDaysOff],
   );
 
-  const startDateSelection = (unitKey: string, sectionId: string, type: "start" | "end", subsection?: number) => {
+  const startDateSelection = (
+    unitKey: string,
+    sectionId: string,
+    type: "start" | "end",
+    subsection?: number,
+  ) => {
     setSelectionMode({ type, unitKey, sectionId, subsection });
   };
 
@@ -191,12 +262,15 @@ export default function Calendar2Page() {
             s.grade === grade &&
             s.unitNumber === unitNumber &&
             (s as { school?: string }).school === selectedSection.school &&
-            (s as { classSection?: string }).classSection === selectedSection.classSection
+            (s as { classSection?: string }).classSection ===
+              selectedSection.classSection,
         );
       }
-      return savedSchedules.find((s) => s.grade === grade && s.unitNumber === unitNumber);
+      return savedSchedules.find(
+        (s) => s.grade === grade && s.unitNumber === unitNumber,
+      );
     },
-    [savedSchedules, selectedSection]
+    [savedSchedules, selectedSection],
   );
 
   const handleClearSectionDates = useCallback(
@@ -204,7 +278,10 @@ export default function Calendar2Page() {
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
       if (!unit) return;
 
-      const existingSchedule = findExistingSchedule(unit.grade, unit.unitNumber);
+      const existingSchedule = findExistingSchedule(
+        unit.grade,
+        unit.unitNumber,
+      );
       if (!existingSchedule) return;
 
       clearSectionDates.mutate({
@@ -215,7 +292,7 @@ export default function Calendar2Page() {
         subsection,
       });
     },
-    [unitSchedules, findExistingSchedule, clearSectionDates]
+    [unitSchedules, findExistingSchedule, clearSectionDates],
   );
 
   const handleUnitDateChange = useCallback(
@@ -223,7 +300,10 @@ export default function Calendar2Page() {
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
       if (!unit) return;
 
-      const existingSchedule = findExistingSchedule(unit.grade, unit.unitNumber);
+      const existingSchedule = findExistingSchedule(
+        unit.grade,
+        unit.unitNumber,
+      );
 
       updateUnitDates.mutate({
         unitKey,
@@ -236,17 +316,18 @@ export default function Calendar2Page() {
         existingScheduleId: existingSchedule?._id,
       });
     },
-    [unitSchedules, findExistingSchedule, updateUnitDates]
+    [unitSchedules, findExistingSchedule, updateUnitDates],
   );
 
   const handleDateClick = useCallback(
     (dateStr: string) => {
       if (!selectionMode) return;
 
-      const { type, unitKey, sectionId, subsection, pendingStartDate } = selectionMode;
+      const { type, unitKey, sectionId, subsection, pendingStartDate } =
+        selectionMode;
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
       const section = unit?.sections.find(
-        (s) => s.sectionId === sectionId && s.subsection === subsection
+        (s) => s.sectionId === sectionId && s.subsection === subsection,
       );
 
       if (!unit || !section) {
@@ -254,11 +335,15 @@ export default function Calendar2Page() {
         return;
       }
 
-      const existingSchedule = findExistingSchedule(unit.grade, unit.unitNumber);
+      const existingSchedule = findExistingSchedule(
+        unit.grade,
+        unit.unitNumber,
+      );
 
-      const startDate = type === "start"
-        ? dateStr
-        : (section.startDate || pendingStartDate || "");
+      const startDate =
+        type === "start"
+          ? dateStr
+          : section.startDate || pendingStartDate || "";
 
       updateSectionDates.mutate({
         unitKey,
@@ -274,33 +359,77 @@ export default function Calendar2Page() {
       });
 
       if (type === "start") {
-        setSelectionMode({ type: "end", unitKey, sectionId, subsection, pendingStartDate: dateStr });
+        setSelectionMode({
+          type: "end",
+          unitKey,
+          sectionId,
+          subsection,
+          pendingStartDate: dateStr,
+        });
       } else {
         setSelectionMode(null);
+
+        // Auto-update unit end date to reflect the latest section end date
+        const allEndDates = unit.sections
+          .map((s) =>
+            s.sectionId === sectionId && s.subsection === subsection
+              ? dateStr
+              : s.endDate,
+          )
+          .filter(Boolean);
+        if (allEndDates.length > 0) {
+          const maxEnd = allEndDates.sort().pop()!;
+          if (maxEnd !== unit.endDate) {
+            handleUnitDateChange(unitKey, "endDate", maxEnd);
+          }
+        }
       }
     },
-    [selectionMode, unitSchedules, findExistingSchedule, updateSectionDates]
+    [
+      selectionMode,
+      unitSchedules,
+      findExistingSchedule,
+      updateSectionDates,
+      handleUnitDateChange,
+    ],
   );
 
-  const handleCopyToSections = useCallback((unitNumbers: number[]) => {
-    if (!selectedSection || copyTargets.size === 0 || unitNumbers.length === 0) return;
+  const handleCopyToSections = useCallback(
+    (unitNumbers: number[]) => {
+      if (
+        !selectedSection ||
+        copyTargets.size === 0 ||
+        unitNumbers.length === 0
+      )
+        return;
 
-    const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
-    const targetSections = sectionConfigs.filter(
-      (s) => s.scopeSequenceTag === scopeTag && copyTargets.has(`${s.school}|${s.classSection}`)
-    );
+      const scopeTag =
+        selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
+      const targetSections = sectionConfigs.filter(
+        (s) =>
+          s.scopeSequenceTag === scopeTag &&
+          copyTargets.has(`${s.school}|${s.classSection}`),
+      );
 
-    copySchedules.mutate(
-      { targetSections, unitNumbers },
-      {
-        onSuccess: () => {
-          setShowCopyModal(false);
-          setCopyTargets(new Set());
-          setSelectedUnits(new Set());
+      copySchedules.mutate(
+        { targetSections, unitNumbers },
+        {
+          onSuccess: () => {
+            setShowCopyModal(false);
+            setCopyTargets(new Set());
+            setSelectedUnits(new Set());
+          },
         },
-      }
-    );
-  }, [selectedSection, selectedGrade, sectionConfigs, copyTargets, copySchedules]);
+      );
+    },
+    [
+      selectedSection,
+      selectedGrade,
+      sectionConfigs,
+      copyTargets,
+      copySchedules,
+    ],
+  );
 
   const handleAddDayOff = useCallback(
     async (
@@ -308,12 +437,18 @@ export default function Calendar2Page() {
       name: string,
       shiftSchedule: boolean,
       targetSections: Array<{ school: string; classSection: string }>,
-      hasMathClass: boolean
+      hasMathClass: boolean,
     ) => {
-      await addDayOff.mutateAsync({ date, name, shiftSchedule, targetSections, hasMathClass });
+      await addDayOff.mutateAsync({
+        date,
+        name,
+        shiftSchedule,
+        targetSections,
+        hasMathClass,
+      });
       setShowAddDayOffModal(false);
     },
-    [addDayOff]
+    [addDayOff],
   );
 
   const handleDeleteDayOff = useCallback(
@@ -322,11 +457,16 @@ export default function Calendar2Page() {
       setShowDeleteDayOffModal(false);
       setDayOffToDelete(null);
     },
-    [deleteDayOff]
+    [deleteDayOff],
   );
 
   const handleOpenSubsections = useCallback(
-    (unitKey: string, sectionId: string, sectionName: string, lessons: LessonForSubsection[]) => {
+    (
+      unitKey: string,
+      sectionId: string,
+      sectionName: string,
+      lessons: LessonForSubsection[],
+    ) => {
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
       if (!unit) return;
 
@@ -339,7 +479,7 @@ export default function Calendar2Page() {
         grade: unit.grade,
       });
     },
-    [unitSchedules]
+    [unitSchedules],
   );
 
   const handleSaveSubsections = useCallback(
@@ -349,7 +489,10 @@ export default function Calendar2Page() {
         return;
       }
 
-      const scopeSection = subsectionsModal.sectionId === "Ramp Up" ? "Ramp Ups" : subsectionsModal.sectionId;
+      const scopeSection =
+        subsectionsModal.sectionId === "Ramp Up"
+          ? "Ramp Ups"
+          : subsectionsModal.sectionId;
       const unitKeyParts = subsectionsModal.unitKey.split("-");
       const unitNumber = parseInt(unitKeyParts[unitKeyParts.length - 1], 10);
 
@@ -374,7 +517,7 @@ export default function Calendar2Page() {
         console.error("[handleSaveSubsections] Error:", error);
       }
     },
-    [subsectionsModal, selectedSection, updateSubsections, schoolYear]
+    [subsectionsModal, selectedSection, updateSubsections, schoolYear],
   );
 
   const getScheduleForDate = useCallback(
@@ -385,14 +528,19 @@ export default function Calendar2Page() {
         const unit = unitSchedules[i];
         for (let j = 0; j < unit.sections.length; j++) {
           const section = unit.sections[j];
-          if (section.startDate && section.endDate && dateStr >= section.startDate && dateStr <= section.endDate) {
+          if (
+            section.startDate &&
+            section.endDate &&
+            dateStr >= section.startDate &&
+            dateStr <= section.endDate
+          ) {
             return { unitIndex: i, sectionIndex: j, unit, section };
           }
         }
       }
       return null;
     },
-    [selectedSection, unitSchedules]
+    [selectedSection, unitSchedules],
   );
 
   // Map (sectionId, subsection) to its color index for the selected unit
@@ -407,12 +555,15 @@ export default function Calendar2Page() {
       for (const section of unit.sections) {
         if (!seenSectionIds.has(section.sectionId)) {
           seenSectionIds.add(section.sectionId);
-          const sectionsForId = unit.sections.filter(s => s.sectionId === section.sectionId);
+          const sectionsForId = unit.sections.filter(
+            (s) => s.sectionId === section.sectionId,
+          );
           const isSplit = sectionsForId.length > 1;
 
           if (isSplit) {
             for (const sub of sectionsForId) {
-              if (sub.sectionId === sectionId && sub.subsection === subsection) return colorIdx;
+              if (sub.sectionId === sectionId && sub.subsection === subsection)
+                return colorIdx;
               colorIdx++;
             }
           } else {
@@ -423,7 +574,7 @@ export default function Calendar2Page() {
       }
       return 0;
     },
-    [unitSchedules]
+    [unitSchedules],
   );
 
   const getEventsForDate = useCallback(
@@ -432,7 +583,7 @@ export default function Calendar2Page() {
       const dateStr = date.toISOString().split("T")[0];
       return calendar.events.filter((e) => e.date === dateStr);
     },
-    [calendar]
+    [calendar],
   );
 
   const isDayOff = useCallback(
@@ -442,16 +593,21 @@ export default function Calendar2Page() {
       if (sectionDaysOff.some((d) => d.date === dateStr)) return true;
       return false;
     },
-    [daysOff, sectionDaysOff]
+    [daysOff, sectionDaysOff],
   );
 
   const isSectionDayOff = useCallback(
-    (date: Date): { isDayOff: boolean; event?: { date: string; name: string; hasMathClass?: boolean } } => {
+    (
+      date: Date,
+    ): {
+      isDayOff: boolean;
+      event?: { date: string; name: string; hasMathClass?: boolean };
+    } => {
       const dateStr = date.toISOString().split("T")[0];
       const event = sectionDaysOff.find((d) => d.date === dateStr);
       return { isDayOff: !!event, event };
     },
-    [sectionDaysOff]
+    [sectionDaysOff],
   );
 
   const isWeekend = (date: Date): boolean => {
@@ -460,20 +616,28 @@ export default function Calendar2Page() {
   };
 
   const prevMonth = () => {
-    setCurrentMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+    setCurrentMonth(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1),
+    );
   };
 
   const nextMonth = () => {
-    setCurrentMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+    setCurrentMonth(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1),
+    );
   };
 
-  const handleSectionDayOffClick = useCallback((event: { date: string; name: string }) => {
-    setDayOffToDelete(event);
-    setShowDeleteDayOffModal(true);
-  }, []);
+  const handleSectionDayOffClick = useCallback(
+    (event: { date: string; name: string }) => {
+      setDayOffToDelete(event);
+      setShowDeleteDayOffModal(true);
+    },
+    [],
+  );
 
   const matchingSections = useMemo(() => {
-    const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
+    const scopeTag =
+      selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
     return sectionConfigs.filter((s) => s.scopeSequenceTag === scopeTag);
   }, [sectionConfigs, selectedGrade]);
 
@@ -489,7 +653,9 @@ export default function Calendar2Page() {
     for (const section of selectedUnit.sections) {
       if (!seenSectionIds.has(section.sectionId)) {
         seenSectionIds.add(section.sectionId);
-        const sectionsForId = selectedUnit.sections.filter(s => s.sectionId === section.sectionId);
+        const sectionsForId = selectedUnit.sections.filter(
+          (s) => s.sectionId === section.sectionId,
+        );
         const isSplit = sectionsForId.length > 1;
         const baseName = section.name
           .replace(/ \(Part \d+\)$/, "")
@@ -497,14 +663,23 @@ export default function Calendar2Page() {
 
         if (isSplit) {
           for (const sub of sectionsForId) {
-            const subLabel = sub.subsection !== undefined
-              ? `${baseName} Pt.${sub.subsection}`
-              : `${baseName} (Unassigned)`;
-            entries.push({ key: `${sub.sectionId}-${sub.subsection ?? "u"}`, label: subLabel, colorIndex: colorIdx });
+            const subLabel =
+              sub.subsection !== undefined
+                ? `${baseName} Pt.${sub.subsection}`
+                : `${baseName} (Unassigned)`;
+            entries.push({
+              key: `${sub.sectionId}-${sub.subsection ?? "u"}`,
+              label: subLabel,
+              colorIndex: colorIdx,
+            });
             colorIdx++;
           }
         } else {
-          entries.push({ key: section.sectionId, label: baseName, colorIndex: colorIdx });
+          entries.push({
+            key: section.sectionId,
+            label: baseName,
+            colorIndex: colorIdx,
+          });
           colorIdx++;
         }
       }
@@ -528,13 +703,18 @@ export default function Calendar2Page() {
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Unit Calendar by Section</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Unit Calendar by Section
+            </h1>
             <p className="text-sm text-gray-500">
               {schoolYear} School Year
-              {isMutating && <span className="ml-2 text-blue-600">Saving...</span>}
+              {isMutating && (
+                <span className="ml-2 text-blue-600">Saving...</span>
+              )}
               {selectionMode && (
                 <span className="ml-2 text-green-600">
-                  Click a date to set {selectionMode.type} for Section {selectionMode.sectionId}
+                  Click a date to set {selectionMode.type} for Section{" "}
+                  {selectionMode.sectionId}
                 </span>
               )}
             </p>
@@ -557,74 +737,79 @@ export default function Calendar2Page() {
             </select>
 
             {/* Section selector */}
-            {sectionConfigs.length === 0 ? (
-              <div className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-400">
-                Loading sections...
-              </div>
-            ) : matchingSections.length > 0 ? (
-              <div className="flex items-center gap-2">
-                <select
-                  value={selectedSection ? `${selectedSection.school}|${selectedSection.classSection}` : ""}
-                  onChange={(e) => {
-                    if (e.target.value === "") {
-                      setSelectedSection(null);
-                    } else {
-                      const [school, classSection] = e.target.value.split("|");
-                      const section = matchingSections.find(
-                        (s) => s.school === school && s.classSection === classSection
-                      );
-                      setSelectedSection(section || null);
-                    }
-                  }}
-                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm cursor-pointer"
+            <select
+              disabled={matchingSections.length === 0}
+              value={
+                selectedSection
+                  ? `${selectedSection.school}|${selectedSection.classSection}`
+                  : ""
+              }
+              onChange={(e) => {
+                if (e.target.value === "") {
+                  setSelectedSection(null);
+                } else {
+                  const [school, classSection] = e.target.value.split("|");
+                  const section = matchingSections.find(
+                    (s) =>
+                      s.school === school && s.classSection === classSection,
+                  );
+                  setSelectedSection(section || null);
+                }
+              }}
+              className={`px-3 py-2 border border-gray-300 rounded-lg text-sm ${matchingSections.length === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+            >
+              <option value="">Select a class section...</option>
+              {matchingSections.map((s) => (
+                <option
+                  key={`${s.school}|${s.classSection}`}
+                  value={`${s.school}|${s.classSection}`}
                 >
-                  <option value="">Select a class section...</option>
-                  {matchingSections.map((s) => (
-                    <option key={`${s.school}|${s.classSection}`} value={`${s.school}|${s.classSection}`}>
-                      {s.school} - {s.classSection}
-                      {s.teacher ? ` (${s.teacher})` : ""}
-                    </option>
-                  ))}
-                </select>
+                  {s.school} - {s.classSection}
+                  {s.teacher ? ` (${s.teacher})` : ""}
+                </option>
+              ))}
+            </select>
 
-                {/* Unit selector - only when section is selected */}
-                {selectedSection && unitSchedules.length > 0 && (
-                  <select
-                    value={selectedUnitIndex}
-                    onChange={(e) => setSelectedUnitIndex(Number(e.target.value))}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm cursor-pointer"
-                  >
-                    {unitSchedules.map((u, i) => (
-                      <option key={u.unitKey} value={i}>
-                        {u.unitName}
-                      </option>
-                    ))}
-                  </select>
-                )}
+            {/* Unit selector */}
+            <select
+              disabled={!selectedSection || unitSchedules.length === 0}
+              value={selectedUnitIndex}
+              onChange={(e) => setSelectedUnitIndex(Number(e.target.value))}
+              className={`px-3 py-2 border border-gray-300 rounded-lg text-sm max-w-[320px] truncate ${!selectedSection || unitSchedules.length === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+            >
+              {unitSchedules.length === 0 && (
+                <option value={0}>Select a unit...</option>
+              )}
+              {unitSchedules.map((u, i) => (
+                <option key={u.unitKey} value={i}>
+                  {u.unitName}
+                </option>
+              ))}
+            </select>
 
-                {selectedSection && matchingSections.length > 1 && (
-                  <button
-                    onClick={() => setShowCopyModal(true)}
-                    className="flex items-center gap-1 px-3 py-2 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 cursor-pointer"
-                    title="Copy schedule from another section"
-                  >
-                    <DocumentDuplicateIcon className="h-4 w-4" />
-                    Copy
-                  </button>
-                )}
+            {/* Copy button - only visible when multiple sections exist */}
+            {matchingSections.length > 1 && (
+              <button
+                disabled={!selectedSection}
+                onClick={() => setShowCopyModal(true)}
+                className={`flex items-center gap-1 px-3 py-2 text-sm rounded-lg ${!selectedSection ? "bg-blue-50/50 text-blue-400 opacity-50 cursor-not-allowed" : "bg-blue-50 text-blue-700 hover:bg-blue-100 cursor-pointer"}`}
+                title="Copy schedule from another section"
+              >
+                <DocumentDuplicateIcon className="h-4 w-4" />
+                Copy
+              </button>
+            )}
 
-                {selectedSection && (
-                  <button
-                    onClick={() => setShowAddDayOffModal(true)}
-                    className="flex items-center gap-1 px-3 py-2 text-sm bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 cursor-pointer"
-                    title="Add an event for this section"
-                  >
-                    <PlusIcon className="h-4 w-4" />
-                    Event
-                  </button>
-                )}
-              </div>
-            ) : null}
+            {/* + Event button */}
+            <button
+              disabled={!selectedSection}
+              onClick={() => setShowAddDayOffModal(true)}
+              className={`flex items-center gap-1 px-3 py-2 text-sm rounded-lg ${!selectedSection ? "bg-amber-50/50 text-amber-400 opacity-50 cursor-not-allowed" : "bg-amber-50 text-amber-700 hover:bg-amber-100 cursor-pointer"}`}
+              title="Add an event for this section"
+            >
+              <PlusIcon className="h-4 w-4" />
+              Event
+            </button>
 
             {selectionMode && (
               <button
@@ -642,7 +827,8 @@ export default function Calendar2Page() {
       <div className="flex h-[calc(100vh-80px)]">
         {/* Left column - Selected unit only */}
         <div className="w-1/3 p-4 overflow-y-auto border-r border-gray-200 relative">
-          {(isContentLoading || (pendingSectionKey && sectionConfigs.length === 0)) && (
+          {(isContentLoading ||
+            (pendingSectionKey && sectionConfigs.length === 0)) && (
             <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
               <div className="flex items-center gap-2 text-blue-600">
                 <Spinner size="sm" variant="primary" />
@@ -660,7 +846,12 @@ export default function Calendar2Page() {
           {!selectedSection && !pendingSectionKey ? (
             <div className="h-full">
               <div className="bg-white rounded-lg shadow-md p-8 h-full flex flex-col items-center justify-center text-center">
-                <svg className="w-12 h-12 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-12 h-12 mb-4 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -668,9 +859,12 @@ export default function Calendar2Page() {
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <p className="text-lg font-medium text-gray-900 mb-2">Select a Class Section</p>
+                <p className="text-lg font-medium text-gray-900 mb-2">
+                  Select a Class Section
+                </p>
                 <p className="text-sm text-gray-500 max-w-xs">
-                  Choose a grade and class section from the dropdown above to view and edit the unit schedule.
+                  Choose a grade and class section from the dropdown above to
+                  view and edit the unit schedule.
                 </p>
               </div>
             </div>
@@ -697,33 +891,42 @@ export default function Calendar2Page() {
             <div className="absolute inset-0 bg-gray-100/70 flex items-center justify-center z-10">
               <div className="flex items-center gap-2 text-blue-600">
                 <Spinner size="sm" variant="primary" />
-                <span className="text-sm font-medium">Updating calendar...</span>
+                <span className="text-sm font-medium">
+                  Updating calendar...
+                </span>
               </div>
             </div>
           )}
 
-          {!selectedUnit?.startDate ? (
-            <div className="h-full flex items-center justify-center">
-              <p className="text-sm text-gray-400">Select a unit start date to view the calendar</p>
-            </div>
-          ) : (
-          <>
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-4 bg-white rounded-lg shadow px-4 py-2">
-            <button onClick={prevMonth} className="p-1 hover:bg-gray-100 rounded cursor-pointer">
+            <button
+              onClick={prevMonth}
+              className="p-1 hover:bg-gray-100 rounded cursor-pointer"
+            >
               <ChevronLeftIcon className="h-5 w-5" />
             </button>
             <span className="text-sm font-medium">
-              {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+              {currentMonth.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              })}
             </span>
-            <button onClick={nextMonth} className="p-1 hover:bg-gray-100 rounded cursor-pointer">
+            <button
+              onClick={nextMonth}
+              className="p-1 hover:bg-gray-100 rounded cursor-pointer"
+            >
               <ChevronRightIcon className="h-5 w-5" />
             </button>
           </div>
 
           {/* Calendar months stacked vertically */}
           {[0, 1, 2].map((offset) => {
-            const monthDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + offset, 1);
+            const monthDate = new Date(
+              currentMonth.getFullYear(),
+              currentMonth.getMonth() + offset,
+              1,
+            );
             return (
               <MonthCalendarV2
                 key={monthDate.toISOString()}
@@ -741,9 +944,6 @@ export default function Calendar2Page() {
               />
             );
           })}
-
-          </>
-          )}
         </div>
       </div>
 
@@ -764,12 +964,16 @@ export default function Calendar2Page() {
             <span className="text-gray-400">Other Units</span>
           </div>
           {legendEntries.map((entry) => {
-            const color = SECTION_COLORS[entry.colorIndex % SECTION_COLORS.length];
+            const color =
+              SECTION_COLORS[entry.colorIndex % SECTION_COLORS.length];
             return (
               <div key={entry.key} className="flex items-center gap-1">
                 <div
                   className="w-3 h-3 rounded"
-                  style={{ backgroundColor: color.light, border: `1px solid ${color.base}` }}
+                  style={{
+                    backgroundColor: color.light,
+                    border: `1px solid ${color.base}`,
+                  }}
                 />
                 <span style={{ color: color.base }}>{entry.label}</span>
               </div>
@@ -791,7 +995,11 @@ export default function Calendar2Page() {
           copying={copySchedules.isPending}
           sourceSection={selectedSection}
           otherSections={matchingSections.filter(
-            (s) => !(s.school === selectedSection.school && s.classSection === selectedSection.classSection)
+            (s) =>
+              !(
+                s.school === selectedSection.school &&
+                s.classSection === selectedSection.classSection
+              ),
           )}
           copyTargets={copyTargets}
           setCopyTargets={setCopyTargets}
@@ -846,7 +1054,12 @@ export default function Calendar2Page() {
         onClose={() => setShowAddLessonModal(false)}
         onSubmit={(data: ScopeAndSequenceInput) => {
           createScopeSequence.mutate(data, {
-            onSuccess: () => setShowAddLessonModal(false),
+            onSuccess: () => {
+              setShowAddLessonModal(false);
+              queryClient.invalidateQueries({
+                queryKey: calendarKeys.lessons(selectedGrade),
+              });
+            },
           });
         }}
         isLoading={createScopeSequence.isPending}
