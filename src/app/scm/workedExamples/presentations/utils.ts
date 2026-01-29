@@ -234,16 +234,18 @@ export const PRINT_STYLES = `
     .slide-container {
       display: block !important;
       position: static !important;
-      width: 100% !important;
+      width: 7.5in !important;
       height: auto !important;
       overflow: visible !important;
       background: white !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
 
     /* Print pages - simple approach */
     .print-page {
       display: block !important;
-      width: 100% !important;
+      width: 7.5in !important;
       height: auto !important;
       min-height: 0 !important;
       max-height: none !important;

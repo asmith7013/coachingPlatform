@@ -7,6 +7,9 @@ export function PrintButton({ slide }: PrintButtonProps) {
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
 
+    // Strip embedded <style> blocks from AI-generated HTML so only our styles apply
+    const cleanedContent = slide.htmlContent.replace(/<style[\s\S]*?<\/style>/gi, '');
+
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
@@ -15,7 +18,7 @@ export function PrintButton({ slide }: PrintButtonProps) {
         <style>
           @page {
             size: letter portrait;
-            margin: 0.5in;
+            margin: 0;
           }
           * {
             -webkit-print-color-adjust: exact !important;
@@ -27,39 +30,56 @@ export function PrintButton({ slide }: PrintButtonProps) {
             background: white;
           }
           .slide-container {
-            display: block;
-            position: static;
-            width: 100%;
-            height: auto;
-            overflow: visible;
-            background: white;
+            display: block !important;
+            position: static !important;
+            width: 8.5in !important;
+            height: auto !important;
+            overflow: visible !important;
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
           }
           .print-page {
-            display: block;
-            width: 100%;
-            height: auto;
-            min-height: 0;
-            max-height: none;
-            margin: 0;
-            padding: 0.3in;
-            border: none;
-            box-sizing: border-box;
-            background: white;
-            page-break-after: always;
-            page-break-inside: avoid;
+            display: block !important;
+            width: 8.5in !important;
+            height: 10.5in !important;
+            overflow: hidden !important;
+            margin: 0.25in 0 !important;
+            padding: 0.5in !important;
+            border: none !important;
+            box-sizing: border-box !important;
+            background: white !important;
+            page-break-after: always !important;
+            page-break-inside: avoid !important;
           }
           .print-page:last-child {
-            page-break-after: auto;
+            page-break-after: auto !important;
+            break-after: auto !important;
           }
         </style>
         ${slide.customCSS ? `<style>${slide.customCSS}</style>` : ''}
       </head>
       <body>
-        ${slide.htmlContent}
+        ${cleanedContent}
       </body>
       </html>
     `);
     printWindow.document.close();
+
+    // Directly override inline styles on DOM elements for Safari compatibility
+    const container = printWindow.document.querySelector('.slide-container') as HTMLElement;
+    if (container) {
+      container.style.cssText = 'display:block;position:static;width:8.5in;height:auto;overflow:visible;background:white;margin:0;padding:0;';
+    }
+    const pages = printWindow.document.querySelectorAll('.print-page') as NodeListOf<HTMLElement>;
+    pages.forEach((page) => {
+      page.style.cssText = 'display:block;width:8.5in;height:10.5in;overflow:hidden;margin:0.25in 0;padding:0.5in;border:none;box-sizing:border-box;background:white;page-break-after:always;';
+    });
+    if (pages.length > 0) {
+      const lastPage = pages[pages.length - 1];
+      lastPage.style.pageBreakAfter = 'auto';
+      lastPage.style.setProperty('break-after', 'auto');
+    }
 
     setTimeout(() => {
       printWindow.focus();
