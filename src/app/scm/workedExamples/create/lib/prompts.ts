@@ -24,6 +24,24 @@ import {
   TECHNICAL_RULES as SHARED_TECHNICAL_RULES,
   SLIDE_PEDAGOGY_RULES as SHARED_SLIDE_PEDAGOGY_RULES,
   PRE_FLIGHT_CHECKLIST as SHARED_PRE_FLIGHT_CHECKLIST,
+  // Card patterns (HTML templates for slide components)
+  TITLE_ZONE,
+  CONTENT_BOX,
+  CFU_ANSWER_CARD,
+  PROBLEM_REMINDER,
+  SVG_CARD,
+  PRINTABLE_TEMPLATE,
+  VISUAL_CARD_LAYERS,
+  D3_DIAGRAM_TEMPLATE,
+  SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE,
+  SLIDE_BIG_IDEA_TEMPLATE,
+  // Reference documents
+  DIAGRAM_PATTERNS,
+  LAYOUT_PRESETS,
+  REGION_DEFAULTS,
+  COMPLETION_CHECKLIST,
+  SVG_COORDINATE_PLANES,
+  ANNOTATION_ZONES,
 } from '../ai';
 
 // Re-export shared content for backward compatibility
@@ -196,6 +214,14 @@ IMPORTANT:
  */
 export const GENERATE_SLIDES_SYSTEM_PROMPT = `You are an expert educational content creator generating PPTX-compatible HTML slide decks for math worked examples.
 
+**⚠️ CRITICAL: You MUST copy the card pattern templates provided below — NEVER write slide HTML from scratch.**
+- Slide 1: Copy SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE and fill placeholders
+- Slide 2: Copy SLIDE_BIG_IDEA_TEMPLATE and fill placeholders
+- Slides 3-6: Use TITLE_ZONE + CONTENT_BOX + CFU_ANSWER_CARD + PROBLEM_REMINDER patterns
+- Slides 7-8: Use TITLE_ZONE + visual content area
+- Slide 9: Copy PRINTABLE_TEMPLATE and fill placeholders
+- For non-graph diagrams (tape, hanger, number line, area model): Copy D3_DIAGRAM_TEMPLATE
+
 ## CRITICAL: PPTX Constraints
 
 - **Dimensions**: Every slide body MUST be exactly 960×540px
@@ -252,6 +278,76 @@ Each slide MUST:
 - Have all text in proper semantic tags (<p>, <h1-6>, <ul>, <ol>)
 - Use .row/.col layout classes
 - Have NO JavaScript or onclick handlers
+
+---
+
+## SLIDE TEMPLATES (MANDATORY - Copy these, do NOT create slides from scratch)
+
+### Slide 1: Teacher Instructions Template
+${SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE}
+
+### Slide 2: Big Idea Template
+${SLIDE_BIG_IDEA_TEMPLATE}
+
+---
+
+## CARD PATTERNS (Copy these components into your slides)
+
+### Title Zone (top of every step slide):
+${TITLE_ZONE}
+
+### Content Box (text containers):
+${CONTENT_BOX}
+
+### CFU + Answer Cards (CRITICAL - must use exact positions and data-pptx attributes):
+${CFU_ANSWER_CARD}
+
+### Problem Reminder (bottom-left corner of step slides):
+${PROBLEM_REMINDER}
+
+### SVG Container (wrap all SVGs in this):
+${SVG_CARD}
+
+### Visual Card Layers (right column with multiple elements):
+${VISUAL_CARD_LAYERS}
+
+### Printable Worksheet Template (final slide):
+${PRINTABLE_TEMPLATE}
+
+---
+
+## D3.js DIAGRAM TEMPLATE (for non-graph diagrams: tape, hanger, number line, area model)
+${D3_DIAGRAM_TEMPLATE}
+
+---
+
+## SVG COORDINATE PLANE WORKFLOW
+${SVG_COORDINATE_PLANES}
+
+## ANNOTATION ZONES
+${ANNOTATION_ZONES}
+
+---
+
+## DIAGRAM PATTERNS REFERENCE (visual structure for common math representations)
+${DIAGRAM_PATTERNS}
+
+---
+
+## LAYOUT & POSITIONING
+${LAYOUT_PRESETS}
+
+${REGION_DEFAULTS}
+
+---
+
+## STYLING GUIDE
+${STYLING_GUIDE}
+
+---
+
+## COMPLETION CHECKLIST (verify before finishing)
+${COMPLETION_CHECKLIST}
 `;
 
 /**
