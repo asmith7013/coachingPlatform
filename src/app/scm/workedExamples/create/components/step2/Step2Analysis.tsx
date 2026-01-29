@@ -789,7 +789,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                     ),
                 },
                 // Diagram Evolution section (shows step-by-step visual progression)
-                ...(problemAnalysis.diagramEvolution
+                ...(scenarios[0]?.diagramEvolution
                   ? [
                       {
                         key: "we-diagram-evolution",
@@ -797,7 +797,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                         icon: null,
                         content: (
                           <SlidePlanDisplay
-                            diagramEvolution={problemAnalysis.diagramEvolution!}
+                            diagramEvolution={scenarios[0].diagramEvolution!}
                             visualType={problemAnalysis.visualType}
                             svgSubtype={problemAnalysis.svgSubtype}
                             stepCount={strategyDefinition.moves.length}
@@ -944,7 +944,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                   : []),
                 // Note: diagramPreview is now deprecated in favor of diagramEvolution (which includes keyElements)
                 // For backward compatibility, show diagramPreview only if diagramEvolution is NOT present
-                ...(!problemAnalysis.diagramEvolution &&
+                ...(!scenarios[0]?.diagramEvolution &&
                 problemAnalysis.diagramPreview
                   ? [
                       {

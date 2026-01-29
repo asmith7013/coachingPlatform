@@ -291,14 +291,14 @@ Instructions:
 2. Identify the mathematical structure and problem type
 3. Define ONE clear strategy with 2-3 moves
 4. Create 3 scenarios with DIFFERENT contexts (all different from the mastery check)
-5. **CRITICAL: Generate diagramEvolution** - Create ASCII art showing how the visual develops step-by-step:
-   - initialState: ASCII showing Problem Setup slide
+5. **CRITICAL: Generate diagramEvolution on Scenario 1** - Scenario 1 is the worked example, so it MUST have its own diagramEvolution with its specific numbers/context (NOT the mastery check's numbers):
+   - initialState: ASCII showing Problem Setup slide for Scenario 1's numbers
    - keyElements: Array explaining each visual element
    - steps: One entry per strategy move (must match strategyDefinition.moves.length)
 ${additionalContext ? "6. Apply the teacher's additional context preferences when creating scenarios and choosing strategy" : ''}
 
 **⚠️ REQUIRED FIELDS - Your response MUST include:**
-- problemAnalysis.diagramEvolution (with initialState, keyElements, and steps array)
+- scenarios[0].diagramEvolution (with initialState, keyElements, and steps array using Scenario 1's numbers)
 - strategyDefinition.moves (2-3 moves)
 - scenarios (exactly 3 with different contexts)
 
