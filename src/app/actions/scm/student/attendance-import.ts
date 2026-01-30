@@ -3,9 +3,9 @@
 import { z } from "zod";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { Attendance313 } from "@mongoose-schema/scm/student/attendance.model";
-import { StudentModel } from "@mongoose-schema/scm/student/student.model";
 import { AttendanceStatusSchema, type AttendanceInput } from "@zod-schema/scm/student/attendance";
 import { handleServerError } from "@error/handlers/server";
+import { findStudentsByEmails } from "@/lib/utils/student-matching";
 
 // =====================================
 // INPUT SCHEMAS
@@ -81,30 +81,15 @@ export async function importAttendanceData(jsonData: unknown, school?: string) {
       const attendanceRecords: AttendanceInput[] = [];
       const errors: string[] = [];
 
-      // Get all student emails to look up studentIds (case-insensitive)
+      // Get all student emails to look up studentIds using shared utility
       const emails = Object.keys(matrix);
+      const studentMap = await findStudentsByEmails(emails, school);
 
-      // Build query with optional school filter
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const studentQuery: any = {
-        email: { $in: emails.map(email => new RegExp(`^${email}$`, 'i')) }
-      };
-
-      // Filter by school if provided (important for sections that exist in multiple schools)
-      if (school) {
-        studentQuery.school = school;
+      // Create studentID lookup from matched students
+      const emailToStudentId = new Map<string, number>();
+      for (const [email, student] of studentMap) {
+        emailToStudentId.set(email, student.studentID);
       }
-
-      const students = await StudentModel.find(studentQuery).lean();
-
-      // Create case-insensitive email lookup map
-      // Store with lowercase keys for case-insensitive matching
-      const emailToStudentId = new Map<string, number>(
-        students.map(s => [
-          String(s.email).toLowerCase(),
-          Number(s.studentID)
-        ])
-      );
 
       // Parse through matrix
       let notTrackedCount = 0;
