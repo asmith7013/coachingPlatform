@@ -14,7 +14,8 @@ const pacingEntrySchema = new mongoose.Schema({
   podsieAssignmentId: { type: Number, required: true },
   dueDate: { type: String, required: false }, // "YYYY-MM-DD" format or null
   groupNumber: { type: Number, required: false, min: 1, max: 20 }, // null = ungrouped
-  groupLabel: { type: String, required: false } // e.g., "Part 1", "Week 1"
+  groupLabel: { type: String, required: false }, // e.g., "Part 1", "Week 1"
+  orderIndex: { type: Number, required: false } // Order within the group (0-based)
 }, { _id: false });
 
 const podsieScmGroupFields = {
@@ -31,6 +32,9 @@ const podsieScmGroupFields = {
 
   // Pacing configuration - array of assignment entries
   assignments: { type: [pacingEntrySchema], default: [] },
+
+  // Group numbers of sections marked complete by the teacher
+  completedSections: { type: [Number], default: [] },
 
   ...standardDocumentFields
 };

@@ -13,6 +13,7 @@ export const PacingEntrySchema = z.object({
   dueDate: z.string().nullable().optional().describe("Due date in YYYY-MM-DD format"),
   groupNumber: z.number().int().min(1).max(20).nullable().optional().describe("Group number (1-20), null = ungrouped"),
   groupLabel: z.string().nullable().optional().describe("Group label (e.g., 'Part 1', 'Week 1')"),
+  orderIndex: z.number().int().nullable().optional().describe("Order index within the group (0-based)"),
 });
 
 export type PacingEntry = z.infer<typeof PacingEntrySchema>;
@@ -27,6 +28,7 @@ const PodsieScmGroupFieldsSchema = z.object({
   pointsRewardGoal: z.number().nullable().optional().describe("Points reward goal"),
   pointsRewardDescription: z.string().nullable().optional().describe("Points reward description"),
   assignments: z.array(PacingEntrySchema).default([]).describe("Assignment pacing entries"),
+  completedSections: z.array(z.number().int()).default([]).describe("Group numbers of sections marked complete"),
 });
 
 export const PodsieScmGroupZodSchema = BaseDocumentSchema.merge(PodsieScmGroupFieldsSchema);
