@@ -14,6 +14,8 @@ export const PacingEntrySchema = z.object({
   groupNumber: z.number().int().min(1).max(20).nullable().optional().describe("Group number (1-20), null = ungrouped"),
   groupLabel: z.string().nullable().optional().describe("Group label (e.g., 'Part 1', 'Week 1')"),
   orderIndex: z.number().int().nullable().optional().describe("Order index within the group (0-based)"),
+  assignmentTitle: z.string().nullable().optional().describe("Assignment title from Podsie"),
+  zearnLessonCode: z.string().nullable().optional().describe("Zearn lesson code, e.g. 'G8 M4 L2'"),
 });
 
 export type PacingEntry = z.infer<typeof PacingEntrySchema>;

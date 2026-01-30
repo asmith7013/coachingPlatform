@@ -15,7 +15,9 @@ const pacingEntrySchema = new mongoose.Schema({
   dueDate: { type: String, required: false }, // "YYYY-MM-DD" format or null
   groupNumber: { type: Number, required: false, min: 1, max: 20 }, // null = ungrouped
   groupLabel: { type: String, required: false }, // e.g., "Part 1", "Week 1"
-  orderIndex: { type: Number, required: false } // Order within the group (0-based)
+  orderIndex: { type: Number, required: false }, // Order within the group (0-based)
+  assignmentTitle: { type: String, required: false },
+  zearnLessonCode: { type: String, required: false }, // e.g. "G8 M4 L2"
 }, { _id: false });
 
 const podsieScmGroupFields = {
