@@ -12,6 +12,7 @@ import {
   type UnitWithLessons,
 } from "./actions";
 import { LessonsTable } from "./components/LessonsTable";
+import { ExportJsonModal } from "./components/ExportJsonModal";
 import type { ScopeSequenceTag } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 import {
   StandardsUnitMatrix,
@@ -37,6 +38,7 @@ export default function LessonsOverviewPage() {
   const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [showSubstandards, setShowSubstandards] = useState(true);
   const [isMatrixOpen, setIsMatrixOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   // Load available grades on mount
   useEffect(() => {
@@ -188,6 +190,14 @@ export default function LessonsOverviewPage() {
               </Link>
             </div>
             <div className="flex items-center gap-4">
+              {/* Export JSON */}
+              <button
+                type="button"
+                onClick={() => setIsExportModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors border border-gray-300"
+              >
+                Export JSON
+              </button>
               {/* Ramp Ups Toggle */}
               {selectedGrade && (
                 <ToggleSwitch
@@ -335,6 +345,15 @@ export default function LessonsOverviewPage() {
           </div>
         )}
       </div>
+
+      <ExportJsonModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        availableGrades={availableGrades}
+        selectedGrade={selectedGrade}
+        currentUnits={units}
+        currentSkillMap={skillMap}
+      />
     </div>
   );
 }

@@ -221,6 +221,45 @@ export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceT
 }
 
 /**
+ * Fetch lessons for multiple scope sequence tags at once (for export)
+ */
+export async function fetchMultipleGradesData(tags: ScopeSequenceTag[]): Promise<{
+  success: boolean;
+  data?: Array<{
+    tag: ScopeSequenceTag;
+    units: UnitWithLessons[];
+    skillMap: Record<string, string>;
+  }>;
+  error?: string;
+}> {
+  return withDbConnection(async () => {
+    try {
+      const results = await Promise.all(
+        tags.map(async (tag) => {
+          const result = await fetchLessonsWithUnitOrder(tag);
+          if (!result.success || !result.data) {
+            return null;
+          }
+          return { tag, units: result.data.units, skillMap: result.data.skillMap };
+        })
+      );
+
+      const successfulResults = results.filter(
+        (r): r is NonNullable<typeof r> => r !== null
+      );
+
+      return { success: true, data: successfulResults };
+    } catch (error) {
+      console.error("Error fetching multiple grades data:", error);
+      return {
+        success: false,
+        error: handleServerError(error, "fetchMultipleGradesData"),
+      };
+    }
+  });
+}
+
+/**
  * Get available scope sequence tags (curricula) that have unit order defined
  */
 export async function getAvailableScopeTags(): Promise<{
