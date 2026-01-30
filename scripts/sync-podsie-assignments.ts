@@ -33,7 +33,9 @@ const PodsieAssignmentSchema = z.object({
 
 const PodsieApiResponseSchema = z.object({
   success: z.literal(true),
+  groupIds: z.array(z.number()),
   assignments: z.array(PodsieAssignmentSchema),
+  count: z.number(),
 });
 
 const CoachingPlatformSyncResponseSchema = z.object({
@@ -88,12 +90,17 @@ View full logs: https://github.com/asmith7013/coachingPlatform/actions
 async function fetchAssignmentsFromPodsie(): Promise<PodsieAssignment[]> {
   const baseUrl = process.env.PODSIE_BASE_URL;
   const apiToken = process.env.PODSIE_API_TOKEN;
+  const groupIds = process.env.PODSIE_GROUP_IDS;
 
   if (!baseUrl || !apiToken) {
     throw new Error('Missing PODSIE_BASE_URL or PODSIE_API_TOKEN environment variable');
   }
 
-  const url = `${baseUrl}/api/assignments/sync`;
+  if (!groupIds) {
+    throw new Error('Missing PODSIE_GROUP_IDS environment variable (comma-separated group IDs)');
+  }
+
+  const url = `${baseUrl}/api/sandbox/assignments/sync?groupIds=${groupIds}`;
   console.log(`📥 Fetching assignments from ${url}...`);
 
   const response = await fetch(url, {
