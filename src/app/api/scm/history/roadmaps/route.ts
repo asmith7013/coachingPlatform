@@ -24,6 +24,7 @@ import { StudentModel } from "@mongoose-schema/scm/student/student.model";
 type RoadmapsHistoryRow = {
   studentId: string;
   studentName: string;
+  studentEmail: string;
   section: string;
   skillCode: string;
   skillName: string;
@@ -60,7 +61,7 @@ export async function GET(req: NextRequest) {
       // Fetch students with skillPerformances
       const students = await StudentModel.find(query)
         .select(
-          "studentID firstName lastName section skillPerformances lastAssessmentDate"
+          "studentID firstName lastName email section skillPerformances lastAssessmentDate"
         )
         .lean();
 
@@ -69,6 +70,7 @@ export async function GET(req: NextRequest) {
       for (const student of students) {
         const s = student as Record<string, unknown>;
         const studentName = `${s.firstName || ""} ${s.lastName || ""}`.trim() || "(unknown)";
+        const studentEmail = (s.email as string) || "";
         const studentId = (s.studentID as number).toString();
 
         const skillPerformances = s.skillPerformances as Array<
@@ -108,6 +110,7 @@ export async function GET(req: NextRequest) {
               rows.push({
                 studentId,
                 studentName,
+                studentEmail,
                 section: s.section as string,
                 skillCode: skill.skillCode as string,
                 skillName: skill.skillName as string,
