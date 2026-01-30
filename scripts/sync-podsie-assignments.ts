@@ -10,6 +10,10 @@
  * - PODSIE_API_TOKEN: API token for Podsie
  * - PODSIE_BASE_URL: Base URL for Podsie API (e.g., https://podsie.org)
  * - SOLVES_COACHING_API_KEY: API key for AI Coaching Platform
+ * - COACHING_PLATFORM_URL: URL for AI Coaching Platform
+ *
+ * The script dynamically fetches group IDs from the coaching platform's
+ * podsie-scm-groups collection, then fetches assignments for those groups.
  *
  * Usage:
  *   npx tsx scripts/sync-podsie-assignments.ts
@@ -35,6 +39,12 @@ const PodsieApiResponseSchema = z.object({
   success: z.literal(true),
   groupIds: z.array(z.number()),
   assignments: z.array(PodsieAssignmentSchema),
+  count: z.number(),
+});
+
+const GroupIdsResponseSchema = z.object({
+  success: z.literal(true),
+  groupIds: z.array(z.number()),
   count: z.number(),
 });
 
@@ -87,20 +97,55 @@ View full logs: https://github.com/asmith7013/coachingPlatform/actions
   }
 }
 
-async function fetchAssignmentsFromPodsie(): Promise<PodsieAssignment[]> {
+function getCoachingPlatformUrl(): string {
+  return process.env.COACHING_PLATFORM_URL || 'http://localhost:3000';
+}
+
+function getCoachingApiKey(): string {
+  const apiKey = process.env.SOLVES_COACHING_API_KEY;
+  if (!apiKey) {
+    throw new Error('Missing SOLVES_COACHING_API_KEY environment variable');
+  }
+  return apiKey;
+}
+
+async function fetchGroupIdsFromCoachingPlatform(): Promise<number[]> {
+  const baseUrl = getCoachingPlatformUrl();
+  const apiKey = getCoachingApiKey();
+  const url = `${baseUrl}/api/podsie/lesson-progress/groups`;
+
+  console.log(`📋 Fetching group IDs from ${url}...`);
+
+  const response = await fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch group IDs: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  const parsed = GroupIdsResponseSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error(`Invalid group IDs response: ${parsed.error.message}`);
+  }
+
+  return parsed.data.groupIds;
+}
+
+async function fetchAssignmentsFromPodsie(groupIds: number[]): Promise<PodsieAssignment[]> {
   const baseUrl = process.env.PODSIE_BASE_URL;
   const apiToken = process.env.PODSIE_API_TOKEN;
-  const groupIds = process.env.PODSIE_GROUP_IDS;
 
   if (!baseUrl || !apiToken) {
     throw new Error('Missing PODSIE_BASE_URL or PODSIE_API_TOKEN environment variable');
   }
 
-  if (!groupIds) {
-    throw new Error('Missing PODSIE_GROUP_IDS environment variable (comma-separated group IDs)');
-  }
-
-  const url = `${baseUrl}/api/sandbox/assignments/sync?groupIds=${groupIds}`;
+  const groupIdsParam = groupIds.join(',');
+  const url = `${baseUrl}/api/sandbox/assignments/sync?groupIds=${groupIdsParam}`;
   console.log(`📥 Fetching assignments from ${url}...`);
 
   const response = await fetch(url, {
@@ -129,14 +174,8 @@ async function syncToCoachingPlatform(assignments: PodsieAssignment[]): Promise<
   insertedCount: number;
   modifiedCount: number;
 }> {
-  const apiKey = process.env.SOLVES_COACHING_API_KEY;
-
-  if (!apiKey) {
-    throw new Error('Missing SOLVES_COACHING_API_KEY environment variable');
-  }
-
-  // For local development, use localhost; for production, this would be the deployed URL
-  const baseUrl = process.env.COACHING_PLATFORM_URL || 'http://localhost:3000';
+  const baseUrl = getCoachingPlatformUrl();
+  const apiKey = getCoachingApiKey();
   const url = `${baseUrl}/api/podsie/assignments/sync`;
 
   console.log(`📤 Syncing ${assignments.length} assignments to ${url}...`);
@@ -199,18 +238,28 @@ async function main() {
   };
 
   try {
-    // Step 1: Fetch assignments from Podsie
-    const assignments = await fetchAssignmentsFromPodsie();
+    // Step 1: Get group IDs from coaching platform
+    const groupIds = await fetchGroupIdsFromCoachingPlatform();
+    console.log(`✓ Found ${groupIds.length} group IDs: [${groupIds.join(', ')}]`);
+
+    if (groupIds.length === 0) {
+      console.log('⚠️ No group IDs configured — nothing to sync');
+      result.success = true;
+      process.exit(0);
+    }
+
+    // Step 2: Fetch assignments from Podsie
+    const assignments = await fetchAssignmentsFromPodsie(groupIds);
     result.totalFetched = assignments.length;
     console.log(`✓ Fetched ${assignments.length} assignments from Podsie`);
 
     if (assignments.length === 0) {
       console.log('⚠️ No assignments to sync');
       result.success = true;
-      return;
+      process.exit(0);
     }
 
-    // Step 2: Sync to AI Coaching Platform
+    // Step 3: Sync to AI Coaching Platform
     const syncResult = await syncToCoachingPlatform(assignments);
     result.upsertedCount = syncResult.upsertedCount;
     result.insertedCount = syncResult.insertedCount;
