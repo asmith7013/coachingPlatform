@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { validateApiKey } from "@server/auth/api-key";
-import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import {
   fetchActivityTypes,
