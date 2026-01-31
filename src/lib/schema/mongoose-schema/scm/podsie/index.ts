@@ -9,6 +9,5 @@ export { RampUpProgressModel } from './ramp-up-progress.model';
 export { SectionConfigModel } from './section-config.model';
 export { LearningContentModel } from './learning-content.model';
 export { AssignmentVariationModel } from './assignment-variation.model';
-export { PodsieAssignmentModel } from './podsie-assignment.model';
 export { PodsieScmGroupModel } from './podsie-scm-group.model';
 export { PodsieScmModuleModel } from './podsie-scm-module.model';

@@ -1,24 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PodsieAssignmentModel } from "@mongoose-schema/scm/podsie";
+import { PodsieScmModuleModel } from "@mongoose-schema/scm/podsie";
 import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { validateApiKey } from "@server/auth/api-key";
 
 /**
- * API endpoint for bulk syncing Podsie assignment metadata
+ * API endpoint for bulk syncing Podsie assignment metadata into podsie-scm-modules
  *
  * Headers:
  *   - Authorization: Bearer <SOLVES_COACHING_API_KEY>
  *
  * POST /api/podsie/assignments/sync
- *   Bulk upserts assignment metadata from Podsie
- *   Body: { assignments: [{ podsieAssignmentId, title, podsieModuleId?, moduleOrder?, state? }] }
- *   Returns: { success: true, upsertedCount: number, insertedCount: number, modifiedCount: number }
+ *   Upserts assignment metadata from Podsie into PodsieScmModule docs.
+ *   Groups assignments by (podsieGroupId, podsieModuleId) and updates the
+ *   assignments[] array on matching module docs.
+ *
+ *   Body: { assignments: [{ podsieAssignmentId, title, podsieGroupId, podsieModuleId?, moduleOrder?, state? }] }
+ *   Returns: { success: true, modulesUpdated: number, assignmentsProcessed: number }
  */
 
 interface AssignmentInput {
   podsieAssignmentId: number;
   title: string;
+  podsieGroupId: number;
   podsieModuleId?: number | null;
   moduleOrder?: number | null;
   state?: string | null;
@@ -42,9 +46,8 @@ export async function POST(req: NextRequest) {
     if (assignments.length === 0) {
       return NextResponse.json({
         success: true,
-        upsertedCount: 0,
-        insertedCount: 0,
-        modifiedCount: 0,
+        modulesUpdated: 0,
+        assignmentsProcessed: 0,
       });
     }
 
@@ -56,42 +59,97 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
-      if (typeof assignment.title !== 'string' || !assignment.title.trim()) {
+      if (typeof assignment.podsieGroupId !== 'number') {
         return NextResponse.json(
-          { success: false, error: `Assignment ${assignment.podsieAssignmentId} must have a non-empty title` },
+          { success: false, error: `Assignment ${assignment.podsieAssignmentId} must have a numeric podsieGroupId` },
           { status: 400 }
         );
       }
     }
 
     const result = await withDbConnection(async () => {
-      // Use bulkWrite for efficient upserts
-      const operations = assignments.map((assignment) => ({
-        updateOne: {
-          filter: { podsieAssignmentId: assignment.podsieAssignmentId },
-          update: {
-            $set: {
-              podsieAssignmentId: assignment.podsieAssignmentId,
-              title: assignment.title,
-              podsieModuleId: assignment.podsieModuleId ?? null,
-              moduleOrder: assignment.moduleOrder ?? null,
-              state: assignment.state ?? null,
-            },
-          },
-          upsert: true,
-        },
-      }));
+      // Group assignments by (podsieGroupId, podsieModuleId)
+      const moduleMap = new Map<string, {
+        podsieGroupId: number;
+        podsieModuleId: number;
+        assignments: AssignmentInput[];
+      }>();
 
-      const bulkResult = await PodsieAssignmentModel.bulkWrite(operations);
+      for (const a of assignments) {
+        const moduleId = a.podsieModuleId ?? 0; // 0 for unassigned module
+        const key = `${a.podsieGroupId}:${moduleId}`;
+        if (!moduleMap.has(key)) {
+          moduleMap.set(key, {
+            podsieGroupId: a.podsieGroupId,
+            podsieModuleId: moduleId,
+            assignments: [],
+          });
+        }
+        moduleMap.get(key)!.assignments.push(a);
+      }
 
-      return {
-        upsertedCount: bulkResult.upsertedCount,
-        insertedCount: bulkResult.insertedCount,
-        modifiedCount: bulkResult.modifiedCount,
-      };
+      let modulesUpdated = 0;
+
+      for (const { podsieGroupId, podsieModuleId, assignments: moduleAssignments } of moduleMap.values()) {
+        // Find existing module doc
+        const existingDoc = await PodsieScmModuleModel.findOne({
+          podsieGroupId,
+          podsieModuleId,
+        });
+
+        if (existingDoc) {
+          // Update existing assignments and add new ones
+          const existingAssignments = Array.from(
+            (existingDoc as unknown as { assignments: Array<Record<string, unknown>> }).assignments || []
+          );
+
+          const existingById = new Map(
+            existingAssignments.map((a, i) => [a.podsieAssignmentId as number, i])
+          );
+
+          for (const incoming of moduleAssignments) {
+            const idx = existingById.get(incoming.podsieAssignmentId);
+            if (idx !== undefined) {
+              // Update title and state on existing entry
+              existingAssignments[idx].assignmentTitle = incoming.title;
+              existingAssignments[idx].state = incoming.state ?? undefined;
+              if (incoming.moduleOrder != null) {
+                existingAssignments[idx].orderIndex = incoming.moduleOrder;
+              }
+            } else {
+              // Add new assignment entry
+              existingAssignments.push({
+                podsieAssignmentId: incoming.podsieAssignmentId,
+                assignmentTitle: incoming.title,
+                state: incoming.state ?? undefined,
+                orderIndex: incoming.moduleOrder ?? undefined,
+              });
+            }
+          }
+
+          (existingDoc as unknown as { assignments: Array<Record<string, unknown>> }).assignments = existingAssignments;
+          await existingDoc.save();
+        } else {
+          // Create new module doc with these assignments
+          await PodsieScmModuleModel.create({
+            podsieGroupId,
+            podsieModuleId,
+            assignments: moduleAssignments.map(a => ({
+              podsieAssignmentId: a.podsieAssignmentId,
+              assignmentTitle: a.title,
+              state: a.state ?? undefined,
+              orderIndex: a.moduleOrder ?? undefined,
+            })),
+          });
+        }
+
+        modulesUpdated++;
+      }
+
+      return { modulesUpdated, assignmentsProcessed: assignments.length };
     });
 
-    console.log(`Synced ${assignments.length} assignments: ${result.insertedCount} inserted, ${result.modifiedCount} modified`);
+    console.log(`Synced ${result.assignmentsProcessed} assignments across ${result.modulesUpdated} modules`);
 
     return NextResponse.json({
       success: true,

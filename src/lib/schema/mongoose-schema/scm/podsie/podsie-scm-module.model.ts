@@ -17,6 +17,7 @@ const pacingEntrySchema = new mongoose.Schema({
   orderIndex: { type: Number, required: false }, // Order within the group (0-based)
   assignmentTitle: { type: String, required: false },
   zearnLessonCode: { type: String, required: false }, // e.g. "G8 M4 L2"
+  state: { type: String, required: false }, // e.g. "active", "archived" — synced from Podsie
 }, { _id: false });
 
 const podsieScmModuleFields = {

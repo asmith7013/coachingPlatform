@@ -33,6 +33,7 @@ const PodsieAssignmentSchema = z.object({
   moduleId: z.number().nullable(),
   moduleOrder: z.number().nullable(),
   state: z.string().nullable(),
+  groupId: z.number(),
 });
 
 const PodsieApiResponseSchema = z.object({
@@ -50,9 +51,8 @@ const GroupIdsResponseSchema = z.object({
 
 const CoachingPlatformSyncResponseSchema = z.object({
   success: z.literal(true),
-  upsertedCount: z.number().optional().default(0),
-  insertedCount: z.number().optional().default(0),
-  modifiedCount: z.number().optional().default(0),
+  modulesUpdated: z.number().optional().default(0),
+  assignmentsProcessed: z.number().optional().default(0),
 });
 
 type PodsieAssignment = z.infer<typeof PodsieAssignmentSchema>;
@@ -60,9 +60,8 @@ type PodsieAssignment = z.infer<typeof PodsieAssignmentSchema>;
 interface SyncResult {
   success: boolean;
   totalFetched: number;
-  upsertedCount: number;
-  insertedCount: number;
-  modifiedCount: number;
+  modulesUpdated: number;
+  assignmentsProcessed: number;
   errors: string[];
 }
 
@@ -75,9 +74,8 @@ async function sendFailureEmail(result: SyncResult, easternTime: string) {
 
 SUMMARY:
   Total Fetched: ${result.totalFetched}
-  Upserted: ${result.upsertedCount}
-  Inserted: ${result.insertedCount}
-  Modified: ${result.modifiedCount}
+  Modules Updated: ${result.modulesUpdated}
+  Assignments Processed: ${result.assignmentsProcessed}
   Error Count: ${result.errors.length}
 
 ERRORS:
@@ -170,9 +168,8 @@ async function fetchAssignmentsFromPodsie(groupIds: number[]): Promise<PodsieAss
 }
 
 async function syncToCoachingPlatform(assignments: PodsieAssignment[]): Promise<{
-  upsertedCount: number;
-  insertedCount: number;
-  modifiedCount: number;
+  modulesUpdated: number;
+  assignmentsProcessed: number;
 }> {
   const baseUrl = getCoachingPlatformUrl();
   const apiKey = getCoachingApiKey();
@@ -180,12 +177,13 @@ async function syncToCoachingPlatform(assignments: PodsieAssignment[]): Promise<
 
   console.log(`📤 Syncing ${assignments.length} assignments to ${url}...`);
 
-  // Transform to API format
+  // Transform to API format — include groupId for module-level upsert
   const payload = {
     assignments: assignments.map(a => ({
       podsieAssignmentId: a.id,
       title: a.title,
       podsieModuleId: a.moduleId,
+      podsieGroupId: a.groupId,
       moduleOrder: a.moduleOrder,
       state: a.state,
     })),
@@ -213,9 +211,8 @@ async function syncToCoachingPlatform(assignments: PodsieAssignment[]): Promise<
   }
 
   return {
-    upsertedCount: parsed.data.upsertedCount,
-    insertedCount: parsed.data.insertedCount,
-    modifiedCount: parsed.data.modifiedCount,
+    modulesUpdated: parsed.data.modulesUpdated,
+    assignmentsProcessed: parsed.data.assignmentsProcessed,
   };
 }
 
@@ -231,9 +228,8 @@ async function main() {
   const result: SyncResult = {
     success: false,
     totalFetched: 0,
-    upsertedCount: 0,
-    insertedCount: 0,
-    modifiedCount: 0,
+    modulesUpdated: 0,
+    assignmentsProcessed: 0,
     errors: [],
   };
 
@@ -259,18 +255,16 @@ async function main() {
       process.exit(0);
     }
 
-    // Step 3: Sync to AI Coaching Platform
+    // Step 3: Sync to AI Coaching Platform (upserts into podsie-scm-modules)
     const syncResult = await syncToCoachingPlatform(assignments);
-    result.upsertedCount = syncResult.upsertedCount;
-    result.insertedCount = syncResult.insertedCount;
-    result.modifiedCount = syncResult.modifiedCount;
+    result.modulesUpdated = syncResult.modulesUpdated;
+    result.assignmentsProcessed = syncResult.assignmentsProcessed;
 
     console.log('\n📊 Results Summary:');
     console.log(JSON.stringify({
       totalFetched: result.totalFetched,
-      upsertedCount: result.upsertedCount,
-      insertedCount: result.insertedCount,
-      modifiedCount: result.modifiedCount,
+      modulesUpdated: result.modulesUpdated,
+      assignmentsProcessed: result.assignmentsProcessed,
     }, null, 2));
 
     result.success = true;
