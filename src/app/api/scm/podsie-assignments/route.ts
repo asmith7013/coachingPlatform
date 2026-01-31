@@ -65,10 +65,10 @@ export async function GET(req: NextRequest) {
         { podsieAssignmentId: number; assignmentTitle: string }
       >();
       for (const mod of modules) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const assignments = Array.from(
-          (mod as any).assignments || [],
-        ) as Array<{ podsieAssignmentId?: number; assignmentTitle?: string }>;
+        const assignments = (mod.assignments ?? []) as unknown as Array<{
+          podsieAssignmentId?: number;
+          assignmentTitle?: string;
+        }>;
         for (const a of assignments) {
           if (a.podsieAssignmentId && !seen.has(a.podsieAssignmentId)) {
             seen.set(a.podsieAssignmentId, {
