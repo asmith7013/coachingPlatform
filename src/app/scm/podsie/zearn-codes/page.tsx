@@ -28,7 +28,7 @@ interface ScmGroupRecord {
  * Guess a Zearn lesson code from assignment title and module ID.
  * e.g. title "Lesson 3: Adding Fractions" with moduleId 294 (unit 4) → "G8 M4 L3"
  */
-function guessZearnCode(title: string, moduleId: number): string | null {
+function guessZearnCode(title: string, _moduleId: number): string | null {
   // Common Podsie title patterns:
   // "Lesson 3: Topic Name"
   // "L3 - Topic Name"
