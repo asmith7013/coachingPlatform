@@ -98,7 +98,7 @@ View full logs: https://github.com/asmith7013/coachingPlatform/actions
 }
 
 function getCoachingPlatformUrl(): string {
-  return process.env.COACHING_PLATFORM_URL || 'http://localhost:3000';
+  return process.env.COACHING_PLATFORM_URL || 'https://solvescoaching.com';
 }
 
 function getCoachingApiKey(): string {
