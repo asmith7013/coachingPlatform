@@ -1,9 +1,9 @@
 name: Sync Podsie Groups
 
 on:
-  # Runs daily at 1:30 AM EST (6:30 AM UTC) - 30 min after assignments sync
-  schedule:
-    - cron: '30 6 * * *'
+  # Cron disabled - re-enable when needed
+  # schedule:
+  #   - cron: '30 6 * * *'
 
   # Allows manual trigger from GitHub Actions tab
   workflow_dispatch:
