@@ -182,6 +182,7 @@ export const WorkedExampleDeckSchema = z.object({
   unitNumber: z.number().int().positive().optional(), // Unit number (matches scope-and-sequence)
   lessonNumber: z.number().int().optional(), // Lesson number (matches scope-and-sequence, can be 0 or negative for ramp-ups)
   scopeAndSequenceId: z.string().optional(), // Link to scope-and-sequence collection
+  podsieAssignmentId: z.number().int().optional(), // Linked Podsie assignment ID
 
   // Visual type (determined during Phase 1 planning)
   deckVisualType: DeckVisualTypeSchema.optional(), // text-only | html-table | svg-visual

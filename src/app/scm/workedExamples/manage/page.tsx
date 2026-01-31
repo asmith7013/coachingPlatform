@@ -36,6 +36,12 @@ interface EditableMetadata {
   lessonNumber?: number | null;
   mathStandard?: string;
   isPublic?: boolean;
+  podsieAssignmentId?: number | null;
+}
+
+interface PodsieAssignment {
+  podsieAssignmentId: number;
+  assignmentTitle: string;
 }
 
 export default function ManageWorkedExamples() {
@@ -55,6 +61,44 @@ export default function ManageWorkedExamples() {
   const [savingIds, setSavingIds] = useState<Set<string>>(new Set());
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
+
+  // Cache of Podsie assignments by "grade|unit" key
+  const [assignmentCache, setAssignmentCache] = useState<
+    Record<string, PodsieAssignment[]>
+  >({});
+  const [loadingAssignments, setLoadingAssignments] = useState<Set<string>>(
+    new Set(),
+  );
+
+  const fetchAssignments = useCallback(
+    async (gradeLevel: string, unitNumber: number) => {
+      const cacheKey = `${gradeLevel}|${unitNumber}`;
+      if (assignmentCache[cacheKey] || loadingAssignments.has(cacheKey)) return;
+
+      setLoadingAssignments((prev) => new Set([...prev, cacheKey]));
+      try {
+        const res = await fetch(
+          `/api/scm/podsie-assignments?gradeLevel=${encodeURIComponent(gradeLevel)}&unitNumber=${unitNumber}`,
+        );
+        const json = await res.json();
+        if (json.success) {
+          setAssignmentCache((prev) => ({
+            ...prev,
+            [cacheKey]: json.data,
+          }));
+        }
+      } catch {
+        // Silently fail - dropdown will just be empty
+      } finally {
+        setLoadingAssignments((prev) => {
+          const next = new Set(prev);
+          next.delete(cacheKey);
+          return next;
+        });
+      }
+    },
+    [assignmentCache, loadingAssignments],
+  );
 
   // Filter decks
   const filteredDecks = useMemo(() => {
@@ -324,6 +368,9 @@ export default function ManageWorkedExamples() {
                 <th className="px-3 py-3 text-center font-medium text-gray-700 w-20">
                   Public
                 </th>
+                <th className="px-3 py-3 text-left font-medium text-gray-700 w-48">
+                  Podsie Assignment
+                </th>
                 <th className="px-3 py-3 text-left font-medium text-gray-700 w-24">
                   Status
                 </th>
@@ -495,6 +542,79 @@ export default function ManageWorkedExamples() {
                           }
                           className="rounded border-gray-300"
                         />
+                      )}
+                    </td>
+
+                    {/* Podsie Assignment */}
+                    <td className="px-3 py-2">
+                      {isDeactivated ? (
+                        <span className="text-gray-500 text-xs">
+                          {deck.podsieAssignmentId ?? "—"}
+                        </span>
+                      ) : (
+                        (() => {
+                          const grade = (getValue(deck, "gradeLevel") ??
+                            deck.gradeLevel) as string;
+                          const unit = (getValue(deck, "unitNumber") ??
+                            deck.unitNumber) as number | null | undefined;
+                          const cacheKey =
+                            grade && unit ? `${grade}|${unit}` : null;
+                          const assignments = cacheKey
+                            ? assignmentCache[cacheKey]
+                            : null;
+                          const currentVal =
+                            getValue(deck, "podsieAssignmentId") ??
+                            deck.podsieAssignmentId;
+
+                          return (
+                            <div className="flex items-center gap-1">
+                              {grade && unit && !assignments ? (
+                                <button
+                                  onClick={() => fetchAssignments(grade, unit)}
+                                  className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded cursor-pointer"
+                                >
+                                  {loadingAssignments.has(cacheKey!)
+                                    ? "Loading..."
+                                    : currentVal
+                                      ? `#${currentVal}`
+                                      : "Link"}
+                                </button>
+                              ) : assignments && assignments.length > 0 ? (
+                                <select
+                                  value={currentVal ?? ""}
+                                  onChange={(e) =>
+                                    handleFieldChange(
+                                      deck.slug,
+                                      "podsieAssignmentId",
+                                      e.target.value
+                                        ? parseInt(e.target.value)
+                                        : null,
+                                    )
+                                  }
+                                  className="w-full px-1 py-1 border border-gray-200 rounded text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                >
+                                  <option value="">None</option>
+                                  {assignments.map((a) => (
+                                    <option
+                                      key={a.podsieAssignmentId}
+                                      value={a.podsieAssignmentId}
+                                    >
+                                      {a.assignmentTitle}
+                                    </option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <span className="text-xs text-gray-400">
+                                  {!grade || !unit
+                                    ? "Set grade & unit"
+                                    : currentVal
+                                      ? `#${currentVal}`
+                                      : "—"}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()
                       )}
                     </td>
 

@@ -9,11 +9,11 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
-  fetchPodsieScmGroups,
-  createPodsieScmGroup,
-  updatePodsieScmGroup,
-  deletePodsieScmGroup,
-} from "@actions/scm/podsie/podsie-scm-group";
+  fetchPodsieScmModules,
+  createPodsieScmModule,
+  updatePodsieScmModule,
+  deletePodsieScmModule,
+} from "@actions/scm/podsie/podsie-scm-module";
 
 interface ScmGroupRecord {
   _id: string;
@@ -66,7 +66,7 @@ export default function ScmGroupsPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await fetchPodsieScmGroups({
+      const result = await fetchPodsieScmModules({
         page: 1,
         limit: 500,
         sortBy: "podsieGroupId",
@@ -114,7 +114,7 @@ export default function ScmGroupsPage() {
     }
 
     try {
-      const result = await createPodsieScmGroup({
+      const result = await createPodsieScmModule({
         podsieGroupId: groupId,
         podsieModuleId: moduleId,
         moduleStartDate: newRecord.moduleStartDate || undefined,
@@ -155,7 +155,7 @@ export default function ScmGroupsPage() {
     setSuccess(null);
 
     try {
-      const result = await updatePodsieScmGroup(record._id, {
+      const result = await updatePodsieScmModule(record._id, {
         moduleStartDate: editValues.moduleStartDate || null,
         pointsRewardGoal: editValues.pointsRewardGoal
           ? parseInt(editValues.pointsRewardGoal, 10)
@@ -181,7 +181,7 @@ export default function ScmGroupsPage() {
     setSuccess(null);
 
     try {
-      const result = await deletePodsieScmGroup(id);
+      const result = await deletePodsieScmModule(id);
       if (result.success) {
         setSuccess("Record deleted successfully");
         setDeletingId(null);

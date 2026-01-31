@@ -13,7 +13,7 @@
  * - COACHING_PLATFORM_URL: URL for AI Coaching Platform
  *
  * The script dynamically fetches group IDs from the coaching platform's
- * podsie-scm-groups collection, then fetches assignments for those groups.
+ * podsie-scm-modules collection, then fetches assignments for those groups.
  *
  * Usage:
  *   npx tsx scripts/sync-podsie-assignments.ts

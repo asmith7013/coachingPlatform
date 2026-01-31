@@ -1,9 +1,9 @@
 "use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
-import { auth } from '@clerk/nextjs/server';
-import { handleServerError } from '@error/handlers/server';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { WorkedExampleDeck } from "@mongoose-schema/worked-example-deck.model";
+import { auth } from "@clerk/nextjs/server";
+import { handleServerError } from "@error/handlers/server";
 
 interface ListDecksFilters {
   gradeLevel?: string; // "6", "7", "8", "Algebra 1"
@@ -53,27 +53,25 @@ export async function listWorkedExampleDecks(filters?: ListDecksFilters) {
         query.isPublic = filters.isPublic;
       } else if (userId) {
         // Default: show public decks OR user's own decks
-        query.$or = [
-          { isPublic: true },
-          { createdBy: userId },
-        ];
+        query.$or = [{ isPublic: true }, { createdBy: userId }];
       } else {
         // Not authenticated: only show public decks
         query.isPublic = true;
       }
 
-      const decks = await WorkedExampleDeck
-        .find(query)
+      const decks = await WorkedExampleDeck.find(query)
         .sort({ createdAt: -1 })
         .limit(filters?.limit || 50)
         .skip(filters?.skip || 0)
-        .select('title slug mathConcept mathStandard gradeLevel unitNumber lessonNumber learningGoals createdBy isPublic deactivated googleSlidesUrl createdAt'); // Light projection for list view
+        .select(
+          "title slug mathConcept mathStandard gradeLevel unitNumber lessonNumber learningGoals createdBy isPublic deactivated googleSlidesUrl podsieAssignmentId createdAt",
+        ); // Light projection for list view
 
       const total = await WorkedExampleDeck.countDocuments(query);
 
       return {
         success: true,
-        data: decks.map(d => {
+        data: decks.map((d) => {
           const json = d.toJSON();
           // Convert ObjectId to string for client compatibility
           return {
@@ -92,7 +90,7 @@ export async function listWorkedExampleDecks(filters?: ListDecksFilters) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to list worked example decks'),
+        error: handleServerError(error, "Failed to list worked example decks"),
       };
     }
   });

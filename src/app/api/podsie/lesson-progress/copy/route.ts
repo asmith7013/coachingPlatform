@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PodsieScmGroupModel } from "@mongoose-schema/scm/podsie/podsie-scm-group.model";
+import { PodsieScmModuleModel } from "@mongoose-schema/scm/podsie/podsie-scm-module.model";
 import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { validateApiKey } from "@server/auth/api-key";
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
     const result = await withDbConnection(async () => {
       // Get source pacing config
-      const sourceConfig = await PodsieScmGroupModel.findOne({
+      const sourceConfig = await PodsieScmModuleModel.findOne({
         podsieGroupId: sourceGroupId,
         podsieModuleId: sourceModuleId,
       }).lean();
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
           ...(!copyGroups && { groupNumber: undefined, groupLabel: undefined }),
         }));
 
-        await PodsieScmGroupModel.findOneAndUpdate(
+        await PodsieScmModuleModel.findOneAndUpdate(
           {
             podsieGroupId: targetGroupId,
             podsieModuleId: sourceModuleId,

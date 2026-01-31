@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PodsieScmGroupModel } from "@mongoose-schema/scm/podsie/podsie-scm-group.model";
+import { PodsieScmModuleModel } from "@mongoose-schema/scm/podsie/podsie-scm-module.model";
 import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { validateApiKey } from "@server/auth/api-key";
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const groupIds = await withDbConnection(async () => {
-      const ids = await PodsieScmGroupModel.distinct("podsieGroupId");
+      const ids = await PodsieScmModuleModel.distinct("podsieGroupId");
       return ids.map((id) => Number(id)).sort((a, b) => a - b);
     });
 

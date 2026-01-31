@@ -129,6 +129,7 @@ const workedExampleDeckSchema = new mongoose.Schema({
   unitNumber: { type: Number }, // Unit number (matches scope-and-sequence)
   lessonNumber: { type: Number }, // Lesson number (matches scope-and-sequence)
   scopeAndSequenceId: { type: String, index: true }, // Link to scope-and-sequence collection
+  podsieAssignmentId: { type: Number, index: true }, // Linked Podsie assignment ID (set via manage page)
 
   // HTML Slides (required)
   htmlSlides: { type: [htmlSlideSchema], required: true },

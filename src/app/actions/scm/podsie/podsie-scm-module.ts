@@ -1,13 +1,13 @@
 "use server";
 
 import { ZodType } from "zod";
-import { PodsieScmGroupModel } from "@mongoose-schema/scm/podsie/podsie-scm-group.model";
+import { PodsieScmModuleModel } from "@mongoose-schema/scm/podsie/podsie-scm-module.model";
 import {
-  PodsieScmGroupZodSchema,
-  PodsieScmGroupInputZodSchema,
-  PodsieScmGroup,
-  PodsieScmGroupInput,
-} from "@zod-schema/scm/podsie/podsie-scm-group";
+  PodsieScmModuleZodSchema,
+  PodsieScmModuleInputZodSchema,
+  PodsieScmModule,
+  PodsieScmModuleInput,
+} from "@zod-schema/scm/podsie/podsie-scm-module";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
@@ -16,22 +16,22 @@ import { handleServerError } from "@error/handlers/server";
 // CRUD OPERATIONS (using factory)
 // =====================================
 
-const podsieScmGroupCrud = createCrudActions({
-  model: PodsieScmGroupModel as unknown as Parameters<typeof createCrudActions>[0]['model'],
-  schema: PodsieScmGroupZodSchema as ZodType<PodsieScmGroup>,
-  inputSchema: PodsieScmGroupInputZodSchema as ZodType<PodsieScmGroupInput>,
-  name: 'PodsieScmGroup',
-  revalidationPaths: ['/scm/podsie/scm-groups'],
+const podsieScmModuleCrud = createCrudActions({
+  model: PodsieScmModuleModel as unknown as Parameters<typeof createCrudActions>[0]['model'],
+  schema: PodsieScmModuleZodSchema as ZodType<PodsieScmModule>,
+  inputSchema: PodsieScmModuleInputZodSchema as ZodType<PodsieScmModuleInput>,
+  name: 'PodsieScmModule',
+  revalidationPaths: ['/scm/podsie/module-config'],
   sortFields: ['podsieGroupId', 'podsieModuleId', 'createdAt', 'updatedAt'],
   defaultSortField: 'podsieGroupId',
   defaultSortOrder: 'asc'
 });
 
-export const createPodsieScmGroup = podsieScmGroupCrud.create;
-export const updatePodsieScmGroup = podsieScmGroupCrud.update;
-export const deletePodsieScmGroup = podsieScmGroupCrud.delete;
-export const fetchPodsieScmGroups = podsieScmGroupCrud.fetch;
-export const fetchPodsieScmGroupById = podsieScmGroupCrud.fetchById;
+export const createPodsieScmModule = podsieScmModuleCrud.create;
+export const updatePodsieScmModule = podsieScmModuleCrud.update;
+export const deletePodsieScmModule = podsieScmModuleCrud.delete;
+export const fetchPodsieScmModules = podsieScmModuleCrud.fetch;
+export const fetchPodsieScmModuleById = podsieScmModuleCrud.fetchById;
 
 // =====================================
 // CUSTOM OPERATIONS
@@ -43,7 +43,7 @@ export const fetchPodsieScmGroupById = podsieScmGroupCrud.fetchById;
 export async function fetchDistinctGroupIds(): Promise<{ success: boolean; groupIds?: number[]; error?: string }> {
   return withDbConnection(async () => {
     try {
-      const rawIds = await PodsieScmGroupModel.distinct('podsieGroupId');
+      const rawIds = await PodsieScmModuleModel.distinct('podsieGroupId');
       const groupIds = rawIds.map((id) => Number(id));
       return {
         success: true,

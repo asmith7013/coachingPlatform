@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import type { PresentationModalProps } from './types';
-import { usePresentationState } from './usePresentationState';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { PresentationModalProps } from "./types";
+import { usePresentationState } from "./usePresentationState";
 import {
   SlideContent,
   NavigationControls,
@@ -13,8 +13,9 @@ import {
   SettingsButton,
   PreparationPanel,
   PlanningGuideButton,
-} from './components';
-import { PRINT_STYLES, isPrintableSlide } from './utils';
+} from "./components";
+import { Stopwatch } from "./Stopwatch";
+import { PRINT_STYLES, isPrintableSlide } from "./utils";
 
 export function PresentationModal({
   slug,
@@ -51,31 +52,31 @@ export function PresentationModal({
     if (!isOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' || e.key === ' ') {
+      if (e.key === "ArrowRight" || e.key === " ") {
         e.preventDefault();
         nextSlide();
-      } else if (e.key === 'ArrowLeft') {
+      } else if (e.key === "ArrowLeft") {
         e.preventDefault();
         prevSlide();
-      } else if (e.key === 'Escape') {
+      } else if (e.key === "Escape") {
         onClose();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, nextSlide, prevSlide, onClose]);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
 
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -117,8 +118,8 @@ export function PresentationModal({
               <div
                 className="w-full h-full"
                 style={{
-                  maxWidth: 'calc((100vh - 56px - 16px) * 960 / 540)',
-                  aspectRatio: '960 / 540',
+                  maxWidth: "calc((100vh - 56px - 16px) * 960 / 540)",
+                  aspectRatio: "960 / 540",
                 }}
               >
                 <SlideContent slide={slide} currentRevealed={currentRevealed} />
@@ -145,6 +146,9 @@ export function PresentationModal({
               onPrevSlide={prevSlide}
               onNextSlide={nextSlide}
             />
+
+            {/* Center: Stopwatch */}
+            <Stopwatch currentSlide={currentSlide} isActive={isOpen} />
 
             {/* Right: Planning Guide & Settings */}
             <div className="flex items-center gap-2">

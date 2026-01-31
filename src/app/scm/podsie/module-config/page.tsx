@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import {
-  fetchPodsieScmGroups,
-  updatePodsieScmGroup,
-} from "@actions/scm/podsie/podsie-scm-group";
+  fetchPodsieScmModules,
+  updatePodsieScmModule,
+} from "@actions/scm/podsie/podsie-scm-module";
 
 interface PacingEntry {
   podsieAssignmentId: number;
@@ -17,10 +17,11 @@ interface PacingEntry {
   zearnLessonCode?: string | null;
 }
 
-interface ScmGroupRecord {
+interface ScmModuleRecord {
   _id: string;
   podsieGroupId: number;
   podsieModuleId: number;
+  unitNumber?: number | null;
   assignments: PacingEntry[];
 }
 
@@ -29,24 +30,16 @@ interface ScmGroupRecord {
  * e.g. title "Lesson 3: Adding Fractions" with moduleId 294 (unit 4) → "G8 M4 L3"
  */
 function guessZearnCode(title: string, _moduleId: number): string | null {
-  // Common Podsie title patterns:
-  // "Lesson 3: Topic Name"
-  // "L3 - Topic Name"
-  // "4.3 Topic Name" (module.lesson)
   const lessonMatch = title.match(/(?:lesson\s+)(\d+)/i);
   if (lessonMatch) {
-    // We don't know the unit number from moduleId alone — moduleId is the Podsie module ID,
-    // not the math unit number. Leave unit blank for now; user will need to confirm.
     return `G8 M? L${lessonMatch[1]}`;
   }
 
-  // Try "L3" pattern
   const shortMatch = title.match(/\bL(\d+)\b/);
   if (shortMatch) {
     return `G8 M? L${shortMatch[1]}`;
   }
 
-  // Try "X.Y" pattern where X is module, Y is lesson
   const dotMatch = title.match(/\b(\d+)\.(\d+)\b/);
   if (dotMatch) {
     return `G8 M${dotMatch[1]} L${dotMatch[2]}`;
@@ -55,8 +48,8 @@ function guessZearnCode(title: string, _moduleId: number): string | null {
   return null;
 }
 
-export default function ZearnCodesPage() {
-  const [records, setRecords] = useState<ScmGroupRecord[]>([]);
+export default function ModuleConfigPage() {
+  const [records, setRecords] = useState<ScmModuleRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -66,13 +59,17 @@ export default function ZearnCodesPage() {
   const [editedCodes, setEditedCodes] = useState<
     Record<string, Record<number, string>>
   >({});
+  // Track edited unitNumber per record: recordId → unitNumber string
+  const [editedUnitNumbers, setEditedUnitNumbers] = useState<
+    Record<string, string>
+  >({});
   const [savingId, setSavingId] = useState<string | null>(null);
 
   const loadRecords = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await fetchPodsieScmGroups({
+      const result = await fetchPodsieScmModules({
         page: 1,
         limit: 500,
         sortBy: "podsieGroupId",
@@ -80,7 +77,7 @@ export default function ZearnCodesPage() {
         filters: {},
       });
       if (result.items) {
-        setRecords(result.items as unknown as ScmGroupRecord[]);
+        setRecords(result.items as unknown as ScmModuleRecord[]);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load records");
@@ -94,9 +91,7 @@ export default function ZearnCodesPage() {
   }, [loadRecords]);
 
   const filteredRecords = filterGroupId
-    ? records.filter(
-        (r) => r.podsieGroupId === parseInt(filterGroupId, 10),
-      )
+    ? records.filter((r) => r.podsieGroupId === parseInt(filterGroupId, 10))
     : records;
 
   // Only show records that have assignments
@@ -108,19 +103,34 @@ export default function ZearnCodesPage() {
     ...new Set(records.map((r) => r.podsieGroupId)),
   ].sort((a, b) => a - b);
 
-  const getCodeValue = (record: ScmGroupRecord, entry: PacingEntry): string => {
+  const getCodeValue = (
+    record: ScmModuleRecord,
+    entry: PacingEntry,
+  ): string => {
     const edited = editedCodes[record._id]?.[entry.podsieAssignmentId];
     if (edited !== undefined) return edited;
     return entry.zearnLessonCode || "";
   };
 
-  const getPlaceholder = (entry: PacingEntry, record: ScmGroupRecord): string => {
+  const getPlaceholder = (
+    entry: PacingEntry,
+    record: ScmModuleRecord,
+  ): string => {
     if (entry.zearnLessonCode) return "";
     if (entry.assignmentTitle) {
-      const guess = guessZearnCode(entry.assignmentTitle, record.podsieModuleId);
+      const guess = guessZearnCode(
+        entry.assignmentTitle,
+        record.podsieModuleId,
+      );
       return guess || "";
     }
     return "";
+  };
+
+  const getUnitNumberValue = (record: ScmModuleRecord): string => {
+    const edited = editedUnitNumbers[record._id];
+    if (edited !== undefined) return edited;
+    return record.unitNumber != null ? String(record.unitNumber) : "";
   };
 
   const handleCodeChange = (
@@ -137,7 +147,14 @@ export default function ZearnCodesPage() {
     }));
   };
 
-  const handleSave = async (record: ScmGroupRecord) => {
+  const handleUnitNumberChange = (recordId: string, value: string) => {
+    setEditedUnitNumbers((prev) => ({
+      ...prev,
+      [recordId]: value,
+    }));
+  };
+
+  const handleSave = async (record: ScmModuleRecord) => {
     setSavingId(record._id);
     setError(null);
     setSuccess(null);
@@ -155,16 +172,30 @@ export default function ZearnCodesPage() {
         };
       });
 
-      const result = await updatePodsieScmGroup(record._id, {
+      const unitNumStr = editedUnitNumbers[record._id];
+      const unitNumberUpdate =
+        unitNumStr !== undefined
+          ? unitNumStr === ""
+            ? { unitNumber: null }
+            : { unitNumber: parseInt(unitNumStr, 10) }
+          : {};
+
+      const result = await updatePodsieScmModule(record._id, {
         assignments: updatedAssignments,
+        ...unitNumberUpdate,
       });
 
       if (result.success) {
         setSuccess(
-          `Saved Zearn codes for Group ${record.podsieGroupId} / Module ${record.podsieModuleId}`,
+          `Saved config for Group ${record.podsieGroupId} / Module ${record.podsieModuleId}`,
         );
         // Clear edits for this record
         setEditedCodes((prev) => {
+          const next = { ...prev };
+          delete next[record._id];
+          return next;
+        });
+        setEditedUnitNumbers((prev) => {
           const next = { ...prev };
           delete next[record._id];
           return next;
@@ -180,7 +211,7 @@ export default function ZearnCodesPage() {
     }
   };
 
-  const handleAutoPopulate = (record: ScmGroupRecord) => {
+  const handleAutoPopulate = (record: ScmModuleRecord) => {
     const newEdits: Record<number, string> = {};
     for (const entry of record.assignments) {
       if (!entry.zearnLessonCode && entry.assignmentTitle) {
@@ -205,7 +236,10 @@ export default function ZearnCodesPage() {
   };
 
   const hasEdits = (recordId: string): boolean => {
-    return Object.keys(editedCodes[recordId] || {}).length > 0;
+    return (
+      Object.keys(editedCodes[recordId] || {}).length > 0 ||
+      editedUnitNumbers[recordId] !== undefined
+    );
   };
 
   return (
@@ -213,10 +247,10 @@ export default function ZearnCodesPage() {
       <div className="mx-auto max-w-6xl p-6">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h1 className="text-2xl font-bold">Zearn Lesson Codes</h1>
+          <h1 className="text-2xl font-bold">Module Configuration</h1>
           <p className="text-gray-600 mt-1">
-            Manage Zearn lesson code mappings for pacing assignments.
-            {" "}
+            Manage unit numbers and Zearn lesson code mappings for pacing
+            modules.{" "}
             <span className="text-gray-500">
               {records.length} records, {distinctGroupIds.length} groups
             </span>
@@ -284,6 +318,18 @@ export default function ZearnCodesPage() {
                     <span className="text-sm text-gray-500">
                       Module {record.podsieModuleId}
                     </span>
+                    <div className="flex items-center gap-1">
+                      <label className="text-xs text-gray-500">Unit #:</label>
+                      <input
+                        type="number"
+                        value={getUnitNumberValue(record)}
+                        placeholder="—"
+                        onChange={(e) =>
+                          handleUnitNumberChange(record._id, e.target.value)
+                        }
+                        className="w-16 px-2 py-0.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
                     <span className="text-xs text-gray-400">
                       {record.assignments.length} assignments
                     </span>
@@ -362,9 +408,7 @@ export default function ZearnCodesPage() {
                   )}
                   <button
                     onClick={() => handleSave(record)}
-                    disabled={
-                      savingId === record._id || !hasEdits(record._id)
-                    }
+                    disabled={savingId === record._id || !hasEdits(record._id)}
                     className="flex items-center gap-1 px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
                   >
                     <CheckIcon className="h-3.5 w-3.5" />

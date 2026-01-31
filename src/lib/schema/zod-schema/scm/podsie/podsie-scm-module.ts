@@ -2,7 +2,7 @@ import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
 
 // =====================================
-// PODSIE SCM GROUP SCHEMA
+// PODSIE SCM MODULE SCHEMA
 // =====================================
 
 /**
@@ -21,11 +21,12 @@ export const PacingEntrySchema = z.object({
 export type PacingEntry = z.infer<typeof PacingEntrySchema>;
 
 /**
- * Podsie SCM Group - stores pacing configuration per group + module
+ * Podsie SCM Module - stores pacing configuration per group + module
  */
-const PodsieScmGroupFieldsSchema = z.object({
+const PodsieScmModuleFieldsSchema = z.object({
   podsieGroupId: z.number().int().describe("Podsie group ID"),
   podsieModuleId: z.number().int().describe("Podsie module ID"),
+  unitNumber: z.number().int().nullable().optional().describe("Unit number matching scope-and-sequence"),
   moduleStartDate: z.string().nullable().optional().describe("Module start date in YYYY-MM-DD format"),
   pointsRewardGoal: z.number().nullable().optional().describe("Points reward goal"),
   pointsRewardDescription: z.string().nullable().optional().describe("Points reward description"),
@@ -33,8 +34,8 @@ const PodsieScmGroupFieldsSchema = z.object({
   completedSections: z.array(z.number().int()).default([]).describe("Group numbers of sections marked complete"),
 });
 
-export const PodsieScmGroupZodSchema = BaseDocumentSchema.merge(PodsieScmGroupFieldsSchema);
-export const PodsieScmGroupInputZodSchema = toInputSchema(PodsieScmGroupZodSchema);
+export const PodsieScmModuleZodSchema = BaseDocumentSchema.merge(PodsieScmModuleFieldsSchema);
+export const PodsieScmModuleInputZodSchema = toInputSchema(PodsieScmModuleZodSchema);
 
-export type PodsieScmGroup = z.infer<typeof PodsieScmGroupZodSchema>;
-export type PodsieScmGroupInput = z.infer<typeof PodsieScmGroupInputZodSchema>;
+export type PodsieScmModule = z.infer<typeof PodsieScmModuleZodSchema>;
+export type PodsieScmModuleInput = z.infer<typeof PodsieScmModuleInputZodSchema>;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PodsieScmGroupModel } from "@mongoose-schema/scm/podsie/podsie-scm-group.model";
+import { PodsieScmModuleModel } from "@mongoose-schema/scm/podsie/podsie-scm-module.model";
 import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { validateApiKey } from "@server/auth/api-key";
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
       }
 
       const result = await withDbConnection(async () => {
-        const pacingConfig = await PodsieScmGroupModel.findOne({
+        const pacingConfig = await PodsieScmModuleModel.findOne({
           podsieGroupId,
           podsieModuleId,
         }).lean();
@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
 
     // No moduleId - return all pacing configs for this group
     const results = await withDbConnection(async () => {
-      const pacingConfigs = await PodsieScmGroupModel.find({
+      const pacingConfigs = await PodsieScmModuleModel.find({
         podsieGroupId,
       }).lean();
 
@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await withDbConnection(async () => {
-      const existingConfig = await PodsieScmGroupModel.findOne({
+      const existingConfig = await PodsieScmModuleModel.findOne({
         podsieGroupId,
         podsieModuleId,
       });
@@ -146,7 +146,7 @@ export async function POST(req: NextRequest) {
         return { doc: existingConfig.toJSON(), created: false };
       } else {
         // Create new
-        const newConfig = new PodsieScmGroupModel({
+        const newConfig = new PodsieScmModuleModel({
           podsieGroupId,
           podsieModuleId,
           moduleStartDate,
@@ -203,7 +203,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     await withDbConnection(async () => {
-      await PodsieScmGroupModel.deleteOne({
+      await PodsieScmModuleModel.deleteOne({
         podsieGroupId,
         podsieModuleId,
       });
