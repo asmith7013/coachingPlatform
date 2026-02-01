@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { podsieGroupId, podsieModuleId, moduleStartDate, pointsRewardGoal, pointsRewardDescription, assignments } = body;
+    const { podsieGroupId, podsieModuleId, moduleStartDate, pointsRewardGoal, pointsRewardDescription, assignments, completedSections } = body;
 
     if (!podsieGroupId || !podsieModuleId) {
       return NextResponse.json(
@@ -142,6 +142,9 @@ export async function POST(req: NextRequest) {
           existingConfig.set('pointsRewardDescription', pointsRewardDescription);
         }
         existingConfig.set('assignments', assignments);
+        if (completedSections !== undefined) {
+          existingConfig.set('completedSections', completedSections);
+        }
         await existingConfig.save();
         return { doc: existingConfig.toJSON(), created: false };
       } else {
@@ -153,6 +156,7 @@ export async function POST(req: NextRequest) {
           pointsRewardGoal,
           pointsRewardDescription,
           assignments,
+          completedSections: completedSections ?? [],
         });
         await newConfig.save();
         return { doc: newConfig.toJSON(), created: true };
