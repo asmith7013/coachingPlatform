@@ -25,6 +25,9 @@ const podsieScmModuleFields = {
   podsieGroupId: { type: Number, required: true, index: true },
   podsieModuleId: { type: Number, required: true, index: true },
 
+  // Display name for the module (synced from Podsie or manually entered)
+  moduleName: { type: String, required: false },
+
   // Unit number (matches scope-and-sequence, e.g. 3 for "Unit 3")
   unitNumber: { type: Number, index: true },
 

@@ -26,6 +26,7 @@ export type PacingEntry = z.infer<typeof PacingEntrySchema>;
 const PodsieScmModuleFieldsSchema = z.object({
   podsieGroupId: z.number().int().describe("Podsie group ID"),
   podsieModuleId: z.number().int().describe("Podsie module ID"),
+  moduleName: z.string().nullable().optional().describe("Display name for the module"),
   unitNumber: z.number().int().nullable().optional().describe("Unit number matching scope-and-sequence"),
   moduleStartDate: z.string().nullable().optional().describe("Module start date in YYYY-MM-DD format"),
   pointsRewardGoal: z.number().nullable().optional().describe("Points reward goal"),

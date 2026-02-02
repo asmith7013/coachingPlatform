@@ -24,6 +24,7 @@ interface AssignmentInput {
   title: string;
   podsieGroupId: number;
   podsieModuleId?: number | null;
+  moduleName?: string | null;
   moduleOrder?: number | null;
   state?: string | null;
 }
@@ -91,6 +92,9 @@ export async function POST(req: NextRequest) {
       let modulesUpdated = 0;
 
       for (const { podsieGroupId, podsieModuleId, assignments: moduleAssignments } of moduleMap.values()) {
+        // Extract moduleName from the first assignment that has one
+        const moduleName = moduleAssignments.find(a => a.moduleName)?.moduleName ?? null;
+
         // Find existing module doc
         const existingDoc = await PodsieScmModuleModel.findOne({
           podsieGroupId,
@@ -98,6 +102,11 @@ export async function POST(req: NextRequest) {
         });
 
         if (existingDoc) {
+          // Update moduleName if available
+          if (moduleName) {
+            (existingDoc as unknown as Record<string, unknown>).moduleName = moduleName;
+          }
+
           // Update existing assignments and add new ones
           const existingAssignments = Array.from(
             (existingDoc as unknown as { assignments: Array<Record<string, unknown>> }).assignments || []
@@ -134,6 +143,7 @@ export async function POST(req: NextRequest) {
           await PodsieScmModuleModel.create({
             podsieGroupId,
             podsieModuleId,
+            moduleName: moduleName ?? undefined,
             assignments: moduleAssignments.map(a => ({
               podsieAssignmentId: a.podsieAssignmentId,
               assignmentTitle: a.title,

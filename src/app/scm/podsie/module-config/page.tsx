@@ -172,6 +172,13 @@ export default function ModuleConfigPage() {
     ...new Set(records.map((r) => r.podsieGroupId)),
   ].sort((a, b) => a - b);
 
+  // Auto-select first group if none selected
+  useEffect(() => {
+    if (!filterGroupId && distinctGroupIds.length > 0) {
+      setFilterGroupId(String(distinctGroupIds[0]));
+    }
+  }, [distinctGroupIds, filterGroupId]);
+
   const getGroupLabel = (id: number): string => {
     const name = groupNameMap[id];
     return name ? `${name} (${id})` : `Group ${id}`;
@@ -439,121 +446,6 @@ export default function ModuleConfigPage() {
           </div>
         )}
 
-        {/* Filter + Create Group */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <div className="flex items-center gap-4">
-            <label className="text-sm font-medium text-gray-700">
-              Filter by Group:
-            </label>
-            <select
-              value={filterGroupId}
-              onChange={(e) => setFilterGroupId(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">All Groups ({distinctGroupIds.length})</option>
-              {distinctGroupIds.map((id) => (
-                <option key={id} value={id}>
-                  {getGroupLabel(id)}
-                </option>
-              ))}
-            </select>
-            <span className="text-sm text-gray-500">
-              Showing {recordsWithAssignments.length} records with assignments
-            </span>
-            <div className="ml-auto">
-              <button
-                onClick={() => setShowCreateForm(!showCreateForm)}
-                className="flex items-center gap-1 px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              >
-                <PlusIcon className="h-4 w-4" />
-                Add Group
-              </button>
-            </div>
-          </div>
-
-          {/* Create Group Form */}
-          {showCreateForm && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <h3 className="text-sm font-semibold mb-3">Add New Group</h3>
-              <div className="grid grid-cols-2 gap-3 max-w-2xl">
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Podsie Group ID *
-                  </label>
-                  <input
-                    type="number"
-                    value={newGroupId}
-                    onChange={(e) => setNewGroupId(e.target.value)}
-                    placeholder="e.g. 350"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Group Name
-                  </label>
-                  <input
-                    type="text"
-                    value={newGroupName}
-                    onChange={(e) => setNewGroupName(e.target.value)}
-                    placeholder="e.g. Ms. Smith Period 3"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Grade Level *
-                  </label>
-                  <select
-                    value={newGradeLevel}
-                    onChange={(e) => setNewGradeLevel(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Select grade...</option>
-                    {SCOPE_SEQUENCE_TAG_OPTIONS.map((grade) => (
-                      <option key={grade} value={grade}>
-                        {grade}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    School *
-                  </label>
-                  <select
-                    value={newSchool}
-                    onChange={(e) => setNewSchool(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Select school...</option>
-                    {Schools.map((school) => (
-                      <option key={school} value={school}>
-                        {school}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={handleCreateGroup}
-                  disabled={creatingGroup}
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
-                >
-                  {creatingGroup ? "Creating..." : "Create Group"}
-                </button>
-                <button
-                  onClick={() => setShowCreateForm(false)}
-                  className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Groups Management */}
         {groups.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm mb-4 overflow-hidden">
@@ -732,6 +624,120 @@ export default function ModuleConfigPage() {
             )}
           </div>
         )}
+
+        {/* Filter + Create Group */}
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-medium text-gray-700">
+              Filter by Group:
+            </label>
+            <select
+              value={filterGroupId}
+              onChange={(e) => setFilterGroupId(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              {distinctGroupIds.map((id) => (
+                <option key={id} value={id}>
+                  {getGroupLabel(id)}
+                </option>
+              ))}
+            </select>
+            <span className="text-sm text-gray-500">
+              Showing {recordsWithAssignments.length} records with assignments
+            </span>
+            <div className="ml-auto">
+              <button
+                onClick={() => setShowCreateForm(!showCreateForm)}
+                className="flex items-center gap-1 px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <PlusIcon className="h-4 w-4" />
+                Add Group
+              </button>
+            </div>
+          </div>
+
+          {/* Create Group Form */}
+          {showCreateForm && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <h3 className="text-sm font-semibold mb-3">Add New Group</h3>
+              <div className="grid grid-cols-2 gap-3 max-w-2xl">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Podsie Group ID *
+                  </label>
+                  <input
+                    type="number"
+                    value={newGroupId}
+                    onChange={(e) => setNewGroupId(e.target.value)}
+                    placeholder="e.g. 350"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Group Name
+                  </label>
+                  <input
+                    type="text"
+                    value={newGroupName}
+                    onChange={(e) => setNewGroupName(e.target.value)}
+                    placeholder="e.g. Ms. Smith Period 3"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Grade Level *
+                  </label>
+                  <select
+                    value={newGradeLevel}
+                    onChange={(e) => setNewGradeLevel(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select grade...</option>
+                    {SCOPE_SEQUENCE_TAG_OPTIONS.map((grade) => (
+                      <option key={grade} value={grade}>
+                        {grade}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    School *
+                  </label>
+                  <select
+                    value={newSchool}
+                    onChange={(e) => setNewSchool(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select school...</option>
+                    {Schools.map((school) => (
+                      <option key={school} value={school}>
+                        {school}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={handleCreateGroup}
+                  disabled={creatingGroup}
+                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
+                >
+                  {creatingGroup ? "Creating..." : "Create Group"}
+                </button>
+                <button
+                  onClick={() => setShowCreateForm(false)}
+                  className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Records */}
         {loading ? (
