@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
         const assignmentIdFilter = assignmentIdParam ? parseInt(assignmentIdParam, 10) : null;
 
         for (const mod of modules) {
-          for (const assignment of (mod as { assignments: Array<{ podsieAssignmentId: number; zearnLessonCode?: string }> }).assignments || []) {
+          for (const assignment of (mod as unknown as { assignments: Array<{ podsieAssignmentId: number; zearnLessonCode?: string }> }).assignments || []) {
             if (assignmentIdFilter != null && assignment.podsieAssignmentId !== assignmentIdFilter) {
               continue;
             }
