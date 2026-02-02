@@ -3,6 +3,7 @@ import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { validateApiKey } from "@server/auth/api-key";
 import { StudentModel } from "@mongoose-schema/scm/student/student.model";
+import { PodsieScmModuleModel } from "@mongoose-schema/scm/podsie/podsie-scm-module.model";
 
 /**
  * API endpoint for fetching Zearn completion history
@@ -17,6 +18,9 @@ import { StudentModel } from "@mongoose-schema/scm/student/student.model";
  *   - section: Filter by student section
  *   - startDate: Filter completions after this date (MM/DD/YY format)
  *   - endDate: Filter completions before this date (MM/DD/YY format)
+ *   - groupId: Filter by Podsie group ID (uses pacing config to find relevant lesson codes)
+ *   - moduleId: Filter by Podsie module ID (used with groupId for more specific filtering)
+ *   - assignmentId: Filter by a specific Podsie assignment ID's zearn lesson code
  */
 
 // Type for the student data from MongoDB
@@ -24,6 +28,7 @@ type StudentWithZearn = {
   studentID: number;
   firstName: string;
   lastName: string;
+  email?: string;
   section: string;
   zearnLessons: Array<{
     lessonCode: string;
@@ -35,6 +40,7 @@ type StudentWithZearn = {
 type ZearnHistoryRow = {
   studentId: string;
   studentName: string;
+  studentEmail: string;
   section: string;
   lessonCode: string;
   completionDate: string;
@@ -51,8 +57,43 @@ export async function GET(req: NextRequest) {
     const sectionFilter = searchParams.get("section");
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
+    const groupIdParam = searchParams.get("groupId");
+    const moduleIdParam = searchParams.get("moduleId");
+    const assignmentIdParam = searchParams.get("assignmentId");
 
     const result = await withDbConnection(async () => {
+      // If groupId/moduleId/assignmentId provided, look up relevant zearn lesson codes
+      let allowedLessonCodes: Set<string> | null = null;
+
+      if (groupIdParam || moduleIdParam || assignmentIdParam) {
+        const moduleQuery: Record<string, unknown> = {};
+        if (groupIdParam) moduleQuery.podsieGroupId = parseInt(groupIdParam, 10);
+        if (moduleIdParam) moduleQuery.podsieModuleId = parseInt(moduleIdParam, 10);
+
+        const modules = await PodsieScmModuleModel.find(moduleQuery, {
+          assignments: 1,
+        }).lean();
+
+        allowedLessonCodes = new Set<string>();
+        const assignmentIdFilter = assignmentIdParam ? parseInt(assignmentIdParam, 10) : null;
+
+        for (const mod of modules) {
+          for (const assignment of (mod as { assignments: Array<{ podsieAssignmentId: number; zearnLessonCode?: string }> }).assignments || []) {
+            if (assignmentIdFilter != null && assignment.podsieAssignmentId !== assignmentIdFilter) {
+              continue;
+            }
+            if (assignment.zearnLessonCode) {
+              allowedLessonCodes.add(assignment.zearnLessonCode);
+            }
+          }
+        }
+
+        // If no lesson codes found, return empty
+        if (allowedLessonCodes.size === 0) {
+          return [];
+        }
+      }
+
       // Build query
       const query: Record<string, unknown> = {
         active: true,
@@ -68,6 +109,7 @@ export async function GET(req: NextRequest) {
         studentID: 1,
         firstName: 1,
         lastName: 1,
+        email: 1,
         section: 1,
         zearnLessons: 1,
       }).lean()) as unknown as StudentWithZearn[];
@@ -79,6 +121,11 @@ export async function GET(req: NextRequest) {
         const studentName = `${student.lastName}, ${student.firstName}`;
 
         for (const lesson of student.zearnLessons || []) {
+          // Filter by allowed lesson codes if specified
+          if (allowedLessonCodes && !allowedLessonCodes.has(lesson.lessonCode)) {
+            continue;
+          }
+
           // Parse lesson code to extract grade and module
           // Format: "G8 M2 L1" or "G3 M1 L10"
           const lessonMatch = lesson.lessonCode.match(/G(\d+)\s+M(\d+)\s+L(\d+)/);
@@ -99,6 +146,7 @@ export async function GET(req: NextRequest) {
           rows.push({
             studentId: student.studentID.toString(),
             studentName,
+            studentEmail: student.email || "",
             section: student.section,
             lessonCode: lesson.lessonCode,
             completionDate: lesson.completionDate,
