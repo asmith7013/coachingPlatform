@@ -31,6 +31,7 @@ const PodsieScmModuleFieldsSchema = z.object({
   moduleStartDate: z.string().nullable().optional().describe("Module start date in YYYY-MM-DD format"),
   pointsRewardGoal: z.number().nullable().optional().describe("Points reward goal"),
   pointsRewardDescription: z.string().nullable().optional().describe("Points reward description"),
+  studentPointsTarget: z.number().nullable().optional().describe("Per-student points target"),
   assignments: z.array(PacingEntrySchema).default([]).describe("Assignment pacing entries"),
   completedSections: z.array(z.number().int()).default([]).describe("Group numbers of sections marked complete"),
 });
