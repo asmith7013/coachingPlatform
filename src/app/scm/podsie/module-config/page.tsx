@@ -11,6 +11,7 @@ import {
 import {
   fetchPodsieScmModules,
   updatePodsieScmModule,
+  updateZearnCodesAcrossGroups,
 } from "@actions/scm/podsie/podsie-scm-module";
 import {
   fetchPodsieScmGroups,
@@ -48,18 +49,21 @@ interface ScmGroupRecord {
 }
 
 /**
- * Guess a Zearn lesson code from assignment title and module ID.
- * e.g. title "Lesson 3: Adding Fractions" with moduleId 294 (unit 4) → "G8 M4 L3"
+ * Guess a Zearn lesson code from assignment title.
+ * e.g. title "Lesson 3: Adding Fractions" with unitNumber 4 → "G8 M4 L3"
+ * If unitNumber is not provided, uses "M?" as placeholder.
  */
-function guessZearnCode(title: string, _moduleId: number): string | null {
+function guessZearnCode(title: string, unitNumber?: number | null): string | null {
+  const missionPart = unitNumber != null ? `M${unitNumber}` : "M?";
+
   const lessonMatch = title.match(/(?:lesson\s+)(\d+)/i);
   if (lessonMatch) {
-    return `G8 M? L${lessonMatch[1]}`;
+    return `G8 ${missionPart} L${lessonMatch[1]}`;
   }
 
   const shortMatch = title.match(/\bL(\d+)\b/);
   if (shortMatch) {
-    return `G8 M? L${shortMatch[1]}`;
+    return `G8 ${missionPart} L${shortMatch[1]}`;
   }
 
   const dotMatch = title.match(/\b(\d+)\.(\d+)\b/);
@@ -199,10 +203,15 @@ export default function ModuleConfigPage() {
   ): string => {
     if (entry.zearnLessonCode) return "";
     if (entry.assignmentTitle) {
-      const guess = guessZearnCode(
-        entry.assignmentTitle,
-        record.podsieModuleId,
-      );
+      // Use edited unit number if available, otherwise use record's unit number
+      const editedUnitNum = editedUnitNumbers[record._id];
+      const unitNum =
+        editedUnitNum !== undefined
+          ? editedUnitNum
+            ? parseInt(editedUnitNum, 10)
+            : null
+          : record.unitNumber;
+      const guess = guessZearnCode(entry.assignmentTitle, unitNum);
       return guess || "";
     }
     return "";
@@ -242,49 +251,61 @@ export default function ModuleConfigPage() {
 
     try {
       const edits = editedCodes[record._id] || {};
-      const updatedAssignments = record.assignments.map((entry) => {
+
+      // Build a map of assignmentId → zearnCode for cross-group update
+      // Only include assignments that have been edited
+      const assignmentCodeMap: Record<number, string | null> = {};
+      for (const entry of record.assignments) {
         const editedCode = edits[entry.podsieAssignmentId];
-        return {
-          ...entry,
-          zearnLessonCode:
-            editedCode !== undefined
-              ? editedCode || null
-              : entry.zearnLessonCode || null,
-        };
-      });
-
-      const unitNumStr = editedUnitNumbers[record._id];
-      const unitNumberUpdate =
-        unitNumStr !== undefined
-          ? unitNumStr === ""
-            ? { unitNumber: null }
-            : { unitNumber: parseInt(unitNumStr, 10) }
-          : {};
-
-      const result = await updatePodsieScmModule(record._id, {
-        assignments: updatedAssignments,
-        ...unitNumberUpdate,
-      });
-
-      if (result.success) {
-        setSuccess(
-          `Saved config for ${getGroupLabel(record.podsieGroupId)} / Module ${record.podsieModuleId}`,
-        );
-        // Clear edits for this record
-        setEditedCodes((prev) => {
-          const next = { ...prev };
-          delete next[record._id];
-          return next;
-        });
-        setEditedUnitNumbers((prev) => {
-          const next = { ...prev };
-          delete next[record._id];
-          return next;
-        });
-        await loadRecords();
-      } else {
-        setError(result.error || "Failed to save");
+        if (editedCode !== undefined) {
+          assignmentCodeMap[entry.podsieAssignmentId] = editedCode || null;
+        }
       }
+
+      // Update Zearn codes across all groups
+      const hasCodeEdits = Object.keys(assignmentCodeMap).length > 0;
+      if (hasCodeEdits) {
+        const codeResult = await updateZearnCodesAcrossGroups(assignmentCodeMap);
+        if (!codeResult.success) {
+          setError(codeResult.error || "Failed to save Zearn codes");
+          return;
+        }
+      }
+
+      // Update unit number for this specific record if changed
+      const unitNumStr = editedUnitNumbers[record._id];
+      if (unitNumStr !== undefined) {
+        const unitNumberUpdate =
+          unitNumStr === ""
+            ? { unitNumber: null }
+            : { unitNumber: parseInt(unitNumStr, 10) };
+
+        const unitResult = await updatePodsieScmModule(record._id, unitNumberUpdate);
+        if (!unitResult.success) {
+          setError(unitResult.error || "Failed to save unit number");
+          return;
+        }
+      }
+
+      const editedCount = Object.keys(assignmentCodeMap).length;
+      setSuccess(
+        hasCodeEdits
+          ? `Saved ${editedCount} Zearn code(s) across all groups`
+          : `Saved unit number for ${getGroupLabel(record.podsieGroupId)} / Module ${record.podsieModuleId}`,
+      );
+
+      // Clear edits for this record
+      setEditedCodes((prev) => {
+        const next = { ...prev };
+        delete next[record._id];
+        return next;
+      });
+      setEditedUnitNumbers((prev) => {
+        const next = { ...prev };
+        delete next[record._id];
+        return next;
+      });
+      await loadRecords();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save");
     } finally {
@@ -293,13 +314,19 @@ export default function ModuleConfigPage() {
   };
 
   const handleAutoPopulate = (record: ScmModuleRecord) => {
+    // Use edited unit number if available, otherwise use record's unit number
+    const editedUnitNum = editedUnitNumbers[record._id];
+    const unitNum =
+      editedUnitNum !== undefined
+        ? editedUnitNum
+          ? parseInt(editedUnitNum, 10)
+          : null
+        : record.unitNumber;
+
     const newEdits: Record<number, string> = {};
     for (const entry of record.assignments) {
       if (!entry.zearnLessonCode && entry.assignmentTitle) {
-        const guess = guessZearnCode(
-          entry.assignmentTitle,
-          record.podsieModuleId,
-        );
+        const guess = guessZearnCode(entry.assignmentTitle, unitNum);
         if (guess) {
           newEdits[entry.podsieAssignmentId] = guess;
         }
@@ -622,10 +649,104 @@ export default function ModuleConfigPage() {
                 </tbody>
               </table>
             )}
+            {showGroups && (
+              <div className="px-4 py-3 border-t border-gray-200">
+                {showCreateForm ? (
+                  <div>
+                    <h3 className="text-sm font-semibold mb-3">
+                      Add New Group
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3 max-w-2xl">
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">
+                          Podsie Group ID *
+                        </label>
+                        <input
+                          type="number"
+                          value={newGroupId}
+                          onChange={(e) => setNewGroupId(e.target.value)}
+                          placeholder="e.g. 350"
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">
+                          Group Name
+                        </label>
+                        <input
+                          type="text"
+                          value={newGroupName}
+                          onChange={(e) => setNewGroupName(e.target.value)}
+                          placeholder="e.g. Ms. Smith Period 3"
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">
+                          Grade Level *
+                        </label>
+                        <select
+                          value={newGradeLevel}
+                          onChange={(e) => setNewGradeLevel(e.target.value)}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select grade...</option>
+                          {SCOPE_SEQUENCE_TAG_OPTIONS.map((grade) => (
+                            <option key={grade} value={grade}>
+                              {grade}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">
+                          School *
+                        </label>
+                        <select
+                          value={newSchool}
+                          onChange={(e) => setNewSchool(e.target.value)}
+                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select school...</option>
+                          {Schools.map((school) => (
+                            <option key={school} value={school}>
+                              {school}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      <button
+                        onClick={handleCreateGroup}
+                        disabled={creatingGroup}
+                        className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
+                      >
+                        {creatingGroup ? "Creating..." : "Create Group"}
+                      </button>
+                      <button
+                        onClick={() => setShowCreateForm(false)}
+                        className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowCreateForm(true)}
+                    className="flex items-center gap-1 px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
+                  >
+                    <PlusIcon className="h-4 w-4" />
+                    Add Group
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         )}
 
-        {/* Filter + Create Group */}
+        {/* Filter */}
         <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-gray-700">
@@ -645,98 +766,7 @@ export default function ModuleConfigPage() {
             <span className="text-sm text-gray-500">
               Showing {recordsWithAssignments.length} records with assignments
             </span>
-            <div className="ml-auto">
-              <button
-                onClick={() => setShowCreateForm(!showCreateForm)}
-                className="flex items-center gap-1 px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              >
-                <PlusIcon className="h-4 w-4" />
-                Add Group
-              </button>
-            </div>
           </div>
-
-          {/* Create Group Form */}
-          {showCreateForm && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <h3 className="text-sm font-semibold mb-3">Add New Group</h3>
-              <div className="grid grid-cols-2 gap-3 max-w-2xl">
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Podsie Group ID *
-                  </label>
-                  <input
-                    type="number"
-                    value={newGroupId}
-                    onChange={(e) => setNewGroupId(e.target.value)}
-                    placeholder="e.g. 350"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Group Name
-                  </label>
-                  <input
-                    type="text"
-                    value={newGroupName}
-                    onChange={(e) => setNewGroupName(e.target.value)}
-                    placeholder="e.g. Ms. Smith Period 3"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    Grade Level *
-                  </label>
-                  <select
-                    value={newGradeLevel}
-                    onChange={(e) => setNewGradeLevel(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Select grade...</option>
-                    {SCOPE_SEQUENCE_TAG_OPTIONS.map((grade) => (
-                      <option key={grade} value={grade}>
-                        {grade}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">
-                    School *
-                  </label>
-                  <select
-                    value={newSchool}
-                    onChange={(e) => setNewSchool(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="">Select school...</option>
-                    {Schools.map((school) => (
-                      <option key={school} value={school}>
-                        {school}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={handleCreateGroup}
-                  disabled={creatingGroup}
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
-                >
-                  {creatingGroup ? "Creating..." : "Create Group"}
-                </button>
-                <button
-                  onClick={() => setShowCreateForm(false)}
-                  className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Records */}
