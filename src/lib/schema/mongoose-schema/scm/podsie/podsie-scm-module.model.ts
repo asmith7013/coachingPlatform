@@ -38,6 +38,9 @@ const podsieScmModuleFields = {
   pointsRewardGoal: { type: Number, required: false },
   pointsRewardDescription: { type: String, required: false },
 
+  // Per-student points target (e.g., each student should earn 50 points)
+  studentPointsTarget: { type: Number, required: false },
+
   // Pacing configuration - array of assignment entries
   assignments: { type: [pacingEntrySchema], default: [] },
 

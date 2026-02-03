@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       copyDueDates = true,
       copyStartDate = true,
       copyPointsReward = true,
+      copySectionComplete = true,
     } = body;
 
     if (!sourceGroupId || !sourceModuleId) {
@@ -100,6 +101,10 @@ export async function POST(req: NextRequest) {
             ...(copyPointsReward && {
               pointsRewardGoal: sourceConfig.pointsRewardGoal,
               pointsRewardDescription: sourceConfig.pointsRewardDescription,
+              studentPointsTarget: sourceConfig.studentPointsTarget,
+            }),
+            ...(copySectionComplete && {
+              completedSections: sourceConfig.completedSections,
             }),
           },
           { upsert: true, new: true }
