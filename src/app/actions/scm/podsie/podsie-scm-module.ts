@@ -59,51 +59,41 @@ export async function fetchDistinctGroupIds(): Promise<{ success: boolean; group
   });
 }
 
-interface AssignmentEntry {
-  podsieAssignmentId: number;
-  zearnLessonCode?: string | null;
-}
-
-interface ModuleDoc {
-  assignments: AssignmentEntry[];
-  save: () => Promise<void>;
-}
-
 /**
  * Update Zearn codes for assignments across all groups.
  * Takes a map of assignmentId → zearnCode and updates all matching assignments
  * in all PodsieScmModule documents.
+ *
+ * Uses atomic MongoDB updateMany with array filters to prevent race conditions
+ * that could occur with find/modify/save patterns.
  */
 export async function updateZearnCodesAcrossGroups(
   assignmentCodeMap: Record<number, string | null>
 ): Promise<{ success: boolean; updatedCount?: number; error?: string }> {
   return withDbConnection(async () => {
     try {
-      const assignmentIds = Object.keys(assignmentCodeMap).map(Number);
+      const entries = Object.entries(assignmentCodeMap);
 
-      if (assignmentIds.length === 0) {
+      if (entries.length === 0) {
         return { success: true, updatedCount: 0 };
       }
 
-      // Find all modules containing any of these assignments
-      const modules = (await PodsieScmModuleModel.find({
-        "assignments.podsieAssignmentId": { $in: assignmentIds },
-      })) as unknown as ModuleDoc[];
-
       let updatedCount = 0;
-      for (const moduleDoc of modules) {
-        let changed = false;
-        for (const assignment of moduleDoc.assignments) {
-          const newCode = assignmentCodeMap[assignment.podsieAssignmentId];
-          if (newCode !== undefined && assignment.zearnLessonCode !== newCode) {
-            assignment.zearnLessonCode = newCode;
-            changed = true;
+
+      // Update each assignment atomically using positional operator with array filters
+      // This prevents race conditions that can occur with find/modify/save patterns
+      for (const [assignmentIdStr, zearnCode] of entries) {
+        const assignmentId = Number(assignmentIdStr);
+
+        const result = await PodsieScmModuleModel.updateMany(
+          { "assignments.podsieAssignmentId": assignmentId },
+          { $set: { "assignments.$[elem].zearnLessonCode": zearnCode } },
+          {
+            arrayFilters: [{ "elem.podsieAssignmentId": assignmentId }],
           }
-        }
-        if (changed) {
-          await moduleDoc.save();
-          updatedCount++;
-        }
+        );
+
+        updatedCount += result.modifiedCount;
       }
 
       revalidatePath("/scm/podsie/module-config");
