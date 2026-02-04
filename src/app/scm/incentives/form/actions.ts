@@ -93,13 +93,6 @@ export async function updateActivityType(
         return { success: false, error: "Activity type not found" };
       }
 
-      if (type.isDefault) {
-        return {
-          success: false,
-          error: "Cannot edit default activity types",
-        };
-      }
-
       // Check for duplicate label if updating label
       if (updates.label && updates.label !== type.label) {
         const existing = await ActivityTypeConfigModel.findOne({

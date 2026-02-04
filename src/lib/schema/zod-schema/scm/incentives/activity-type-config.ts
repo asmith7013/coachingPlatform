@@ -28,6 +28,7 @@ export const ActivityTypeConfigFieldsSchema = z.object({
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).describe("Hex color code (e.g., '#3b82f6')"),
   isDefault: z.boolean().default(false).describe("Cannot be deleted if true"),
   order: z.number().int().nonnegative().describe("Display order (lower = left)"),
+  pointsValue: z.number().int().nonnegative().default(0).describe("Points to auto-award when activity is logged (0 = no auto points)"),
   typeId: z.string().optional().describe("Legacy field for backwards compatibility"),
 });
 
@@ -67,6 +68,7 @@ export function createActivityTypeConfigDefaults(
     color: "#3b82f6",
     isDefault: false,
     order: 0,
+    pointsValue: 0,
     ownerIds: [],
     ...overrides
   };
@@ -84,6 +86,7 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     color: "#3b82f6",
     isDefault: true,
     order: 1,
+    pointsValue: 5,
     ownerIds: []
   },
   {
@@ -94,6 +97,7 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     color: "#8b5cf6",
     isDefault: true,
     order: 2,
+    pointsValue: 5,
     ownerIds: []
   },
   {
@@ -104,6 +108,7 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     color: "#eab308",
     isDefault: true,
     order: 3,
+    pointsValue: 10,
     ownerIds: []
   }
 ];

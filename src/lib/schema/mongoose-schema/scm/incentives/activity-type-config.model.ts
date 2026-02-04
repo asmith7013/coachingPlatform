@@ -38,6 +38,12 @@ const activityTypeConfigSchemaFields = {
     type: Number,
     required: true
   },
+  pointsValue: {
+    type: Number,
+    required: true,
+    default: 0,
+    min: 0
+  },
   ...standardDocumentFields
 };
 
