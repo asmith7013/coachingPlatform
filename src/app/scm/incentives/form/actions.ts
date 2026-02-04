@@ -468,7 +468,7 @@ export async function submitActivities(
               date: normalizedDate,
               activityType: activity.activityType,
               activityLabel: activity.activityLabel,
-              unitId: activity.unitId,
+              unitId: activity.unitId || activity.moduleId, // Accept moduleId from Podsie
               lessonId: activity.lessonId,
               skillId: activity.skillId,
               smallGroupType: activity.smallGroupType,

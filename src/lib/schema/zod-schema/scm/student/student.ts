@@ -16,6 +16,7 @@ export const StudentActivitySchema = z.object({
 
   // Optional context fields based on detailType
   unitId: z.string().optional().describe("Unit ID if activity is unit-specific"),
+  moduleId: z.string().optional().describe("Podsie module ID (maps to unitId)"),
   lessonId: z.string().optional().describe("Lesson ID from scope-and-sequence (for acceleration)"),
   skillId: z.string().optional().describe("Skill number from roadmaps-lesson (for prerequisite)"),
   smallGroupType: z.enum(["mastery", "prerequisite"]).optional().describe("Small group type - mastery check or prerequisite skill"),

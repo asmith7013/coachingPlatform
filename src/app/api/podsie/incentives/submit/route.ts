@@ -21,7 +21,7 @@ import {
  *       date: string,
  *       activityType: string,
  *       activityLabel: string,
- *       unitId?: string,
+ *       moduleId?: string,  // Podsie module ID (stored as unitId)
  *       lessonId?: string,
  *       skillId?: string,
  *       smallGroupType?: "mastery" | "prerequisite",
