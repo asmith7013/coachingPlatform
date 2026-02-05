@@ -9,6 +9,12 @@ import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/
 // Grade, school, and other group-level info that doesn't belong on the
 // per-module pacing config (PodsieScmModuleModel).
 
+// YouTube link subdocument schema
+const youtubeLinkSchema = new mongoose.Schema({
+  url: { type: String, required: true },
+  title: { type: String, required: true }
+}, { _id: false });
+
 const podsieScmGroupFields = {
   // Unique identifier from Podsie
   podsieGroupId: { type: Number, required: true, unique: true, index: true },
@@ -21,6 +27,9 @@ const podsieScmGroupFields = {
 
   // School name
   school: { type: String, index: true },
+
+  // YouTube links for smartboard display
+  youtubeLinks: { type: [youtubeLinkSchema], default: [] },
 
   ...standardDocumentFields
 };
