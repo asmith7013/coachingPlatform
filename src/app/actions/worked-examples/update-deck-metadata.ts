@@ -17,6 +17,7 @@ const UpdateMetadataSchema = z.object({
   learningGoals: z.array(z.string()).optional(),
   isPublic: z.boolean().optional(),
   podsieAssignmentId: z.number().int().nullable().optional(),
+  podsieAssignmentTitle: z.string().nullable().optional(),
 });
 
 export type UpdateDeckMetadataInput = z.infer<typeof UpdateMetadataSchema>;
@@ -80,6 +81,9 @@ export async function updateDeckMetadata(
       if (validated.isPublic !== undefined) deck.isPublic = validated.isPublic;
       if (validated.podsieAssignmentId !== undefined)
         deck.podsieAssignmentId = validated.podsieAssignmentId ?? undefined;
+      if (validated.podsieAssignmentTitle !== undefined)
+        deck.podsieAssignmentTitle =
+          validated.podsieAssignmentTitle ?? undefined;
 
       deck.updatedAt = new Date();
       await deck.save();

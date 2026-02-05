@@ -130,6 +130,7 @@ const workedExampleDeckSchema = new mongoose.Schema({
   lessonNumber: { type: Number }, // Lesson number (matches scope-and-sequence)
   scopeAndSequenceId: { type: String, index: true }, // Link to scope-and-sequence collection
   podsieAssignmentId: { type: Number, index: true }, // Linked Podsie assignment ID (set via manage page)
+  podsieAssignmentTitle: { type: String }, // Title of the linked Podsie assignment (set via manage page)
 
   // HTML Slides (required)
   htmlSlides: { type: [htmlSlideSchema], required: true },

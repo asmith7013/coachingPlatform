@@ -42,6 +42,7 @@ interface EditableMetadata {
   mathStandard?: string;
   isPublic?: boolean;
   podsieAssignmentId?: number | null;
+  podsieAssignmentTitle?: string | null;
 }
 
 interface PodsieAssignment {
@@ -706,15 +707,30 @@ export default function ManageWorkedExamples() {
                             return (
                               <select
                                 value={currentVal ?? ""}
-                                onChange={(e) =>
-                                  handleFieldChange(
-                                    deck.slug,
-                                    "podsieAssignmentId",
-                                    e.target.value
-                                      ? parseInt(e.target.value)
-                                      : null,
-                                  )
-                                }
+                                onChange={(e) => {
+                                  const selectedId = e.target.value
+                                    ? parseInt(e.target.value)
+                                    : null;
+                                  const selectedAssignment = selectedId
+                                    ? globalAssignments.find(
+                                        (a) =>
+                                          a.podsieAssignmentId === selectedId,
+                                      )
+                                    : null;
+                                  // Update both ID and title together
+                                  setEditState((prev) => ({
+                                    ...prev,
+                                    [deck.slug]: {
+                                      ...prev[deck.slug],
+                                      podsieAssignmentId: selectedId,
+                                      podsieAssignmentTitle:
+                                        selectedAssignment?.assignmentTitle ??
+                                        null,
+                                    },
+                                  }));
+                                  setSaveError(null);
+                                  setSaveSuccess(null);
+                                }}
                                 className="w-full px-1 py-1 border border-gray-200 rounded text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                               >
                                 <option value="">None</option>
