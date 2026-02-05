@@ -34,6 +34,8 @@ const GRADE_OPTIONS = [
 // Editable metadata fields
 type GradeLevel = "6" | "7" | "8" | "Algebra 1";
 
+type WorkedExampleType = "masteryCheck" | "prerequisiteSkill" | "other";
+
 interface EditableMetadata {
   title?: string;
   gradeLevel?: GradeLevel;
@@ -43,6 +45,7 @@ interface EditableMetadata {
   isPublic?: boolean;
   podsieAssignmentId?: number | null;
   podsieAssignmentTitle?: string | null;
+  workedExampleType?: WorkedExampleType;
 }
 
 interface PodsieAssignment {
@@ -513,6 +516,9 @@ export default function ManageWorkedExamples() {
                 <th className="px-3 py-3 text-left font-medium text-gray-700 w-48">
                   Podsie Assignment
                 </th>
+                <th className="px-3 py-3 text-left font-medium text-gray-700 w-32">
+                  Type
+                </th>
                 <th className="px-3 py-3 text-left font-medium text-gray-700 w-24">
                   Status
                 </th>
@@ -717,7 +723,7 @@ export default function ManageWorkedExamples() {
                                           a.podsieAssignmentId === selectedId,
                                       )
                                     : null;
-                                  // Update both ID and title together
+                                  // Update ID, title, deck title, and default type together
                                   setEditState((prev) => ({
                                     ...prev,
                                     [deck.slug]: {
@@ -726,6 +732,12 @@ export default function ManageWorkedExamples() {
                                       podsieAssignmentTitle:
                                         selectedAssignment?.assignmentTitle ??
                                         null,
+                                      title:
+                                        selectedAssignment?.assignmentTitle ??
+                                        prev[deck.slug]?.title,
+                                      workedExampleType:
+                                        prev[deck.slug]?.workedExampleType ??
+                                        "masteryCheck",
                                     },
                                   }));
                                   setSaveError(null);
@@ -759,6 +771,57 @@ export default function ManageWorkedExamples() {
                                     ? `#${currentVal}`
                                     : "—"}
                             </span>
+                          );
+                        })()
+                      )}
+                    </td>
+
+                    {/* Worked Example Type */}
+                    <td className="px-3 py-2">
+                      {isDeactivated ? (
+                        <span className="text-gray-500 text-xs">—</span>
+                      ) : (
+                        (() => {
+                          const currentAssignmentId =
+                            getValue(deck, "podsieAssignmentId") ??
+                            deck.podsieAssignmentId;
+                          const currentType = getValue(
+                            deck,
+                            "workedExampleType",
+                          );
+
+                          // Only show type selector when an assignment is selected
+                          if (currentAssignmentId) {
+                            return (
+                              <select
+                                value={currentType ?? "masteryCheck"}
+                                onChange={(e) => {
+                                  setEditState((prev) => ({
+                                    ...prev,
+                                    [deck.slug]: {
+                                      ...prev[deck.slug],
+                                      workedExampleType: e.target
+                                        .value as WorkedExampleType,
+                                    },
+                                  }));
+                                  setSaveError(null);
+                                  setSaveSuccess(null);
+                                }}
+                                className="w-full px-1 py-1 border border-gray-200 rounded text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                              >
+                                <option value="masteryCheck">
+                                  Mastery Check
+                                </option>
+                                <option value="prerequisiteSkill">
+                                  Prerequisite
+                                </option>
+                                <option value="other">Other</option>
+                              </select>
+                            );
+                          }
+
+                          return (
+                            <span className="text-xs text-gray-400">—</span>
                           );
                         })()
                       )}

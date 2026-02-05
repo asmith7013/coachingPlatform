@@ -1,6 +1,9 @@
 // src/lib/schema/mongoose-schema/scm/podsie/podsie-scm-module.model.ts
-import mongoose from 'mongoose';
-import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import mongoose from "mongoose";
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 // =====================================
 // PODSIE SCM MODULE MODEL
@@ -8,17 +11,34 @@ import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/
 // Stores pacing configuration for Podsie assignments within a module,
 // per group (class section). Used by Podsie sandbox pages.
 
+// Worked example link subdocument
+const workedExampleLinkSchema = new mongoose.Schema(
+  {
+    slug: { type: String, required: true },
+    workedExampleType: {
+      type: String,
+      required: true,
+      enum: ["masteryCheck", "prerequisiteSkill", "other"],
+    },
+  },
+  { _id: false },
+);
+
 // Assignment pacing entry subdocument schema
-const pacingEntrySchema = new mongoose.Schema({
-  podsieAssignmentId: { type: Number, required: true },
-  dueDate: { type: String, required: false }, // "YYYY-MM-DD" format or null
-  groupNumber: { type: Number, required: false, min: 1, max: 20 }, // null = ungrouped
-  groupLabel: { type: String, required: false }, // e.g., "Part 1", "Week 1"
-  orderIndex: { type: Number, required: false }, // Order within the group (0-based)
-  assignmentTitle: { type: String, required: false },
-  zearnLessonCode: { type: String, required: false }, // e.g. "G8 M4 L2"
-  state: { type: String, required: false }, // e.g. "active", "archived" — synced from Podsie
-}, { _id: false });
+const pacingEntrySchema = new mongoose.Schema(
+  {
+    podsieAssignmentId: { type: Number, required: true },
+    dueDate: { type: String, required: false }, // "YYYY-MM-DD" format or null
+    groupNumber: { type: Number, required: false, min: 1, max: 20 }, // null = ungrouped
+    groupLabel: { type: String, required: false }, // e.g., "Part 1", "Week 1"
+    orderIndex: { type: Number, required: false }, // Order within the group (0-based)
+    assignmentTitle: { type: String, required: false },
+    zearnLessonCode: { type: String, required: false }, // e.g. "G8 M4 L2"
+    state: { type: String, required: false }, // e.g. "active", "archived" — synced from Podsie
+    workedExamples: { type: [workedExampleLinkSchema], default: [] }, // Linked worked example decks
+  },
+  { _id: false },
+);
 
 const podsieScmModuleFields = {
   // Composite key: unique per group + module
@@ -47,18 +67,18 @@ const podsieScmModuleFields = {
   // Group numbers of sections marked complete by the teacher
   completedSections: { type: [Number], default: [] },
 
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
 const PodsieScmModuleSchema = new mongoose.Schema(podsieScmModuleFields, {
   ...standardSchemaOptions,
-  collection: 'podsie-scm-modules'
+  collection: "podsie-scm-modules",
 });
 
 // Unique index: one pacing config per group + module
 PodsieScmModuleSchema.index(
   { podsieGroupId: 1, podsieModuleId: 1 },
-  { unique: true }
+  { unique: true },
 );
 
 // Delete existing model to force schema refresh during development
@@ -66,4 +86,7 @@ if (mongoose.models.PodsieScmModule) {
   delete mongoose.models.PodsieScmModule;
 }
 
-export const PodsieScmModuleModel = mongoose.model('PodsieScmModule', PodsieScmModuleSchema);
+export const PodsieScmModuleModel = mongoose.model(
+  "PodsieScmModule",
+  PodsieScmModuleSchema,
+);

@@ -6,6 +6,14 @@ import { getAuthenticatedUser } from "@server/auth/getAuthenticatedUser";
 import { handleServerError } from "@error/handlers/server";
 import { z } from "zod";
 import { GradeZod } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
+import { PodsieScmModuleModel } from "@mongoose-schema/scm/podsie/podsie-scm-module.model";
+
+const WorkedExampleTypeEnum = z.enum([
+  "masteryCheck",
+  "prerequisiteSkill",
+  "other",
+]);
+export type WorkedExampleType = z.infer<typeof WorkedExampleTypeEnum>;
 
 const UpdateMetadataSchema = z.object({
   title: z.string().min(1).max(200).optional(),
@@ -18,6 +26,7 @@ const UpdateMetadataSchema = z.object({
   isPublic: z.boolean().optional(),
   podsieAssignmentId: z.number().int().nullable().optional(),
   podsieAssignmentTitle: z.string().nullable().optional(),
+  workedExampleType: WorkedExampleTypeEnum.optional(),
 });
 
 export type UpdateDeckMetadataInput = z.infer<typeof UpdateMetadataSchema>;
@@ -87,6 +96,38 @@ export async function updateDeckMetadata(
 
       deck.updatedAt = new Date();
       await deck.save();
+
+      // Update all podsie-scm-modules that contain this assignment
+      if (validated.podsieAssignmentId && validated.workedExampleType) {
+        const workedExampleEntry = {
+          slug,
+          workedExampleType: validated.workedExampleType,
+        };
+
+        // First, remove any existing entry with this slug (to avoid duplicates)
+        await PodsieScmModuleModel.updateMany(
+          { "assignments.podsieAssignmentId": validated.podsieAssignmentId },
+          { $pull: { "assignments.$[elem].workedExamples": { slug } } },
+          {
+            arrayFilters: [
+              { "elem.podsieAssignmentId": validated.podsieAssignmentId },
+            ],
+          },
+        );
+
+        // Then add the new entry
+        await PodsieScmModuleModel.updateMany(
+          { "assignments.podsieAssignmentId": validated.podsieAssignmentId },
+          {
+            $push: { "assignments.$[elem].workedExamples": workedExampleEntry },
+          },
+          {
+            arrayFilters: [
+              { "elem.podsieAssignmentId": validated.podsieAssignmentId },
+            ],
+          },
+        );
+      }
 
       return {
         success: true,
