@@ -25,11 +25,6 @@ import { validateApiKey } from "@server/auth/api-key";
  *   Body: { podsieGroupId, url }
  */
 
-interface YoutubeLink {
-  url: string;
-  title: string;
-}
-
 export async function GET(req: NextRequest) {
   const authError = validateApiKey(req);
   if (authError) return authError;
