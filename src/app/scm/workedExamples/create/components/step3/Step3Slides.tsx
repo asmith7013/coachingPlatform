@@ -597,6 +597,11 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
         finalSlug = state.editSlug;
       } else {
+        // Extract lesson summary HTML from the slides (if present)
+        const lessonSummarySlide = slides.find(
+          (slide) => slide.htmlContent.includes('LESSON SUMMARY') && slide.htmlContent.includes('print-page'),
+        );
+
         // Create mode: save as a new deck
         const deckData: CreateWorkedExampleDeckInput = {
           title: title,
@@ -614,6 +619,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
             visualType: slide.visualType,
             scripts: slide.scripts,
           })),
+          lessonSummaryHtml: lessonSummarySlide?.htmlContent,
           learningGoals:
             state.learningGoals.length > 0 ? state.learningGoals : undefined,
           // Analysis data for deck editing

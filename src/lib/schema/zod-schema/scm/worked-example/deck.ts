@@ -192,6 +192,10 @@ export const WorkedExampleDeckSchema = z.object({
   // HTML Slides (required)
   htmlSlides: z.array(HtmlSlideSchema).min(1),
 
+  // Standalone lesson summary HTML (printable one-page reference)
+  // Stored separately from htmlSlides for lightweight access from other contexts
+  lessonSummaryHtml: z.string().optional(),
+
   // Learning Goals
   learningGoals: z.array(z.string()).optional(),
 

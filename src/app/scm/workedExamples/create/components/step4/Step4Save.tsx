@@ -219,6 +219,11 @@ export function Step4Save({ wizard }: Step4SaveProps) {
     setError(null);
 
     try {
+      // Extract lesson summary HTML from the slides (if present)
+      const lessonSummarySlide = state.slides.find(
+        (slide) => slide.htmlContent.includes('LESSON SUMMARY') && slide.htmlContent.includes('print-page'),
+      );
+
       const deckData: CreateWorkedExampleDeckInput = {
         title: state.title,
         slug: state.slug,
@@ -234,6 +239,7 @@ export function Step4Save({ wizard }: Step4SaveProps) {
           visualType: slide.visualType,
           scripts: slide.scripts,
         })),
+        lessonSummaryHtml: lessonSummarySlide?.htmlContent,
         learningGoals: state.learningGoals.length > 0 ? state.learningGoals : undefined,
         generatedBy: 'ai',
         sourceImage: state.masteryCheckImage.uploadedUrl ?? undefined,

@@ -2,9 +2,9 @@
 
 ## Purpose
 
-Create 9 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
+Create 10 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
 
-**Note:** Slides 1-6 are the worked example, slides 7-8 are practice problem previews for whiteboard work, and slide 9 (the printable worksheet) is generated separately after the main slides complete.
+**Note:** Slides 1-6 are the worked example, slides 7-8 are practice problem previews for whiteboard work, slide 9 (the printable worksheet) is generated separately after the main slides complete, and slide 10 (the lesson summary) is a one-page printable reference card.
 
 ## Output Format
 
@@ -37,7 +37,7 @@ All slides are **960x540px, light theme**. CFU/Answer boxes use PPTX animation (
 
 **Checklists (use during/after generation):**
 - `checklists/pre-flight.md` - Verify BEFORE writing each slide
-- `checklists/completion.md` - Verify AFTER all 9 slides done
+- `checklists/completion.md` - Verify AFTER all 10 slides done
 
 ---
 
@@ -76,7 +76,14 @@ STEP 3.4: Generate Printable (Slide 9)
 │   - Contains practice problems from Scenarios 2 & 3 + Answer Key
 │
 ▼
-STEP 3.5: Verify Completion Checklist
+STEP 3.5: Generate Lesson Summary (Slide 10)
+│   - One-page printable summary of the lesson's main idea
+│   - Uses lesson-summary-snippet.html pattern
+│   - Contains: Big Idea, Strategy overview, Visual reference, Key Takeaway
+│   - Must include print-page class for print detection
+│
+▼
+STEP 3.6: Verify Completion Checklist
           See checklists/completion.md
 ```
 
@@ -117,6 +124,7 @@ Most slides use just 3 patterns:
 - `slide-teacher-instructions.html` → Slide 1 only (teacher-facing)
 - `slide-big-idea.html` → Slide 2 only (student-facing Big Idea)
 - `printable-slide-snippet.html` → Slide 9 only (printable worksheet)
+- `lesson-summary-snippet.html` → Slide 10 only (lesson summary reference card)
 
 **Always READ and COPY from snippet files.** Never write HTML from scratch.
 
@@ -136,7 +144,8 @@ src/app/presentations/{slug}/
 ├── slide-6.html   (Step 3 + CFU + Answer stacked)
 ├── slide-7.html   (Practice Problem 1 Preview - Scenario 2)
 ├── slide-8.html   (Practice Problem 2 Preview - Scenario 3)
-└── slide-9.html   (Printable with Practice Problems 1 & 2 + Answer Key)
+├── slide-9.html   (Printable with Practice Problems 1 & 2 + Answer Key)
+└── slide-10.html  (Lesson Summary - one-page printable reference card)
 ```
 
 Use the Write tool for each slide file.

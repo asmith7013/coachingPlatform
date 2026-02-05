@@ -73,6 +73,7 @@ CFU and Answer boxes are now STACKED on the same slide (both appear, one after a
 | 7 | Practice Preview 1 | `two-column` or `centered` | Scenario 2 problem + visual + "Your Task" |
 | 8 | Practice Preview 2 | `two-column` or `centered` | Scenario 3 problem + visual + "Your Task" |
 | 9 | Printable | `full-width` | printable format |
+| 10 | Lesson Summary | `full-width` | printable one-page lesson reference card |
 
 **Layout Selection (slides 3-8):**
 
@@ -191,6 +192,29 @@ For each slide N from 1 to 8:
 3. Compose slide using card-patterns
 4. Write slide file (starts with `<!DOCTYPE html>`, no other content before it)
 5. Continue until all slides complete
+
+### Step 7: Generate Lesson Summary (Slide 10)
+
+**After the printable slide (9) is complete, generate a one-page lesson summary.**
+
+This is a printable reference card that students can use to quickly recall the main idea from this lesson. Use `lesson-summary-snippet.html` as the template.
+
+**Content to include:**
+1. **Header:** "LESSON SUMMARY" badge + lesson title + Grade/Unit/Lesson
+2. **Big Idea (hero section):** Large, prominent statement from `strategyDefinition.bigIdea`
+3. **Strategy Steps:** Numbered list of the 3 moves (verb + description) from `strategyDefinition.moves`
+4. **Visual Reference (ALWAYS include):**
+   - For coordinate graph lessons: Small labeled graph showing the key concept (use Scenario 1's graphPlan, scaled down)
+   - For diagram lessons: Simplified version of the diagram type
+   - For text/table lessons: Compact worked example showing the strategy applied
+5. **Remember:** 1-2 sentence key takeaway synthesized from `learningGoals`
+
+**Requirements:**
+- Single `print-page` div (one page, 8.5in × 11in)
+- Uses Times New Roman font (matches printable worksheet)
+- Must include `print-page` CSS class for print detection
+- Keep it scannable - a student should grasp the key idea at a glance
+- Visual should fit in ~40% of the page width
 
 ---
 

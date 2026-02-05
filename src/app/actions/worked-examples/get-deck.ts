@@ -43,6 +43,71 @@ export async function getDeckBySlug(slug: string) {
   });
 }
 
+/**
+ * Get just the lesson summary HTML for a deck (lightweight query).
+ * Returns the summary + basic metadata without loading the full deck.
+ */
+export async function getLessonSummaryBySlug(slug: string) {
+  return withDbConnection(async () => {
+    try {
+      const { userId } = await auth();
+
+      const deck = await WorkedExampleDeck.findOne(
+        { slug },
+        {
+          lessonSummaryHtml: 1,
+          title: 1,
+          slug: 1,
+          gradeLevel: 1,
+          unitNumber: 1,
+          lessonNumber: 1,
+          isPublic: 1,
+          createdBy: 1,
+        },
+      );
+
+      if (!deck) {
+        return {
+          success: false,
+          error: 'Deck not found',
+        };
+      }
+
+      // Check permissions: public decks or owned by user
+      if (!deck.isPublic && deck.createdBy !== userId) {
+        return {
+          success: false,
+          error: 'You do not have permission to view this deck',
+        };
+      }
+
+      if (!deck.lessonSummaryHtml) {
+        return {
+          success: false,
+          error: 'No lesson summary available for this deck',
+        };
+      }
+
+      return {
+        success: true,
+        data: {
+          lessonSummaryHtml: deck.lessonSummaryHtml,
+          title: deck.title,
+          slug: deck.slug,
+          gradeLevel: deck.gradeLevel,
+          unitNumber: deck.unitNumber,
+          lessonNumber: deck.lessonNumber,
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, 'Failed to retrieve lesson summary'),
+      };
+    }
+  });
+}
+
 export async function getDeckById(deckId: string) {
   return withDbConnection(async () => {
     try {

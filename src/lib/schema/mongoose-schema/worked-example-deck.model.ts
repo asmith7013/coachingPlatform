@@ -135,6 +135,10 @@ const workedExampleDeckSchema = new mongoose.Schema({
   // HTML Slides (required)
   htmlSlides: { type: [htmlSlideSchema], required: true },
 
+  // Standalone lesson summary HTML (printable one-page reference)
+  // Stored separately from htmlSlides for lightweight access from other contexts
+  lessonSummaryHtml: { type: String },
+
   // Learning Goals
   learningGoals: [String],
 

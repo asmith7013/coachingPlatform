@@ -1,0 +1,132 @@
+<!-- LESSON SUMMARY SLIDE TEMPLATE -->
+<!-- This slide is a one-page printable reference of the lesson's main idea -->
+<!-- Students can use this as a quick reminder of the key concept and strategy -->
+
+<!-- ============================================================== -->
+<!-- CRITICAL: ALL CONTENT GOES IN ONE SLIDE FILE (1 PAGE)          -->
+<!-- ============================================================== -->
+<!-- Single page: Lesson summary with Big Idea, Strategy, Visual    -->
+<!-- Must use print-page class for print detection                  -->
+<!-- Keep it scannable - a student should grasp the key idea at     -->
+<!-- a glance. This is a reference card, not a textbook page.       -->
+<!-- ============================================================== -->
+
+<!-- ============================================================== -->
+<!-- WHAT TO INCLUDE (and nothing more)                             -->
+<!-- ============================================================== -->
+<!-- 1. Header with "LESSON SUMMARY" badge, lesson title, grade     -->
+<!-- 2. Big Idea box (large, prominent - the hero element)          -->
+<!-- 3. Strategy steps (numbered list: verb + what it does)         -->
+<!-- 4. Visual reference (always include - graph, diagram, or       -->
+<!--    worked example showing the concept)                         -->
+<!-- 5. "Remember" key takeaway (1-2 sentences)                     -->
+<!--                                                                -->
+<!-- DO NOT ADD: Practice problems, CFU questions, answer keys,     -->
+<!--             lengthy explanations, multiple examples            -->
+<!-- ============================================================== -->
+
+<div class="slide-container" style="width: 100vw; height: 100vh; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; color: #000000; font-family: 'Times New Roman', Georgia, serif;">
+
+    <!-- Single Page: Lesson Summary -->
+    <div class="print-page" style="width: 8.5in; height: 11in; margin: 0 auto; padding: 0.5in; box-sizing: border-box; display: flex; flex-direction: column; flex-shrink: 0; border: 1px solid #ccc;">
+
+        <!-- Header with lesson info and badge -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h1 style="font-size: 22px; font-weight: 700; margin: 0; color: #000;">[LESSON TITLE]</h1>
+                <p style="font-size: 13px; color: #333; margin: 4px 0 0 0;">Unit [X] Lesson [Y] | Grade [Z]</p>
+            </div>
+            <div style="background: #1791e8; color: #ffffff; padding: 6px 14px; border-radius: 4px; font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; letter-spacing: 0.5px;">
+                LESSON SUMMARY
+            </div>
+        </div>
+
+        <!-- Big Idea (Hero Section) -->
+        <div style="background: #eff6ff; border: 2px solid #3b82f6; border-radius: 8px; padding: 16px 20px; margin-bottom: 18px;">
+            <p style="font-size: 12px; font-weight: bold; margin: 0 0 6px 0; color: #1e40af; font-family: Arial, sans-serif; letter-spacing: 0.5px;">BIG IDEA</p>
+            <p style="font-size: 20px; font-weight: bold; margin: 0; line-height: 1.4; color: #1e293b;">
+                [BIG IDEA STATEMENT - the core mathematical concept in student-friendly language]
+            </p>
+        </div>
+
+        <!-- Two-column layout: Strategy Steps + Visual Reference -->
+        <div style="display: flex; gap: 24px; flex: 1; margin-bottom: 15px;">
+
+            <!-- Left: Strategy Steps -->
+            <div style="flex: 1; display: flex; flex-direction: column;">
+                <p style="font-size: 14px; font-weight: bold; margin: 0 0 10px 0; color: #000; border-bottom: 1px solid #ccc; padding-bottom: 6px;">
+                    Strategy: [STRATEGY NAME]
+                </p>
+                <ol style="font-size: 13px; margin: 0; padding-left: 20px; line-height: 1.8;">
+                    <li style="margin-bottom: 8px;">
+                        <strong>[VERB 1]:</strong> [Brief description of what this step does]
+                    </li>
+                    <li style="margin-bottom: 8px;">
+                        <strong>[VERB 2]:</strong> [Brief description of what this step does]
+                    </li>
+                    <li style="margin-bottom: 8px;">
+                        <strong>[VERB 3]:</strong> [Brief description of what this step does]
+                    </li>
+                </ol>
+            </div>
+
+            <!-- Right: Visual Reference -->
+            <!-- ALWAYS include a visual. Choose based on lesson type: -->
+            <!-- - Coordinate graph: small labeled graph showing the concept -->
+            <!-- - Diagram: simplified version of the diagram type used -->
+            <!-- - Text/table: a compact worked example applying the strategy -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; background: #fafafa;">
+                <!-- Visual goes here: SVG graph, diagram, table, or worked example -->
+                <!-- Keep it small and clearly labeled -->
+                <!-- Max height ~300px to fit well on the page -->
+                <p style="font-size: 11px; color: #64748b; margin: 8px 0 0 0; text-align: center; font-style: italic;">
+                    [Brief caption describing what the visual shows]
+                </p>
+            </div>
+        </div>
+
+        <!-- Remember (Key Takeaway) -->
+        <div style="background: #f0fdf4; border: 1px solid #22c55e; border-radius: 6px; padding: 12px 16px;">
+            <p style="font-size: 12px; font-weight: bold; margin: 0 0 4px 0; color: #166534; font-family: Arial, sans-serif;">REMEMBER</p>
+            <p style="font-size: 14px; margin: 0; line-height: 1.5; color: #1e293b;">
+                [1-2 sentence key takeaway that synthesizes the learning goal. What should students remember about this concept?]
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Print-specific styles -->
+<style>
+@media print {
+    .slide-container {
+        display: block !important;
+        position: static !important;
+        width: 8.5in !important;
+        height: auto !important;
+        overflow: visible !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .print-page {
+        width: 8.5in !important;
+        height: 11in !important;
+        margin: 0 !important;
+        padding: 0.5in !important;
+        box-sizing: border-box !important;
+        page-break-after: auto;
+        border: none !important;
+    }
+    svg line, svg path, svg text, svg circle {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+    div[style*="background"] {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}
+@page {
+    size: letter portrait;
+    margin: 0;
+}
+</style>

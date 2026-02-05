@@ -23,6 +23,7 @@ import SVG_CARD from './card-patterns/svg-card.html';
 import GRAPH_SNIPPET from './card-patterns/complex-patterns/graph-snippet.html';
 import ANNOTATION_SNIPPET from './card-patterns/complex-patterns/annotation-snippet.html';
 import PRINTABLE_TEMPLATE from './card-patterns/complex-patterns/printable-slide-snippet.html';
+import LESSON_SUMMARY_TEMPLATE from './card-patterns/complex-patterns/lesson-summary-snippet.html';
 import VISUAL_CARD_LAYERS from './card-patterns/complex-patterns/visual-card-layers.html';
 import D3_DIAGRAM_TEMPLATE from './card-patterns/complex-patterns/d3-diagram-template.html';
 import SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE from './card-patterns/complex-patterns/slide-teacher-instructions.html';
@@ -94,6 +95,7 @@ export {
   GRAPH_SNIPPET,
   ANNOTATION_SNIPPET,
   PRINTABLE_TEMPLATE,
+  LESSON_SUMMARY_TEMPLATE,
   VISUAL_CARD_LAYERS,
   D3_DIAGRAM_TEMPLATE,
   SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE,
@@ -216,13 +218,24 @@ export const SLIDE_STRUCTURE = `
 - "Your Task:" section with the question
 - NO CFU/Answer boxes - students work independently
 
-### Slide 9: Printable Worksheet (Final Slide)
+### Slide 9: Printable Worksheet
 **Purpose**: Provide take-home practice
 **Content**:
 - Practice Problem 1 (Scenario 2) with space for student work
 - Practice Problem 2 (Scenario 3) with space for student work
 - Answer Key page for teacher
 - Must be 8.5" × 11" for printing
+
+### Slide 10: Lesson Summary (Final Slide)
+**Purpose**: One-page printable quick-reference of the lesson's main idea
+**Content**:
+- "LESSON SUMMARY" badge with lesson title and grade/unit/lesson
+- Big Idea (large, prominent - the hero element)
+- Strategy steps (numbered list: verb + description)
+- Visual reference (always included - graph, diagram, or worked example)
+- "Remember" key takeaway (1-2 sentences)
+- Must be 8.5" × 11" for printing (single page)
+- Uses print-page class for print detection
 `;
 
 // ============================================================================

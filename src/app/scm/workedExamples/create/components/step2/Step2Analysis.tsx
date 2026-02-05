@@ -50,6 +50,8 @@ function getSlideTypeName(slideNum: number): string {
       return "Step 3";
     case 7:
       return "Print Page";
+    case 8:
+      return "Lesson Summary";
     default:
       return `Slide ${slideNum}`;
   }
@@ -443,6 +445,117 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                 `Printable generation error: ${printableError instanceof Error ? printableError.message : "Unknown error"}. You can regenerate from step 3.`,
               );
             }
+          }
+
+          // Generate lesson summary (slide 10) after printable
+          console.log(
+            "[generate-slides] Generating lesson summary...",
+          );
+          setLoadingProgress({
+            phase: "generating",
+            message: "Creating Lesson Summary...",
+            detail: "Generating printable lesson summary reference",
+            startTime,
+            slideProgress: {
+              currentSlide: 8,
+              estimatedTotal: 8,
+            },
+          });
+
+          try {
+            const summaryAbortController = new AbortController();
+            const summaryTimeout = setTimeout(
+              () => {
+                summaryAbortController.abort();
+                console.warn(
+                  "[generate-slides] Lesson summary generation timed out after 3 minutes",
+                );
+              },
+              3 * 60 * 1000,
+            );
+
+            console.log("[generate-slides] Calling lesson summary API...");
+            const summaryResponse = await fetch(
+              "/api/scm/worked-examples/generate-lesson-summary",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  strategyName: strategyDefinition?.name || "Strategy",
+                  strategyMoves: strategyDefinition?.moves || [],
+                  oneSentenceSummary: strategyDefinition?.oneSentenceSummary || "",
+                  bigIdea: strategyDefinition?.bigIdea || "",
+                  problemType: problemAnalysis?.problemType || "Math Problem",
+                  visualType: problemAnalysis?.visualType || "text-only",
+                  svgSubtype: problemAnalysis?.svgSubtype,
+                  workedExampleScenario: scenarios[0],
+                  learningGoals: state.learningGoals,
+                  gradeLevel: state.gradeLevel || "8",
+                  unitNumber: state.unitNumber,
+                  lessonNumber: state.lessonNumber,
+                }),
+                signal: summaryAbortController.signal,
+              },
+            );
+
+            clearTimeout(summaryTimeout);
+            console.log(
+              "[generate-slides] Lesson summary API responded, status:",
+              summaryResponse.status,
+            );
+
+            if (!summaryResponse.ok) {
+              const errorText = await summaryResponse.text();
+              console.error(
+                "[generate-slides] Lesson summary API error response:",
+                errorText,
+              );
+              // Non-fatal: summary is nice-to-have, don't block the flow
+              console.warn(
+                "[generate-slides] Lesson summary generation failed, continuing without it.",
+              );
+            } else {
+              const summaryData = await summaryResponse.json();
+              console.log(
+                "[generate-slides] Lesson summary data received, success:",
+                summaryData.success,
+              );
+
+              if (summaryData.success && summaryData.htmlContent) {
+                const summarySlide: HtmlSlide = {
+                  slideNumber: 10,
+                  htmlContent: summaryData.htmlContent,
+                  visualType: "html",
+                };
+                accumulatedSlidesRef.current.push(summarySlide);
+                setSlides([...accumulatedSlidesRef.current]);
+                console.log(
+                  "[generate-slides] Lesson summary slide added successfully, total slides:",
+                  accumulatedSlidesRef.current.length,
+                );
+              } else {
+                console.warn(
+                  "[generate-slides] Lesson summary generation failed:",
+                  summaryData.error,
+                );
+              }
+            }
+          } catch (summaryError) {
+            // Non-fatal: lesson summary is supplementary
+            if (
+              summaryError instanceof Error &&
+              summaryError.name === "AbortError"
+            ) {
+              console.error("[generate-slides] Lesson summary generation timed out");
+            } else {
+              console.error(
+                "[generate-slides] Lesson summary generation error:",
+                summaryError,
+              );
+            }
+            console.warn(
+              "[generate-slides] Continuing without lesson summary.",
+            );
           }
         }
 

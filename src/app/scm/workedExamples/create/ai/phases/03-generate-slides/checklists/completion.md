@@ -1,12 +1,12 @@
 # Completion Checklist
 
-**Verify AFTER all 7 slides are written.**
+**Verify AFTER all 8 slides are written.**
 
 ---
 
 ## All Slides
 
-- [ ] All 7 slides written to files (6 worked example + 1 printable)
+- [ ] All 8 slides written to files (6 worked example + 1 printable + 1 lesson summary)
 - [ ] Slides 1-6 are exactly 960x540px
 - [ ] All text is in `<p>`, `<h1-6>`, `<ul>`, `<ol>` tags (NOT bare text in divs!)
 - [ ] Using `.row`/`.col` classes (NOT inline `display: flex`)
@@ -43,6 +43,20 @@
 - [ ] Times New Roman font
 - [ ] Contains BOTH practice problems (from Scenarios 2 & 3)
 - [ ] Each problem has work space
+
+---
+
+## Lesson Summary (Slide 8)
+
+- [ ] Has `print-page` CSS class for print detection
+- [ ] Contains Big Idea prominently (large text, blue background box)
+- [ ] Contains strategy steps as numbered list
+- [ ] Includes a visual reference (graph, diagram, or worked example)
+- [ ] Has "REMEMBER" key takeaway section (1-2 sentences)
+- [ ] Is a single page (NOT multi-page)
+- [ ] WHITE background (#ffffff)
+- [ ] Times New Roman font (matching printable worksheet)
+- [ ] 8.5in × 11in format
 
 ---
 

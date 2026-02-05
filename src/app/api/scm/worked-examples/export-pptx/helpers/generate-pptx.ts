@@ -61,8 +61,8 @@ export async function generatePptxFromSlides(
       // Check if this is the printable slide (has .print-page elements)
       const isPrintable = html.includes('print-page');
 
-      if (isPrintable && i === slides.length - 1) {
-        // Last slide is printable - count print pages
+      if (isPrintable) {
+        // Printable slide (practice problems or lesson summary) - count print pages
         const printPageCount = await renderSession.countPrintPages(html);
         slideExpansions.push({ originalIndex: i, printPageCount });
         totalPptxSlides += printPageCount > 0 ? printPageCount : 1;
@@ -91,15 +91,21 @@ export async function generatePptxFromSlides(
       const expansion = slideExpansions[i];
 
       if (expansion.printPageCount > 0) {
-        // This is the printable slide - create a slide for each practice problem
+        // Detect if this is a lesson summary or practice problems
+        const isLessonSummary = html.includes('LESSON SUMMARY');
+
+        // This is a printable slide - create a slide for each print page
         for (let pageIdx = 0; pageIdx < expansion.printPageCount; pageIdx++) {
           pptxSlideIndex++;
           const problemNumber = pageIdx + 1;
+          const pageLabel = isLessonSummary
+            ? 'Lesson Summary'
+            : `Practice Problem ${problemNumber}`;
 
           onProgress?.(
             pptxSlideIndex,
             totalPptxSlides,
-            `Rendering Practice Problem ${problemNumber}...`,
+            `Rendering ${pageLabel}...`,
             'processing'
           );
 
@@ -122,7 +128,7 @@ export async function generatePptxFromSlides(
             });
           } else {
             // Fallback text if rendering fails
-            slide.addText(`Practice Problem ${problemNumber}`, {
+            slide.addText(pageLabel, {
               x: 0.5,
               y: 2.5,
               w: 9,
@@ -135,7 +141,7 @@ export async function generatePptxFromSlides(
           }
 
           // Add slide title
-          slide.addText(`Practice Problem ${problemNumber}`, {
+          slide.addText(pageLabel, {
             x: 6.2,
             y: 0.5,
             w: 3.5,
@@ -146,11 +152,13 @@ export async function generatePptxFromSlides(
             color: '333333',
           });
 
-          // Add "Print this worksheet" link with instructions
+          // Add "Print this" link with instructions
           if (slug) {
-            const printUrl = `https://solvescoaching.com/scm/workedExamples/viewer?view=${slug}&slide=9`;
+            const slideNum = slideData.slideNumber || (i + 1);
+            const printUrl = `https://solvescoaching.com/scm/workedExamples/viewer?view=${slug}&slide=${slideNum}`;
+            const printLabel = isLessonSummary ? 'Print this summary:' : 'Print this worksheet:';
 
-            slide.addText('Print this worksheet:', {
+            slide.addText(printLabel, {
               x: 6.2,
               y: 1.2,
               w: 3.5,
