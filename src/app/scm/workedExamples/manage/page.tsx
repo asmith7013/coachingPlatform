@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -16,6 +16,11 @@ import {
   reactivateDeck,
 } from "@/app/actions/worked-examples";
 import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
+
+interface PodsieModule {
+  unitNumber: number;
+  moduleName: string | null;
+}
 
 // Grade options matching viewer
 const GRADE_OPTIONS = [
@@ -62,43 +67,76 @@ export default function ManageWorkedExamples() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
 
-  // Cache of Podsie assignments by "grade|unit" key
-  const [assignmentCache, setAssignmentCache] = useState<
-    Record<string, PodsieAssignment[]>
-  >({});
-  const [loadingAssignments, setLoadingAssignments] = useState<Set<string>>(
-    new Set(),
-  );
+  // Global module selector state
+  const [modules, setModules] = useState<PodsieModule[]>([]);
+  const [selectedModule, setSelectedModule] = useState<number | null>(null);
+  const [loadingModules, setLoadingModules] = useState(false);
 
-  const fetchAssignments = useCallback(
-    async (gradeLevel: string, unitNumber: number) => {
-      const cacheKey = `${gradeLevel}|${unitNumber}`;
-      if (assignmentCache[cacheKey] || loadingAssignments.has(cacheKey)) return;
+  // Global assignments for the selected grade + module
+  const [globalAssignments, setGlobalAssignments] = useState<
+    PodsieAssignment[]
+  >([]);
+  const [loadingAssignments, setLoadingAssignments] = useState(false);
 
-      setLoadingAssignments((prev) => new Set([...prev, cacheKey]));
+  // Fetch modules when grade filter changes
+  useEffect(() => {
+    if (!gradeFilter) {
+      setModules([]);
+      setSelectedModule(null);
+      setGlobalAssignments([]);
+      return;
+    }
+
+    const fetchModules = async () => {
+      setLoadingModules(true);
+      setModules([]);
+      setSelectedModule(null);
+      setGlobalAssignments([]);
       try {
         const res = await fetch(
-          `/api/scm/podsie-assignments?gradeLevel=${encodeURIComponent(gradeLevel)}&unitNumber=${unitNumber}`,
+          `/api/scm/podsie-modules?gradeLevel=${encodeURIComponent(gradeFilter)}`,
         );
         const json = await res.json();
-        if (json.success) {
-          setAssignmentCache((prev) => ({
-            ...prev,
-            [cacheKey]: json.data,
-          }));
+        if (json.success && json.data) {
+          setModules(json.data);
         }
       } catch {
-        // Silently fail - dropdown will just be empty
+        // Silently fail
       } finally {
-        setLoadingAssignments((prev) => {
-          const next = new Set(prev);
-          next.delete(cacheKey);
-          return next;
-        });
+        setLoadingModules(false);
       }
-    },
-    [assignmentCache, loadingAssignments],
-  );
+    };
+
+    fetchModules();
+  }, [gradeFilter]);
+
+  // Fetch assignments when module is selected
+  useEffect(() => {
+    if (!gradeFilter || selectedModule === null) {
+      setGlobalAssignments([]);
+      return;
+    }
+
+    const fetchAssignments = async () => {
+      setLoadingAssignments(true);
+      setGlobalAssignments([]);
+      try {
+        const res = await fetch(
+          `/api/scm/podsie-assignments?gradeLevel=${encodeURIComponent(gradeFilter)}&unitNumber=${selectedModule}`,
+        );
+        const json = await res.json();
+        if (json.success && json.data) {
+          setGlobalAssignments(json.data);
+        }
+      } catch {
+        // Silently fail
+      } finally {
+        setLoadingAssignments(false);
+      }
+    };
+
+    fetchAssignments();
+  }, [gradeFilter, selectedModule]);
 
   // Filter decks
   const filteredDecks = useMemo(() => {
@@ -313,6 +351,45 @@ export default function ManageWorkedExamples() {
             </button>
           ))}
         </div>
+
+        {/* Module selector - only show when a grade is selected */}
+        {gradeFilter && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Module:</span>
+            <select
+              value={selectedModule ?? ""}
+              onChange={(e) =>
+                setSelectedModule(
+                  e.target.value ? parseInt(e.target.value) : null,
+                )
+              }
+              disabled={loadingModules}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="">
+                {loadingModules ? "Loading..." : "Select module"}
+              </option>
+              {modules.map((mod) => (
+                <option key={mod.unitNumber} value={mod.unitNumber}>
+                  {mod.moduleName || `Unit ${mod.unitNumber}`}
+                </option>
+              ))}
+            </select>
+            {selectedModule !== null && loadingAssignments && (
+              <span className="text-xs text-gray-500">
+                Loading assignments...
+              </span>
+            )}
+            {selectedModule !== null &&
+              !loadingAssignments &&
+              globalAssignments.length > 0 && (
+                <span className="text-xs text-gray-500">
+                  {globalAssignments.length} assignments
+                </span>
+              )}
+          </div>
+        )}
+
         <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
           <input
             type="checkbox"
@@ -553,66 +630,55 @@ export default function ManageWorkedExamples() {
                         </span>
                       ) : (
                         (() => {
-                          const grade = (getValue(deck, "gradeLevel") ??
-                            deck.gradeLevel) as string;
-                          const unit = (getValue(deck, "unitNumber") ??
-                            deck.unitNumber) as number | null | undefined;
-                          const cacheKey =
-                            grade && unit ? `${grade}|${unit}` : null;
-                          const assignments = cacheKey
-                            ? assignmentCache[cacheKey]
-                            : null;
                           const currentVal =
                             getValue(deck, "podsieAssignmentId") ??
                             deck.podsieAssignmentId;
 
+                          // Use global assignments from selected module
+                          if (
+                            selectedModule !== null &&
+                            globalAssignments.length > 0
+                          ) {
+                            return (
+                              <select
+                                value={currentVal ?? ""}
+                                onChange={(e) =>
+                                  handleFieldChange(
+                                    deck.slug,
+                                    "podsieAssignmentId",
+                                    e.target.value
+                                      ? parseInt(e.target.value)
+                                      : null,
+                                  )
+                                }
+                                className="w-full px-1 py-1 border border-gray-200 rounded text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                              >
+                                <option value="">None</option>
+                                {globalAssignments.map((a) => (
+                                  <option
+                                    key={a.podsieAssignmentId}
+                                    value={a.podsieAssignmentId}
+                                  >
+                                    {a.assignmentTitle}
+                                  </option>
+                                ))}
+                              </select>
+                            );
+                          }
+
+                          // Show hint or current value when no module selected
                           return (
-                            <div className="flex items-center gap-1">
-                              {grade && unit && !assignments ? (
-                                <button
-                                  onClick={() => fetchAssignments(grade, unit)}
-                                  className="px-2 py-1 text-xs text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded cursor-pointer"
-                                >
-                                  {loadingAssignments.has(cacheKey!)
-                                    ? "Loading..."
-                                    : currentVal
-                                      ? `#${currentVal}`
-                                      : "Link"}
-                                </button>
-                              ) : assignments && assignments.length > 0 ? (
-                                <select
-                                  value={currentVal ?? ""}
-                                  onChange={(e) =>
-                                    handleFieldChange(
-                                      deck.slug,
-                                      "podsieAssignmentId",
-                                      e.target.value
-                                        ? parseInt(e.target.value)
-                                        : null,
-                                    )
-                                  }
-                                  className="w-full px-1 py-1 border border-gray-200 rounded text-xs focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                                >
-                                  <option value="">None</option>
-                                  {assignments.map((a) => (
-                                    <option
-                                      key={a.podsieAssignmentId}
-                                      value={a.podsieAssignmentId}
-                                    >
-                                      {a.assignmentTitle}
-                                    </option>
-                                  ))}
-                                </select>
-                              ) : (
-                                <span className="text-xs text-gray-400">
-                                  {!grade || !unit
-                                    ? "Set grade & unit"
-                                    : currentVal
-                                      ? `#${currentVal}`
-                                      : "—"}
-                                </span>
-                              )}
-                            </div>
+                            <span className="text-xs text-gray-400">
+                              {selectedModule === null
+                                ? currentVal
+                                  ? `#${currentVal}`
+                                  : "Select module above"
+                                : loadingAssignments
+                                  ? "Loading..."
+                                  : currentVal
+                                    ? `#${currentVal}`
+                                    : "—"}
+                            </span>
                           );
                         })()
                       )}

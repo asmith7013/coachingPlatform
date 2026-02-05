@@ -5,12 +5,12 @@ import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@server/auth/getAuthenticatedUser";
 
 /**
- * GET /api/scm/podsie-assignments?gradeLevel=8&unitNumber=3
+ * GET /api/scm/podsie-modules?gradeLevel=8
  *
- * Returns deduplicated assignment list for a given grade + unit.
+ * Returns deduplicated list of modules (unitNumber + moduleName) for a given grade.
  * Flow: gradeLevel → find matching PodsieScmGroup docs → get podsieGroupIds
- *       → query PodsieScmModule where groupId in those + unitNumber matches
- *       → collect assignments from all matching modules
+ *       → query PodsieScmModule where groupId in those
+ *       → deduplicate by unitNumber and return sorted list
  */
 export async function GET(req: NextRequest) {
   const authResult = await getAuthenticatedUser();
@@ -23,19 +23,10 @@ export async function GET(req: NextRequest) {
 
   const searchParams = new URL(req.url).searchParams;
   const gradeLevel = searchParams.get("gradeLevel");
-  const unitNumber = searchParams.get("unitNumber");
 
-  if (!gradeLevel || !unitNumber) {
+  if (!gradeLevel) {
     return NextResponse.json(
-      { success: false, error: "gradeLevel and unitNumber are required" },
-      { status: 400 },
-    );
-  }
-
-  const unitNum = parseInt(unitNumber, 10);
-  if (isNaN(unitNum)) {
-    return NextResponse.json(
-      { success: false, error: "unitNumber must be a number" },
+      { success: false, error: "gradeLevel is required" },
       { status: 400 },
     );
   }
@@ -60,43 +51,40 @@ export async function GET(req: NextRequest) {
 
       const groupIds = groups.map((g) => g.podsieGroupId);
 
-      // Find module configs for those groups + unit number
+      // Find all modules for those groups
       const modules = await PodsieScmModuleModel.find({
         podsieGroupId: { $in: groupIds },
-        unitNumber: unitNum,
+        unitNumber: { $exists: true, $ne: null },
       })
-        .select("assignments")
+        .select("unitNumber moduleName")
         .lean();
 
-      // Deduplicate assignments by podsieAssignmentId
+      // Deduplicate by unitNumber, preferring entries with moduleName
       const seen = new Map<
         number,
-        { podsieAssignmentId: number; assignmentTitle: string }
+        { unitNumber: number; moduleName: string | null }
       >();
+
       for (const mod of modules) {
-        const assignments = (mod.assignments ?? []) as unknown as Array<{
-          podsieAssignmentId?: number;
-          assignmentTitle?: string;
-        }>;
-        for (const a of assignments) {
-          if (a.podsieAssignmentId && !seen.has(a.podsieAssignmentId)) {
-            seen.set(a.podsieAssignmentId, {
-              podsieAssignmentId: a.podsieAssignmentId,
-              assignmentTitle:
-                a.assignmentTitle || `Assignment ${a.podsieAssignmentId}`,
-            });
-          }
+        const unit = mod.unitNumber as unknown as number;
+        const name = (mod.moduleName as unknown as string | null) ?? null;
+
+        if (!seen.has(unit)) {
+          seen.set(unit, { unitNumber: unit, moduleName: name });
+        } else if (name && !seen.get(unit)!.moduleName) {
+          // Prefer entry with a moduleName
+          seen.set(unit, { unitNumber: unit, moduleName: name });
         }
       }
 
       return Array.from(seen.values()).sort(
-        (a, b) => a.podsieAssignmentId - b.podsieAssignmentId,
+        (a, b) => a.unitNumber - b.unitNumber,
       );
     });
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error("Error in podsie-assignments GET:", error);
+    console.error("Error in podsie-modules GET:", error);
     return NextResponse.json(
       { success: false, error: "Internal server error" },
       { status: 500 },
