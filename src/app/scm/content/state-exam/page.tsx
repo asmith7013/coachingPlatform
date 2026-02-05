@@ -36,7 +36,7 @@ import type {
 export default function StateExamQuestionsPage() {
   const [questions, setQuestions] = useState<StateTestQuestion[]>([]);
   const [stats, setStats] = useState<ScrapeStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Filters
@@ -367,13 +367,16 @@ export default function StateExamQuestionsPage() {
                       id="grade-filter"
                       value={selectedGrade}
                       onChange={handleGradeChange}
-                      className={`px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer ${
-                        !selectedGrade
-                          ? "border-blue-500 ring-2 ring-blue-200"
-                          : "border-gray-300"
+                      disabled={!stats}
+                      className={`px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        !stats
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : !selectedGrade
+                            ? "border-blue-500 ring-2 ring-blue-200 cursor-pointer"
+                            : "border-gray-300 cursor-pointer"
                       }`}
                     >
-                      <option value="">Select a grade...</option>
+                      <option value="">{!stats ? "Loading grades..." : "Select a grade..."}</option>
                       {availableGrades.map((grade) => (
                         <option key={grade} value={grade}>
                           Grade {grade} ({stats?.byGrade[grade] || 0} questions)
