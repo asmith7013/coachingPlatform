@@ -12,7 +12,9 @@ import {
   fetchPodsieScmModules,
   updatePodsieScmModule,
   updateZearnCodesAcrossGroups,
+  updateWorkedExamplesAcrossGroups,
 } from "@actions/scm/podsie/podsie-scm-module";
+import { listWorkedExampleDecks } from "@actions/worked-examples";
 import {
   fetchPodsieScmGroups,
   createPodsieScmGroup,
@@ -20,6 +22,11 @@ import {
   deletePodsieScmGroup,
 } from "@actions/scm/podsie/podsie-scm-group";
 import { Schools, SCOPE_SEQUENCE_TAG_OPTIONS } from "@schema/enum/scm";
+
+interface WorkedExampleLink {
+  slug: string;
+  workedExampleType: string;
+}
 
 interface PacingEntry {
   podsieAssignmentId: number;
@@ -29,7 +36,27 @@ interface PacingEntry {
   groupLabel?: string;
   orderIndex?: number | null;
   zearnLessonCode?: string | null;
+  workedExamples?: WorkedExampleLink[];
 }
+
+interface DeckSummary {
+  slug: string;
+  title: string;
+  gradeLevel: string;
+  unitNumber?: number;
+  lessonNumber?: number;
+}
+
+const WE_TYPE_LABELS: Record<string, string> = {
+  masteryCheck: "MC",
+  prerequisiteSkill: "PS",
+  other: "Other",
+};
+
+const WE_TYPE_OPTIONS = ["masteryCheck", "prerequisiteSkill", "other"] as const;
+
+/** Grade values matching WorkedExampleDeck.gradeLevel (GradeZod enum) */
+const DECK_GRADE_OPTIONS = ["6", "7", "8", "Algebra 1"] as const;
 
 interface ScmModuleRecord {
   _id: string;
@@ -74,6 +101,95 @@ function guessZearnCode(title: string, unitNumber?: number | null): string | nul
   return null;
 }
 
+/** Inline cell for managing worked example links per assignment */
+function WorkedExamplesCell({
+  workedExamples,
+  availableDecks,
+  deckTitleMap,
+  onAdd,
+  onRemove,
+}: {
+  workedExamples: WorkedExampleLink[];
+  availableDecks: DeckSummary[];
+  deckTitleMap: Record<string, string>;
+  onAdd: (slug: string, type: string) => void;
+  onRemove: (slug: string) => void;
+}) {
+  const [selectedSlug, setSelectedSlug] = useState("");
+  const [selectedType, setSelectedType] = useState<string>("masteryCheck");
+
+  const linkedSlugs = new Set(workedExamples.map((we) => we.slug));
+  const unlinkedDecks = availableDecks.filter((d) => !linkedSlugs.has(d.slug));
+
+  const handleAdd = () => {
+    if (!selectedSlug) return;
+    onAdd(selectedSlug, selectedType);
+    setSelectedSlug("");
+  };
+
+  return (
+    <div className="space-y-1">
+      {/* Current links */}
+      {workedExamples.map((we) => (
+        <div
+          key={we.slug}
+          className="flex items-center gap-1 text-xs"
+        >
+          <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded font-medium">
+            {WE_TYPE_LABELS[we.workedExampleType] ?? we.workedExampleType}
+          </span>
+          <span className="text-gray-600 truncate max-w-[140px]" title={we.slug}>
+            {deckTitleMap[we.slug] || we.slug}
+          </span>
+          <button
+            onClick={() => onRemove(we.slug)}
+            className="text-gray-400 hover:text-red-500 cursor-pointer flex-shrink-0"
+            title="Remove"
+          >
+            <XMarkIcon className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ))}
+
+      {/* Add new */}
+      <div className="flex items-center gap-1">
+        <select
+          value={selectedSlug}
+          onChange={(e) => setSelectedSlug(e.target.value)}
+          className="flex-1 min-w-0 px-1.5 py-0.5 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="">Select deck...</option>
+          {unlinkedDecks.map((d) => (
+            <option key={d.slug} value={d.slug}>
+              {d.title}
+              {d.unitNumber != null ? ` (U${d.unitNumber}${d.lessonNumber != null ? ` L${d.lessonNumber}` : ""})` : ""}
+            </option>
+          ))}
+        </select>
+        <select
+          value={selectedType}
+          onChange={(e) => setSelectedType(e.target.value)}
+          className="w-16 px-1 py-0.5 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+        >
+          {WE_TYPE_OPTIONS.map((t) => (
+            <option key={t} value={t}>
+              {WE_TYPE_LABELS[t]}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={handleAdd}
+          disabled={!selectedSlug}
+          className="p-0.5 text-green-600 hover:text-green-800 disabled:text-gray-300 cursor-pointer"
+          title="Add worked example"
+        >
+          <PlusIcon className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function ModuleConfigPage() {
   const [records, setRecords] = useState<ScmModuleRecord[]>([]);
   const [groups, setGroups] = useState<ScmGroupRecord[]>([]);
@@ -91,6 +207,14 @@ export default function ModuleConfigPage() {
     Record<string, string>
   >({});
   const [savingId, setSavingId] = useState<string | null>(null);
+
+  // Worked examples state
+  const [availableDecks, setAvailableDecks] = useState<DeckSummary[]>([]);
+  const [deckGradeFilter, setDeckGradeFilter] = useState("");
+  const [deckUnitFilter, setDeckUnitFilter] = useState("");
+  const [editedWorkedExamples, setEditedWorkedExamples] = useState<
+    Record<string, Record<number, WorkedExampleLink[]>>
+  >({});
 
   // Create group form state
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -129,6 +253,31 @@ export default function ModuleConfigPage() {
     }
   }, []);
 
+  const loadDecks = useCallback(async (grade?: string, unit?: string) => {
+    try {
+      const filters: { gradeLevel?: string; unitNumber?: number; limit: number } = { limit: 500 };
+      if (grade) filters.gradeLevel = grade;
+      if (unit) {
+        const n = parseInt(unit, 10);
+        if (!isNaN(n)) filters.unitNumber = n;
+      }
+      const result = await listWorkedExampleDecks(filters);
+      if (result.success && result.data) {
+        setAvailableDecks(
+          result.data.map((d: Record<string, unknown>) => ({
+            slug: d.slug as string,
+            title: d.title as string,
+            gradeLevel: d.gradeLevel as string,
+            unitNumber: d.unitNumber as number | undefined,
+            lessonNumber: d.lessonNumber as number | undefined,
+          })),
+        );
+      }
+    } catch {
+      // Decks are supplementary; don't block the page
+    }
+  }, []);
+
   // Derive name map from groups
   const groupNameMap: Record<number, string> = {};
   for (const g of groups) {
@@ -161,7 +310,13 @@ export default function ModuleConfigPage() {
   useEffect(() => {
     loadRecords();
     loadGroups();
-  }, [loadRecords, loadGroups]);
+    loadDecks();
+  }, [loadRecords, loadGroups, loadDecks]);
+
+  // Reload decks when filters change
+  useEffect(() => {
+    loadDecks(deckGradeFilter, deckUnitFilter);
+  }, [deckGradeFilter, deckUnitFilter, loadDecks]);
 
   const filteredRecords = filterGroupId
     ? records.filter((r) => r.podsieGroupId === parseInt(filterGroupId, 10))
@@ -244,6 +399,74 @@ export default function ModuleConfigPage() {
     }));
   };
 
+  // Worked examples helpers
+  const getWorkedExamplesValue = (
+    record: ScmModuleRecord,
+    entry: PacingEntry,
+  ): WorkedExampleLink[] => {
+    const edited = editedWorkedExamples[record._id]?.[entry.podsieAssignmentId];
+    if (edited !== undefined) return edited;
+    return entry.workedExamples ?? [];
+  };
+
+  const handleAddWorkedExample = (
+    recordId: string,
+    assignmentId: number,
+    slug: string,
+    type: string,
+  ) => {
+    setEditedWorkedExamples((prev) => {
+      const recordEdits = prev[recordId] ?? {};
+      const current = recordEdits[assignmentId];
+      // Get base from record data if no edits yet
+      const base = current !== undefined
+        ? current
+        : records
+            .find((r) => r._id === recordId)
+            ?.assignments.find((a) => a.podsieAssignmentId === assignmentId)
+            ?.workedExamples ?? [];
+      // Don't add duplicate slugs
+      if (base.some((we) => we.slug === slug)) return prev;
+      return {
+        ...prev,
+        [recordId]: {
+          ...recordEdits,
+          [assignmentId]: [...base, { slug, workedExampleType: type }],
+        },
+      };
+    });
+  };
+
+  const handleRemoveWorkedExample = (
+    recordId: string,
+    assignmentId: number,
+    slug: string,
+  ) => {
+    setEditedWorkedExamples((prev) => {
+      const recordEdits = prev[recordId] ?? {};
+      const current = recordEdits[assignmentId];
+      const base = current !== undefined
+        ? current
+        : records
+            .find((r) => r._id === recordId)
+            ?.assignments.find((a) => a.podsieAssignmentId === assignmentId)
+            ?.workedExamples ?? [];
+      return {
+        ...prev,
+        [recordId]: {
+          ...recordEdits,
+          [assignmentId]: base.filter((we) => we.slug !== slug),
+        },
+      };
+    });
+  };
+
+  // Build a title lookup from available decks
+  const deckTitleMap: Record<string, string> = {};
+  for (const d of availableDecks) {
+    deckTitleMap[d.slug] = d.title;
+  }
+
   const handleSave = async (record: ScmModuleRecord) => {
     setSavingId(record._id);
     setError(null);
@@ -287,11 +510,31 @@ export default function ModuleConfigPage() {
         }
       }
 
+      // Update worked examples across all groups
+      const weEdits = editedWorkedExamples[record._id] || {};
+      const assignmentWeMap: Record<number, { slug: string; workedExampleType: string }[]> = {};
+      for (const [assignmentIdStr, workedExamples] of Object.entries(weEdits)) {
+        assignmentWeMap[Number(assignmentIdStr)] = workedExamples;
+      }
+      const hasWeEdits = Object.keys(assignmentWeMap).length > 0;
+      if (hasWeEdits) {
+        const weResult = await updateWorkedExamplesAcrossGroups(assignmentWeMap);
+        if (!weResult.success) {
+          setError(weResult.error || "Failed to save worked examples");
+          return;
+        }
+      }
+
       const editedCount = Object.keys(assignmentCodeMap).length;
+      const weEditedCount = Object.keys(assignmentWeMap).length;
+      const parts: string[] = [];
+      if (hasCodeEdits) parts.push(`${editedCount} Zearn code(s)`);
+      if (hasWeEdits) parts.push(`${weEditedCount} worked example link(s)`);
+      if (editedUnitNumbers[record._id] !== undefined) parts.push("unit number");
       setSuccess(
-        hasCodeEdits
-          ? `Saved ${editedCount} Zearn code(s) across all groups`
-          : `Saved unit number for ${getGroupLabel(record.podsieGroupId)} / Module ${record.podsieModuleId}`,
+        parts.length > 0
+          ? `Saved ${parts.join(", ")} across all groups`
+          : "Saved",
       );
 
       // Clear edits for this record
@@ -301,6 +544,11 @@ export default function ModuleConfigPage() {
         return next;
       });
       setEditedUnitNumbers((prev) => {
+        const next = { ...prev };
+        delete next[record._id];
+        return next;
+      });
+      setEditedWorkedExamples((prev) => {
         const next = { ...prev };
         delete next[record._id];
         return next;
@@ -346,7 +594,8 @@ export default function ModuleConfigPage() {
   const hasEdits = (recordId: string): boolean => {
     return (
       Object.keys(editedCodes[recordId] || {}).length > 0 ||
-      editedUnitNumbers[recordId] !== undefined
+      editedUnitNumbers[recordId] !== undefined ||
+      Object.keys(editedWorkedExamples[recordId] || {}).length > 0
     );
   };
 
@@ -453,8 +702,8 @@ export default function ModuleConfigPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h1 className="text-2xl font-bold">Module Configuration</h1>
           <p className="text-gray-600 mt-1">
-            Manage unit numbers and Zearn lesson code mappings for pacing
-            modules.{" "}
+            Manage unit numbers, Zearn lesson codes, and worked example
+            mappings for pacing modules.{" "}
             <span className="text-gray-500">
               {records.length} records, {distinctGroupIds.length} groups
             </span>
@@ -748,24 +997,57 @@ export default function ModuleConfigPage() {
 
         {/* Filter */}
         <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <div className="flex items-center gap-4">
-            <label className="text-sm font-medium text-gray-700">
-              Filter by Group:
-            </label>
-            <select
-              value={filterGroupId}
-              onChange={(e) => setFilterGroupId(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              {distinctGroupIds.map((id) => (
-                <option key={id} value={id}>
-                  {getGroupLabel(id)}
-                </option>
-              ))}
-            </select>
-            <span className="text-sm text-gray-500">
-              Showing {recordsWithAssignments.length} records with assignments
-            </span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <label className="text-sm font-medium text-gray-700">
+                Filter by Group:
+              </label>
+              <select
+                value={filterGroupId}
+                onChange={(e) => setFilterGroupId(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                {distinctGroupIds.map((id) => (
+                  <option key={id} value={id}>
+                    {getGroupLabel(id)}
+                  </option>
+                ))}
+              </select>
+              <span className="text-sm text-gray-500">
+                Showing {recordsWithAssignments.length} records with assignments
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-500 font-medium">WE Decks:</span>
+              <div className="flex items-center gap-1">
+                <label className="text-xs text-gray-500">Grade</label>
+                <select
+                  value={deckGradeFilter}
+                  onChange={(e) => setDeckGradeFilter(e.target.value)}
+                  className="px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">All</option>
+                  {DECK_GRADE_OPTIONS.map((grade) => (
+                    <option key={grade} value={grade}>
+                      {grade === "Algebra 1" ? grade : `Grade ${grade}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-1">
+                <label className="text-xs text-gray-500">Unit</label>
+                <input
+                  type="number"
+                  value={deckUnitFilter}
+                  onChange={(e) => setDeckUnitFilter(e.target.value)}
+                  placeholder="—"
+                  className="w-14 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <span className="text-xs text-gray-400">
+                {availableDecks.length} decks
+              </span>
+            </div>
           </div>
         </div>
 
@@ -836,6 +1118,9 @@ export default function ModuleConfigPage() {
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-48">
                         Zearn Code
                       </th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                        Worked Examples
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -870,6 +1155,28 @@ export default function ModuleConfigPage() {
                               )
                             }
                             className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </td>
+                        <td className="px-4 py-2">
+                          <WorkedExamplesCell
+                            workedExamples={getWorkedExamplesValue(record, entry)}
+                            availableDecks={availableDecks}
+                            deckTitleMap={deckTitleMap}
+                            onAdd={(slug, type) =>
+                              handleAddWorkedExample(
+                                record._id,
+                                entry.podsieAssignmentId,
+                                slug,
+                                type,
+                              )
+                            }
+                            onRemove={(slug) =>
+                              handleRemoveWorkedExample(
+                                record._id,
+                                entry.podsieAssignmentId,
+                                slug,
+                              )
+                            }
                           />
                         </td>
                       </tr>

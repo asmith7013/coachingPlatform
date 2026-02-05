@@ -106,3 +106,48 @@ export async function updateZearnCodesAcrossGroups(
     }
   });
 }
+
+/**
+ * Update worked examples for assignments across all groups.
+ * Takes a map of assignmentId → workedExamples[] and updates all matching assignments
+ * in all PodsieScmModule documents.
+ *
+ * Uses atomic MongoDB updateMany with array filters to prevent race conditions.
+ */
+export async function updateWorkedExamplesAcrossGroups(
+  assignmentWorkedExamplesMap: Record<number, { slug: string; workedExampleType: string }[]>
+): Promise<{ success: boolean; updatedCount?: number; error?: string }> {
+  return withDbConnection(async () => {
+    try {
+      const entries = Object.entries(assignmentWorkedExamplesMap);
+
+      if (entries.length === 0) {
+        return { success: true, updatedCount: 0 };
+      }
+
+      let updatedCount = 0;
+
+      for (const [assignmentIdStr, workedExamples] of entries) {
+        const assignmentId = Number(assignmentIdStr);
+
+        const result = await PodsieScmModuleModel.updateMany(
+          { "assignments.podsieAssignmentId": assignmentId },
+          { $set: { "assignments.$[elem].workedExamples": workedExamples } },
+          {
+            arrayFilters: [{ "elem.podsieAssignmentId": assignmentId }],
+          }
+        );
+
+        updatedCount += result.modifiedCount;
+      }
+
+      revalidatePath("/scm/podsie/module-config");
+      return { success: true, updatedCount };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error),
+      };
+    }
+  });
+}

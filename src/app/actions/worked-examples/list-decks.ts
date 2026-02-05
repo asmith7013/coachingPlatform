@@ -7,6 +7,7 @@ import { handleServerError } from "@error/handlers/server";
 
 interface ListDecksFilters {
   gradeLevel?: string; // "6", "7", "8", "Algebra 1"
+  unitNumber?: number;
   mathConcept?: string;
   mathStandard?: string;
   createdBy?: string;
@@ -26,6 +27,10 @@ export async function listWorkedExampleDecks(filters?: ListDecksFilters) {
       // Apply filters
       if (filters?.gradeLevel) {
         query.gradeLevel = filters.gradeLevel;
+      }
+
+      if (filters?.unitNumber) {
+        query.unitNumber = filters.unitNumber;
       }
 
       if (filters?.mathConcept) {
