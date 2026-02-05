@@ -54,6 +54,7 @@ export default function ManageWorkedExamples() {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const gradeFilter = searchParams.get("grade") || "";
+  const unitFilter = searchParams.get("unit") || "";
   const showDeactivated = searchParams.get("showDeactivated") === "true";
 
   // Data fetching
@@ -138,6 +139,21 @@ export default function ManageWorkedExamples() {
     fetchAssignments();
   }, [gradeFilter, selectedModule]);
 
+  // Get available units for the current grade filter (for unit dropdown)
+  const availableUnits = useMemo(() => {
+    let gradeDecks = decks;
+    if (gradeFilter) {
+      gradeDecks = gradeDecks.filter((d) => d.gradeLevel === gradeFilter);
+    }
+    const units = new Set<number>();
+    for (const d of gradeDecks) {
+      if (d.unitNumber != null) {
+        units.add(d.unitNumber);
+      }
+    }
+    return Array.from(units).sort((a, b) => a - b);
+  }, [decks, gradeFilter]);
+
   // Filter decks
   const filteredDecks = useMemo(() => {
     let result = decks;
@@ -145,6 +161,12 @@ export default function ManageWorkedExamples() {
     // Filter by grade
     if (gradeFilter) {
       result = result.filter((d) => d.gradeLevel === gradeFilter);
+    }
+
+    // Filter by unit
+    if (unitFilter) {
+      const unitNum = parseInt(unitFilter, 10);
+      result = result.filter((d) => d.unitNumber === unitNum);
     }
 
     // Filter deactivated unless showing them
@@ -162,7 +184,7 @@ export default function ManageWorkedExamples() {
       if (unitCompare !== 0) return unitCompare;
       return (a.lessonNumber || 0) - (b.lessonNumber || 0);
     });
-  }, [decks, gradeFilter, showDeactivated]);
+  }, [decks, gradeFilter, unitFilter, showDeactivated]);
 
   // Get current value (edited or original)
   const getValue = useCallback(
@@ -288,6 +310,20 @@ export default function ManageWorkedExamples() {
     } else {
       params.delete("grade");
     }
+    // Clear unit filter when grade changes
+    params.delete("unit");
+    router.push(`/scm/workedExamples/manage?${params.toString()}`, {
+      scroll: false,
+    });
+  };
+
+  const handleUnitChange = (unit: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (unit) {
+      params.set("unit", unit);
+    } else {
+      params.delete("unit");
+    }
     router.push(`/scm/workedExamples/manage?${params.toString()}`, {
       scroll: false,
     });
@@ -334,8 +370,8 @@ export default function ManageWorkedExamples() {
         </Link>
       </div>
 
-      {/* Filters */}
-      <div className="mb-6 flex flex-wrap items-center gap-4">
+      {/* Filters - Row 1: Grade, Unit, Show Deactivated */}
+      <div className="mb-4 flex flex-wrap items-center gap-4">
         <div className="flex gap-2">
           {GRADE_OPTIONS.map((opt) => (
             <button
@@ -352,41 +388,22 @@ export default function ManageWorkedExamples() {
           ))}
         </div>
 
-        {/* Module selector - only show when a grade is selected */}
-        {gradeFilter && (
+        {/* Unit filter - only show when a grade is selected */}
+        {gradeFilter && availableUnits.length > 0 && (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-600">Module:</span>
+            <span className="text-sm text-gray-600">Unit:</span>
             <select
-              value={selectedModule ?? ""}
-              onChange={(e) =>
-                setSelectedModule(
-                  e.target.value ? parseInt(e.target.value) : null,
-                )
-              }
-              disabled={loadingModules}
+              value={unitFilter}
+              onChange={(e) => handleUnitChange(e.target.value)}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             >
-              <option value="">
-                {loadingModules ? "Loading..." : "Select module"}
-              </option>
-              {modules.map((mod) => (
-                <option key={mod.unitNumber} value={mod.unitNumber}>
-                  {mod.moduleName || `Unit ${mod.unitNumber}`}
+              <option value="">All Units</option>
+              {availableUnits.map((unit) => (
+                <option key={unit} value={unit}>
+                  Unit {unit}
                 </option>
               ))}
             </select>
-            {selectedModule !== null && loadingAssignments && (
-              <span className="text-xs text-gray-500">
-                Loading assignments...
-              </span>
-            )}
-            {selectedModule !== null &&
-              !loadingAssignments &&
-              globalAssignments.length > 0 && (
-                <span className="text-xs text-gray-500">
-                  {globalAssignments.length} assignments
-                </span>
-              )}
           </div>
         )}
 
@@ -400,6 +417,53 @@ export default function ManageWorkedExamples() {
           Show deactivated
         </label>
       </div>
+
+      {/* Podsie Module selector - Row 2: for linking assignments */}
+      {gradeFilter && (
+        <div className="mb-6 flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <span className="text-sm font-medium text-gray-700">
+            Link to Podsie Module:
+          </span>
+          <select
+            value={selectedModule ?? ""}
+            onChange={(e) =>
+              setSelectedModule(
+                e.target.value ? parseInt(e.target.value) : null,
+              )
+            }
+            disabled={loadingModules}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white"
+          >
+            <option value="">
+              {loadingModules ? "Loading..." : "Select Podsie module"}
+            </option>
+            {modules.map((mod) => (
+              <option key={mod.unitNumber} value={mod.unitNumber}>
+                {mod.moduleName || `Unit ${mod.unitNumber}`}
+              </option>
+            ))}
+          </select>
+          {selectedModule !== null && loadingAssignments && (
+            <span className="text-xs text-gray-500">
+              Loading assignments...
+            </span>
+          )}
+          {selectedModule !== null &&
+            !loadingAssignments &&
+            globalAssignments.length > 0 && (
+              <span className="text-xs text-green-600 font-medium">
+                {globalAssignments.length} assignments available
+              </span>
+            )}
+          {selectedModule !== null &&
+            !loadingAssignments &&
+            globalAssignments.length === 0 && (
+              <span className="text-xs text-amber-600">
+                No assignments found for this module
+              </span>
+            )}
+        </div>
+      )}
 
       {/* Status messages */}
       {saveError && (
