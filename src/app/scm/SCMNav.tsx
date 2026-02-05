@@ -102,6 +102,7 @@ export function SCMNav() {
         { href: "/scm/workedExamples/viewer?grade=8", label: "Grade 8" },
         { href: "/scm/workedExamples/viewer?grade=alg1", label: "Algebra 1" },
         { href: "---", label: "---" },
+        { href: "/scm/workedExamples/manage", label: "Manage" },
         { href: "/scm/workedExamples/create", label: "+ Create New" },
       ],
     },
