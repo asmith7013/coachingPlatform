@@ -14,6 +14,12 @@ interface StandardAccordionProps {
   contained?: boolean;
   /** Dynamic standard descriptions from lesson data (supplements hardcoded STANDARD_DESCRIPTIONS) */
   standardDescriptions?: Record<string, string>;
+  /** Set of selected question IDs for print selection */
+  selectedQuestions?: Set<string>;
+  /** Callback when a question's selection state changes */
+  onQuestionSelectionChange?: (questionId: string, selected: boolean) => void;
+  /** Whether to show checkboxes for print selection */
+  showCheckboxes?: boolean;
 }
 
 export function StandardAccordion({
@@ -22,6 +28,9 @@ export function StandardAccordion({
   isSecondaryMatch,
   contained = false,
   standardDescriptions = {},
+  selectedQuestions,
+  onQuestionSelectionChange,
+  showCheckboxes = false,
 }: StandardAccordionProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -91,6 +100,9 @@ export function StandardAccordion({
                 question={question}
                 isSecondaryOnlyMatch={isSecondaryMatch.get(question.questionId) || false}
                 hideStandardBadge={true}
+                isSelected={selectedQuestions?.has(question.questionId) || false}
+                onSelectionChange={onQuestionSelectionChange}
+                showCheckbox={showCheckboxes}
               />
             ))}
           </div>

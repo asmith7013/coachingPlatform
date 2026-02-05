@@ -4,3 +4,4 @@ export { QuestionsByUnitTable } from "./QuestionsByUnitTable";
 export { StandardsDistributionTable } from "./StandardsDistributionTable";
 export { StandardsByUnitTable } from "./StandardsByUnitTable";
 export { StandardsUnitMatrix } from "./StandardsUnitMatrix";
+export { PrintSelectionFooter } from "./PrintSelectionFooter";

@@ -24,7 +24,9 @@ import {
   QuestionCard,
   StandardAccordion,
   StandardsUnitMatrix,
+  PrintSelectionFooter,
 } from "./components";
+import { printSelectedQuestions } from "./utils";
 import type {
   ScrapeStats,
   StateTestQuestion,
@@ -53,6 +55,9 @@ export default function StateExamQuestionsPage() {
   // Export modal state
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [selectedForExport, setSelectedForExport] = useState<Set<string>>(new Set());
+
+  // Print selection state
+  const [selectedForPrint, setSelectedForPrint] = useState<Set<string>>(new Set());
 
   // Load stats on mount
   useEffect(() => {
@@ -267,6 +272,7 @@ export default function StateExamQuestionsPage() {
     setSelectedGrade(e.target.value);
     setSelectedUnit(null);
     setSelectedSection("all");
+    setSelectedForPrint(new Set()); // Clear print selection on grade change
   };
 
   // Sort questions by standard (same sorting as main page)
@@ -319,8 +325,30 @@ export default function StateExamQuestionsPage() {
     setIsExportModalOpen(false);
   }, [sortedFilteredQuestions, selectedForExport, selectedGrade, selectedUnit, selectedSection]);
 
+  // Print selection handlers
+  const handleQuestionSelectionChange = useCallback((questionId: string, selected: boolean) => {
+    setSelectedForPrint(prev => {
+      const next = new Set(prev);
+      if (selected) {
+        next.add(questionId);
+      } else {
+        next.delete(questionId);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleClearPrintSelection = useCallback(() => {
+    setSelectedForPrint(new Set());
+  }, []);
+
+  const handlePrint = useCallback(() => {
+    const questionsToPrint = filteredQuestions.filter(q => selectedForPrint.has(q.questionId));
+    printSelectedQuestions(questionsToPrint);
+  }, [filteredQuestions, selectedForPrint]);
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen bg-gray-50 ${selectedForPrint.size > 0 ? "pb-20" : ""}`}>
       <div className="mx-auto p-6" style={{ maxWidth: "1800px" }}>
         <div className="flex gap-6">
           {/* Main Content Area */}
@@ -373,6 +401,7 @@ export default function StateExamQuestionsPage() {
                   onUnitClick={(unitNumber) => {
                     setSelectedUnit(unitNumber);
                     setSelectedSection("all");
+                    setSelectedForPrint(new Set()); // Clear print selection on unit change
                   }}
                   standardDescriptions={dynamicStandardDescriptions}
                   showSubstandards={showSubstandards}
@@ -566,6 +595,9 @@ export default function StateExamQuestionsPage() {
                             isSecondaryMatch={isSecondaryMatch}
                             contained
                             standardDescriptions={dynamicStandardDescriptions}
+                            selectedQuestions={selectedForPrint}
+                            onQuestionSelectionChange={handleQuestionSelectionChange}
+                            showCheckboxes={true}
                           />
                         ))}
                     </div>
@@ -576,6 +608,9 @@ export default function StateExamQuestionsPage() {
                           key={question.questionId}
                           question={question}
                           isSecondaryOnlyMatch={secondaryOnlyMatches.has(question.questionId)}
+                          isSelected={selectedForPrint.has(question.questionId)}
+                          onSelectionChange={handleQuestionSelectionChange}
+                          showCheckbox={true}
                         />
                       ))}
                     </div>
@@ -588,6 +623,13 @@ export default function StateExamQuestionsPage() {
 
         </div>
       </div>
+
+      {/* Print Selection Footer */}
+      <PrintSelectionFooter
+        selectedCount={selectedForPrint.size}
+        onClear={handleClearPrintSelection}
+        onPrint={handlePrint}
+      />
 
       {/* Export Modal */}
       <Dialog

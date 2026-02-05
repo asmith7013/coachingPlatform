@@ -27,12 +27,18 @@ interface QuestionCardProps {
   question: StateTestQuestion;
   isSecondaryOnlyMatch?: boolean;
   hideStandardBadge?: boolean;
+  isSelected?: boolean;
+  onSelectionChange?: (questionId: string, selected: boolean) => void;
+  showCheckbox?: boolean;
 }
 
 export function QuestionCard({
   question,
   isSecondaryOnlyMatch = false,
   hideStandardBadge = false,
+  isSelected = false,
+  onSelectionChange,
+  showCheckbox = false,
 }: QuestionCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -100,7 +106,20 @@ export function QuestionCard({
         </div>
 
         {/* Image */}
-        <div className="block">
+        <div className="relative block">
+          {showCheckbox && (
+            <div
+              className="absolute top-2 right-2 z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={(e) => onSelectionChange?.(question.questionId, e.target.checked)}
+                className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+              />
+            </div>
+          )}
           <img
             src={question.screenshotUrl}
             alt={`Question ${question.questionId}`}
