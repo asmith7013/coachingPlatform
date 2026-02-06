@@ -156,7 +156,7 @@ function WorkedExamplesCell({
         <select
           value={selectedSlug}
           onChange={(e) => setSelectedSlug(e.target.value)}
-          className="flex-1 min-w-0 px-1.5 py-0.5 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full max-w-[260px] px-1.5 py-0.5 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="">Select deck...</option>
           {unlinkedDecks.map((d) => (
@@ -1118,7 +1118,7 @@ export default function ModuleConfigPage() {
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-48">
                         Zearn Code
                       </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase w-80">
                         Worked Examples
                       </th>
                     </tr>
