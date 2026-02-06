@@ -345,10 +345,6 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       setError('Please upload a mastery check question image');
       return;
     }
-    if (!state.podsieAssignmentId) {
-      setError('Please select a Podsie assignment');
-      return;
-    }
     // Learning goals are required if no curriculum targets exist
     const hasLearningTargets = selectedLesson?.learningTargets && selectedLesson.learningTargets.length > 0;
     if (!hasLearningTargets && state.learningGoals.length === 0) {
@@ -592,7 +588,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
             {/* Podsie Assignment Dropdown */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Podsie Assignment <span className="text-red-500">*</span>
+                Podsie Assignment
               </label>
               {isLoadingAssignments ? (
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
