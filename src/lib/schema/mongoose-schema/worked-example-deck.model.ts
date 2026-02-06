@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
 
+const SLIDE_TYPES = ['teacher-instructions', 'big-idea', 'problem-setup', 'step', 'practice-preview', 'printable-worksheet', 'lesson-summary'];
+
 const htmlSlideSchema = {
   slideNumber: { type: Number, required: true },
+  slideType: { type: String, enum: SLIDE_TYPES }, // Semantic slide type
   htmlContent: { type: String, required: true }, // Full HTML for the slide
   visualType: { type: String, enum: ['html', 'p5', 'd3'], default: 'html' },
   scripts: [{
@@ -138,6 +141,9 @@ const workedExampleDeckSchema = new mongoose.Schema({
   // Standalone lesson summary HTML (printable one-page reference)
   // Stored separately from htmlSlides for lightweight access from other contexts
   lessonSummaryHtml: { type: String },
+
+  // Slide number of the lesson summary slide (computed from slideType on save)
+  lessonSummarySlideNumber: { type: Number },
 
   // Learning Goals
   learningGoals: [String],

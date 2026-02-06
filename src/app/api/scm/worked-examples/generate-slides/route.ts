@@ -280,6 +280,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
                   // Build slide object for incremental saving
                   const slideObj = {
                     slideNumber: completedSlides.length,
+                    slideType: extractSlideType(completedSlide),
                     htmlContent: completedSlide,
                     visualType: detectVisualType(completedSlide),
                     scripts: extractScripts(completedSlide),
@@ -308,6 +309,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
             // Build slide object for incremental saving
             const slideObj = {
               slideNumber: completedSlides.length,
+              slideType: extractSlideType(remainingSlide),
               htmlContent: remainingSlide,
               visualType: detectVisualType(remainingSlide),
               scripts: extractScripts(remainingSlide),
@@ -344,6 +346,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
           // Convert to HtmlSlide format
           const slides = completedSlides.map((html, index) => ({
             slideNumber: index + 1,
+            slideType: extractSlideType(html),
             htmlContent: html,
             visualType: detectVisualType(html),
             scripts: extractScripts(html),
@@ -424,6 +427,22 @@ function parseSlidesFromText(text: string): string[] {
 /**
  * Detect visual type from HTML content
  */
+const VALID_SLIDE_TYPES = new Set([
+  'teacher-instructions', 'big-idea', 'problem-setup', 'step',
+  'practice-preview', 'printable-worksheet', 'lesson-summary',
+]);
+
+/**
+ * Extract slide type from data-slide-type attribute on <body>
+ */
+function extractSlideType(html: string): string | undefined {
+  const match = html.match(/data-slide-type=["']([^"']+)["']/);
+  if (match && VALID_SLIDE_TYPES.has(match[1])) {
+    return match[1];
+  }
+  return undefined;
+}
+
 function detectVisualType(html: string): 'html' | 'p5' | 'd3' {
   const lower = html.toLowerCase();
 

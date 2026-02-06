@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSignIn } from '@clerk/nextjs';
 import type { WizardStateHook } from '../../hooks/useWizardState';
 import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
+import { updateDeckMetadata } from '@/app/actions/worked-examples/update-deck-metadata';
 import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
 
 // Session storage key for pending Google Slides export
@@ -219,8 +220,10 @@ export function Step4Save({ wizard }: Step4SaveProps) {
     setError(null);
 
     try {
-      // Extract lesson summary HTML from the slides (if present)
+      // Extract lesson summary slide (prefer slideType, fallback to HTML content search)
       const lessonSummarySlide = state.slides.find(
+        (slide) => slide.slideType === 'lesson-summary',
+      ) ?? state.slides.find(
         (slide) => slide.htmlContent.includes('LESSON SUMMARY') && slide.htmlContent.includes('print-page'),
       );
 
@@ -233,13 +236,17 @@ export function Step4Save({ wizard }: Step4SaveProps) {
         unitNumber: state.unitNumber ?? undefined,
         lessonNumber: state.lessonNumber ?? undefined,
         scopeAndSequenceId: state.scopeAndSequenceId ?? undefined,
+        podsieAssignmentId: state.podsieAssignmentId ?? undefined,
+        podsieAssignmentTitle: state.podsieAssignmentTitle ?? undefined,
         htmlSlides: state.slides.map((slide) => ({
           slideNumber: slide.slideNumber,
+          slideType: slide.slideType,
           htmlContent: slide.htmlContent,
           visualType: slide.visualType,
           scripts: slide.scripts,
         })),
         lessonSummaryHtml: lessonSummarySlide?.htmlContent,
+        lessonSummarySlideNumber: lessonSummarySlide?.slideNumber,
         learningGoals: state.learningGoals.length > 0 ? state.learningGoals : undefined,
         generatedBy: 'ai',
         sourceImage: state.masteryCheckImage.uploadedUrl ?? undefined,
@@ -259,7 +266,18 @@ export function Step4Save({ wizard }: Step4SaveProps) {
         return;
       }
 
-      setSavedSlug(result.slug || state.slug);
+      const finalSlug = result.slug || state.slug;
+
+      // Auto-link to Podsie assignment's pacing config (if assignment was selected)
+      if (state.podsieAssignmentId) {
+        await updateDeckMetadata(finalSlug, {
+          podsieAssignmentId: state.podsieAssignmentId,
+          podsieAssignmentTitle: state.podsieAssignmentTitle,
+          workedExampleType: 'masteryCheck',
+        });
+      }
+
+      setSavedSlug(finalSlug);
       clearPersistedState();
       setLoading(false);
     } catch (error) {

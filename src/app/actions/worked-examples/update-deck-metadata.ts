@@ -99,10 +99,14 @@ export async function updateDeckMetadata(
 
       // Update all podsie-scm-modules that contain this assignment
       if (validated.podsieAssignmentId && validated.workedExampleType) {
-        const workedExampleEntry = {
+        const workedExampleEntry: Record<string, unknown> = {
           slug,
           workedExampleType: validated.workedExampleType,
         };
+        // Include lessonSummarySlideNumber if available on the deck
+        if (deck.lessonSummarySlideNumber) {
+          workedExampleEntry.lessonSummarySlideNumber = deck.lessonSummarySlideNumber;
+        }
 
         // First, remove any existing entry with this slug (to avoid duplicates)
         await PodsieScmModuleModel.updateMany(

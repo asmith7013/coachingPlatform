@@ -2,6 +2,7 @@
 
 import { useReducer, useCallback, useEffect, useState } from 'react';
 import type { WizardState, WizardAction, WizardStep, ProblemAnalysis, StrategyDefinition, Scenario, LoadingProgress } from '../lib/types';
+import type { SlideType } from '@zod-schema/scm/worked-example';
 import { initialWizardState } from '../lib/types';
 import { updateDeckSlides } from '@/app/actions/worked-examples';
 
@@ -110,6 +111,13 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
 
     case 'SET_SCOPE_AND_SEQUENCE_ID':
       return { ...state, scopeAndSequenceId: action.payload };
+
+    case 'SET_PODSIE_ASSIGNMENT':
+      return {
+        ...state,
+        podsieAssignmentId: action.payload.id,
+        podsieAssignmentTitle: action.payload.title,
+      };
 
     case 'SET_LEARNING_GOALS':
       return { ...state, learningGoals: action.payload };
@@ -256,6 +264,17 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
         }
       });
       return { ...state, slides: batchUpdatedSlides };
+
+    case 'UPDATE_SLIDE_TYPE': {
+      const updatedSlides = [...state.slides];
+      if (updatedSlides[action.payload.index]) {
+        updatedSlides[action.payload.index] = {
+          ...updatedSlides[action.payload.index],
+          slideType: action.payload.slideType,
+        };
+      }
+      return { ...state, slides: updatedSlides };
+    }
 
     case 'SET_SELECTED_SLIDE':
       return { ...state, selectedSlideIndex: action.payload };
@@ -524,6 +543,7 @@ export function useWizardState() {
     if (persisted.lessonName) dispatch({ type: 'SET_LESSON_NAME', payload: persisted.lessonName });
     if (persisted.section) dispatch({ type: 'SET_SECTION', payload: persisted.section });
     if (persisted.scopeAndSequenceId) dispatch({ type: 'SET_SCOPE_AND_SEQUENCE_ID', payload: persisted.scopeAndSequenceId });
+    if (persisted.podsieAssignmentId) dispatch({ type: 'SET_PODSIE_ASSIGNMENT', payload: { id: persisted.podsieAssignmentId, title: persisted.podsieAssignmentTitle } });
     if (persisted.learningGoals?.length) dispatch({ type: 'SET_LEARNING_GOALS', payload: persisted.learningGoals });
     if (persisted.masteryCheckImage?.uploadedUrl) {
       dispatch({ type: 'SET_UPLOADED_IMAGE_URL', payload: persisted.masteryCheckImage.uploadedUrl });
@@ -603,6 +623,10 @@ export function useWizardState() {
     dispatch({ type: 'SET_SCOPE_AND_SEQUENCE_ID', payload: id });
   }, []);
 
+  const setPodsieAssignment = useCallback((id: number | null, title: string | null) => {
+    dispatch({ type: 'SET_PODSIE_ASSIGNMENT', payload: { id, title } });
+  }, []);
+
   const setLearningGoals = useCallback((goals: string[]) => {
     dispatch({ type: 'SET_LEARNING_GOALS', payload: goals });
   }, []);
@@ -674,6 +698,10 @@ export function useWizardState() {
 
   const updateSlidesBatch = useCallback((updates: { index: number; htmlContent: string }[]) => {
     dispatch({ type: 'UPDATE_SLIDES_BATCH', payload: updates });
+  }, []);
+
+  const updateSlideType = useCallback((index: number, slideType: SlideType) => {
+    dispatch({ type: 'UPDATE_SLIDE_TYPE', payload: { index, slideType } });
   }, []);
 
   const setSelectedSlide = useCallback((index: number) => {
@@ -772,6 +800,7 @@ export function useWizardState() {
     setLessonName,
     setSection,
     setScopeAndSequenceId,
+    setPodsieAssignment,
     setLearningGoals,
     setMasteryImage,
     setUploadedImageUrl,
@@ -790,6 +819,7 @@ export function useWizardState() {
     setSlides,
     updateSlide,
     updateSlidesBatch,
+    updateSlideType,
     setSelectedSlide,
     toggleSlideToEdit,
     toggleContextSlide,

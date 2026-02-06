@@ -62,18 +62,21 @@ Graph: Use card-patterns/svg-card.html → modify for X_MAX=10, Y_MAX=100
 
 CFU and Answer boxes are now STACKED on the same slide (both appear, one after another on click).
 
-| Slide # | Type | Layout Options | Content |
-|---------|------|----------------|---------|
-| 1 | Teacher Instructions | `two-column` | **Teacher-only (students start on Slide 2).** Big Idea + Learning Targets + Deck Overview |
-| 2 | Big Idea | `centered` | Grade/Unit/Lesson + Big Idea badge + statement |
-| 3 | Problem Setup | `two-column` or `centered` | problem + visual |
-| 4 | Step 1 | `two-column` or `centered` | step content + CFU + Answer (stacked) |
-| 5 | Step 2 | `two-column` or `centered` | step content + CFU + Answer (stacked) |
-| 6 | Step 3 | `two-column` or `centered` | step content + CFU + Answer (stacked) |
-| 7 | Practice Preview 1 | `two-column` or `centered` | Scenario 2 problem + visual + "Your Task" |
-| 8 | Practice Preview 2 | `two-column` or `centered` | Scenario 3 problem + visual + "Your Task" |
-| 9 | Printable | `full-width` | printable format |
-| 10 | Lesson Summary | `full-width` | printable one-page lesson reference card |
+| Slide # | Type | `data-slide-type` | Layout Options | Content |
+|---------|------|--------------------|----------------|---------|
+| 1 | Teacher Instructions | `teacher-instructions` | `two-column` | **Teacher-only (students start on Slide 2).** Big Idea + Learning Targets + Deck Overview |
+| 2 | Big Idea | `big-idea` | `centered` | Grade/Unit/Lesson + Big Idea badge + statement |
+| 3 | Problem Setup | `problem-setup` | `two-column` or `centered` | problem + visual |
+| 4 | Step 1 | `step` | `two-column` or `centered` | step content + CFU + Answer (stacked) |
+| 5 | Step 2 | `step` | `two-column` or `centered` | step content + CFU + Answer (stacked) |
+| 6 | Step 3 | `step` | `two-column` or `centered` | step content + CFU + Answer (stacked) |
+| 7 | Practice Preview 1 | `practice-preview` | `two-column` or `centered` | Scenario 2 problem + visual + "Your Task" |
+| 8 | Practice Preview 2 | `practice-preview` | `two-column` or `centered` | Scenario 3 problem + visual + "Your Task" |
+| 9 | Printable | `printable-worksheet` | `full-width` | printable format |
+| 10 | Lesson Summary | `lesson-summary` | `full-width` | printable one-page lesson reference card |
+
+**⚠️ REQUIRED: Every slide's `<body>` tag MUST include the `data-slide-type` attribute from the table above.**
+Example: `<body style="width:960px;height:540px;..." data-slide-type="step">`
 
 **Layout Selection (slides 3-8):**
 

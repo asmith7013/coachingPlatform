@@ -274,6 +274,13 @@ Generate each slide as a complete HTML document. Separate slides with this delim
 Each slide MUST:
 - Start with \`<!DOCTYPE html>\` as the first 15 characters
 - Have body with width: 960px; height: 540px
+- The \`<body>\` tag MUST include a \`data-slide-type\` attribute identifying the slide's purpose. Valid values:
+  - \`teacher-instructions\` — Slide 1 (teacher-only instructions)
+  - \`big-idea\` — Slide 2 (big idea introduction)
+  - \`problem-setup\` — Slide 3 (problem context and setup)
+  - \`step\` — Slides 4-6 (worked example steps with CFU/Answer)
+  - \`practice-preview\` — Slides 7-8 (practice problem previews)
+  Example: \`<body style="width:960px;height:540px;..." data-slide-type="teacher-instructions">\`
 - Use light theme (white background, dark text)
 - Have all text in proper semantic tags (<p>, <h1-6>, <ul>, <ol>)
 - Use .row/.col layout classes

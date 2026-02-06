@@ -408,6 +408,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
               if (printableData.success && printableData.htmlContent) {
                 const printableSlide: HtmlSlide = {
                   slideNumber: 9,
+                  slideType: "printable-worksheet",
                   htmlContent: printableData.htmlContent,
                   visualType: "html",
                 };
@@ -524,6 +525,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
               if (summaryData.success && summaryData.htmlContent) {
                 const summarySlide: HtmlSlide = {
                   slideNumber: 10,
+                  slideType: "lesson-summary",
                   htmlContent: summaryData.htmlContent,
                   visualType: "html",
                 };

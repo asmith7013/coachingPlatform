@@ -20,6 +20,7 @@ const workedExampleLinkSchema = new mongoose.Schema(
       required: true,
       enum: ["masteryCheck", "prerequisiteSkill", "other"],
     },
+    lessonSummarySlideNumber: { type: Number, required: false },
   },
   { _id: false },
 );

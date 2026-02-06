@@ -74,7 +74,7 @@ function formatLessonDisplay(lesson: LessonOption): string {
 }
 
 export function Step1Inputs({ wizard }: Step1InputsProps) {
-  const { state, isHydrated, savedSessions, loadSession, deleteSession, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setSection, setScopeAndSequenceId, setLearningGoals, setMasteryImage, setUploadedImageUrl, addAdditionalImage, removeAdditionalImage, setAdditionalImageUrl, setAdditionalContext, setAnalysis, clearAnalysis, setLoadingProgress, setError, nextStep } = wizard;
+  const { state, isHydrated, savedSessions, loadSession, deleteSession, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setSection, setScopeAndSequenceId, setPodsieAssignment, setLearningGoals, setMasteryImage, setUploadedImageUrl, addAdditionalImage, removeAdditionalImage, setAdditionalImageUrl, setAdditionalContext, setAnalysis, clearAnalysis, setLoadingProgress, setError, nextStep } = wizard;
 
   const [learningGoalText, setLearningGoalText] = useState(
     state.learningGoals.map(g => typeof g === 'string' ? g : JSON.stringify(g)).join('\n')
@@ -96,11 +96,12 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     setLessonNumber(null);
     setLessonName('');
     setScopeAndSequenceId(null);
+    setPodsieAssignment(null, null);
     setLearningGoals([]);
     setMasteryImage(null, null);  // Also clears uploadedUrl now
     clearAnalysis();  // Clear any previous analysis data and slides
     setError(null);
-  }, [setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setScopeAndSequenceId, setLearningGoals, setMasteryImage, clearAnalysis, setError]);
+  }, [setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setScopeAndSequenceId, setPodsieAssignment, setLearningGoals, setMasteryImage, clearAnalysis, setError]);
 
   // Handle loading a saved session
   const handleLoadSession = useCallback((sessionId: string) => {
@@ -112,11 +113,13 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     }
   }, [loadSession]);
 
-  // Units and lessons data
+  // Units, lessons, and assignments data
   const [units, setUnits] = useState<UnitOption[]>([]);
   const [lessons, setLessons] = useState<LessonOption[]>([]);
+  const [assignments, setAssignments] = useState<{ podsieAssignmentId: number; assignmentTitle: string }[]>([]);
   const [isLoadingUnits, setIsLoadingUnits] = useState(false);
   const [isLoadingLessons, setIsLoadingLessons] = useState(false);
+  const [isLoadingAssignments, setIsLoadingAssignments] = useState(false);
   const [selectedUnitGrade, setSelectedUnitGrade] = useState<string | null>(null);
 
   // Get scope sequence tag from grade
@@ -176,6 +179,31 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
 
     loadLessons();
   }, [state.gradeLevel, state.unitNumber, selectedUnitGrade, scopeSequenceTag]);
+
+  // Fetch Podsie assignments when grade + unit changes
+  useEffect(() => {
+    if (!state.gradeLevel || !state.unitNumber) {
+      setAssignments([]);
+      return;
+    }
+
+    async function loadAssignments() {
+      setIsLoadingAssignments(true);
+      try {
+        const res = await fetch(`/api/scm/podsie-assignments?gradeLevel=${encodeURIComponent(state.gradeLevel!)}&unitNumber=${state.unitNumber}`);
+        const json = await res.json();
+        if (json.success && json.data) {
+          setAssignments(json.data);
+        }
+      } catch (error) {
+        console.error('Error loading assignments:', error);
+      } finally {
+        setIsLoadingAssignments(false);
+      }
+    }
+
+    loadAssignments();
+  }, [state.gradeLevel, state.unitNumber]);
 
   // Sort lessons for display
   const sortedLessons = useMemo(() => sortLessons(lessons), [lessons]);
@@ -317,6 +345,10 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       setError('Please upload a mastery check question image');
       return;
     }
+    if (!state.podsieAssignmentId) {
+      setError('Please select a Podsie assignment');
+      return;
+    }
     // Learning goals are required if no curriculum targets exist
     const hasLearningTargets = selectedLesson?.learningTargets && selectedLesson.learningTargets.length > 0;
     if (!hasLearningTargets && state.learningGoals.length === 0) {
@@ -425,7 +457,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     }
   };
 
-  // Handle grade change - reset unit and lesson
+  // Handle grade change - reset unit, lesson, and assignment
   const handleGradeChange = useCallback((grade: GradeLevel | null) => {
     setGradeLevel(grade);
     setUnitNumber(null);
@@ -433,9 +465,10 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     setSelectedLesson(null);
     setSelectedUnitGrade(null);
     setLessons([]);
-  }, [setGradeLevel, setUnitNumber, setLessonNumber]);
+    setPodsieAssignment(null, null);
+  }, [setGradeLevel, setUnitNumber, setLessonNumber, setPodsieAssignment]);
 
-  // Handle unit change - reset lesson
+  // Handle unit change - reset lesson and assignment
   const handleUnitChange = useCallback((value: string | null) => {
     if (!value) {
       setUnitNumber(null);
@@ -447,7 +480,8 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     }
     setLessonNumber(null);
     setSelectedLesson(null);
-  }, [setUnitNumber, setLessonNumber]);
+    setPodsieAssignment(null, null);
+  }, [setUnitNumber, setLessonNumber, setPodsieAssignment]);
 
   return (
     <div className="flex gap-6">
@@ -549,6 +583,43 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                   {sortedLessons.map((lesson) => (
                     <option key={lesson._id} value={lesson._id}>
                       {formatLessonDisplay(lesson)}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            {/* Podsie Assignment Dropdown */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Podsie Assignment <span className="text-red-500">*</span>
+              </label>
+              {isLoadingAssignments ? (
+                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                  Loading assignments...
+                </div>
+              ) : !state.unitNumber ? (
+                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
+                  Select a unit first
+                </div>
+              ) : assignments.length === 0 ? (
+                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                  No assignments found
+                </div>
+              ) : (
+                <select
+                  value={state.podsieAssignmentId ?? ''}
+                  onChange={(e) => {
+                    const id = e.target.value ? parseInt(e.target.value) : null;
+                    const assignment = assignments.find(a => a.podsieAssignmentId === id);
+                    setPodsieAssignment(id, assignment?.assignmentTitle ?? null);
+                  }}
+                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                >
+                  <option value="">Select assignment...</option>
+                  {assignments.map((a) => (
+                    <option key={a.podsieAssignmentId} value={a.podsieAssignmentId}>
+                      {a.assignmentTitle}
                     </option>
                   ))}
                 </select>

@@ -1,4 +1,4 @@
-import type { HtmlSlide, DeckVisualType, SvgSubtype } from '@zod-schema/scm/worked-example';
+import type { HtmlSlide, DeckVisualType, SvgSubtype, SlideType } from '@zod-schema/scm/worked-example';
 
 // Grade levels matching the schema
 export type GradeLevel = '6' | '7' | '8' | 'Algebra 1';
@@ -416,6 +416,8 @@ export interface WizardState {
   lessonName: string;
   section: string | null;
   scopeAndSequenceId: string | null;
+  podsieAssignmentId: number | null;
+  podsieAssignmentTitle: string | null;
   learningGoals: string[];
   masteryCheckImage: {
     file: File | null;
@@ -470,6 +472,7 @@ export type WizardAction =
   | { type: 'SET_LESSON_NAME'; payload: string }
   | { type: 'SET_SECTION'; payload: string | null }
   | { type: 'SET_SCOPE_AND_SEQUENCE_ID'; payload: string | null }
+  | { type: 'SET_PODSIE_ASSIGNMENT'; payload: { id: number | null; title: string | null } }
   | { type: 'SET_LEARNING_GOALS'; payload: string[] }
   | { type: 'SET_MASTERY_IMAGE'; payload: { file: File | null; preview: string | null } }
   | { type: 'SET_UPLOADED_IMAGE_URL'; payload: string }
@@ -487,6 +490,7 @@ export type WizardAction =
   | { type: 'SET_SLIDES'; payload: HtmlSlide[] }
   | { type: 'UPDATE_SLIDE'; payload: { index: number; htmlContent: string } }
   | { type: 'UPDATE_SLIDES_BATCH'; payload: { index: number; htmlContent: string }[] }
+  | { type: 'UPDATE_SLIDE_TYPE'; payload: { index: number; slideType: SlideType } }
   | { type: 'SET_SELECTED_SLIDE'; payload: number }
   | { type: 'TOGGLE_SLIDE_TO_EDIT'; payload: number }
   | { type: 'TOGGLE_CONTEXT_SLIDE'; payload: number }
@@ -534,6 +538,8 @@ export const initialWizardState: WizardState = {
   lessonName: '',
   section: null,
   scopeAndSequenceId: null,
+  podsieAssignmentId: null,
+  podsieAssignmentTitle: null,
   learningGoals: [],
   masteryCheckImage: {
     file: null,

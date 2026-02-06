@@ -9,6 +9,8 @@ import { handleServerError } from '@error/handlers/server';
 interface UpdateDeckSlidesInput {
   slug: string;
   htmlSlides: HtmlSlide[];
+  lessonSummaryHtml?: string;
+  lessonSummarySlideNumber?: number;
 }
 
 /**
@@ -59,13 +61,21 @@ export async function updateDeckSlides(input: UpdateDeckSlidesInput) {
         }
       }
 
-      // Update the deck's slides
+      // Update the deck's slides and lesson summary fields
+      const updateFields: Record<string, unknown> = {
+        htmlSlides: input.htmlSlides,
+        updatedAt: new Date(),
+      };
+      if (input.lessonSummaryHtml !== undefined) {
+        updateFields.lessonSummaryHtml = input.lessonSummaryHtml;
+      }
+      if (input.lessonSummarySlideNumber !== undefined) {
+        updateFields.lessonSummarySlideNumber = input.lessonSummarySlideNumber;
+      }
+
       const updatedDeck = await WorkedExampleDeck.findByIdAndUpdate(
         existingDeck._id,
-        {
-          htmlSlides: input.htmlSlides,
-          updatedAt: new Date(),
-        },
+        updateFields,
         { new: true }
       );
 

@@ -154,9 +154,21 @@ const HtmlSlideScriptSchema = z.object({
   content: z.string(),
 });
 
+// Slide type - semantic identifier for each slide's purpose
+export const SlideTypeSchema = z.enum([
+  'teacher-instructions',
+  'big-idea',
+  'problem-setup',
+  'step',
+  'practice-preview',
+  'printable-worksheet',
+  'lesson-summary',
+]);
+
 // HTML Slide schema
 const HtmlSlideSchema = z.object({
   slideNumber: z.number().min(1),
+  slideType: SlideTypeSchema.optional(), // Semantic slide type (optional for backward compat)
   htmlContent: z.string(), // Full HTML for the slide
   visualType: z.enum(['html', 'p5', 'd3']).default('html'),
   scripts: z.array(HtmlSlideScriptSchema).optional(),
@@ -195,6 +207,9 @@ export const WorkedExampleDeckSchema = z.object({
   // Standalone lesson summary HTML (printable one-page reference)
   // Stored separately from htmlSlides for lightweight access from other contexts
   lessonSummaryHtml: z.string().optional(),
+
+  // Slide number of the lesson summary slide (computed from slideType or HTML content on save)
+  lessonSummarySlideNumber: z.number().int().positive().optional(),
 
   // Learning Goals
   learningGoals: z.array(z.string()).optional(),
@@ -239,3 +254,4 @@ export type WorkedExampleDeck = z.infer<typeof WorkedExampleDeckSchema>;
 export type CreateWorkedExampleDeckInput = z.infer<typeof CreateWorkedExampleDeckSchema>;
 export type HtmlSlide = z.infer<typeof HtmlSlideSchema>;
 export type HtmlSlideScript = z.infer<typeof HtmlSlideScriptSchema>;
+export type SlideType = z.infer<typeof SlideTypeSchema>;

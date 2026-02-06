@@ -42,6 +42,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
     state,
     updateSlide,
     updateSlidesBatch,
+    updateSlideType,
     setSelectedSlide,
     toggleSlideToEdit,
     setSlideSelectionMode,
@@ -560,6 +561,13 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
       let finalSlug = state.slug;
 
+      // Extract lesson summary slide for edit mode too
+      const editLessonSummarySlide = slides.find(
+        (slide) => slide.slideType === 'lesson-summary',
+      ) ?? slides.find(
+        (slide) => slide.htmlContent.includes('LESSON SUMMARY') && slide.htmlContent.includes('print-page'),
+      );
+
       if (state.editSlug) {
         // Edit mode: update the existing deck instead of creating a new one
         // Update metadata
@@ -585,10 +593,13 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           slug: state.editSlug,
           htmlSlides: slides.map((slide) => ({
             slideNumber: slide.slideNumber,
+            slideType: slide.slideType,
             htmlContent: slide.htmlContent,
             visualType: slide.visualType,
             scripts: slide.scripts,
           })),
+          lessonSummaryHtml: editLessonSummarySlide?.htmlContent,
+          lessonSummarySlideNumber: editLessonSummarySlide?.slideNumber,
         });
 
         if (!slidesResult.success) {
@@ -597,8 +608,10 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
 
         finalSlug = state.editSlug;
       } else {
-        // Extract lesson summary HTML from the slides (if present)
+        // Extract lesson summary slide (prefer slideType, fallback to HTML content search)
         const lessonSummarySlide = slides.find(
+          (slide) => slide.slideType === 'lesson-summary',
+        ) ?? slides.find(
           (slide) => slide.htmlContent.includes('LESSON SUMMARY') && slide.htmlContent.includes('print-page'),
         );
 
@@ -613,13 +626,17 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           unitNumber: unitNumber ?? undefined,
           lessonNumber: lessonNumber ?? undefined,
           scopeAndSequenceId: state.scopeAndSequenceId ?? undefined,
+          podsieAssignmentId: state.podsieAssignmentId ?? undefined,
+          podsieAssignmentTitle: state.podsieAssignmentTitle ?? undefined,
           htmlSlides: slides.map((slide) => ({
             slideNumber: slide.slideNumber,
+            slideType: slide.slideType,
             htmlContent: slide.htmlContent,
             visualType: slide.visualType,
             scripts: slide.scripts,
           })),
           lessonSummaryHtml: lessonSummarySlide?.htmlContent,
+          lessonSummarySlideNumber: lessonSummarySlide?.slideNumber,
           learningGoals:
             state.learningGoals.length > 0 ? state.learningGoals : undefined,
           // Analysis data for deck editing
@@ -648,6 +665,15 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         }
 
         finalSlug = saveResult.slug || state.slug;
+
+        // Auto-link to Podsie assignment's pacing config (if assignment was selected)
+        if (state.podsieAssignmentId) {
+          await updateDeckMetadata(finalSlug, {
+            podsieAssignmentId: state.podsieAssignmentId,
+            podsieAssignmentTitle: state.podsieAssignmentTitle,
+            workedExampleType: 'masteryCheck',
+          });
+        }
       }
 
       // Success!
@@ -812,6 +838,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           selectedSlideIndex={selectedSlideIndex}
           slidesToEdit={slidesToEdit}
           contextSlides={contextSlides}
+          slideTypes={slides.map((s) => s.slideType)}
           onSelectSlide={(index) => {
             setSelectedSlide(index);
             setIsEditing(false);
@@ -820,6 +847,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           onDeselectSlide={deselectSlide}
           onSetSlideSelectionMode={setSlideSelectionMode}
           onClearSelections={clearSlideSelections}
+          onUpdateSlideType={updateSlideType}
         />
 
         {/* Preview / Edit Area */}
