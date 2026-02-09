@@ -13,10 +13,10 @@ export const DOMAIN_LABELS: Record<string, string> = {
 export const DOMAIN_COLORS: Record<string, { bg: string; border: string; text: string; badge: string }> = {
   EE: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", badge: "bg-blue-500" },
   G: { bg: "bg-green-50", border: "border-green-200", text: "text-green-700", badge: "bg-green-500" },
-  RP: { bg: "bg-purple-50", border: "border-purple-200", text: "text-purple-700", badge: "bg-purple-500" },
+  RP: { bg: "bg-teal-50", border: "border-teal-200", text: "text-teal-700", badge: "bg-teal-500" },
   NS: { bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-700", badge: "bg-orange-500" },
   SP: { bg: "bg-pink-50", border: "border-pink-200", text: "text-pink-700", badge: "bg-pink-500" },
-  F: { bg: "bg-teal-50", border: "border-teal-200", text: "text-teal-700", badge: "bg-teal-500" },
+  F: { bg: "bg-purple-50", border: "border-purple-200", text: "text-purple-700", badge: "bg-purple-500" },
   Other: { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", badge: "bg-gray-500" },
 };
 

@@ -20,6 +20,10 @@ interface StandardAccordionProps {
   onQuestionSelectionChange?: (questionId: string, selected: boolean) => void;
   /** Whether to show checkboxes for print selection */
   showCheckboxes?: boolean;
+  /** Controlled open state (when provided, component is controlled) */
+  open?: boolean;
+  /** Callback when open state changes (for controlled mode) */
+  onToggle?: (standard: string) => void;
 }
 
 export function StandardAccordion({
@@ -31,8 +35,11 @@ export function StandardAccordion({
   selectedQuestions,
   onQuestionSelectionChange,
   showCheckboxes = false,
+  open,
+  onToggle,
 }: StandardAccordionProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isOpen = open !== undefined ? open : internalOpen;
 
   const sortedQuestions = [...questions].sort((a, b) => {
     // Sort secondary matches last
@@ -62,10 +69,10 @@ export function StandardAccordion({
       {/* Accordion Header - Domain colored background */}
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between px-4 py-3 text-left ${colors.bg} hover:opacity-90 cursor-pointer transition-colors`}
+        onClick={() => onToggle ? onToggle(standard) : setInternalOpen(!internalOpen)}
+        className={`w-full flex items-center justify-between px-4 py-3 text-left bg-white hover:bg-gray-50 cursor-pointer transition-colors`}
       >
-        <div className="flex items-start gap-3 flex-1 mr-10">
+        <div className="flex items-center gap-3 flex-1 mr-10">
           <span className={`inline-flex items-center justify-center w-20 py-1.5 rounded text-base font-semibold ${colors.badge} text-white flex-shrink-0`}>
             {standard}
           </span>

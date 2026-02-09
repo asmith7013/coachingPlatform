@@ -21,7 +21,6 @@ import {
   extractDomain,
 } from "./hooks";
 import {
-  QuestionCard,
   StandardAccordion,
   StandardsUnitMatrix,
   PrintSelectionFooter,
@@ -58,6 +57,9 @@ export default function StateExamQuestionsPage() {
 
   // Print selection state
   const [selectedForPrint, setSelectedForPrint] = useState<Set<string>>(new Set());
+
+  // Accordion open state (controlled)
+  const [openStandards, setOpenStandards] = useState<Set<string>>(new Set());
 
   // Load stats on mount
   useEffect(() => {
@@ -168,7 +170,7 @@ export default function StateExamQuestionsPage() {
   // Filter questions by search query and unit/section standards
   // Also track which questions matched only via secondary standard
   // Group questions by the standard they matched on
-  const { filteredQuestions, secondaryOnlyMatches, questionsByStandard } = useMemo(() => {
+  const { filteredQuestions, questionsByStandard } = useMemo(() => {
     let filtered = questions;
     const secondaryOnly = new Set<string>();
     const byStandard = new Map<string, QuestionsByStandardData>();
@@ -208,20 +210,22 @@ export default function StateExamQuestionsPage() {
           secondaryOnly.add(q.questionId);
         }
 
-        // Group by matching standards (a question can appear in multiple groups)
+        // Group by question's own standard (not the filter standard) to preserve substandards
         if (primaryMatches && primaryMatchStd) {
-          if (!byStandard.has(primaryMatchStd)) {
-            byStandard.set(primaryMatchStd, { questions: [], isSecondaryMatch: new Map() });
+          const groupKey = normalizeStandard(q.standard);
+          if (!byStandard.has(groupKey)) {
+            byStandard.set(groupKey, { questions: [], isSecondaryMatch: new Map() });
           }
-          byStandard.get(primaryMatchStd)!.questions.push(q);
-          byStandard.get(primaryMatchStd)!.isSecondaryMatch.set(q.questionId, false);
+          byStandard.get(groupKey)!.questions.push(q);
+          byStandard.get(groupKey)!.isSecondaryMatch.set(q.questionId, false);
         }
         if (secondaryMatches && secondaryMatchStd) {
-          if (!byStandard.has(secondaryMatchStd)) {
-            byStandard.set(secondaryMatchStd, { questions: [], isSecondaryMatch: new Map() });
+          const groupKey = q.secondaryStandard ? normalizeStandard(q.secondaryStandard) : secondaryMatchStd;
+          if (!byStandard.has(groupKey)) {
+            byStandard.set(groupKey, { questions: [], isSecondaryMatch: new Map() });
           }
           // Only add if not already added via primary match to this same standard
-          const existing = byStandard.get(secondaryMatchStd)!;
+          const existing = byStandard.get(groupKey)!;
           if (!existing.questions.some(eq => eq.questionId === q.questionId)) {
             existing.questions.push(q);
           }
@@ -242,7 +246,7 @@ export default function StateExamQuestionsPage() {
       });
     }
 
-    return { filteredQuestions: filtered, secondaryOnlyMatches: secondaryOnly, questionsByStandard: byStandard };
+    return { filteredQuestions: filtered, questionsByStandard: byStandard };
   }, [questions, filterStandards]);
 
   // Build a combined standard descriptions map from units data (dynamic from lessons)
@@ -346,6 +350,35 @@ export default function StateExamQuestionsPage() {
     const questionsToPrint = filteredQuestions.filter(q => selectedForPrint.has(q.questionId));
     printSelectedQuestions(questionsToPrint);
   }, [filteredQuestions, selectedForPrint]);
+
+  // Accordion toggle handler
+  const handleStandardToggle = useCallback((standard: string) => {
+    setOpenStandards(prev => {
+      const next = new Set(prev);
+      if (next.has(standard)) {
+        next.delete(standard);
+      } else {
+        next.add(standard);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleExpandAll = useCallback((standards: string[]) => {
+    setOpenStandards(prev => {
+      const next = new Set(prev);
+      standards.forEach(s => next.add(s));
+      return next;
+    });
+  }, []);
+
+  const handleCollapseAll = useCallback((standards: string[]) => {
+    setOpenStandards(prev => {
+      const next = new Set(prev);
+      standards.forEach(s => next.delete(s));
+      return next;
+    });
+  }, []);
 
   return (
     <div className={`min-h-screen bg-gray-50 ${selectedForPrint.size > 0 ? "pb-20" : ""}`}>
@@ -479,15 +512,14 @@ export default function StateExamQuestionsPage() {
             {/* Questions Grid */}
             {!loading && filteredQuestions.length > 0 && (
               <>
-                {/* Results Summary Card - Sticky (top of connected card) */}
-                <div className="bg-slate-50 rounded-t-lg border border-gray-300 border-b-0 sticky top-0 z-30">
-                  {/* Top row - counts, selected unit, and export button */}
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                {/* Results Summary Card - Standalone */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div className="flex items-center justify-between px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-2">
                         <span className="text-3xl font-bold text-blue-600">{filteredQuestions.length}</span>
                         <span className="text-base text-gray-600">
-                          {filteredQuestions.length === 1 ? "question" : "questions"}
+                          total {filteredQuestions.length === 1 ? "question" : "questions"}
                         </span>
                       </div>
                       {selectedUnit !== null && (
@@ -513,7 +545,6 @@ export default function StateExamQuestionsPage() {
                     </div>
                     <button
                       onClick={() => {
-                        // Select all filtered questions by default when opening modal
                         setSelectedForExport(new Set(filteredQuestions.map(q => q.questionId)));
                         setIsExportModalOpen(true);
                       }}
@@ -525,99 +556,90 @@ export default function StateExamQuestionsPage() {
                       Export JSON
                     </button>
                   </div>
-
-                  {/* Second row - domain legend */}
-                  <div className="px-4 py-2.5 border-b-4 border-gray-200 bg-white flex items-center justify-between">
-                    {/* Domain Color Legend - when unit selected, only show domains with standards in this unit */}
-                    <div className="flex flex-wrap gap-2 text-xs">
-                      {(() => {
-                        // Calculate domain counts from filtered standards
-                        const domainStandardCounts = new Map<string, number>();
-                        if (selectedUnit !== null && questionsByStandard.size > 0) {
-                          // Count unique standards per domain
-                          questionsByStandard.forEach((_, standard) => {
-                            const domain = extractDomain(normalizeStandard(standard));
-                            domainStandardCounts.set(domain, (domainStandardCounts.get(domain) || 0) + 1);
-                          });
-                        }
-
-                        // If unit is selected, only show domains that have standards
-                        const domainsToShow = selectedUnit !== null
-                          ? Object.entries(DOMAIN_COLORS).filter(([key]) => key !== "Other" && domainStandardCounts.has(key))
-                          : Object.entries(DOMAIN_COLORS).filter(([key]) => key !== "Other");
-
-                        return domainsToShow.map(([domain, colors]) => {
-                          const count = domainStandardCounts.get(domain);
-                          return (
-                            <span
-                              key={domain}
-                              className={`inline-flex items-center gap-1.5 px-2 py-1 rounded ${colors.bg} ${colors.border} border`}
-                            >
-                              {selectedUnit !== null && count !== undefined ? (
-                                <span className={`inline-flex items-center justify-center w-4 h-4 rounded text-[10px] font-bold ${colors.badge} text-white`}>
-                                  {count}
-                                </span>
-                              ) : (
-                                <span className={`w-2.5 h-2.5 rounded ${colors.badge}`}></span>
-                              )}
-                              <span className={`font-medium ${colors.text}`}>{DOMAIN_LABELS[domain] || domain}</span>
-                            </span>
-                          );
-                        });
-                      })()}
-                    </div>
-                  </div>
                 </div>
 
-                {/* Questions display - grouped by standard (bottom of connected card) */}
-                <div className="bg-white rounded-b-lg border border-gray-300 border-t-0 overflow-hidden">
-                  {questionsByStandard.size > 0 ? (
-                    <div className="divide-y divide-gray-200">
-                      {Array.from(questionsByStandard.entries())
-                        .sort(([a], [b]) => {
-                          // Sort by domain first, then by standard number
-                          const domainA = extractDomain(a);
-                          const domainB = extractDomain(b);
-                          if (domainA !== domainB) {
-                            return domainA.localeCompare(domainB);
-                          }
-                          // Extract numeric parts for numerical sorting within domain
-                          const numA = a.replace(/[^\d.]/g, '').split('.').map(Number);
-                          const numB = b.replace(/[^\d.]/g, '').split('.').map(Number);
-                          for (let i = 0; i < Math.max(numA.length, numB.length); i++) {
-                            const diff = (numA[i] || 0) - (numB[i] || 0);
-                            if (diff !== 0) return diff;
-                          }
-                          return 0;
-                        })
-                        .map(([standard, { questions: stdQuestions, isSecondaryMatch }]) => (
-                          <StandardAccordion
-                            key={standard}
-                            standard={standard}
-                            questions={stdQuestions}
-                            isSecondaryMatch={isSecondaryMatch}
-                            contained
-                            standardDescriptions={dynamicStandardDescriptions}
-                            selectedQuestions={selectedForPrint}
-                            onQuestionSelectionChange={handleQuestionSelectionChange}
-                            showCheckboxes={true}
-                          />
-                        ))}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4">
-                      {filteredQuestions.map((question) => (
-                        <QuestionCard
-                          key={question.questionId}
-                          question={question}
-                          isSecondaryOnlyMatch={secondaryOnlyMatches.has(question.questionId)}
-                          isSelected={selectedForPrint.has(question.questionId)}
-                          onSelectionChange={handleQuestionSelectionChange}
-                          showCheckbox={true}
-                        />
-                      ))}
-                    </div>
-                  )}
+                {/* Questions display - grouped by domain */}
+                <div className="mt-4 space-y-4">
+                  {(() => {
+                    // Sort standards, then group by domain
+                    const sortedEntries = Array.from(questionsByStandard.entries())
+                      .sort(([a], [b]) => {
+                        const domainA = extractDomain(a);
+                        const domainB = extractDomain(b);
+                        if (domainA !== domainB) {
+                          return domainA.localeCompare(domainB);
+                        }
+                        const numA = a.replace(/[^\d.]/g, '').split('.').map(Number);
+                        const numB = b.replace(/[^\d.]/g, '').split('.').map(Number);
+                        for (let i = 0; i < Math.max(numA.length, numB.length); i++) {
+                          const diff = (numA[i] || 0) - (numB[i] || 0);
+                          if (diff !== 0) return diff;
+                        }
+                        return a.localeCompare(b);
+                      });
+
+                    // Group into domains preserving sort order
+                    const domainGroups = new Map<string, typeof sortedEntries>();
+                    sortedEntries.forEach((entry) => {
+                      const domain = extractDomain(entry[0]);
+                      if (!domainGroups.has(domain)) {
+                        domainGroups.set(domain, []);
+                      }
+                      domainGroups.get(domain)!.push(entry);
+                    });
+
+                    return Array.from(domainGroups.entries()).map(([domain, entries]) => {
+                      const colors = DOMAIN_COLORS[domain] || DOMAIN_COLORS.Other;
+                      const totalQuestions = entries.reduce((sum, [, data]) => sum + data.questions.length, 0);
+                      const domainStandards = entries.map(([s]) => s);
+                      const allExpanded = domainStandards.every(s => openStandards.has(s));
+
+                      return (
+                        <div key={domain} className={`bg-white rounded-lg border ${colors.border} overflow-hidden`}>
+                          {/* Domain header with colored bg and chip-style title */}
+                          <div className={`${colors.bg} px-4 py-3 flex items-center justify-between`}>
+                            <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded bg-white ${colors.border} border`}>
+                              <span className={`w-2.5 h-2.5 rounded-full ${colors.badge}`}></span>
+                              <span className={`font-medium ${colors.text}`}>{DOMAIN_LABELS[domain] || domain}</span>
+                            </span>
+                            <div className="flex items-center gap-3">
+                              <span className={`text-sm ${colors.text}`}>
+                                {entries.length} {entries.length === 1 ? "standard" : "standards"} · {totalQuestions} {totalQuestions === 1 ? "question" : "questions"}
+                              </span>
+                              <button
+                                onClick={() => allExpanded ? handleCollapseAll(domainStandards) : handleExpandAll(domainStandards)}
+                                className={`inline-flex items-center gap-1 text-xs font-medium ${colors.text} bg-white ${colors.border} border rounded px-2 py-1 hover:opacity-70 cursor-pointer`}
+                              >
+                                <span>{allExpanded ? "Collapse all" : "Expand all"}</span>
+                                <svg className={`w-4 h-4 transition-transform ${allExpanded ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 3l5 5 5-5" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5 5 5-5" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          {/* Standard accordions within this domain */}
+                          <div className="divide-y divide-gray-200">
+                            {entries.map(([standard, { questions: stdQuestions, isSecondaryMatch }]) => (
+                              <StandardAccordion
+                                key={standard}
+                                standard={standard}
+                                questions={stdQuestions}
+                                isSecondaryMatch={isSecondaryMatch}
+                                contained
+                                standardDescriptions={dynamicStandardDescriptions}
+                                selectedQuestions={selectedForPrint}
+                                onQuestionSelectionChange={handleQuestionSelectionChange}
+                                showCheckboxes={true}
+                                open={openStandards.has(standard)}
+                                onToggle={handleStandardToggle}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    });
+                  })()}
                 </div>
               </>
             )}
