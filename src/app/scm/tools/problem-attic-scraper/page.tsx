@@ -24,23 +24,21 @@ const EXAM_MONTHS = ['', 'January', 'June', 'August'] as const;
 
 interface GradeUrls {
   grade: string;
-  urls: string[];
-  examYear: string;
-  examTitle: string;
+  entries: { url: string; examYear: string; examTitle: string }[];
 }
 
-interface GradeConfig {
-  urls: string;
+interface UrlEntry {
+  url: string;
   year: string;
   month: string;
 }
 
 export default function ProblemAtticScraperPage() {
-  const defaultConfig: GradeConfig = { urls: '', year: '', month: '' };
-  const [grade6, setGrade6] = useState<GradeConfig>(defaultConfig);
-  const [grade7, setGrade7] = useState<GradeConfig>(defaultConfig);
-  const [grade8, setGrade8] = useState<GradeConfig>(defaultConfig);
-  const [alg1, setAlg1] = useState<GradeConfig>(defaultConfig);
+  const emptyEntry = (): UrlEntry => ({ url: '', year: '', month: '' });
+  const [grade6, setGrade6] = useState<UrlEntry[]>([emptyEntry()]);
+  const [grade7, setGrade7] = useState<UrlEntry[]>([emptyEntry()]);
+  const [grade8, setGrade8] = useState<UrlEntry[]>([emptyEntry()]);
+  const [alg1, setAlg1] = useState<UrlEntry[]>([emptyEntry()]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<StateTestQuestion[]>([]);
@@ -49,27 +47,44 @@ export default function ProblemAtticScraperPage() {
   const [urlStatuses, setUrlStatuses] = useState<UrlStatus[]>([]);
   const [_currentUrlIndex, setCurrentUrlIndex] = useState<number | null>(null);
 
-  const parseUrls = (input: string): string[] => {
-    return input
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length > 0 && line.startsWith('http'));
+  const buildExamTitle = (entry: UrlEntry): string => {
+    return entry.month ? `${entry.month} ${entry.year}` : entry.year;
   };
 
-  const buildExamTitle = (config: GradeConfig): string => {
-    return config.month ? `${config.month} ${config.year}` : config.year;
+  const updateEntry = (
+    entries: UrlEntry[],
+    setEntries: React.Dispatch<React.SetStateAction<UrlEntry[]>>,
+    index: number,
+    field: keyof UrlEntry,
+    value: string
+  ) => {
+    setEntries(prev => prev.map((e, i) => i === index ? { ...e, [field]: value } : e));
   };
+
+  const addEntry = (setEntries: React.Dispatch<React.SetStateAction<UrlEntry[]>>) => {
+    setEntries(prev => [...prev, emptyEntry()]);
+  };
+
+  const removeEntry = (
+    setEntries: React.Dispatch<React.SetStateAction<UrlEntry[]>>,
+    index: number
+  ) => {
+    setEntries(prev => prev.length <= 1 ? [emptyEntry()] : prev.filter((_, i) => i !== index));
+  };
+
+  const getValidEntries = (entries: UrlEntry[]) =>
+    entries.filter(e => e.url.trim().startsWith('http') && e.year.trim().length > 0);
 
   const getAllGradeUrls = (): GradeUrls[] => {
     return [
-      { grade: '6', urls: parseUrls(grade6.urls), examYear: grade6.year, examTitle: buildExamTitle(grade6) },
-      { grade: '7', urls: parseUrls(grade7.urls), examYear: grade7.year, examTitle: buildExamTitle(grade7) },
-      { grade: '8', urls: parseUrls(grade8.urls), examYear: grade8.year, examTitle: buildExamTitle(grade8) },
-      { grade: 'alg1', urls: parseUrls(alg1.urls), examYear: alg1.year, examTitle: buildExamTitle(alg1) },
-    ].filter(g => g.urls.length > 0 && g.examYear.length > 0);
+      { grade: '6', entries: getValidEntries(grade6).map(e => ({ url: e.url.trim(), examYear: e.year.trim(), examTitle: buildExamTitle(e) })) },
+      { grade: '7', entries: getValidEntries(grade7).map(e => ({ url: e.url.trim(), examYear: e.year.trim(), examTitle: buildExamTitle(e) })) },
+      { grade: '8', entries: getValidEntries(grade8).map(e => ({ url: e.url.trim(), examYear: e.year.trim(), examTitle: buildExamTitle(e) })) },
+      { grade: 'alg1', entries: getValidEntries(alg1).map(e => ({ url: e.url.trim(), examYear: e.year.trim(), examTitle: buildExamTitle(e) })) },
+    ].filter(g => g.entries.length > 0);
   };
 
-  const totalUrls = parseUrls(grade6.urls).length + parseUrls(grade7.urls).length + parseUrls(grade8.urls).length + parseUrls(alg1.urls).length;
+  const totalUrls = getValidEntries(grade6).length + getValidEntries(grade7).length + getValidEntries(grade8).length + getValidEntries(alg1).length;
 
   const handleScrape = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,8 +97,8 @@ export default function ProblemAtticScraperPage() {
 
     // Flatten all URLs with their grades for status tracking
     const allUrlsWithGrades: { url: string; grade: string; examYear: string; examTitle: string }[] = [];
-    for (const { grade, urls, examYear, examTitle } of gradeUrls) {
-      for (const url of urls) {
+    for (const { grade, entries } of gradeUrls) {
+      for (const { url, examYear, examTitle } of entries) {
         allUrlsWithGrades.push({ url, grade, examYear, examTitle });
       }
     }
@@ -154,10 +169,10 @@ export default function ProblemAtticScraperPage() {
   };
 
   const handleReset = () => {
-    setGrade6(defaultConfig);
-    setGrade7(defaultConfig);
-    setGrade8(defaultConfig);
-    setAlg1(defaultConfig);
+    setGrade6([emptyEntry()]);
+    setGrade7([emptyEntry()]);
+    setGrade8([emptyEntry()]);
+    setAlg1([emptyEntry()]);
     setResults([]);
     setError(null);
     setUrlStatuses([]);
@@ -203,48 +218,73 @@ export default function ProblemAtticScraperPage() {
           </div>
 
           <form onSubmit={handleScrape} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {([
-                { label: 'Grade 6', config: grade6, setConfig: setGrade6, colorClass: 'blue' },
-                { label: 'Grade 7', config: grade7, setConfig: setGrade7, colorClass: 'purple' },
-                { label: 'Grade 8', config: grade8, setConfig: setGrade8, colorClass: 'orange' },
-                { label: 'Algebra 1', config: alg1, setConfig: setAlg1, colorClass: 'green' },
-              ] as const).map(({ label, config, setConfig, colorClass }) => (
+            <div className="space-y-6">
+              {[
+                { label: 'Grade 6', entries: grade6, setEntries: setGrade6, colorClass: 'blue' },
+                { label: 'Grade 7', entries: grade7, setEntries: setGrade7, colorClass: 'purple' },
+                { label: 'Grade 8', entries: grade8, setEntries: setGrade8, colorClass: 'orange' },
+                { label: 'Algebra 1', entries: alg1, setEntries: setAlg1, colorClass: 'green' },
+              ].map(({ label, entries, setEntries, colorClass }) => (
                 <div key={label} className="space-y-2">
-                  <span className="inline-flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <span className={`bg-${colorClass}-100 text-${colorClass}-800 px-2 py-0.5 rounded text-xs font-semibold`}>{label}</span>
-                    URLs ({parseUrls(config.urls).length})
-                  </span>
-
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={config.year}
-                      onChange={(e) => setConfig({ ...config, year: e.target.value })}
-                      placeholder="Year"
-                      className="w-20 px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                      disabled={isLoading}
-                    />
-                    <select
-                      value={config.month}
-                      onChange={(e) => setConfig({ ...config, month: e.target.value })}
-                      className="flex-1 px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                      disabled={isLoading}
-                    >
-                      {EXAM_MONTHS.map((m) => (
-                        <option key={m} value={m}>{m || '(no month)'}</option>
-                      ))}
-                    </select>
+                    <span className="text-sm text-gray-500">
+                      {getValidEntries(entries).length} valid {getValidEntries(entries).length === 1 ? 'URL' : 'URLs'}
+                    </span>
                   </div>
 
-                  <textarea
-                    value={config.urls}
-                    onChange={(e) => setConfig({ ...config, urls: e.target.value })}
-                    placeholder="https://www.problem-attic.com/..."
-                    rows={4}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-${colorClass}-500 focus:border-${colorClass}-500 font-mono text-sm`}
+                  <div className="space-y-2">
+                    {entries.map((entry, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={entry.url}
+                          onChange={(e) => updateEntry(entries, setEntries, idx, 'url', e.target.value)}
+                          placeholder="https://www.problem-attic.com/..."
+                          className="flex-1 px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+                          disabled={isLoading}
+                        />
+                        <input
+                          type="text"
+                          value={entry.year}
+                          onChange={(e) => updateEntry(entries, setEntries, idx, 'year', e.target.value)}
+                          placeholder="Year"
+                          className="w-20 px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                          disabled={isLoading}
+                        />
+                        <select
+                          value={entry.month}
+                          onChange={(e) => updateEntry(entries, setEntries, idx, 'month', e.target.value)}
+                          className="w-32 px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                          disabled={isLoading}
+                        >
+                          {EXAM_MONTHS.map((m) => (
+                            <option key={m} value={m}>{m || '(no month)'}</option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          onClick={() => removeEntry(setEntries, idx)}
+                          className="flex-shrink-0 p-1.5 text-gray-400 hover:text-red-500 cursor-pointer"
+                          disabled={isLoading}
+                          title="Remove row"
+                        >
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => addEntry(setEntries)}
+                    className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer"
                     disabled={isLoading}
-                  />
+                  >
+                    + Add URL
+                  </button>
                 </div>
               ))}
             </div>
