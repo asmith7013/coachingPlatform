@@ -75,10 +75,16 @@ export class StateTestScraper {
     console.log('✅ Login successful');
   }
 
-  async scrapePage(url: string, grade: string): Promise<StateTestQuestion[]> {
+  async scrapePage(
+    url: string,
+    grade: string,
+    examYear: string,
+    examTitle: string
+  ): Promise<StateTestQuestion[]> {
     if (!this.page) throw new Error('Browser not initialized');
 
     console.log(`📄 Scraping page: ${url} (Grade ${grade})`);
+    console.log(`📋 Exam: ${examTitle}, Year: ${examYear}`);
 
     // Navigate to target URL
     await this.page.goto(url, { waitUntil: 'networkidle' });
@@ -86,13 +92,6 @@ export class StateTestScraper {
     // Wait for questions to load
     await this.page.waitForSelector(SELECTORS.QUESTION_CONTAINER, { timeout: 15000 });
     console.log('✅ Page loaded, questions found');
-
-    // Extract page-level metadata
-    const examTitleEl = this.page.locator(SELECTORS.EXAM_TITLE);
-    const examTitle = (await examTitleEl.textContent())?.trim() || '';
-    const examYear = examTitle.match(/(\d{4})/)?.[1] || 'unknown';
-
-    console.log(`📋 Exam: ${examTitle}, Year: ${examYear}`);
 
     // Find all question containers
     const containers = this.page.locator(SELECTORS.QUESTION_CONTAINER);
@@ -143,6 +142,7 @@ export class StateTestScraper {
           sourceUrl: url,
           scrapedAt: new Date().toISOString(),
           pageIndex: i + 1, // 1-based index
+          questionNumber: i + 1, // Sequential order = question number
         });
       } catch (error) {
         console.error(`  ❌ Error processing question ${i + 1}:`);

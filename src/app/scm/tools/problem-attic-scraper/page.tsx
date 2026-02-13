@@ -20,15 +20,27 @@ interface UrlStatus {
   error?: string;
 }
 
+const EXAM_MONTHS = ['', 'January', 'June', 'August'] as const;
+
 interface GradeUrls {
   grade: string;
   urls: string[];
+  examYear: string;
+  examTitle: string;
+}
+
+interface GradeConfig {
+  urls: string;
+  year: string;
+  month: string;
 }
 
 export default function ProblemAtticScraperPage() {
-  const [grade6Urls, setGrade6Urls] = useState('');
-  const [grade7Urls, setGrade7Urls] = useState('');
-  const [grade8Urls, setGrade8Urls] = useState('');
+  const defaultConfig: GradeConfig = { urls: '', year: '', month: '' };
+  const [grade6, setGrade6] = useState<GradeConfig>(defaultConfig);
+  const [grade7, setGrade7] = useState<GradeConfig>(defaultConfig);
+  const [grade8, setGrade8] = useState<GradeConfig>(defaultConfig);
+  const [alg1, setAlg1] = useState<GradeConfig>(defaultConfig);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<StateTestQuestion[]>([]);
@@ -44,15 +56,20 @@ export default function ProblemAtticScraperPage() {
       .filter(line => line.length > 0 && line.startsWith('http'));
   };
 
-  const getAllGradeUrls = (): GradeUrls[] => {
-    return [
-      { grade: '6', urls: parseUrls(grade6Urls) },
-      { grade: '7', urls: parseUrls(grade7Urls) },
-      { grade: '8', urls: parseUrls(grade8Urls) },
-    ].filter(g => g.urls.length > 0);
+  const buildExamTitle = (config: GradeConfig): string => {
+    return config.month ? `${config.month} ${config.year}` : config.year;
   };
 
-  const totalUrls = parseUrls(grade6Urls).length + parseUrls(grade7Urls).length + parseUrls(grade8Urls).length;
+  const getAllGradeUrls = (): GradeUrls[] => {
+    return [
+      { grade: '6', urls: parseUrls(grade6.urls), examYear: grade6.year, examTitle: buildExamTitle(grade6) },
+      { grade: '7', urls: parseUrls(grade7.urls), examYear: grade7.year, examTitle: buildExamTitle(grade7) },
+      { grade: '8', urls: parseUrls(grade8.urls), examYear: grade8.year, examTitle: buildExamTitle(grade8) },
+      { grade: 'alg1', urls: parseUrls(alg1.urls), examYear: alg1.year, examTitle: buildExamTitle(alg1) },
+    ].filter(g => g.urls.length > 0 && g.examYear.length > 0);
+  };
+
+  const totalUrls = parseUrls(grade6.urls).length + parseUrls(grade7.urls).length + parseUrls(grade8.urls).length + parseUrls(alg1.urls).length;
 
   const handleScrape = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,10 +81,10 @@ export default function ProblemAtticScraperPage() {
     setResults([]);
 
     // Flatten all URLs with their grades for status tracking
-    const allUrlsWithGrades: { url: string; grade: string }[] = [];
-    for (const { grade, urls } of gradeUrls) {
+    const allUrlsWithGrades: { url: string; grade: string; examYear: string; examTitle: string }[] = [];
+    for (const { grade, urls, examYear, examTitle } of gradeUrls) {
       for (const url of urls) {
-        allUrlsWithGrades.push({ url, grade });
+        allUrlsWithGrades.push({ url, grade, examYear, examTitle });
       }
     }
 
@@ -83,7 +100,7 @@ export default function ProblemAtticScraperPage() {
 
     // Process URLs sequentially
     for (let i = 0; i < allUrlsWithGrades.length; i++) {
-      const { url, grade } = allUrlsWithGrades[i];
+      const { url, grade, examYear, examTitle } = allUrlsWithGrades[i];
       setCurrentUrlIndex(i);
 
       // Update status to scraping
@@ -92,7 +109,7 @@ export default function ProblemAtticScraperPage() {
       ));
 
       try {
-        const result = await scrapeStateTestPage(url, grade);
+        const result = await scrapeStateTestPage(url, grade, examYear, examTitle);
 
         if (result.success && result.questions) {
           allResults.push(...result.questions);
@@ -137,9 +154,10 @@ export default function ProblemAtticScraperPage() {
   };
 
   const handleReset = () => {
-    setGrade6Urls('');
-    setGrade7Urls('');
-    setGrade8Urls('');
+    setGrade6(defaultConfig);
+    setGrade7(defaultConfig);
+    setGrade8(defaultConfig);
+    setAlg1(defaultConfig);
     setResults([]);
     setError(null);
     setUrlStatuses([]);
@@ -185,60 +203,50 @@ export default function ProblemAtticScraperPage() {
           </div>
 
           <form onSubmit={handleScrape} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Grade 6 URLs */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {([
+                { label: 'Grade 6', config: grade6, setConfig: setGrade6, colorClass: 'blue' },
+                { label: 'Grade 7', config: grade7, setConfig: setGrade7, colorClass: 'purple' },
+                { label: 'Grade 8', config: grade8, setConfig: setGrade8, colorClass: 'orange' },
+                { label: 'Algebra 1', config: alg1, setConfig: setAlg1, colorClass: 'green' },
+              ] as const).map(({ label, config, setConfig, colorClass }) => (
+                <div key={label} className="space-y-2">
                   <span className="inline-flex items-center gap-2">
-                    <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs font-semibold">Grade 6</span>
-                    URLs ({parseUrls(grade6Urls).length})
+                    <span className={`bg-${colorClass}-100 text-${colorClass}-800 px-2 py-0.5 rounded text-xs font-semibold`}>{label}</span>
+                    URLs ({parseUrls(config.urls).length})
                   </span>
-                </label>
-                <textarea
-                  value={grade6Urls}
-                  onChange={(e) => setGrade6Urls(e.target.value)}
-                  placeholder="https://www.problem-attic.com/..."
-                  rows={5}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
-                  disabled={isLoading}
-                />
-              </div>
 
-              {/* Grade 7 URLs */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  <span className="inline-flex items-center gap-2">
-                    <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded text-xs font-semibold">Grade 7</span>
-                    URLs ({parseUrls(grade7Urls).length})
-                  </span>
-                </label>
-                <textarea
-                  value={grade7Urls}
-                  onChange={(e) => setGrade7Urls(e.target.value)}
-                  placeholder="https://www.problem-attic.com/..."
-                  rows={5}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 font-mono text-sm"
-                  disabled={isLoading}
-                />
-              </div>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={config.year}
+                      onChange={(e) => setConfig({ ...config, year: e.target.value })}
+                      placeholder="Year"
+                      className="w-20 px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      disabled={isLoading}
+                    />
+                    <select
+                      value={config.month}
+                      onChange={(e) => setConfig({ ...config, month: e.target.value })}
+                      className="flex-1 px-2 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      disabled={isLoading}
+                    >
+                      {EXAM_MONTHS.map((m) => (
+                        <option key={m} value={m}>{m || '(no month)'}</option>
+                      ))}
+                    </select>
+                  </div>
 
-              {/* Grade 8 URLs */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  <span className="inline-flex items-center gap-2">
-                    <span className="bg-orange-100 text-orange-800 px-2 py-0.5 rounded text-xs font-semibold">Grade 8</span>
-                    URLs ({parseUrls(grade8Urls).length})
-                  </span>
-                </label>
-                <textarea
-                  value={grade8Urls}
-                  onChange={(e) => setGrade8Urls(e.target.value)}
-                  placeholder="https://www.problem-attic.com/..."
-                  rows={5}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 font-mono text-sm"
-                  disabled={isLoading}
-                />
-              </div>
+                  <textarea
+                    value={config.urls}
+                    onChange={(e) => setConfig({ ...config, urls: e.target.value })}
+                    placeholder="https://www.problem-attic.com/..."
+                    rows={4}
+                    className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-${colorClass}-500 focus:border-${colorClass}-500 font-mono text-sm`}
+                    disabled={isLoading}
+                  />
+                </div>
+              ))}
             </div>
 
             {error && (
@@ -318,9 +326,10 @@ export default function ProblemAtticScraperPage() {
                   <span className={`flex-shrink-0 px-2 py-0.5 rounded text-xs font-semibold ${
                     status.grade === '6' ? 'bg-blue-100 text-blue-800' :
                     status.grade === '7' ? 'bg-purple-100 text-purple-800' :
+                    status.grade === 'alg1' ? 'bg-green-100 text-green-800' :
                     'bg-orange-100 text-orange-800'
                   }`}>
-                    G{status.grade}
+                    {status.grade === 'alg1' ? 'Alg1' : `G${status.grade}`}
                   </span>
 
                   {/* URL and Status */}

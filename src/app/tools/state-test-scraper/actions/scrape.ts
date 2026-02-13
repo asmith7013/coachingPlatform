@@ -13,7 +13,12 @@ export interface ScrapeResult {
   questions?: StateTestQuestion[];
 }
 
-export async function scrapeStateTestPage(url: string, grade: string): Promise<ScrapeResult> {
+export async function scrapeStateTestPage(
+  url: string,
+  grade: string,
+  examYear: string,
+  examTitle: string
+): Promise<ScrapeResult> {
   const email = process.env.PROBLEM_ATTIC_EMAIL;
   const password = process.env.PROBLEM_ATTIC_PASSWORD;
 
@@ -24,10 +29,10 @@ export async function scrapeStateTestPage(url: string, grade: string): Promise<S
     };
   }
 
-  if (!grade || !['6', '7', '8'].includes(grade)) {
+  if (!grade || !['6', '7', '8', 'alg1'].includes(grade)) {
     return {
       success: false,
-      error: 'Grade must be 6, 7, or 8',
+      error: 'Grade must be 6, 7, 8, or alg1',
     };
   }
 
@@ -40,7 +45,7 @@ export async function scrapeStateTestPage(url: string, grade: string): Promise<S
   try {
     await scraper.initialize();
     await scraper.login();
-    const questions = await scraper.scrapePage(url, grade);
+    const questions = await scraper.scrapePage(url, grade, examYear, examTitle);
 
     // Save to database
     await withDbConnection(async () => {

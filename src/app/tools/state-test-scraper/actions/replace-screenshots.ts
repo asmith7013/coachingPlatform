@@ -17,11 +17,24 @@ export type YearResult = {
   grade6: ReplaceResult;
   grade7: ReplaceResult;
   grade8: ReplaceResult;
+  alg1: ReplaceResult;
 };
 
 /**
+ * Sort PNG filenames by the number embedded in them (e.g. q01.png, q02.png).
+ * Falls back to natural string sort if no number is found.
+ */
+function sortFilesByNumber(files: string[]): string[] {
+  return [...files].sort((a, b) => {
+    const numA = parseInt(a.match(/(\d+)/)?.[1] || '0');
+    const numB = parseInt(b.match(/(\d+)/)?.[1] || '0');
+    return numA - numB;
+  });
+}
+
+/**
  * Replace state test screenshots for a specific year with new images from local folders.
- * Files are matched to questions by sorting both by timestamp (files) and pageIndex (questions).
+ * Files are matched to questions by sorting both by filename number and pageIndex.
  */
 export async function replaceScreenshotsForYear(year: string): Promise<YearResult> {
   const basePath = '/Users/alexsmith/Documents/state-exam';
@@ -29,8 +42,9 @@ export async function replaceScreenshotsForYear(year: string): Promise<YearResul
   const grade6 = await replaceScreenshotsForGrade(path.join(basePath, `${year} 6`), '6', year);
   const grade7 = await replaceScreenshotsForGrade(path.join(basePath, `${year} 7`), '7', year);
   const grade8 = await replaceScreenshotsForGrade(path.join(basePath, `${year} 8`), '8', year);
+  const alg1 = await replaceScreenshotsForGrade(path.join(basePath, `${year} alg1`), 'alg1', year);
 
-  return { grade6, grade7, grade8 };
+  return { grade6, grade7, grade8, alg1 };
 }
 
 /**
@@ -52,6 +66,22 @@ export async function replaceAllScreenshots(): Promise<{
   };
 }
 
+/**
+ * Replace screenshots from an explicit folder path.
+ * Use this after running the PDF question extractor (extract-exam-questions.mjs),
+ * which outputs files as q01.png, q02.png, etc.
+ *
+ * Files are sorted by the number in their filename and matched to questions
+ * sorted by pageIndex (q01.png → pageIndex 1, q02.png → pageIndex 2, etc.)
+ */
+export async function replaceScreenshotsFromFolder(
+  folderPath: string,
+  grade: string,
+  year: string
+): Promise<ReplaceResult> {
+  return replaceScreenshotsForGrade(folderPath, grade, year);
+}
+
 async function replaceScreenshotsForGrade(
   folderPath: string,
   grade: string,
@@ -62,7 +92,7 @@ async function replaceScreenshotsForGrade(
 
   try {
     return await withDbConnection(async () => {
-      // 1. Get all PNG files sorted by modification time (oldest first)
+      // 1. Get all PNG files, excluding full-page renders (prefixed with _)
       console.log(`\n📂 Reading files from: ${folderPath}`);
       let files: string[];
       try {
@@ -72,72 +102,72 @@ async function replaceScreenshotsForGrade(
         console.error(`❌ ${error}`);
         return { success: false, replaced: 0, total: 0, errors: [error] };
       }
-      const pngFiles = files.filter((f) => f.toLowerCase().endsWith('.png'));
+      const pngFiles = files.filter(
+        (f) => f.toLowerCase().endsWith('.png') && !f.startsWith('_')
+      );
 
-    const fileStats = await Promise.all(
-      pngFiles.map(async (f) => ({
-        name: f,
-        mtime: (await fs.stat(path.join(folderPath, f))).mtime,
-      }))
-    );
+      // Sort by number in filename (q01.png, q02.png, etc.)
+      const sortedFiles = sortFilesByNumber(pngFiles);
 
-    // Sort by modification time, oldest first (first screenshot = first question)
-    fileStats.sort((a, b) => a.mtime.getTime() - b.mtime.getTime());
-    const sortedFiles = fileStats.map((f) => f.name);
+      console.log(`📊 Found ${sortedFiles.length} PNG files`);
 
-    console.log(`📊 Found ${sortedFiles.length} PNG files`);
+      // 2. Get questions from MongoDB sorted by pageIndex
+      console.log(`🔍 Querying MongoDB for grade ${grade}, year ${year}...`);
+      const questions = await StateTestQuestionModel.find({ grade, examYear: year })
+        .sort({ pageIndex: 1 })
+        .lean();
 
-    // 2. Get questions from MongoDB sorted by pageIndex
-    console.log(`🔍 Querying MongoDB for grade ${grade}, year ${year}...`);
-    const questions = await StateTestQuestionModel.find({ grade, examYear: year })
-      .sort({ pageIndex: 1 })
-      .lean();
+      console.log(`📊 Found ${questions.length} questions in database`);
 
-    console.log(`📊 Found ${questions.length} questions in database`);
-
-    // 3. Verify counts match
-    if (sortedFiles.length !== questions.length) {
-      const error = `Count mismatch: ${sortedFiles.length} files vs ${questions.length} questions`;
-      console.error(`❌ ${error}`);
-      return {
-        success: false,
-        replaced: 0,
-        total: questions.length,
-        errors: [error],
-      };
-    }
-
-    console.log(`✅ Counts match! Starting upload...\n`);
-
-    // 4. Upload each file to Vercel Blob
-    for (let i = 0; i < sortedFiles.length; i++) {
-      const file = sortedFiles[i];
-      const question = questions[i];
-
-      try {
-        const filePath = path.join(folderPath, file);
-        const fileBuffer = await fs.readFile(filePath);
-
-        const blobPath = `state-test-questions/${year}/grade-${grade}/${question.questionId}.png`;
-
-        await put(blobPath, fileBuffer, {
-          access: 'public',
-          contentType: 'image/png',
-          allowOverwrite: true,
-        });
-
-        replaced++;
-        console.log(
-          `✓ [${i + 1}/${sortedFiles.length}] Uploaded: ${question.questionId} (pageIndex: ${question.pageIndex})`
-        );
-      } catch (error) {
-        const errorMsg = `Failed to upload ${file} for question ${question.questionId}: ${error instanceof Error ? error.message : 'Unknown error'}`;
-        console.error(`✗ [${i + 1}/${sortedFiles.length}] ${errorMsg}`);
-        errors.push(errorMsg);
+      // 3. Verify counts match
+      if (sortedFiles.length !== questions.length) {
+        const error = `Count mismatch: ${sortedFiles.length} files vs ${questions.length} questions`;
+        console.error(`❌ ${error}`);
+        return {
+          success: false,
+          replaced: 0,
+          total: questions.length,
+          errors: [error],
+        };
       }
-    }
 
-    console.log(`\n📈 Grade ${grade} complete: ${replaced}/${sortedFiles.length} successful`);
+      console.log(`✅ Counts match! Starting upload...\n`);
+
+      // 4. Upload each file to Vercel Blob
+      for (let i = 0; i < sortedFiles.length; i++) {
+        const file = sortedFiles[i];
+        const question = questions[i];
+
+        try {
+          const filePath = path.join(folderPath, file);
+          const fileBuffer = await fs.readFile(filePath);
+
+          const blobPath = `state-test-questions/${year}/grade-${grade}/${question.questionId}.png`;
+
+          const blob = await put(blobPath, fileBuffer, {
+            access: 'public',
+            contentType: 'image/png',
+            allowOverwrite: true,
+          });
+
+          // Update screenshotUrl in database
+          await StateTestQuestionModel.findOneAndUpdate(
+            { questionId: question.questionId },
+            { $set: { screenshotUrl: blob.url } }
+          );
+
+          replaced++;
+          console.log(
+            `✓ [${i + 1}/${sortedFiles.length}] Uploaded: ${question.questionId} (Q${question.pageIndex}) ← ${file}`
+          );
+        } catch (error) {
+          const errorMsg = `Failed to upload ${file} for question ${question.questionId}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+          console.error(`✗ [${i + 1}/${sortedFiles.length}] ${errorMsg}`);
+          errors.push(errorMsg);
+        }
+      }
+
+      console.log(`\n📈 Grade ${grade} complete: ${replaced}/${sortedFiles.length} successful`);
 
       return {
         success: errors.length === 0,
