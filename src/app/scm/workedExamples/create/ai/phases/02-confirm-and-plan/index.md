@@ -1,10 +1,10 @@
 # Phase 2: Confirm & Plan
 
 ## Purpose
-Present your analysis to the user, get their confirmation, and plan the three scenarios - all using DIFFERENT contexts from the mastery check.
+Present your analysis to the user, get their confirmation, and plan the three scenarios - all using DIFFERENT contexts from the mastery check. Also surface backward-planning details so the user can validate the instructional design.
 
 ## Output Format: PPTX-Compatible HTML
-All slides will be **PPTX-compatible HTML** (960×540px, light theme, 7 slides). See `03-generate-slides/02-technical-rules.md` for technical specs.
+All slides will be **PPTX-compatible HTML** (960×540px, light theme). Slide count varies based on step count (2-5 steps). See `03-generate-slides/02-technical-rules.md` for technical specs.
 
 ## Prerequisites
 - Phase 1 complete
@@ -48,10 +48,17 @@ Based on the mastery check question you provided, here's my understanding:
   - [field 2]: [value]
   - [field 3]: [value, if applicable]
 
-**The Steps:**
+**The Steps (2-5 moves, default 3):**
 1. [STEP VERB]: [brief description]
 2. [STEP VERB]: [brief description]
 3. [STEP VERB]: [brief description, if needed]
+... (up to 5 steps if the problem requires it)
+
+**Backward Planning:**
+- **Anticipated Misconceptions:** [1-3 common student errors or misunderstandings for this problem type]
+- **Big Idea (Detailed):** [expanded explanation of the core mathematical concept and why it matters]
+- **Design Rationale:** [why this strategy/visual/step sequence was chosen over alternatives]
+- **Discovery Questions:** [1-2 questions the teacher can pose to help students discover the key idea themselves]
 
 **The three scenarios (all DIFFERENT from the mastery check):**
 - Scenario 1 (worked example): [context + what makes it engaging]
@@ -169,7 +176,7 @@ Each scenario MUST:
 - Require the **exact same strategy** to solve
 - Use **DIFFERENT numbers and context** from the mastery check (and from each other)
 - Be solvable using the **exact same steps in the exact same order**
-- Include a **condensed problem reminder (≤15 words)** for use on slides 2-8
+- Include a **condensed problem reminder (≤15 words)** for use on step and practice slides
 
 ### ⚠️ Visual Progression: Plan What Changes Each Step (REQUIRED for Scenario 1)
 
@@ -181,16 +188,19 @@ The visual should tell a story that builds toward the answer. Each step adds som
 
 ```
 Visual Progression (Scenario 1):
-- Setup (Slide 2): [What the visual shows initially - problem state, unknowns visible]
-- Step 1 (Slides 3-4): [What gets highlighted/added after Step 1]
-- Step 2 (Slides 5-6): [What gets highlighted/added after Step 2]
-- Step 3 (Slides 7-8): [What shows the final answer on the visual]
+- Setup (Slide 3): [What the visual shows initially - problem state, unknowns visible]
+- Step 1 (Slide 4): [What gets highlighted/added after Step 1]
+- Step 2 (Slide 5): [What gets highlighted/added after Step 2]
+- Step 3 (Slide 6): [What shows the final answer on the visual]
+... (include one entry per step — 2-5 steps depending on the strategy)
 ```
+
+**Note:** The number of step slides varies (2-5). Slide numbers for practice previews and printable shift accordingly. See `01-slide-by-slide.md` for the dynamic slide table.
 
 **Examples by Visual Type:**
 
-| Visual Type | Setup Shows | Step 1 Adds | Step 2 Adds | Step 3 Adds |
-|-------------|-------------|-------------|-------------|-------------|
+| Visual Type | Setup Shows | Step 1 Adds | Step 2 Adds | Final Step Adds |
+|-------------|-------------|-------------|-------------|-----------------|
 | Tape diagram | Empty tape with ? and total | Boxes with value per box | Highlight the count | Answer label |
 | Coordinate graph | Blank axes with labels | First line plotted | Second line plotted | Intersection labeled |
 | Hanger diagram | Initial balanced equation | Subtraction from both sides | Division both sides | Variable isolated |
@@ -245,11 +255,12 @@ Scenario 1 (Worked Example):
 - Same mathematical structure: [yes/explain how]
 - Different from mastery check: [yes/explain what's different]
 - **VisualPlan:** [see schema below - details for THIS scenario's numbers]
-- **Visual Progression:** (REQUIRED - what changes on visual each step)
+- **Visual Progression:** (REQUIRED - what changes on visual each step, one entry per move)
   - Setup: [initial state - problem shown, unknowns visible]
   - Step 1: [what gets added/highlighted]
   - Step 2: [what gets added/highlighted]
-  - Step 3: [answer revealed on visual]
+  - ... (one entry per step, up to Step 5)
+  - Final Step: [answer revealed on visual]
 
 Scenario 2 (Practice):
 - Context: [different engaging scenario]

@@ -2,9 +2,9 @@
 
 ## Purpose
 
-Create 10 PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals.
+Create PPTX-compatible HTML slides using atomic card-patterns and PPTX animation for CFU/Answer reveals. Total slide count varies based on step count (S = 2-5 steps, default 3).
 
-**Note:** Slides 1-6 are the worked example, slides 7-8 are practice problem previews for whiteboard work, slide 9 (the printable worksheet) is generated separately after the main slides complete, and slide 10 (the lesson summary) is a one-page printable reference card.
+**Note:** Slides 1-3 are fixed (Teacher Instructions, Big Idea, Problem Setup). Slides 4 through 3+S are step slides (one per step). After the steps come two practice preview slides for whiteboard work, then the printable worksheet, and finally the lesson summary. With the default 3 steps, this yields 10 slides; with 5 steps it yields 12.
 
 ## Output Format
 
@@ -53,8 +53,10 @@ STEP 3.1: Check Visual Type (from Phase 1)
 │   └── If "SVG visual" → Read 04-svg-workflow.md + graph-snippet.html
 │
 ▼
-STEP 3.2: Generate Slides 1-6 (Worked Example)
-│   For each slide N from 1 to 6:
+STEP 3.2: Generate Slides 1 through 3+S (Worked Example)
+│   Slides 1-3 are fixed (Teacher Instructions, Big Idea, Problem Setup).
+│   Slides 4 through 3+S are step slides (one per step, S = 2-5).
+│   For each slide:
 │     1. Announce checkpoint (CLI mode only)
 │     2. Choose layout preset (full-width or two-column)
 │     3. Compose using card-patterns
@@ -62,21 +64,21 @@ STEP 3.2: Generate Slides 1-6 (Worked Example)
 │     5. Write HTML file
 │
 ▼
-STEP 3.3: Generate Slides 7-8 (Practice Problem Previews)
-│   For each practice preview (7 and 8):
+STEP 3.3: Generate Practice Preview Slides (slides 3+S+1 and 3+S+2)
+│   For each practice preview:
 │     1. Use Problem Setup slide as template
-│     2. Replace scenario with Scenario 2 (slide 7) or Scenario 3 (slide 8)
+│     2. Replace scenario with Scenario 2 (first preview) or Scenario 3 (second preview)
 │     3. Include "Your Task:" section with the question
 │     4. NO CFU/Answer boxes - students work on whiteboards
 │
 ▼
-STEP 3.4: Generate Printable (Slide 9)
-│   - Generated separately after slides 1-8 complete
+STEP 3.4: Generate Printable (slide 3+S+3)
+│   - Generated separately after all previous slides complete
 │   - Uses printable-slide-snippet.html pattern
 │   - Contains practice problems from Scenarios 2 & 3 + Answer Key
 │
 ▼
-STEP 3.5: Generate Lesson Summary (Slide 10)
+STEP 3.5: Generate Lesson Summary (slide 3+S+4)
 │   - One-page printable summary of the lesson's main idea
 │   - Uses lesson-summary-snippet.html pattern
 │   - Contains: Big Idea, Strategy overview, Visual reference, Key Takeaway
@@ -123,8 +125,8 @@ Most slides use just 3 patterns:
 - `graph-snippet.html` → Coordinate graphs (recalculate pixels)
 - `slide-teacher-instructions.html` → Slide 1 only (teacher-facing)
 - `slide-big-idea.html` → Slide 2 only (student-facing Big Idea)
-- `printable-slide-snippet.html` → Slide 9 only (printable worksheet)
-- `lesson-summary-snippet.html` → Slide 10 only (lesson summary reference card)
+- `printable-slide-snippet.html` → Printable slide only (slide 3+S+3)
+- `lesson-summary-snippet.html` → Lesson summary only (slide 3+S+4)
 
 **Always READ and COPY from snippet files.** Never write HTML from scratch.
 
@@ -132,8 +134,9 @@ Most slides use just 3 patterns:
 
 ## File Output Structure
 
-Write each slide to a separate file:
+Write each slide to a separate file. The number of step slides (S) varies from 2-5 (default 3), so the total file count varies accordingly.
 
+**Example with 3 steps (default):**
 ```
 src/app/presentations/{slug}/
 ├── slide-1.html   (Teacher Instructions - Big Idea, Learning Targets, Strategy)
@@ -147,6 +150,8 @@ src/app/presentations/{slug}/
 ├── slide-9.html   (Printable with Practice Problems 1 & 2 + Answer Key)
 └── slide-10.html  (Lesson Summary - one-page printable reference card)
 ```
+
+**With 5 steps:** slides 4-8 are steps, slide 9 is Practice Preview 1, slide 10 is Practice Preview 2, slide 11 is Printable, slide 12 is Lesson Summary.
 
 Use the Write tool for each slide file.
 
@@ -165,7 +170,7 @@ Use the Write tool for each slide file.
 
 ## NEXT PHASE
 
-**When all slides are written:**
+**When all slides are written (total count depends on step count):**
 
 Use the Read tool to read the Phase 4 instructions:
 ```

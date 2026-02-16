@@ -62,23 +62,26 @@ Graph: Use card-patterns/svg-card.html → modify for X_MAX=10, Y_MAX=100
 
 CFU and Answer boxes are now STACKED on the same slide (both appear, one after another on click).
 
+**Note:** The number of step slides varies (N = 2-5 steps, default 3). Slide numbers after the steps shift accordingly. Let S = number of steps.
+
 | Slide # | Type | `data-slide-type` | Layout Options | Content |
 |---------|------|--------------------|----------------|---------|
 | 1 | Teacher Instructions | `teacher-instructions` | `two-column` | **Teacher-only (students start on Slide 2).** Big Idea + Learning Targets + Deck Overview |
 | 2 | Big Idea | `big-idea` | `centered` | Grade/Unit/Lesson + Big Idea badge + statement |
 | 3 | Problem Setup | `problem-setup` | `two-column` or `centered` | problem + visual |
-| 4 | Step 1 | `step` | `two-column` or `centered` | step content + CFU + Answer (stacked) |
-| 5 | Step 2 | `step` | `two-column` or `centered` | step content + CFU + Answer (stacked) |
-| 6 | Step 3 | `step` | `two-column` or `centered` | step content + CFU + Answer (stacked) |
-| 7 | Practice Preview 1 | `practice-preview` | `two-column` or `centered` | Scenario 2 problem + visual + "Your Task" |
-| 8 | Practice Preview 2 | `practice-preview` | `two-column` or `centered` | Scenario 3 problem + visual + "Your Task" |
-| 9 | Printable | `printable-worksheet` | `full-width` | printable format |
-| 10 | Lesson Summary | `lesson-summary` | `full-width` | printable one-page lesson reference card |
+| 4 to 3+S | Steps 1-S | `step` | `two-column` or `centered` | step content + CFU + Answer (stacked). One slide per step. |
+| 3+S+1 | Practice Preview 1 | `practice-preview` | `two-column` or `centered` | Scenario 2 problem + visual + "Your Task" |
+| 3+S+2 | Practice Preview 2 | `practice-preview` | `two-column` or `centered` | Scenario 3 problem + visual + "Your Task" |
+| 3+S+3 | Printable | `printable-worksheet` | `full-width` | printable format |
+| 3+S+4 | Lesson Summary | `lesson-summary` | `full-width` | printable one-page lesson reference card |
+
+**Example with 3 steps (default):** Steps on slides 4-6, Practice Preview 1 on slide 7, Practice Preview 2 on slide 8, Printable on slide 9, Lesson Summary on slide 10.
+**Example with 5 steps:** Steps on slides 4-8, Practice Preview 1 on slide 9, Practice Preview 2 on slide 10, Printable on slide 11, Lesson Summary on slide 12.
 
 **⚠️ REQUIRED: Every slide's `<body>` tag MUST include the `data-slide-type` attribute from the table above.**
 Example: `<body style="width:960px;height:540px;..." data-slide-type="step">`
 
-**Layout Selection (slides 3-8):**
+**Layout Selection (step and practice slides):**
 
 | Choose `centered` when... | Choose `two-column` when... |
 |---------------------------|----------------------------|
@@ -122,8 +125,8 @@ groups?"                   How many groups?"]
 See `reference/layout-presets.md` for pixel dimensions and HTML examples.
 
 **Note:** Practice problems appear in TWO places:
-1. **Slides 7-8 (Preview)**: One problem per slide for whiteboard work (NO answers shown)
-2. **Slide 9 (Printable)**: Both problems with space for written work + answer key
+1. **Practice Preview slides (Preview)**: One problem per slide for whiteboard work (NO answers shown)
+2. **Printable slide**: Both problems with space for written work + answer key
 
 ---
 
@@ -131,7 +134,7 @@ See `reference/layout-presets.md` for pixel dimensions and HTML examples.
 
 **CFU and Answer boxes occupy the SAME position on the same slide. Both use PPTX animation - CFU appears first, then Answer overlays it on the second click.**
 
-Add BOTH boxes BEFORE the closing `</body>` tag on Step slides (4, 5, 6):
+Add BOTH boxes BEFORE the closing `</body>` tag on each Step slide (slides 4 through 3+S, where S = number of steps):
 
 **CFU Box (appears on first click):**
 ```html
@@ -160,7 +163,7 @@ Add BOTH boxes BEFORE the closing `</body>` tag on Step slides (4, 5, 6):
 
 ### Step 4: Compose Slides from Atomic Components
 
-**For ALL slides (1-8, printable generated separately as slide 9):**
+**For ALL non-printable slides (1 through last practice preview; printable and lesson summary generated separately):**
 
 1. **ANNOUNCE** checkpoint to user (plain text, CLI mode only)
 2. **CHOOSE LAYOUT** from the table above (full-width or two-column)
@@ -176,36 +179,36 @@ Add BOTH boxes BEFORE the closing `</body>` tag on Step slides (4, 5, 6):
 6. **VERIFY** the pre-flight checklist (see `checklists/pre-flight.md`)
 7. **WRITE** slide file using Write tool (file starts with `<!DOCTYPE html>`)
 
-### Step 5: Practice Problem Preview Slides (7-8)
+### Step 5: Practice Problem Preview Slides
 
-**For Practice Preview slides, use the Problem Setup slide (3) as a template but:**
+**For Practice Preview slides (the two slides after the last step slide), use the Problem Setup slide (3) as a template but:**
 - Change title zone to: "PRACTICE PROBLEM [1/2]: [Scenario Name] [Icon]"
 - Use the appropriate scenario's graphPlan/diagramEvolution:
-  - Slide 7: Use `scenarios[1]` (Scenario 2)
-  - Slide 8: Use `scenarios[2]` (Scenario 3)
+  - Practice Preview 1 (slide 3+S+1): Use `scenarios[1]` (Scenario 2)
+  - Practice Preview 2 (slide 3+S+2): Use `scenarios[2]` (Scenario 3)
 - Include "Your Task:" section prominently with the question to solve
 - **NO CFU/Answer boxes** - students work independently on whiteboards
 - Keep the same layout style as the worked example (two-column or centered)
 
 ### Step 6: Repeat Protocol
 
-For each slide N from 1 to 8:
+For each slide N from 1 through the last practice preview slide:
 1. Return to Step 1
 2. Announce checkpoint (plain text to user, CLI mode only)
 3. Compose slide using card-patterns
 4. Write slide file (starts with `<!DOCTYPE html>`, no other content before it)
-5. Continue until all slides complete
+5. Continue until all non-printable slides complete
 
-### Step 7: Generate Lesson Summary (Slide 10)
+### Step 7: Generate Lesson Summary (last slide)
 
-**After the printable slide (9) is complete, generate a one-page lesson summary.**
+**After the printable slide is complete, generate a one-page lesson summary (slide 3+S+4).**
 
 This is a printable reference card that students can use to quickly recall the main idea from this lesson. Use `lesson-summary-snippet.html` as the template.
 
 **Content to include:**
 1. **Header:** "LESSON SUMMARY" badge + lesson title + Grade/Unit/Lesson
 2. **Big Idea (hero section):** Large, prominent statement from `strategyDefinition.bigIdea`
-3. **Strategy Steps:** Numbered list of the 3 moves (verb + description) from `strategyDefinition.moves`
+3. **Strategy Steps:** Numbered list of all moves (2-5, verb + description) from `strategyDefinition.moves`
 4. **Visual Reference (ALWAYS include):**
    - For coordinate graph lessons: Small labeled graph showing the key concept (use Scenario 1's graphPlan, scaled down)
    - For diagram lessons: Simplified version of the diagram type
@@ -286,10 +289,10 @@ The mastery check (`problemAnalysis.graphPlan`) is for the student's exit ticket
 
 | Slides | Source | GraphPlan to Use |
 |--------|--------|------------------|
-| 3-6 (Worked Example) | Scenario 1 | `scenarios[0].graphPlan` |
-| 7 (Practice Preview 1) | Scenario 2 | `scenarios[1].graphPlan` |
-| 8 (Practice Preview 2) | Scenario 3 | `scenarios[2].graphPlan` |
-| 9 (Printable - Practice 1 & 2) | Scenarios 2 & 3 | `scenarios[1].graphPlan` and `scenarios[2].graphPlan` |
+| 3 through 3+S (Worked Example) | Scenario 1 | `scenarios[0].graphPlan` |
+| Practice Preview 1 (slide 3+S+1) | Scenario 2 | `scenarios[1].graphPlan` |
+| Practice Preview 2 (slide 3+S+2) | Scenario 3 | `scenarios[2].graphPlan` |
+| Printable (slide 3+S+3) | Scenarios 2 & 3 | `scenarios[1].graphPlan` and `scenarios[2].graphPlan` |
 
 Each GRAPH PLAN contains the semantic decisions for that scenario:
 - **Equations** with correct slope/y-intercept for that scenario's numbers

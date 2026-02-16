@@ -57,7 +57,7 @@ This preview prevents surprises during slide generation and ensures the teacher 
 - No JavaScript toggles or animations in HTML
 - CFU and Answer boxes use PPTX animation (appear on click)
 - Both CFU and Answer are on the SAME slide (Answer overlays CFU on second click)
-- Total slide count: **7 slides** (6 worked example + 1 printable with practice problems)
+- Total slide count varies: **3 fixed + S step slides + 2 practice previews + printable + lesson summary** (where S = 2-5 steps, default 3). With 3 steps = 10 slides total.
 
 ## Core Principles
 
@@ -70,7 +70,7 @@ Separating questions from answers forces mental commitment before revealing solu
 ### 3. Transfer of Learning
 Independent practice (practice slides) tests whether students can apply logic to new contexts without scaffolding.
 
-## Slide Structure (7 Slides)
+## Slide Structure (Dynamic, based on step count)
 
 ### Slide 1: Teacher Instructions
 **Purpose**: Provide teacher with lesson overview (not shown to students)
@@ -96,7 +96,7 @@ Independent practice (practice slides) tests whether students can apply logic to
 - Visual representation (graph, table, diagram)
 - No solution yet
 
-### Slides 4-6: Step-by-Step with CFU + Answer (Stacked)
+### Slides 4 through 3+S: Step-by-Step with CFU + Answer (Stacked)
 
 **Each step is ONE slide with both CFU and Answer boxes (animated):**
 
@@ -108,9 +108,17 @@ Independent practice (practice slides) tests whether students can apply logic to
 - CFU box (appears on FIRST click)
 - Answer box (appears on SECOND click, overlays CFU)
 
-**Number of Steps**: 3 steps = 3 slides
+**Number of Steps**: N steps = N slides (2-5, default 3)
 
-### Slide 7: Printable Worksheet (Final Slide)
+### Practice Preview Slides (slides 3+S+1 and 3+S+2)
+**Purpose**: Present practice problems for whiteboard work
+**Content**:
+- One problem per slide (Scenario 2, then Scenario 3)
+- Visual representation
+- "Your Task:" section
+- NO CFU/Answer boxes - students work independently
+
+### Printable Worksheet (slide 3+S+3)
 **Purpose**: Provide take-home practice
 **Content**:
 - ALL practice problems (Scenarios 2 and 3) in ONE slide with multiple print-page divs
@@ -119,7 +127,7 @@ Independent practice (practice slides) tests whether students can apply logic to
 - 8.5in × 11in page format
 - @media print CSS
 - NO strategy reminders - students apply independently
-- Generated separately after slides 1-6 complete
+- Generated separately after all step and practice preview slides complete
 
 ## The Five Rules
 
@@ -134,13 +142,13 @@ PPTX Implementation:
 - Teacher can pause, discuss, then reveal each
 
 ### Rule 2: The "Visual Stability" Rule
-**Keep main visual in same position across slides 3-6**
+**Keep main visual in same position across the problem setup and all step slides**
 
 Why: Reduces cognitive load from visual searching. Mimics teacher at whiteboard who keeps problem visible while adding annotations.
 
 Implementation:
 - Fix position of graph/table on slide 2
-- Slides 3-8 maintain that exact position
+- All step and practice slides maintain that exact position
 - Add highlights, arrows, annotations AROUND the stationary element
 - Never reposition the core visual between slides
 
@@ -148,14 +156,15 @@ Implementation:
 
 **"Stability" means POSITION is fixed, but CONTENT evolves.**
 
-Each step slide must ADD something new to the visual. If slides 3-8 show identical visuals, students see repetition instead of progression. The visual should tell a story that builds toward the answer.
+Each step slide must ADD something new to the visual. If all step slides show identical visuals, students see repetition instead of progression. The visual should tell a story that builds toward the answer.
 
 **The Pattern:**
 ```
-Slide 2 (Setup):    Visual shows the PROBLEM (unknowns visible)
-Slide 3-4 (Step 1): Visual shows Step 1 RESULT highlighted
-Slide 5-6 (Step 2): Visual shows Step 2 RESULT added
-Slide 7-8 (Step 3): Visual shows SOLUTION complete
+Slide 3 (Setup):     Visual shows the PROBLEM (unknowns visible)
+Step 1 slide:        Visual shows Step 1 RESULT highlighted
+Step 2 slide:        Visual shows Step 2 RESULT added
+...
+Final Step slide:    Visual shows SOLUTION complete
 ```
 
 **What Changes vs. What Stays:**
@@ -215,8 +224,8 @@ Don't:
 
 Why: Tests true understanding vs. pattern matching.
 
-- Slides 3-6: Full scaffolding (step badges, CFU questions, highlighting)
-- Slide 7 (Printable): No scaffolding (just the raw problems + "Your Task")
+- Step slides: Full scaffolding (step badges, CFU questions, highlighting)
+- Printable slide: No scaffolding (just the raw problems + "Your Task")
 
 ### Rule 5: The "3-Second Scan" Rule
 **A student should understand the key point in 3 seconds**
@@ -269,13 +278,14 @@ Prose & equations        Diagrams, tables, graphs
 Before generating slides, define:
 1. **Strategy Name**: Clear, memorable (e.g., "Plot and Connect", "Balance and Isolate")
 2. **One-Sentence Summary**: "To solve this, we [VERB] the [OBJECT] to find [GOAL]"
-3. **2-3 Moves**: Each move is a verb + what it accomplishes
+3. **2-5 Moves** (default 3): Each move is a verb + what it accomplishes
 
 ### Step Headers Use Strategy Verbs
 If your moves are IDENTIFY, PLOT, CONNECT:
-- Slide 3-4: "STEP 1: IDENTIFY"
-- Slide 5-6: "STEP 2: PLOT"
-- Slide 7-8: "STEP 3: CONNECT"
+- Step 1 slide: "STEP 1: IDENTIFY"
+- Step 2 slide: "STEP 2: PLOT"
+- Step 3 slide: "STEP 3: CONNECT"
+- (Continue for each additional step if more than 3 moves)
 
 ### CFU Questions Reference Strategy
 - ✅ "Why did I IDENTIFY the slope first?"
@@ -372,4 +382,4 @@ All three use y = mx + b, but with completely different contexts.
 
 ---
 
-**Remember**: Total slide count is 9 (8 worked example + 1 printable). The principles are fixed: separate Ask from Answer (via slide advancement), maintain visual stability, use engaging contexts, remove scaffolding in the printable worksheet.
+**Remember**: Total slide count is dynamic (3 fixed + S step slides + 2 practice previews + 1 printable + 1 lesson summary, where S = 2-5). With 3 steps this yields 10 slides. The principles are fixed: separate Ask from Answer (via slide advancement), maintain visual stability, use engaging contexts, remove scaffolding in the printable worksheet.
