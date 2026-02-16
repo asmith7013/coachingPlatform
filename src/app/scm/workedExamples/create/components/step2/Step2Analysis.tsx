@@ -777,7 +777,92 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
 
         {/* Right Column - Accordions (70%) */}
         <div className="w-[70%] space-y-4">
-          {/* Big Idea Card - FIRST element in right column, EDITABLE */}
+          {/* ① EXIT TICKET ANALYSIS - Source of truth */}
+          <SectionAccordion
+            title="Exit Ticket Analysis"
+            subtitle={
+              problemAnalysis.visualType === "svg-visual" &&
+              problemAnalysis.svgSubtype
+                ? `${problemAnalysis.visualType}: ${problemAnalysis.svgSubtype}`
+                : problemAnalysis.visualType
+            }
+            color="#475569"
+            className="mb-0"
+            hideExpandAll
+            defaultOpenItems={["et-analysis"]}
+            items={[
+              {
+                key: "et-analysis",
+                title: "Problem & Solution",
+                icon: null,
+                content: (
+                  <div>
+                    <div className="border-b border-gray-200 pb-4">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                        Problem Type
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {problemAnalysis.problemType}
+                      </p>
+                    </div>
+                    <div className="border-b border-gray-200 py-4">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                        Answer
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {problemAnalysis.answer}
+                      </p>
+                    </div>
+                    <div className="pt-4">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                        Key Challenge
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {problemAnalysis.keyChallenge}
+                      </p>
+                    </div>
+                  </div>
+                ),
+              },
+              ...(problemAnalysis.visualType === "svg-visual" &&
+              problemAnalysis.svgSubtype === "coordinate-graph" &&
+              problemAnalysis.graphPlan
+                ? [
+                    {
+                      key: "et-graph-plan",
+                      title: "Graph Plan",
+                      icon: null,
+                      content: (
+                        <GraphPlanDisplay
+                          graphPlan={problemAnalysis.graphPlan!}
+                        />
+                      ),
+                    },
+                  ]
+                : []),
+              ...(problemAnalysis.problemTranscription
+                ? [
+                    {
+                      key: "et-transcription",
+                      title: "Problem Transcription",
+                      icon: null,
+                      content: (
+                        <div>
+                          <p className="text-xs text-gray-400 mb-2">
+                            (verify this matches the image)
+                          </p>
+                          <p className="text-sm text-gray-600 whitespace-pre-wrap bg-gray-50 rounded p-3 border border-gray-200">
+                            {problemAnalysis.problemTranscription}
+                          </p>
+                        </div>
+                      ),
+                    },
+                  ]
+                : []),
+            ]}
+          />
+
+          {/* ② BIG IDEA - Core mathematical principle */}
           {strategyDefinition.bigIdea && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-sm">
               <div className="flex items-center justify-between mb-2">
@@ -808,30 +893,24 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                   {strategyDefinition.bigIdea}
                 </p>
               )}
-            </div>
-          )}
-
-          {/* Backward Planning Details - Big Idea Detailed + Supporting Patterns */}
-          {strategyDefinition.bigIdeaDetailed && (
-            <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-3 text-sm">
-              <details>
-                <summary className="cursor-pointer text-blue-700 font-medium text-xs uppercase tracking-wide">
-                  Detailed Big Idea &amp; Supporting Patterns
-                </summary>
-                <div className="mt-2 space-y-2">
-                  <p className="text-gray-700 whitespace-pre-line">{strategyDefinition.bigIdeaDetailed}</p>
-                  {strategyDefinition.bigIdeaSupportingPatterns && strategyDefinition.bigIdeaSupportingPatterns.length > 0 && (
-                    <div>
-                      <span className="text-xs font-semibold text-blue-600">Supporting Patterns:</span>
-                      <ul className="list-disc list-inside text-gray-600 mt-1">
-                        {strategyDefinition.bigIdeaSupportingPatterns.map((p, i) => (
-                          <li key={i}>{p}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+              {/* Detailed Big Idea (visible, not collapsed) */}
+              {strategyDefinition.bigIdeaDetailed && (
+                <div className="mt-3 pt-3 border-t border-blue-100">
+                  <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Detailed</span>
+                  <p className="text-sm text-gray-700 whitespace-pre-line mt-1">{strategyDefinition.bigIdeaDetailed}</p>
                 </div>
-              </details>
+              )}
+              {/* Supporting Patterns (visible) */}
+              {strategyDefinition.bigIdeaSupportingPatterns && strategyDefinition.bigIdeaSupportingPatterns.length > 0 && (
+                <div className="mt-2">
+                  <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Supporting Patterns</span>
+                  <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
+                    {strategyDefinition.bigIdeaSupportingPatterns.map((p, i) => (
+                      <li key={i}>{p}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           )}
 
@@ -879,19 +958,165 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
             </div>
           )}
 
-          {/* Design Rationale */}
-          {strategyDefinition.designRationale && (
-            <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 text-sm">
-              <details>
-                <summary className="cursor-pointer text-purple-700 font-medium text-xs uppercase tracking-wide">
-                  Design Rationale
-                </summary>
-                <p className="mt-2 text-gray-700 whitespace-pre-line">{strategyDefinition.designRationale}</p>
-              </details>
-            </div>
-          )}
+          {/* ④ INSTRUCTIONAL DESIGN - Design Rationale + Strategy Steps */}
+          <SectionAccordion
+            title="Instructional Design"
+            subtitle={strategyDefinition.name}
+            color="#6366F1"
+            className="mb-0"
+            hideExpandAll
+            defaultOpenItems={["id-design-rationale", "id-strategy-steps"]}
+            items={[
+              // Design Rationale (promoted from hidden <details>)
+              ...(strategyDefinition.designRationale
+                ? [
+                    {
+                      key: "id-design-rationale",
+                      title: "Design Rationale",
+                      icon: null,
+                      content: (
+                        <p className="text-sm text-gray-700 whitespace-pre-line">
+                          {strategyDefinition.designRationale}
+                        </p>
+                      ),
+                    },
+                  ]
+                : []),
+              // Strategy Steps (moved from Worked Example accordion)
+              {
+                key: "id-strategy-steps",
+                title: (
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-sm font-medium text-gray-700">
+                      Strategy Steps
+                    </span>
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingStrategySteps(!editingStrategySteps);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          setEditingStrategySteps(!editingStrategySteps);
+                        }
+                      }}
+                      className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
+                      title={
+                        editingStrategySteps
+                          ? "Done editing"
+                          : "Edit strategy steps"
+                      }
+                    >
+                      {editingStrategySteps ? (
+                        <CheckIcon className="h-4 w-4" />
+                      ) : (
+                        <PencilIcon className="h-4 w-4" />
+                      )}
+                    </span>
+                  </div>
+                ),
+                icon: null,
+                content: editingStrategySteps ? (
+                  <div className="space-y-4">
+                    {strategyDefinition.moves.map((move, i) => (
+                      <div
+                        key={i}
+                        className="bg-gray-50 rounded p-3 space-y-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Badge intent="primary" size="xs" rounded="full">
+                            {i + 1}
+                          </Badge>
+                          <input
+                            type="text"
+                            value={move.verb}
+                            onChange={(e) => {
+                              const updated = [...strategyDefinition.moves];
+                              updated[i] = {
+                                ...updated[i],
+                                verb: e.target.value,
+                              };
+                              updateStrategyMoves(updated);
+                            }}
+                            className="font-semibold text-sm border border-gray-300 rounded px-2 py-1 w-32 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Verb"
+                          />
+                        </div>
+                        <input
+                          type="text"
+                          value={move.description}
+                          onChange={(e) => {
+                            const updated = [...strategyDefinition.moves];
+                            updated[i] = {
+                              ...updated[i],
+                              description: e.target.value,
+                            };
+                            updateStrategyMoves(updated);
+                          }}
+                          className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Description"
+                        />
+                        <input
+                          type="text"
+                          value={move.result}
+                          onChange={(e) => {
+                            const updated = [...strategyDefinition.moves];
+                            updated[i] = {
+                              ...updated[i],
+                              result: e.target.value,
+                            };
+                            updateStrategyMoves(updated);
+                          }}
+                          className="w-full text-sm text-gray-500 border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Result (optional)"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {strategyDefinition.moves.map((move, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <Badge intent="primary" size="xs" rounded="full">
+                          {i + 1}
+                        </Badge>
+                        <div className="flex-1 min-w-0">
+                          <span className="font-semibold text-gray-900 text-sm">
+                            {move.verb}
+                          </span>
+                          <span className="text-gray-600 text-sm">
+                            : {move.description}
+                          </span>
+                          {move.result && (
+                            <span className="text-gray-500 text-xs block mt-0.5">
+                              → {move.result}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    {/* Discovery Questions */}
+                    {strategyDefinition.discoveryQuestions && strategyDefinition.discoveryQuestions.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-gray-100">
+                        <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide">Discovery Questions</span>
+                        <ul className="mt-1 space-y-1">
+                          {strategyDefinition.discoveryQuestions.map((q, i) => (
+                            <li key={i} className="text-xs text-gray-600 italic">&ldquo;{q}&rdquo;</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                ),
+              },
+            ]}
+          />
 
-          {/* Worked Example Accordion - Green header */}
+          {/* ⑤ WORKED EXAMPLE - Scenario 1 */}
           {scenarios[0] && (
             <SectionAccordion
               title={`${scenarios[0].themeIcon} Worked Example`}
@@ -1000,137 +1225,6 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                       },
                     ]
                   : []),
-                // Strategy Steps section (editable)
-                {
-                  key: "we-strategy-steps",
-                  title: (
-                    <div className="flex items-center justify-between w-full">
-                      <span className="text-sm font-medium text-gray-700">
-                        Strategy Steps
-                      </span>
-                      <span
-                        role="button"
-                        tabIndex={0}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingStrategySteps(!editingStrategySteps);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            setEditingStrategySteps(!editingStrategySteps);
-                          }
-                        }}
-                        className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
-                        title={
-                          editingStrategySteps
-                            ? "Done editing"
-                            : "Edit strategy steps"
-                        }
-                      >
-                        {editingStrategySteps ? (
-                          <CheckIcon className="h-4 w-4" />
-                        ) : (
-                          <PencilIcon className="h-4 w-4" />
-                        )}
-                      </span>
-                    </div>
-                  ),
-                  icon: null,
-                  content: editingStrategySteps ? (
-                    <div className="space-y-4">
-                      {strategyDefinition.moves.map((move, i) => (
-                        <div
-                          key={i}
-                          className="bg-gray-50 rounded p-3 space-y-2"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Badge intent="primary" size="xs" rounded="full">
-                              {i + 1}
-                            </Badge>
-                            <input
-                              type="text"
-                              value={move.verb}
-                              onChange={(e) => {
-                                const updated = [...strategyDefinition.moves];
-                                updated[i] = {
-                                  ...updated[i],
-                                  verb: e.target.value,
-                                };
-                                updateStrategyMoves(updated);
-                              }}
-                              className="font-semibold text-sm border border-gray-300 rounded px-2 py-1 w-32 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              placeholder="Verb"
-                            />
-                          </div>
-                          <input
-                            type="text"
-                            value={move.description}
-                            onChange={(e) => {
-                              const updated = [...strategyDefinition.moves];
-                              updated[i] = {
-                                ...updated[i],
-                                description: e.target.value,
-                              };
-                              updateStrategyMoves(updated);
-                            }}
-                            className="w-full text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Description"
-                          />
-                          <input
-                            type="text"
-                            value={move.result}
-                            onChange={(e) => {
-                              const updated = [...strategyDefinition.moves];
-                              updated[i] = {
-                                ...updated[i],
-                                result: e.target.value,
-                              };
-                              updateStrategyMoves(updated);
-                            }}
-                            className="w-full text-sm text-gray-500 border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Result (optional)"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {strategyDefinition.moves.map((move, i) => (
-                        <div key={i} className="flex items-start gap-3">
-                          <Badge intent="primary" size="xs" rounded="full">
-                            {i + 1}
-                          </Badge>
-                          <div className="flex-1 min-w-0">
-                            <span className="font-semibold text-gray-900 text-sm">
-                              {move.verb}
-                            </span>
-                            <span className="text-gray-600 text-sm">
-                              : {move.description}
-                            </span>
-                            {move.result && (
-                              <span className="text-gray-500 text-xs block mt-0.5">
-                                → {move.result}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                      {/* Discovery Questions */}
-                      {strategyDefinition.discoveryQuestions && strategyDefinition.discoveryQuestions.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-gray-100">
-                          <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide">Discovery Questions</span>
-                          <ul className="mt-1 space-y-1">
-                            {strategyDefinition.discoveryQuestions.map((q, i) => (
-                              <li key={i} className="text-xs text-gray-600 italic">&ldquo;{q}&rdquo;</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  ),
-                },
                 // Graph Plan section (if exists - for coordinate graphs)
                 ...(scenarios[0].graphPlan
                   ? [
@@ -1462,118 +1556,6 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
             />
           )}
 
-          {/* Problem Analysis - Gray header */}
-          <SectionAccordion
-            title="Initial Problem Analysis"
-            subtitle={
-              problemAnalysis.visualType === "svg-visual" &&
-              problemAnalysis.svgSubtype
-                ? `${problemAnalysis.visualType}: ${problemAnalysis.svgSubtype}`
-                : problemAnalysis.visualType
-            }
-            color="#6B7280"
-            className="mb-0"
-            hideExpandAll
-            defaultOpenItems={["analysis-details"]}
-            items={[
-              // Analysis - open by default
-              {
-                key: "analysis-details",
-                title: "Analysis",
-                icon: null,
-                content: (
-                  <div>
-                    {/* Problem Type */}
-                    <div className="border-b border-gray-200 pb-4">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                        Problem Type
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        {problemAnalysis.problemType}
-                      </p>
-                    </div>
-
-                    {/* Answer */}
-                    <div className="border-b border-gray-200 py-4">
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                        Answer
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        {problemAnalysis.answer}
-                      </p>
-                    </div>
-
-                    {/* Key Challenge */}
-                    <div
-                      className={
-                        problemAnalysis.commonMistakes.length > 0
-                          ? "border-b border-gray-200 py-4"
-                          : "pt-4"
-                      }
-                    >
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                        Key Challenge
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        {problemAnalysis.keyChallenge}
-                      </p>
-                    </div>
-
-                    {/* Common Mistakes */}
-                    {problemAnalysis.commonMistakes.length > 0 && (
-                      <div className="pt-4">
-                        <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                          Common Mistakes
-                        </h4>
-                        <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
-                          {problemAnalysis.commonMistakes.map((mistake, i) => (
-                            <li key={i}>{mistake}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                ),
-              },
-              // Graph Plan - closed by default (only shown for svg-visual with coordinate-graph subtype)
-              ...(problemAnalysis.visualType === "svg-visual" &&
-              problemAnalysis.svgSubtype === "coordinate-graph" &&
-              problemAnalysis.graphPlan
-                ? [
-                    {
-                      key: "graph-plan",
-                      title: "Graph Plan",
-                      icon: null,
-                      content: (
-                        <GraphPlanDisplay
-                          graphPlan={problemAnalysis.graphPlan!}
-                        />
-                      ),
-                    },
-                  ]
-                : []),
-              // Problem Transcription - closed by default (at bottom)
-              ...(problemAnalysis.problemTranscription
-                ? [
-                    {
-                      key: "problem-transcription",
-                      title: "Problem Transcription",
-                      icon: null,
-                      content: (
-                        <div>
-                          <p className="text-xs text-gray-400 mb-2">
-                            (verify this matches the image)
-                          </p>
-                          <p className="text-sm text-gray-600 whitespace-pre-wrap bg-gray-50 rounded p-3 border border-gray-200">
-                            {problemAnalysis.problemTranscription}
-                          </p>
-                        </div>
-                      ),
-                    },
-                  ]
-                : []),
-            ]}
-          />
         </div>
       </div>
 
