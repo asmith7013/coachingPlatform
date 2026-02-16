@@ -132,11 +132,13 @@ export async function POST(request: NextRequest) {
     const user = await currentUser();
     const userEmail = user?.emailAddresses?.[0]?.emailAddress;
 
-    // Estimate total slides for PPTX format (matches protocol structure):
-    // 6 worked example slides (Teacher Instructions, Big Idea, Problem Setup, 3 Step slides)
+    // Estimate total slides for PPTX format (dynamic based on strategy moves):
+    // 3 intro slides (Teacher Instructions, Big Idea, Problem Setup)
+    // N step slides (one per strategy move, determined by misconception count)
     // 2 practice problem preview slides (for whiteboard work)
-    // Printable slide (9) is generated separately via generate-printable API
-    const fullSlideCount = 8;
+    // Printable and Lesson Summary slides are generated separately
+    const numMoves = strategyDefinition?.moves?.length ?? 3;
+    const fullSlideCount = 3 + numMoves + 2;
 
     // Calculate estimated slides based on mode
     let estimatedSlideCount: number;
