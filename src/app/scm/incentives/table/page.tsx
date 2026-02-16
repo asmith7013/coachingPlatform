@@ -13,14 +13,245 @@ import type { RoadmapUnit as Unit } from "@zod-schema/scm/roadmaps/roadmap-unit"
 import { useActivityTypes, useActivityData } from "../hooks";
 import { Spinner } from "@/components/core/feedback/Spinner";
 
+/** Check if a unitId looks like a MongoDB ObjectId (24-char hex) */
+function isMongoObjectId(id: string | undefined): boolean {
+  return !!id && /^[0-9a-fA-F]{24}$/.test(id);
+}
+
+function formatDateTime(dateStr: string | undefined) {
+  if (!dateStr) return "-";
+
+  const date = new Date(dateStr);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const isToday =
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear();
+  const isYesterday =
+    date.getDate() === yesterday.getDate() &&
+    date.getMonth() === yesterday.getMonth() &&
+    date.getFullYear() === yesterday.getFullYear();
+
+  if (isToday) {
+    return `Today, ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  } else if (isYesterday) {
+    return `Yesterday, ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  } else {
+    const dayOfWeek = date.toLocaleDateString([], { weekday: "short" });
+    const dateFormat = date.toLocaleDateString([], {
+      month: "numeric",
+      day: "numeric",
+    });
+    const timeStr = date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return `${dayOfWeek}, ${dateFormat}, ${timeStr}`;
+  }
+}
+
+interface ActivityTableProps {
+  records: StudentActivityRecord[];
+  activityTypes: { _id: string; label: string }[];
+  editingRow: string | null;
+  editValues: {
+    activityDate: string;
+    activityType: string;
+    activityLabel: string;
+  };
+  onEditClick: (record: StudentActivityRecord) => void;
+  onSaveEdit: (activityId: string) => void;
+  onCancelEdit: () => void;
+  onEditValuesChange: (values: {
+    activityDate: string;
+    activityType: string;
+    activityLabel: string;
+  }) => void;
+  onDelete: (activityId: string, studentName: string) => void;
+  showUnit?: boolean;
+  unitLookup?: Map<string, string>;
+}
+
+function ActivityTable({
+  records,
+  activityTypes,
+  editingRow,
+  editValues,
+  onEditClick,
+  onSaveEdit,
+  onCancelEdit,
+  onEditValuesChange,
+  onDelete,
+  showUnit = false,
+  unitLookup,
+}: ActivityTableProps) {
+  if (records.length === 0) {
+    return (
+      <div className="p-6 text-center text-gray-500 text-sm">
+        No records found.
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+              Student
+            </th>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+              Date
+            </th>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+              Activity
+            </th>
+            {showUnit && (
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                Unit
+              </th>
+            )}
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+              Details
+            </th>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+              Logged By
+            </th>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+              Submitted
+            </th>
+            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {records.map((record, index) => {
+            const isEditing = editingRow === record._id;
+            return (
+              <tr key={`${record._id}-${index}`}>
+                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {record.studentName}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                  {isEditing ? (
+                    <input
+                      type="date"
+                      value={editValues.activityDate}
+                      onChange={(e) =>
+                        onEditValuesChange({
+                          ...editValues,
+                          activityDate: e.target.value,
+                        })
+                      }
+                      className="px-2 py-1 border border-gray-300 rounded text-sm"
+                    />
+                  ) : (
+                    record.activityDate
+                  )}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                  {isEditing ? (
+                    <select
+                      value={editValues.activityType}
+                      onChange={(e) => {
+                        const selectedType = activityTypes.find(
+                          (t) => t._id === e.target.value,
+                        );
+                        onEditValuesChange({
+                          ...editValues,
+                          activityType: e.target.value,
+                          activityLabel: selectedType?.label || "",
+                        });
+                      }}
+                      className="px-2 py-1 border border-gray-300 rounded text-sm"
+                    >
+                      {activityTypes.map((type) => (
+                        <option key={type._id} value={type._id}>
+                          {type.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    record.activityLabel
+                  )}
+                </td>
+                {showUnit && (
+                  <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                    {unitLookup?.get(record.unitId || "") ||
+                      record.unitId ||
+                      "-"}
+                  </td>
+                )}
+                <td className="px-3 py-2 text-sm text-gray-500 max-w-[150px] truncate">
+                  {record.inquiryQuestion ||
+                    record.customDetail ||
+                    record.skillId ||
+                    record.lessonName ||
+                    "-"}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                  {record.loggedBy || "-"}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                  {formatDateTime(record.loggedAt)}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap text-sm">
+                  {isEditing ? (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => onSaveEdit(record._id)}
+                        className="text-green-600 hover:text-green-800 font-medium cursor-pointer"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={onCancelEdit}
+                        className="text-gray-600 hover:text-gray-800 font-medium cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => onEditClick(record)}
+                        className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => onDelete(record._id, record.studentName)}
+                        className="text-red-600 hover:text-red-800 font-medium cursor-pointer"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function IncentivesTablePage() {
-  // Load saved filters from localStorage (shared with form page)
+  // Section filter (shared with form page via localStorage)
   const [section, setSection] = useState<string>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("incentives-form-section") || "";
     }
     return "";
   });
+
+  // Unit filter only applies to platform data
   const [unitId, setUnitId] = useState<string>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("incentives-form-current-unit") || "";
@@ -28,23 +259,51 @@ export default function IncentivesTablePage() {
     return "";
   });
 
-  // Build filters object for React Query
-  const filters: ActivityDataFilters = useMemo(() => {
+  // Fetch ALL records for the section (no unit filter) so we can split by source
+  const allFilters: ActivityDataFilters = useMemo(() => {
     const f: ActivityDataFilters = {};
     if (section) f.section = section;
-    if (unitId) f.unitId = unitId;
     return f;
-  }, [section, unitId]);
+  }, [section]);
 
-  // Data fetching with React Query hooks
+  // Data fetching
   const { units: allUnits, loading: unitsLoading } = useRoadmapUnits();
   const { activityTypes } = useActivityTypes();
-  const { records, loading: recordsLoading, refetch } = useActivityData(filters);
+  const {
+    records: allRecords,
+    loading: recordsLoading,
+    refetch,
+  } = useActivityData(allFilters);
 
-  // Filter units for grade 8
+  // Build unit lookup for platform data
   const units = useMemo(() => {
     return allUnits.filter((u: Unit) => u.grade.includes("8th Grade"));
   }, [allUnits]);
+
+  const unitLookup = useMemo(() => {
+    const map = new Map<string, string>();
+    units.forEach((u: Unit) => map.set(u._id, u.unitTitle));
+    return map;
+  }, [units]);
+
+  // Split records by source: Podsie (short numeric unitId) vs Platform (ObjectId unitId)
+  const { podsieRecords, platformRecords } = useMemo(() => {
+    const podsie: StudentActivityRecord[] = [];
+    const platform: StudentActivityRecord[] = [];
+
+    for (const record of allRecords) {
+      if (isMongoObjectId(record.unitId)) {
+        // Platform data — apply unit filter if set
+        if (!unitId || record.unitId === unitId) {
+          platform.push(record);
+        }
+      } else {
+        podsie.push(record);
+      }
+    }
+
+    return { podsieRecords: podsie, platformRecords: platform };
+  }, [allRecords, unitId]);
 
   // UI State
   const [isExporting, setIsExporting] = useState(false);
@@ -55,7 +314,7 @@ export default function IncentivesTablePage() {
     activityLabel: string;
   }>({ activityDate: "", activityType: "", activityLabel: "" });
 
-  // Save section and unitId to localStorage when they change (shared with form page)
+  // Persist filters
   useEffect(() => {
     if (typeof window !== "undefined") {
       if (section) {
@@ -78,11 +337,10 @@ export default function IncentivesTablePage() {
 
   const handleExportCSV = async () => {
     setIsExporting(true);
-
+    const filters: ActivityDataFilters = {};
+    if (section) filters.section = section;
     const result = await exportActivityDataAsCSV(filters);
-
     if (typeof result !== "string" && result.success && result.data) {
-      // Create download link
       const blob = new Blob([result.data as string], { type: "text/csv" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -93,7 +351,6 @@ export default function IncentivesTablePage() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     }
-
     setIsExporting(false);
   };
 
@@ -133,7 +390,10 @@ export default function IncentivesTablePage() {
     }
   };
 
-  const handleDeleteActivity = async (activityId: string, studentName: string) => {
+  const handleDeleteActivity = async (
+    activityId: string,
+    studentName: string,
+  ) => {
     if (!confirm(`Delete this activity for ${studentName}?`)) {
       return;
     }
@@ -148,40 +408,22 @@ export default function IncentivesTablePage() {
     }
   };
 
-  const formatDateTime = (dateStr: string | undefined) => {
-    if (!dateStr) return "-";
-
-    const date = new Date(dateStr);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    const isToday =
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear();
-    const isYesterday =
-      date.getDate() === yesterday.getDate() &&
-      date.getMonth() === yesterday.getMonth() &&
-      date.getFullYear() === yesterday.getFullYear();
-
-    if (isToday) {
-      return `Today, ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
-    } else if (isYesterday) {
-      return `Yesterday, ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
-    } else {
-      const dayOfWeek = date.toLocaleDateString([], { weekday: "short" });
-      const dateFormat = date.toLocaleDateString([], { month: "numeric", day: "numeric" });
-      const timeStr = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      return `${dayOfWeek}, ${dateFormat}, ${timeStr}`;
-    }
-  };
-
   const isLoading = unitsLoading || recordsLoading;
+
+  const sharedTableProps = {
+    activityTypes,
+    editingRow,
+    editValues,
+    onEditClick: handleEditClick,
+    onSaveEdit: handleSaveEdit,
+    onCancelEdit: handleCancelEdit,
+    onEditValuesChange: setEditValues,
+    onDelete: handleDeleteActivity,
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-[1600px] mx-auto space-y-6">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
@@ -196,7 +438,7 @@ export default function IncentivesTablePage() {
             <div className="flex gap-2">
               <button
                 onClick={handleExportCSV}
-                disabled={isExporting || records.length === 0}
+                disabled={isExporting || allRecords.length === 0}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isExporting ? "Exporting..." : "Export CSV"}
@@ -205,7 +447,7 @@ export default function IncentivesTablePage() {
           </div>
 
           {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Section
@@ -225,7 +467,7 @@ export default function IncentivesTablePage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Unit
+                Unit (Platform data only)
               </label>
               <select
                 value={unitId}
@@ -240,169 +482,80 @@ export default function IncentivesTablePage() {
                 ))}
               </select>
             </div>
+
+            <div className="flex items-end">
+              <button
+                onClick={clearFilters}
+                className="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
+              >
+                Clear Filters
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between mt-4">
-            <div className="text-sm text-gray-500">
-              {isLoading
-                ? "Loading..."
-                : `${records.length} record${records.length !== 1 ? "s" : ""} found`}
-            </div>
-            <button
-              onClick={clearFilters}
-              className="text-sm text-blue-600 hover:text-blue-700 cursor-pointer"
-            >
-              Clear Filters
-            </button>
+          <div className="flex items-center gap-4 mt-4 text-sm text-gray-500">
+            {isLoading ? (
+              <span>Loading...</span>
+            ) : (
+              <>
+                <span>{allRecords.length} total records</span>
+                <span className="text-gray-300">|</span>
+                <span className="text-blue-600">
+                  {podsieRecords.length} from Podsie
+                </span>
+                <span className="text-gray-300">|</span>
+                <span className="text-purple-600">
+                  {platformRecords.length} from Platform
+                </span>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Table View */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          {isLoading ? (
-            <div className="flex justify-center items-center min-h-[400px]">
-              <Spinner size="lg" variant="primary" />
+        {/* Two-column layout */}
+        {isLoading ? (
+          <div className="flex justify-center items-center min-h-[400px]">
+            <Spinner size="lg" variant="primary" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left: Podsie Data */}
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="px-4 py-3 bg-blue-50 border-b border-blue-100">
+                <h2 className="text-sm font-semibold text-blue-800">
+                  Podsie Data
+                </h2>
+                <p className="text-xs text-blue-600 mt-0.5">
+                  {podsieRecords.length} records submitted from Podsie
+                  class-points
+                </p>
+              </div>
+              <div className="max-h-[600px] overflow-auto">
+                <ActivityTable records={podsieRecords} {...sharedTableProps} />
+              </div>
             </div>
-          ) : records.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
-              No activity records found. Try adjusting your filters.
+
+            {/* Right: Platform Data */}
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="px-4 py-3 bg-purple-50 border-b border-purple-100">
+                <h2 className="text-sm font-semibold text-purple-800">
+                  Platform Data
+                </h2>
+                <p className="text-xs text-purple-600 mt-0.5">
+                  {platformRecords.length} records from coaching platform form
+                </p>
+              </div>
+              <div className="max-h-[600px] overflow-auto">
+                <ActivityTable
+                  records={platformRecords}
+                  showUnit
+                  unitLookup={unitLookup}
+                  {...sharedTableProps}
+                />
+              </div>
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Student
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Section
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Class Date
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Activity
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Details
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Logged By
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Submitted
-                    </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {records.map((record, index) => {
-                    const isEditing = editingRow === record._id;
-                    return (
-                      <tr key={`${record.studentId}-${index}`}>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {record.studentName}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {record.section}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                          {isEditing ? (
-                            <input
-                              type="date"
-                              value={editValues.activityDate}
-                              onChange={(e) =>
-                                setEditValues({ ...editValues, activityDate: e.target.value })
-                              }
-                              className="px-2 py-1 border border-gray-300 rounded text-sm"
-                            />
-                          ) : (
-                            record.activityDate
-                          )}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                          {isEditing ? (
-                            <select
-                              value={editValues.activityType}
-                              onChange={(e) => {
-                                const selectedType = activityTypes.find(
-                                  (t) => t._id === e.target.value
-                                );
-                                setEditValues({
-                                  ...editValues,
-                                  activityType: e.target.value,
-                                  activityLabel: selectedType?.label || "",
-                                });
-                              }}
-                              className="px-2 py-1 border border-gray-300 rounded text-sm"
-                            >
-                              {activityTypes.map((type) => (
-                                <option key={type._id} value={type._id}>
-                                  {type.label}
-                                </option>
-                              ))}
-                            </select>
-                          ) : (
-                            record.activityLabel
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-500">
-                          {record.inquiryQuestion ||
-                            record.customDetail ||
-                            record.skillId ||
-                            record.lessonName ||
-                            "-"}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {record.loggedBy || "-"}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                          {formatDateTime(record.loggedAt)}
-                        </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-sm">
-                          {isEditing ? (
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => handleSaveEdit(record._id)}
-                                className="text-green-600 hover:text-green-800 font-medium cursor-pointer"
-                              >
-                                Save
-                              </button>
-                              <button
-                                onClick={handleCancelEdit}
-                                className="text-gray-600 hover:text-gray-800 font-medium cursor-pointer"
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => handleEditClick(record)}
-                                className="text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => handleDeleteActivity(record._id, record.studentName)}
-                                className="text-red-600 hover:text-red-800 font-medium cursor-pointer"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

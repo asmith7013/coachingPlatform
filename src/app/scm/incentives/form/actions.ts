@@ -587,7 +587,7 @@ export async function submitActivities(
           }));
 
           const emailService = new IncentiveEmailService();
-          await emailService.sendSubmissionNotification({
+          const emailSent = await emailService.sendSubmissionNotification({
             teacherName: teacherName || 'Unknown',
             section: eventsToInsert[0].section as string,
             unitTitle,
@@ -595,6 +595,9 @@ export async function submitActivities(
             studentCount: results.length,
             activityBreakdown
           });
+          if (!emailSent) {
+            console.error("❌ [submitActivities] Email notification returned false - check EMAIL_USER/EMAIL_PASSWORD env vars");
+          }
         } catch (emailError) {
           // Log email error but don't fail the submission
           console.error("❌ [submitActivities] Email notification failed:", emailError);

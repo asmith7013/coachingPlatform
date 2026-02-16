@@ -16,7 +16,6 @@ import { StudentActivityModel } from "@mongoose-schema/scm/student/student-activ
 
 interface AggregationResult {
   _id: {
-    studentId: string;
     studentName: string;
     activityType: string;
   };
@@ -35,7 +34,7 @@ export async function GET(req: NextRequest) {
     if (!section) {
       return NextResponse.json(
         { success: false, error: "section parameter is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -47,33 +46,36 @@ export async function GET(req: NextRequest) {
         matchConditions.date = { $gte: startDate };
       }
 
-      // Aggregate counts by student and activity type
-      const aggregation = await StudentActivityModel.aggregate<AggregationResult>([
-        { $match: matchConditions },
-        {
-          $group: {
-            _id: {
-              studentId: "$studentId",
-              studentName: "$studentName",
-              activityType: "$activityType",
+      // Aggregate counts by student name and activity type
+      const aggregation =
+        await StudentActivityModel.aggregate<AggregationResult>([
+          { $match: matchConditions },
+          {
+            $group: {
+              _id: {
+                studentName: "$studentName",
+                activityType: "$activityType",
+              },
+              count: { $sum: 1 },
             },
-            count: { $sum: 1 },
           },
-        },
-      ]);
+        ]);
 
-      // Transform into nested structure: { studentId: { activityType: count } }
-      const summary: Record<string, { name: string; counts: Record<string, number> }> = {};
+      // Transform into nested structure: { studentName: { activityType: count } }
+      const summary: Record<
+        string,
+        { name: string; counts: Record<string, number> }
+      > = {};
       const activityTypesSet = new Set<string>();
 
       for (const item of aggregation) {
-        const { studentId, studentName, activityType } = item._id;
+        const { studentName, activityType } = item._id;
         activityTypesSet.add(activityType);
 
-        if (!summary[studentId]) {
-          summary[studentId] = { name: studentName, counts: {} };
+        if (!summary[studentName]) {
+          summary[studentName] = { name: studentName, counts: {} };
         }
-        summary[studentId].counts[activityType] = item.count;
+        summary[studentName].counts[activityType] = item.count;
       }
 
       return {
@@ -90,7 +92,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in incentives summary GET:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
