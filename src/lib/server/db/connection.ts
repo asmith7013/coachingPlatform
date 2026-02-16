@@ -1,10 +1,4 @@
-import mongoose from 'mongoose';
-
-const MONGO_URI = process.env.DATABASE_URL;
-
-if (!MONGO_URI) {
-  throw new Error('Missing DATABASE_URL - please define it in your .env files');
-}
+import mongoose from "mongoose";
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -15,7 +9,6 @@ declare global {
   var mongoose: MongooseCache | undefined;
 }
 
-
 // Global cache to support hot reloads in dev and serverless environments
 let cached = global.mongoose;
 
@@ -24,6 +17,13 @@ if (!cached) {
 }
 
 export const connectToDB = async () => {
+  const MONGO_URI = process.env.DATABASE_URL;
+  if (!MONGO_URI) {
+    throw new Error(
+      "Missing DATABASE_URL - please define it in your .env files",
+    );
+  }
+
   if (cached.conn) {
     // console.log("🔄 Using cached connection");
     // console.log("📊 Connection readyState:", mongoose.connection.readyState);
@@ -38,7 +38,7 @@ export const connectToDB = async () => {
       socketTimeoutMS: 45000,
       // Disable auto-indexing in production to prevent N+1 createIndex calls on every cold start
       // Indexes should be created once during deployment, not on every request
-      autoIndex: process.env.NODE_ENV !== 'production',
+      autoIndex: process.env.NODE_ENV !== "production",
     };
 
     // console.log(`🌍 Connecting to MongoDB (${process.env.NODE_ENV} environment)`);
@@ -48,14 +48,14 @@ export const connectToDB = async () => {
 
     cached.promise = mongoose.connect(MONGO_URI, opts).then((mongoose) => {
       // Set up connection event handlers
-      mongoose.connection.on('error', (err) => {
-        console.error('MongoDB connection error:', err);
+      mongoose.connection.on("error", (err) => {
+        console.error("MongoDB connection error:", err);
         cached.conn = null;
         cached.promise = null;
       });
 
-      mongoose.connection.on('disconnected', () => {
-        console.warn('MongoDB disconnected');
+      mongoose.connection.on("disconnected", () => {
+        console.warn("MongoDB disconnected");
         cached.conn = null;
         cached.promise = null;
       });
@@ -81,9 +81,12 @@ export const getConnectionState = () => {
     hasPromise: !!cached.promise,
     readyState: mongoose.connection.readyState,
     // Convert readyState to human-readable format
-    status: ['disconnected', 'connected', 'connecting', 'disconnecting'][mongoose.connection.readyState] || 'unknown'
+    status:
+      ["disconnected", "connected", "connecting", "disconnecting"][
+        mongoose.connection.readyState
+      ] || "unknown",
   };
-  
+
   console.log("🔍 Connection state:", JSON.stringify(state));
   return state;
 };
