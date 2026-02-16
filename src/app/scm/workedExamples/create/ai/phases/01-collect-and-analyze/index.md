@@ -93,11 +93,11 @@ Store the `scopeAndSequenceId` for later. If not found, continue anyway (set to 
 
 ---
 
-## Step 1.3: Deep Analysis of the Problem
+## Step 1.3: Backward Planning Analysis
 
 **CRITICAL: Do NOT skip this step. Do NOT proceed until complete.**
 
-After receiving the problem image (and any additional context), thoroughly analyze it:
+After receiving the problem image (and any additional context), perform a full backward planning analysis.
 
 ### Using Additional Context (if provided)
 
@@ -108,29 +108,29 @@ If the teacher provided **reference images** or **notes**, incorporate them into
 - **Context themes**: If the teacher suggests "use gaming themes", incorporate that into scenario creation
 - **Focus areas**: If the teacher says "want practice with distributing negatives", ensure the worked example emphasizes that skill
 
-### 1.3a: Solve the problem yourself
-- Work through it step-by-step
-- Write out your complete solution
-- Identify the final answer
+### 1.3a: Follow the Backward Planning Protocol
 
-### 1.3b: Identify the mathematical structure
-- What SPECIFIC type of problem is this?
-  - Be precise: "solving two-step equations with variables on both sides"
-  - NOT vague: "algebra"
-- What mathematical relationships are present?
-- What prior knowledge does this assume?
+**Read the detailed analysis instructions:**
+```
+Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/analyze-problem.md
+```
 
-### 1.3c: Identify what makes this challenging
-- Where might students make mistakes?
-- What's the key insight needed?
-- What misconceptions does this address?
+Follow Steps 1-6 in that file exactly. The protocol is:
+1. **Deep Exit Ticket Analysis** — solve step-by-step, identify mathematical structure, articulate what correct understanding looks like
+2. **Develop Big Idea** — two drafts: detailed (know/do/understand) → simplified (one sentence + supporting patterns)
+3. **Anticipate Misconceptions** — 2-5 structured misconceptions that DRIVE the step count. Each has: misconception, studentWorkExample, rootCause, addressedInStep
+4. **Design Thinking** — map each misconception to a worked example step, write design rationale
+5. **Define Strategy** — moves determined by misconceptions (not arbitrary), discovery questions for each step
+6. **Create Scenarios** — 3 different contexts from the mastery check
 
-### 1.3d: Note constraints
-- What format is the answer expected in?
-- Any special conditions (positive numbers, whole numbers, etc.)?
-- Does it ask for explanation/reasoning?
+**The output schema is defined in:**
+```
+Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/output-schema.md
+```
 
-### 1.3e: Determine visual type
+Your output MUST match that JSON schema exactly. Do NOT use the old "Common Mistakes" or "Key Challenge" format.
+
+### 1.3b: Determine visual type
 
 **CRITICAL: ALL graphics/diagrams MUST use SVG.**
 SVG is required for PPTX export compatibility. The only exception is simple HTML tables.
@@ -147,7 +147,7 @@ SVG is required for PPTX export compatibility. The only exception is simple HTML
 
 **If your problem needs ANY visual beyond a simple table, you MUST use SVG.**
 
-### 1.3f: SVG Planning (REQUIRED if visual type is "SVG visual")
+### 1.3c: SVG Planning (REQUIRED if visual type is "SVG visual")
 
 **IF you selected "SVG visual" above, you MUST plan your SVG now.**
 
@@ -166,7 +166,7 @@ Plan the visual elements:
 
 **IF you selected "Text-only" or "HTML table", skip to the output template.**
 
-### 1.3g: Diagram Evolution (REQUIRED for ALL worked examples)
+### 1.3d: Diagram Evolution (REQUIRED for ALL worked examples)
 
 **⚠️ CRITICAL: This step is REQUIRED. Do NOT skip it.**
 
@@ -190,7 +190,7 @@ See the "STEP 8: Generate Diagram Evolution Preview" section in analyze-problem.
 **The Diagram Evolution MUST include:**
 1. **initialState**: ASCII showing the diagram on Problem Setup slide (empty axes, blank tape, etc.)
 2. **keyElements**: Array explaining each element and what it represents mathematically
-3. **steps**: Array with one entry per strategy move (2-3 entries), each containing:
+3. **steps**: Array with one entry per strategy move (2-5 entries), each containing:
    - `header`: The slide header (e.g., "STEP 1: IDENTIFY")
    - `ascii`: ASCII showing the diagram state AFTER that step (building cumulatively)
    - `changes`: Array of what was added/changed from previous step
@@ -200,150 +200,11 @@ See the "STEP 8: Generate Diagram Evolution Preview" section in analyze-problem.
 - Catches issues like "wrong step order" or "missing annotation" BEFORE slide generation
 - The number of steps MUST match `strategyDefinition.moves.length`
 
-### Output Template (YOU MUST COMPLETE THIS):
-
-```
-PROBLEM ANALYSIS
-================
-Problem Type: [specific type]
-Mathematical Structure: [describe relationships]
-
-My Solution:
-1. [First step with reasoning]
-2. [Second step with reasoning]
-3. [Third step with reasoning]
-Answer: [final answer]
-
-Key Challenge: [what makes this hard]
-Common Mistakes: [likely errors]
-Required Prior Knowledge: [prerequisites]
-Answer Format: [how answer should be presented]
-Visual Type: [Text-only | HTML table | SVG visual]
-SVG Subtype (if SVG visual): [coordinate-graph | diagram | shape | number-line | other]
-
-SVG PLAN (only if Visual Type is "SVG visual"):
-===============================================
-
-[FOR COORDINATE GRAPHS - use graph-planning.md:]
-Equations (with EXPLICIT slope and y-intercept):
-- Line 1: [equation], slope=[m], y-intercept=[b] ([color])
-- Line 2: [equation], slope=[m], y-intercept=[b] ([color])
-
-Scale:
-- X_MAX: [rightmost x-value]
-- Y_MAX: [top y-value, rounded to nice number]
-- X-axis labels: [list]
-- Y-axis labels: [list]
-
-Key Points (CALCULATE THESE - ensures math accuracy):
-- Line 1 at x=0: y=[calculated]
-- Line 1 at x=[X_MAX/2]: y=[calculated]
-- Line 1 at x=[X_MAX]: y=[calculated]
-- Line 2 at x=0: y=[calculated]
-- Line 2 at x=[X_MAX/2]: y=[calculated]
-- Line 2 at x=[X_MAX]: y=[calculated]
-
-Annotation:
-- Relationship to show: [what mathematical concept]
-- Annotation type: [y-intercept-shift / parallel-label / slope-comparison / etc.]
-- Label text: [e.g., "+20"]
-
-[FOR OTHER SVG TYPES (diagrams, shapes, etc.):]
-Elements:
-- Element 1: [shape/component] ([color])
-- Element 2: [shape/component] ([color])
-- ...
-
-Layout:
-- Container size: [width x height in viewBox]
-- Element positions: [how elements are arranged]
-
-Annotations across slides:
-- Slide 2: [initial state - what's shown]
-- Slides 3-4: [Step 1 - what changes/highlights]
-- Slides 5-6: [Step 2 - what changes/highlights]
-- Slides 7-8: [Step 3 - what changes/highlights]
-
-DIAGRAM PREVIEW (Scenario 1) - REQUIRED for all worked examples:
-==============================================================
-
-[ASCII representation of the complete visual structure
- based on patterns from reference/diagram-patterns.md]
-
-Key elements:
-- [element 1]: [what it represents]
-- [element 2]: [what it represents]
-- [element 3]: [what it represents]
-
-Does this visual structure look right for your problem?
-```
-
 ---
 
-## Step 1.4: Define the Strategy Thread
+## Step 1.4: Create Progress File
 
-**Before ANY content creation, define ONE clear strategy.**
-
-### 1.4a: Name the strategy
-Give it a clear, memorable name:
-- "Balance and Isolate"
-- "Find the Unit Rate"
-- "Plot and Connect"
-- "Table to Equation"
-
-### 1.4b: State it in one sentence
-Student-facing explanation:
-- "To solve this, we [VERB] the [OBJECT] to find [GOAL]"
-- Example: "To solve this, we REMOVE equal items from BOTH SIDES to ISOLATE the unknown."
-
-### 1.4c: Identify the 2-3 moves (maximum 3)
-- Move 1: [Action verb] → [What it accomplishes]
-- Move 2: [Action verb] → [What it accomplishes]
-- Move 3 (if needed): [Action verb] → [What it accomplishes]
-
-### 1.4d: Define consistent language
-These step names MUST:
-- Use the EXACT same verbs throughout all slides
-- Appear on every slide header
-- Be referenced in CFU questions
-
-### 1.4e: State the Big Idea
-One sentence that captures the core mathematical concept:
-- "To solve equations, we keep both sides balanced"
-- "Unit rates let us compare different quantities fairly"
-- "Parallel lines have the same slope but different y-intercepts"
-
-The Big Idea is more general than the strategy summary - it's the mathematical truth students will remember.
-
-### Output Template (YOU MUST COMPLETE THIS):
-
-```
-STRATEGY DEFINITION
-===================
-Strategy Name: "[Name]"
-One-Sentence Summary: "[Student-facing explanation]"
-Big Idea: "[The core mathematical concept in one sentence]"
-
-The Moves:
-1. [VERB]: [Description] → [Result]
-2. [VERB]: [Description] → [Result]
-3. [VERB]: [Description] → [Result] (if needed)
-
-Slide Headers Will Say:
-- "STEP 1: [VERB]"
-- "STEP 2: [VERB]"
-- "STEP 3: [VERB]" (if needed)
-
-CFU Questions Will Reference:
-- "Why did I [VERB] first?"
-- "How does [VERB]ing help us find the answer?"
-```
-
----
-
-## Step 1.5: Create Progress File
-
-**After completing both analysis templates, create the progress tracking file.**
+**After completing the backward planning analysis, create the progress tracking file.**
 
 Use the Write tool to create `.worked-example-progress.json` in the presentation directory:
 
@@ -361,7 +222,7 @@ Where `{slug}` is generated from the strategy name and grade level (e.g., `balan
   "lessonNumber": [lesson],
   "scopeAndSequenceId": "[id or null]",
   "strategyName": "[from STRATEGY DEFINITION]",
-  "strategySteps": ["[VERB1]", "[VERB2]", "[VERB3 if applicable]"],
+  "strategySteps": ["[VERB1]", "[VERB2]", "...(2-5 verbs, determined by misconception count)"],
   "problemType": "[from PROBLEM ANALYSIS]",
   "userConfirmed": false,
   "slidesCompleted": [],
@@ -385,9 +246,15 @@ Before proceeding, verify you have:
 - [ ] All 5 required user inputs collected (grade, unit, lesson, learning goals, mastery check image)
 - [ ] (If provided) Additional context incorporated into analysis
 - [ ] Scope and sequence ID looked up (or noted as undefined)
-- [ ] PROBLEM ANALYSIS template completed
-- [ ] STRATEGY DEFINITION template completed
-- [ ] Strategy has exactly 2-3 moves with consistent verbs
+- [ ] Full backward planning analysis completed (following analyze-problem.md Steps 1-6):
+  - [ ] Deep Exit Ticket Analysis (solved step-by-step, mathematical structure identified)
+  - [ ] Big Idea developed (two drafts: detailed → simplified + supporting patterns)
+  - [ ] Anticipated Misconceptions identified (2-5 structured misconceptions with studentWorkExample, rootCause, addressedInStep)
+  - [ ] Design Thinking completed (each misconception mapped to a WE step, design rationale written)
+  - [ ] Strategy defined (moves determined by misconception count, discovery questions for each step)
+  - [ ] 3 scenarios created (all different contexts from mastery check)
+- [ ] Output matches output-schema.md JSON structure
+- [ ] Strategy has 2-5 moves determined by misconception count (each misconception maps to a step via addressedInStep)
 - [ ] Visual type determined: Text-only, HTML table, or SVG visual
 - [ ] **Diagram Evolution preview created** showing step-by-step progression (how content builds across slides)
 - [ ] **IF visual type is SVG visual:** SVG PLAN completed (elements, layout, annotations per slide)
@@ -404,4 +271,4 @@ Use the Read tool to read the Phase 2 instructions:
 Read: .claude/skills/create-worked-example-sg/phases/02-confirm-and-plan.md
 ```
 
-Do NOT proceed to Phase 2 until you have completed BOTH output templates above.
+Do NOT proceed to Phase 2 until the backward planning analysis is complete and output matches the schema.

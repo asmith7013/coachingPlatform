@@ -8,8 +8,8 @@ All slides will be **PPTX-compatible HTML** (960×540px, light theme). Slide cou
 
 ## Prerequisites
 - Phase 1 complete
-- You have completed PROBLEM ANALYSIS template
-- You have completed STRATEGY DEFINITION template
+- You have completed the backward planning analysis (following analyze-problem.md Steps 1-6)
+- Your output matches the output-schema.md JSON structure
 
 ---
 
@@ -32,35 +32,45 @@ The user provided a **mastery check question**. ALL scenarios you create must us
 
 **Show the user your understanding and WAIT for confirmation.**
 
-Use this exact template:
+Use this exact template (which follows the backward planning protocol — the entire presentation IS backward planning):
 
 ```
-Based on the mastery check question you provided, here's my understanding:
+Based on the mastery check question you provided, here's my analysis:
 
-**Problem Type:** [from PROBLEM ANALYSIS]
-**Big Idea:** [the core mathematical concept from STRATEGY DEFINITION]
-**Strategy I'll Use:** [strategy name from STRATEGY DEFINITION]
-**One-Sentence Summary:** [from STRATEGY DEFINITION]
+**Exit Ticket Analysis:**
+- Problem Type: [specific type from analysis]
+- Key Challenge: [what makes this hard for students]
+
+**Big Idea:** [simplified one-sentence mathematical principle]
+- [supporting pattern 1]
+- [supporting pattern 2]
+- [supporting pattern 3, if applicable]
+
+**Anticipated Misconceptions → Step Design:**
+| # | Misconception | Student Work Example | Addressed In |
+|---|---------------|---------------------|--------------|
+| 1 | [what the student incorrectly believes] | [specific wrong answer they'd make] | Step [N]: [VERB] |
+| 2 | [misconception] | [what their work looks like] | Step [N]: [VERB] |
+| 3 | [misconception] | [what their work looks like] | Step [N]: [VERB] |
+
+**Design Rationale:** [why the WE is structured this way — how steps connect back to the exit ticket]
+
+**Discovery Questions:**
+- Step 1: "[What do you notice...?]"
+- Step 2: "[What pattern do you see...?]"
+- Step 3: "[How does this compare...?]" (if applicable)
+
+**Strategy:** [name] — "[one-sentence summary]"
+**Steps (determined by misconceptions above):**
+1. [STEP VERB]: [description] → addresses misconception [N]
+2. [STEP VERB]: [description] → addresses misconception [N]
+3. [STEP VERB]: [description] → addresses misconception [N] (if needed)
+... (2-5 steps, matching misconception count)
 
 **Visual Type:** [from Visual Types table]
-**Visual Plan:** [key details for this visual - see VisualPlan schemas]
-  - [field 1]: [value]
-  - [field 2]: [value]
-  - [field 3]: [value, if applicable]
+**Visual Plan:** [key details - see VisualPlan schemas]
 
-**The Steps (2-5 moves, default 3):**
-1. [STEP VERB]: [brief description]
-2. [STEP VERB]: [brief description]
-3. [STEP VERB]: [brief description, if needed]
-... (up to 5 steps if the problem requires it)
-
-**Backward Planning:**
-- **Anticipated Misconceptions:** [1-3 common student errors or misunderstandings for this problem type]
-- **Big Idea (Detailed):** [expanded explanation of the core mathematical concept and why it matters]
-- **Design Rationale:** [why this strategy/visual/step sequence was chosen over alternatives]
-- **Discovery Questions:** [1-2 questions the teacher can pose to help students discover the key idea themselves]
-
-**The three scenarios (all DIFFERENT from the mastery check):**
+**Scenarios (all DIFFERENT from mastery check):**
 - Scenario 1 (worked example): [context + what makes it engaging]
 - Scenario 2 (practice): [different context]
 - Scenario 3 (practice): [different context]
