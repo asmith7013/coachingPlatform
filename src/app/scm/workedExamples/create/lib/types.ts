@@ -296,6 +296,14 @@ export interface DiagramPreview {
   }[];
 }
 
+// Anticipated misconception with concrete student work and step mapping
+export interface AnticipatedMisconception {
+  misconception: string; // What the student incorrectly believes
+  studentWorkExample: string; // What their work/answer looks like on the exit ticket
+  rootCause: string; // Why they make this mistake
+  addressedInStep: number; // Which strategy step addresses this (1-indexed)
+}
+
 // Problem analysis from Claude
 export interface ProblemAnalysis {
   // Verbatim transcription of the problem from the image
@@ -309,7 +317,9 @@ export interface ProblemAnalysis {
   }[];
   answer: string;
   keyChallenge: string;
-  commonMistakes: string[];
+  commonMistakes: string[]; // Kept for backward compat with old drafts
+  // Structured misconceptions that drive step design (new backward planning flow)
+  anticipatedMisconceptions?: AnticipatedMisconception[];
   requiredPriorKnowledge: string[];
   answerFormat: string;
   visualType: VisualType;
@@ -330,6 +340,14 @@ export interface StrategyDefinition {
   name: string;
   oneSentenceSummary: string;
   bigIdea: string; // The core mathematical concept in one sentence
+  // Detailed Big Idea with know/do/understand bullet points (backward planning)
+  bigIdeaDetailed?: string;
+  // Supporting structural patterns for the Big Idea
+  bigIdeaSupportingPatterns?: string[];
+  // Explicit design rationale connecting WE design to exit ticket
+  designRationale?: string;
+  // Discovery questions per step ("What do you notice about...?")
+  discoveryQuestions?: string[];
   moves: {
     verb: string;
     description: string;
