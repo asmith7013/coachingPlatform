@@ -389,20 +389,24 @@ Context:
 - Lesson: ${lessonNumber ?? 'Not specified'} - ${lessonName || 'Not specified'}
 - Learning Targets: ${learningGoals.length > 0 ? learningGoals.join('; ') : 'Not specified'}${additionalContextSection}
 
-Instructions:
-1. Solve the problem yourself step-by-step
-2. Identify the mathematical structure and problem type
-3. Define ONE clear strategy with 2-3 moves
-4. Create 3 scenarios with DIFFERENT contexts (all different from the mastery check)
-5. **CRITICAL: Generate diagramEvolution on Scenario 1** - Scenario 1 is the worked example, so it MUST have its own diagramEvolution with its specific numbers/context (NOT the mastery check's numbers):
+Instructions (backward planning protocol — exit ticket is the essential source of truth):
+1. Deep Exit Ticket Analysis: solve step-by-step, identify mathematical structure, articulate what correct understanding looks like
+2. Develop the Big Idea: two drafts (detailed with know/do/understand, then simplified one-sentence). Must be a generalizable mathematical principle, NOT context-specific.
+3. Anticipate Misconceptions: identify 2-5 key misconceptions with concrete student work examples. Each misconception drives a worked example step.
+4. Design Thinking: map each misconception to a step, write design rationale
+5. Define ONE clear strategy with 2-5 moves (determined by misconceptions identified)
+6. Create 3 scenarios with DIFFERENT contexts (all different from the mastery check)
+7. **CRITICAL: Generate diagramEvolution on Scenario 1** - Scenario 1 is the worked example, so it MUST have its own diagramEvolution with its specific numbers/context (NOT the mastery check's numbers):
    - initialState: ASCII showing Problem Setup slide for Scenario 1's numbers
    - keyElements: Array explaining each visual element
    - steps: One entry per strategy move (must match strategyDefinition.moves.length)
-${additionalContext ? "6. Apply the teacher's additional context preferences when creating scenarios and choosing strategy" : ''}
+${additionalContext ? "8. Apply the teacher's additional context preferences when creating scenarios and choosing strategy" : ''}
 
 **⚠️ REQUIRED FIELDS - Your response MUST include:**
 - scenarios[0].diagramEvolution (with initialState, keyElements, and steps array using Scenario 1's numbers)
-- strategyDefinition.moves (2-3 moves)
+- strategyDefinition.moves (2-5 moves, determined by misconception count)
+- problemAnalysis.anticipatedMisconceptions (structured objects with addressedInStep)
+- strategyDefinition.bigIdeaDetailed, bigIdeaSupportingPatterns, designRationale, discoveryQuestions
 - scenarios (exactly 3 with different contexts)
 
 Return ONLY valid JSON matching the schema described in the system prompt.`;
@@ -514,6 +518,34 @@ export function buildGenerateSlidesPrompt(
     };
   }[]
 ): string {
+  // Dynamic slide count based on number of strategy moves
+  const numMoves = strategyDefinition.moves.length;
+  const totalMainSlides = 3 + numMoves + 2; // intro(3) + steps(N) + practice(2)
+  const practiceSlide1Num = 3 + numMoves + 1;
+  const practiceSlide2Num = 3 + numMoves + 2;
+  const printableSlideNum = totalMainSlides + 1;
+
+  // Build step slide descriptions dynamically
+  const stepSlideDescriptions = strategyDefinition.moves
+    .map((_, i) => {
+      const slideNum = 4 + i;
+      const prevStepsNote =
+        i === 0
+          ? ''
+          : ` with step${i > 1 ? 's' : ''} 1${i > 1 ? `-${i}` : ''} complete`;
+      const isLast = i === numMoves - 1;
+      return `${slideNum}. **Step ${i + 1} + CFU + Answer** - Show step ${i + 1}${isLast ? ' (final)' : ''}${prevStepsNote}, both CFU and Answer at y=40 (Answer overlays CFU on second click)`;
+    })
+    .join('\n');
+
+  // Build slide type reference table rows for step slides
+  const stepTableRows = strategyDefinition.moves
+    .map(
+      (_, i) =>
+        `| ${4 + i} | Step ${i + 1} + CFU + Answer | Both boxes stacked (animated) | generate-new |`
+    )
+    .join('\n');
+
   // Build graph plan section if visualType is svg-visual with coordinate-graph subtype
   // CRITICAL: Use Scenario 1's graphPlan (worked example) for slides, NOT mastery check's graphPlan
   let graphPlanSection = '';
@@ -687,7 +719,7 @@ ${gp.keyPoints.map((p) => `  - ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPi
 
 ## Instructions - PPTX-Compatible Slides
 
-Generate exactly **8 PPTX-compatible HTML slides** following this structure:
+Generate exactly **${totalMainSlides} PPTX-compatible HTML slides** following this structure:
 
 **All slides must be 960×540px, light theme (white background), Arial font, NO JavaScript.**
 
@@ -697,28 +729,26 @@ Generate exactly **8 PPTX-compatible HTML slides** following this structure:
 1. **Teacher Instructions** - Big Idea + Learning Targets + Strategy overview (teacher-facing, visually quiet)
 2. **Big Idea** - Grade/Unit/Lesson + Big Idea badge + statement (student-facing, gradient background)
 
-**Worked Example - Problem + Steps (4 slides):**
+**Worked Example - Problem + Steps (${1 + numMoves} slides):**
 3. **Problem Setup** - Scenario 1 introduction with visual (use two-column layout)
-4. **Step 1 + CFU + Answer** - Show step 1, both CFU and Answer at y=40 (Answer overlays CFU on second click)
-5. **Step 2 + CFU + Answer** - Show step 2 with step 1 complete, both CFU and Answer at y=40 (Answer overlays CFU)
-6. **Step 3 + CFU + Answer** - Show final step with steps 1-2 complete, both CFU and Answer at y=40 (Answer overlays CFU)
+${stepSlideDescriptions}
 
 **Practice Problem Previews (2 slides):**
-7. **Practice Problem 1** - Scenario 2 for whiteboard work
+${practiceSlide1Num}. **Practice Problem 1** - Scenario 2 for whiteboard work
    - Title: "PRACTICE PROBLEM 1: [Scenario 2 Name] [Icon]"
    - Problem context and description from scenarios[1]
    - Visual using scenarios[1].graphPlan or scenarios[1].diagramEvolution
    - "Your Task:" section with the question students must solve
    - NO CFU/Answer boxes - students work independently on whiteboards
 
-8. **Practice Problem 2** - Scenario 3 for whiteboard work
+${practiceSlide2Num}. **Practice Problem 2** - Scenario 3 for whiteboard work
    - Title: "PRACTICE PROBLEM 2: [Scenario 3 Name] [Icon]"
    - Problem context and description from scenarios[2]
    - Visual using scenarios[2].graphPlan or scenarios[2].diagramEvolution
    - "Your Task:" section with the question students must solve
    - NO CFU/Answer boxes - students work independently on whiteboards
 
-**Note:** The printable worksheet (slide 9) is generated separately after these 8 slides.
+**Note:** The printable worksheet (slide ${printableSlideNum}) is generated separately after these ${totalMainSlides} slides.
 
 ## CFU/Answer Box PPTX Attributes (REQUIRED - SAME POSITION, ANSWER OVERLAYS CFU)
 
@@ -740,19 +770,17 @@ DO NOT include:
 
 The slides you output should contain ONLY valid HTML starting with \`<!DOCTYPE html>\` and ending with \`</html>\`.
 
-**Slide type reference (8 SLIDES):**
+**Slide type reference (${totalMainSlides} SLIDES):**
 | # | Type | Has CFU/Answer? | Action |
 |---|------|-----------------|--------|
 | 1 | Teacher Instructions | No | generate-new |
 | 2 | Big Idea | No | generate-new |
 | 3 | Problem Setup | No | generate-new |
-| 4 | Step 1 + CFU + Answer | Both boxes stacked (animated) | generate-new |
-| 5 | Step 2 + CFU + Answer | Both boxes stacked (animated) | generate-new |
-| 6 | Step 3 + CFU + Answer | Both boxes stacked (animated) | generate-new |
-| 7 | Practice Problem 1 | No | generate-new |
-| 8 | Practice Problem 2 | No | generate-new |
+${stepTableRows}
+| ${practiceSlide1Num} | Practice Problem 1 | No | generate-new |
+| ${practiceSlide2Num} | Practice Problem 2 | No | generate-new |
 
-(Slide 9 - Printable with practice problems - is generated separately)
+(Slide ${printableSlideNum} - Printable with practice problems - is generated separately)
 
 Use ===SLIDE_SEPARATOR=== between each slide.
 Each slide MUST have body with width: 960px; height: 540px.`;
