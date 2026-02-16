@@ -18,6 +18,14 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
     "answer": "final answer",
     "keyChallenge": "what makes this hard for students",
     "commonMistakes": ["mistake 1", "mistake 2"],
+    "anticipatedMisconceptions": [
+      {
+        "misconception": "What the student incorrectly believes",
+        "studentWorkExample": "Specific wrong answer/choice they'd make on the exit ticket",
+        "rootCause": "Why they make this mistake (what understanding they're missing)",
+        "addressedInStep": 1
+      }
+    ],
     "requiredPriorKnowledge": ["prereq 1", "prereq 2"],
     "answerFormat": "how answer should be presented",
     "visualType": "text-only | html-table | svg-visual",
@@ -31,16 +39,6 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
         {
           "header": "STEP 1: VERB",
           "ascii": "ASCII showing diagram after step 1 (builds on initial state)",
-          "changes": ["What was added or modified in this step"]
-        },
-        {
-          "header": "STEP 2: VERB",
-          "ascii": "ASCII showing diagram after step 2 (builds on step 1)",
-          "changes": ["What was added or modified in this step"]
-        },
-        {
-          "header": "STEP 3: VERB",
-          "ascii": "ASCII showing final diagram state with solution",
           "changes": ["What was added or modified in this step"]
         }
       ]
@@ -74,7 +72,11 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
   "strategyDefinition": {
     "name": "Clear Strategy Name (e.g., 'Balance and Isolate')",
     "oneSentenceSummary": "To solve this, we [VERB] the [OBJECT] to find [GOAL]",
-    "bigIdea": "The core mathematical concept in one sentence",
+    "bigIdea": "The core mathematical principle in one sentence (simplified/revised draft)",
+    "bigIdeaDetailed": "Detailed Big Idea (first draft) — what students need to know/do/understand to get the exit ticket correct. Include bullet-point sub-items as a single string with newlines.",
+    "bigIdeaSupportingPatterns": ["structural pattern 1", "structural pattern 2"],
+    "designRationale": "Explicit thinking about why the WE is designed this way, how steps connect to exit ticket, and what the overall discovery arc is",
+    "discoveryQuestions": ["What do you notice about...?", "What pattern do you see...?"],
     "moves": [
       { "verb": "VERB1", "description": "what this step does", "result": "what it accomplishes" }
     ],
@@ -113,7 +115,12 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
 
 | Field | Description |
 |-------|-------------|
-| `strategyDefinition.moves` | 2-3 moves with verb, description, result |
+| `strategyDefinition.moves` | 2-5 moves (determined by misconception count; 3 is typical) |
+| `strategyDefinition.bigIdeaDetailed` | Detailed Big Idea (first draft with know/do/understand) |
+| `strategyDefinition.bigIdeaSupportingPatterns` | 2-4 supporting structural patterns |
+| `strategyDefinition.designRationale` | Why the WE is structured this way |
+| `strategyDefinition.discoveryQuestions` | One per step, guiding toward Big Idea |
+| `problemAnalysis.anticipatedMisconceptions` | Structured misconception objects driving step design |
 | `scenarios` | Exactly 3 scenarios with different contexts |
 | `scenarios[0].diagramEvolution` | Scenario 1 (worked example) needs its own diagramEvolution with its specific numbers in the ASCII art |
 
@@ -125,6 +132,40 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
 | `problemAnalysis.graphPlan` | When `svgSubtype` is `"coordinate-graph"` |
 | `scenario[].graphPlan` | When `svgSubtype` is `"coordinate-graph"` |
 | `scenario[].visualPlan` | When `svgSubtype` is NOT `"coordinate-graph"` |
+
+## anticipatedMisconceptions Structure
+
+The `anticipatedMisconceptions` array is **CRITICAL** for backward planning. Each misconception drives a worked example step.
+
+**Rules:**
+- Each object must have: `misconception`, `studentWorkExample`, `rootCause`, `addressedInStep`
+- `addressedInStep` is 1-indexed and must reference a valid strategy move
+- The number of unique `addressedInStep` values should match `strategyDefinition.moves.length`
+- Multiple misconceptions CAN map to the same step if they're addressed together
+
+**Example:**
+```json
+"anticipatedMisconceptions": [
+  {
+    "misconception": "Student thinks different constant yields one solution",
+    "studentWorkExample": "For 'one value of x,' writes 10 (a constant instead of a variable term)",
+    "rootCause": "Doesn't understand that differing constants with same coefficients means NO solution",
+    "addressedInStep": 1
+  },
+  {
+    "misconception": "Student confuses no solution with infinite solutions",
+    "studentWorkExample": "For 'no values of x,' writes 8; for 'all values,' writes something other than 8",
+    "rootCause": "Can't distinguish the conditions for no vs. infinite solutions",
+    "addressedInStep": 2
+  },
+  {
+    "misconception": "Student assumes every equation has one solution",
+    "studentWorkExample": "For 'no values' and 'all values,' writes 'Not possible'",
+    "rootCause": "Has only seen equations with one solution",
+    "addressedInStep": 3
+  }
+]
+```
 
 ## diagramEvolution Structure
 
