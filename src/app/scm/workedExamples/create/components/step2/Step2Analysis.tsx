@@ -268,6 +268,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                   totalSlideCount,
                   mode,
                   existingSlides,
+                  numMoves,
                 );
               } catch (e) {
                 console.warn("Failed to parse SSE data:", e);
@@ -583,6 +584,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
     totalSlideCount: number, // Total slides including printable (for progress display)
     mode: GenerationMode,
     existingSlides: HtmlSlide[],
+    numMoves: number,
   ) => {
     // For continue mode, we need to track existing slides for proper numbering
     const existingCount = mode === "continue" ? existingSlides.length : 0;
@@ -849,7 +851,7 @@ export function Step2Analysis({ wizard }: Step2AnalysisProps) {
                   <div key={i} className="bg-white rounded-md p-3 border border-amber-100">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-medium text-gray-900">{m.misconception}</p>
-                      <Badge color="blue" size="xs">Step {m.addressedInStep}</Badge>
+                      <Badge intent="blue" size="xs">Step {m.addressedInStep}</Badge>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
                       <span className="font-semibold">Student work:</span> {m.studentWorkExample}
