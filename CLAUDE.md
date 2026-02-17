@@ -1,147 +1,48 @@
+@AGENTS.md
+
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
-## Database Operations with MongoDB
-
-### Connecting to MongoDB Atlas
-
-This project uses MongoDB Atlas. The connection string is in `.env.local` as `DATABASE_URL`.
-
-### Using mongosh for Database Operations
-
-Claude Code CAN and SHOULD use `mongosh` for database operations. Always use the `$DATABASE_URL` environment variable instead of hardcoding the connection string.
-
-**Important:** Always source `.env.local` first to load the DATABASE_URL (only needed once per shell session):
-
-```bash
-source /Users/alexsmith/solves-coaching/.env.local 2>/dev/null
-mongosh "$DATABASE_URL" --eval "YOUR_COMMAND_HERE"
-```
-
-Here are common patterns (assuming DATABASE_URL is already loaded):
-
-#### Find Documents
-
-```bash
-source /Users/alexsmith/solves-coaching/.env.local 2>/dev/null
-mongosh "$DATABASE_URL" --eval "
-db['collection-name'].find({ field: 'value' }).forEach(printjson);
-"
-```
-
-#### Count Documents
-
-```bash
-mongosh "$DATABASE_URL" --eval "
-print('Total documents:', db['collection-name'].countDocuments());
-"
-```
-
-#### Update Documents
-
-```bash
-mongosh "$DATABASE_URL" --eval "
-const result = db['collection-name'].updateOne(
-  { _id: ObjectId('...') },
-  { \$set: { field: 'new value' } }
-);
-printjson(result);
-"
-```
-
-#### Delete Documents
-
-```bash
-mongosh "$DATABASE_URL" --eval "
-const result = db['collection-name'].deleteOne({ _id: ObjectId('...') });
-printjson(result);
-print('Deleted:', result.deletedCount, 'documents');
-"
-```
-
-#### Aggregation Pipelines
-
-```bash
-mongosh "$DATABASE_URL" --eval "
-const pipeline = [
-  { \$group: { _id: '\$field', count: { \$sum: 1 } } },
-  { \$sort: { count: -1 } }
-];
-db['collection-name'].aggregate(pipeline).forEach(printjson);
-"
-```
-
-#### Managing Indexes
-
-```bash
-# List indexes
-mongosh "$DATABASE_URL" --eval "
-printjson(db['collection-name'].getIndexes());
-"
-
-# Drop an index
-mongosh "$DATABASE_URL" --eval "
-db['collection-name'].dropIndex('index_name');
-"
-```
-
-#### Running JavaScript Files
-
-For complex operations, create a `.js` file and execute it:
-
-```bash
-mongosh "$DATABASE_URL" --file script.js
-```
-
-### Important Notes
-
-- Always use `$DATABASE_URL` environment variable (never hardcode credentials)
-- Use `printjson()` for formatted output
-- Escape special characters in shell commands (e.g., `\$` for MongoDB operators)
-- Use `--eval` for single commands, or `--file` for complex scripts
-
-## Tech Stack
-
-- **Framework**: Next.js 15 with App Router
-- **UI**: React 18, Tailwind CSS
-- **Database**: MongoDB Atlas with Mongoose ODM
-- **Authentication**: Clerk
-- **Language**: TypeScript
-- **State Management**: React Hooks, localStorage for client-side persistence
+This file provides guidance to Claude Code when working with this repository.
 
 ## Code Guidelines
 
-- **Avoid `any` types** - Use proper TypeScript types or `unknown` with type guards. When using `any` is unavoidable (e.g., working with Mongoose lean() types), DO NOT use `eslint-disable` comments as they prevent the build from completing. Just use `as any` directly.
-- **Use Zod for validation** - All external data should be validated with Zod schemas
-- **Server Actions** - Use "use server" directive for backend operations
-- **Button Cursor** - Always add `cursor-pointer` class to all clickable buttons and interactive elements
-- Before making commits, run:
-  - `npm run prebuild` - Check for TypeScript and linting errors (DO NOT use `npm run build` as it interferes with dev server)
-  - `npm run lint` - Fix linting issues
+- **Avoid `any` types** — Use proper TypeScript types or `unknown` with type guards. When `any` is unavoidable (e.g., Mongoose `lean()` types), use `as any` directly — DO NOT use `eslint-disable` comments as they prevent the build from completing.
+- **Use Zod for validation** — All external data should be validated with Zod schemas
+- **Server Actions** — Use `"use server"` directive for backend operations
+- **Follow existing patterns** — Look at similar features before creating new ones
+- **Use existing schemas** — Extend rather than create new ones when possible
+- **Handle errors gracefully** — Server actions must always return `{ success, data?, error? }`
+- **Button Cursor** — Always add `cursor-pointer` class to clickable buttons and interactive elements
+- At the end of large changes or before making commits, always run:
+  - `npm run prebuild` — TypeScript + linting errors (DO NOT use `npm run build` as it interferes with dev server)
+  - `npm run lint` — Fix linting issues
+  - `npm run format` (do not forget this one)
 
 ## Architecture
 
-### File Structure
+Backend follows **Server Actions** pattern:
 
-- **`src/app/`** - Next.js app router pages and layouts
-- **`src/app/actions/`** - Server actions for data mutations
-- **`src/lib/schema/mongoose-schema/`** - Mongoose models
-- **`src/lib/schema/zod-schema/`** - Zod validation schemas
-- **`src/components/`** - Reusable React components
-- **`src/query/`** - React Query hooks and providers
+- **Pages/Layouts** (`src/app/`) — Next.js App Router pages
+- **Server Actions** (`src/app/actions/`) — Data mutations with `"use server"`
+- **Mongoose Models** (`src/lib/schema/mongoose-schema/`) — Database models
+- **Zod Schemas** (`src/lib/schema/zod-schema/`) — Validation and TypeScript types
+- **Components** (`src/components/`) — Reusable React components
+- **Query Hooks** (`src/query/`) — React Query hooks and providers
 
-### Schema Organization
+### Type Organization
 
-This project uses a **dual schema system**:
+- **Zod schemas** define validation rules and infer TypeScript types
+- **Common pattern**: Define Zod schema → Infer TypeScript type → Export both
+- **Mongoose schemas** define database structure and must mirror Zod schemas
+- When adding a new field: update Zod schema, Mongoose schema, and any TypeScript interfaces
 
-1. **Zod Schemas** (`src/lib/schema/zod-schema/`) - For validation and TypeScript types
-2. **Mongoose Schemas** (`src/lib/schema/mongoose-schema/`) - For database models
+### Schema Organization (Dual Schema System)
+
+1. **Zod Schemas** (`src/lib/schema/zod-schema/`) — For validation and TypeScript types
+2. **Mongoose Schemas** (`src/lib/schema/mongoose-schema/`) — For database models
 
 **Important conventions:**
 
-- Zod schemas define the validation rules and infer TypeScript types
-- Mongoose schemas define the database structure
 - Keep both in sync manually (no automatic generation)
 - Mongoose uses `_id` (ObjectId), but transforms add `id` field for client-side use
 - Use `toJSON()` when returning Mongoose documents to ensure proper serialization
@@ -172,31 +73,54 @@ export async function myAction(input: MyInputType) {
 ### Client-Side Data Fetching
 
 - Use React Query for server state management
-- Use `useQuery` for fetching data
-- Use `useMutation` for mutations
+- Use `useQuery` for fetching, `useMutation` for mutations
 - Store UI state in React hooks or localStorage
 - Avoid storing server data in localStorage (use React Query cache instead)
+
+## Performance Requirements
+
+This is a teacher/coach-facing application. Query performance matters.
+
+- Avoid N+1 queries — use `.populate()` or aggregation pipelines instead of looping with individual queries
+- When querying large collections, always use indexed fields and `.lean()` for read-only operations
+- Use `.select()` to limit returned fields when full documents aren't needed
 
 ## Database Schema Notes
 
 ### Important Collections
 
-- **`students`** - Student records with `studentID` (number) as primary identifier
-- **`roadmaps-student-data`** - Assessment data with `studentId` (string slug)
-  - ⚠️ **Known Issue**: `studentId` format doesn't match `students.studentID`
-- **`activity-type-configs`** - Incentive activity types (max 10)
+- **`students`** — Student records with `studentID` (number) as primary identifier
+- **`roadmaps-student-data`** — Assessment data with `studentId` (string slug)
+  - **Known Issue**: `studentId` format doesn't match `students.studentID`
+- **`activity-type-configs`** — Incentive activity types (max 10)
 
 ### Common Pitfalls
 
-1. **ID Format Mismatches** - Some collections use numeric IDs, others use string slugs
-2. **Mongoose Model Caching** - Use `delete mongoose.models.ModelName` to clear cache during development
-3. **Index Conflicts** - Old indexes may persist after schema changes; drop them manually
-4. **Timezone Issues** - Always use local timezone for dates in forms (`new Date().get*()` methods)
+1. **ID Format Mismatches** — Some collections use numeric IDs, others use string slugs
+2. **Mongoose Model Caching** — Use `delete mongoose.models.ModelName` to clear cache during development
+3. **Index Conflicts** — Old indexes may persist after schema changes; drop them manually
+4. **Timezone Issues** — Always use local timezone for dates in forms (`new Date().get*()` methods)
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **UI**: React 19, Tailwind CSS
+- **Database**: MongoDB Atlas with Mongoose ODM
+- **Authentication**: Clerk
+- **Language**: TypeScript
+- **State Management**: React Hooks, React Query, localStorage
+
+## Dev Notes
+
+- **Dependency APIs**: ALWAYS read node_module files rather than doing web searches to understand a dependency's API
+- **Prefer existing libraries**: Use `react-icons` or existing UI libraries over writing custom SVGs
+- **Investigate before modifying data**: Use `find()` and `countDocuments()` before bulk operations
+- **Sample before bulk**: Test on one document before updating many
 
 ## Environment Variables
 
 Required in `.env.local`:
 
-- `DATABASE_URL` - MongoDB Atlas connection string
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk auth public key
-- `CLERK_SECRET_KEY` - Clerk auth secret key
+- `DATABASE_URL` — MongoDB Atlas connection string
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` — Clerk auth public key
+- `CLERK_SECRET_KEY` — Clerk auth secret key
