@@ -22,7 +22,7 @@ export interface LessonConfig {
   section?: string;
   subsection?: number;
   unitNumber: number;
-  activityType?: 'sidekick' | 'mastery-check' | 'assessment';
+  activityType?: "sidekick" | "mastery-check" | "assessment";
   hasZearnActivity?: boolean;
 }
 

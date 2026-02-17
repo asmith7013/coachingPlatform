@@ -1,5 +1,5 @@
-import { google } from 'googleapis';
-import { Readable } from 'stream';
+import { google } from "googleapis";
+import { Readable } from "stream";
 
 /**
  * Google Drive API client configuration
@@ -8,14 +8,14 @@ import { Readable } from 'stream';
 const auth = new google.auth.GoogleAuth({
   credentials: {
     client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
   },
   scopes: [
-    'https://www.googleapis.com/auth/drive.file', // Create/manage files
+    "https://www.googleapis.com/auth/drive.file", // Create/manage files
   ],
 });
 
-export const drive = google.drive({ version: 'v3', auth });
+export const drive = google.drive({ version: "v3", auth });
 
 /**
  * Upload a file to Google Drive and optionally convert to Google format
@@ -27,24 +27,34 @@ export async function uploadFile(
   options?: {
     convertToGoogleFormat?: boolean;
     folderId?: string;
-  }
-): Promise<{ success: true; fileId: string; webViewLink: string } | { success: false; error: string }> {
+  },
+): Promise<
+  | { success: true; fileId: string; webViewLink: string }
+  | { success: false; error: string }
+> {
   try {
     // Convert Buffer to Readable stream
     const stream = Readable.from(buffer);
 
-    const fileMetadata: { name: string; mimeType?: string; parents?: string[] } = {
+    const fileMetadata: {
+      name: string;
+      mimeType?: string;
+      parents?: string[];
+    } = {
       name: filename,
     };
 
     // If converting, set the target mimeType
     if (options?.convertToGoogleFormat) {
-      if (mimeType.includes('presentation') || mimeType.includes('pptx')) {
-        fileMetadata.mimeType = 'application/vnd.google-apps.presentation';
-      } else if (mimeType.includes('spreadsheet') || mimeType.includes('xlsx')) {
-        fileMetadata.mimeType = 'application/vnd.google-apps.spreadsheet';
-      } else if (mimeType.includes('document') || mimeType.includes('docx')) {
-        fileMetadata.mimeType = 'application/vnd.google-apps.document';
+      if (mimeType.includes("presentation") || mimeType.includes("pptx")) {
+        fileMetadata.mimeType = "application/vnd.google-apps.presentation";
+      } else if (
+        mimeType.includes("spreadsheet") ||
+        mimeType.includes("xlsx")
+      ) {
+        fileMetadata.mimeType = "application/vnd.google-apps.spreadsheet";
+      } else if (mimeType.includes("document") || mimeType.includes("docx")) {
+        fileMetadata.mimeType = "application/vnd.google-apps.document";
       }
     }
 
@@ -58,23 +68,25 @@ export async function uploadFile(
         mimeType,
         body: stream,
       },
-      fields: 'id, webViewLink',
+      fields: "id, webViewLink",
     });
 
     if (!response.data.id) {
-      return { success: false, error: 'Failed to get file ID from response' };
+      return { success: false, error: "Failed to get file ID from response" };
     }
 
     return {
       success: true,
       fileId: response.data.id,
-      webViewLink: response.data.webViewLink || `https://docs.google.com/presentation/d/${response.data.id}/edit`,
+      webViewLink:
+        response.data.webViewLink ||
+        `https://docs.google.com/presentation/d/${response.data.id}/edit`,
     };
   } catch (error) {
-    console.error('Error uploading file to Google Drive:', error);
+    console.error("Error uploading file to Google Drive:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }
@@ -85,13 +97,13 @@ export async function uploadFile(
 export async function shareFileWithUser(
   fileId: string,
   email: string,
-  role: 'reader' | 'writer' | 'commenter' = 'writer'
+  role: "reader" | "writer" | "commenter" = "writer",
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await drive.permissions.create({
       fileId,
       requestBody: {
-        type: 'user',
+        type: "user",
         role,
         emailAddress: email,
       },
@@ -100,10 +112,10 @@ export async function shareFileWithUser(
 
     return { success: true };
   } catch (error) {
-    console.error('Error sharing file:', error);
+    console.error("Error sharing file:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }
@@ -113,23 +125,23 @@ export async function shareFileWithUser(
  */
 export async function makeFilePublic(
   fileId: string,
-  role: 'reader' | 'writer' | 'commenter' = 'reader'
+  role: "reader" | "writer" | "commenter" = "reader",
 ): Promise<{ success: boolean; error?: string }> {
   try {
     await drive.permissions.create({
       fileId,
       requestBody: {
-        type: 'anyone',
+        type: "anyone",
         role,
       },
     });
 
     return { success: true };
   } catch (error) {
-    console.error('Error making file public:', error);
+    console.error("Error making file public:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }
@@ -141,14 +153,17 @@ export async function makeFilePublic(
 export async function uploadPptxAsGoogleSlides(
   pptxBuffer: Buffer,
   filename: string,
-  shareWithEmail?: string
-): Promise<{ success: true; fileId: string; url: string } | { success: false; error: string }> {
+  shareWithEmail?: string,
+): Promise<
+  | { success: true; fileId: string; url: string }
+  | { success: false; error: string }
+> {
   // Upload and convert to Google Slides
   const uploadResult = await uploadFile(
     pptxBuffer,
-    filename.replace(/\.pptx$/i, ''),
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    { convertToGoogleFormat: true }
+    filename.replace(/\.pptx$/i, ""),
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    { convertToGoogleFormat: true },
   );
 
   if (!uploadResult.success) {
@@ -157,9 +172,13 @@ export async function uploadPptxAsGoogleSlides(
 
   // Share with user if email provided
   if (shareWithEmail) {
-    const shareResult = await shareFileWithUser(uploadResult.fileId, shareWithEmail, 'writer');
+    const shareResult = await shareFileWithUser(
+      uploadResult.fileId,
+      shareWithEmail,
+      "writer",
+    );
     if (!shareResult.success) {
-      console.warn('Failed to share file with user:', shareResult.error);
+      console.warn("Failed to share file with user:", shareResult.error);
       // Don't fail the entire operation, just log warning
     }
   }

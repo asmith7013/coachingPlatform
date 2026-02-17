@@ -19,9 +19,15 @@ export function DeprecationModal({ links }: DeprecationModalProps) {
   if (process.env.NODE_ENV !== "production") return null;
 
   return (
-    <Dialog open={open} onClose={() => setOpen(false)} title="This page has moved" size="sm">
+    <Dialog
+      open={open}
+      onClose={() => setOpen(false)}
+      title="This page has moved"
+      size="sm"
+    >
       <p className="mb-4 text-gray-600">
-        This dashboard is now maintained on Podsie. Please use the new version for the latest features and updates.
+        This dashboard is now maintained on Podsie. Please use the new version
+        for the latest features and updates.
       </p>
       <div className="flex flex-col gap-2">
         {links.map((link) => (

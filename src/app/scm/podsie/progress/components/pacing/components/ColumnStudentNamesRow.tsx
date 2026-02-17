@@ -1,7 +1,14 @@
 "use client";
 
-import { CheckCircleIcon, UserGroupIcon, PresentationChartLineIcon } from "@heroicons/react/24/solid";
-import { CheckCircleIcon as CheckCircleOutlineIcon, UserGroupIcon as UserGroupOutlineIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  UserGroupIcon,
+  PresentationChartLineIcon,
+} from "@heroicons/react/24/solid";
+import {
+  CheckCircleIcon as CheckCircleOutlineIcon,
+  UserGroupIcon as UserGroupOutlineIcon,
+} from "@heroicons/react/24/outline";
 import { getZoneStyles } from "./zone-styles";
 import { ActivityRow, PresentationChartLineOutlineIcon } from "./shared-ui";
 import type { ColumnConfig } from "./types";
@@ -19,10 +26,12 @@ function StudentDetailCard({
 }) {
   return (
     <div
-      className={`text-[9px] ${styles.text} leading-tight px-2 py-1 overflow-hidden ${showBorderTop ? `border-t ${styles.border}` : ''}`}
+      className={`text-[9px] ${styles.text} leading-tight px-2 py-1 overflow-hidden ${showBorderTop ? `border-t ${styles.border}` : ""}`}
     >
       {/* Row 1: Student name + Mastery data */}
-      <div className={`flex items-center justify-between pb-0.5 border-b ${styles.border}`}>
+      <div
+        className={`flex items-center justify-between pb-0.5 border-b ${styles.border}`}
+      >
         <span className="truncate font-medium">{student.name}</span>
         <ActivityRow
           todayIcon={<CheckCircleIcon className="w-3 h-3" />}
@@ -46,7 +55,9 @@ function StudentDetailCard({
       <div className="pt-0.5">
         <ActivityRow
           todayIcon={<PresentationChartLineIcon className="w-3 h-3" />}
-          yesterdayIcon={<PresentationChartLineOutlineIcon className="w-3 h-3" />}
+          yesterdayIcon={
+            <PresentationChartLineOutlineIcon className="w-3 h-3" />
+          }
           todayCount={student.inquiryToday ? 1 : 0}
           yesterdayCount={student.inquiryYesterday ? 1 : 0}
           iconColor={styles.lessonIcon}
@@ -56,13 +67,12 @@ function StudentDetailCard({
   );
 }
 
-export function ColumnStudentNamesRow({
-  config,
-}: {
-  config: ColumnConfig;
-}) {
+export function ColumnStudentNamesRow({ config }: { config: ColumnConfig }) {
   const styles = getZoneStyles(config.zone);
-  const zoneLessonCount = config.sections.reduce((sum, s) => sum + (s.lessons?.length || 0), 0);
+  const zoneLessonCount = config.sections.reduce(
+    (sum, s) => sum + (s.lessons?.length || 0),
+    0,
+  );
 
   const widthStyle = config.isFixedWidth
     ? { width: config.width, flexShrink: 0 }
@@ -70,7 +80,9 @@ export function ColumnStudentNamesRow({
 
   const borderClasses = config.isCompleteColumn
     ? `border-l`
-    : (!config.isLastColumn ? `border-r` : "");
+    : !config.isLastColumn
+      ? `border-r`
+      : "";
 
   // Complete column shows student details with activity rows (same as zones)
   if (config.isCompleteColumn) {
@@ -90,7 +102,9 @@ export function ColumnStudentNamesRow({
             />
           ))
         ) : (
-          <span className={`text-[9px] ${styles.text} opacity-30 px-2 py-1`}>—</span>
+          <span className={`text-[9px] ${styles.text} opacity-30 px-2 py-1`}>
+            —
+          </span>
         )}
       </div>
     );
@@ -106,12 +120,16 @@ export function ColumnStudentNamesRow({
         const isLastSection = sectionIndex === config.sections.length - 1;
         const lessons = section.lessons || [];
         const sectionLessonCount = lessons.length || 1;
-        const sectionWidthPercent = zoneLessonCount > 0 ? (sectionLessonCount / zoneLessonCount) * 100 : 100;
+        const sectionWidthPercent =
+          zoneLessonCount > 0
+            ? (sectionLessonCount / zoneLessonCount) * 100
+            : 100;
 
         // Use sectionId + subsection for unique key
-        const sectionKey = section.subsection !== undefined
-          ? `${section.sectionId}:${section.subsection}`
-          : section.sectionId;
+        const sectionKey =
+          section.subsection !== undefined
+            ? `${section.sectionId}:${section.subsection}`
+            : section.sectionId;
 
         return (
           <div
@@ -138,14 +156,20 @@ export function ColumnStudentNamesRow({
                         />
                       ))
                     ) : (
-                      <span className={`text-[9px] ${styles.text} opacity-30 px-2 py-1`}>—</span>
+                      <span
+                        className={`text-[9px] ${styles.text} opacity-30 px-2 py-1`}
+                      >
+                        —
+                      </span>
                     )}
                   </div>
                 );
               })
             ) : (
               <div className="flex-1 flex items-center justify-center py-1">
-                <span className={`text-[9px] ${styles.text} opacity-30`}>—</span>
+                <span className={`text-[9px] ${styles.text} opacity-30`}>
+                  —
+                </span>
               </div>
             )}
           </div>

@@ -10,9 +10,14 @@ export interface PDFExtractorState {
   success: string;
 }
 
-export type GradeOption = '6th-grade' | '7th-grade' | '8th-grade' | 'Algebra-1';
+export type GradeOption = "6th-grade" | "7th-grade" | "8th-grade" | "Algebra-1";
 
-export const GRADE_OPTIONS: GradeOption[] = ['6th-grade', '7th-grade', '8th-grade', 'Algebra-1'];
+export const GRADE_OPTIONS: GradeOption[] = [
+  "6th-grade",
+  "7th-grade",
+  "8th-grade",
+  "Algebra-1",
+];
 
 export interface ProcessingResult {
   success: boolean;

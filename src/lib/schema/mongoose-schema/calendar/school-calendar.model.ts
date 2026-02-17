@@ -1,23 +1,29 @@
 import mongoose from "mongoose";
-import { standardSchemaOptions, standardDocumentFields } from "@mongoose-schema/shared-options";
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 /**
  * Calendar event schema (embedded document)
  * Events without school/classSection are global (apply to everyone)
  * Events with school/classSection are section-specific
  */
-const calendarEventSchema = new mongoose.Schema({
-  date: { type: String, required: true }, // YYYY-MM-DD
-  name: { type: String, required: true },
-  description: { type: String, required: false },
-  // Optional section targeting (if absent = global event)
-  school: { type: String, required: false },
-  classSection: { type: String, required: false },
-  // Whether math class happens on this day
-  // false = no math class (testing, assembly, no school) - schedule shifts, light gray
-  // true = math class happens (pop quiz, special lesson) - no shift, dark gray
-  hasMathClass: { type: Boolean, default: false },
-}, { _id: false });
+const calendarEventSchema = new mongoose.Schema(
+  {
+    date: { type: String, required: true }, // YYYY-MM-DD
+    name: { type: String, required: true },
+    description: { type: String, required: false },
+    // Optional section targeting (if absent = global event)
+    school: { type: String, required: false },
+    classSection: { type: String, required: false },
+    // Whether math class happens on this day
+    // false = no math class (testing, assembly, no school) - schedule shifts, light gray
+    // true = math class happens (pop quiz, special lesson) - no shift, dark gray
+    hasMathClass: { type: Boolean, default: false },
+  },
+  { _id: false },
+);
 
 /**
  * School calendar schema
@@ -29,16 +35,17 @@ const schoolCalendarFields = {
   endDate: { type: String, required: true }, // YYYY-MM-DD
   events: { type: [calendarEventSchema], default: [] },
   notes: { type: String, required: false },
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
 const SchoolCalendarSchema = new mongoose.Schema(schoolCalendarFields, {
   ...standardSchemaOptions,
-  collection: "school-calendars"
+  collection: "school-calendars",
 });
 
 // Index for efficient lookups
 SchoolCalendarSchema.index({ schoolYear: 1, schoolId: 1 });
 
-export const SchoolCalendarModel = mongoose.models.SchoolCalendar ||
+export const SchoolCalendarModel =
+  mongoose.models.SchoolCalendar ||
   mongoose.model("SchoolCalendar", SchoolCalendarSchema);

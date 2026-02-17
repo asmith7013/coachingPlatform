@@ -1,6 +1,6 @@
 // src/lib/data-schema/domain/shared-enums.ts
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // =====================================
 // CORE ENUM DEFINITIONS
@@ -11,20 +11,20 @@ import { z } from 'zod';
  */
 export enum GradeLevels {
   KINDERGARTEN = "Kindergarten",
-  GRADE_1 = "1st Grade",      // ✅ Changed from "Grade 1"
-  GRADE_2 = "2nd Grade",      // ✅ Changed from "Grade 2" 
-  GRADE_3 = "3rd Grade",      // ✅ Changed from "Grade 3"
-  GRADE_4 = "4th Grade",      // ✅ Changed from "Grade 4"
-  GRADE_5 = "5th Grade",      // ✅ Changed from "Grade 5"
-  GRADE_6 = "6th Grade",      // ✅ Changed from "Grade 6"
-  GRADE_7 = "7th Grade",      // ✅ Changed from "Grade 7"
-  GRADE_8 = "8th Grade",      // ✅ Changed from "Grade 8"
-  GRADE_9 = "9th Grade",      // ✅ Changed from "Grade 9"
-  GRADE_10 = "10th Grade",    // ✅ Changed from "Grade 10"
-  GRADE_11 = "11th Grade",    // ✅ Changed from "Grade 11"
-  GRADE_12 = "12th Grade",    // ✅ Changed from "Grade 12"
+  GRADE_1 = "1st Grade", // ✅ Changed from "Grade 1"
+  GRADE_2 = "2nd Grade", // ✅ Changed from "Grade 2"
+  GRADE_3 = "3rd Grade", // ✅ Changed from "Grade 3"
+  GRADE_4 = "4th Grade", // ✅ Changed from "Grade 4"
+  GRADE_5 = "5th Grade", // ✅ Changed from "Grade 5"
+  GRADE_6 = "6th Grade", // ✅ Changed from "Grade 6"
+  GRADE_7 = "7th Grade", // ✅ Changed from "Grade 7"
+  GRADE_8 = "8th Grade", // ✅ Changed from "Grade 8"
+  GRADE_9 = "9th Grade", // ✅ Changed from "Grade 9"
+  GRADE_10 = "10th Grade", // ✅ Changed from "Grade 10"
+  GRADE_11 = "11th Grade", // ✅ Changed from "Grade 11"
+  GRADE_12 = "12th Grade", // ✅ Changed from "Grade 12"
   ALGEBRA_I = "Algebra I",
-  ALGEBRA_II = "Algebra II", 
+  ALGEBRA_II = "Algebra II",
   GEOMETRY = "Geometry",
 }
 
@@ -89,7 +89,7 @@ export enum PeriodTypes {
   PREP = "prep",
   LUNCH = "lunch",
   MEETING = "meeting",
-  DUTY = "duty"
+  DUTY = "duty",
 }
 /**
  * Duration Values (in minutes)
@@ -110,7 +110,7 @@ export enum Duration {
 export enum RolesNYCPS {
   TEACHER = "Teacher",
   PRINCIPAL = "Principal",
-  AP = "AP", 
+  AP = "AP",
   COACH = "Coach",
   ADMINISTRATOR = "Administrator",
 }
@@ -151,8 +151,8 @@ export enum NoteTypes {
  */
 export enum IPGCoreActions {
   CA1 = "CA1", // Ensure the work reflects Focus, Coherence, and Rigor
-  CA2 = "CA2", // Employ instructional practices for all students  
-  CA3 = "CA3"  // Provide opportunities for mathematical practices
+  CA2 = "CA2", // Employ instructional practices for all students
+  CA3 = "CA3", // Provide opportunities for mathematical practices
 }
 
 /**
@@ -163,17 +163,17 @@ export enum IPGSubCategories {
   CA1A = "CA1A", // Grade-level cluster focus
   CA1B = "CA1B", // Relates new content to prior math
   CA1C = "CA1C", // Targets appropriate rigor aspects
-  
-  // CA2 sections  
+
+  // CA2 sections
   CA2A = "CA2A", // Makes mathematics explicit
   CA2B = "CA2B", // Strategically shares student representations
-  
+
   // CA3 sections
   CA3A = "CA3A", // Grade-level problems and exercises
   CA3B = "CA3B", // Cultivates reasoning and problem solving
   CA3C = "CA3C", // Prompts students to explain thinking
   CA3D = "CA3D", // Creates conditions for student conversations
-  CA3E = "CA3E"  // Connects informal to precise mathematical language
+  CA3E = "CA3E", // Connects informal to precise mathematical language
 }
 
 /**
@@ -199,7 +199,7 @@ export enum ImplementationIndicators {
  */
 export enum ImplementationExperience {
   FIRST_YEAR = "First year of Implementation",
-  EXPERIENCED = "Experienced with Implementation"
+  EXPERIENCED = "Experienced with Implementation",
 }
 
 /**
@@ -207,9 +207,9 @@ export enum ImplementationExperience {
  */
 export enum PrimaryStrategyCategory {
   PREPARING = "Preparing to Teach",
-  IN_CLASS = "In-class support", 
+  IN_CLASS = "In-class support",
   PROFESSIONAL = "Professional Learning",
-  COLLABORATION = "Sustaining Teacher-Led Collaboration"
+  COLLABORATION = "Sustaining Teacher-Led Collaboration",
 }
 
 /**
@@ -236,13 +236,13 @@ export enum SessionPurposes {
  */
 export enum MetricCollectionMethods {
   OBSERVATION = "observation",
-  STUDENT_WORK_ANALYSIS = "student_work_analysis", 
+  STUDENT_WORK_ANALYSIS = "student_work_analysis",
   ASSESSMENT_DATA = "assessment_data",
   INTERVIEW = "interview",
   SURVEY = "survey",
   DOCUMENTATION_REVIEW = "documentation_review",
   SELF_REFLECTION = "self_reflection",
-  OTHER = "other"
+  OTHER = "other",
 }
 
 /**
@@ -250,9 +250,9 @@ export enum MetricCollectionMethods {
  */
 export enum VisitStatuses {
   PLANNED = "planned",
-  COMPLETED = "completed", 
+  COMPLETED = "completed",
   CANCELLED = "cancelled",
-  RESCHEDULED = "rescheduled"
+  RESCHEDULED = "rescheduled",
 }
 
 /**
@@ -261,7 +261,7 @@ export enum VisitStatuses {
 export enum CoachingCycleNumbers {
   CYCLE_1 = "1",
   CYCLE_2 = "2",
-  CYCLE_3 = "3"
+  CYCLE_3 = "3",
 }
 
 /**
@@ -270,7 +270,7 @@ export enum CoachingCycleNumbers {
 export enum VisitNumbers {
   VISIT_1 = "1",
   VISIT_2 = "2",
-  VISIT_3 = "3"
+  VISIT_3 = "3",
 }
 
 /**
@@ -280,7 +280,7 @@ export enum CoachingActionPlanStatuses {
   DRAFT = "draft",
   ACTIVE = "active",
   COMPLETED = "completed",
-  ARCHIVED = "archived"
+  ARCHIVED = "archived",
 }
 
 /**
@@ -291,9 +291,8 @@ export enum EvidenceTypes {
   LINK = "link",
   DOCUMENT = "document",
   PHOTO = "photo",
-  VIDEO = "video"
+  VIDEO = "video",
 }
-
 
 export enum ScheduleAssignment {
   FULL_PERIOD = "full_period",
@@ -349,7 +348,7 @@ export enum SolvesTouchpoint {
 export enum NYCSolvesAdmin {
   YES_TEACHER_SUPPORT = "Yes - debriefed teacher support only",
   YES_LEADER_SUPPORT = "Yes - provided leader specific support",
-  NO = "No"
+  NO = "No",
 }
 
 /**
@@ -357,17 +356,17 @@ export enum NYCSolvesAdmin {
  */
 export enum AdminDone {
   YES = "Yes",
-  NO = "No"
+  NO = "No",
 }
 
 /**
  * Teacher Support Types
  */
 export enum TeacherSupportTypes {
-  SPECIAL_ED = "Special Education Teachers", 
+  SPECIAL_ED = "Special Education Teachers",
   ENL_ELL = "English as New Language or English Language Learner Teachers",
   BILINGUAL_DUAL = "Bilingual/Dual Language Teachers",
-  NONE_OF_ABOVE = "None of the above"
+  NONE_OF_ABOVE = "None of the above",
 }
 
 /**
@@ -375,7 +374,7 @@ export enum TeacherSupportTypes {
  */
 export enum AcademicYears {
   YEAR_2021_2022 = "2021-2022",
-  YEAR_2022_2023 = "2022-2023", 
+  YEAR_2022_2023 = "2022-2023",
   YEAR_2023_2024 = "2023-2024",
   YEAR_2024_2025 = "2024-2025",
   YEAR_2025_2026 = "2025-2026",
@@ -480,24 +479,40 @@ export const VisitNumberZod = createZodEnum(VisitNumbers);
 export type VisitNumber = z.infer<typeof VisitNumberZod>;
 
 // Coaching Action Plan Statuses
-export const CoachingActionPlanStatusZod = createZodEnum(CoachingActionPlanStatuses);
-export type CoachingActionPlanStatus = z.infer<typeof CoachingActionPlanStatusZod>;
+export const CoachingActionPlanStatusZod = createZodEnum(
+  CoachingActionPlanStatuses,
+);
+export type CoachingActionPlanStatus = z.infer<
+  typeof CoachingActionPlanStatusZod
+>;
 
 // Evidence Types
 export const EvidenceTypeZod = createZodEnum(EvidenceTypes);
 export type EvidenceType = z.infer<typeof EvidenceTypeZod>;
 
 // Implementation Indicators
-export const ImplementationIndicatorZod = createZodEnum(ImplementationIndicators);
-export type ImplementationIndicator = z.infer<typeof ImplementationIndicatorZod>;
+export const ImplementationIndicatorZod = createZodEnum(
+  ImplementationIndicators,
+);
+export type ImplementationIndicator = z.infer<
+  typeof ImplementationIndicatorZod
+>;
 
 // Implementation Experience
-export const ImplementationExperienceZod = createZodEnum(ImplementationExperience);
-export type ImplementationExperienceType = z.infer<typeof ImplementationExperienceZod>;
+export const ImplementationExperienceZod = createZodEnum(
+  ImplementationExperience,
+);
+export type ImplementationExperienceType = z.infer<
+  typeof ImplementationExperienceZod
+>;
 
 // Primary Strategy Category
-export const PrimaryStrategyCategoryZod = createZodEnum(PrimaryStrategyCategory);
-export type PrimaryStrategyCategoryType = z.infer<typeof PrimaryStrategyCategoryZod>;
+export const PrimaryStrategyCategoryZod = createZodEnum(
+  PrimaryStrategyCategory,
+);
+export type PrimaryStrategyCategoryType = z.infer<
+  typeof PrimaryStrategyCategoryZod
+>;
 
 // Support Cycle Types
 export const SupportCycleTypeZod = createZodEnum(SupportCycleTypes);
@@ -594,13 +609,15 @@ export const DurationConverter = {
   toMongoose: (value: keyof typeof Duration): number => {
     return Number(Duration[value]);
   },
-  
+
   // Convert the number from Mongoose to string enum value for Zod
   toZod: (value: number): keyof typeof Duration => {
     const stringValue = String(value);
     // Find the enum key that has this string value
-    const entry = Object.entries(Duration).find(([_, val]) => val === stringValue);
+    const entry = Object.entries(Duration).find(
+      ([_, val]) => val === stringValue,
+    );
     if (!entry) throw new Error(`Invalid duration value: ${value}`);
     return entry[0] as keyof typeof Duration;
-  }
+  },
 };

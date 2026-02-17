@@ -1,11 +1,17 @@
-import type { BaseDocument } from '@core-types/document';
-import type { QueryKey } from '@tanstack/react-query';
-import type { BaseResponse } from '@core-types/response';
+import type { BaseDocument } from "@core-types/document";
+import type { QueryKey } from "@tanstack/react-query";
+import type { BaseResponse } from "@core-types/response";
 
 /**
  * Cache operation types for entity mutations
  */
-export type CacheOperationType = 'create' | 'update' | 'delete' | 'bulkCreate' | 'bulkUpdate' | 'bulkDelete';
+export type CacheOperationType =
+  | "create"
+  | "update"
+  | "delete"
+  | "bulkCreate"
+  | "bulkUpdate"
+  | "bulkDelete";
 
 /**
  * Configuration for cache synchronization
@@ -41,7 +47,9 @@ export type ServerActionResult<T> = Promise<BaseResponse & { data?: T }>;
 /**
  * Type for a server action function
  */
-export type ServerAction<TArgs extends unknown[], TResult> = (...args: TArgs) => Promise<TResult>;
+export type ServerAction<TArgs extends unknown[], TResult> = (
+  ...args: TArgs
+) => Promise<TResult>;
 
 /**
  * Interface for cache operations for a specific entity
@@ -52,9 +60,12 @@ export interface EntityCacheOperations {
   /** Invalidate a single entity by ID */
   invalidateDetail: (id: string) => Promise<void>;
   /** Update entity data directly in cache */
-  updateEntity: <T extends BaseDocument>(id: string, updater: (old: T) => T) => Promise<void>;
+  updateEntity: <T extends BaseDocument>(
+    id: string,
+    updater: (old: T) => T,
+  ) => Promise<void>;
   /** Add a new entity to list cache */
   addEntity: <T extends BaseDocument>(entity: T) => Promise<void>;
   /** Remove an entity from list cache */
   removeEntity: (id: string) => Promise<void>;
-} 
+}

@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 // =====================================
 // TYPES
@@ -38,11 +38,11 @@ export class EmailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-      }
+        pass: process.env.EMAIL_PASSWORD,
+      },
     });
   }
 
@@ -59,12 +59,12 @@ export class EmailService {
   async send(options: EmailOptions): Promise<EmailResult> {
     try {
       if (!this.isConfigured()) {
-        console.warn('Email not configured - skipping notification');
-        return { success: false, error: 'Email not configured' };
+        console.warn("Email not configured - skipping notification");
+        return { success: false, error: "Email not configured" };
       }
 
       const recipients = Array.isArray(options.to)
-        ? options.to.join(', ')
+        ? options.to.join(", ")
         : options.to;
 
       await this.transporter.sendMail({
@@ -72,14 +72,15 @@ export class EmailService {
         to: recipients,
         subject: options.subject,
         text: options.body,
-        ...(options.html && { html: options.html })
+        ...(options.html && { html: options.html }),
       });
 
-      console.log('Email sent successfully to:', recipients);
+      console.log("Email sent successfully to:", recipients);
       return { success: true };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Failed to send email:', errorMessage);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      console.error("Failed to send email:", errorMessage);
       return { success: false, error: errorMessage };
     }
   }
@@ -90,10 +91,10 @@ export class EmailService {
   async testConnection(): Promise<boolean> {
     try {
       await this.transporter.verify();
-      console.log('Email configuration is valid');
+      console.log("Email configuration is valid");
       return true;
     } catch (error) {
-      console.error('Email configuration error:', error);
+      console.error("Email configuration error:", error);
       return false;
     }
   }

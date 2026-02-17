@@ -1,5 +1,5 @@
-import React from 'react';
-import { cn } from '@ui/utils/formatters';
+import React from "react";
+import { cn } from "@ui/utils/formatters";
 
 interface FormSectionProps {
   title?: string;
@@ -12,14 +12,14 @@ interface FormSectionProps {
  * FormSection component for organizing form fields into logical groups
  * Provides consistent spacing and optional titles/descriptions
  */
-export function FormSection({ 
-  title, 
-  description, 
-  children, 
-  className 
+export function FormSection({
+  title,
+  description,
+  children,
+  className,
 }: FormSectionProps) {
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn("space-y-4", className)}>
       {(title || description) && (
         <div className="border-b border-gray-200 pb-4">
           {title && (
@@ -30,9 +30,7 @@ export function FormSection({
           )}
         </div>
       )}
-      <div className="space-y-4">
-        {children}
-      </div>
+      <div className="space-y-4">{children}</div>
     </div>
   );
-} 
+}

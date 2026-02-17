@@ -1,26 +1,28 @@
-'use client';
+"use client";
 
-import { useSearchParams } from 'next/navigation'
-import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton'
-import { Card } from '@/components/composed/cards/Card'
+import { useSearchParams } from "next/navigation";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { Card } from "@/components/composed/cards/Card";
 
-const DEFAULT_REDIRECT = '/scm'
+const DEFAULT_REDIRECT = "/scm";
 
 export default function SignInPage() {
-  const searchParams = useSearchParams()
-  const redirectUrl = searchParams.get('redirect_url') || DEFAULT_REDIRECT
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect_url") || DEFAULT_REDIRECT;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md p-8">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="mt-2 text-gray-600">Sign in to your account to continue</p>
+          <p className="mt-2 text-gray-600">
+            Sign in to your account to continue
+          </p>
         </div>
-        
+
         <div className="space-y-4">
           <GoogleSignInButton redirectUrl={redirectUrl} />
-          
+
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300" />
@@ -31,19 +33,25 @@ export default function SignInPage() {
               </span>
             </div>
           </div>
-          
+
           <p className="text-center text-sm text-gray-600">
-            By signing in, you agree to our{' '}
-            <a href="/terms" className="font-medium text-primary-600 hover:text-primary-500">
+            By signing in, you agree to our{" "}
+            <a
+              href="/terms"
+              className="font-medium text-primary-600 hover:text-primary-500"
+            >
               Terms of Service
-            </a>{' '}
-            and{' '}
-            <a href="/privacy" className="font-medium text-primary-600 hover:text-primary-500">
+            </a>{" "}
+            and{" "}
+            <a
+              href="/privacy"
+              className="font-medium text-primary-600 hover:text-primary-500"
+            >
               Privacy Policy
             </a>
           </p>
         </div>
       </Card>
     </div>
-  )
-} 
+  );
+}

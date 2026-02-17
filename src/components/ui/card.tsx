@@ -1,6 +1,6 @@
-import * as React from "react"
+import * as React from "react";
 
-type CardProps = React.HTMLAttributes<HTMLDivElement>
+type CardProps = React.HTMLAttributes<HTMLDivElement>;
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className = "", ...props }, ref) => (
@@ -9,8 +9,8 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       className={`rounded-lg border bg-white shadow-sm ${className}`}
       {...props}
     />
-  )
-)
-Card.displayName = "Card"
+  ),
+);
+Card.displayName = "Card";
 
-export { Card }
+export { Card };

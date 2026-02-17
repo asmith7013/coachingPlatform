@@ -1,6 +1,9 @@
 "use client";
 
-import type { StudentPacingStatus, SectionLessonInfo } from "../../../hooks/usePacingData";
+import type {
+  StudentPacingStatus,
+  SectionLessonInfo,
+} from "../../../hooks/usePacingData";
 
 type ZoneColor = "red" | "yellow" | "green" | "sky" | "blue";
 
@@ -12,23 +15,26 @@ interface PacingZoneCardProps {
   showSectionBadge?: boolean; // For far-behind/far-ahead, show section badge instead of progress bar
 }
 
-const colorClasses: Record<ZoneColor, {
-  bg: string;
-  border: string;
-  dot: string;
-  titleText: string;
-  countText: string;
-  subtitleText: string;
-  emptyText: string;
-  lessonText: string;
-  nameText: string;
-  progressBg: string;
-  progressFill: string;
-  progressText: string;
-  divider: string;
-  badgeBg: string;
-  badgeText: string;
-}> = {
+const colorClasses: Record<
+  ZoneColor,
+  {
+    bg: string;
+    border: string;
+    dot: string;
+    titleText: string;
+    countText: string;
+    subtitleText: string;
+    emptyText: string;
+    lessonText: string;
+    nameText: string;
+    progressBg: string;
+    progressFill: string;
+    progressText: string;
+    divider: string;
+    badgeBg: string;
+    badgeText: string;
+  }
+> = {
   red: {
     bg: "bg-red-50",
     border: "border-red-200",
@@ -127,9 +133,10 @@ export function PacingZoneCard({
 
   // Group students by current lesson and sort by progress (least to most)
   const sortedStudents = [...students].sort(
-    (a, b) => a.completedLessonsInSection - b.completedLessonsInSection
+    (a, b) => a.completedLessonsInSection - b.completedLessonsInSection,
   );
-  const groupedByLesson: { lesson: string; students: typeof sortedStudents }[] = [];
+  const groupedByLesson: { lesson: string; students: typeof sortedStudents }[] =
+    [];
   let currentLesson: string | null = null;
   let currentGroup: typeof sortedStudents = [];
 
@@ -137,7 +144,10 @@ export function PacingZoneCard({
     const lesson = student.currentLesson || "Done";
     if (lesson !== currentLesson) {
       if (currentGroup.length > 0) {
-        groupedByLesson.push({ lesson: currentLesson!, students: currentGroup });
+        groupedByLesson.push({
+          lesson: currentLesson!,
+          students: currentGroup,
+        });
       }
       currentLesson = lesson;
       currentGroup = [student];
@@ -183,13 +193,21 @@ export function PacingZoneCard({
   const showSectionInHeader = !showSectionBadge && shortSectionName;
 
   return (
-    <div className={`${classes.bg} border ${classes.border} rounded-lg overflow-hidden`}>
+    <div
+      className={`${classes.bg} border ${classes.border} rounded-lg overflow-hidden`}
+    >
       {/* Header */}
-      <div className={`flex items-center gap-2 px-3 py-2 border-b ${classes.divider}`}>
+      <div
+        className={`flex items-center gap-2 px-3 py-2 border-b ${classes.divider}`}
+      >
         <div className={`w-3 h-3 rounded-full ${classes.dot}`}></div>
-        <h4 className={`font-semibold ${classes.titleText} text-sm`}>{title}</h4>
+        <h4 className={`font-semibold ${classes.titleText} text-sm`}>
+          {title}
+        </h4>
         {showSectionInHeader && (
-          <span className={`ml-auto ${classes.badgeBg} ${classes.badgeText} text-[10px] px-1.5 py-0.5 rounded-full font-medium`}>
+          <span
+            className={`ml-auto ${classes.badgeBg} ${classes.badgeText} text-[10px] px-1.5 py-0.5 rounded-full font-medium`}
+          >
             {shortSectionName}
           </span>
         )}
@@ -201,64 +219,72 @@ export function PacingZoneCard({
         ) : (
           <div>
             {groupedByLesson.map((group, groupIndex) => (
-            <div key={group.lesson}>
-              {groupIndex > 0 && (
-                <div className={`border-t ${classes.divider} my-1.5`} />
-              )}
-              <div className={`text-xs ${classes.lessonText} mb-1`}>
-                {formatLessonName(group.lesson)}
-              </div>
-              <div className="space-y-0.5">
-                {group.students.map((student) => {
-                  const totalLessons = student.totalLessonsInSection;
-                  const progressPercent =
-                    totalLessons > 0
-                      ? Math.round(
-                          (student.completedLessonsInSection / totalLessons) * 100
-                        )
-                      : 0;
+              <div key={group.lesson}>
+                {groupIndex > 0 && (
+                  <div className={`border-t ${classes.divider} my-1.5`} />
+                )}
+                <div className={`text-xs ${classes.lessonText} mb-1`}>
+                  {formatLessonName(group.lesson)}
+                </div>
+                <div className="space-y-0.5">
+                  {group.students.map((student) => {
+                    const totalLessons = student.totalLessonsInSection;
+                    const progressPercent =
+                      totalLessons > 0
+                        ? Math.round(
+                            (student.completedLessonsInSection / totalLessons) *
+                              100,
+                          )
+                        : 0;
 
-                  // Check if student is fully complete (completed all lessons in their section)
-                  const isFullyComplete = totalLessons > 0 && student.completedLessonsInSection >= totalLessons;
+                    // Check if student is fully complete (completed all lessons in their section)
+                    const isFullyComplete =
+                      totalLessons > 0 &&
+                      student.completedLessonsInSection >= totalLessons;
 
-                  return (
-                    <div key={student.studentId} className="flex items-center gap-1">
-                      <span
-                        className={`text-xs ${classes.nameText} truncate flex-1 min-w-0`}
+                    return (
+                      <div
+                        key={student.studentId}
+                        className="flex items-center gap-1"
                       >
-                        {student.studentName}
-                      </span>
-                      {showSectionBadge ? (
-                        // For far-behind/far-ahead: only show "Unit Complete" if fully complete, otherwise blank
-                        isFullyComplete ? (
-                          <span className={`text-[10px] ${classes.badgeBg} ${classes.badgeText} px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap`}>
-                            Unit Complete
-                          </span>
-                        ) : null
-                      ) : (
-                        // For other zones: show progress bar
-                        <div className="w-12 flex items-center gap-0.5">
-                          <div
-                            className={`relative h-1.5 ${classes.progressBg} rounded-full overflow-hidden flex-1`}
-                          >
+                        <span
+                          className={`text-xs ${classes.nameText} truncate flex-1 min-w-0`}
+                        >
+                          {student.studentName}
+                        </span>
+                        {showSectionBadge ? (
+                          // For far-behind/far-ahead: only show "Unit Complete" if fully complete, otherwise blank
+                          isFullyComplete ? (
+                            <span
+                              className={`text-[10px] ${classes.badgeBg} ${classes.badgeText} px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap`}
+                            >
+                              Unit Complete
+                            </span>
+                          ) : null
+                        ) : (
+                          // For other zones: show progress bar
+                          <div className="w-12 flex items-center gap-0.5">
                             <div
-                              className={`absolute h-full ${classes.progressFill} rounded-full`}
-                              style={{ width: `${progressPercent}%` }}
-                            />
+                              className={`relative h-1.5 ${classes.progressBg} rounded-full overflow-hidden flex-1`}
+                            >
+                              <div
+                                className={`absolute h-full ${classes.progressFill} rounded-full`}
+                                style={{ width: `${progressPercent}%` }}
+                              />
+                            </div>
+                            <span
+                              className={`text-[10px] ${classes.progressText} whitespace-nowrap`}
+                            >
+                              {student.completedLessonsInSection}/{totalLessons}
+                            </span>
                           </div>
-                          <span
-                            className={`text-[10px] ${classes.progressText} whitespace-nowrap`}
-                          >
-                            {student.completedLessonsInSection}/{totalLessons}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
           </div>
         )}
       </div>

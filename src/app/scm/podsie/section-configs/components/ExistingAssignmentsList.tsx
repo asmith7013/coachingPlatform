@@ -6,7 +6,7 @@ interface ExistingAssignmentsListProps {
 }
 
 export function ExistingAssignmentsList({
-  assignments
+  assignments,
 }: ExistingAssignmentsListProps) {
   if (assignments.length === 0) {
     return null;
@@ -24,14 +24,21 @@ export function ExistingAssignmentsList({
           if (!firstActivity) return null;
 
           return (
-            <div key={idx} className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div
+              key={idx}
+              className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg"
+            >
               <div className="flex-1">
                 <div className="font-medium text-gray-900">
                   {assignment.unitLessonId}: {assignment.lessonName}
                 </div>
                 <div className="text-sm text-gray-600">
-                  Assignment ID: {firstActivity.podsieAssignmentId} • {firstActivity.totalQuestions} questions • {firstActivity.variations ?? 3} variations • {firstActivity.activityType}
-                  {assignment.podsieActivities.length > 1 && ` (+${assignment.podsieActivities.length - 1} more activities)`}
+                  Assignment ID: {firstActivity.podsieAssignmentId} •{" "}
+                  {firstActivity.totalQuestions} questions •{" "}
+                  {firstActivity.variations ?? 3} variations •{" "}
+                  {firstActivity.activityType}
+                  {assignment.podsieActivities.length > 1 &&
+                    ` (+${assignment.podsieActivities.length - 1} more activities)`}
                 </div>
               </div>
               <CheckIcon className="w-5 h-5 text-green-600" />

@@ -1,31 +1,25 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, ReactNode } from 'react';
-import { useAuthenticatedUser } from '@/hooks/auth/useAuthenticatedUser';
-import { AuthenticatedUser } from '@core-types/auth';
-import { useUserStaff } from '@/hooks/domain';
+import React, { createContext, useContext, ReactNode } from "react";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { AuthenticatedUser } from "@core-types/auth";
 
-type AuthContextType = AuthenticatedUser & {
-  staff: ReturnType<typeof useUserStaff>;
-};
+type AuthContextType = AuthenticatedUser;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const authData = useAuthenticatedUser();
-  const staff = useUserStaff();
-  
+
   return (
-    <AuthContext.Provider value={{ ...authData, staff }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>
   );
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 }

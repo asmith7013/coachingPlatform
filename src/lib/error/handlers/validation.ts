@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import { fromZodError } from 'zod-validation-error';
+import { fromZodError } from "zod-validation-error";
 import { logError } from "@error/core/logging";
 import { ErrorContext } from "@error-types";
 
@@ -11,21 +11,22 @@ import { ErrorContext } from "@error-types";
  */
 export function handleValidationError(
   error: ZodError,
-  context: ErrorContext | string = {}
+  context: ErrorContext | string = {},
 ): string {
   // Use zod-validation-error for better formatting
   const validationError = fromZodError(error, {
-    prefix: 'Validation failed',
-    prefixSeparator: ': ',
-    issueSeparator: '; ',
+    prefix: "Validation failed",
+    prefixSeparator: ": ",
+    issueSeparator: "; ",
   });
 
   const formattedMessage = `[422] ${validationError.message}`;
 
   // Create context if string provided
-  const errorContext: ErrorContext = typeof context === 'string'
-    ? { component: "Validation", operation: context }
-    : { component: "Validation", ...context };
+  const errorContext: ErrorContext =
+    typeof context === "string"
+      ? { component: "Validation", operation: context }
+      : { component: "Validation", ...context };
 
   // Add validation-specific context
   const enhancedContext: ErrorContext = {
@@ -34,8 +35,8 @@ export function handleValidationError(
     severity: "warning",
     metadata: {
       ...errorContext.metadata,
-      validationErrors: error.issues
-    }
+      validationErrors: error.issues,
+    },
   };
 
   // Log validation error through unified system

@@ -29,7 +29,9 @@ export function getUnitColor(unitIndex: number): UnitColor {
 /**
  * Get shade for a section based on its index within a unit
  */
-export function getSectionShade(sectionIndex: number): "light" | "medium" | "dark" {
+export function getSectionShade(
+  sectionIndex: number,
+): "light" | "medium" | "dark" {
   const shadeIndex = sectionIndex % 3;
   return shadeIndex === 0 ? "light" : shadeIndex === 1 ? "medium" : "dark";
 }
@@ -37,7 +39,10 @@ export function getSectionShade(sectionIndex: number): "light" | "medium" | "dar
 /**
  * Get the specific color for a section within a unit
  */
-export function getUnitSectionColor(unitIndex: number, sectionIndex: number): string {
+export function getUnitSectionColor(
+  unitIndex: number,
+  sectionIndex: number,
+): string {
   const unitColor = getUnitColor(unitIndex);
   const shade = getSectionShade(sectionIndex);
   return unitColor[shade];

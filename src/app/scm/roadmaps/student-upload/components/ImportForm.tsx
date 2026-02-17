@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
+import React, { useState, useRef } from "react";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/fields/Input";
 
 interface ImportFormProps {
   onSubmit: (file: File, sheetName: string) => void;
@@ -11,7 +11,7 @@ interface ImportFormProps {
 
 export function ImportForm({ onSubmit, isLoading }: ImportFormProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [sheetName, setSheetName] = useState('');
+  const [sheetName, setSheetName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +31,7 @@ export function ImportForm({ onSubmit, isLoading }: ImportFormProps) {
   const handleClearFile = () => {
     setSelectedFile(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -78,7 +78,8 @@ export function ImportForm({ onSubmit, isLoading }: ImportFormProps) {
             </div>
             {selectedFile && (
               <p className="mt-1 text-sm text-gray-500">
-                Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
+                Selected: {selectedFile.name} (
+                {(selectedFile.size / 1024).toFixed(1)} KB)
               </p>
             )}
           </div>
@@ -97,12 +98,26 @@ export function ImportForm({ onSubmit, isLoading }: ImportFormProps) {
         </div>
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-2">Expected Sheet Format</h4>
+          <h4 className="font-medium text-blue-900 mb-2">
+            Expected Sheet Format
+          </h4>
           <ul className="text-sm text-blue-800 space-y-1">
-            <li>• <strong>Row 1, Column C:</strong> Metadata (Section | Teacher | Roadmap | Date)</li>
-            <li>• <strong>Row 3, Starting Column I:</strong> Student names (LASTNAME, FIRSTNAME)</li>
-            <li>• <strong>Column A, Row 4+:</strong> Skill numbers with Unit headers</li>
-            <li>• <strong>Student columns:</strong> Mark &quot;PO&quot; for Passed Out (mastered skills)</li>
+            <li>
+              • <strong>Row 1, Column C:</strong> Metadata (Section | Teacher |
+              Roadmap | Date)
+            </li>
+            <li>
+              • <strong>Row 3, Starting Column I:</strong> Student names
+              (LASTNAME, FIRSTNAME)
+            </li>
+            <li>
+              • <strong>Column A, Row 4+:</strong> Skill numbers with Unit
+              headers
+            </li>
+            <li>
+              • <strong>Student columns:</strong> Mark &quot;PO&quot; for Passed
+              Out (mastered skills)
+            </li>
           </ul>
         </div>
 
@@ -112,15 +127,21 @@ export function ImportForm({ onSubmit, isLoading }: ImportFormProps) {
           intent="primary"
           fullWidth
         >
-          {isLoading ? 'Importing Skills...' : 'Import Student Skills'}
+          {isLoading ? "Importing Skills..." : "Import Student Skills"}
         </Button>
       </form>
 
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <h4 className="font-medium text-yellow-900 mb-2">Important Notes</h4>
         <ul className="text-sm text-yellow-800 space-y-1">
-          <li>• Students matched by exact name format: &quot;LASTNAME, FIRSTNAME&quot;</li>
-          <li>• New skills will be added to existing mastered skills (not replaced)</li>
+          <li>
+            • Students matched by exact name format: &quot;LASTNAME,
+            FIRSTNAME&quot;
+          </li>
+          <li>
+            • New skills will be added to existing mastered skills (not
+            replaced)
+          </li>
           <li>• Only active students in the database will be updated</li>
           <li>• Accepts .xlsx and .xls Excel file formats</li>
         </ul>

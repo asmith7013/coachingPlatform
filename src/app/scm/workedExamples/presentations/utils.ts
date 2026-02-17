@@ -1,4 +1,4 @@
-import type { AnimatableBox } from './types';
+import type { AnimatableBox } from "./types";
 
 /**
  * Check if slide HTML is a printable worksheet (contains print-page class)
@@ -20,11 +20,16 @@ export function buildExportTitle(params: {
 }): string {
   const { gradeLevel, unitNumber, lessonNumber, title } = params;
 
-  const lessonPrefix = gradeLevel && unitNumber !== null && unitNumber !== undefined && lessonNumber !== null && lessonNumber !== undefined
-    ? `SGI ${gradeLevel}.${unitNumber}.${lessonNumber}: `
-    : 'SGI ';
+  const lessonPrefix =
+    gradeLevel &&
+    unitNumber !== null &&
+    unitNumber !== undefined &&
+    lessonNumber !== null &&
+    lessonNumber !== undefined
+      ? `SGI ${gradeLevel}.${unitNumber}.${lessonNumber}: `
+      : "SGI ";
 
-  const strategyName = title || 'Worked Example';
+  const strategyName = title || "Worked Example";
 
   return `${lessonPrefix}${strategyName}`;
 }
@@ -52,10 +57,10 @@ export function getGoogleSlidesEmbedUrl(url: string): string | null {
 export function getAnimatableBoxes(html: string): AnimatableBox[] {
   const boxes: AnimatableBox[] = [];
   if (/data-pptx-region=["']cfu-box["']/i.test(html)) {
-    boxes.push('cfu-box');
+    boxes.push("cfu-box");
   }
   if (/data-pptx-region=["']answer-box["']/i.test(html)) {
-    boxes.push('answer-box');
+    boxes.push("answer-box");
   }
   return boxes;
 }
@@ -114,20 +119,28 @@ export function generateAnimationCSS(currentRevealed: Set<string>): string {
     }
 
     /* Show revealed boxes - slide up into view */
-    ${currentRevealed.has('cfu-box') ? `
+    ${
+      currentRevealed.has("cfu-box")
+        ? `
       [data-pptx-region="cfu-box"] {
         transform: translateY(0) !important;
         opacity: 1 !important;
         pointer-events: auto !important;
       }
-    ` : ''}
-    ${currentRevealed.has('answer-box') ? `
+    `
+        : ""
+    }
+    ${
+      currentRevealed.has("answer-box")
+        ? `
       [data-pptx-region="answer-box"] {
         transform: translateY(0) !important;
         opacity: 1 !important;
         pointer-events: auto !important;
       }
-    ` : ''}
+    `
+        : ""
+    }
 
     /* On smaller screens, stack vertically */
     @media (max-width: 900px) {
@@ -147,16 +160,24 @@ export function generateAnimationCSS(currentRevealed: Set<string>): string {
         bottom: 72px !important;
       }
 
-      ${currentRevealed.has('cfu-box') ? `
+      ${
+        currentRevealed.has("cfu-box")
+          ? `
         [data-pptx-region="cfu-box"] {
           transform: translateX(-50%) translateY(0) !important;
         }
-      ` : ''}
-      ${currentRevealed.has('answer-box') ? `
+      `
+          : ""
+      }
+      ${
+        currentRevealed.has("answer-box")
+          ? `
         [data-pptx-region="answer-box"] {
           transform: translateX(-50%) translateY(0) !important;
         }
-      ` : ''}
+      `
+          : ""
+      }
     }
   `;
 }

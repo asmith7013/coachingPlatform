@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { SWRConfig } from 'swr';
-import React from 'react';
+import { SWRConfig } from "swr";
+import React from "react";
 
 export const globalSWRConfig = {
   dedupingInterval: 10000,
@@ -15,9 +15,5 @@ export const globalSWRConfig = {
 };
 
 export function SWRProvider({ children }: { children: React.ReactNode }) {
-  return (
-    <SWRConfig value={globalSWRConfig}>
-      {children}
-    </SWRConfig>
-  );
-} 
+  return <SWRConfig value={globalSWRConfig}>{children}</SWRConfig>;
+}

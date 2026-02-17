@@ -64,21 +64,21 @@ export interface SyncSectionResult {
  * Used to ensure sync stores data at the correct positions
  */
 export interface QuestionIdToNumberMap {
-  [questionId: string]: number;  // questionId -> questionNumber
+  [questionId: string]: number; // questionId -> questionNumber
 }
 
 /**
  * Options for sync operations
  */
 export interface SyncOptions {
-  testMode?: boolean;           // If true, only sync first student with email
-  testStudentId?: string;        // Specific student ID to test with
-  questionMapping?: number[][];  // Mapping of logical positions to question_ids
-  baseQuestionIds?: number[];    // Base question IDs from assignment (in order)
-  questionIdToNumber?: QuestionIdToNumberMap;  // Map of questionId -> actual questionNumber
-  variations?: number;           // Number of variations per question (default: 3)
-  q1HasVariations?: boolean;     // Whether Question 1 has variations (default: false)
-  activityType?: 'sidekick' | 'mastery-check' | 'assessment';  // Type of Podsie activity
+  testMode?: boolean; // If true, only sync first student with email
+  testStudentId?: string; // Specific student ID to test with
+  questionMapping?: number[][]; // Mapping of logical positions to question_ids
+  baseQuestionIds?: number[]; // Base question IDs from assignment (in order)
+  questionIdToNumber?: QuestionIdToNumberMap; // Map of questionId -> actual questionNumber
+  variations?: number; // Number of variations per question (default: 3)
+  q1HasVariations?: boolean; // Whether Question 1 has variations (default: false)
+  activityType?: "sidekick" | "mastery-check" | "assessment"; // Type of Podsie activity
 }
 
 // =====================================
@@ -96,7 +96,7 @@ export interface StudentRampUpProgressData {
   unitCode: string;
   rampUpId: string;
   rampUpName?: string;
-  activityType?: 'sidekick' | 'mastery-check' | 'assessment';
+  activityType?: "sidekick" | "mastery-check" | "assessment";
   questions: RampUpQuestion[];
   totalQuestions: number;
   completedCount: number;

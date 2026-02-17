@@ -1,23 +1,27 @@
 import { z } from "zod";
-import { 
-  GradeLevelsSupportedZod, 
+import {
+  GradeLevelsSupportedZod,
   AllowedPurposeZod,
   ModeDoneZod,
 } from "@enums";
 // import { EventFieldsSchema } from "@/lib/schema/zod-schema/schedules/schedule";
-import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { BaseReferenceZodSchema } from '@zod-schema/core-types/reference';
-import { createReferenceTransformer, createArrayTransformer } from "@/lib/data-processing/transformers/factories/reference-factory";
-import { toDateString, formatMediumDate } from '@/lib/data-processing/transformers/utils/date-utils';
+import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
+import { BaseReferenceZodSchema } from "@zod-schema/core-types/reference";
+import {
+  createReferenceTransformer,
+  createArrayTransformer,
+} from "@/lib/data-processing/transformers/factories/reference-factory";
+import {
+  toDateString,
+  formatMediumDate,
+} from "@/lib/data-processing/transformers/utils/date-utils";
 
 // Helper function for consistent date formatting
 export function formatVisitDate(date: Date | string | undefined): string {
-  if (!date) return 'No date set';
-  
-  const dateString = date instanceof Date 
-    ? toDateString(date)
-    : date;
-    
+  if (!date) return "No date set";
+
+  const dateString = date instanceof Date ? toDateString(date) : date;
+
   return formatMediumDate(dateString);
 }
 
@@ -29,8 +33,14 @@ export const SessionLinkFieldsSchema = z.object({
   purpose: z.string().describe("Purpose of the linked resource"),
   title: z.string().describe("Display title for the link"),
   url: z.string().url().describe("Valid URL to external resource or document"),
-  staffIds: z.array(z.string()).describe("Array of Staff document _ids who should access this link"),
-  periodNum: z.number().optional().default(0).describe("Bell schedule period number (1-8)"),
+  staffIds: z
+    .array(z.string())
+    .describe("Array of Staff document _ids who should access this link"),
+  periodNum: z
+    .number()
+    .optional()
+    .default(0)
+    .describe("Bell schedule period number (1-8)"),
 });
 
 // =====================================
@@ -39,45 +49,97 @@ export const SessionLinkFieldsSchema = z.object({
 
 export const VisitFieldsSchema = z.object({
   // Primary relationships
-  coachingActionPlanId: z.string().describe("Reference to CoachingActionPlan document _id - PRIMARY AGGREGATE"),
+  coachingActionPlanId: z
+    .string()
+    .describe(
+      "Reference to CoachingActionPlan document _id - PRIMARY AGGREGATE",
+    ),
   date: z.string().optional().describe("ISO string for system timestamp"),
-  schoolId: z.string().describe("Reference to School document _id where visit occurs"),
-  coachId: z.string().describe("Reference to Staff document _id of the coach conducting visit"),
-  
+  schoolId: z
+    .string()
+    .describe("Reference to School document _id where visit occurs"),
+  coachId: z
+    .string()
+    .describe("Reference to Staff document _id of the coach conducting visit"),
+
   // Optional relationships
   // cycleId: z.string().optional().describe("Reference to Cycle document _id for coaching cycle"),
-  teacherId: z.string().optional().describe("Primary teacher for this visit (most common from schedule events)"),
-  
+  teacherId: z
+    .string()
+    .optional()
+    .describe(
+      "Primary teacher for this visit (most common from schedule events)",
+    ),
+
   // Visit metadata
-  allowedPurpose: AllowedPurposeZod.optional().describe("Visit type: Initial Walkthrough, Regular Visit, or Final Walkthrough"),
-  modeDone: ModeDoneZod.optional().describe("Visit format: In-Person, Virtual, or Hybrid"),
-  gradeLevelsSupported: z.array(GradeLevelsSupportedZod).default([]).describe("Grade levels included in this visit"),
-  
+  allowedPurpose: AllowedPurposeZod.optional().describe(
+    "Visit type: Initial Walkthrough, Regular Visit, or Final Walkthrough",
+  ),
+  modeDone: ModeDoneZod.optional().describe(
+    "Visit format: In-Person, Virtual, or Hybrid",
+  ),
+  gradeLevelsSupported: z
+    .array(GradeLevelsSupportedZod)
+    .default([])
+    .describe("Grade levels included in this visit"),
+
   // Schedule reference (NEW - replaces embedded events)
-  visitScheduleId: z.string().optional().describe("Reference to VisitSchedule document _id for detailed scheduling"),
-  
+  visitScheduleId: z
+    .string()
+    .optional()
+    .describe(
+      "Reference to VisitSchedule document _id for detailed scheduling",
+    ),
+
   // NEW: Reference to embedded weekly plan
-  weeklyPlanIndex: z.number().optional().describe("Index of weekly plan within CAP.weeklyPlans array for this visit"),
-  
-  // NEW: Metrics to focus on during this visit  
-  focusOutcomeIndexes: z.array(z.number()).default([]).describe("Indexes of CAP.outcomes array to focus on during this visit"),
-  
+  weeklyPlanIndex: z
+    .number()
+    .optional()
+    .describe(
+      "Index of weekly plan within CAP.weeklyPlans array for this visit",
+    ),
+
+  // NEW: Metrics to focus on during this visit
+  focusOutcomeIndexes: z
+    .array(z.number())
+    .default([])
+    .describe("Indexes of CAP.outcomes array to focus on during this visit"),
+
   // events: z.array(VisitScheduleZodSchema).default([]).describe("Events that occurred during this visit"),
   // Supporting content
-  sessionLinks: z.array(SessionLinkFieldsSchema).default([]).describe("External resources and documents"),
-  
+  sessionLinks: z
+    .array(SessionLinkFieldsSchema)
+    .default([])
+    .describe("External resources and documents"),
+
   // Monday.com integration fields
-  mondayItemId: z.string().optional().describe("Monday.com board item ID for bi-directional sync"),
-  mondayBoardId: z.string().optional().describe("Monday.com board ID where visit item exists"),
+  mondayItemId: z
+    .string()
+    .optional()
+    .describe("Monday.com board item ID for bi-directional sync"),
+  mondayBoardId: z
+    .string()
+    .optional()
+    .describe("Monday.com board ID where visit item exists"),
   mondayItemName: z.string().optional().describe("Item name in Monday.com"),
-  mondayLastSyncedAt: z.string().optional().describe("Last sync timestamp with Monday.com"),
-  
+  mondayLastSyncedAt: z
+    .string()
+    .optional()
+    .describe("Last sync timestamp with Monday.com"),
+
   // Import flexibility fields
-  siteAddress: z.string().optional().describe("Physical address for visit location"),
+  siteAddress: z
+    .string()
+    .optional()
+    .describe("Physical address for visit location"),
   endDate: z.string().optional().describe("ISO string for system timestamp"),
 
   // Coaching Log Submission Fields
-  coachingLogSubmitted: z.boolean().optional().default(false).describe("Whether the coaching log has been submitted"),
+  coachingLogSubmitted: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe("Whether the coaching log has been submitted"),
 });
 
 // Visit Full Schema
@@ -91,22 +153,26 @@ export const VisitInputZodSchema = toInputSchema(VisitZodSchema);
 // =====================================
 
 export const VisitReferenceZodSchema = BaseReferenceZodSchema.merge(
-  VisitFieldsSchema
-    .pick({
-      date: true,
-      schoolId: true,
-      coachId: true,
-      allowedPurpose: true,
-      modeDone: true,
-    })
-    .partial()
+  VisitFieldsSchema.pick({
+    date: true,
+    schoolId: true,
+    coachId: true,
+    allowedPurpose: true,
+    modeDone: true,
+  }).partial(),
 ).extend({
-  date: z.string().optional().describe("Date as ISO string or formatted for display"),
+  date: z
+    .string()
+    .optional()
+    .describe("Date as ISO string or formatted for display"),
   dateFormatted: z.string().optional().describe("Formatted date string"),
   schoolName: z.string().optional().describe("School name (for display)"),
   coachName: z.string().optional().describe("Coach name (for display)"),
   hasSchedule: z.boolean().optional().describe("Whether visit has a schedule"),
-  hasCoachingLog: z.boolean().optional().describe("Whether visit has a coaching log"),
+  hasCoachingLog: z
+    .boolean()
+    .optional()
+    .describe("Whether visit has a coaching log"),
 });
 
 // =====================================
@@ -126,14 +192,19 @@ export const VisitImportZodSchema = VisitFieldsSchema.extend({
 // REFERENCE TRANSFORMER
 // =====================================
 
-export const visitToReference = createReferenceTransformer<Visit, VisitReference>(
+export const visitToReference = createReferenceTransformer<
+  Visit,
+  VisitReference
+>(
   // Label function: Create display string from date and purpose
   (visit) => {
-    if (!visit.date) return 'No date set';
+    if (!visit.date) return "No date set";
     const dateStr = formatVisitDate(visit.date);
-    return visit.allowedPurpose ? `${dateStr} - ${visit.allowedPurpose}` : dateStr;
+    return visit.allowedPurpose
+      ? `${dateStr} - ${visit.allowedPurpose}`
+      : dateStr;
   },
-  
+
   // Additional fields function
   (visit) => {
     const date = visit.date ? new Date(visit.date) : undefined;
@@ -148,14 +219,14 @@ export const visitToReference = createReferenceTransformer<Visit, VisitReference
       hasCoachingLog: false, // This would need to be populated from related data
     };
   },
-  
+
   // Validation schema
-  VisitReferenceZodSchema
+  VisitReferenceZodSchema,
 );
 
 // Array transformer
 export const visitsToReferences = createArrayTransformer<Visit, VisitReference>(
-  visitToReference
+  visitToReference,
 );
 
 // =====================================
@@ -172,14 +243,16 @@ export type VisitImport = z.infer<typeof VisitImportZodSchema>;
 // HELPER FUNCTIONS
 // =====================================
 
-export function createVisitDefaults(overrides: Partial<VisitInput> = {}): VisitInput {
+export function createVisitDefaults(
+  overrides: Partial<VisitInput> = {},
+): VisitInput {
   return {
-    coachingActionPlanId: '',
+    coachingActionPlanId: "",
     date: new Date().toISOString(),
-    schoolId: '',
-    coachId: '',
+    schoolId: "",
+    coachId: "",
     gradeLevelsSupported: [],
     sessionLinks: [],
-    ...overrides
+    ...overrides,
   };
 }

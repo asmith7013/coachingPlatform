@@ -5,11 +5,7 @@ import { getZoneStyles } from "./zone-styles";
 import { StudentCountBadge } from "./shared-ui";
 import type { ColumnConfig } from "./types";
 
-export function ColumnHeader({
-  config,
-}: {
-  config: ColumnConfig;
-}) {
+export function ColumnHeader({ config }: { config: ColumnConfig }) {
   const styles = getZoneStyles(config.zone);
 
   const widthStyle = config.isFixedWidth
@@ -18,7 +14,9 @@ export function ColumnHeader({
 
   const borderClasses = config.isCompleteColumn
     ? `border-l ${styles.border}`
-    : (!config.isLastColumn ? `border-r ${styles.border}` : "");
+    : !config.isLastColumn
+      ? `border-r ${styles.border}`
+      : "";
 
   return (
     <div
@@ -36,7 +34,9 @@ export function ColumnHeader({
       ) : (
         <>
           <div className="flex items-center">
-            <span className={`w-2.5 h-2.5 rounded-full ${styles.dotColor} mr-2 flex-shrink-0`} />
+            <span
+              className={`w-2.5 h-2.5 rounded-full ${styles.dotColor} mr-2 flex-shrink-0`}
+            />
             <span className={`text-sm ${styles.text} truncate`}>
               {config.headerLabel}
             </span>

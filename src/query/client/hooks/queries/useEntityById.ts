@@ -1,8 +1,8 @@
 // src/hooks/data/useEntityById.ts
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { ZodSchema } from 'zod';
-import { BaseDocument } from '@core-types/document';
-import { EntityResponse } from '@core-types/response';
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { ZodSchema } from "zod";
+import { BaseDocument } from "@core-types/document";
+import { EntityResponse } from "@core-types/response";
 
 /**
  * Configuration for useEntityById hook
@@ -10,24 +10,27 @@ import { EntityResponse } from '@core-types/response';
 export interface UseEntityByIdConfig<T extends BaseDocument> {
   /** Entity type for query key generation */
   entityType: string;
-  
+
   /** Entity ID to fetch */
   id: string | null | undefined;
-  
+
   /** Function to fetch entity by ID - now expects EntityResponse */
   fetcher: (id: string) => Promise<EntityResponse<T>>;
-  
+
   /** Zod schema for validation */
   schema: ZodSchema<T>;
-  
+
   /** Whether to use the selector system instead of direct schema validation */
   useSelector?: boolean;
-  
+
   /** Error context for debugging */
   errorContext?: string;
-  
+
   /** Additional query options */
-  queryOptions?: Omit<UseQueryOptions<EntityResponse<T>, Error>, 'queryKey' | 'queryFn' | 'select' | 'enabled'>;
+  queryOptions?: Omit<
+    UseQueryOptions<EntityResponse<T>, Error>,
+    "queryKey" | "queryFn" | "select" | "enabled"
+  >;
 }
 
 /**
@@ -37,35 +40,35 @@ export function useEntityById<T extends BaseDocument>({
   entityType,
   id,
   fetcher,
-  queryOptions = {}
+  queryOptions = {},
 }: UseEntityByIdConfig<T>) {
   const query = useQuery({
-    queryKey: [entityType, 'detail', id] as string[],
+    queryKey: [entityType, "detail", id] as string[],
     queryFn: async () => {
       if (!id) {
         throw new Error(`Cannot fetch ${entityType} without an ID`);
       }
       return await fetcher(id);
     },
-    
+
     // ✅ SIMPLIFIED: Direct EntityResponse handling
     select: (response) => {
       // Handle EntityResponse format - extract and validate the single entity
       if (!response.success || !response.data) {
         throw new Error(response.error || `Failed to fetch ${entityType}`);
       }
-      
+
       // ✅ FIXED: Transform the single entity directly (no format conversion needed)
-      const transformed = response.data
-      
+      const transformed = response.data;
+
       if (!transformed) {
         throw new Error(`Failed to transform ${entityType} data`);
       }
-      
+
       return transformed;
     },
     enabled: !!id,
-    ...queryOptions
+    ...queryOptions,
   });
 
   return {
@@ -74,6 +77,6 @@ export function useEntityById<T extends BaseDocument>({
     isError: query.isError,
     error: query.error,
     refetch: query.refetch,
-    query
+    query,
   };
 }

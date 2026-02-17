@@ -1,18 +1,18 @@
 "use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { handleServerError } from '@error/handlers/server';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { handleServerError } from "@error/handlers/server";
 import { put } from "@vercel/blob";
-import { getAuthenticatedUser } from '@/lib/server/auth';
-import { WorkedExampleRequestModel } from '@mongoose-schema/scm/podsie/worked-example-request.model';
+import { getAuthenticatedUser } from "@/lib/server/auth";
+import { WorkedExampleRequestModel } from "@mongoose-schema/scm/podsie/worked-example-request.model";
 import {
   WorkedExampleRequestInputZodSchema,
   WorkedExampleRequestQuerySchema,
   type WorkedExampleRequestInput,
   type WorkedExampleRequestQuery,
-  type WorkedExampleRequestStatus
-} from '@zod-schema/scm/podsie/worked-example-request';
-import { sendEmail } from '@/lib/email/email-service';
+  type WorkedExampleRequestStatus,
+} from "@zod-schema/scm/podsie/worked-example-request";
+import { sendEmail } from "@/lib/email/email-service";
 
 // =====================================
 // IMAGE UPLOAD
@@ -21,11 +21,11 @@ import { sendEmail } from '@/lib/email/email-service';
 export async function uploadWorkedExampleImage(
   imageData: Uint8Array,
   filename: string,
-  contentType: string = "image/png"
+  contentType: string = "image/png",
 ) {
   try {
     const timestamp = Date.now();
-    const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, "_");
     const blobFileName = `worked-example-requests/${sanitizedFilename}-${timestamp}`;
 
     const imageBlob = new Blob([imageData], { type: contentType });
@@ -52,7 +52,9 @@ export async function uploadWorkedExampleImage(
 // CREATE REQUEST
 // =====================================
 
-export async function createWorkedExampleRequest(input: WorkedExampleRequestInput) {
+export async function createWorkedExampleRequest(
+  input: WorkedExampleRequestInput,
+) {
   return withDbConnection(async () => {
     try {
       // Get current user
@@ -88,7 +90,10 @@ export async function createWorkedExampleRequest(input: WorkedExampleRequestInpu
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to create worked example request'),
+        error: handleServerError(
+          error,
+          "Failed to create worked example request",
+        ),
       };
     }
   });
@@ -98,28 +103,32 @@ export async function createWorkedExampleRequest(input: WorkedExampleRequestInpu
 // GET REQUESTS (for queue view)
 // =====================================
 
-export async function getWorkedExampleRequests(query?: WorkedExampleRequestQuery) {
+export async function getWorkedExampleRequests(
+  query?: WorkedExampleRequestQuery,
+) {
   return withDbConnection(async () => {
     try {
       // Validate query params if provided
-      const validated = query ? WorkedExampleRequestQuerySchema.parse(query) : {};
+      const validated = query
+        ? WorkedExampleRequestQuerySchema.parse(query)
+        : {};
 
       // Build filter
       const filter: Record<string, unknown> = {};
       if (validated.status) filter.status = validated.status;
-      if (validated.scopeSequenceTag) filter.scopeSequenceTag = validated.scopeSequenceTag;
+      if (validated.scopeSequenceTag)
+        filter.scopeSequenceTag = validated.scopeSequenceTag;
       if (validated.grade) filter.grade = validated.grade;
       if (validated.unitNumber) filter.unitNumber = validated.unitNumber;
       if (validated.lessonNumber) filter.lessonNumber = validated.lessonNumber;
       if (validated.requestedBy) filter.requestedBy = validated.requestedBy;
 
       // Fetch requests, sorted by status priority then newest first
-      const requests = await WorkedExampleRequestModel.find(filter)
-        .sort({
-          // Custom sort: pending first, then in_progress, then others
-          status: 1,
-          createdAt: -1
-        });
+      const requests = await WorkedExampleRequestModel.find(filter).sort({
+        // Custom sort: pending first, then in_progress, then others
+        status: 1,
+        createdAt: -1,
+      });
 
       // Sort manually to ensure pending comes first
       const sortedRequests = requests.sort((a, b) => {
@@ -127,22 +136,27 @@ export async function getWorkedExampleRequests(query?: WorkedExampleRequestQuery
           pending: 0,
           in_progress: 1,
           completed: 2,
-          cancelled: 3
+          cancelled: 3,
         };
         const statusDiff = statusOrder[a.status] - statusOrder[b.status];
         if (statusDiff !== 0) return statusDiff;
         // If same status, sort by createdAt descending
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       });
 
       return {
         success: true,
-        data: sortedRequests.map(r => JSON.parse(JSON.stringify(r.toJSON()))),
+        data: sortedRequests.map((r) => JSON.parse(JSON.stringify(r.toJSON()))),
       };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to fetch worked example requests'),
+        error: handleServerError(
+          error,
+          "Failed to fetch worked example requests",
+        ),
       };
     }
   });
@@ -160,7 +174,7 @@ export async function getWorkedExampleRequestById(id: string) {
       if (!request) {
         return {
           success: false,
-          error: 'Worked example request not found',
+          error: "Worked example request not found",
         };
       }
 
@@ -171,7 +185,10 @@ export async function getWorkedExampleRequestById(id: string) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to fetch worked example request'),
+        error: handleServerError(
+          error,
+          "Failed to fetch worked example request",
+        ),
       };
     }
   });
@@ -184,7 +201,7 @@ export async function getWorkedExampleRequestById(id: string) {
 export async function updateWorkedExampleRequestStatus(
   id: string,
   status: WorkedExampleRequestStatus,
-  completedWorkedExampleId?: string
+  completedWorkedExampleId?: string,
 ) {
   return withDbConnection(async () => {
     try {
@@ -196,13 +213,13 @@ export async function updateWorkedExampleRequestStatus(
       const request = await WorkedExampleRequestModel.findByIdAndUpdate(
         id,
         { $set: updateData },
-        { new: true }
+        { new: true },
       );
 
       if (!request) {
         return {
           success: false,
-          error: 'Worked example request not found',
+          error: "Worked example request not found",
         };
       }
 
@@ -213,7 +230,10 @@ export async function updateWorkedExampleRequestStatus(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to update worked example request status'),
+        error: handleServerError(
+          error,
+          "Failed to update worked example request status",
+        ),
       };
     }
   });
@@ -238,7 +258,9 @@ interface RequestData {
   _id: string;
 }
 
-async function sendRequestNotification(requestData: RequestData): Promise<boolean> {
+async function sendRequestNotification(
+  requestData: RequestData,
+): Promise<boolean> {
   const subject = `New Worked Example Request - ${requestData.lessonName}`;
 
   let body = `A new worked example request has been submitted:\n\n`;
@@ -253,7 +275,7 @@ async function sendRequestNotification(requestData: RequestData): Promise<boolea
   body += `   Standard: ${requestData.mathStandard}\n\n`;
 
   body += `STRUGGLING SKILLS:\n`;
-  body += `   Skills: ${requestData.strugglingSkillNumbers.join(', ')}\n`;
+  body += `   Skills: ${requestData.strugglingSkillNumbers.join(", ")}\n`;
   body += `   Description: ${requestData.strugglingDescription}\n\n`;
 
   body += `SOURCE IMAGE:\n`;
@@ -265,15 +287,15 @@ async function sendRequestNotification(requestData: RequestData): Promise<boolea
   }
 
   body += `REQUESTED BY:\n`;
-  body += `   ${requestData.requestedByEmail || 'Unknown'}\n\n`;
+  body += `   ${requestData.requestedByEmail || "Unknown"}\n\n`;
 
-  body += `Submitted at: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}\n`;
+  body += `Submitted at: ${new Date().toLocaleString("en-US", { timeZone: "America/New_York" })}\n`;
   body += `\nView queue: https://www.solvescoaching.com/scm/workedExamples/request/admin`;
 
   const result = await sendEmail({
-    to: 'alex.smith@teachinglab.com',
+    to: "alex.smith@teachinglab.com",
     subject,
-    body
+    body,
   });
 
   return result.success;

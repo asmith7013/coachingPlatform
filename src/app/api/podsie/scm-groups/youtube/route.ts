@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
         if (isNaN(podsieGroupId)) return null;
         const group = await PodsieScmGroupModel.findOne(
           { podsieGroupId },
-          { youtubeLinks: 1, podsieGroupId: 1, groupName: 1 }
+          { youtubeLinks: 1, podsieGroupId: 1, groupName: 1 },
         ).lean();
         return group;
       }
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
         if (ids.length === 0) return [];
         const groups = await PodsieScmGroupModel.find(
           { podsieGroupId: { $in: ids } },
-          { youtubeLinks: 1, podsieGroupId: 1, groupName: 1 }
+          { youtubeLinks: 1, podsieGroupId: 1, groupName: 1 },
         ).lean();
         return groups;
       }
@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in scm-groups/youtube GET:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
           success: false,
           error: "podsieGroupId, url, and title are required",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
           $setOnInsert: { podsieGroupId },
           $addToSet: { youtubeLinks: { url, title } },
         },
-        { upsert: true, new: true }
+        { upsert: true, new: true },
       ).lean();
     });
 
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     console.error("Error in scm-groups/youtube POST:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -130,7 +130,7 @@ export async function DELETE(req: NextRequest) {
     if (!podsieGroupId || !url) {
       return NextResponse.json(
         { success: false, error: "podsieGroupId and url are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -138,14 +138,14 @@ export async function DELETE(req: NextRequest) {
       return PodsieScmGroupModel.findOneAndUpdate(
         { podsieGroupId },
         { $pull: { youtubeLinks: { url } } },
-        { new: true }
+        { new: true },
       ).lean();
     });
 
     if (!result) {
       return NextResponse.json(
         { success: false, error: "Group not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -157,7 +157,7 @@ export async function DELETE(req: NextRequest) {
     console.error("Error in scm-groups/youtube DELETE:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

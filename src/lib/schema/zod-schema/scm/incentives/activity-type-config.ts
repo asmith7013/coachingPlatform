@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
+import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
 
 // =====================================
 // ACTIVITY TYPE CONFIG SCHEMA
@@ -9,38 +9,65 @@ import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
  * Detail type enum - determines what kind of detail card to show
  */
 export const DetailTypeZod = z.enum([
-  "inquiry",      // Inquiry activity questions (nested by section/assessment)
-  "lesson",       // Lesson picker from scope-and-sequence
-  "skill",        // Skill picker from unit's additionalSupportSkills
-  "small-group",  // Small group with lesson + optional prereq skill
-  "custom",       // Free text input
-  "none"          // No detail card needed
+  "inquiry", // Inquiry activity questions (nested by section/assessment)
+  "lesson", // Lesson picker from scope-and-sequence
+  "skill", // Skill picker from unit's additionalSupportSkills
+  "small-group", // Small group with lesson + optional prereq skill
+  "custom", // Free text input
+  "none", // No detail card needed
 ]);
 
 /**
  * Activity type configuration fields
  */
 export const ActivityTypeConfigFieldsSchema = z.object({
-  label: z.string().min(1).max(50).describe("Display name (e.g., 'Inquiry Activity')"),
-  requiresDetails: z.boolean().describe("Whether to show detail card when checked"),
+  label: z
+    .string()
+    .min(1)
+    .max(50)
+    .describe("Display name (e.g., 'Inquiry Activity')"),
+  requiresDetails: z
+    .boolean()
+    .describe("Whether to show detail card when checked"),
   detailType: DetailTypeZod.describe("Type of detail to collect"),
   icon: z.string().min(1).max(10).describe("Emoji icon for column header"),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/).describe("Hex color code (e.g., '#3b82f6')"),
+  color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+    .describe("Hex color code (e.g., '#3b82f6')"),
   isDefault: z.boolean().default(false).describe("Cannot be deleted if true"),
-  order: z.number().int().nonnegative().describe("Display order (lower = left)"),
-  pointsValue: z.number().int().nonnegative().default(0).describe("Points to auto-award when activity is logged (0 = no auto points)"),
-  typeId: z.string().optional().describe("Legacy field for backwards compatibility"),
+  order: z
+    .number()
+    .int()
+    .nonnegative()
+    .describe("Display order (lower = left)"),
+  pointsValue: z
+    .number()
+    .int()
+    .nonnegative()
+    .default(0)
+    .describe(
+      "Points to auto-award when activity is logged (0 = no auto points)",
+    ),
+  typeId: z
+    .string()
+    .optional()
+    .describe("Legacy field for backwards compatibility"),
 });
 
 /**
  * Full activity type config schema with base document fields
  */
-export const ActivityTypeConfigZodSchema = BaseDocumentSchema.merge(ActivityTypeConfigFieldsSchema);
+export const ActivityTypeConfigZodSchema = BaseDocumentSchema.merge(
+  ActivityTypeConfigFieldsSchema,
+);
 
 /**
  * Input schema for creating/updating activity type configs
  */
-export const ActivityTypeConfigInputZodSchema = toInputSchema(ActivityTypeConfigZodSchema);
+export const ActivityTypeConfigInputZodSchema = toInputSchema(
+  ActivityTypeConfigZodSchema,
+);
 
 // =====================================
 // TYPE EXPORTS
@@ -48,7 +75,9 @@ export const ActivityTypeConfigInputZodSchema = toInputSchema(ActivityTypeConfig
 
 export type DetailType = z.infer<typeof DetailTypeZod>;
 export type ActivityTypeConfig = z.infer<typeof ActivityTypeConfigZodSchema>;
-export type ActivityTypeConfigInput = z.infer<typeof ActivityTypeConfigInputZodSchema>;
+export type ActivityTypeConfigInput = z.infer<
+  typeof ActivityTypeConfigInputZodSchema
+>;
 
 // =====================================
 // DEFAULT VALUE CREATORS
@@ -58,7 +87,7 @@ export type ActivityTypeConfigInput = z.infer<typeof ActivityTypeConfigInputZodS
  * Create default values for activity type config input
  */
 export function createActivityTypeConfigDefaults(
-  overrides: Partial<ActivityTypeConfigInput> = {}
+  overrides: Partial<ActivityTypeConfigInput> = {},
 ): ActivityTypeConfigInput {
   return {
     label: "",
@@ -70,7 +99,7 @@ export function createActivityTypeConfigDefaults(
     order: 0,
     pointsValue: 0,
     ownerIds: [],
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -87,7 +116,7 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     isDefault: true,
     order: 1,
     pointsValue: 5,
-    ownerIds: []
+    ownerIds: [],
   },
   {
     label: "Small Group",
@@ -98,7 +127,7 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     isDefault: true,
     order: 2,
     pointsValue: 5,
-    ownerIds: []
+    ownerIds: [],
   },
   {
     label: "Student of the Day",
@@ -109,8 +138,8 @@ export const DEFAULT_ACTIVITY_TYPES: ActivityTypeConfigInput[] = [
     isDefault: true,
     order: 3,
     pointsValue: 10,
-    ownerIds: []
-  }
+    ownerIds: [],
+  },
 ];
 
 /**
@@ -126,8 +155,8 @@ export function isValidActivityTypeId(id: string): boolean {
 export function generateActivityTypeId(label: string): string {
   return label
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/[^a-z0-9\s-]/g, "")
     .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 }

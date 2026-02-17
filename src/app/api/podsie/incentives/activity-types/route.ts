@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in incentives activity-types GET:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     console.error("Error in incentives activity-types POST:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -66,7 +66,7 @@ export async function PUT(req: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { success: false, error: "id is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -78,7 +78,7 @@ export async function PUT(req: NextRequest) {
     console.error("Error in incentives activity-types PUT:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -94,7 +94,7 @@ export async function DELETE(req: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { success: false, error: "id is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,7 +106,7 @@ export async function DELETE(req: NextRequest) {
     console.error("Error in incentives activity-types DELETE:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

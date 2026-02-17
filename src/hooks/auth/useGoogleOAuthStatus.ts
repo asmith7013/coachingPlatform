@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { useAuth, useClerk } from '@clerk/nextjs';
+import { useQuery } from "@tanstack/react-query";
+import { useAuth, useClerk } from "@clerk/nextjs";
 
 interface OAuthStatus {
   valid: boolean;
@@ -18,12 +18,12 @@ export function useGoogleOAuthStatus(options?: { enabled?: boolean }) {
   const { isSignedIn } = useAuth();
 
   const query = useQuery<OAuthStatus>({
-    queryKey: ['google-oauth-status'],
+    queryKey: ["google-oauth-status"],
     queryFn: async () => {
-      const response = await fetch('/api/auth/check-google-oauth');
+      const response = await fetch("/api/auth/check-google-oauth");
       return response.json();
     },
-    enabled: isSignedIn && (options?.enabled !== false),
+    enabled: isSignedIn && options?.enabled !== false,
     staleTime: 5 * 60 * 1000, // 5 minutes - don't check too frequently
     retry: false, // Don't retry on failure
   });
@@ -53,7 +53,8 @@ export function useGoogleReauth() {
       // If that's not available, fall back to sign-in
     } catch {
       // Redirect to sign-in with Google as a fallback
-      window.location.href = '/sign-in?redirect_url=' + encodeURIComponent(window.location.pathname);
+      window.location.href =
+        "/sign-in?redirect_url=" + encodeURIComponent(window.location.pathname);
     }
   };
 

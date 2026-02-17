@@ -7,7 +7,7 @@ import {
   ScopeAndSequenceZodSchema,
   ScopeAndSequenceInputZodSchema,
   ScopeAndSequence,
-  ScopeAndSequenceInput
+  ScopeAndSequenceInput,
 } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -19,14 +19,16 @@ import { handleValidationError } from "@error/handlers/validation";
 // =====================================
 
 const scopeAndSequenceCrud = createCrudActions({
-  model: ScopeAndSequenceModel as unknown as Parameters<typeof createCrudActions>[0]['model'],
+  model: ScopeAndSequenceModel as unknown as Parameters<
+    typeof createCrudActions
+  >[0]["model"],
   schema: ScopeAndSequenceZodSchema as ZodType<ScopeAndSequence>,
   inputSchema: ScopeAndSequenceInputZodSchema as ZodType<ScopeAndSequenceInput>,
-  name: 'ScopeAndSequence',
-  revalidationPaths: ['/roadmaps/scope-and-sequence'],
-  sortFields: ['grade', 'unitNumber', 'lessonNumber', 'createdAt', 'updatedAt'],
-  defaultSortField: 'unitNumber',
-  defaultSortOrder: 'asc'
+  name: "ScopeAndSequence",
+  revalidationPaths: ["/roadmaps/scope-and-sequence"],
+  sortFields: ["grade", "unitNumber", "lessonNumber", "createdAt", "updatedAt"],
+  defaultSortField: "unitNumber",
+  defaultSortOrder: "asc",
 });
 
 // Export CRUD operations
@@ -59,7 +61,7 @@ export async function upsertScopeAndSequence(data: {
       // Validate input
       const validatedData = ScopeAndSequenceInputZodSchema.parse({
         ...data,
-        ownerIds: []
+        ownerIds: [],
       });
 
       // Upsert by compound key: grade + unitLessonId + scopeSequenceTag
@@ -67,38 +69,38 @@ export async function upsertScopeAndSequence(data: {
         {
           grade: data.grade,
           unitLessonId: data.unitLessonId,
-          scopeSequenceTag: data.scopeSequenceTag || null
+          scopeSequenceTag: data.scopeSequenceTag || null,
         },
         {
           $set: {
             ...validatedData,
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           },
           $setOnInsert: {
-            createdAt: new Date().toISOString()
-          }
+            createdAt: new Date().toISOString(),
+          },
         },
-        { upsert: true, new: true, runValidators: true }
+        { upsert: true, new: true, runValidators: true },
       );
 
-      revalidatePath('/roadmaps/scope-and-sequence');
+      revalidatePath("/roadmaps/scope-and-sequence");
 
       return {
         success: true,
         data: result.toObject(),
-        message: `Saved ${data.unitLessonId}: ${data.lessonName}`
+        message: `Saved ${data.unitLessonId}: ${data.lessonName}`,
       };
     } catch (error) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          error: handleValidationError(error)
+          error: handleValidationError(error),
         };
       }
-      console.error('💥 Error upserting scope and sequence:', error);
+      console.error("💥 Error upserting scope and sequence:", error);
       return {
         success: false,
-        error: handleServerError(error, 'upsertScopeAndSequence')
+        error: handleServerError(error, "upsertScopeAndSequence"),
       };
     }
   });
@@ -117,37 +119,43 @@ export async function bulkUpsertScopeAndSequence(
     lessonName: string;
     section?: string;
     scopeSequenceTag?: string;
-  }>
+  }>,
 ) {
   return withDbConnection(async () => {
     try {
-      console.log(`📊 [BULK UPSERT] Starting bulk upsert of ${entries.length} entries`);
+      console.log(
+        `📊 [BULK UPSERT] Starting bulk upsert of ${entries.length} entries`,
+      );
 
       const results = {
         created: [] as string[],
         updated: [] as string[],
-        failed: [] as { unitLessonId: string; error: string }[]
+        failed: [] as { unitLessonId: string; error: string }[],
       };
 
       let processedCount = 0;
 
       for (const entry of entries) {
         processedCount++;
-        console.log(`🔄 [${processedCount}/${entries.length}] Processing: ${entry.unitLessonId}`);
+        console.log(
+          `🔄 [${processedCount}/${entries.length}] Processing: ${entry.unitLessonId}`,
+        );
 
         try {
           // Validate the data first
           console.log(`   ✓ Validating data for ${entry.unitLessonId}...`);
           const validatedData = ScopeAndSequenceInputZodSchema.parse({
             ...entry,
-            ownerIds: []
+            ownerIds: [],
           });
 
-          console.log(`   ✓ Looking for existing entry with grade: ${entry.grade}, unitLessonId: ${entry.unitLessonId}, tag: ${entry.scopeSequenceTag || 'none'}`);
+          console.log(
+            `   ✓ Looking for existing entry with grade: ${entry.grade}, unitLessonId: ${entry.unitLessonId}, tag: ${entry.scopeSequenceTag || "none"}`,
+          );
           const existingEntry = await ScopeAndSequenceModel.findOne({
             grade: entry.grade,
             unitLessonId: entry.unitLessonId,
-            scopeSequenceTag: entry.scopeSequenceTag || null
+            scopeSequenceTag: entry.scopeSequenceTag || null,
           });
 
           if (existingEntry) {
@@ -157,35 +165,38 @@ export async function bulkUpsertScopeAndSequence(
               {
                 $set: {
                   ...validatedData,
-                  updatedAt: new Date().toISOString()
-                }
+                  updatedAt: new Date().toISOString(),
+                },
               },
-              { new: true, runValidators: true }
+              { new: true, runValidators: true },
             );
 
             if (updated) {
               results.updated.push(entry.unitLessonId);
               console.log(`   ✅ Successfully updated: ${entry.unitLessonId}`);
             } else {
-              throw new Error('Update returned null');
+              throw new Error("Update returned null");
             }
           } else {
             console.log(`   ✨ Creating new entry: ${entry.unitLessonId}`);
             const created = await ScopeAndSequenceModel.create({
               ...validatedData,
               createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
+              updatedAt: new Date().toISOString(),
             });
 
             if (created) {
               results.created.push(entry.unitLessonId);
               console.log(`   ✅ Successfully created: ${entry.unitLessonId}`);
             } else {
-              throw new Error('Create returned null');
+              throw new Error("Create returned null");
             }
           }
         } catch (itemError) {
-          console.error(`   ❌ Error processing entry ${entry.unitLessonId}:`, itemError);
+          console.error(
+            `   ❌ Error processing entry ${entry.unitLessonId}:`,
+            itemError,
+          );
 
           // Log detailed error information
           if (itemError instanceof Error) {
@@ -195,31 +206,36 @@ export async function bulkUpsertScopeAndSequence(
           }
 
           results.failed.push({
-            unitLessonId: entry.unitLessonId || 'unknown',
-            error: itemError instanceof Error ? itemError.message : 'Unknown error'
+            unitLessonId: entry.unitLessonId || "unknown",
+            error:
+              itemError instanceof Error ? itemError.message : "Unknown error",
           });
         }
       }
 
-      console.log(`📊 [BULK UPSERT] Completed processing ${processedCount} entries`);
-      console.log(`📊 [BULK UPSERT] Results: Created: ${results.created.length}, Updated: ${results.updated.length}, Failed: ${results.failed.length}`);
+      console.log(
+        `📊 [BULK UPSERT] Completed processing ${processedCount} entries`,
+      );
+      console.log(
+        `📊 [BULK UPSERT] Results: Created: ${results.created.length}, Updated: ${results.updated.length}, Failed: ${results.failed.length}`,
+      );
 
       if (results.failed.length > 0) {
         console.error(`⚠️  [BULK UPSERT] Failed entries:`, results.failed);
       }
 
-      revalidatePath('/roadmaps/scope-and-sequence');
+      revalidatePath("/roadmaps/scope-and-sequence");
 
       return {
         success: true,
         data: results,
-        message: `Created: ${results.created.length}, Updated: ${results.updated.length}, Failed: ${results.failed.length}`
+        message: `Created: ${results.created.length}, Updated: ${results.updated.length}, Failed: ${results.failed.length}`,
       };
     } catch (error) {
-      console.error('💥 Error in bulk upsert:', error);
+      console.error("💥 Error in bulk upsert:", error);
       return {
         success: false,
-        error: handleServerError(error, 'bulkUpsertScopeAndSequence')
+        error: handleServerError(error, "bulkUpsertScopeAndSequence"),
       };
     }
   });
@@ -235,19 +251,20 @@ export async function fetchScopeAndSequenceByGrade(grade: string) {
     try {
       let entries;
 
-      if (grade === 'Algebra 1') {
+      if (grade === "Algebra 1") {
         // For Algebra 1, fetch:
         // 1. Grade 8 lessons tagged with 'Algebra 1' (prerequisites)
         // 2. Grade 'Algebra 1' lessons (the actual curriculum)
         const [grade8Prerequisites, algebra1Curriculum] = await Promise.all([
-          ScopeAndSequenceModel
-            .find({ grade: '8', scopeSequenceTag: 'Algebra 1' })
+          ScopeAndSequenceModel.find({
+            grade: "8",
+            scopeSequenceTag: "Algebra 1",
+          })
             .sort({ unitNumber: 1, lessonNumber: 1 })
             .exec(),
-          ScopeAndSequenceModel
-            .find({ grade: 'Algebra 1' })
+          ScopeAndSequenceModel.find({ grade: "Algebra 1" })
             .sort({ unitNumber: 1, lessonNumber: 1 })
-            .exec()
+            .exec(),
         ]);
 
         // Combine: 8th grade prerequisites first, then Algebra 1 curriculum
@@ -255,28 +272,27 @@ export async function fetchScopeAndSequenceByGrade(grade: string) {
       } else {
         // For regular grades, exclude entries tagged for other scopes (e.g., 'Algebra 1' prerequisites)
         // Only include entries with matching scopeSequenceTag or no tag
-        entries = await ScopeAndSequenceModel
-          .find({
-            grade,
-            $or: [
-              { scopeSequenceTag: { $exists: false } },
-              { scopeSequenceTag: null },
-              { scopeSequenceTag: `Grade ${grade}` }
-            ]
-          })
+        entries = await ScopeAndSequenceModel.find({
+          grade,
+          $or: [
+            { scopeSequenceTag: { $exists: false } },
+            { scopeSequenceTag: null },
+            { scopeSequenceTag: `Grade ${grade}` },
+          ],
+        })
           .sort({ unitNumber: 1, lessonNumber: 1 })
           .exec();
       }
 
       return {
         success: true,
-        data: entries.map(entry => entry.toObject())
+        data: entries.map((entry) => entry.toObject()),
       };
     } catch (error) {
-      console.error('💥 Error fetching scope and sequence by grade:', error);
+      console.error("💥 Error fetching scope and sequence by grade:", error);
       return {
         success: false,
-        error: handleServerError(error, 'fetchScopeAndSequenceByGrade')
+        error: handleServerError(error, "fetchScopeAndSequenceByGrade"),
       };
     }
   });
@@ -285,23 +301,25 @@ export async function fetchScopeAndSequenceByGrade(grade: string) {
 /**
  * Fetch scope and sequence by unit
  */
-export async function fetchScopeAndSequenceByUnit(grade: string, unitNumber: number) {
+export async function fetchScopeAndSequenceByUnit(
+  grade: string,
+  unitNumber: number,
+) {
   return withDbConnection(async () => {
     try {
-      const entries = await ScopeAndSequenceModel
-        .find({ grade, unitNumber })
+      const entries = await ScopeAndSequenceModel.find({ grade, unitNumber })
         .sort({ lessonNumber: 1 })
         .exec();
 
       return {
         success: true,
-        data: entries.map(entry => entry.toObject())
+        data: entries.map((entry) => entry.toObject()),
       };
     } catch (error) {
-      console.error('💥 Error fetching scope and sequence by unit:', error);
+      console.error("💥 Error fetching scope and sequence by unit:", error);
       return {
         success: false,
-        error: handleServerError(error, 'fetchScopeAndSequenceByUnit')
+        error: handleServerError(error, "fetchScopeAndSequenceByUnit"),
       };
     }
   });
@@ -329,15 +347,16 @@ export async function fetchLessonsListByScopeTag(scopeSequenceTag: string) {
         scopeSequenceTag?: string;
       }
 
-      const lessons = await ScopeAndSequenceModel
-        .find({ scopeSequenceTag })
-        .select('_id unitNumber lessonNumber unitLessonId lessonName lessonTitle lessonType unit grade section scopeSequenceTag')
+      const lessons = await ScopeAndSequenceModel.find({ scopeSequenceTag })
+        .select(
+          "_id unitNumber lessonNumber unitLessonId lessonName lessonTitle lessonType unit grade section scopeSequenceTag",
+        )
         .sort({ unitNumber: 1, section: 1, lessonNumber: 1 })
         .lean<LightweightLesson[]>();
 
       return {
         success: true,
-        data: lessons.map(lesson => ({
+        data: lessons.map((lesson) => ({
           _id: String(lesson._id),
           unitNumber: lesson.unitNumber,
           lessonNumber: lesson.lessonNumber,
@@ -349,10 +368,10 @@ export async function fetchLessonsListByScopeTag(scopeSequenceTag: string) {
           grade: lesson.grade,
           section: lesson.section,
           scopeSequenceTag: lesson.scopeSequenceTag || scopeSequenceTag,
-        }))
+        })),
       };
     } catch (error) {
-      console.error('💥 Error fetching lessons list:', error);
+      console.error("💥 Error fetching lessons list:", error);
       return {
         success: false,
         data: [] as Array<{
@@ -368,7 +387,7 @@ export async function fetchLessonsListByScopeTag(scopeSequenceTag: string) {
           section?: string;
           scopeSequenceTag: string;
         }>,
-        error: handleServerError(error, 'fetchLessonsListByScopeTag')
+        error: handleServerError(error, "fetchLessonsListByScopeTag"),
       };
     }
   });
@@ -378,46 +397,50 @@ export async function fetchLessonsListByScopeTag(scopeSequenceTag: string) {
  * Fetch full lesson data for an entire unit in a single query
  * Much faster than fetching each lesson individually
  */
-export async function fetchFullLessonsByUnit(scopeSequenceTag: string, unit: string) {
+export async function fetchFullLessonsByUnit(
+  scopeSequenceTag: string,
+  unit: string,
+) {
   return withDbConnection(async () => {
     try {
-      const lessons = await ScopeAndSequenceModel
-        .find({
-          scopeSequenceTag,
-          unit,
-          $or: [
-            { lessonType: { $exists: false } },
-            { lessonType: null },
-            { lessonType: "lesson" }
-          ]
-        })
+      const lessons = await ScopeAndSequenceModel.find({
+        scopeSequenceTag,
+        unit,
+        $or: [
+          { lessonType: { $exists: false } },
+          { lessonType: null },
+          { lessonType: "lesson" },
+        ],
+      })
         .sort({ section: 1, lessonNumber: 1 })
         .lean();
 
       // Convert _id to string to make it serializable for Client Components
       // Also handle nested _id fields in arrays like podsieQuestionMap
-      const serializedLessons = lessons.map(lesson => {
+      const serializedLessons = lessons.map((lesson) => {
         const lessonObj = lesson as Record<string, unknown>;
-        const podsieQuestionMap = lessonObj.podsieQuestionMap as Array<{ _id?: unknown; questionNumber: number; questionId: string }> | undefined;
+        const podsieQuestionMap = lessonObj.podsieQuestionMap as
+          | Array<{ _id?: unknown; questionNumber: number; questionId: string }>
+          | undefined;
         return {
           ...lesson,
           _id: String(lesson._id),
           // Remove _id from podsieQuestionMap items if present (Mongoose adds these to subdocs)
           podsieQuestionMap: podsieQuestionMap?.map(
-            ({ _id: _subdocId, ...rest }) => rest
-          )
+            ({ _id: _subdocId, ...rest }) => rest,
+          ),
         };
       });
 
       return {
         success: true,
-        data: serializedLessons as unknown as ScopeAndSequence[]
+        data: serializedLessons as unknown as ScopeAndSequence[],
       };
     } catch (error) {
       return {
         success: false,
         data: [] as ScopeAndSequence[],
-        error: handleServerError(error, 'fetchFullLessonsByUnit')
+        error: handleServerError(error, "fetchFullLessonsByUnit"),
       };
     }
   });
@@ -431,17 +454,16 @@ export async function fetchFullLessonsByUnit(scopeSequenceTag: string, unit: str
 export async function fetchRampUpsByScope(scopeSequenceTag: string) {
   return withDbConnection(async () => {
     try {
-      const rampUps = await ScopeAndSequenceModel
-        .find({
-          scopeSequenceTag,
-          section: 'Ramp Ups'
-        })
+      const rampUps = await ScopeAndSequenceModel.find({
+        scopeSequenceTag,
+        section: "Ramp Ups",
+      })
         .sort({ unitNumber: 1, lessonNumber: 1 })
         .lean();
 
       return {
         success: true,
-        data: rampUps.map(ru => ({
+        data: rampUps.map((ru) => ({
           _id: String(ru._id),
           unitNumber: ru.unitNumber,
           unitLessonId: ru.unitLessonId,
@@ -450,14 +472,14 @@ export async function fetchRampUpsByScope(scopeSequenceTag: string) {
           grade: ru.grade,
           scopeSequenceTag: ru.scopeSequenceTag,
           // Note: podsieAssignmentId and totalQuestions moved to section-config collection
-        }))
+        })),
       };
     } catch (error) {
-      console.error('💥 Error fetching ramp-ups by scope:', error);
+      console.error("💥 Error fetching ramp-ups by scope:", error);
       return {
         success: false,
         data: [],
-        error: handleServerError(error, 'fetchRampUpsByScope')
+        error: handleServerError(error, "fetchRampUpsByScope"),
       };
     }
   });
@@ -475,7 +497,7 @@ export async function fetchRampUpsByUnit(
   options?: {
     section?: string;
     grade?: string;
-  }
+  },
 ) {
   return withDbConnection(async () => {
     try {
@@ -491,7 +513,10 @@ export async function fetchRampUpsByUnit(
         section?: string;
         scopeSequenceTag?: string;
         podsieAssignmentId?: string;
-        podsieQuestionMap?: Array<{ questionNumber: number; questionId: string }>;
+        podsieQuestionMap?: Array<{
+          questionNumber: number;
+          questionId: string;
+        }>;
         totalQuestions?: number;
         roadmapSkills?: string[];
         targetSkills?: string[];
@@ -499,7 +524,7 @@ export async function fetchRampUpsByUnit(
 
       const query: Record<string, unknown> = {
         scopeSequenceTag,
-        unitNumber
+        unitNumber,
         // Removed lessonType filter - fetch ALL lesson types
       };
 
@@ -513,14 +538,13 @@ export async function fetchRampUpsByUnit(
         query.grade = options.grade;
       }
 
-      const lessons = await ScopeAndSequenceModel
-        .find(query)
+      const lessons = await ScopeAndSequenceModel.find(query)
         .sort({ section: 1, lessonNumber: 1, unitLessonId: 1 })
         .lean<LessonDoc[]>();
 
       return {
         success: true,
-        data: lessons.map(lesson => ({
+        data: lessons.map((lesson) => ({
           _id: String(lesson._id),
           unitNumber: lesson.unitNumber,
           unitLessonId: lesson.unitLessonId,
@@ -530,16 +554,16 @@ export async function fetchRampUpsByUnit(
           unit: lesson.unit,
           grade: lesson.grade,
           section: lesson.section,
-          scopeSequenceTag: lesson.scopeSequenceTag || '',
+          scopeSequenceTag: lesson.scopeSequenceTag || "",
           roadmapSkills: lesson.roadmapSkills || [],
           targetSkills: lesson.targetSkills || [],
           // Note: Podsie data moved to section-config collection
           podsieAssignmentId: undefined,
           totalQuestions: 10, // Default for now - should come from section-config
-        }))
+        })),
       };
     } catch (error) {
-      console.error('💥 Error fetching lessons by unit:', error);
+      console.error("💥 Error fetching lessons by unit:", error);
       return {
         success: false,
         data: [] as Array<{
@@ -556,10 +580,13 @@ export async function fetchRampUpsByUnit(
           roadmapSkills: string[];
           targetSkills: string[];
           podsieAssignmentId?: string;
-          podsieQuestionMap?: Array<{ questionNumber: number; questionId: string }>;
+          podsieQuestionMap?: Array<{
+            questionNumber: number;
+            questionId: string;
+          }>;
           totalQuestions: number;
         }>,
-        error: handleServerError(error, 'fetchRampUpsByUnit')
+        error: handleServerError(error, "fetchRampUpsByUnit"),
       };
     }
   });
@@ -571,13 +598,13 @@ export async function fetchRampUpsByUnit(
  */
 export async function fetchUnitsWithRampUps(
   scopeSequenceTag: string,
-  section?: string
+  section?: string,
 ) {
   return withDbConnection(async () => {
     try {
       const matchQuery: Record<string, unknown> = {
         scopeSequenceTag,
-        podsieAssignmentId: { $exists: true, $ne: null }
+        podsieAssignmentId: { $exists: true, $ne: null },
       };
 
       if (section) {
@@ -588,30 +615,30 @@ export async function fetchUnitsWithRampUps(
         { $match: matchQuery },
         {
           $group: {
-            _id: '$unitNumber',
-            unit: { $first: '$unit' },
-            grade: { $first: '$grade' },
-            rampUpCount: { $sum: 1 }
-          }
+            _id: "$unitNumber",
+            unit: { $first: "$unit" },
+            grade: { $first: "$grade" },
+            rampUpCount: { $sum: 1 },
+          },
         },
-        { $sort: { _id: 1 } }
+        { $sort: { _id: 1 } },
       ]);
 
       return {
         success: true,
-        data: units.map(u => ({
+        data: units.map((u) => ({
           unitNumber: u._id,
           unitName: u.unit,
           grade: u.grade,
-          rampUpCount: u.rampUpCount
-        }))
+          rampUpCount: u.rampUpCount,
+        })),
       };
     } catch (error) {
-      console.error('💥 Error fetching units with Podsie data:', error);
+      console.error("💥 Error fetching units with Podsie data:", error);
       return {
         success: false,
         data: [],
-        error: handleServerError(error, 'fetchUnitsWithRampUps')
+        error: handleServerError(error, "fetchUnitsWithRampUps"),
       };
     }
   });
@@ -621,12 +648,15 @@ export async function fetchUnitsWithRampUps(
  * Fetch all available units for a given scope sequence tag
  * Returns ALL units, not just those with Podsie assignments configured
  */
-export async function fetchAllUnitsByScopeTag(scopeSequenceTag: string, grade?: string) {
+export async function fetchAllUnitsByScopeTag(
+  scopeSequenceTag: string,
+  grade?: string,
+) {
   return withDbConnection(async () => {
     try {
       // Build match criteria
       const matchCriteria: Record<string, unknown> = { scopeSequenceTag };
-      if (grade && grade !== 'Algebra 1') {
+      if (grade && grade !== "Algebra 1") {
         matchCriteria.grade = grade;
       }
 
@@ -634,29 +664,29 @@ export async function fetchAllUnitsByScopeTag(scopeSequenceTag: string, grade?: 
         { $match: matchCriteria },
         {
           $group: {
-            _id: { grade: '$grade', unitNumber: '$unitNumber' },
-            unit: { $first: '$unit' },
-            lessonCount: { $sum: 1 }
-          }
+            _id: { grade: "$grade", unitNumber: "$unitNumber" },
+            unit: { $first: "$unit" },
+            lessonCount: { $sum: 1 },
+          },
         },
-        { $sort: { '_id.grade': 1, '_id.unitNumber': 1 } }
+        { $sort: { "_id.grade": 1, "_id.unitNumber": 1 } },
       ]);
 
       return {
         success: true,
-        data: units.map(u => ({
+        data: units.map((u) => ({
           unitNumber: u._id.unitNumber,
           unitName: u.unit,
           grade: u._id.grade,
-          lessonCount: u.lessonCount || 0
-        }))
+          lessonCount: u.lessonCount || 0,
+        })),
       };
     } catch (error) {
-      console.error('💥 Error fetching all units by scope tag:', error);
+      console.error("💥 Error fetching all units by scope tag:", error);
       return {
         success: false,
         data: [],
-        error: handleServerError(error, 'fetchAllUnitsByScopeTag')
+        error: handleServerError(error, "fetchAllUnitsByScopeTag"),
       };
     }
   });
@@ -665,7 +695,10 @@ export async function fetchAllUnitsByScopeTag(scopeSequenceTag: string, grade?: 
 /**
  * Get unique sections that have Podsie assignments for a scope and unit
  */
-export async function fetchSectionsWithPodsieData(scopeSequenceTag: string, unitNumber: number) {
+export async function fetchSectionsWithPodsieData(
+  scopeSequenceTag: string,
+  unitNumber: number,
+) {
   return withDbConnection(async () => {
     try {
       const sections = await ScopeAndSequenceModel.aggregate([
@@ -673,31 +706,31 @@ export async function fetchSectionsWithPodsieData(scopeSequenceTag: string, unit
           $match: {
             scopeSequenceTag,
             unitNumber,
-            podsieAssignmentId: { $exists: true, $ne: null }
-          }
+            podsieAssignmentId: { $exists: true, $ne: null },
+          },
         },
         {
           $group: {
-            _id: '$section',
-            lessonCount: { $sum: 1 }
-          }
+            _id: "$section",
+            lessonCount: { $sum: 1 },
+          },
         },
-        { $sort: { _id: 1 } }
+        { $sort: { _id: 1 } },
       ]);
 
       return {
         success: true,
-        data: sections.map(s => ({
-          section: s._id || 'None',
-          lessonCount: s.lessonCount
-        }))
+        data: sections.map((s) => ({
+          section: s._id || "None",
+          lessonCount: s.lessonCount,
+        })),
       };
     } catch (error) {
-      console.error('💥 Error fetching sections with Podsie data:', error);
+      console.error("💥 Error fetching sections with Podsie data:", error);
       return {
         success: false,
         data: [],
-        error: handleServerError(error, 'fetchSectionsWithPodsieData')
+        error: handleServerError(error, "fetchSectionsWithPodsieData"),
       };
     }
   });
@@ -712,17 +745,19 @@ export async function updateLessonSkills(
   data: {
     roadmapSkills?: string[];
     targetSkills?: string[];
-  }
+  },
 ) {
   return withDbConnection(async () => {
     try {
-      console.log(`🔄 [updateLessonSkills] Starting update for lesson ID: ${id}`);
+      console.log(
+        `🔄 [updateLessonSkills] Starting update for lesson ID: ${id}`,
+      );
       console.log(`   📝 Roadmap skills to set:`, data.roadmapSkills);
       console.log(`   📝 Target skills to set:`, data.targetSkills);
 
       // Build update object
       const updateFields: Record<string, unknown> = {
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       if (data.roadmapSkills !== undefined) {
@@ -733,7 +768,10 @@ export async function updateLessonSkills(
         updateFields.targetSkills = data.targetSkills;
       }
 
-      console.log(`   🔧 Update fields:`, JSON.stringify(updateFields, null, 2));
+      console.log(
+        `   🔧 Update fields:`,
+        JSON.stringify(updateFields, null, 2),
+      );
 
       // First, fetch the document to see its current state
       const beforeDoc = await ScopeAndSequenceModel.findById(id);
@@ -741,45 +779,60 @@ export async function updateLessonSkills(
         console.error(`   ❌ Lesson with ID ${id} not found`);
         return {
           success: false,
-          error: `Lesson with ID ${id} not found`
+          error: `Lesson with ID ${id} not found`,
         };
       }
 
-      console.log(`   📋 BEFORE update - roadmapSkills:`, beforeDoc.roadmapSkills);
-      console.log(`   📋 BEFORE update - targetSkills:`, beforeDoc.targetSkills);
+      console.log(
+        `   📋 BEFORE update - roadmapSkills:`,
+        beforeDoc.roadmapSkills,
+      );
+      console.log(
+        `   📋 BEFORE update - targetSkills:`,
+        beforeDoc.targetSkills,
+      );
 
       // Direct MongoDB update using $set
       const updatedDoc = await ScopeAndSequenceModel.findByIdAndUpdate(
         id,
         { $set: updateFields },
-        { new: true, runValidators: false } // Disable validators to allow empty arrays
+        { new: true, runValidators: false }, // Disable validators to allow empty arrays
       );
 
       if (!updatedDoc) {
         console.error(`   ❌ Update returned null`);
         return {
           success: false,
-          error: `Update failed for lesson with ID ${id}`
+          error: `Update failed for lesson with ID ${id}`,
         };
       }
 
       console.log(`   ✅ Successfully updated lesson`);
-      console.log(`   📊 AFTER update - roadmapSkills:`, updatedDoc.roadmapSkills);
-      console.log(`   📊 AFTER update - targetSkills:`, updatedDoc.targetSkills);
-      console.log(`   📊 AFTER update - updatedAt:`, updatedDoc.get('updatedAt'));
+      console.log(
+        `   📊 AFTER update - roadmapSkills:`,
+        updatedDoc.roadmapSkills,
+      );
+      console.log(
+        `   📊 AFTER update - targetSkills:`,
+        updatedDoc.targetSkills,
+      );
+      console.log(
+        `   📊 AFTER update - updatedAt:`,
+        updatedDoc.get("updatedAt"),
+      );
 
-      revalidatePath('/roadmaps/scope-and-sequence');
+      revalidatePath("/roadmaps/scope-and-sequence");
 
       return {
         success: true,
         data: updatedDoc.toObject(),
-        message: `Skills updated successfully`
+        message: `Skills updated successfully`,
       };
     } catch (error) {
-      console.error('💥 [updateLessonSkills] Error:', error);
+      console.error("💥 [updateLessonSkills] Error:", error);
       return {
         success: false,
-        error: handleServerError(error, 'updateLessonSkills')
+        error: handleServerError(error, "updateLessonSkills"),
       };
     }
   });
@@ -808,12 +861,16 @@ export interface LessonIdentifierResult {
 export async function findLessonByIdentifiers(
   grade: string,
   unitNumber: number,
-  lessonNumber: number
-): Promise<{ success: true; data: LessonIdentifierResult } | { success: false; data: null; message?: string; error?: string }> {
+  lessonNumber: number,
+): Promise<
+  | { success: true; data: LessonIdentifierResult }
+  | { success: false; data: null; message?: string; error?: string }
+> {
   return withDbConnection(async () => {
     try {
       // Map grade to scopeSequenceTag
-      const scopeSequenceTag = grade === 'Algebra 1' ? 'Algebra 1' : `Grade ${grade}`;
+      const scopeSequenceTag =
+        grade === "Algebra 1" ? "Algebra 1" : `Grade ${grade}`;
 
       interface LessonDoc {
         _id: unknown;
@@ -837,15 +894,15 @@ export async function findLessonByIdentifiers(
         $or: [
           { lessonType: { $exists: false } },
           { lessonType: null },
-          { lessonType: 'lesson' }
-        ]
+          { lessonType: "lesson" },
+        ],
       }).lean<LessonDoc>();
 
       if (!lesson) {
         return {
           success: false as const,
           data: null,
-          message: 'Lesson not found'
+          message: "Lesson not found",
         };
       }
 
@@ -861,15 +918,15 @@ export async function findLessonByIdentifiers(
           unit: lesson.unit,
           learningTargets: lesson.learningTargets || [],
           section: lesson.section,
-          scopeSequenceTag: lesson.scopeSequenceTag
-        }
+          scopeSequenceTag: lesson.scopeSequenceTag,
+        },
       };
     } catch (error) {
-      console.error('💥 Error finding lesson:', error);
+      console.error("💥 Error finding lesson:", error);
       return {
         success: false as const,
         data: null,
-        error: handleServerError(error, 'findLessonByIdentifiers')
+        error: handleServerError(error, "findLessonByIdentifiers"),
       };
     }
   });
@@ -889,29 +946,33 @@ export async function getGradeUnitPairsByTag(scopeSequenceTag: string) {
         { $match: { scopeSequenceTag } },
         {
           $group: {
-            _id: { grade: '$grade', unitNumber: '$unitNumber' },
-            unitName: { $first: '$unit' }
-          }
+            _id: { grade: "$grade", unitNumber: "$unitNumber" },
+            unitName: { $first: "$unit" },
+          },
         },
         {
           $project: {
             _id: 0,
-            grade: '$_id.grade',
-            unitNumber: '$_id.unitNumber',
-            unitName: 1
-          }
+            grade: "$_id.grade",
+            unitNumber: "$_id.unitNumber",
+            unitName: 1,
+          },
         },
-        { $sort: { unitNumber: 1 } }
+        { $sort: { unitNumber: 1 } },
       ]);
 
       return {
         success: true,
-        data: pairs as Array<{ grade: string; unitNumber: number; unitName: string }>
+        data: pairs as Array<{
+          grade: string;
+          unitNumber: number;
+          unitName: string;
+        }>,
       };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'getGradeUnitPairsByTag')
+        error: handleServerError(error, "getGradeUnitPairsByTag"),
       };
     }
   });

@@ -1,2 +1,2 @@
-export { PresentationModal } from './PresentationModal';
-export type { PresentationModalProps, ExportStatus } from './types';
+export { PresentationModal } from "./PresentationModal";
+export type { PresentationModalProps, ExportStatus } from "./types";

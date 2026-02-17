@@ -14,7 +14,7 @@ import {
   SmallGroupRecord,
   InquiryRecord,
   LessonInfo,
-  ShoutoutsTeamworkRecord
+  ShoutoutsTeamworkRecord,
 } from "./tracking-actions";
 
 interface TrackingTablesProps {
@@ -23,14 +23,19 @@ interface TrackingTablesProps {
 }
 
 export function TrackingTables({ section, unitId }: TrackingTablesProps) {
-  const [studentOfDayData, setStudentOfDayData] = useState<StudentOfTheDayRecord[]>([]);
+  const [studentOfDayData, setStudentOfDayData] = useState<
+    StudentOfTheDayRecord[]
+  >([]);
   const [smallGroupData, setSmallGroupData] = useState<SmallGroupRecord[]>([]);
   const [inquiryData, setInquiryData] = useState<InquiryRecord[]>([]);
-  const [shoutoutsTeamworkData, setShoutoutsTeamworkData] = useState<ShoutoutsTeamworkRecord[]>([]);
+  const [shoutoutsTeamworkData, setShoutoutsTeamworkData] = useState<
+    ShoutoutsTeamworkRecord[]
+  >([]);
   const [lessons, setLessons] = useState<LessonInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingStudentOfDay, setIsLoadingStudentOfDay] = useState(true);
-  const [isLoadingShoutoutsTeamwork, setIsLoadingShoutoutsTeamwork] = useState(true);
+  const [isLoadingShoutoutsTeamwork, setIsLoadingShoutoutsTeamwork] =
+    useState(true);
 
   // Fetch Student of the Day data (always shown, independent of unit)
   useEffect(() => {
@@ -71,11 +76,12 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
       if (!unitId) return;
 
       setIsLoading(true);
-      const [smallGroupResult, inquiryResult, lessonsResult] = await Promise.all([
-        fetchSmallGroupActivities(unitId, section),
-        fetchInquiryActivities(unitId, section),
-        fetchLessonsForUnit(unitId)
-      ]);
+      const [smallGroupResult, inquiryResult, lessonsResult] =
+        await Promise.all([
+          fetchSmallGroupActivities(unitId, section),
+          fetchInquiryActivities(unitId, section),
+          fetchLessonsForUnit(unitId),
+        ]);
 
       if (smallGroupResult.success && smallGroupResult.data) {
         setSmallGroupData(smallGroupResult.data);
@@ -108,14 +114,25 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
         />
 
         {/* Student of the Day Calendar */}
-        <StudentOfTheDayCalendar data={studentOfDayData} isLoading={isLoadingStudentOfDay} />
+        <StudentOfTheDayCalendar
+          data={studentOfDayData}
+          isLoading={isLoadingStudentOfDay}
+        />
       </div>
 
       {/* Middle Row: Shoutouts/Teamwork Table (full width) */}
-      <ShoutoutsTeamworkTable data={shoutoutsTeamworkData} section={section} isLoading={isLoadingShoutoutsTeamwork} />
+      <ShoutoutsTeamworkTable
+        data={shoutoutsTeamworkData}
+        section={section}
+        isLoading={isLoadingShoutoutsTeamwork}
+      />
 
       {/* Bottom Row: Inquiry Groups Table (full width) */}
-      <InquiryGroupsTable data={inquiryData} isLoading={isLoading} hasSelection={!!(unitId && section)} />
+      <InquiryGroupsTable
+        data={inquiryData}
+        isLoading={isLoading}
+        hasSelection={!!(unitId && section)}
+      />
     </div>
   );
 }
@@ -124,7 +141,13 @@ export function TrackingTables({ section, unitId }: TrackingTablesProps) {
 // STUDENT OF THE DAY CALENDAR
 // =====================================
 
-function StudentOfTheDayCalendar({ data, isLoading }: { data: StudentOfTheDayRecord[]; isLoading: boolean }) {
+function StudentOfTheDayCalendar({
+  data,
+  isLoading,
+}: {
+  data: StudentOfTheDayRecord[];
+  isLoading: boolean;
+}) {
   const today = new Date();
 
   if (isLoading) {
@@ -269,7 +292,7 @@ function SmallGroupsTable({
   data,
   lessons,
   isLoading,
-  hasSelection
+  hasSelection,
 }: {
   data: SmallGroupRecord[];
   lessons: LessonInfo[];
@@ -278,7 +301,7 @@ function SmallGroupsTable({
 }) {
   // Get unique students
   const students = Array.from(
-    new Set(data.map((d) => `${d.studentId}|||${d.studentName}`))
+    new Set(data.map((d) => `${d.studentId}|||${d.studentName}`)),
   ).map((str) => {
     const [studentId, studentName] = str.split("|||");
     return { studentId, studentName };
@@ -290,7 +313,9 @@ function SmallGroupsTable({
     if (!activityMap.has(record.studentId)) {
       activityMap.set(record.studentId, new Map());
     }
-    activityMap.get(record.studentId)!.set(record.lessonId, record.isAcceleration);
+    activityMap
+      .get(record.studentId)!
+      .set(record.lessonId, record.isAcceleration);
   });
 
   if (!hasSelection) {
@@ -300,7 +325,10 @@ function SmallGroupsTable({
           Small Groups / Acceleration Tracking
         </h2>
         <div className="text-center text-gray-500 py-8">
-          <p>Please select both a section and a unit to view small group activities.</p>
+          <p>
+            Please select both a section and a unit to view small group
+            activities.
+          </p>
         </div>
       </div>
     );
@@ -329,9 +357,15 @@ function SmallGroupsTable({
           {students.length === 0 && lessons.length === 0 ? (
             <p>No small group activities or lessons found for this unit.</p>
           ) : students.length === 0 ? (
-            <p>No small group activities found for this unit. Lessons: {lessons.length}</p>
+            <p>
+              No small group activities found for this unit. Lessons:{" "}
+              {lessons.length}
+            </p>
           ) : (
-            <p>No lessons found for this unit. Students with activities: {students.length}</p>
+            <p>
+              No lessons found for this unit. Students with activities:{" "}
+              {students.length}
+            </p>
           )}
         </div>
       </div>
@@ -341,7 +375,8 @@ function SmallGroupsTable({
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">
-        Small Groups / Acceleration Tracking ({students.length} students, {lessons.length} lessons)
+        Small Groups / Acceleration Tracking ({students.length} students,{" "}
+        {lessons.length} lessons)
       </h2>
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse">
@@ -369,7 +404,9 @@ function SmallGroupsTable({
                     {student.studentName}
                   </td>
                   {lessons.map((lesson) => {
-                    const isAcceleration = studentActivities?.get(lesson.lessonId);
+                    const isAcceleration = studentActivities?.get(
+                      lesson.lessonId,
+                    );
                     return (
                       <td
                         key={lesson.lessonId}
@@ -400,7 +437,7 @@ function SmallGroupsTable({
 function ShoutoutsTeamworkTable({
   data,
   section,
-  isLoading
+  isLoading,
 }: {
   data: ShoutoutsTeamworkRecord[];
   section?: string;
@@ -408,7 +445,8 @@ function ShoutoutsTeamworkTable({
 }) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [filteredData, setFilteredData] = useState<ShoutoutsTeamworkRecord[]>(data);
+  const [filteredData, setFilteredData] =
+    useState<ShoutoutsTeamworkRecord[]>(data);
 
   // Update filtered data when date range or data changes
   useEffect(() => {
@@ -417,12 +455,25 @@ function ShoutoutsTeamworkTable({
       return;
     }
 
-    const filtered = data.map(student => ({
-      ...student,
-      shoutoutDates: student.shoutoutDates.filter(date => date >= startDate && date <= endDate),
-      teamworkDates: student.teamworkDates.filter(date => date >= startDate && date <= endDate),
-      studentOfDayDates: student.studentOfDayDates.filter(date => date >= startDate && date <= endDate)
-    })).filter(student => student.shoutoutDates.length > 0 || student.teamworkDates.length > 0 || student.studentOfDayDates.length > 0);
+    const filtered = data
+      .map((student) => ({
+        ...student,
+        shoutoutDates: student.shoutoutDates.filter(
+          (date) => date >= startDate && date <= endDate,
+        ),
+        teamworkDates: student.teamworkDates.filter(
+          (date) => date >= startDate && date <= endDate,
+        ),
+        studentOfDayDates: student.studentOfDayDates.filter(
+          (date) => date >= startDate && date <= endDate,
+        ),
+      }))
+      .filter(
+        (student) =>
+          student.shoutoutDates.length > 0 ||
+          student.teamworkDates.length > 0 ||
+          student.studentOfDayDates.length > 0,
+      );
 
     setFilteredData(filtered);
   }, [data, startDate, endDate]);
@@ -431,7 +482,11 @@ function ShoutoutsTeamworkTable({
   useEffect(() => {
     async function reloadData() {
       if (startDate && endDate) {
-        const result = await fetchShoutoutsTeamwork(section, startDate, endDate);
+        const result = await fetchShoutoutsTeamwork(
+          section,
+          startDate,
+          endDate,
+        );
         if (result.success && result.data) {
           setFilteredData(result.data);
         }
@@ -469,7 +524,7 @@ function ShoutoutsTeamworkTable({
   const formatDate = (dateStr: string) => {
     // Parse date as local date to avoid timezone issues
     // dateStr is in YYYY-MM-DD format
-    const [_year, month, day] = dateStr.split('-').map(Number);
+    const [_year, month, day] = dateStr.split("-").map(Number);
     return `${month}/${day}`;
   };
 
@@ -477,7 +532,8 @@ function ShoutoutsTeamworkTable({
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-900 mb-2">
-          Shoutouts, Teamwork & Student of the Day Tracking ({filteredData.length} students)
+          Shoutouts, Teamwork & Student of the Day Tracking (
+          {filteredData.length} students)
         </h2>
 
         {/* Date Range Filters */}
@@ -541,7 +597,10 @@ function ShoutoutsTeamworkTable({
           </thead>
           <tbody>
             {filteredData.map((student) => {
-              const totalPoints = (student.teamworkDates.length * 5) + (student.shoutoutDates.length * 5) + (student.studentOfDayDates.length * 10);
+              const totalPoints =
+                student.teamworkDates.length * 5 +
+                student.shoutoutDates.length * 5 +
+                student.studentOfDayDates.length * 10;
 
               return (
                 <tr key={student.studentId}>
@@ -613,7 +672,7 @@ function ShoutoutsTeamworkTable({
 function InquiryGroupsTable({
   data,
   isLoading,
-  hasSelection
+  hasSelection,
 }: {
   data: InquiryRecord[];
   isLoading: boolean;
@@ -626,7 +685,9 @@ function InquiryGroupsTable({
           Inquiry Groups Tracking
         </h2>
         <div className="text-center text-gray-500 py-8">
-          <p>Please select both a section and a unit to view inquiry activities.</p>
+          <p>
+            Please select both a section and a unit to view inquiry activities.
+          </p>
         </div>
       </div>
     );
@@ -659,15 +720,19 @@ function InquiryGroupsTable({
   }
 
   // Get unique inquiry questions
-  const inquiryQuestions = Array.from(new Set(data.map((d) => d.inquiryQuestion))).sort();
+  const inquiryQuestions = Array.from(
+    new Set(data.map((d) => d.inquiryQuestion)),
+  ).sort();
 
   // Get unique students
   const students = Array.from(
-    new Set(data.map((d) => `${d.studentId}|||${d.studentName}`))
-  ).map((str) => {
-    const [studentId, studentName] = str.split("|||");
-    return { studentId, studentName };
-  }).sort((a, b) => a.studentName.localeCompare(b.studentName));
+    new Set(data.map((d) => `${d.studentId}|||${d.studentName}`)),
+  )
+    .map((str) => {
+      const [studentId, studentName] = str.split("|||");
+      return { studentId, studentName };
+    })
+    .sort((a, b) => a.studentName.localeCompare(b.studentName));
 
   // Create a map: studentId -> Set of inquiry questions
   const activityMap = new Map<string, Set<string>>();
@@ -681,7 +746,8 @@ function InquiryGroupsTable({
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">
-        Inquiry Groups Tracking ({students.length} students, {inquiryQuestions.length} questions)
+        Inquiry Groups Tracking ({students.length} students,{" "}
+        {inquiryQuestions.length} questions)
       </h2>
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse">

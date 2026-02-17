@@ -13,7 +13,7 @@ import {
   AssignmentContent,
   SectionOption,
   PodsieQuestionMap,
-  YoutubeLink
+  YoutubeLink,
 } from "@zod-schema/scm/podsie/section-config";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -25,14 +25,25 @@ import { handleValidationError } from "@error/handlers/validation";
 // =====================================
 
 const sectionConfigCrud = createCrudActions({
-  model: SectionConfigModel as unknown as Parameters<typeof createCrudActions>[0]['model'],
+  model: SectionConfigModel as unknown as Parameters<
+    typeof createCrudActions
+  >[0]["model"],
   schema: SectionConfigZodSchema as ZodType<SectionConfig>,
   inputSchema: SectionConfigInputZodSchema as ZodType<SectionConfigInput>,
-  name: 'SectionConfig',
-  revalidationPaths: ['/roadmaps/ramp-up-progress', '/roadmaps/scope-and-sequence'],
-  sortFields: ['school', 'classSection', 'gradeLevel', 'createdAt', 'updatedAt'],
-  defaultSortField: 'classSection',
-  defaultSortOrder: 'asc'
+  name: "SectionConfig",
+  revalidationPaths: [
+    "/roadmaps/ramp-up-progress",
+    "/roadmaps/scope-and-sequence",
+  ],
+  sortFields: [
+    "school",
+    "classSection",
+    "gradeLevel",
+    "createdAt",
+    "updatedAt",
+  ],
+  defaultSortField: "classSection",
+  defaultSortOrder: "asc",
 });
 
 // Export CRUD operations
@@ -59,10 +70,13 @@ export async function fetchSectionConfigsByQuery(query: SectionConfigQuery) {
       // Build MongoDB filter
       const filter: Record<string, unknown> = {};
       if (validatedQuery.school) filter.school = validatedQuery.school;
-      if (validatedQuery.classSection) filter.classSection = validatedQuery.classSection;
+      if (validatedQuery.classSection)
+        filter.classSection = validatedQuery.classSection;
       if (validatedQuery.teacher) filter.teacher = validatedQuery.teacher;
-      if (validatedQuery.gradeLevel) filter.gradeLevel = validatedQuery.gradeLevel;
-      if (validatedQuery.active !== undefined) filter.active = validatedQuery.active;
+      if (validatedQuery.gradeLevel)
+        filter.gradeLevel = validatedQuery.gradeLevel;
+      if (validatedQuery.active !== undefined)
+        filter.active = validatedQuery.active;
 
       const results = await SectionConfigModel.find(filter)
         .sort({ school: 1, classSection: 1 })
@@ -70,19 +84,19 @@ export async function fetchSectionConfigsByQuery(query: SectionConfigQuery) {
 
       return {
         success: true,
-        data: results
+        data: results,
       };
     } catch (error) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          error: handleValidationError(error)
+          error: handleValidationError(error),
         };
       }
-      console.error('💥 Error fetching section configs:', error);
+      console.error("💥 Error fetching section configs:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch section configs")
+        error: handleServerError(error, "Failed to fetch section configs"),
       };
     }
   });
@@ -98,21 +112,23 @@ export async function getSectionConfig(school: string, classSection: string) {
       const result = await SectionConfigModel.findOne({
         school,
         classSection,
-        active: true
+        active: true,
       }).lean();
 
       // Serialize the result to ensure it's JSON-compatible
-      const serializedResult = result ? JSON.parse(JSON.stringify(result)) : null;
+      const serializedResult = result
+        ? JSON.parse(JSON.stringify(result))
+        : null;
 
       return {
         success: true,
-        data: serializedResult
+        data: serializedResult,
       };
     } catch (error) {
-      console.error('💥 Error fetching section config:', error);
+      console.error("💥 Error fetching section config:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch section config")
+        error: handleServerError(error, "Failed to fetch section config"),
       };
     }
   });
@@ -138,46 +154,46 @@ export async function upsertSectionConfig(data: {
       // Validate input
       const validatedData = SectionConfigInputZodSchema.parse({
         ...data,
-        ownerIds: []
+        ownerIds: [],
       });
 
       // Upsert by compound key: school + classSection
       const result = await SectionConfigModel.findOneAndUpdate(
         {
           school: data.school,
-          classSection: data.classSection
+          classSection: data.classSection,
         },
         {
           $set: {
             ...validatedData,
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           },
           $setOnInsert: {
-            createdAt: new Date().toISOString()
-          }
+            createdAt: new Date().toISOString(),
+          },
         },
-        { upsert: true, new: true, runValidators: true }
+        { upsert: true, new: true, runValidators: true },
       );
 
-      revalidatePath('/roadmaps/ramp-up-progress');
-      revalidatePath('/roadmaps/scope-and-sequence');
+      revalidatePath("/roadmaps/ramp-up-progress");
+      revalidatePath("/roadmaps/scope-and-sequence");
 
       return {
         success: true,
         data: result.toObject(),
-        message: `Saved config for ${data.school} ${data.classSection}`
+        message: `Saved config for ${data.school} ${data.classSection}`,
       };
     } catch (error) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          error: handleValidationError(error)
+          error: handleValidationError(error),
         };
       }
-      console.error('💥 Error upserting section config:', error);
+      console.error("💥 Error upserting section config:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to save section config")
+        error: handleServerError(error, "Failed to save section config"),
       };
     }
   });
@@ -191,7 +207,7 @@ export async function upsertSectionConfig(data: {
 export async function addPodsieAssignment(
   school: string,
   classSection: string,
-  assignment: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  assignment: any, // eslint-disable-line @typescript-eslint/no-explicit-any
 ) {
   return withDbConnection(async () => {
     try {
@@ -203,26 +219,26 @@ export async function addPodsieAssignment(
         {
           school,
           classSection,
-          'podsieAssignments.podsieAssignmentId': assignment.podsieAssignmentId
+          "podsieAssignments.podsieAssignmentId": assignment.podsieAssignmentId,
         },
         {
           $set: {
-            'podsieAssignments.$': assignment,
-            updatedAt: new Date().toISOString()
-          }
+            "podsieAssignments.$": assignment,
+            updatedAt: new Date().toISOString(),
+          },
         },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       );
 
       // If found and updated, return success
       if (updateResult) {
-        revalidatePath('/roadmaps/ramp-up-progress');
-        revalidatePath('/roadmaps/scope-and-sequence');
+        revalidatePath("/roadmaps/ramp-up-progress");
+        revalidatePath("/roadmaps/scope-and-sequence");
 
         return {
           success: true,
           data: updateResult.toObject(),
-          message: `Updated assignment ${assignment.unitLessonId} in ${school} ${classSection}`
+          message: `Updated assignment ${assignment.unitLessonId} in ${school} ${classSection}`,
         };
       }
 
@@ -231,31 +247,31 @@ export async function addPodsieAssignment(
         { school, classSection },
         {
           $push: { podsieAssignments: assignment },
-          $set: { updatedAt: new Date().toISOString() }
+          $set: { updatedAt: new Date().toISOString() },
         },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       );
 
       if (!pushResult) {
         return {
           success: false,
-          error: "Section config not found"
+          error: "Section config not found",
         };
       }
 
-      revalidatePath('/roadmaps/ramp-up-progress');
-      revalidatePath('/roadmaps/scope-and-sequence');
+      revalidatePath("/roadmaps/ramp-up-progress");
+      revalidatePath("/roadmaps/scope-and-sequence");
 
       return {
         success: true,
         data: pushResult.toObject(),
-        message: `Added assignment ${assignment.unitLessonId} to ${school} ${classSection}`
+        message: `Added assignment ${assignment.unitLessonId} to ${school} ${classSection}`,
       };
     } catch (error) {
-      console.error('💥 Error adding Podsie assignment:', error);
+      console.error("💥 Error adding Podsie assignment:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to add Podsie assignment")
+        error: handleServerError(error, "Failed to add Podsie assignment"),
       };
     }
   });
@@ -269,7 +285,7 @@ export async function updatePodsieAssignment(
   school: string,
   classSection: string,
   unitLessonId: string,
-  updates: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  updates: any, // eslint-disable-line @typescript-eslint/no-explicit-any
 ) {
   return withDbConnection(async () => {
     try {
@@ -277,37 +293,37 @@ export async function updatePodsieAssignment(
         {
           school,
           classSection,
-          'podsieAssignments.unitLessonId': unitLessonId
+          "podsieAssignments.unitLessonId": unitLessonId,
         },
         {
           $set: {
-            'podsieAssignments.$': { ...updates, unitLessonId },
-            updatedAt: new Date().toISOString()
-          }
+            "podsieAssignments.$": { ...updates, unitLessonId },
+            updatedAt: new Date().toISOString(),
+          },
         },
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       );
 
       if (!result) {
         return {
           success: false,
-          error: "Assignment not found"
+          error: "Assignment not found",
         };
       }
 
-      revalidatePath('/roadmaps/ramp-up-progress');
-      revalidatePath('/roadmaps/scope-and-sequence');
+      revalidatePath("/roadmaps/ramp-up-progress");
+      revalidatePath("/roadmaps/scope-and-sequence");
 
       return {
         success: true,
         data: result.toObject(),
-        message: `Updated assignment ${unitLessonId}`
+        message: `Updated assignment ${unitLessonId}`,
       };
     } catch (error) {
-      console.error('💥 Error updating Podsie assignment:', error);
+      console.error("💥 Error updating Podsie assignment:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to update Podsie assignment")
+        error: handleServerError(error, "Failed to update Podsie assignment"),
       };
     }
   });
@@ -319,7 +335,7 @@ export async function updatePodsieAssignment(
 export async function removePodsieAssignment(
   school: string,
   classSection: string,
-  unitLessonId: string
+  unitLessonId: string,
 ) {
   return withDbConnection(async () => {
     try {
@@ -327,31 +343,31 @@ export async function removePodsieAssignment(
         { school, classSection },
         {
           $pull: { podsieAssignments: { unitLessonId } },
-          $set: { updatedAt: new Date().toISOString() }
+          $set: { updatedAt: new Date().toISOString() },
         },
-        { new: true }
+        { new: true },
       );
 
       if (!result) {
         return {
           success: false,
-          error: "Section config not found"
+          error: "Section config not found",
         };
       }
 
-      revalidatePath('/roadmaps/ramp-up-progress');
-      revalidatePath('/roadmaps/scope-and-sequence');
+      revalidatePath("/roadmaps/ramp-up-progress");
+      revalidatePath("/roadmaps/scope-and-sequence");
 
       return {
         success: true,
         data: result.toObject(),
-        message: `Removed assignment ${unitLessonId}`
+        message: `Removed assignment ${unitLessonId}`,
       };
     } catch (error) {
-      console.error('💥 Error removing Podsie assignment:', error);
+      console.error("💥 Error removing Podsie assignment:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to remove Podsie assignment")
+        error: handleServerError(error, "Failed to remove Podsie assignment"),
       };
     }
   });
@@ -361,7 +377,11 @@ export async function removePodsieAssignment(
  * Get all active sections as dropdown options
  * Includes metadata for easy display
  */
-export async function getSectionOptions(): Promise<{ success: boolean; data?: SectionOption[]; error?: string }> {
+export async function getSectionOptions(): Promise<{
+  success: boolean;
+  data?: SectionOption[];
+  error?: string;
+}> {
   return withDbConnection(async () => {
     try {
       interface SectionConfigDoc {
@@ -377,24 +397,26 @@ export async function getSectionOptions(): Promise<{ success: boolean; data?: Se
         .sort({ school: 1, classSection: 1 })
         .lean<SectionConfigDoc[]>();
 
-      const options: SectionOption[] = configs.map(config => ({
+      const options: SectionOption[] = configs.map((config) => ({
         school: String(config.school),
         classSection: String(config.classSection),
         teacher: config.teacher ? String(config.teacher) : undefined,
         gradeLevel: String(config.gradeLevel),
-        scopeSequenceTag: config.scopeSequenceTag ? String(config.scopeSequenceTag) : undefined,
-        assignmentCount: config.podsieAssignments?.length || 0
+        scopeSequenceTag: config.scopeSequenceTag
+          ? String(config.scopeSequenceTag)
+          : undefined,
+        assignmentCount: config.podsieAssignments?.length || 0,
       }));
 
       return {
         success: true,
-        data: options
+        data: options,
       };
     } catch (error) {
-      console.error('💥 Error fetching section options:', error);
+      console.error("💥 Error fetching section options:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch section options")
+        error: handleServerError(error, "Failed to fetch section options"),
       };
     }
   });
@@ -407,7 +429,7 @@ export async function getSectionOptions(): Promise<{ success: boolean; data?: Se
 export async function getPodsieAssignment(
   school: string,
   classSection: string,
-  unitLessonId: string
+  unitLessonId: string,
 ) {
   return withDbConnection(async () => {
     try {
@@ -419,24 +441,24 @@ export async function getPodsieAssignment(
         {
           school,
           classSection,
-          'podsieAssignments.unitLessonId': unitLessonId
+          "podsieAssignments.unitLessonId": unitLessonId,
         },
         {
-          'podsieAssignments.$': 1
-        }
+          "podsieAssignments.$": 1,
+        },
       ).lean<SectionConfigWithAssignment>();
 
       const assignment = config?.podsieAssignments?.[0];
 
       return {
         success: true,
-        data: assignment || null
+        data: assignment || null,
       };
     } catch (error) {
-      console.error('💥 Error fetching Podsie assignment:', error);
+      console.error("💥 Error fetching Podsie assignment:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch Podsie assignment")
+        error: handleServerError(error, "Failed to fetch Podsie assignment"),
       };
     }
   });
@@ -460,7 +482,7 @@ export async function addAssignmentContent(
     section?: string;
     subsection?: number;
     grade?: string;
-    activityType: 'sidekick' | 'mastery-check' | 'assessment';
+    activityType: "sidekick" | "mastery-check" | "assessment";
     podsieAssignmentId: string;
     podsieQuestionMap: PodsieQuestionMap[];
     totalQuestions: number;
@@ -468,7 +490,7 @@ export async function addAssignmentContent(
     q1HasVariations?: boolean;
     hasZearnLesson?: boolean;
     active?: boolean;
-  }
+  },
 ): Promise<{ success: boolean; data?: SectionConfig; error?: string }> {
   try {
     return await withDbConnection(async () => {
@@ -478,24 +500,27 @@ export async function addAssignmentContent(
       if (!config) {
         return {
           success: false,
-          error: 'Section config not found. Please create it first.'
+          error: "Section config not found. Please create it first.",
         };
       }
 
       // Get assignmentContent as a plain array
-      const assignmentContentArray = config.assignmentContent as unknown as AssignmentContent[];
+      const assignmentContentArray =
+        config.assignmentContent as unknown as AssignmentContent[];
 
       // Check if assignment content with this scopeAndSequenceId already exists
       const existingIndex = assignmentContentArray.findIndex(
-        (a: AssignmentContent) => a.scopeAndSequenceId?.toString() === assignment.scopeAndSequenceId
+        (a: AssignmentContent) =>
+          a.scopeAndSequenceId?.toString() === assignment.scopeAndSequenceId,
       );
 
       if (existingIndex >= 0) {
         // Assignment content exists, check if activity with this podsieAssignmentId exists
         const existingAssignment = assignmentContentArray[existingIndex];
-        const activityIndex = existingAssignment.podsieActivities?.findIndex(
-          (a) => a.podsieAssignmentId === assignment.podsieAssignmentId
-        ) ?? -1;
+        const activityIndex =
+          existingAssignment.podsieActivities?.findIndex(
+            (a) => a.podsieAssignmentId === assignment.podsieAssignmentId,
+          ) ?? -1;
 
         if (activityIndex >= 0) {
           // Update existing activity
@@ -507,7 +532,7 @@ export async function addAssignmentContent(
               totalQuestions: assignment.totalQuestions,
               variations: assignment.variations ?? 3,
               q1HasVariations: assignment.q1HasVariations ?? false,
-              active: assignment.active ?? true
+              active: assignment.active ?? true,
             };
           }
         } else {
@@ -522,7 +547,7 @@ export async function addAssignmentContent(
             totalQuestions: assignment.totalQuestions,
             variations: assignment.variations ?? 3,
             q1HasVariations: assignment.q1HasVariations ?? false,
-            active: assignment.active ?? true
+            active: assignment.active ?? true,
           });
         }
 
@@ -545,31 +570,31 @@ export async function addAssignmentContent(
               totalQuestions: assignment.totalQuestions,
               variations: assignment.variations ?? 3,
               q1HasVariations: assignment.q1HasVariations ?? false,
-              active: assignment.active ?? true
-            }
+              active: assignment.active ?? true,
+            },
           ],
           zearnActivity: assignment.hasZearnLesson
             ? { active: true }
             : undefined,
-          active: true
+          active: true,
         });
         config.assignmentContent = assignmentContentArray as never;
       }
 
       await config.save();
 
-      revalidatePath('/scm/roadmaps/section-configs');
-      revalidatePath('/scm/podsie/progress');
+      revalidatePath("/scm/roadmaps/section-configs");
+      revalidatePath("/scm/podsie/progress");
 
       return {
         success: true,
-        data: JSON.parse(JSON.stringify(config.toJSON())) as SectionConfig
+        data: JSON.parse(JSON.stringify(config.toJSON())) as SectionConfig,
       };
     });
   } catch (error) {
     return {
       success: false,
-      error: handleServerError(error, 'Failed to add assignment content')
+      error: handleServerError(error, "Failed to add assignment content"),
     };
   }
 }
@@ -581,28 +606,31 @@ export async function updatePodsieQuestionMap(
   school: string,
   classSection: string,
   podsieAssignmentId: string,
-  questionMap: PodsieQuestionMap[]
+  questionMap: PodsieQuestionMap[],
 ): Promise<{ success: boolean; error?: string }> {
   try {
     return await withDbConnection(async () => {
       const config = await SectionConfigModel.findOne({ school, classSection });
 
       if (!config) {
-        return { success: false, error: 'Section config not found' };
+        return { success: false, error: "Section config not found" };
       }
 
-      const assignmentContentArray = config.assignmentContent as unknown as AssignmentContent[];
+      const assignmentContentArray =
+        config.assignmentContent as unknown as AssignmentContent[];
 
       // Find the assignment content that contains this Podsie activity
       let found = false;
       for (const content of assignmentContentArray) {
         if (content.podsieActivities) {
           const activityIndex = content.podsieActivities.findIndex(
-            (a) => a.podsieAssignmentId === podsieAssignmentId
+            (a) => a.podsieAssignmentId === podsieAssignmentId,
           );
           if (activityIndex >= 0) {
-            content.podsieActivities[activityIndex].podsieQuestionMap = questionMap;
-            content.podsieActivities[activityIndex].totalQuestions = questionMap.length;
+            content.podsieActivities[activityIndex].podsieQuestionMap =
+              questionMap;
+            content.podsieActivities[activityIndex].totalQuestions =
+              questionMap.length;
             found = true;
             break;
           }
@@ -610,21 +638,21 @@ export async function updatePodsieQuestionMap(
       }
 
       if (!found) {
-        return { success: false, error: 'Podsie activity not found' };
+        return { success: false, error: "Podsie activity not found" };
       }
 
       config.assignmentContent = assignmentContentArray as never;
       await config.save();
 
-      revalidatePath('/scm/roadmaps/section-configs');
-      revalidatePath('/scm/podsie/progress');
+      revalidatePath("/scm/roadmaps/section-configs");
+      revalidatePath("/scm/podsie/progress");
 
       return { success: true };
     });
   } catch (error) {
     return {
       success: false,
-      error: handleServerError(error, 'Failed to update question map')
+      error: handleServerError(error, "Failed to update question map"),
     };
   }
 }
@@ -635,28 +663,33 @@ export async function updatePodsieQuestionMap(
  */
 export async function getAssignmentContent(
   school: string,
-  classSection: string
+  classSection: string,
 ): Promise<{ success: boolean; data?: AssignmentContent[]; error?: string }> {
   try {
     return await withDbConnection(async () => {
-      const config = await SectionConfigModel.findOne({ school, classSection }).lean();
+      const config = await SectionConfigModel.findOne({
+        school,
+        classSection,
+      }).lean();
 
       if (!config) {
         return { success: true, data: [] };
       }
 
       // Serialize to ensure proper type conversion
-      const serialized = JSON.parse(JSON.stringify(config.assignmentContent || []));
+      const serialized = JSON.parse(
+        JSON.stringify(config.assignmentContent || []),
+      );
 
       return {
         success: true,
-        data: serialized as AssignmentContent[]
+        data: serialized as AssignmentContent[],
       };
     });
   } catch (error) {
     return {
       success: false,
-      error: handleServerError(error, 'Failed to fetch assignment content')
+      error: handleServerError(error, "Failed to fetch assignment content"),
     };
   }
 }
@@ -676,7 +709,7 @@ export async function updateLessonSubsections(
     section: string;
     subsection: number | null; // null to clear subsection
     grade: string;
-  }>
+  }>,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     return await withDbConnection(async () => {
@@ -685,7 +718,7 @@ export async function updateLessonSubsections(
 
       if (!config) {
         // Create a new config if it doesn't exist
-        const gradeLevel = updates[0]?.grade || '6';
+        const gradeLevel = updates[0]?.grade || "6";
         config = new SectionConfigModel({
           school,
           classSection,
@@ -693,22 +726,23 @@ export async function updateLessonSubsections(
           active: true,
           assignmentContent: [],
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         });
       }
 
       // Get assignmentContent as a mutable array
-      const assignmentContentArray = (config.assignmentContent as unknown as AssignmentContent[]) || [];
+      const assignmentContentArray =
+        (config.assignmentContent as unknown as AssignmentContent[]) || [];
 
       // Process each update
       for (const update of updates) {
         // Helper to normalize ObjectId/string to comparable string
         const normalizeId = (id: unknown): string => {
-          if (!id) return '';
+          if (!id) return "";
           // Handle ObjectId, string, or object with $oid property
-          if (typeof id === 'object' && id !== null) {
-            if ('$oid' in id) return String((id as { $oid: string }).$oid);
-            if ('str' in id) return String((id as { str: string }).str);
+          if (typeof id === "object" && id !== null) {
+            if ("$oid" in id) return String((id as { $oid: string }).$oid);
+            if ("str" in id) return String((id as { str: string }).str);
           }
           return String(id);
         };
@@ -719,13 +753,15 @@ export async function updateLessonSubsections(
         let existingIndex = assignmentContentArray.findIndex(
           (a: AssignmentContent) =>
             normalizeId(a.scopeAndSequenceId) === updateId &&
-            a.podsieActivities && a.podsieActivities.length > 0
+            a.podsieActivities &&
+            a.podsieActivities.length > 0,
         );
 
         // If not found with Podsie, try without that constraint
         if (existingIndex < 0) {
           existingIndex = assignmentContentArray.findIndex(
-            (a: AssignmentContent) => normalizeId(a.scopeAndSequenceId) === updateId
+            (a: AssignmentContent) =>
+              normalizeId(a.scopeAndSequenceId) === updateId,
           );
         }
 
@@ -734,14 +770,15 @@ export async function updateLessonSubsections(
           existingIndex = assignmentContentArray.findIndex(
             (a: AssignmentContent) =>
               a.unitLessonId === update.unitLessonId &&
-              a.podsieActivities && a.podsieActivities.length > 0
+              a.podsieActivities &&
+              a.podsieActivities.length > 0,
           );
         }
 
         // Final fallback: any entry with matching unitLessonId
         if (existingIndex < 0) {
           existingIndex = assignmentContentArray.findIndex(
-            (a: AssignmentContent) => a.unitLessonId === update.unitLessonId
+            (a: AssignmentContent) => a.unitLessonId === update.unitLessonId,
           );
         }
 
@@ -749,13 +786,17 @@ export async function updateLessonSubsections(
           // Update existing entry's subsection
           if (update.subsection === null) {
             // Clear subsection (set to undefined)
-            delete (assignmentContentArray[existingIndex] as Record<string, unknown>).subsection;
+            delete (
+              assignmentContentArray[existingIndex] as Record<string, unknown>
+            ).subsection;
           } else {
-            assignmentContentArray[existingIndex].subsection = update.subsection;
+            assignmentContentArray[existingIndex].subsection =
+              update.subsection;
           }
           // Also update scopeAndSequenceId if it was missing (migrate old data)
           if (!assignmentContentArray[existingIndex].scopeAndSequenceId) {
-            assignmentContentArray[existingIndex].scopeAndSequenceId = update.scopeAndSequenceId;
+            assignmentContentArray[existingIndex].scopeAndSequenceId =
+              update.scopeAndSequenceId;
           }
         } else {
           // Create new assignmentContent entry with subsection
@@ -766,7 +807,7 @@ export async function updateLessonSubsections(
             section: update.section,
             grade: update.grade,
             podsieActivities: [],
-            active: true
+            active: true,
           };
 
           if (update.subsection !== null) {
@@ -778,19 +819,20 @@ export async function updateLessonSubsections(
       }
 
       config.assignmentContent = assignmentContentArray as never;
-      (config as unknown as Record<string, unknown>).updatedAt = new Date().toISOString();
+      (config as unknown as Record<string, unknown>).updatedAt =
+        new Date().toISOString();
       await config.save();
 
-      revalidatePath('/scm/content/calendar');
-      revalidatePath('/scm/podsie/progress');
+      revalidatePath("/scm/content/calendar");
+      revalidatePath("/scm/podsie/progress");
 
       return { success: true };
     });
   } catch (error) {
-    console.error('[updateLessonSubsections] Error:', error);
+    console.error("[updateLessonSubsections] Error:", error);
     return {
       success: false,
-      error: handleServerError(error, 'Failed to update lesson subsections')
+      error: handleServerError(error, "Failed to update lesson subsections"),
     };
   }
 }
@@ -804,17 +846,24 @@ export async function updateLessonSubsections(
  */
 export async function getYoutubeLinks(
   school: string,
-  classSection: string
-): Promise<{ success: boolean; data?: { youtubeLinks: YoutubeLink[]; activeYoutubeUrl?: string }; error?: string }> {
+  classSection: string,
+): Promise<{
+  success: boolean;
+  data?: { youtubeLinks: YoutubeLink[]; activeYoutubeUrl?: string };
+  error?: string;
+}> {
   return withDbConnection(async () => {
     try {
       const config = await SectionConfigModel.findOne(
         { school, classSection },
-        { youtubeLinks: 1, activeYoutubeUrl: 1 }
+        { youtubeLinks: 1, activeYoutubeUrl: 1 },
       ).lean();
 
       if (!config) {
-        return { success: true, data: { youtubeLinks: [], activeYoutubeUrl: undefined } };
+        return {
+          success: true,
+          data: { youtubeLinks: [], activeYoutubeUrl: undefined },
+        };
       }
 
       // Serialize to ensure proper types
@@ -824,14 +873,14 @@ export async function getYoutubeLinks(
         success: true,
         data: {
           youtubeLinks: (serialized.youtubeLinks as YoutubeLink[]) || [],
-          activeYoutubeUrl: serialized.activeYoutubeUrl as string | undefined
-        }
+          activeYoutubeUrl: serialized.activeYoutubeUrl as string | undefined,
+        },
       };
     } catch (error) {
-      console.error('💥 Error fetching YouTube links:', error);
+      console.error("💥 Error fetching YouTube links:", error);
       return {
         success: false,
-        error: handleServerError(error, 'Failed to fetch YouTube links')
+        error: handleServerError(error, "Failed to fetch YouTube links"),
       };
     }
   });
@@ -843,7 +892,7 @@ export async function getYoutubeLinks(
 export async function addYoutubeLink(
   school: string,
   classSection: string,
-  link: YoutubeLink
+  link: YoutubeLink,
 ): Promise<{ success: boolean; data?: YoutubeLink[]; error?: string }> {
   return withDbConnection(async () => {
     try {
@@ -851,29 +900,29 @@ export async function addYoutubeLink(
         { school, classSection },
         {
           $push: { youtubeLinks: link },
-          $set: { updatedAt: new Date().toISOString() }
+          $set: { updatedAt: new Date().toISOString() },
         },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!result) {
-        return { success: false, error: 'Section config not found' };
+        return { success: false, error: "Section config not found" };
       }
 
-      revalidatePath('/scm/podsie/progress');
+      revalidatePath("/scm/podsie/progress");
 
       // Serialize to ensure proper types
       const serialized = JSON.parse(JSON.stringify(result));
 
       return {
         success: true,
-        data: serialized.youtubeLinks as YoutubeLink[]
+        data: serialized.youtubeLinks as YoutubeLink[],
       };
     } catch (error) {
-      console.error('💥 Error adding YouTube link:', error);
+      console.error("💥 Error adding YouTube link:", error);
       return {
         success: false,
-        error: handleServerError(error, 'Failed to add YouTube link')
+        error: handleServerError(error, "Failed to add YouTube link"),
       };
     }
   });
@@ -885,12 +934,15 @@ export async function addYoutubeLink(
 export async function removeYoutubeLink(
   school: string,
   classSection: string,
-  url: string
+  url: string,
 ): Promise<{ success: boolean; data?: YoutubeLink[]; error?: string }> {
   return withDbConnection(async () => {
     try {
       // First check if this URL is active, if so clear it
-      const config = await SectionConfigModel.findOne({ school, classSection }).lean();
+      const config = await SectionConfigModel.findOne({
+        school,
+        classSection,
+      }).lean();
       const configJson = config ? JSON.parse(JSON.stringify(config)) : null;
       const isActiveUrl = configJson?.activeYoutubeUrl === url;
 
@@ -900,30 +952,30 @@ export async function removeYoutubeLink(
           $pull: { youtubeLinks: { url } },
           $set: {
             updatedAt: new Date().toISOString(),
-            ...(isActiveUrl ? { activeYoutubeUrl: null } : {})
-          }
+            ...(isActiveUrl ? { activeYoutubeUrl: null } : {}),
+          },
         },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!result) {
-        return { success: false, error: 'Section config not found' };
+        return { success: false, error: "Section config not found" };
       }
 
-      revalidatePath('/scm/podsie/progress');
+      revalidatePath("/scm/podsie/progress");
 
       // Serialize to ensure proper types
       const serialized = JSON.parse(JSON.stringify(result));
 
       return {
         success: true,
-        data: serialized.youtubeLinks as YoutubeLink[]
+        data: serialized.youtubeLinks as YoutubeLink[],
       };
     } catch (error) {
-      console.error('💥 Error removing YouTube link:', error);
+      console.error("💥 Error removing YouTube link:", error);
       return {
         success: false,
-        error: handleServerError(error, 'Failed to remove YouTube link')
+        error: handleServerError(error, "Failed to remove YouTube link"),
       };
     }
   });
@@ -935,7 +987,7 @@ export async function removeYoutubeLink(
 export async function setActiveYoutubeUrl(
   school: string,
   classSection: string,
-  url: string | null
+  url: string | null,
 ): Promise<{ success: boolean; error?: string }> {
   return withDbConnection(async () => {
     try {
@@ -944,24 +996,24 @@ export async function setActiveYoutubeUrl(
         {
           $set: {
             activeYoutubeUrl: url,
-            updatedAt: new Date().toISOString()
-          }
+            updatedAt: new Date().toISOString(),
+          },
         },
-        { new: true }
+        { new: true },
       );
 
       if (!result) {
-        return { success: false, error: 'Section config not found' };
+        return { success: false, error: "Section config not found" };
       }
 
-      revalidatePath('/scm/podsie/progress');
+      revalidatePath("/scm/podsie/progress");
 
       return { success: true };
     } catch (error) {
-      console.error('💥 Error setting active YouTube URL:', error);
+      console.error("💥 Error setting active YouTube URL:", error);
       return {
         success: false,
-        error: handleServerError(error, 'Failed to set active YouTube URL')
+        error: handleServerError(error, "Failed to set active YouTube URL"),
       };
     }
   });
@@ -974,18 +1026,18 @@ export async function copyYoutubeLinksFromSection(
   school: string,
   classSection: string,
   sourceSchool: string,
-  sourceClassSection: string
+  sourceClassSection: string,
 ): Promise<{ success: boolean; data?: YoutubeLink[]; error?: string }> {
   return withDbConnection(async () => {
     try {
       // Get source section's YouTube links
       const sourceConfig = await SectionConfigModel.findOne(
         { school: sourceSchool, classSection: sourceClassSection },
-        { youtubeLinks: 1 }
+        { youtubeLinks: 1 },
       ).lean();
 
       if (!sourceConfig) {
-        return { success: false, error: 'Source section not found' };
+        return { success: false, error: "Source section not found" };
       }
 
       // Serialize to ensure proper types
@@ -993,25 +1045,34 @@ export async function copyYoutubeLinksFromSection(
       const sourceLinks = (sourceJson.youtubeLinks as YoutubeLink[]) || [];
 
       if (sourceLinks.length === 0) {
-        return { success: false, error: 'Source section has no YouTube links' };
+        return { success: false, error: "Source section has no YouTube links" };
       }
 
       // Get target section's current links to avoid duplicates
       const targetConfig = await SectionConfigModel.findOne(
         { school, classSection },
-        { youtubeLinks: 1 }
+        { youtubeLinks: 1 },
       ).lean();
 
-      const targetJson = targetConfig ? JSON.parse(JSON.stringify(targetConfig)) : null;
+      const targetJson = targetConfig
+        ? JSON.parse(JSON.stringify(targetConfig))
+        : null;
       const existingUrls = new Set(
-        ((targetJson?.youtubeLinks as YoutubeLink[]) || []).map((l: YoutubeLink) => l.url)
+        ((targetJson?.youtubeLinks as YoutubeLink[]) || []).map(
+          (l: YoutubeLink) => l.url,
+        ),
       );
 
       // Filter out duplicates
-      const newLinks = sourceLinks.filter((l: YoutubeLink) => !existingUrls.has(l.url));
+      const newLinks = sourceLinks.filter(
+        (l: YoutubeLink) => !existingUrls.has(l.url),
+      );
 
       if (newLinks.length === 0) {
-        return { success: false, error: 'All links from source section already exist' };
+        return {
+          success: false,
+          error: "All links from source section already exist",
+        };
       }
 
       // Add new links
@@ -1019,29 +1080,29 @@ export async function copyYoutubeLinksFromSection(
         { school, classSection },
         {
           $push: { youtubeLinks: { $each: newLinks } },
-          $set: { updatedAt: new Date().toISOString() }
+          $set: { updatedAt: new Date().toISOString() },
         },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!result) {
-        return { success: false, error: 'Target section not found' };
+        return { success: false, error: "Target section not found" };
       }
 
-      revalidatePath('/scm/podsie/progress');
+      revalidatePath("/scm/podsie/progress");
 
       // Serialize to ensure proper types
       const serialized = JSON.parse(JSON.stringify(result));
 
       return {
         success: true,
-        data: serialized.youtubeLinks as YoutubeLink[]
+        data: serialized.youtubeLinks as YoutubeLink[],
       };
     } catch (error) {
-      console.error('💥 Error copying YouTube links:', error);
+      console.error("💥 Error copying YouTube links:", error);
       return {
         success: false,
-        error: handleServerError(error, 'Failed to copy YouTube links')
+        error: handleServerError(error, "Failed to copy YouTube links"),
       };
     }
   });

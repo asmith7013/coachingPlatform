@@ -30,7 +30,9 @@ export function useActivityData(filters: ActivityDataFilters) {
   });
 
   const refetch = () => {
-    queryClient.invalidateQueries({ queryKey: activityDataKeys.filtered(filters) });
+    queryClient.invalidateQueries({
+      queryKey: activityDataKeys.filtered(filters),
+    });
   };
 
   return {

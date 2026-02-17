@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { PlusIcon, TrashIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import {
+  PlusIcon,
+  TrashIcon,
+  DocumentDuplicateIcon,
+} from "@heroicons/react/24/outline";
 import type { YoutubeLink } from "@zod-schema/scm/podsie/section-config";
 
 interface YoutubeEditorProps {
@@ -34,7 +38,9 @@ export function YoutubeEditor({
   const [error, setError] = useState<string | null>(null);
 
   // Filter out current section from copy options
-  const otherSections = sections.filter(s => s.classSection !== currentSection);
+  const otherSections = sections.filter(
+    (s) => s.classSection !== currentSection,
+  );
 
   const handleAddLink = () => {
     if (!newUrl.trim()) {
@@ -47,7 +53,8 @@ export function YoutubeEditor({
     }
 
     // Basic YouTube URL validation (supports youtube.com, youtu.be, youtubeeducation.com)
-    const youtubePattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|youtubeeducation\.com)\/.+/;
+    const youtubePattern =
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be|youtubeeducation\.com)\/.+/;
     if (!youtubePattern.test(newUrl)) {
       setError("Please enter a valid YouTube URL");
       return;
@@ -60,7 +67,10 @@ export function YoutubeEditor({
     setError(null);
   };
 
-  const handleCopyFromSection = (section: { school: string; classSection: string }) => {
+  const handleCopyFromSection = (section: {
+    school: string;
+    classSection: string;
+  }) => {
     onCopyFromSection(section.school, section.classSection);
     setShowCopyModal(false);
   };
@@ -153,9 +163,7 @@ export function YoutubeEditor({
               focus:outline-none focus:ring-2 focus:ring-indigo-500
             `}
           />
-          {error && (
-            <p className="text-red-400 text-xs">{error}</p>
-          )}
+          {error && <p className="text-red-400 text-xs">{error}</p>}
           <div className="flex gap-2">
             <button
               onClick={handleAddLink}

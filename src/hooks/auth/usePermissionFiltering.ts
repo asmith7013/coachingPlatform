@@ -1,58 +1,66 @@
 // src/hooks/auth/usePermissionFiltering.ts
-import { useMemo } from 'react'
-import { useClerkContext } from './useClerkContext'
-import type { NavigationItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
+import { useMemo } from "react";
+import { useClerkContext } from "./useClerkContext";
+import type { NavigationItem } from "@/components/composed/layouts/sidebar/NavigationSidebar";
 
 export function usePermissionFiltering() {
-  const { user, metadata, allPermissions } = useClerkContext()
+  const { user, metadata, allPermissions } = useClerkContext();
 
   const userPermissions = useMemo(() => {
-    if (!user) return { roles: [], permissions: [] }
+    if (!user) return { roles: [], permissions: [] };
 
-    return { roles: metadata.roles, permissions: allPermissions }
-  }, [user, metadata.roles, allPermissions])
-  
+    return { roles: metadata.roles, permissions: allPermissions };
+  }, [user, metadata.roles, allPermissions]);
+
   const filterItemsByPermissions = useMemo(() => {
     return (items: NavigationItem[]) => {
-      if (!user) return []
-      
+      if (!user) return [];
+
       return filterNavigationByAuth(
         items,
         userPermissions.roles,
-        userPermissions.permissions
-      )
-    }
-  }, [user, userPermissions])
-  
+        userPermissions.permissions,
+      );
+    };
+  }, [user, userPermissions]);
+
   return {
     userPermissions,
     filterItemsByPermissions,
-    isAuthenticated: !!user
-  }
+    isAuthenticated: !!user,
+  };
 }
 
 function filterNavigationByAuth(
   items: NavigationItem[],
   userRoles: string[],
-  userPermissions: string[]
+  userPermissions: string[],
 ): NavigationItem[] {
   return items
-    .filter(item => {
-      if (item.requiredRoles && !item.requiredRoles.some(role => userRoles.includes(role))) {
-        return false
+    .filter((item) => {
+      if (
+        item.requiredRoles &&
+        !item.requiredRoles.some((role) => userRoles.includes(role))
+      ) {
+        return false;
       }
-      
-      if (item.requiredPermissions && !item.requiredPermissions.some(permission => userPermissions.includes(permission))) {
-        return false
+
+      if (
+        item.requiredPermissions &&
+        !item.requiredPermissions.some((permission) =>
+          userPermissions.includes(permission),
+        )
+      ) {
+        return false;
       }
-      
-      return true
+
+      return true;
     })
-    .map(item => ({
+    .map((item) => ({
       ...item,
-      children: item.children 
+      children: item.children
         ? filterNavigationByAuth(item.children, userRoles, userPermissions)
-        : undefined
+        : undefined,
     }))
-    .filter(item => !item.children || item.children.length > 0)
+    .filter((item) => !item.children || item.children.length > 0);
 }

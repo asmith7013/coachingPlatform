@@ -1,8 +1,8 @@
-import { NextRequest } from 'next/server';
-import { generatePptxFromSlides } from '../export-pptx/helpers';
+import { NextRequest } from "next/server";
+import { generatePptxFromSlides } from "../export-pptx/helpers";
 
 interface ProgressEvent {
-  type: 'progress' | 'complete' | 'error';
+  type: "progress" | "complete" | "error";
   message?: string;
   currentSlide?: number;
   totalSlides?: number;
@@ -21,11 +21,11 @@ export async function POST(request: NextRequest) {
 
     if (!slides || !Array.isArray(slides) || slides.length === 0) {
       return new Response(
-        JSON.stringify({ type: 'error', error: 'No slides provided' }),
+        JSON.stringify({ type: "error", error: "No slides provided" }),
         {
           status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        }
+          headers: { "Content-Type": "application/json" },
+        },
       );
     }
 
@@ -35,7 +35,9 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         const sendProgress = (event: ProgressEvent) => {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify(event)}\n\n`),
+          );
         };
 
         try {
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest) {
             mathConcept,
             onProgress: (current, total, message, step) => {
               sendProgress({
-                type: 'progress',
+                type: "progress",
                 message,
                 currentSlide: current,
                 totalSlides: total,
@@ -55,21 +57,24 @@ export async function POST(request: NextRequest) {
 
           // Send completion with file data
           sendProgress({
-            type: 'complete',
-            message: 'Export complete!',
+            type: "complete",
+            message: "Export complete!",
             currentSlide: totalSlides,
             totalSlides,
-            step: 'complete',
+            step: "complete",
             data: result.pptxBase64,
             filename: result.filename,
           });
 
           controller.close();
         } catch (error) {
-          console.error('PPTX generation error:', error);
+          console.error("PPTX generation error:", error);
           sendProgress({
-            type: 'error',
-            error: error instanceof Error ? error.message : 'Failed to generate PPTX',
+            type: "error",
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to generate PPTX",
           });
           controller.close();
         }
@@ -78,19 +83,23 @@ export async function POST(request: NextRequest) {
 
     return new Response(stream, {
       headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        Connection: 'keep-alive',
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
       },
     });
   } catch (error) {
-    console.error('PPTX stream error:', error);
+    console.error("PPTX stream error:", error);
     return new Response(
-      JSON.stringify({ type: 'error', error: error instanceof Error ? error.message : 'Failed to start export' }),
+      JSON.stringify({
+        type: "error",
+        error:
+          error instanceof Error ? error.message : "Failed to start export",
+      }),
       {
         status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
+        headers: { "Content-Type": "application/json" },
+      },
     );
   }
 }

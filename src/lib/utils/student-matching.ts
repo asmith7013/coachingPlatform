@@ -33,7 +33,7 @@ export interface MatchedStudent {
  */
 export async function findStudentByEmail(
   email: string,
-  school?: string
+  school?: string,
 ): Promise<MatchedStudent | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const query: any = {
@@ -66,7 +66,7 @@ export async function findStudentByEmail(
  */
 export async function findStudentsByEmails(
   emails: string[],
-  school?: string
+  school?: string,
 ): Promise<Map<string, MatchedStudent>> {
   if (emails.length === 0) return new Map();
 

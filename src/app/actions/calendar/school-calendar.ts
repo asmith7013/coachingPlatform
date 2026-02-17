@@ -6,7 +6,7 @@ import {
   SchoolCalendarZodSchema,
   SchoolCalendarInputZodSchema,
   type SchoolCalendar,
-  type SchoolCalendarInput
+  type SchoolCalendarInput,
 } from "@zod-schema/calendar";
 import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -20,9 +20,9 @@ const schoolCalendarActions = createCrudActions({
   inputSchema: SchoolCalendarInputZodSchema as ZodType<SchoolCalendarInput>,
   name: "SchoolCalendar",
   revalidationPaths: ["/calendar"],
-  sortFields: ['schoolYear', 'createdAt', 'updatedAt'],
-  defaultSortField: 'schoolYear',
-  defaultSortOrder: 'desc'
+  sortFields: ["schoolYear", "createdAt", "updatedAt"],
+  defaultSortField: "schoolYear",
+  defaultSortOrder: "desc",
 });
 
 // Export the generated actions with connection handling
@@ -34,7 +34,10 @@ export async function createSchoolCalendar(data: SchoolCalendarInput) {
   return withDbConnection(() => schoolCalendarActions.create(data));
 }
 
-export async function updateSchoolCalendar(id: string, data: Partial<SchoolCalendarInput>) {
+export async function updateSchoolCalendar(
+  id: string,
+  data: Partial<SchoolCalendarInput>,
+) {
   return withDbConnection(() => schoolCalendarActions.update(id, data));
 }
 
@@ -50,7 +53,10 @@ export async function fetchSchoolCalendarById(id: string) {
  * Fetch school calendar by school year
  * Custom action for specific lookup not covered by generic CRUD
  */
-export async function fetchSchoolCalendar(schoolYear: string, schoolId?: string) {
+export async function fetchSchoolCalendar(
+  schoolYear: string,
+  schoolId?: string,
+) {
   return withDbConnection(async () => {
     try {
       const query: Record<string, string> = { schoolYear };
@@ -58,12 +64,17 @@ export async function fetchSchoolCalendar(schoolYear: string, schoolId?: string)
         query.schoolId = schoolId;
       }
 
-      const calendar = await SchoolCalendarModel.findOne(query).lean() as {
+      const calendar = (await SchoolCalendarModel.findOne(query).lean()) as {
         _id: { toString(): string };
         schoolYear: string;
         startDate: string;
         endDate: string;
-        events?: Array<{ date: string; name: string; description?: string; hasMathClass?: boolean }>;
+        events?: Array<{
+          date: string;
+          name: string;
+          description?: string;
+          hasMathClass?: boolean;
+        }>;
         notes?: string;
       } | null;
 
@@ -81,7 +92,7 @@ export async function fetchSchoolCalendar(schoolYear: string, schoolId?: string)
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch school calendar")
+        error: handleServerError(error, "Failed to fetch school calendar"),
       };
     }
   });
@@ -99,17 +110,17 @@ export async function upsertSchoolCalendar(input: SchoolCalendarInput) {
       const calendar = await SchoolCalendarModel.findOneAndUpdate(
         {
           schoolYear: validated.schoolYear,
-          ...(validated.schoolId ? { schoolId: validated.schoolId } : {})
+          ...(validated.schoolId ? { schoolId: validated.schoolId } : {}),
         },
         validated,
-        { new: true, upsert: true }
+        { new: true, upsert: true },
       ).lean();
 
       return { success: true, data: calendar as unknown as SchoolCalendar };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to save school calendar")
+        error: handleServerError(error, "Failed to save school calendar"),
       };
     }
   });
@@ -127,9 +138,16 @@ export async function getDaysOff(schoolYear: string, schoolId?: string) {
         query.schoolId = schoolId;
       }
 
-      const calendar = await SchoolCalendarModel.findOne(query)
-        .select('events')
-        .lean() as { events?: Array<{ date: string; school?: string; classSection?: string; hasMathClass?: boolean }> } | null;
+      const calendar = (await SchoolCalendarModel.findOne(query)
+        .select("events")
+        .lean()) as {
+        events?: Array<{
+          date: string;
+          school?: string;
+          classSection?: string;
+          hasMathClass?: boolean;
+        }>;
+      } | null;
 
       if (!calendar) {
         return { success: true, data: [] };
@@ -144,7 +162,7 @@ export async function getDaysOff(schoolYear: string, schoolId?: string) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch days off")
+        error: handleServerError(error, "Failed to fetch days off"),
       };
     }
   });
@@ -156,27 +174,37 @@ export async function getDaysOff(schoolYear: string, schoolId?: string) {
 export async function getSectionDaysOff(
   schoolYear: string,
   school: string,
-  classSection: string
+  classSection: string,
 ) {
   return withDbConnection(async () => {
     try {
-      const calendar = await SchoolCalendarModel.findOne({ schoolYear })
-        .select('events')
-        .lean() as { events?: Array<{ date: string; name: string; description?: string; school?: string; classSection?: string; hasMathClass?: boolean }> } | null;
+      const calendar = (await SchoolCalendarModel.findOne({ schoolYear })
+        .select("events")
+        .lean()) as {
+        events?: Array<{
+          date: string;
+          name: string;
+          description?: string;
+          school?: string;
+          classSection?: string;
+          hasMathClass?: boolean;
+        }>;
+      } | null;
 
       if (!calendar) {
         return { success: true, data: [] };
       }
 
       // Filter to events that match this specific section
-      const sectionEvents = (calendar.events ?? [])
-        .filter((e) => e.school === school && e.classSection === classSection);
+      const sectionEvents = (calendar.events ?? []).filter(
+        (e) => e.school === school && e.classSection === classSection,
+      );
 
       return { success: true, data: sectionEvents };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch section days off")
+        error: handleServerError(error, "Failed to fetch section days off"),
       };
     }
   });
@@ -188,13 +216,20 @@ export async function getSectionDaysOff(
 export async function getAllDaysOffForSection(
   schoolYear: string,
   school: string,
-  classSection: string
+  classSection: string,
 ) {
   return withDbConnection(async () => {
     try {
-      const calendar = await SchoolCalendarModel.findOne({ schoolYear })
-        .select('events')
-        .lean() as { events?: Array<{ date: string; school?: string; classSection?: string; hasMathClass?: boolean }> } | null;
+      const calendar = (await SchoolCalendarModel.findOne({ schoolYear })
+        .select("events")
+        .lean()) as {
+        events?: Array<{
+          date: string;
+          school?: string;
+          classSection?: string;
+          hasMathClass?: boolean;
+        }>;
+      } | null;
 
       if (!calendar) {
         return { success: true, data: [] };
@@ -203,8 +238,12 @@ export async function getAllDaysOffForSection(
       // Get dates that are either global days off (no math class) OR section-specific events (no math class)
       const daysOff = (calendar.events ?? [])
         .filter((e) => {
-          const isGlobalDayOff = !e.school && !e.classSection && !e.hasMathClass;
-          const isSectionDayOff = e.school === school && e.classSection === classSection && !e.hasMathClass;
+          const isGlobalDayOff =
+            !e.school && !e.classSection && !e.hasMathClass;
+          const isSectionDayOff =
+            e.school === school &&
+            e.classSection === classSection &&
+            !e.hasMathClass;
           return isGlobalDayOff || isSectionDayOff;
         })
         .map((e) => e.date);
@@ -213,7 +252,10 @@ export async function getAllDaysOffForSection(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch all days off for section")
+        error: handleServerError(
+          error,
+          "Failed to fetch all days off for section",
+        ),
       };
     }
   });
@@ -231,7 +273,7 @@ export async function addSectionDayOff(
     school: string;
     classSection: string;
     hasMathClass?: boolean; // false = no math class (schedule shifts), true = math happens (no shift)
-  }
+  },
 ) {
   return withDbConnection(async () => {
     try {
@@ -246,14 +288,17 @@ export async function addSectionDayOff(
               school: event.school,
               classSection: event.classSection,
               hasMathClass: event.hasMathClass ?? false,
-            }
-          }
+            },
+          },
         },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!calendar) {
-        return { success: false, error: "School calendar not found for this year" };
+        return {
+          success: false,
+          error: "School calendar not found for this year",
+        };
       }
 
       // Serialize for client - convert ObjectId and Date fields
@@ -263,7 +308,7 @@ export async function addSectionDayOff(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to add section event")
+        error: handleServerError(error, "Failed to add section event"),
       };
     }
   });
@@ -276,7 +321,7 @@ export async function deleteSectionDayOff(
   schoolYear: string,
   date: string,
   school: string,
-  classSection: string
+  classSection: string,
 ) {
   return withDbConnection(async () => {
     try {
@@ -288,14 +333,17 @@ export async function deleteSectionDayOff(
               date,
               school,
               classSection,
-            }
-          }
+            },
+          },
         },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!calendar) {
-        return { success: false, error: "School calendar not found for this year" };
+        return {
+          success: false,
+          error: "School calendar not found for this year",
+        };
       }
 
       // Serialize for client - convert ObjectId and Date fields
@@ -305,7 +353,7 @@ export async function deleteSectionDayOff(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to delete section day off")
+        error: handleServerError(error, "Failed to delete section day off"),
       };
     }
   });

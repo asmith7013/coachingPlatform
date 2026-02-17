@@ -50,8 +50,8 @@ export function useFormFilters() {
     // Get local timezone date (YYYY-MM-DD)
     const now = new Date();
     const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   });
   const [isLoaded, setIsLoaded] = useState(false);
@@ -138,7 +138,7 @@ export function useFormDraft(date: string) {
           JSON.stringify({
             formState: state,
             timestamp: timestamp.toISOString(),
-          })
+          }),
         );
         // Don't call setFormState here - it causes cascading updates
         // The state is already updated by toggleCheckbox/updateDetail
@@ -147,7 +147,7 @@ export function useFormDraft(date: string) {
         console.error("Failed to save draft:", error);
       }
     },
-    [draftKey]
+    [draftKey],
   );
 
   // Clear draft after successful submission
@@ -164,7 +164,7 @@ export function useFormDraft(date: string) {
       if (!studentData) return false;
       return Object.values(studentData).some((detail) => detail.checked);
     },
-    [formState]
+    [formState],
   );
 
   // Get checked activity types for a student
@@ -176,7 +176,7 @@ export function useFormDraft(date: string) {
         .filter(([_, detail]) => detail.checked)
         .map(([activityTypeId]) => activityTypeId);
     },
-    [formState]
+    [formState],
   );
 
   // Update a single activity detail
@@ -190,7 +190,7 @@ export function useFormDraft(date: string) {
         },
       }));
     },
-    []
+    [],
   );
 
   // Toggle checkbox
@@ -210,7 +210,7 @@ export function useFormDraft(date: string) {
         };
       });
     },
-    []
+    [],
   );
 
   // Update detail value
@@ -230,7 +230,7 @@ export function useFormDraft(date: string) {
         };
       });
     },
-    []
+    [],
   );
 
   return {
@@ -257,7 +257,7 @@ export function useFormDraft(date: string) {
 export function useDebouncedSave(
   formState: FormState,
   saveDraft: (state: FormState) => void,
-  delay: number = 500
+  delay: number = 500,
 ) {
   useEffect(() => {
     const timer = setTimeout(() => {

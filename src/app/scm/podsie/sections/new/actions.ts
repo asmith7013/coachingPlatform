@@ -6,7 +6,12 @@ import { SectionConfigModel } from "@mongoose-schema/scm/podsie/section-config.m
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
-import { SchoolsZod, AllSectionsZod, ScopeSequenceTagZod, SpecialPopulationsZod } from "@schema/enum/scm";
+import {
+  SchoolsZod,
+  AllSectionsZod,
+  ScopeSequenceTagZod,
+  SpecialPopulationsZod,
+} from "@schema/enum/scm";
 import { GradeZod } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 // Input schema for creating a new section config
@@ -25,7 +30,9 @@ type CreateSectionConfigInput = z.infer<typeof CreateSectionConfigInputSchema>;
  * Create a new section config
  * Used when adding a new Podsie group/section
  */
-export async function createSectionConfig(data: CreateSectionConfigInput): Promise<{
+export async function createSectionConfig(
+  data: CreateSectionConfigInput,
+): Promise<{
   success: boolean;
   error?: string;
   data?: { id: string };

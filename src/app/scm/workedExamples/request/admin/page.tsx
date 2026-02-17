@@ -1,13 +1,24 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getWorkedExampleRequests, updateWorkedExampleRequestStatus } from "@actions/scm/podsie/worked-example-requests";
-import { WorkedExampleRequest, WorkedExampleRequestStatus } from "@zod-schema/scm/podsie/worked-example-request";
+import {
+  getWorkedExampleRequests,
+  updateWorkedExampleRequestStatus,
+} from "@actions/scm/podsie/worked-example-requests";
+import {
+  WorkedExampleRequest,
+  WorkedExampleRequestStatus,
+} from "@zod-schema/scm/podsie/worked-example-request";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 
-const STATUS_OPTIONS: WorkedExampleRequestStatus[] = ["pending", "in_progress", "completed", "cancelled"];
+const STATUS_OPTIONS: WorkedExampleRequestStatus[] = [
+  "pending",
+  "in_progress",
+  "completed",
+  "cancelled",
+];
 
 const STATUS_COLORS: Record<WorkedExampleRequestStatus, string> = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -27,7 +38,9 @@ export default function WorkedExampleRequestAdminPage() {
   const [requests, setRequests] = useState<WorkedExampleRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [statusFilter, setStatusFilter] = useState<WorkedExampleRequestStatus | "">("");
+  const [statusFilter, setStatusFilter] = useState<
+    WorkedExampleRequestStatus | ""
+  >("");
   const [updating, setUpdating] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -56,15 +69,18 @@ export default function WorkedExampleRequestAdminPage() {
     loadRequests();
   }, [loadRequests]);
 
-  const handleStatusChange = async (id: string, newStatus: WorkedExampleRequestStatus) => {
+  const handleStatusChange = async (
+    id: string,
+    newStatus: WorkedExampleRequestStatus,
+  ) => {
     setUpdating(id);
     try {
       const result = await updateWorkedExampleRequestStatus(id, newStatus);
 
       if (result.success) {
         // Update local state
-        setRequests(prev =>
-          prev.map(r => (r._id === id ? { ...r, status: newStatus } : r))
+        setRequests((prev) =>
+          prev.map((r) => (r._id === id ? { ...r, status: newStatus } : r)),
         );
       } else {
         setError(result.error || "Failed to update status");
@@ -88,11 +104,13 @@ export default function WorkedExampleRequestAdminPage() {
   };
 
   const filteredRequests = statusFilter
-    ? requests.filter(r => r.status === statusFilter)
+    ? requests.filter((r) => r.status === statusFilter)
     : requests;
 
-  const pendingCount = requests.filter(r => r.status === "pending").length;
-  const inProgressCount = requests.filter(r => r.status === "in_progress").length;
+  const pendingCount = requests.filter((r) => r.status === "pending").length;
+  const inProgressCount = requests.filter(
+    (r) => r.status === "in_progress",
+  ).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -101,18 +119,24 @@ export default function WorkedExampleRequestAdminPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Worked Example Request Queue</h1>
+              <h1 className="text-3xl font-bold mb-2">
+                Worked Example Request Queue
+              </h1>
               <p className="text-gray-600">
                 Manage worked example requests from teachers
               </p>
             </div>
             <div className="flex gap-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-600">{pendingCount}</div>
+                <div className="text-3xl font-bold text-yellow-600">
+                  {pendingCount}
+                </div>
                 <div className="text-sm text-gray-500">Pending</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">{inProgressCount}</div>
+                <div className="text-3xl font-bold text-blue-600">
+                  {inProgressCount}
+                </div>
                 <div className="text-sm text-gray-500">In Progress</div>
               </div>
             </div>
@@ -120,17 +144,24 @@ export default function WorkedExampleRequestAdminPage() {
 
           {/* Filters */}
           <div className="flex gap-4 items-center">
-            <label htmlFor="status-filter" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="status-filter"
+              className="text-sm font-medium text-gray-700"
+            >
               Filter by Status:
             </label>
             <select
               id="status-filter"
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as WorkedExampleRequestStatus | "")}
+              onChange={(e) =>
+                setStatusFilter(
+                  e.target.value as WorkedExampleRequestStatus | "",
+                )
+              }
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             >
               <option value="">All Statuses</option>
-              {STATUS_OPTIONS.map(status => (
+              {STATUS_OPTIONS.map((status) => (
                 <option key={status} value={status}>
                   {STATUS_LABELS[status]}
                 </option>
@@ -164,7 +195,9 @@ export default function WorkedExampleRequestAdminPage() {
         {!loading && filteredRequests.length === 0 && (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
             <ClipboardDocumentListIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">No Requests Found</h3>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+              No Requests Found
+            </h3>
             <p className="text-gray-500">
               {statusFilter
                 ? `No ${STATUS_LABELS[statusFilter].toLowerCase()} requests found.`
@@ -175,7 +208,7 @@ export default function WorkedExampleRequestAdminPage() {
 
         {!loading && filteredRequests.length > 0 && (
           <div className="space-y-4">
-            {filteredRequests.map(request => (
+            {filteredRequests.map((request) => (
               <div
                 key={request._id}
                 className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
@@ -185,18 +218,23 @@ export default function WorkedExampleRequestAdminPage() {
                     {/* Left side: Lesson info */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${STATUS_COLORS[request.status]}`}>
+                        <span
+                          className={`px-3 py-1 text-xs font-semibold rounded-full border ${STATUS_COLORS[request.status]}`}
+                        >
                           {STATUS_LABELS[request.status]}
                         </span>
                         <span className="text-sm text-gray-500">
-                          {request.createdAt ? formatDate(request.createdAt) : "Unknown date"}
+                          {request.createdAt
+                            ? formatDate(request.createdAt)
+                            : "Unknown date"}
                         </span>
                       </div>
                       <h3 className="text-lg font-bold text-gray-900 mb-1">
                         {request.lessonName}
                       </h3>
                       <p className="text-sm text-gray-600 mb-2">
-                        {request.scopeSequenceTag} • Unit {request.unitNumber}, Lesson {request.lessonNumber}
+                        {request.scopeSequenceTag} • Unit {request.unitNumber},
+                        Lesson {request.lessonNumber}
                         {request.section && ` • Section ${request.section}`}
                       </p>
                     </div>
@@ -208,10 +246,15 @@ export default function WorkedExampleRequestAdminPage() {
                       ) : (
                         <select
                           value={request.status}
-                          onChange={(e) => handleStatusChange(request._id, e.target.value as WorkedExampleRequestStatus)}
+                          onChange={(e) =>
+                            handleStatusChange(
+                              request._id,
+                              e.target.value as WorkedExampleRequestStatus,
+                            )
+                          }
                           className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                         >
-                          {STATUS_OPTIONS.map(status => (
+                          {STATUS_OPTIONS.map((status) => (
                             <option key={status} value={status}>
                               {STATUS_LABELS[status]}
                             </option>
@@ -225,20 +268,28 @@ export default function WorkedExampleRequestAdminPage() {
                   <div className="grid grid-cols-3 gap-6">
                     {/* Column 1: Math details */}
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Math Details</h4>
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                        Math Details
+                      </h4>
                       <div className="space-y-2 text-sm">
                         <div>
                           <span className="text-gray-500">Concept:</span>{" "}
-                          <span className="font-medium">{request.mathConcept}</span>
+                          <span className="font-medium">
+                            {request.mathConcept}
+                          </span>
                         </div>
                         <div>
                           <span className="text-gray-500">Standard:</span>{" "}
-                          <span className="font-medium">{request.mathStandard}</span>
+                          <span className="font-medium">
+                            {request.mathStandard}
+                          </span>
                         </div>
                         <div>
-                          <span className="text-gray-500">Struggling Skills:</span>{" "}
+                          <span className="text-gray-500">
+                            Struggling Skills:
+                          </span>{" "}
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {request.strugglingSkillNumbers.map(num => (
+                            {request.strugglingSkillNumbers.map((num) => (
                               <span
                                 key={num}
                                 className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 text-orange-800 font-bold text-xs"
@@ -253,13 +304,17 @@ export default function WorkedExampleRequestAdminPage() {
 
                     {/* Column 2: Misconception description */}
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Misconception</h4>
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                        Misconception
+                      </h4>
                       <p className="text-sm text-gray-600 whitespace-pre-wrap">
                         {request.strugglingDescription}
                       </p>
                       {request.additionalNotes && (
                         <div className="mt-3">
-                          <h4 className="text-sm font-semibold text-gray-700 mb-1">Additional Notes</h4>
+                          <h4 className="text-sm font-semibold text-gray-700 mb-1">
+                            Additional Notes
+                          </h4>
                           <p className="text-sm text-gray-600 whitespace-pre-wrap">
                             {request.additionalNotes}
                           </p>
@@ -269,7 +324,9 @@ export default function WorkedExampleRequestAdminPage() {
 
                     {/* Column 3: Source image */}
                     <div>
-                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Source Image</h4>
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                        Source Image
+                      </h4>
                       <div
                         onClick={() => setSelectedImage(request.sourceImageUrl)}
                         className="cursor-pointer hover:opacity-80 transition-opacity"

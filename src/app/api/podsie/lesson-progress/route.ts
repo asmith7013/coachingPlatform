@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
     if (!groupId) {
       return NextResponse.json(
         { success: false, error: "groupId parameter is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
     if (isNaN(podsieGroupId)) {
       return NextResponse.json(
         { success: false, error: "groupId must be a valid integer" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
       if (isNaN(podsieModuleId)) {
         return NextResponse.json(
           { success: false, error: "moduleId must be a valid integer" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
       if (!result) {
         return NextResponse.json(
           { success: false, error: "No pacing config found" },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
@@ -97,7 +97,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in lesson-progress GET:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -108,19 +108,31 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { podsieGroupId, podsieModuleId, moduleStartDate, pointsRewardGoal, pointsRewardDescription, studentPointsTarget, assignments, completedSections } = body;
+    const {
+      podsieGroupId,
+      podsieModuleId,
+      moduleStartDate,
+      pointsRewardGoal,
+      pointsRewardDescription,
+      studentPointsTarget,
+      assignments,
+      completedSections,
+    } = body;
 
     if (!podsieGroupId || !podsieModuleId) {
       return NextResponse.json(
-        { success: false, error: "podsieGroupId and podsieModuleId are required" },
-        { status: 400 }
+        {
+          success: false,
+          error: "podsieGroupId and podsieModuleId are required",
+        },
+        { status: 400 },
       );
     }
 
     if (!Array.isArray(assignments)) {
       return NextResponse.json(
         { success: false, error: "assignments must be an array" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -133,20 +145,23 @@ export async function POST(req: NextRequest) {
       if (existingConfig) {
         // Update existing - use set() for proper Mongoose subdocument handling
         if (moduleStartDate !== undefined) {
-          existingConfig.set('moduleStartDate', moduleStartDate);
+          existingConfig.set("moduleStartDate", moduleStartDate);
         }
         if (pointsRewardGoal !== undefined) {
-          existingConfig.set('pointsRewardGoal', pointsRewardGoal);
+          existingConfig.set("pointsRewardGoal", pointsRewardGoal);
         }
         if (pointsRewardDescription !== undefined) {
-          existingConfig.set('pointsRewardDescription', pointsRewardDescription);
+          existingConfig.set(
+            "pointsRewardDescription",
+            pointsRewardDescription,
+          );
         }
         if (studentPointsTarget !== undefined) {
-          existingConfig.set('studentPointsTarget', studentPointsTarget);
+          existingConfig.set("studentPointsTarget", studentPointsTarget);
         }
-        existingConfig.set('assignments', assignments);
+        existingConfig.set("assignments", assignments);
         if (completedSections !== undefined) {
-          existingConfig.set('completedSections', completedSections);
+          existingConfig.set("completedSections", completedSections);
         }
         await existingConfig.save();
         return { doc: existingConfig.toJSON(), created: false };
@@ -173,13 +188,13 @@ export async function POST(req: NextRequest) {
         data: result.doc,
         created: result.created,
       },
-      { status: result.created ? 201 : 200 }
+      { status: result.created ? 201 : 200 },
     );
   } catch (error) {
     console.error("Error in lesson-progress POST:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -195,8 +210,11 @@ export async function DELETE(req: NextRequest) {
 
     if (!groupId || !moduleId) {
       return NextResponse.json(
-        { success: false, error: "groupId and moduleId parameters are required" },
-        { status: 400 }
+        {
+          success: false,
+          error: "groupId and moduleId parameters are required",
+        },
+        { status: 400 },
       );
     }
 
@@ -205,8 +223,11 @@ export async function DELETE(req: NextRequest) {
 
     if (isNaN(podsieGroupId) || isNaN(podsieModuleId)) {
       return NextResponse.json(
-        { success: false, error: "groupId and moduleId must be valid integers" },
-        { status: 400 }
+        {
+          success: false,
+          error: "groupId and moduleId must be valid integers",
+        },
+        { status: 400 },
       );
     }
 
@@ -224,7 +245,7 @@ export async function DELETE(req: NextRequest) {
     console.error("Error in lesson-progress DELETE:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

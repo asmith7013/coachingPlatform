@@ -1,6 +1,6 @@
-import { ZodSchema } from 'zod';
-import { fromZodError } from 'zod-validation-error';
-import { handleClientError } from '@error/handlers/client';
+import { ZodSchema } from "zod";
+import { fromZodError } from "zod-validation-error";
+import { handleClientError } from "@error/handlers/client";
 
 /**
  * Validates JSON string against schema with enhanced error handling
@@ -8,7 +8,7 @@ import { handleClientError } from '@error/handlers/client';
  */
 export function validateJsonString<T>(
   jsonString: string,
-  schema: ZodSchema<T>
+  schema: ZodSchema<T>,
 ): { success: true; data: T } | { success: false; error: string } {
   try {
     const parsed = JSON.parse(jsonString);
@@ -19,16 +19,17 @@ export function validateJsonString<T>(
       const validationError = fromZodError(result.error);
       return {
         success: false,
-        error: validationError.message
+        error: validationError.message,
       };
     }
 
     return { success: true, data: result.data };
   } catch (error) {
-    const errorMessage = handleClientError(error, 'validateJsonString');
+    const errorMessage = handleClientError(error, "validateJsonString");
     return {
       success: false,
-      error: error instanceof SyntaxError ? 'Invalid JSON format' : errorMessage
+      error:
+        error instanceof SyntaxError ? "Invalid JSON format" : errorMessage,
     };
   }
 }
@@ -39,11 +40,13 @@ export function validateJsonString<T>(
  */
 export function validateArrayWithPartialSuccess<T>(
   data: unknown[],
-  schema: ZodSchema<T>
-): { success: true; data: T[]; validCount: number; totalCount: number } | { success: false; error: string } {
+  schema: ZodSchema<T>,
+):
+  | { success: true; data: T[]; validCount: number; totalCount: number }
+  | { success: false; error: string } {
   try {
     if (!Array.isArray(data)) {
-      return { success: false, error: 'Data must be an array' };
+      return { success: false, error: "Data must be an array" };
     }
 
     const validatedItems: T[] = [];
@@ -62,7 +65,7 @@ export function validateArrayWithPartialSuccess<T>(
     if (validatedItems.length === 0) {
       return {
         success: false,
-        error: errors.length > 0 ? errors[0] : 'No valid items found'
+        error: errors.length > 0 ? errors[0] : "No valid items found",
       };
     }
 
@@ -70,10 +73,13 @@ export function validateArrayWithPartialSuccess<T>(
       success: true,
       data: validatedItems,
       validCount: validatedItems.length,
-      totalCount: data.length
+      totalCount: data.length,
     };
   } catch (error) {
-    const errorMessage = handleClientError(error, 'validateArrayWithPartialSuccess');
+    const errorMessage = handleClientError(
+      error,
+      "validateArrayWithPartialSuccess",
+    );
     return { success: false, error: errorMessage };
   }
 }
@@ -82,14 +88,19 @@ export function validateArrayWithPartialSuccess<T>(
  * Factory function for creating partial validators (for updates)
  * Uses schema.partial() to make all fields optional
  */
-export function createPartialValidator<T>(schema: ZodSchema<T>, entityName: string) {
+export function createPartialValidator<T>(
+  schema: ZodSchema<T>,
+  entityName: string,
+) {
   // Type guard to check if schema has partial method (ZodObject)
-  const partialSchema = 'partial' in schema && typeof schema.partial === 'function' 
-    ? schema.partial() 
-    : schema; // Fallback to original schema if partial not available
-  
+  const partialSchema =
+    "partial" in schema && typeof schema.partial === "function"
+      ? schema.partial()
+      : schema; // Fallback to original schema if partial not available
+
   return {
-    validateSingle: (jsonString: string) => validateJsonString(jsonString, partialSchema),
+    validateSingle: (jsonString: string) =>
+      validateJsonString(jsonString, partialSchema),
     validateArray: (jsonString: string) => {
       try {
         const parsed = JSON.parse(jsonString);
@@ -98,10 +109,13 @@ export function createPartialValidator<T>(schema: ZodSchema<T>, entityName: stri
       } catch (error) {
         return {
           success: false as const,
-          error: error instanceof SyntaxError ? 'Invalid JSON format' : `${entityName} validation failed`
+          error:
+            error instanceof SyntaxError
+              ? "Invalid JSON format"
+              : `${entityName} validation failed`,
         };
       }
-    }
+    },
   };
 }
 
@@ -110,13 +124,18 @@ export function createPartialValidator<T>(schema: ZodSchema<T>, entityName: stri
  * Follows transformer factory pattern
  * Enhanced with partial validation support
  */
-export function createValidator<T>(schema: ZodSchema<T>, entityName: string, options?: { partial?: boolean }) {
+export function createValidator<T>(
+  schema: ZodSchema<T>,
+  entityName: string,
+  options?: { partial?: boolean },
+) {
   if (options?.partial) {
     return createPartialValidator(schema, entityName);
   }
-  
+
   return {
-    validateSingle: (jsonString: string) => validateJsonString(jsonString, schema),
+    validateSingle: (jsonString: string) =>
+      validateJsonString(jsonString, schema),
     validateArray: (jsonString: string) => {
       try {
         const parsed = JSON.parse(jsonString);
@@ -125,10 +144,12 @@ export function createValidator<T>(schema: ZodSchema<T>, entityName: string, opt
       } catch (error) {
         return {
           success: false as const,
-          error: error instanceof SyntaxError ? 'Invalid JSON format' : `${entityName} validation failed`
+          error:
+            error instanceof SyntaxError
+              ? "Invalid JSON format"
+              : `${entityName} validation failed`,
         };
       }
-    }
+    },
   };
-} 
-
+}

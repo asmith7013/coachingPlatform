@@ -17,7 +17,7 @@ export function MatchingControls({
   onToggleUnmatched,
   onAutoMatch,
   onSaveAll,
-  saving
+  saving,
 }: MatchingControlsProps) {
   return (
     <div className="flex items-center justify-between mb-4">
@@ -48,7 +48,7 @@ export function MatchingControls({
           className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           <PlusIcon className="w-5 h-5" />
-          {saving ? 'Saving...' : `Save All (${matchedCount})`}
+          {saving ? "Saving..." : `Save All (${matchedCount})`}
         </button>
       </div>
     </div>

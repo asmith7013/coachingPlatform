@@ -9,7 +9,13 @@ interface AccordionItemProps {
   showTitleBadge?: boolean;
 }
 
-export function AccordionItem({ title, content, isExpanded, onToggle, showTitleBadge = true }: AccordionItemProps) {
+export function AccordionItem({
+  title,
+  content,
+  isExpanded,
+  onToggle,
+  showTitleBadge = true,
+}: AccordionItemProps) {
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden">
       <button
@@ -21,9 +27,7 @@ export function AccordionItem({ title, content, isExpanded, onToggle, showTitleB
             {title}
           </span>
         ) : (
-          <span className="text-xs font-semibold text-gray-800">
-            {title}
-          </span>
+          <span className="text-xs font-semibold text-gray-800">{title}</span>
         )}
         {isExpanded ? (
           <ChevronDownIcon className="w-4 h-4 text-gray-600 flex-shrink-0" />
@@ -33,7 +37,7 @@ export function AccordionItem({ title, content, isExpanded, onToggle, showTitleB
       </button>
       {isExpanded && content && (
         <div className="px-3 py-2 bg-white border-t border-gray-200">
-          {typeof content === 'string' ? (
+          {typeof content === "string" ? (
             <p className="text-sm text-gray-600">{content}</p>
           ) : (
             content

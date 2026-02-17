@@ -1,10 +1,22 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { fetchRoadmapsSkills, fetchRoadmapsSkillsByNumbers } from "@actions/scm/roadmaps/roadmaps-skills";
-import { fetchLessonsListByScopeTag, fetchScopeAndSequenceById } from "@actions/scm/scope-and-sequence/scope-and-sequence";
-import { createWorkedExampleRequest, uploadWorkedExampleImage } from "@actions/scm/podsie/worked-example-requests";
-import { RoadmapsSkill, PracticeProblem } from "@zod-schema/scm/roadmaps/roadmap-skill";
+import {
+  fetchRoadmapsSkills,
+  fetchRoadmapsSkillsByNumbers,
+} from "@actions/scm/roadmaps/roadmaps-skills";
+import {
+  fetchLessonsListByScopeTag,
+  fetchScopeAndSequenceById,
+} from "@actions/scm/scope-and-sequence/scope-and-sequence";
+import {
+  createWorkedExampleRequest,
+  uploadWorkedExampleImage,
+} from "@actions/scm/podsie/worked-example-requests";
+import {
+  RoadmapsSkill,
+  PracticeProblem,
+} from "@zod-schema/scm/roadmaps/roadmap-skill";
 import { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 import { Student } from "@zod-schema/scm/student/student";
 import { SkillDetailWrapper } from "../../roadmaps/components/SkillDetailWrapper";
@@ -21,7 +33,11 @@ import {
   RequestTypeSelector,
   PracticeProblemQueue,
 } from "./components";
-import type { RequestType, QueuedPracticeProblem, SkillType } from "./components";
+import type {
+  RequestType,
+  QueuedPracticeProblem,
+  SkillType,
+} from "./components";
 
 // Lightweight lesson data for list display
 interface LessonListItem {
@@ -52,7 +68,8 @@ export default function WorkedExampleRequestPage() {
   const [isLoadingList, setIsLoadingList] = useState(false);
 
   // Full lesson data (loaded when selected)
-  const [selectedLessonFull, setSelectedLessonFull] = useState<FullLessonData | null>(null);
+  const [selectedLessonFull, setSelectedLessonFull] =
+    useState<FullLessonData | null>(null);
   const [isLoadingLesson, setIsLoadingLesson] = useState(false);
 
   // Skills data
@@ -61,25 +78,35 @@ export default function WorkedExampleRequestPage() {
 
   // Filter state
   const [selectedGrade, setSelectedGrade] = useState<string>("");
-  const [selectedUnitNumber, setSelectedUnitNumber] = useState<number | null>(null);
+  const [selectedUnitNumber, setSelectedUnitNumber] = useState<number | null>(
+    null,
+  );
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
 
   // UI state
   const [error, setError] = useState<string | null>(null);
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
-  const [selectedSkillColor, setSelectedSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('green');
-  const [selectedSkillType, setSelectedSkillType] = useState<SkillType>('target');
+  const [selectedSkillColor, setSelectedSkillColor] = useState<
+    "blue" | "green" | "orange" | "purple"
+  >("green");
+  const [selectedSkillType, setSelectedSkillType] =
+    useState<SkillType>("target");
   const [contextSkillId, setContextSkillId] = useState<string | null>(null);
-  const [contextSkillColor, setContextSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('orange');
-  const [contextSkillType, setContextSkillType] = useState<SkillType>('target');
+  const [contextSkillColor, setContextSkillColor] = useState<
+    "blue" | "green" | "orange" | "purple"
+  >("orange");
+  const [contextSkillType, setContextSkillType] = useState<SkillType>("target");
   const [showDescriptions, setShowDescriptions] = useState(true);
 
   // Request type state
   const [requestType, setRequestType] = useState<RequestType | null>(null);
 
   // Practice problem queue state (for prerequisite-skill flow)
-  const [practiceProblemQueue, setPracticeProblemQueue] = useState<QueuedPracticeProblem[]>([]);
-  const [selectedPracticeProblem, setSelectedPracticeProblem] = useState<QueuedPracticeProblem | null>(null);
+  const [practiceProblemQueue, setPracticeProblemQueue] = useState<
+    QueuedPracticeProblem[]
+  >([]);
+  const [selectedPracticeProblem, setSelectedPracticeProblem] =
+    useState<QueuedPracticeProblem | null>(null);
 
   // Student filter state
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -87,14 +114,21 @@ export default function WorkedExampleRequestPage() {
   const [selectedSection, setSelectedSection] = useState<string>("");
 
   // Form state
-  const [selectedStrugglingSkills, setSelectedStrugglingSkills] = useState<Set<string>>(new Set());
+  const [selectedStrugglingSkills, setSelectedStrugglingSkills] = useState<
+    Set<string>
+  >(new Set());
   const [strugglingDescription, setStrugglingDescription] = useState("");
   const [mathConcept, setMathConcept] = useState("");
   const [mathStandard, setMathStandard] = useState("");
   const [learningGoals, setLearningGoals] = useState("");
   const [additionalNotes, setAdditionalNotes] = useState("");
-  const [uploadedImage, setUploadedImage] = useState<{ file: File; preview: string } | null>(null);
-  const [preloadedImageUrl, setPreloadedImageUrl] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<{
+    file: File;
+    preview: string;
+  } | null>(null);
+  const [preloadedImageUrl, setPreloadedImageUrl] = useState<string | null>(
+    null,
+  );
   const [submitting, setSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
@@ -107,7 +141,7 @@ export default function WorkedExampleRequestPage() {
           limit: 10000,
           sortBy: "skillNumber",
           sortOrder: "asc",
-          filters: {}
+          filters: {},
         });
 
         if (result.success && result.items) {
@@ -169,10 +203,13 @@ export default function WorkedExampleRequestPage() {
           // Load lesson skills
           const targetSkillNumbers = fullLesson.targetSkills || [];
           const roadmapSkillNumbers = fullLesson.roadmapSkills || [];
-          const allSkillNumbers = [...new Set([...targetSkillNumbers, ...roadmapSkillNumbers])];
+          const allSkillNumbers = [
+            ...new Set([...targetSkillNumbers, ...roadmapSkillNumbers]),
+          ];
 
           if (allSkillNumbers.length > 0) {
-            const skillsResult = await fetchRoadmapsSkillsByNumbers(allSkillNumbers);
+            const skillsResult =
+              await fetchRoadmapsSkillsByNumbers(allSkillNumbers);
             if (skillsResult.success && skillsResult.data) {
               setLessonSkills(skillsResult.data as RoadmapsSkill[]);
             }
@@ -197,33 +234,44 @@ export default function WorkedExampleRequestPage() {
   const availableUnits: UnitInfo[] = selectedGrade
     ? Array.from(
         new Map(
-          lessonsList.map(lesson => [lesson.unitNumber, { unitNumber: lesson.unitNumber, unitName: lesson.unit }])
-        ).values()
+          lessonsList.map((lesson) => [
+            lesson.unitNumber,
+            { unitNumber: lesson.unitNumber, unitName: lesson.unit },
+          ]),
+        ).values(),
       ).sort((a, b) => a.unitNumber - b.unitNumber)
     : [];
 
   // Get lessons for the selected unit
-  const filteredLessons = selectedGrade && selectedUnitNumber !== null
-    ? lessonsList.filter(lesson => lesson.unitNumber === selectedUnitNumber)
-    : [];
+  const filteredLessons =
+    selectedGrade && selectedUnitNumber !== null
+      ? lessonsList.filter((lesson) => lesson.unitNumber === selectedUnitNumber)
+      : [];
 
   // Get selected skill and context skill objects
   const selectedSkill = selectedSkillId
-    ? lessonSkills.find(s => s._id === selectedSkillId) || allSkills.find(s => s._id === selectedSkillId) || null
+    ? lessonSkills.find((s) => s._id === selectedSkillId) ||
+      allSkills.find((s) => s._id === selectedSkillId) ||
+      null
     : null;
 
   const contextSkill = contextSkillId
-    ? allSkills.find(s => s._id === contextSkillId) || null
+    ? allSkills.find((s) => s._id === contextSkillId) || null
     : null;
 
   // Get all available skills (target + essential + helpful from selected skill)
   const getAvailableSkillsForSelection = useCallback(() => {
-    const skills: Array<{ skill: RoadmapsSkill; type: "target" | "essential" | "helpful" }> = [];
+    const skills: Array<{
+      skill: RoadmapsSkill;
+      type: "target" | "essential" | "helpful";
+    }> = [];
 
     // Add target skills from lesson
     const targetSkillNumbers = selectedLessonFull?.targetSkills || [];
-    targetSkillNumbers.forEach(num => {
-      const skill = lessonSkills.find(s => s.skillNumber === num) || allSkills.find(s => s.skillNumber === num);
+    targetSkillNumbers.forEach((num) => {
+      const skill =
+        lessonSkills.find((s) => s.skillNumber === num) ||
+        allSkills.find((s) => s.skillNumber === num);
       if (skill) {
         skills.push({ skill, type: "target" });
       }
@@ -231,16 +279,22 @@ export default function WorkedExampleRequestPage() {
 
     // Add essential and helpful from selected skill
     if (selectedSkill) {
-      selectedSkill.essentialSkills?.forEach(es => {
-        const skill = allSkills.find(s => s.skillNumber === es.skillNumber);
-        if (skill && !skills.find(s => s.skill.skillNumber === skill.skillNumber)) {
+      selectedSkill.essentialSkills?.forEach((es) => {
+        const skill = allSkills.find((s) => s.skillNumber === es.skillNumber);
+        if (
+          skill &&
+          !skills.find((s) => s.skill.skillNumber === skill.skillNumber)
+        ) {
           skills.push({ skill, type: "essential" });
         }
       });
 
-      selectedSkill.helpfulSkills?.forEach(hs => {
-        const skill = allSkills.find(s => s.skillNumber === hs.skillNumber);
-        if (skill && !skills.find(s => s.skill.skillNumber === skill.skillNumber)) {
+      selectedSkill.helpfulSkills?.forEach((hs) => {
+        const skill = allSkills.find((s) => s.skillNumber === hs.skillNumber);
+        if (
+          skill &&
+          !skills.find((s) => s.skill.skillNumber === skill.skillNumber)
+        ) {
           skills.push({ skill, type: "helpful" });
         }
       });
@@ -286,7 +340,7 @@ export default function WorkedExampleRequestPage() {
   };
 
   const handleSkillToggle = (skillNumber: string) => {
-    setSelectedStrugglingSkills(prev => {
+    setSelectedStrugglingSkills((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(skillNumber)) {
         newSet.delete(skillNumber);
@@ -307,78 +361,110 @@ export default function WorkedExampleRequestPage() {
   };
 
   // Queue handlers for practice problem consideration queue
-  const handleAddToQueue = useCallback((
-    problem: PracticeProblem,
-    skillNumber: string,
-    skillTitle: string,
-    skillType: SkillType
-  ) => {
-    setPracticeProblemQueue(prev => {
-      // Check if already in queue
-      const exists = prev.some(
-        item => item.skillNumber === skillNumber && item.problemNumber === problem.problemNumber
+  const handleAddToQueue = useCallback(
+    (
+      problem: PracticeProblem,
+      skillNumber: string,
+      skillTitle: string,
+      skillType: SkillType,
+    ) => {
+      setPracticeProblemQueue((prev) => {
+        // Check if already in queue
+        const exists = prev.some(
+          (item) =>
+            item.skillNumber === skillNumber &&
+            item.problemNumber === problem.problemNumber,
+        );
+        if (exists) return prev;
+
+        return [
+          ...prev,
+          {
+            skillNumber,
+            skillTitle,
+            problemNumber: problem.problemNumber,
+            screenshotUrl: problem.screenshotUrl,
+            skillType,
+          },
+        ];
+      });
+    },
+    [],
+  );
+
+  const handleRemoveFromQueue = useCallback(
+    (item: QueuedPracticeProblem) => {
+      setPracticeProblemQueue((prev) =>
+        prev.filter(
+          (p) =>
+            !(
+              p.skillNumber === item.skillNumber &&
+              p.problemNumber === item.problemNumber
+            ),
+        ),
       );
-      if (exists) return prev;
+      // If we removed the selected item, deselect it
+      if (
+        selectedPracticeProblem?.skillNumber === item.skillNumber &&
+        selectedPracticeProblem?.problemNumber === item.problemNumber
+      ) {
+        setSelectedPracticeProblem(null);
+      }
+    },
+    [selectedPracticeProblem],
+  );
 
-      return [...prev, {
-        skillNumber,
-        skillTitle,
-        problemNumber: problem.problemNumber,
-        screenshotUrl: problem.screenshotUrl,
-        skillType,
-      }];
-    });
-  }, []);
+  const handleSelectFromQueue = useCallback(
+    (item: QueuedPracticeProblem) => {
+      setSelectedPracticeProblem(item);
 
-  const handleRemoveFromQueue = useCallback((item: QueuedPracticeProblem) => {
-    setPracticeProblemQueue(prev =>
-      prev.filter(p => !(p.skillNumber === item.skillNumber && p.problemNumber === item.problemNumber))
-    );
-    // If we removed the selected item, deselect it
-    if (selectedPracticeProblem?.skillNumber === item.skillNumber &&
-        selectedPracticeProblem?.problemNumber === item.problemNumber) {
-      setSelectedPracticeProblem(null);
-    }
-  }, [selectedPracticeProblem]);
+      // Find the skill to auto-fill form fields
+      const skill =
+        lessonSkills.find((s) => s.skillNumber === item.skillNumber) ||
+        allSkills.find((s) => s.skillNumber === item.skillNumber);
 
-  const handleSelectFromQueue = useCallback((item: QueuedPracticeProblem) => {
-    setSelectedPracticeProblem(item);
+      if (skill) {
+        // Auto-select this skill as a struggling skill
+        setSelectedStrugglingSkills(new Set([skill.skillNumber]));
 
-    // Find the skill to auto-fill form fields
-    const skill = lessonSkills.find(s => s.skillNumber === item.skillNumber) ||
-                  allSkills.find(s => s.skillNumber === item.skillNumber);
+        // Auto-fill math concept with skill title or description
+        setMathConcept(skill.title || "");
 
-    if (skill) {
-      // Auto-select this skill as a struggling skill
-      setSelectedStrugglingSkills(new Set([skill.skillNumber]));
+        // Auto-fill math standard from skill's standards
+        if (skill.standards && skill.standards.length > 0) {
+          setMathStandard(skill.standards);
+        }
 
-      // Auto-fill math concept with skill title or description
-      setMathConcept(skill.title || "");
-
-      // Auto-fill math standard from skill's standards
-      if (skill.standards && skill.standards.length > 0) {
-        setMathStandard(skill.standards);
+        // Auto-fill learning goals with skill description
+        setLearningGoals(skill.description || "");
       }
 
-      // Auto-fill learning goals with skill description
-      setLearningGoals(skill.description || "");
-    }
+      // Set the preloaded image URL
+      setPreloadedImageUrl(item.screenshotUrl);
+      // Clear any manually uploaded image
+      setUploadedImage(null);
+    },
+    [lessonSkills, allSkills],
+  );
 
-    // Set the preloaded image URL
-    setPreloadedImageUrl(item.screenshotUrl);
-    // Clear any manually uploaded image
-    setUploadedImage(null);
-  }, [lessonSkills, allSkills]);
-
-  const isProblemInQueue = useCallback((skillNumber: string, problemNumber: number | string) => {
-    return practiceProblemQueue.some(
-      item => item.skillNumber === skillNumber && item.problemNumber === problemNumber
-    );
-  }, [practiceProblemQueue]);
+  const isProblemInQueue = useCallback(
+    (skillNumber: string, problemNumber: number | string) => {
+      return practiceProblemQueue.some(
+        (item) =>
+          item.skillNumber === skillNumber &&
+          item.problemNumber === problemNumber,
+      );
+    },
+    [practiceProblemQueue],
+  );
 
   const handleSubmit = async () => {
     const hasImage = uploadedImage !== null || preloadedImageUrl !== null;
-    if (!selectedLessonFull || !hasImage || selectedStrugglingSkills.size === 0) {
+    if (
+      !selectedLessonFull ||
+      !hasImage ||
+      selectedStrugglingSkills.size === 0
+    ) {
       setError("Please fill in all required fields");
       return;
     }
@@ -396,7 +482,7 @@ export default function WorkedExampleRequestPage() {
         const imageResult = await uploadWorkedExampleImage(
           new Uint8Array(imageBuffer),
           uploadedImage.file.name,
-          uploadedImage.file.type
+          uploadedImage.file.type,
         );
 
         if (!imageResult.success || !imageResult.url) {
@@ -414,20 +500,33 @@ export default function WorkedExampleRequestPage() {
 
       // Create request
       const result = await createWorkedExampleRequest({
-        scopeSequenceTag: selectedGrade as "Grade 6" | "Grade 7" | "Grade 8" | "Algebra 1",
+        scopeSequenceTag: selectedGrade as
+          | "Grade 6"
+          | "Grade 7"
+          | "Grade 8"
+          | "Algebra 1",
         grade: selectedLessonFull.grade,
         unitNumber: selectedLessonFull.unitNumber,
         lessonNumber: selectedLessonFull.lessonNumber,
         lessonName: selectedLessonFull.lessonName,
         scopeAndSequenceId: selectedLessonFull._id,
-        section: selectedLessonFull.section as "Ramp Ups" | "A" | "B" | "C" | "D" | "E" | "F" | "Unit Assessment" | undefined,
+        section: selectedLessonFull.section as
+          | "Ramp Ups"
+          | "A"
+          | "B"
+          | "C"
+          | "D"
+          | "E"
+          | "F"
+          | "Unit Assessment"
+          | undefined,
         roadmapSkills: selectedLessonFull.roadmapSkills || [],
         targetSkills: selectedLessonFull.targetSkills || [],
         strugglingSkillNumbers: Array.from(selectedStrugglingSkills),
         strugglingDescription,
         mathConcept,
         mathStandard,
-        learningGoals: learningGoals.split("\n").filter(g => g.trim()),
+        learningGoals: learningGoals.split("\n").filter((g) => g.trim()),
         sourceImageUrl: finalImageUrl,
         sourceImageFilename: finalImageFilename,
         additionalNotes: additionalNotes || undefined,
@@ -457,15 +556,16 @@ export default function WorkedExampleRequestPage() {
     (uploadedImage !== null || preloadedImageUrl !== null);
 
   // Convert units to format expected by RequestHeader
-  const unitsForHeader = availableUnits.map(u => ({
+  const unitsForHeader = availableUnits.map((u) => ({
     unitNumber: u.unitNumber,
     unitName: u.unitName,
     grade: selectedGrade,
-    lessonCount: lessonsList.filter(l => l.unitNumber === u.unitNumber).length
+    lessonCount: lessonsList.filter((l) => l.unitNumber === u.unitNumber)
+      .length,
   }));
 
   // Convert lessons to format expected by RequestHeader (from lightweight list)
-  const lessonsForHeader = filteredLessons.map(l => ({
+  const lessonsForHeader = filteredLessons.map((l) => ({
     _id: l._id,
     unitNumber: l.unitNumber,
     lessonNumber: l.lessonNumber,
@@ -494,18 +594,20 @@ export default function WorkedExampleRequestPage() {
           onGradeChange={handleGradeChange}
           onUnitChange={handleUnitChange}
           onLessonChange={handleLessonChange}
-          studentFilterSlot={requestType === 'prerequisite-skill' ? (
-            <StudentFilter
-              selectedStudent={selectedStudent}
-              onStudentSelect={setSelectedStudent}
-              onSectionSelect={setSelectedSection}
-              multiSelect={true}
-              onStudentsSelect={setSelectedStudents}
-              selectedStudents={selectedStudents}
-              maxStudents={5}
-              scopeSequenceTag={selectedGrade}
-            />
-          ) : undefined}
+          studentFilterSlot={
+            requestType === "prerequisite-skill" ? (
+              <StudentFilter
+                selectedStudent={selectedStudent}
+                onStudentSelect={setSelectedStudent}
+                onSectionSelect={setSelectedSection}
+                multiSelect={true}
+                onStudentsSelect={setSelectedStudents}
+                selectedStudents={selectedStudents}
+                maxStudents={5}
+                scopeSequenceTag={selectedGrade}
+              />
+            ) : undefined
+          }
         />
 
         {/* Lesson Context Card (includes Mastery Check Preview) */}
@@ -514,10 +616,13 @@ export default function WorkedExampleRequestPage() {
             <LessonContextCard
               lesson={selectedLessonFull}
               skillsSlot={
-                selectedLessonFull.roadmapSkills && selectedLessonFull.roadmapSkills.length > 0 ? (
+                selectedLessonFull.roadmapSkills &&
+                selectedLessonFull.roadmapSkills.length > 0 ? (
                   <div className="h-full flex flex-col">
                     <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10 flex items-center justify-between">
-                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Roadmap Skills</h4>
+                      <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Roadmap Skills
+                      </h4>
                       <ToggleSwitch
                         checked={showDescriptions}
                         onChange={setShowDescriptions}
@@ -529,19 +634,31 @@ export default function WorkedExampleRequestPage() {
                         skillNumbers={selectedLessonFull.roadmapSkills}
                         selectedSection={selectedSection}
                         onSkillClick={(skillNumber, color) => {
-                          const skill = lessonSkills.find(s => s.skillNumber === skillNumber) ||
-                                       allSkills.find(s => s.skillNumber === skillNumber);
+                          const skill =
+                            lessonSkills.find(
+                              (s) => s.skillNumber === skillNumber,
+                            ) ||
+                            allSkills.find(
+                              (s) => s.skillNumber === skillNumber,
+                            );
                           if (skill) {
                             setSelectedSkillId(skill._id);
                             setSelectedSkillColor(color);
-                            const isTarget = selectedLessonFull?.targetSkills?.includes(skillNumber) || false;
-                            setSelectedSkillType(isTarget ? 'target' : 'helpful');
+                            const isTarget =
+                              selectedLessonFull?.targetSkills?.includes(
+                                skillNumber,
+                              ) || false;
+                            setSelectedSkillType(
+                              isTarget ? "target" : "helpful",
+                            );
                           }
                         }}
                         skillType="target"
                         showPrerequisites={true}
                         masteredSkills={selectedStudent?.masteredSkills || []}
-                        targetSkillNumbers={selectedLessonFull.targetSkills || []}
+                        targetSkillNumbers={
+                          selectedLessonFull.targetSkills || []
+                        }
                         selectedStudents={selectedStudents}
                         showDescriptions={showDescriptions}
                         allSkills={allSkills}
@@ -575,7 +692,8 @@ export default function WorkedExampleRequestPage() {
           <Alert intent="success" className="mb-6">
             <Alert.Title>Request Submitted!</Alert.Title>
             <Alert.Description>
-              Your worked example request has been submitted successfully. You will receive an email when it&apos;s ready.
+              Your worked example request has been submitted successfully. You
+              will receive an email when it&apos;s ready.
             </Alert.Description>
           </Alert>
         )}
@@ -588,58 +706,37 @@ export default function WorkedExampleRequestPage() {
         )}
 
         {/* Main content - only show when lesson is fully loaded and request type selected */}
-        {selectedLessonId && selectedLessonFull && !isLoading && requestType === 'prerequisite-skill' && (
-          <>
-            {/* Two Column Layout - Skill Details panels */}
-            <div className="flex gap-6 mb-6">
-              {/* Left Column: Skill Details */}
-              <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
-                contextSkillId ? "w-1/2" : "w-full"
-              }`}>
-                <SkillDetailWrapper
-                  skill={selectedSkill}
-                  color={selectedSkillColor}
-                  skillType={selectedSkillType}
-                  onSkillClick={(skillNumber, color) => {
-                    const skill = allSkills.find(s => s.skillNumber === skillNumber);
-                    if (skill) {
-                      setContextSkillId(skill._id);
-                      setContextSkillColor(color);
-                      // Determine skill type based on color (essential=orange in the old system, helpful=blue)
-                      const skillType: SkillType = color === 'orange' ? 'essential' : color === 'purple' ? 'target' : 'helpful';
-                      setContextSkillType(skillType);
-                    }
-                  }}
-                  sections={{
-                    description: false,
-                    standards: false,
-                    appearsIn: false,
-                    prerequisites: false,
-                    video: false,
-                    practiceProblems: true,
-                    essentialQuestion: true,
-                    commonMisconceptions: true,
-                    vocabulary: false,
-                    modelsAndManipulatives: false,
-                  }}
-                  onAddProblemToQueue={handleAddToQueue}
-                  isProblemInQueue={isProblemInQueue}
-                />
-              </div>
-
-              {/* Right Column: Context Skill (only when contextSkillId is set) */}
-              {contextSkillId && (
-                <div className="w-1/2 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all">
+        {selectedLessonId &&
+          selectedLessonFull &&
+          !isLoading &&
+          requestType === "prerequisite-skill" && (
+            <>
+              {/* Two Column Layout - Skill Details panels */}
+              <div className="flex gap-6 mb-6">
+                {/* Left Column: Skill Details */}
+                <div
+                  className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
+                    contextSkillId ? "w-1/2" : "w-full"
+                  }`}
+                >
                   <SkillDetailWrapper
-                    skill={contextSkill}
-                    color={contextSkillColor}
-                    skillType={contextSkillType}
+                    skill={selectedSkill}
+                    color={selectedSkillColor}
+                    skillType={selectedSkillType}
                     onSkillClick={(skillNumber, color) => {
-                      const skill = allSkills.find(s => s.skillNumber === skillNumber);
+                      const skill = allSkills.find(
+                        (s) => s.skillNumber === skillNumber,
+                      );
                       if (skill) {
                         setContextSkillId(skill._id);
                         setContextSkillColor(color);
-                        const skillType: SkillType = color === 'orange' ? 'essential' : color === 'purple' ? 'target' : 'helpful';
+                        // Determine skill type based on color (essential=orange in the old system, helpful=blue)
+                        const skillType: SkillType =
+                          color === "orange"
+                            ? "essential"
+                            : color === "purple"
+                              ? "target"
+                              : "helpful";
                         setContextSkillType(skillType);
                       }
                     }}
@@ -655,152 +752,226 @@ export default function WorkedExampleRequestPage() {
                       vocabulary: false,
                       modelsAndManipulatives: false,
                     }}
-                    showHeader={true}
-                    onClose={() => setContextSkillId(null)}
                     onAddProblemToQueue={handleAddToQueue}
                     isProblemInQueue={isProblemInQueue}
                   />
                 </div>
-              )}
-            </div>
 
-            {/* Practice Problem Consideration Queue */}
-            <div className="mb-6">
-              <PracticeProblemQueue
-                items={practiceProblemQueue}
-                selectedItem={selectedPracticeProblem}
-                onSelect={handleSelectFromQueue}
-                onRemove={handleRemoveFromQueue}
+                {/* Right Column: Context Skill (only when contextSkillId is set) */}
+                {contextSkillId && (
+                  <div className="w-1/2 bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all">
+                    <SkillDetailWrapper
+                      skill={contextSkill}
+                      color={contextSkillColor}
+                      skillType={contextSkillType}
+                      onSkillClick={(skillNumber, color) => {
+                        const skill = allSkills.find(
+                          (s) => s.skillNumber === skillNumber,
+                        );
+                        if (skill) {
+                          setContextSkillId(skill._id);
+                          setContextSkillColor(color);
+                          const skillType: SkillType =
+                            color === "orange"
+                              ? "essential"
+                              : color === "purple"
+                                ? "target"
+                                : "helpful";
+                          setContextSkillType(skillType);
+                        }
+                      }}
+                      sections={{
+                        description: false,
+                        standards: false,
+                        appearsIn: false,
+                        prerequisites: false,
+                        video: false,
+                        practiceProblems: true,
+                        essentialQuestion: true,
+                        commonMisconceptions: true,
+                        vocabulary: false,
+                        modelsAndManipulatives: false,
+                      }}
+                      showHeader={true}
+                      onClose={() => setContextSkillId(null)}
+                      onAddProblemToQueue={handleAddToQueue}
+                      isProblemInQueue={isProblemInQueue}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Practice Problem Consideration Queue */}
+              <div className="mb-6">
+                <PracticeProblemQueue
+                  items={practiceProblemQueue}
+                  selectedItem={selectedPracticeProblem}
+                  onSelect={handleSelectFromQueue}
+                  onRemove={handleRemoveFromQueue}
+                />
+              </div>
+
+              {/* Request Form */}
+              <WorkedExampleForm
+                availableSkills={getAvailableSkillsForSelection()}
+                selectedStrugglingSkills={selectedStrugglingSkills}
+                onSkillToggle={handleSkillToggle}
+                strugglingDescription={strugglingDescription}
+                onStrugglingDescriptionChange={setStrugglingDescription}
+                mathConcept={mathConcept}
+                onMathConceptChange={setMathConcept}
+                mathStandard={mathStandard}
+                onMathStandardChange={setMathStandard}
+                learningGoals={learningGoals}
+                onLearningGoalsChange={setLearningGoals}
+                additionalNotes={additionalNotes}
+                onAdditionalNotesChange={setAdditionalNotes}
+                uploadedImage={uploadedImage}
+                preloadedImageUrl={preloadedImageUrl}
+                onImageUpload={handleImageUpload}
+                onImageRemove={() => {
+                  handleImageRemove();
+                  setPreloadedImageUrl(null);
+                }}
+                onSubmit={handleSubmit}
+                submitting={submitting}
+                isValid={isFormValid}
               />
-            </div>
-
-            {/* Request Form */}
-            <WorkedExampleForm
-              availableSkills={getAvailableSkillsForSelection()}
-              selectedStrugglingSkills={selectedStrugglingSkills}
-              onSkillToggle={handleSkillToggle}
-              strugglingDescription={strugglingDescription}
-              onStrugglingDescriptionChange={setStrugglingDescription}
-              mathConcept={mathConcept}
-              onMathConceptChange={setMathConcept}
-              mathStandard={mathStandard}
-              onMathStandardChange={setMathStandard}
-              learningGoals={learningGoals}
-              onLearningGoalsChange={setLearningGoals}
-              additionalNotes={additionalNotes}
-              onAdditionalNotesChange={setAdditionalNotes}
-              uploadedImage={uploadedImage}
-              preloadedImageUrl={preloadedImageUrl}
-              onImageUpload={handleImageUpload}
-              onImageRemove={() => {
-                handleImageRemove();
-                setPreloadedImageUrl(null);
-              }}
-              onSubmit={handleSubmit}
-              submitting={submitting}
-              isValid={isFormValid}
-            />
-          </>
-        )}
+            </>
+          )}
 
         {/* Mastery Check flow - simplified view */}
-        {selectedLessonId && selectedLessonFull && !isLoading && requestType === 'mastery-check' && (
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Mastery Check Request</h3>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-blue-800">
-                <strong>Coming soon:</strong> This flow will automatically generate a worked example based on the lesson&apos;s target skills and mastery check content.
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Target Skills</h4>
-                <div className="flex flex-wrap gap-2">
-                  {(selectedLessonFull.targetSkills || []).map(skillNum => {
-                    const skill = allSkills.find(s => s.skillNumber === skillNum);
-                    return (
-                      <span key={skillNum} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                        <span className="w-5 h-5 bg-green-600 text-white rounded-full text-xs flex items-center justify-center">
-                          {skillNum}
-                        </span>
-                        {skill?.title || 'Unknown Skill'}
-                      </span>
-                    );
-                  })}
-                </div>
+        {selectedLessonId &&
+          selectedLessonFull &&
+          !isLoading &&
+          requestType === "mastery-check" && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Mastery Check Request
+              </h3>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-blue-800">
+                  <strong>Coming soon:</strong> This flow will automatically
+                  generate a worked example based on the lesson&apos;s target
+                  skills and mastery check content.
+                </p>
               </div>
-              {(selectedLessonFull as { masteryCheckPdf?: string }).masteryCheckPdf && (
+              <div className="space-y-4">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Mastery Check Preview</h4>
-                  <a
-                    href={(selectedLessonFull as { masteryCheckPdf?: string }).masteryCheckPdf}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800 underline text-sm"
-                  >
-                    View Mastery Check PDF
-                  </a>
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">
+                    Target Skills
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {(selectedLessonFull.targetSkills || []).map((skillNum) => {
+                      const skill = allSkills.find(
+                        (s) => s.skillNumber === skillNum,
+                      );
+                      return (
+                        <span
+                          key={skillNum}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium"
+                        >
+                          <span className="w-5 h-5 bg-green-600 text-white rounded-full text-xs flex items-center justify-center">
+                            {skillNum}
+                          </span>
+                          {skill?.title || "Unknown Skill"}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
-              )}
+                {(selectedLessonFull as { masteryCheckPdf?: string })
+                  .masteryCheckPdf && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      Mastery Check Preview
+                    </h4>
+                    <a
+                      href={
+                        (selectedLessonFull as { masteryCheckPdf?: string })
+                          .masteryCheckPdf
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 underline text-sm"
+                    >
+                      View Mastery Check PDF
+                    </a>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Custom flow - manual input */}
-        {selectedLessonId && selectedLessonFull && !isLoading && requestType === 'custom' && (
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Custom Worked Example Request</h3>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-amber-800">
-                <strong>Coming soon:</strong> Upload your own content and describe what you need for a fully customized worked example.
-              </p>
+        {selectedLessonId &&
+          selectedLessonFull &&
+          !isLoading &&
+          requestType === "custom" && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Custom Worked Example Request
+              </h3>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-amber-800">
+                  <strong>Coming soon:</strong> Upload your own content and
+                  describe what you need for a fully customized worked example.
+                </p>
+              </div>
+              <WorkedExampleForm
+                availableSkills={getAvailableSkillsForSelection()}
+                selectedStrugglingSkills={selectedStrugglingSkills}
+                onSkillToggle={handleSkillToggle}
+                strugglingDescription={strugglingDescription}
+                onStrugglingDescriptionChange={setStrugglingDescription}
+                mathConcept={mathConcept}
+                onMathConceptChange={setMathConcept}
+                mathStandard={mathStandard}
+                onMathStandardChange={setMathStandard}
+                learningGoals={learningGoals}
+                onLearningGoalsChange={setLearningGoals}
+                additionalNotes={additionalNotes}
+                onAdditionalNotesChange={setAdditionalNotes}
+                uploadedImage={uploadedImage}
+                preloadedImageUrl={preloadedImageUrl}
+                onImageUpload={handleImageUpload}
+                onImageRemove={() => {
+                  handleImageRemove();
+                  setPreloadedImageUrl(null);
+                }}
+                onSubmit={handleSubmit}
+                submitting={submitting}
+                isValid={isFormValid}
+              />
             </div>
-            <WorkedExampleForm
-              availableSkills={getAvailableSkillsForSelection()}
-              selectedStrugglingSkills={selectedStrugglingSkills}
-              onSkillToggle={handleSkillToggle}
-              strugglingDescription={strugglingDescription}
-              onStrugglingDescriptionChange={setStrugglingDescription}
-              mathConcept={mathConcept}
-              onMathConceptChange={setMathConcept}
-              mathStandard={mathStandard}
-              onMathStandardChange={setMathStandard}
-              learningGoals={learningGoals}
-              onLearningGoalsChange={setLearningGoals}
-              additionalNotes={additionalNotes}
-              onAdditionalNotesChange={setAdditionalNotes}
-              uploadedImage={uploadedImage}
-              preloadedImageUrl={preloadedImageUrl}
-              onImageUpload={handleImageUpload}
-              onImageRemove={() => {
-                handleImageRemove();
-                setPreloadedImageUrl(null);
-              }}
-              onSubmit={handleSubmit}
-              submitting={submitting}
-              isValid={isFormValid}
-            />
-          </div>
-        )}
+          )}
 
         {/* Prompt to select request type */}
-        {selectedLessonId && selectedLessonFull && !isLoading && !requestType && (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <CursorArrowRaysIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">Select a Request Type</h3>
-            <p className="text-gray-500">
-              Choose one of the request types above to continue.
-            </p>
-          </div>
-        )}
+        {selectedLessonId &&
+          selectedLessonFull &&
+          !isLoading &&
+          !requestType && (
+            <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+              <CursorArrowRaysIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                Select a Request Type
+              </h3>
+              <p className="text-gray-500">
+                Choose one of the request types above to continue.
+              </p>
+            </div>
+          )}
 
         {/* Empty state when no lesson selected */}
         {!selectedLessonId && !isLoading && (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
             <BookOpenIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">Select a Lesson</h3>
+            <h3 className="text-xl font-semibold text-gray-700 mb-2">
+              Select a Lesson
+            </h3>
             <p className="text-gray-500">
-              Choose a curriculum, unit, and lesson to start planning a worked example.
+              Choose a curriculum, unit, and lesson to start planning a worked
+              example.
             </p>
           </div>
         )}

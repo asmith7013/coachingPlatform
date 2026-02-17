@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/core/Button';
-import { Alert } from '@/components/core/feedback/Alert';
-import { SimpleCard } from '@/components/core/cards/SimpleCard';
-import { UnitData } from '../lib/types';
-import { ChevronDownIcon, ChevronUpIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
+import React, { useState } from "react";
+import { Button } from "@/components/core/Button";
+import { Alert } from "@/components/core/feedback/Alert";
+import { SimpleCard } from "@/components/core/cards/SimpleCard";
+import { UnitData } from "../lib/types";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  DocumentArrowDownIcon,
+} from "@heroicons/react/24/outline";
 
 interface UnitResultDisplayProps {
   unitData: UnitData | null;
@@ -18,12 +22,12 @@ export function UnitResultDisplay({
   unitData,
   isLoading,
   error,
-  onClear
+  onClear,
 }: UnitResultDisplayProps) {
   const [expandedSkills, setExpandedSkills] = useState<Set<string>>(new Set());
 
   const toggleSkillExpansion = (skillId: string) => {
-    setExpandedSkills(prev => {
+    setExpandedSkills((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(skillId)) {
         newSet.delete(skillId);
@@ -38,12 +42,12 @@ export function UnitResultDisplay({
     if (!unitData) return;
 
     const dataStr = JSON.stringify(unitData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
 
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `roadmaps-unit-${unitData.unitTitle.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `roadmaps-unit-${unitData.unitTitle.replace(/\s+/g, "-").toLowerCase()}-${new Date().toISOString().split("T")[0]}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -58,8 +62,12 @@ export function UnitResultDisplay({
             ⏳
           </div>
           <div className="ml-4">
-            <h3 className="text-lg font-medium text-gray-900">Scraping in Progress</h3>
-            <p className="text-sm text-gray-500">Please wait while we extract unit content from Roadmaps...</p>
+            <h3 className="text-lg font-medium text-gray-900">
+              Scraping in Progress
+            </h3>
+            <p className="text-sm text-gray-500">
+              Please wait while we extract unit content from Roadmaps...
+            </p>
           </div>
         </div>
         <div className="p-6">
@@ -95,24 +103,33 @@ export function UnitResultDisplay({
             ✓
           </div>
           <div className="ml-4">
-            <h3 className="text-lg font-medium text-gray-900">{unitData.unitTitle}</h3>
+            <h3 className="text-lg font-medium text-gray-900">
+              {unitData.unitTitle}
+            </h3>
             <p className="text-sm text-gray-500">
-              Unit successfully scraped at {new Date(unitData.scrapedAt).toLocaleString()}
+              Unit successfully scraped at{" "}
+              {new Date(unitData.scrapedAt).toLocaleString()}
             </p>
           </div>
         </div>
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{unitData.targetCount}</div>
+              <div className="text-2xl font-bold text-blue-600">
+                {unitData.targetCount}
+              </div>
               <div className="text-sm text-gray-500">Target Skills</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{unitData.supportCount}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {unitData.supportCount}
+              </div>
               <div className="text-sm text-gray-500">Support Skills</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{unitData.extensionCount}</div>
+              <div className="text-2xl font-bold text-purple-600">
+                {unitData.extensionCount}
+              </div>
               <div className="text-sm text-gray-500">Extension Skills</div>
             </div>
           </div>
@@ -142,7 +159,9 @@ export function UnitResultDisplay({
 
       {/* Target Skills List */}
       <div className="space-y-3">
-        <h3 className="text-xl font-semibold text-gray-800">Target Skills ({unitData.targetSkills.length})</h3>
+        <h3 className="text-xl font-semibold text-gray-800">
+          Target Skills ({unitData.targetSkills.length})
+        </h3>
         {unitData.targetSkills.map((skill) => (
           <div key={skill.skillNumber}>
             <SimpleCard
@@ -154,7 +173,13 @@ export function UnitResultDisplay({
               className="cursor-pointer"
               onClick={() => toggleSkillExpansion(skill.skillNumber)}
               showAction
-              actionIcon={expandedSkills.has(skill.skillNumber) ? <ChevronUpIcon className="w-5 h-5" /> : <ChevronDownIcon className="w-5 h-5" />}
+              actionIcon={
+                expandedSkills.has(skill.skillNumber) ? (
+                  <ChevronUpIcon className="w-5 h-5" />
+                ) : (
+                  <ChevronDownIcon className="w-5 h-5" />
+                )
+              }
               onActionClick={(e) => {
                 e.stopPropagation();
                 toggleSkillExpansion(skill.skillNumber);
@@ -163,32 +188,46 @@ export function UnitResultDisplay({
             {expandedSkills.has(skill.skillNumber) && (
               <div className="bg-white border border-gray-200 rounded-b-lg shadow-sm -mt-1 px-6 pb-6 space-y-4">
                 <div>
-                  <h4 className="font-medium text-green-700 mb-2">Essential Skills ({skill.essentialSkills.length})</h4>
+                  <h4 className="font-medium text-green-700 mb-2">
+                    Essential Skills ({skill.essentialSkills.length})
+                  </h4>
                   {skill.essentialSkills.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {skill.essentialSkills.map((s) => (
-                        <span key={s.skillNumber} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                        <span
+                          key={s.skillNumber}
+                          className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm"
+                        >
                           {s.title} ({s.skillNumber})
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 italic">No essential skills</p>
+                    <p className="text-sm text-gray-500 italic">
+                      No essential skills
+                    </p>
                   )}
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-blue-700 mb-2">Helpful Skills ({skill.helpfulSkills.length})</h4>
+                  <h4 className="font-medium text-blue-700 mb-2">
+                    Helpful Skills ({skill.helpfulSkills.length})
+                  </h4>
                   {skill.helpfulSkills.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {skill.helpfulSkills.map((s) => (
-                        <span key={s.skillNumber} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                        <span
+                          key={s.skillNumber}
+                          className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                        >
                           {s.title} ({s.skillNumber})
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 italic">No helpful skills</p>
+                    <p className="text-sm text-gray-500 italic">
+                      No helpful skills
+                    </p>
                   )}
                 </div>
               </div>
@@ -201,11 +240,15 @@ export function UnitResultDisplay({
       {unitData.additionalSupportSkills.length > 0 && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <h3 className="text-lg font-semibold text-green-900 mb-3">
-            Additional Support Skills ({unitData.additionalSupportSkills.length})
+            Additional Support Skills ({unitData.additionalSupportSkills.length}
+            )
           </h3>
           <div className="flex flex-wrap gap-2">
             {unitData.additionalSupportSkills.map((skill) => (
-              <span key={skill.skillNumber} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+              <span
+                key={skill.skillNumber}
+                className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium"
+              >
                 {skill.title} ({skill.skillNumber})
               </span>
             ))}
@@ -221,7 +264,10 @@ export function UnitResultDisplay({
           </h3>
           <div className="flex flex-wrap gap-2">
             {unitData.extensionSkills.map((skill) => (
-              <span key={skill.skillNumber} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+              <span
+                key={skill.skillNumber}
+                className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium"
+              >
                 {skill.title} ({skill.skillNumber})
               </span>
             ))}

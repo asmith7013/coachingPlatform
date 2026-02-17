@@ -27,6 +27,7 @@ Line 3: [if applicable]
 ## Step 2: Calculate Data Ranges
 
 ### Find X_MAX
+
 Choose the rightmost x-value you need to show. Common values: 4, 5, 6, 8, 10
 
 ```
@@ -34,6 +35,7 @@ X_MAX = [your value]
 ```
 
 ### Find Y_MAX
+
 For EACH line, calculate Y at x=0 and x=X_MAX:
 
 ```
@@ -53,17 +55,17 @@ Largest Y value across all lines: [value]
 **Choose the smallest Y_MAX that fits your data AND keeps ticks ≤10.**
 
 | If largest Y is... | Use Y_MAX | Increment | Ticks |
-|-------------------|-----------|-----------|-------|
-| ≤ 6 | 6 | 1 | 7 |
-| 7-8 | 8 | 1 | 9 |
-| 9 | 9 | 1 | 10 |
-| 10-16 | 16 | 2 | 9 |
-| 17-18 | 18 | 2 | 10 |
-| 19-36 | 36 | 4 | 10 |
-| 37-45 | 45 | 5 | 10 |
-| 46-72 | 72 | 8 | 10 |
-| 73-90 | 90 | 10 | 10 |
-| 91-180 | 180 | 20 | 10 |
+| ------------------ | --------- | --------- | ----- |
+| ≤ 6                | 6         | 1         | 7     |
+| 7-8                | 8         | 1         | 9     |
+| 9                  | 9         | 1         | 10    |
+| 10-16              | 16        | 2         | 9     |
+| 17-18              | 18        | 2         | 10    |
+| 19-36              | 36        | 4         | 10    |
+| 37-45              | 45        | 5         | 10    |
+| 46-72              | 72        | 8         | 10    |
+| 73-90              | 90        | 10        | 10    |
+| 91-180             | 180       | 20        | 10    |
 
 **Note:** These Y_MAX values are chosen to give exactly 9-10 ticks with clean increments.
 
@@ -79,15 +81,15 @@ Y_MAX = [your rounded value]
 
 Based on your X_MAX, use these labels:
 
-| X_MAX | X-axis labels | X scale (increment) |
-|-------|---------------|---------------------|
-| 4 | 0, 1, 2, 3, 4 | 1 |
-| 5 | 0, 1, 2, 3, 4, 5 | 1 |
-| 6 | 0, 1, 2, 3, 4, 5, 6 | 1 |
-| 8 | 0, 2, 4, 6, 8 | 2 |
-| 10 | 0, 2, 4, 6, 8, 10 | 2 |
-| 12 | 0, 3, 6, 9, 12 | 3 |
-| 20 | 0, 5, 10, 15, 20 | 5 |
+| X_MAX | X-axis labels       | X scale (increment) |
+| ----- | ------------------- | ------------------- |
+| 4     | 0, 1, 2, 3, 4       | 1                   |
+| 5     | 0, 1, 2, 3, 4, 5    | 1                   |
+| 6     | 0, 1, 2, 3, 4, 5, 6 | 1                   |
+| 8     | 0, 2, 4, 6, 8       | 2                   |
+| 10    | 0, 2, 4, 6, 8, 10   | 2                   |
+| 12    | 0, 3, 6, 9, 12      | 3                   |
+| 20    | 0, 5, 10, 15, 20    | 5                   |
 
 ```
 X-axis labels: [your labels]
@@ -104,30 +106,30 @@ Based on your Y_MAX, use these labels. **Target: ≤10 ticks** (never exceed 10)
 
 **If you need more than 10 ticks, reduce Y_MAX slightly** to hit exactly 9-10 ticks.
 
-| Y_MAX | Y-axis labels (bottom to top) | Y scale (increment) | Ticks |
-|-------|------------------------------|---------------------|-------|
-| 6 | 0, 1, 2, 3, 4, 5, 6 | 1 | 7 |
-| 8 | 0, 1, 2, 3, 4, 5, 6, 7, 8 | 1 | 9 |
-| 9 | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 | 1 | 10 |
-| 16 | 0, 2, 4, 6, 8, 10, 12, 14, 16 | 2 | 9 |
-| 18 | 0, 2, 4, 6, 8, 10, 12, 14, 16, 18 | 2 | 10 |
-| 36 | 0, 4, 8, 12, 16, 20, 24, 28, 32, 36 | 4 | 10 |
-| 45 | 0, 5, 10, 15, 20, 25, 30, 35, 40, 45 | 5 | 10 |
-| 72 | 0, 8, 16, 24, 32, 40, 48, 56, 64, 72 | 8 | 10 |
-| 90 | 0, 10, 20, 30, 40, 50, 60, 70, 80, 90 | 10 | 10 |
-| 180 | 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 | 20 | 10 |
+| Y_MAX | Y-axis labels (bottom to top)              | Y scale (increment) | Ticks |
+| ----- | ------------------------------------------ | ------------------- | ----- |
+| 6     | 0, 1, 2, 3, 4, 5, 6                        | 1                   | 7     |
+| 8     | 0, 1, 2, 3, 4, 5, 6, 7, 8                  | 1                   | 9     |
+| 9     | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9               | 1                   | 10    |
+| 16    | 0, 2, 4, 6, 8, 10, 12, 14, 16              | 2                   | 9     |
+| 18    | 0, 2, 4, 6, 8, 10, 12, 14, 16, 18          | 2                   | 10    |
+| 36    | 0, 4, 8, 12, 16, 20, 24, 28, 32, 36        | 4                   | 10    |
+| 45    | 0, 5, 10, 15, 20, 25, 30, 35, 40, 45       | 5                   | 10    |
+| 72    | 0, 8, 16, 24, 32, 40, 48, 56, 64, 72       | 8                   | 10    |
+| 90    | 0, 10, 20, 30, 40, 50, 60, 70, 80, 90      | 10                  | 10    |
+| 180   | 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 | 20                  | 10    |
 
 **Formula:** For increment I, max Y_MAX = I × 9 (to get 10 ticks including 0)
 
 | Increment | Max Y_MAX for 10 ticks |
-|-----------|------------------------|
-| 1 | 9 |
-| 2 | 18 |
-| 4 | 36 |
-| 5 | 45 |
-| 8 | 72 |
-| 10 | 90 |
-| 20 | 180 |
+| --------- | ---------------------- |
+| 1         | 9                      |
+| 2         | 18                     |
+| 4         | 36                     |
+| 5         | 45                     |
+| 8         | 72                     |
+| 10        | 90                     |
+| 20        | 180                    |
 
 ```
 Y-axis labels: [your labels]
@@ -141,6 +143,7 @@ Y scale: [increment between labels]
 **This step ensures mathematically accurate line drawing.**
 
 For each line equation y = mx + b, calculate:
+
 - **Start point**: Where the line enters the plot (usually at x=0, the y-intercept)
 - **End point**: Where the line exits the plot (usually at x=X_MAX)
 
@@ -168,6 +171,7 @@ Line 2: y = 5x + 20 (slope=5, y-intercept=20)
 ### Edge Cases
 
 If a line exits through the TOP of the plot before reaching X_MAX:
+
 - Calculate where y = Y_MAX: x = (Y_MAX - b) / m
 - Use that x value as the end point's x coordinate
 
@@ -198,14 +202,14 @@ Line 2: y = [equation]
 
 What is the KEY mathematical concept this graph should emphasize?
 
-| If the problem involves... | Annotation type | What to show |
-|---------------------------|-----------------|--------------|
-| Two parallel lines (same slope, different y-intercepts) | Y-intercept shift | Vertical double-arrow between y-intercepts |
-| Two parallel lines | Parallel indicator | "PARALLEL" label or "Same slope = m" |
-| Two lines with different slopes | Slope comparison | Slope labels next to each line |
-| Lines that intersect | Intersection point | Highlighted point with coordinates |
-| Single line with slope focus | Slope triangle | Rise/run annotation |
-| Single line with intercept focus | Y-intercept point | Highlighted point at (0, b) |
+| If the problem involves...                              | Annotation type    | What to show                               |
+| ------------------------------------------------------- | ------------------ | ------------------------------------------ |
+| Two parallel lines (same slope, different y-intercepts) | Y-intercept shift  | Vertical double-arrow between y-intercepts |
+| Two parallel lines                                      | Parallel indicator | "PARALLEL" label or "Same slope = m"       |
+| Two lines with different slopes                         | Slope comparison   | Slope labels next to each line             |
+| Lines that intersect                                    | Intersection point | Highlighted point with coordinates         |
+| Single line with slope focus                            | Slope triangle     | Rise/run annotation                        |
+| Single line with intercept focus                        | Y-intercept point  | Highlighted point at (0, b)                |
 
 ```
 Key relationship: [what to emphasize]
@@ -230,17 +234,20 @@ Label: the numerical difference (e.g., "50 units")
 ### For Parallel/Slope Labels
 
 Place in **open space** away from:
+
 - The lines themselves
 - Axis labels
 - Other annotations
 
 Typical positions:
+
 - Upper right quadrant for legend
 - Near the lines but offset by 10-15px
 
 ### For Intersection Points
 
 Highlight the intersection with:
+
 - A larger circle (r=6 or r=8)
 - Coordinate label offset by 10px
 

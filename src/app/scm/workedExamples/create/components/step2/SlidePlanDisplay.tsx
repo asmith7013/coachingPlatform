@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/core/feedback/Badge';
-import type { DiagramEvolution } from '../../lib/types';
+import { Badge } from "@/components/core/feedback/Badge";
+import type { DiagramEvolution } from "../../lib/types";
 
 interface SlidePlanDisplayProps {
   diagramEvolution: DiagramEvolution;
@@ -12,12 +12,16 @@ interface SlidePlanDisplayProps {
 
 // Color schemes for step headers (cycles through these)
 const STEP_COLORS = [
-  { bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-amber-200' },
-  { bg: 'bg-emerald-50', text: 'text-emerald-800', border: 'border-emerald-200' },
-  { bg: 'bg-purple-50', text: 'text-purple-800', border: 'border-purple-200' },
-  { bg: 'bg-rose-50', text: 'text-rose-800', border: 'border-rose-200' },
-  { bg: 'bg-cyan-50', text: 'text-cyan-800', border: 'border-cyan-200' },
-  { bg: 'bg-orange-50', text: 'text-orange-800', border: 'border-orange-200' },
+  { bg: "bg-amber-50", text: "text-amber-800", border: "border-amber-200" },
+  {
+    bg: "bg-emerald-50",
+    text: "text-emerald-800",
+    border: "border-emerald-200",
+  },
+  { bg: "bg-purple-50", text: "text-purple-800", border: "border-purple-200" },
+  { bg: "bg-rose-50", text: "text-rose-800", border: "border-rose-200" },
+  { bg: "bg-cyan-50", text: "text-cyan-800", border: "border-cyan-200" },
+  { bg: "bg-orange-50", text: "text-orange-800", border: "border-orange-200" },
 ];
 
 /**
@@ -56,9 +60,14 @@ export function SlidePlanDisplay({
         {diagramEvolution.steps.map((step, index) => {
           const colors = STEP_COLORS[index % STEP_COLORS.length];
           return (
-            <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
+            <div
+              key={index}
+              className="border border-gray-200 rounded-lg overflow-hidden"
+            >
               {/* Step header */}
-              <div className={`${colors.bg} px-3 py-1.5 border-b ${colors.border}`}>
+              <div
+                className={`${colors.bg} px-3 py-1.5 border-b ${colors.border}`}
+              >
                 <h4 className={`text-xs font-semibold ${colors.text}`}>
                   {step.header}
                 </h4>
@@ -74,10 +83,15 @@ export function SlidePlanDisplay({
               {/* Changes section */}
               {step.changes.length > 0 && (
                 <div className="px-3 py-2 bg-gray-50 border-t border-gray-100">
-                  <h5 className="text-xs font-medium text-gray-600 mb-1">Changes:</h5>
+                  <h5 className="text-xs font-medium text-gray-600 mb-1">
+                    Changes:
+                  </h5>
                   <ul className="space-y-0.5">
                     {step.changes.map((change, changeIndex) => (
-                      <li key={changeIndex} className="flex items-start gap-1.5 text-xs">
+                      <li
+                        key={changeIndex}
+                        className="flex items-start gap-1.5 text-xs"
+                      >
                         <span className="text-green-600 font-medium">+</span>
                         <span className="text-gray-700">{change}</span>
                       </li>
@@ -91,25 +105,28 @@ export function SlidePlanDisplay({
       </div>
 
       {/* Key Elements legend */}
-      {diagramEvolution.keyElements && diagramEvolution.keyElements.length > 0 && (
-        <div className="border border-gray-200 rounded-lg overflow-hidden">
-          <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
-            <h4 className="text-sm font-semibold text-gray-700">
-              Key Elements
-            </h4>
+      {diagramEvolution.keyElements &&
+        diagramEvolution.keyElements.length > 0 && (
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
+              <h4 className="text-sm font-semibold text-gray-700">
+                Key Elements
+              </h4>
+            </div>
+            <div className="p-4">
+              <ul className="space-y-2">
+                {diagramEvolution.keyElements.map((el, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm">
+                    <span className="text-gray-600 font-medium">
+                      {el.element}:
+                    </span>
+                    <span className="text-gray-500">{el.represents}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="p-4">
-            <ul className="space-y-2">
-              {diagramEvolution.keyElements.map((el, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm">
-                  <span className="text-gray-600 font-medium">{el.element}:</span>
-                  <span className="text-gray-500">{el.represents}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
+        )}
 
       {/* Visual type info badges at bottom */}
       {(visualType || svgSubtype || stepCount) && (
@@ -125,9 +142,7 @@ export function SlidePlanDisplay({
             </Badge>
           )}
           {stepCount && (
-            <span className="text-xs text-gray-500">
-              {stepCount} steps
-            </span>
+            <span className="text-xs text-gray-500">{stepCount} steps</span>
           )}
         </div>
       )}

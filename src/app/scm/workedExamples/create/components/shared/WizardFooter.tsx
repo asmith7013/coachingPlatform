@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import type { LoadingProgress } from '../../lib/types';
-import { WizardStickyFooter, type FooterTheme } from './WizardStickyFooter';
+import { useState, useEffect } from "react";
+import type { LoadingProgress } from "../../lib/types";
+import { WizardStickyFooter, type FooterTheme } from "./WizardStickyFooter";
 
 /**
  * Get a short label for each slide based on its position in the deck.
@@ -16,22 +16,22 @@ import { WizardStickyFooter, type FooterTheme } from './WizardStickyFooter';
 function getSlideLabel(slideNum: number, total: number): string {
   // If this is the last slide and total suggests it's the printable
   if (slideNum === total && total >= 7) {
-    return 'Print';
+    return "Print";
   }
 
   switch (slideNum) {
     case 1:
-      return 'Teacher';
+      return "Teacher";
     case 2:
-      return 'Big Idea';
+      return "Big Idea";
     case 3:
-      return 'Setup';
+      return "Setup";
     case 4:
-      return 'Step 1';
+      return "Step 1";
     case 5:
-      return 'Step 2';
+      return "Step 2";
     case 6:
-      return 'Step 3';
+      return "Step 3";
     default:
       return `Slide ${slideNum}`;
   }
@@ -39,7 +39,7 @@ function getSlideLabel(slideNum: number, total: number): string {
 
 // Custom scale-pulse animation for the icon
 const scalePulseStyle = {
-  animation: 'scalePulse 1.5s ease-in-out infinite',
+  animation: "scalePulse 1.5s ease-in-out infinite",
 };
 
 interface WizardFooterProps {
@@ -66,7 +66,11 @@ function formatElapsedTime(ms: number): string {
  * Shows the slide generation progress bar when generating slides.
  * When not loading, shows action buttons passed as children.
  */
-export function WizardFooter({ isLoading, loadingProgress, children }: WizardFooterProps) {
+export function WizardFooter({
+  isLoading,
+  loadingProgress,
+  children,
+}: WizardFooterProps) {
   const [elapsedTime, setElapsedTime] = useState(0);
 
   // Update elapsed time every second
@@ -88,19 +92,50 @@ export function WizardFooter({ isLoading, loadingProgress, children }: WizardFoo
   }, [isLoading, loadingProgress.startTime]);
 
   // Phase-specific colors
-  const phaseColors: Record<string, { bg: string; text: string; icon: string; iconBg: string }> = {
-    uploading: { bg: 'bg-blue-50', text: 'text-blue-800', icon: 'text-blue-600', iconBg: 'bg-blue-100' },
-    analyzing: { bg: 'bg-purple-50', text: 'text-purple-800', icon: 'text-purple-600', iconBg: 'bg-purple-100' },
-    generating: { bg: 'bg-green-50', text: 'text-green-800', icon: 'text-green-600', iconBg: 'bg-green-100' },
-    saving: { bg: 'bg-amber-50', text: 'text-amber-800', icon: 'text-amber-600', iconBg: 'bg-amber-100' },
+  const phaseColors: Record<
+    string,
+    { bg: string; text: string; icon: string; iconBg: string }
+  > = {
+    uploading: {
+      bg: "bg-blue-50",
+      text: "text-blue-800",
+      icon: "text-blue-600",
+      iconBg: "bg-blue-100",
+    },
+    analyzing: {
+      bg: "bg-purple-50",
+      text: "text-purple-800",
+      icon: "text-purple-600",
+      iconBg: "bg-purple-100",
+    },
+    generating: {
+      bg: "bg-green-50",
+      text: "text-green-800",
+      icon: "text-green-600",
+      iconBg: "bg-green-100",
+    },
+    saving: {
+      bg: "bg-amber-50",
+      text: "text-amber-800",
+      icon: "text-amber-600",
+      iconBg: "bg-amber-100",
+    },
   };
 
   // Show loading progress when loading
-  if (isLoading && loadingProgress.phase !== 'idle') {
-    const colors = phaseColors[loadingProgress.phase] || { bg: 'bg-gray-50', text: 'text-gray-800', icon: 'text-gray-600', iconBg: 'bg-gray-100' };
+  if (isLoading && loadingProgress.phase !== "idle") {
+    const colors = phaseColors[loadingProgress.phase] || {
+      bg: "bg-gray-50",
+      text: "text-gray-800",
+      icon: "text-gray-600",
+      iconBg: "bg-gray-100",
+    };
 
     // Slide generation progress (with tile visualization)
-    if (loadingProgress.phase === 'generating' && loadingProgress.slideProgress) {
+    if (
+      loadingProgress.phase === "generating" &&
+      loadingProgress.slideProgress
+    ) {
       const { currentSlide, estimatedTotal } = loadingProgress.slideProgress;
 
       return (
@@ -114,9 +149,22 @@ export function WizardFooter({ isLoading, loadingProgress, children }: WizardFoo
           `}</style>
           <div className="flex items-center gap-3">
             {/* Pulsating file icon with scale animation */}
-            <div className={`flex-shrink-0 p-1.5 rounded-lg ${colors.iconBg}`} style={scalePulseStyle}>
-              <svg className={`w-8 h-8 ${colors.icon}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <div
+              className={`flex-shrink-0 p-1.5 rounded-lg ${colors.iconBg}`}
+              style={scalePulseStyle}
+            >
+              <svg
+                className={`w-8 h-8 ${colors.icon}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
             </div>
 
@@ -138,17 +186,21 @@ export function WizardFooter({ isLoading, loadingProgress, children }: WizardFoo
                 {Array.from({ length: estimatedTotal }).map((_, i) => {
                   const slideNum = i + 1;
                   const isComplete = slideNum < currentSlide;
-                  const isInProgress = slideNum === currentSlide && currentSlide > 0;
+                  const isInProgress =
+                    slideNum === currentSlide && currentSlide > 0;
                   const label = getSlideLabel(slideNum, estimatedTotal);
                   return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                    <div
+                      key={i}
+                      className="flex-1 flex flex-col items-center gap-0.5"
+                    >
                       <div
                         className={`w-full h-2 rounded-sm transition-all duration-300 ${
                           isComplete
-                            ? 'bg-green-500'
+                            ? "bg-green-500"
                             : isInProgress
-                            ? 'bg-green-300 animate-pulse'
-                            : 'bg-gray-200'
+                              ? "bg-green-300 animate-pulse"
+                              : "bg-gray-200"
                         }`}
                       />
                       <span className="text-[9px] text-green-700 truncate max-w-full">
@@ -167,12 +219,12 @@ export function WizardFooter({ isLoading, loadingProgress, children }: WizardFoo
     // General loading progress (uploading, analyzing, generating without progress, saving)
     // Map phase to theme
     const phaseThemes: Record<string, FooterTheme> = {
-      uploading: 'blue',
-      analyzing: 'purple',
-      generating: 'green',
-      saving: 'amber',
+      uploading: "blue",
+      analyzing: "purple",
+      generating: "green",
+      saving: "amber",
     };
-    const theme = phaseThemes[loadingProgress.phase] || 'gray';
+    const theme = phaseThemes[loadingProgress.phase] || "gray";
 
     return (
       <WizardStickyFooter theme={theme} isActive>
@@ -185,9 +237,22 @@ export function WizardFooter({ isLoading, loadingProgress, children }: WizardFoo
         `}</style>
         <div className="flex items-center gap-3">
           {/* Pulsating file icon with scale animation */}
-          <div className={`flex-shrink-0 p-1.5 rounded-lg ${colors.iconBg}`} style={scalePulseStyle}>
-            <svg className={`w-8 h-8 ${colors.icon}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <div
+            className={`flex-shrink-0 p-1.5 rounded-lg ${colors.iconBg}`}
+            style={scalePulseStyle}
+          >
+            <svg
+              className={`w-8 h-8 ${colors.icon}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
           </div>
 
@@ -197,7 +262,9 @@ export function WizardFooter({ isLoading, loadingProgress, children }: WizardFoo
               {loadingProgress.message}
             </span>
             {loadingProgress.detail && (
-              <span className={`text-sm ${colors.text} opacity-75 block mt-0.5`}>
+              <span
+                className={`text-sm ${colors.text} opacity-75 block mt-0.5`}
+              >
                 {loadingProgress.detail}
               </span>
             )}
@@ -221,9 +288,7 @@ export function WizardFooter({ isLoading, loadingProgress, children }: WizardFoo
 
   return (
     <WizardStickyFooter theme="gray">
-      <div className="flex items-center justify-end gap-3">
-        {children}
-      </div>
+      <div className="flex items-center justify-end gap-3">{children}</div>
     </WizardStickyFooter>
   );
 }

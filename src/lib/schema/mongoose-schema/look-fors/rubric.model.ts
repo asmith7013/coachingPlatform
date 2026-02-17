@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 const rubricFields = {
   score: { type: Number, required: true },
@@ -8,25 +11,32 @@ const rubricFields = {
   parentId: { type: String },
   collectionId: { type: String },
   hex: { type: String },
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
-const RubricSchema = new mongoose.Schema(rubricFields, { ...standardSchemaOptions, collection: 'rubrics' });
+const RubricSchema = new mongoose.Schema(rubricFields, {
+  ...standardSchemaOptions,
+  collection: "rubrics",
+});
 
 const rubricScoreFields = {
   date: { type: Date, required: true },
   score: { type: Number, required: true },
   staffId: { type: String, required: true },
   schoolId: { type: String, required: true },
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
-const RubricScoreSchema = new mongoose.Schema(rubricScoreFields, { ...standardSchemaOptions, collection: 'rubricscores' });
+const RubricScoreSchema = new mongoose.Schema(rubricScoreFields, {
+  ...standardSchemaOptions,
+  collection: "rubricscores",
+});
 
-export const RubricModel = mongoose.models.Rubric || 
-  mongoose.model("Rubric", RubricSchema);
+export const RubricModel =
+  mongoose.models.Rubric || mongoose.model("Rubric", RubricSchema);
 
-export const RubricScoreModel = mongoose.models.RubricScore || 
+export const RubricScoreModel =
+  mongoose.models.RubricScore ||
   mongoose.model("RubricScore", RubricScoreSchema);
 
 export async function getRubricModel() {

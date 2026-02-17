@@ -105,7 +105,8 @@ export async function updateDeckMetadata(
         };
         // Include lessonSummarySlideNumber if available on the deck
         if (deck.lessonSummarySlideNumber) {
-          workedExampleEntry.lessonSummarySlideNumber = deck.lessonSummarySlideNumber;
+          workedExampleEntry.lessonSummarySlideNumber =
+            deck.lessonSummarySlideNumber;
         }
 
         // First, remove any existing entry with this slug (to avoid duplicates)

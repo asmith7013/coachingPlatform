@@ -36,12 +36,13 @@ export function DeleteDayOffModal({
     >
       <div className="px-6 py-4 space-y-4">
         <p className="text-sm text-gray-700">
-          Are you sure you want to delete <span className="font-medium">{event.name}</span> on{' '}
+          Are you sure you want to delete{" "}
+          <span className="font-medium">{event.name}</span> on{" "}
           <span className="font-medium">
-            {new Date(event.date + 'T12:00:00').toLocaleDateString('en-US', {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
+            {new Date(event.date + "T12:00:00").toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
             })}
           </span>
           ?
@@ -55,7 +56,9 @@ export function DeleteDayOffModal({
               onChange={(e) => setShiftSchedule(e.target.checked)}
               className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer"
             />
-            <span className="text-sm text-gray-700">Shift schedule back by 1 day</span>
+            <span className="text-sm text-gray-700">
+              Shift schedule back by 1 day
+            </span>
           </label>
         </div>
       </div>
@@ -77,7 +80,11 @@ export function DeleteDayOffModal({
         >
           {deleting ? (
             <>
-              <Spinner size="xs" variant="default" className="border-white border-t-red-200" />
+              <Spinner
+                size="xs"
+                variant="default"
+                className="border-white border-t-red-200"
+              />
               Deleting...
             </>
           ) : (

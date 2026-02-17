@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
-import { PracticeProblemSchema } from './roadmap-skill';
+import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
+import { PracticeProblemSchema } from "./roadmap-skill";
 
 // =====================================
 // ROADMAPS LESSON SCHEMA
@@ -31,21 +31,21 @@ export const RoadmapsLessonFieldsSchema = z.object({
   helpfulSkills: z.array(z.string()).default([]), // Array of supporting skills
 
   // Content sections
-  description: z.string().default(''),
-  skillChallengeCriteria: z.string().default(''),
-  essentialQuestion: z.string().default(''),
+  description: z.string().default(""),
+  skillChallengeCriteria: z.string().default(""),
+  essentialQuestion: z.string().default(""),
 
   // Teaching strategies and resources
-  launch: z.string().default(''),
-  teacherStudentStrategies: z.string().default(''),
-  modelsAndManipulatives: z.string().default(''),
-  questionsToHelp: z.string().default(''),
-  discussionQuestions: z.string().default(''),
-  commonMisconceptions: z.string().default(''),
-  additionalResources: z.string().default(''),
+  launch: z.string().default(""),
+  teacherStudentStrategies: z.string().default(""),
+  modelsAndManipulatives: z.string().default(""),
+  questionsToHelp: z.string().default(""),
+  discussionQuestions: z.string().default(""),
+  commonMisconceptions: z.string().default(""),
+  additionalResources: z.string().default(""),
 
   // Standards and vocabulary
-  standards: z.string().default(''),
+  standards: z.string().default(""),
   vocabulary: z.array(z.string()).default([]),
 
   // Media and resources
@@ -63,10 +63,14 @@ export const RoadmapsLessonFieldsSchema = z.object({
 });
 
 // Full Roadmaps Lesson Schema
-export const RoadmapsLessonZodSchema = BaseDocumentSchema.merge(RoadmapsLessonFieldsSchema);
+export const RoadmapsLessonZodSchema = BaseDocumentSchema.merge(
+  RoadmapsLessonFieldsSchema,
+);
 
 // Input Schema (for creation)
-export const RoadmapsLessonInputZodSchema = toInputSchema(RoadmapsLessonZodSchema);
+export const RoadmapsLessonInputZodSchema = toInputSchema(
+  RoadmapsLessonZodSchema,
+);
 
 // =====================================
 // TYPE EXPORTS

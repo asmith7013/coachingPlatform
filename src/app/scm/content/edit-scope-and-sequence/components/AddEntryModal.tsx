@@ -24,14 +24,20 @@ interface AddEntryModalProps {
 }
 
 // Derive lessonType from section
-function getLessonTypeFromSection(section: string): "lesson" | "rampUp" | "assessment" {
+function getLessonTypeFromSection(
+  section: string,
+): "lesson" | "rampUp" | "assessment" {
   if (section === "Ramp Ups") return "rampUp";
   if (section === "Unit Assessment") return "assessment";
   return "lesson";
 }
 
 // Generate unitLessonId based on type
-function generateUnitLessonId(unitNumber: number, lessonNumber: number, lessonType: string): string {
+function generateUnitLessonId(
+  unitNumber: number,
+  lessonNumber: number,
+  lessonType: string,
+): string {
   if (lessonType === "rampUp") {
     return `${unitNumber}.RU${lessonNumber}`;
   }
@@ -42,7 +48,11 @@ function generateUnitLessonId(unitNumber: number, lessonNumber: number, lessonTy
 }
 
 // Generate lessonName based on type
-function generateLessonName(lessonNumber: number, lessonTitle: string, lessonType: string): string {
+function generateLessonName(
+  lessonNumber: number,
+  lessonTitle: string,
+  lessonType: string,
+): string {
   if (lessonType === "rampUp") {
     return `Ramp Up ${lessonNumber}: ${lessonTitle}`;
   }
@@ -98,7 +108,7 @@ export function AddEntryModal({
     };
     const matchedGrade = tagToGrade[scopeSequenceTag];
     if (matchedGrade) {
-      return GRADE_OPTIONS.filter(g => g === matchedGrade);
+      return GRADE_OPTIONS.filter((g) => g === matchedGrade);
     }
     return GRADE_OPTIONS;
   }, [scopeSequenceTag]);
@@ -114,8 +124,11 @@ export function AddEntryModal({
   const availableUnits = useMemo(() => {
     if (!grade || !scopeSequenceTag) return [];
     const units = new Set<number>();
-    existingEntries.forEach(entry => {
-      if (entry.grade === grade && entry.scopeSequenceTag === scopeSequenceTag) {
+    existingEntries.forEach((entry) => {
+      if (
+        entry.grade === grade &&
+        entry.scopeSequenceTag === scopeSequenceTag
+      ) {
         units.add(entry.unitNumber);
       }
     });
@@ -128,7 +141,7 @@ export function AddEntryModal({
   const unitTitle = useMemo(() => {
     if (!grade || !unitNumber) return "";
     const matchingEntry = existingEntries.find(
-      e => e.grade === grade && e.unitNumber === unitNumber
+      (e) => e.grade === grade && e.unitNumber === unitNumber,
     );
     return matchingEntry?.unit || `Unit ${unitNumber}`;
   }, [existingEntries, grade, unitNumber]);
@@ -138,14 +151,17 @@ export function AddEntryModal({
     if (!grade || !unitNumber || !section || !scopeSequenceTag) return [];
 
     // Filter existing entries for this unit and section type
-    const existingInSection = existingEntries.filter(entry =>
-      entry.grade === grade &&
-      entry.unitNumber === unitNumber &&
-      entry.scopeSequenceTag === scopeSequenceTag &&
-      entry.section === section
+    const existingInSection = existingEntries.filter(
+      (entry) =>
+        entry.grade === grade &&
+        entry.unitNumber === unitNumber &&
+        entry.scopeSequenceTag === scopeSequenceTag &&
+        entry.section === section,
     );
 
-    const existingNumbers = new Set(existingInSection.map(e => e.lessonNumber));
+    const existingNumbers = new Set(
+      existingInSection.map((e) => e.lessonNumber),
+    );
 
     if (lessonType === "assessment") {
       // Assessment doesn't need a lesson number
@@ -170,7 +186,8 @@ export function AddEntryModal({
 
     // Regular lessons - show gaps and next available
     const numbers: number[] = [];
-    const maxExisting = existingNumbers.size > 0 ? Math.max(...Array.from(existingNumbers)) : 0;
+    const maxExisting =
+      existingNumbers.size > 0 ? Math.max(...Array.from(existingNumbers)) : 0;
 
     // Show gaps (1 to max)
     for (let i = 1; i <= maxExisting; i++) {
@@ -187,7 +204,14 @@ export function AddEntryModal({
       return [1, 2, 3];
     }
     return numbers;
-  }, [existingEntries, grade, unitNumber, section, scopeSequenceTag, lessonType]);
+  }, [
+    existingEntries,
+    grade,
+    unitNumber,
+    section,
+    scopeSequenceTag,
+    lessonType,
+  ]);
 
   // Auto-calculated fields for preview
   const previewUnitLessonId = useMemo(() => {
@@ -222,8 +246,20 @@ export function AddEntryModal({
       lessonName: previewLessonName,
       lessonType: lessonType as "lesson" | "rampUp" | "assessment",
       lessonTitle: isAssessment ? undefined : lessonTitle,
-      section: section as "Ramp Ups" | "A" | "B" | "C" | "D" | "E" | "F" | "Unit Assessment",
-      scopeSequenceTag: scopeSequenceTag as "Grade 6" | "Grade 7" | "Grade 8" | "Algebra 1",
+      section: section as
+        | "Ramp Ups"
+        | "A"
+        | "B"
+        | "C"
+        | "D"
+        | "E"
+        | "F"
+        | "Unit Assessment",
+      scopeSequenceTag: scopeSequenceTag as
+        | "Grade 6"
+        | "Grade 7"
+        | "Grade 8"
+        | "Algebra 1",
       roadmapSkills: [],
       targetSkills: [],
       standards: [],
@@ -233,7 +269,11 @@ export function AddEntryModal({
     onSubmit(data);
   };
 
-  const canSubmit = scopeSequenceTag && grade && unitNumber && section &&
+  const canSubmit =
+    scopeSequenceTag &&
+    grade &&
+    unitNumber &&
+    section &&
     (isAssessment || (lessonNumber && lessonTitle));
 
   return (
@@ -266,7 +306,9 @@ export function AddEntryModal({
             >
               <option value="">-- Select Tag --</option>
               {SCOPE_SEQUENCE_TAG_OPTIONS.map((tag) => (
-                <option key={tag} value={tag}>{tag}</option>
+                <option key={tag} value={tag}>
+                  {tag}
+                </option>
               ))}
             </select>
           </div>
@@ -316,7 +358,9 @@ export function AddEntryModal({
             >
               <option value="">-- Select Unit --</option>
               {availableUnits.map((u) => (
-                <option key={u} value={u}>Unit {u}</option>
+                <option key={u} value={u}>
+                  Unit {u}
+                </option>
               ))}
               {/* Option to add new unit number */}
               {availableUnits.length > 0 && (
@@ -354,12 +398,19 @@ export function AddEntryModal({
             >
               <option value="">-- Select Section --</option>
               {SECTION_OPTIONS.map((s) => (
-                <option key={s} value={s}>{s}</option>
+                <option key={s} value={s}>
+                  {s}
+                </option>
               ))}
             </select>
             {section && (
               <p className="text-xs text-gray-500 mt-1">
-                Type: {lessonType === "rampUp" ? "Ramp Up" : lessonType === "assessment" ? "Assessment" : "Lesson"}
+                Type:{" "}
+                {lessonType === "rampUp"
+                  ? "Ramp Up"
+                  : lessonType === "assessment"
+                    ? "Assessment"
+                    : "Lesson"}
               </p>
             )}
           </div>
@@ -374,13 +425,19 @@ export function AddEntryModal({
               </label>
               <select
                 value={lessonNumber ?? ""}
-                onChange={(e) => setLessonNumber(e.target.value ? parseInt(e.target.value) : null)}
+                onChange={(e) =>
+                  setLessonNumber(
+                    e.target.value ? parseInt(e.target.value) : null,
+                  )
+                }
                 className="w-full px-3 py-2 border rounded-lg cursor-pointer"
                 required
               >
                 <option value="">-- Select Number --</option>
                 {availableLessonNumbers.map((n) => (
-                  <option key={n} value={n}>{n}</option>
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
                 ))}
               </select>
             </div>
@@ -408,7 +465,9 @@ export function AddEntryModal({
             {previewUnitLessonId && (
               <p className="text-sm">
                 <span className="text-gray-600">Unit Lesson ID:</span>{" "}
-                <span className="font-mono bg-white px-1 rounded">{previewUnitLessonId}</span>
+                <span className="font-mono bg-white px-1 rounded">
+                  {previewUnitLessonId}
+                </span>
               </p>
             )}
             {previewLessonName && (

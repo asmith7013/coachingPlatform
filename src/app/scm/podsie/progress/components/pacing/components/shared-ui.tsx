@@ -20,7 +20,9 @@ export function StudentCountBadge({
   if (count === 0) return null;
 
   const badge = (
-    <span className={`${marginLeft ? 'ml-1.5 ' : ''}text-[10px] ${badgeClass} px-1.5 py-0.5 rounded-full flex items-center gap-0.5 flex-shrink-0${showTooltip && tooltipContent ? ' cursor-help' : ''}`}>
+    <span
+      className={`${marginLeft ? "ml-1.5 " : ""}text-[10px] ${badgeClass} px-1.5 py-0.5 rounded-full flex items-center gap-0.5 flex-shrink-0${showTooltip && tooltipContent ? " cursor-help" : ""}`}
+    >
       <UserIcon className="w-2.5 h-2.5" />
       {count}
     </span>
@@ -74,10 +76,25 @@ export function formatShortDate(dateStr: string): string {
 }
 
 // Outline version of PresentationChartLineIcon (not in heroicons)
-export function PresentationChartLineOutlineIcon({ className }: { className?: string }) {
+export function PresentationChartLineOutlineIcon({
+  className,
+}: {
+  className?: string;
+}) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className={className}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6"
+      />
     </svg>
   );
 }
@@ -102,28 +119,36 @@ export function ActivityRow({
 
   return (
     <div className="inline-flex items-center gap-0.5 flex-shrink-0">
-      {todayCount > 0 && (
-        todayCount <= 3 ? (
+      {todayCount > 0 &&
+        (todayCount <= 3 ? (
           Array.from({ length: todayCount }).map((_, i) => (
-            <span key={`t-${i}`} className={`${iconColor} flex-shrink-0`}>{todayIcon}</span>
+            <span key={`t-${i}`} className={`${iconColor} flex-shrink-0`}>
+              {todayIcon}
+            </span>
           ))
         ) : (
-          <span className={`inline-flex items-center text-[9px] font-semibold flex-shrink-0 ${iconColor}`}>
-            {todayCount}{todayIcon}
+          <span
+            className={`inline-flex items-center text-[9px] font-semibold flex-shrink-0 ${iconColor}`}
+          >
+            {todayCount}
+            {todayIcon}
           </span>
-        )
-      )}
-      {yesterdayCount > 0 && (
-        yesterdayCount <= 3 ? (
+        ))}
+      {yesterdayCount > 0 &&
+        (yesterdayCount <= 3 ? (
           Array.from({ length: yesterdayCount }).map((_, i) => (
-            <span key={`y-${i}`} className={`${iconColor} flex-shrink-0`}>{yesterdayIcon}</span>
+            <span key={`y-${i}`} className={`${iconColor} flex-shrink-0`}>
+              {yesterdayIcon}
+            </span>
           ))
         ) : (
-          <span className={`inline-flex items-center text-[9px] font-semibold flex-shrink-0 ${iconColor}`}>
-            {yesterdayCount}{yesterdayIcon}
+          <span
+            className={`inline-flex items-center text-[9px] font-semibold flex-shrink-0 ${iconColor}`}
+          >
+            {yesterdayCount}
+            {yesterdayIcon}
           </span>
-        )
-      )}
+        ))}
     </div>
   );
 }

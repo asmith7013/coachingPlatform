@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
-import type { WizardStateHook } from '../../hooks/useWizardState';
-import type { GradeLevel } from '../../lib/types';
-import { uploadMasteryCheckImage } from '../../actions/upload-image';
-import { analyzeProblem } from '../../actions/analyze-problem';
-import { fetchAllUnitsByScopeTag } from '@actions/scm/scope-and-sequence/scope-and-sequence';
-import { fetchLessonsForUnit } from '@/app/scm/incentives/form/actions';
-import { MarkdownTextarea } from '@/components/core/fields/MarkdownTextarea';
-import { Badge } from '@/components/core/feedback/Badge';
-import { SavedDrafts, type DraftViewState } from './SavedDrafts';
-import { getIM360Url } from '@/lib/utils/im360-url';
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import type { WizardStateHook } from "../../hooks/useWizardState";
+import type { GradeLevel } from "../../lib/types";
+import { uploadMasteryCheckImage } from "../../actions/upload-image";
+import { analyzeProblem } from "../../actions/analyze-problem";
+import { fetchAllUnitsByScopeTag } from "@actions/scm/scope-and-sequence/scope-and-sequence";
+import { fetchLessonsForUnit } from "@/app/scm/incentives/form/actions";
+import { MarkdownTextarea } from "@/components/core/fields/MarkdownTextarea";
+import { Badge } from "@/components/core/feedback/Badge";
+import { SavedDrafts, type DraftViewState } from "./SavedDrafts";
+import { getIM360Url } from "@/lib/utils/im360-url";
 
 interface Step1InputsProps {
   wizard: WizardStateHook;
@@ -34,22 +34,22 @@ interface LessonOption {
 }
 
 const GRADE_OPTIONS: { value: GradeLevel; label: string }[] = [
-  { value: '6', label: 'Grade 6' },
-  { value: '7', label: 'Grade 7' },
-  { value: '8', label: 'Grade 8' },
-  { value: 'Algebra 1', label: 'Algebra 1' },
+  { value: "6", label: "Grade 6" },
+  { value: "7", label: "Grade 7" },
+  { value: "8", label: "Grade 8" },
+  { value: "Algebra 1", label: "Algebra 1" },
 ];
 
 // Section ordering for lesson sorting
 const SECTION_ORDER: Record<string, number> = {
-  'Ramp Ups': 0,
-  'A': 1,
-  'B': 2,
-  'C': 3,
-  'D': 4,
-  'E': 5,
-  'F': 6,
-  'Unit Assessment': 99,
+  "Ramp Ups": 0,
+  A: 1,
+  B: 2,
+  C: 3,
+  D: 4,
+  E: 5,
+  F: 6,
+  "Unit Assessment": 99,
 };
 
 function getSectionOrder(section: string | undefined): number {
@@ -67,21 +67,52 @@ function sortLessons(lessons: LessonOption[]): LessonOption[] {
 }
 
 function formatLessonDisplay(lesson: LessonOption): string {
-  if (lesson.lessonType === 'rampUp' || lesson.section === 'Ramp Ups') {
+  if (lesson.lessonType === "rampUp" || lesson.section === "Ramp Ups") {
     return lesson.lessonName;
   }
   return `Lesson ${lesson.lessonNumber}: ${lesson.lessonName}`;
 }
 
 export function Step1Inputs({ wizard }: Step1InputsProps) {
-  const { state, isHydrated, savedSessions, loadSession, deleteSession, setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setSection, setScopeAndSequenceId, setPodsieAssignment, setLearningGoals, setMasteryImage, setUploadedImageUrl, addAdditionalImage, removeAdditionalImage, setAdditionalImageUrl, setAdditionalContext, setAnalysis, clearAnalysis, setLoadingProgress, setError, nextStep } = wizard;
+  const {
+    state,
+    isHydrated,
+    savedSessions,
+    loadSession,
+    deleteSession,
+    setGradeLevel,
+    setUnitNumber,
+    setLessonNumber,
+    setLessonName,
+    setSection,
+    setScopeAndSequenceId,
+    setPodsieAssignment,
+    setLearningGoals,
+    setMasteryImage,
+    setUploadedImageUrl,
+    addAdditionalImage,
+    removeAdditionalImage,
+    setAdditionalImageUrl,
+    setAdditionalContext,
+    setAnalysis,
+    clearAnalysis,
+    setLoadingProgress,
+    setError,
+    nextStep,
+  } = wizard;
 
   const [learningGoalText, setLearningGoalText] = useState(
-    state.learningGoals.map(g => typeof g === 'string' ? g : JSON.stringify(g)).join('\n')
+    state.learningGoals
+      .map((g) => (typeof g === "string" ? g : JSON.stringify(g)))
+      .join("\n"),
   );
-  const [selectedLesson, setSelectedLesson] = useState<LessonOption | null>(null);
-  const [draftViewState, setDraftViewState] = useState<DraftViewState>('initial');
-  const [isEditingLearningTargets, setIsEditingLearningTargets] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState<LessonOption | null>(
+    null,
+  );
+  const [draftViewState, setDraftViewState] =
+    useState<DraftViewState>("initial");
+  const [isEditingLearningTargets, setIsEditingLearningTargets] =
+    useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const additionalImagesRef = useRef<HTMLInputElement>(null);
 
@@ -89,43 +120,63 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
   const handleSelectNew = useCallback(() => {
     // Clear state but preserve saved sessions in localStorage
     setSelectedLesson(null);
-    setLearningGoalText('');
+    setLearningGoalText("");
     // Reset all wizard state to initial
     setGradeLevel(null);
     setUnitNumber(null);
     setLessonNumber(null);
-    setLessonName('');
+    setLessonName("");
     setScopeAndSequenceId(null);
     setPodsieAssignment(null, null);
     setLearningGoals([]);
-    setMasteryImage(null, null);  // Also clears uploadedUrl now
-    clearAnalysis();  // Clear any previous analysis data and slides
+    setMasteryImage(null, null); // Also clears uploadedUrl now
+    clearAnalysis(); // Clear any previous analysis data and slides
     setError(null);
-  }, [setGradeLevel, setUnitNumber, setLessonNumber, setLessonName, setScopeAndSequenceId, setPodsieAssignment, setLearningGoals, setMasteryImage, clearAnalysis, setError]);
+  }, [
+    setGradeLevel,
+    setUnitNumber,
+    setLessonNumber,
+    setLessonName,
+    setScopeAndSequenceId,
+    setPodsieAssignment,
+    setLearningGoals,
+    setMasteryImage,
+    clearAnalysis,
+    setError,
+  ]);
 
   // Handle loading a saved session
-  const handleLoadSession = useCallback((sessionId: string) => {
-    const success = loadSession(sessionId);
-    if (success) {
-      // Clear local state - it will be repopulated from wizard state
-      setSelectedLesson(null);
-      setLearningGoalText('');
-    }
-  }, [loadSession]);
+  const handleLoadSession = useCallback(
+    (sessionId: string) => {
+      const success = loadSession(sessionId);
+      if (success) {
+        // Clear local state - it will be repopulated from wizard state
+        setSelectedLesson(null);
+        setLearningGoalText("");
+      }
+    },
+    [loadSession],
+  );
 
   // Units, lessons, and assignments data
   const [units, setUnits] = useState<UnitOption[]>([]);
   const [lessons, setLessons] = useState<LessonOption[]>([]);
-  const [assignments, setAssignments] = useState<{ podsieAssignmentId: number; assignmentTitle: string }[]>([]);
+  const [assignments, setAssignments] = useState<
+    { podsieAssignmentId: number; assignmentTitle: string }[]
+  >([]);
   const [isLoadingUnits, setIsLoadingUnits] = useState(false);
   const [isLoadingLessons, setIsLoadingLessons] = useState(false);
   const [isLoadingAssignments, setIsLoadingAssignments] = useState(false);
-  const [selectedUnitGrade, setSelectedUnitGrade] = useState<string | null>(null);
+  const [selectedUnitGrade, setSelectedUnitGrade] = useState<string | null>(
+    null,
+  );
 
   // Get scope sequence tag from grade
   const scopeSequenceTag = useMemo(() => {
     if (!state.gradeLevel) return null;
-    return state.gradeLevel === 'Algebra 1' ? 'Algebra 1' : `Grade ${state.gradeLevel}`;
+    return state.gradeLevel === "Algebra 1"
+      ? "Algebra 1"
+      : `Grade ${state.gradeLevel}`;
   }, [state.gradeLevel]);
 
   // Fetch units when grade changes
@@ -138,12 +189,15 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     async function loadUnits() {
       setIsLoadingUnits(true);
       try {
-        const result = await fetchAllUnitsByScopeTag(scopeSequenceTag!, state.gradeLevel || undefined);
+        const result = await fetchAllUnitsByScopeTag(
+          scopeSequenceTag!,
+          state.gradeLevel || undefined,
+        );
         if (result.success && result.data) {
           setUnits(result.data);
         }
       } catch (error) {
-        console.error('Error loading units:', error);
+        console.error("Error loading units:", error);
       } finally {
         setIsLoadingUnits(false);
       }
@@ -162,16 +216,21 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     async function loadLessons() {
       setIsLoadingLessons(true);
       try {
-        const result = await fetchLessonsForUnit(selectedUnitGrade!, state.unitNumber!, scopeSequenceTag || undefined);
-        if (typeof result !== 'string' && result.success && result.data) {
+        const result = await fetchLessonsForUnit(
+          selectedUnitGrade!,
+          state.unitNumber!,
+          scopeSequenceTag || undefined,
+        );
+        if (typeof result !== "string" && result.success && result.data) {
           // Filter out assessments
           const filtered = (result.data as LessonOption[]).filter(
-            l => l.lessonType !== 'assessment' && l.section !== 'Unit Assessment'
+            (l) =>
+              l.lessonType !== "assessment" && l.section !== "Unit Assessment",
           );
           setLessons(filtered);
         }
       } catch (error) {
-        console.error('Error loading lessons:', error);
+        console.error("Error loading lessons:", error);
       } finally {
         setIsLoadingLessons(false);
       }
@@ -190,13 +249,15 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
     async function loadAssignments() {
       setIsLoadingAssignments(true);
       try {
-        const res = await fetch(`/api/scm/podsie-assignments?gradeLevel=${encodeURIComponent(state.gradeLevel!)}&unitNumber=${state.unitNumber}`);
+        const res = await fetch(
+          `/api/scm/podsie-assignments?gradeLevel=${encodeURIComponent(state.gradeLevel!)}&unitNumber=${state.unitNumber}`,
+        );
         const json = await res.json();
         if (json.success && json.data) {
           setAssignments(json.data);
         }
       } catch (error) {
-        console.error('Error loading assignments:', error);
+        console.error("Error loading assignments:", error);
       } finally {
         setIsLoadingAssignments(false);
       }
@@ -209,26 +270,36 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
   const sortedLessons = useMemo(() => sortLessons(lessons), [lessons]);
 
   // Handle lesson selection
-  const handleLessonSelect = useCallback((lessonId: string) => {
-    const lesson = lessons.find(l => l._id === lessonId);
-    if (lesson) {
-      setSelectedLesson(lesson);
-      setLessonNumber(lesson.lessonNumber);
-      setLessonName(lesson.lessonTitle || lesson.lessonName);
-      setSection(lesson.section || null);
-      // Set the scope and sequence ID to enable session persistence
-      setScopeAndSequenceId(lesson._id);
-      if (lesson.learningTargets && lesson.learningTargets.length > 0) {
-        setLearningGoals(lesson.learningTargets);
-        setLearningGoalText(lesson.learningTargets.join('\n'));
+  const handleLessonSelect = useCallback(
+    (lessonId: string) => {
+      const lesson = lessons.find((l) => l._id === lessonId);
+      if (lesson) {
+        setSelectedLesson(lesson);
+        setLessonNumber(lesson.lessonNumber);
+        setLessonName(lesson.lessonTitle || lesson.lessonName);
+        setSection(lesson.section || null);
+        // Set the scope and sequence ID to enable session persistence
+        setScopeAndSequenceId(lesson._id);
+        if (lesson.learningTargets && lesson.learningTargets.length > 0) {
+          setLearningGoals(lesson.learningTargets);
+          setLearningGoalText(lesson.learningTargets.join("\n"));
+        }
+      } else {
+        setSelectedLesson(null);
+        setLessonNumber(null);
+        setSection(null);
+        setScopeAndSequenceId(null);
       }
-    } else {
-      setSelectedLesson(null);
-      setLessonNumber(null);
-      setSection(null);
-      setScopeAndSequenceId(null);
-    }
-  }, [lessons, setLessonNumber, setLessonName, setSection, setScopeAndSequenceId, setLearningGoals]);
+    },
+    [
+      lessons,
+      setLessonNumber,
+      setLessonName,
+      setSection,
+      setScopeAndSequenceId,
+      setLearningGoals,
+    ],
+  );
 
   // Handle image file selection
   const handleImageSelect = useCallback(
@@ -237,8 +308,8 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       if (!file) return;
 
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setError('Please select an image file');
+      if (!file.type.startsWith("image/")) {
+        setError("Please select an image file");
         return;
       }
 
@@ -247,7 +318,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       setMasteryImage(file, preview);
       setError(null);
     },
-    [setMasteryImage, setError]
+    [setMasteryImage, setError],
   );
 
   // Handle drag and drop
@@ -257,8 +328,8 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       const file = e.dataTransfer.files?.[0];
       if (!file) return;
 
-      if (!file.type.startsWith('image/')) {
-        setError('Please drop an image file');
+      if (!file.type.startsWith("image/")) {
+        setError("Please drop an image file");
         return;
       }
 
@@ -266,7 +337,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       setMasteryImage(file, preview);
       setError(null);
     },
-    [setMasteryImage, setError]
+    [setMasteryImage, setError],
   );
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -280,8 +351,8 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       if (!files) return;
 
       Array.from(files).forEach((file) => {
-        if (!file.type.startsWith('image/')) {
-          setError('Please select only image files');
+        if (!file.type.startsWith("image/")) {
+          setError("Please select only image files");
           return;
         }
         const preview = URL.createObjectURL(file);
@@ -289,9 +360,9 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       });
 
       // Reset input so the same file can be selected again
-      if (additionalImagesRef.current) additionalImagesRef.current.value = '';
+      if (additionalImagesRef.current) additionalImagesRef.current.value = "";
     },
-    [addAdditionalImage, setError]
+    [addAdditionalImage, setError],
   );
 
   // Handle additional images drag and drop
@@ -302,53 +373,49 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       if (!files) return;
 
       Array.from(files).forEach((file) => {
-        if (!file.type.startsWith('image/')) {
-          setError('Please drop only image files');
+        if (!file.type.startsWith("image/")) {
+          setError("Please drop only image files");
           return;
         }
         const preview = URL.createObjectURL(file);
         addAdditionalImage(file, preview);
       });
     },
-    [addAdditionalImage, setError]
+    [addAdditionalImage, setError],
   );
 
   // Parse learning goals from textarea - only update local state while typing
   // The actual wizard state is updated on blur via handleLearningGoalsBlur
-  const handleLearningGoalsChange = useCallback(
-    (text: string) => {
-      setLearningGoalText(text);
-    },
-    []
-  );
+  const handleLearningGoalsChange = useCallback((text: string) => {
+    setLearningGoalText(text);
+  }, []);
 
   // Save learning goals to wizard state when user finishes editing (on blur)
-  const handleLearningGoalsBlur = useCallback(
-    () => {
-      const goals = learningGoalText
-        .split('\n')
-        .map((g) => g.trim())
-        .filter((g) => g.length > 0);
-      setLearningGoals(goals);
-    },
-    [learningGoalText, setLearningGoals]
-  );
+  const handleLearningGoalsBlur = useCallback(() => {
+    const goals = learningGoalText
+      .split("\n")
+      .map((g) => g.trim())
+      .filter((g) => g.length > 0);
+    setLearningGoals(goals);
+  }, [learningGoalText, setLearningGoals]);
 
   // Analyze the problem
   const handleAnalyze = async () => {
     // Validate inputs
     if (!state.gradeLevel) {
-      setError('Please select a grade level');
+      setError("Please select a grade level");
       return;
     }
     if (!state.masteryCheckImage.file && !state.masteryCheckImage.uploadedUrl) {
-      setError('Please upload a mastery check question image');
+      setError("Please upload a mastery check question image");
       return;
     }
     // Learning goals are required if no curriculum targets exist
-    const hasLearningTargets = selectedLesson?.learningTargets && selectedLesson.learningTargets.length > 0;
+    const hasLearningTargets =
+      selectedLesson?.learningTargets &&
+      selectedLesson.learningTargets.length > 0;
     if (!hasLearningTargets && state.learningGoals.length === 0) {
-      setError('Please add at least one learning target');
+      setError("Please add at least one learning target");
       return;
     }
 
@@ -360,9 +427,9 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
 
       if (!imageUrl && state.masteryCheckImage.file) {
         setLoadingProgress({
-          phase: 'uploading',
-          message: 'Uploading image...',
-          detail: 'Sending image to cloud storage',
+          phase: "uploading",
+          message: "Uploading image...",
+          detail: "Sending image to cloud storage",
           startTime: Date.now(),
         });
 
@@ -372,11 +439,11 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
         const uploadResult = await uploadMasteryCheckImage(
           uint8Array,
           state.masteryCheckImage.file.name,
-          state.masteryCheckImage.file.type
+          state.masteryCheckImage.file.type,
         );
 
         if (!uploadResult.success || !uploadResult.url) {
-          setError(uploadResult.error || 'Failed to upload image');
+          setError(uploadResult.error || "Failed to upload image");
           return;
         }
 
@@ -385,7 +452,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
       }
 
       if (!imageUrl) {
-        setError('No image URL available');
+        setError("No image URL available");
         return;
       }
 
@@ -397,9 +464,9 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
           additionalImageUrls.push(img.uploadedUrl);
         } else if (img.file) {
           setLoadingProgress({
-            phase: 'uploading',
+            phase: "uploading",
             message: `Uploading additional image ${i + 1}/${state.additionalImages.length}...`,
-            detail: 'Sending reference images to cloud storage',
+            detail: "Sending reference images to cloud storage",
             startTime: Date.now(),
           });
 
@@ -409,7 +476,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
           const uploadResult = await uploadMasteryCheckImage(
             uint8Array,
             img.file.name,
-            img.file.type
+            img.file.type,
           );
 
           if (uploadResult.success && uploadResult.url) {
@@ -421,9 +488,10 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
 
       // Analyze the problem
       setLoadingProgress({
-        phase: 'analyzing',
-        message: 'Analyzing problem with AI...',
-        detail: 'Examining the problem structure, identifying strategy, and creating scenarios',
+        phase: "analyzing",
+        message: "Analyzing problem with AI...",
+        detail:
+          "Examining the problem structure, identifying strategy, and creating scenarios",
         startTime: Date.now(),
       });
 
@@ -434,50 +502,57 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
         lessonNumber: state.lessonNumber,
         lessonName: state.lessonName,
         learningGoals: state.learningGoals,
-        additionalImageUrls: additionalImageUrls.length > 0 ? additionalImageUrls : undefined,
+        additionalImageUrls:
+          additionalImageUrls.length > 0 ? additionalImageUrls : undefined,
         additionalContext: state.additionalContext || undefined,
       });
 
       if (!result.success || !result.data) {
-        setError(result.error || 'Failed to analyze problem');
+        setError(result.error || "Failed to analyze problem");
         return;
       }
 
       // Set analysis results and move to next step
       setAnalysis(result.data);
-      setLoadingProgress({ phase: 'idle', message: '' });
+      setLoadingProgress({ phase: "idle", message: "" });
       nextStep();
     } catch (error) {
-      console.error('Error during analysis:', error);
-      setError(error instanceof Error ? error.message : 'An error occurred');
+      console.error("Error during analysis:", error);
+      setError(error instanceof Error ? error.message : "An error occurred");
     }
   };
 
   // Handle grade change - reset unit, lesson, and assignment
-  const handleGradeChange = useCallback((grade: GradeLevel | null) => {
-    setGradeLevel(grade);
-    setUnitNumber(null);
-    setLessonNumber(null);
-    setSelectedLesson(null);
-    setSelectedUnitGrade(null);
-    setLessons([]);
-    setPodsieAssignment(null, null);
-  }, [setGradeLevel, setUnitNumber, setLessonNumber, setPodsieAssignment]);
+  const handleGradeChange = useCallback(
+    (grade: GradeLevel | null) => {
+      setGradeLevel(grade);
+      setUnitNumber(null);
+      setLessonNumber(null);
+      setSelectedLesson(null);
+      setSelectedUnitGrade(null);
+      setLessons([]);
+      setPodsieAssignment(null, null);
+    },
+    [setGradeLevel, setUnitNumber, setLessonNumber, setPodsieAssignment],
+  );
 
   // Handle unit change - reset lesson and assignment
-  const handleUnitChange = useCallback((value: string | null) => {
-    if (!value) {
-      setUnitNumber(null);
-      setSelectedUnitGrade(null);
-    } else {
-      const [grade, unitNum] = value.split('::');
-      setUnitNumber(parseInt(unitNum));
-      setSelectedUnitGrade(grade);
-    }
-    setLessonNumber(null);
-    setSelectedLesson(null);
-    setPodsieAssignment(null, null);
-  }, [setUnitNumber, setLessonNumber, setPodsieAssignment]);
+  const handleUnitChange = useCallback(
+    (value: string | null) => {
+      if (!value) {
+        setUnitNumber(null);
+        setSelectedUnitGrade(null);
+      } else {
+        const [grade, unitNum] = value.split("::");
+        setUnitNumber(parseInt(unitNum));
+        setSelectedUnitGrade(grade);
+      }
+      setLessonNumber(null);
+      setSelectedLesson(null);
+      setPodsieAssignment(null, null);
+    },
+    [setUnitNumber, setLessonNumber, setPodsieAssignment],
+  );
 
   return (
     <div className="flex gap-6">
@@ -496,154 +571,186 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
           />
 
           {/* Lesson selection when "Create New" is selected */}
-          {draftViewState === 'new' && (
+          {draftViewState === "new" && (
             <>
               <div className="border-t border-gray-200 my-4" />
               <div className="space-y-4">
-            {/* Grade Level */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Grade <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={state.gradeLevel || ''}
-                onChange={(e) => handleGradeChange(e.target.value as GradeLevel || null)}
-                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
-              >
-                <option value="">Select grade...</option>
-                {GRADE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+                {/* Grade Level */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Grade <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={state.gradeLevel || ""}
+                    onChange={(e) =>
+                      handleGradeChange((e.target.value as GradeLevel) || null)
+                    }
+                    className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                  >
+                    <option value="">Select grade...</option>
+                    {GRADE_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            {/* Unit Dropdown */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Unit <span className="text-red-500">*</span>
-              </label>
-              {isLoadingUnits ? (
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
-                  Loading units...
+                {/* Unit Dropdown */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Unit <span className="text-red-500">*</span>
+                  </label>
+                  {isLoadingUnits ? (
+                    <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                      Loading units...
+                    </div>
+                  ) : !state.gradeLevel ? (
+                    <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
+                      Select a grade first
+                    </div>
+                  ) : units.length === 0 ? (
+                    <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                      No units found
+                    </div>
+                  ) : (
+                    <select
+                      value={
+                        selectedUnitGrade && state.unitNumber
+                          ? `${selectedUnitGrade}::${state.unitNumber}`
+                          : ""
+                      }
+                      onChange={(e) => handleUnitChange(e.target.value || null)}
+                      className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                    >
+                      <option value="">Select unit...</option>
+                      {units.map((unit) => (
+                        <option
+                          key={`${unit.grade}::${unit.unitNumber}`}
+                          value={`${unit.grade}::${unit.unitNumber}`}
+                        >
+                          {unit.unitNumber}. {unit.unitName}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
-              ) : !state.gradeLevel ? (
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
-                  Select a grade first
-                </div>
-              ) : units.length === 0 ? (
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
-                  No units found
-                </div>
-              ) : (
-                <select
-                  value={selectedUnitGrade && state.unitNumber ? `${selectedUnitGrade}::${state.unitNumber}` : ''}
-                  onChange={(e) => handleUnitChange(e.target.value || null)}
-                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
-                >
-                  <option value="">Select unit...</option>
-                  {units.map((unit) => (
-                    <option key={`${unit.grade}::${unit.unitNumber}`} value={`${unit.grade}::${unit.unitNumber}`}>
-                      {unit.unitNumber}. {unit.unitName}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
 
-            {/* Lesson Dropdown */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Lesson <span className="text-red-500">*</span>
-              </label>
-              {isLoadingLessons ? (
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
-                  Loading lessons...
+                {/* Lesson Dropdown */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Lesson <span className="text-red-500">*</span>
+                  </label>
+                  {isLoadingLessons ? (
+                    <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                      Loading lessons...
+                    </div>
+                  ) : !state.unitNumber ? (
+                    <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
+                      Select a unit first
+                    </div>
+                  ) : sortedLessons.length === 0 ? (
+                    <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                      No lessons found
+                    </div>
+                  ) : (
+                    <select
+                      value={selectedLesson?._id || ""}
+                      onChange={(e) => handleLessonSelect(e.target.value)}
+                      className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                    >
+                      <option value="">Select lesson...</option>
+                      {sortedLessons.map((lesson) => (
+                        <option key={lesson._id} value={lesson._id}>
+                          {formatLessonDisplay(lesson)}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
-              ) : !state.unitNumber ? (
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
-                  Select a unit first
-                </div>
-              ) : sortedLessons.length === 0 ? (
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
-                  No lessons found
-                </div>
-              ) : (
-                <select
-                  value={selectedLesson?._id || ''}
-                  onChange={(e) => handleLessonSelect(e.target.value)}
-                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
-                >
-                  <option value="">Select lesson...</option>
-                  {sortedLessons.map((lesson) => (
-                    <option key={lesson._id} value={lesson._id}>
-                      {formatLessonDisplay(lesson)}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
 
-            {/* Podsie Assignment Dropdown */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Podsie Assignment
-              </label>
-              {isLoadingAssignments ? (
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
-                  Loading assignments...
+                {/* Podsie Assignment Dropdown */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Podsie Assignment
+                  </label>
+                  {isLoadingAssignments ? (
+                    <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                      Loading assignments...
+                    </div>
+                  ) : !state.unitNumber ? (
+                    <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
+                      Select a unit first
+                    </div>
+                  ) : assignments.length === 0 ? (
+                    <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                      No assignments found
+                    </div>
+                  ) : (
+                    <select
+                      value={state.podsieAssignmentId ?? ""}
+                      onChange={(e) => {
+                        const id = e.target.value
+                          ? parseInt(e.target.value)
+                          : null;
+                        const assignment = assignments.find(
+                          (a) => a.podsieAssignmentId === id,
+                        );
+                        setPodsieAssignment(
+                          id,
+                          assignment?.assignmentTitle ?? null,
+                        );
+                      }}
+                      className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
+                    >
+                      <option value="">Select assignment...</option>
+                      {assignments.map((a) => (
+                        <option
+                          key={a.podsieAssignmentId}
+                          value={a.podsieAssignmentId}
+                        >
+                          {a.assignmentTitle}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
-              ) : !state.unitNumber ? (
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-400 text-sm">
-                  Select a unit first
-                </div>
-              ) : assignments.length === 0 ? (
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 text-sm">
-                  No assignments found
-                </div>
-              ) : (
-                <select
-                  value={state.podsieAssignmentId ?? ''}
-                  onChange={(e) => {
-                    const id = e.target.value ? parseInt(e.target.value) : null;
-                    const assignment = assignments.find(a => a.podsieAssignmentId === id);
-                    setPodsieAssignment(id, assignment?.assignmentTitle ?? null);
-                  }}
-                  className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
-                >
-                  <option value="">Select assignment...</option>
-                  {assignments.map((a) => (
-                    <option key={a.podsieAssignmentId} value={a.podsieAssignmentId}>
-                      {a.assignmentTitle}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
               </div>
             </>
           )}
-
         </div>
       </div>
 
       {/* Right Column - Lesson Details (70%) */}
       <div className="w-[70%] space-y-4">
         {/* Show empty state when: initial, drafts view without selection, OR new without lesson selected */}
-        {draftViewState === 'initial' ||
-         (draftViewState === 'drafts' && !state.scopeAndSequenceId) ||
-         (draftViewState === 'new' && !selectedLesson && !state.scopeAndSequenceId) ? (
+        {draftViewState === "initial" ||
+        (draftViewState === "drafts" && !state.scopeAndSequenceId) ||
+        (draftViewState === "new" &&
+          !selectedLesson &&
+          !state.scopeAndSequenceId) ? (
           /* Empty state - context-aware message */
           <div className="bg-white rounded-lg shadow-sm p-8 flex items-center justify-center min-h-[400px]">
             <div className="text-center">
-              <svg className="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg
+                className="mx-auto h-12 w-12 text-gray-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
               <p className="mt-4 text-sm text-gray-500">
-                {draftViewState === 'initial' && 'Choose an option from the left to get started'}
-                {draftViewState === 'drafts' && 'Select a draft to continue working'}
-                {draftViewState === 'new' && 'Select a lesson to begin'}
+                {draftViewState === "initial" &&
+                  "Choose an option from the left to get started"}
+                {draftViewState === "drafts" &&
+                  "Select a draft to continue working"}
+                {draftViewState === "new" && "Select a lesson to begin"}
               </p>
             </div>
           </div>
@@ -651,18 +758,23 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
           <>
             {/* Lesson Info Card */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              {(selectedLesson || state.scopeAndSequenceId) ? (
+              {selectedLesson || state.scopeAndSequenceId ? (
                 <div className="space-y-3">
                   {/* Lesson Title as Header */}
                   <h3 className="text-base font-semibold text-gray-900">
-                    {state.lessonNumber ? `Lesson ${state.lessonNumber}: ` : ''}{state.lessonName || selectedLesson?.lessonTitle || selectedLesson?.lessonName}
+                    {state.lessonNumber ? `Lesson ${state.lessonNumber}: ` : ""}
+                    {state.lessonName ||
+                      selectedLesson?.lessonTitle ||
+                      selectedLesson?.lessonName}
                   </h3>
 
                   {/* Badges and IM360 link below title */}
                   <div className="flex items-center gap-2 flex-wrap">
                     {state.gradeLevel && (
                       <Badge intent="primary" size="sm">
-                        {state.gradeLevel === 'Algebra 1' ? 'Algebra 1' : `Grade ${state.gradeLevel}`}
+                        {state.gradeLevel === "Algebra 1"
+                          ? "Algebra 1"
+                          : `Grade ${state.gradeLevel}`}
                       </Badge>
                     )}
                     {state.unitNumber && (
@@ -675,24 +787,27 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                         Section {state.section}
                       </Badge>
                     )}
-                    {state.gradeLevel && state.unitNumber && state.lessonNumber && state.section && (
-                      <>
-                        <span className="text-gray-300">|</span>
-                        <a
-                          href={getIM360Url({
-                            gradeLevel: state.gradeLevel,
-                            unitNumber: state.unitNumber,
-                            lessonNumber: state.lessonNumber,
-                            section: state.section,
-                          })}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 text-sm"
-                        >
-                          Open Lesson on IM 360 →
-                        </a>
-                      </>
-                    )}
+                    {state.gradeLevel &&
+                      state.unitNumber &&
+                      state.lessonNumber &&
+                      state.section && (
+                        <>
+                          <span className="text-gray-300">|</span>
+                          <a
+                            href={getIM360Url({
+                              gradeLevel: state.gradeLevel,
+                              unitNumber: state.unitNumber,
+                              lessonNumber: state.lessonNumber,
+                              section: state.section,
+                            })}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 text-sm"
+                          >
+                            Open Lesson on IM 360 →
+                          </a>
+                        </>
+                      )}
                   </div>
                 </div>
               ) : (
@@ -705,33 +820,43 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
             {/* Learning Targets Card */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-base font-semibold text-gray-900">Learning Targets</h3>
+                <h3 className="text-base font-semibold text-gray-900">
+                  Learning Targets
+                </h3>
                 {/* Show edit/done button when we have targets to display */}
-                {(selectedLesson || state.scopeAndSequenceId) && (state.learningGoals.length > 0 || isEditingLearningTargets) && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!isEditingLearningTargets) {
-                        // Entering edit mode - sync textarea with current targets
-                        setLearningGoalText(state.learningGoals.map(g => typeof g === 'string' ? g : JSON.stringify(g)).join('\n'));
-                      } else {
-                        // Exiting edit mode - explicitly save changes
-                        const goals = learningGoalText
-                          .split('\n')
-                          .map((g) => g.trim())
-                          .filter((g) => g.length > 0);
-                        setLearningGoals(goals);
-                      }
-                      setIsEditingLearningTargets(!isEditingLearningTargets);
-                    }}
-                    className="text-sm text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
-                  >
-                    {isEditingLearningTargets ? 'Done' : 'Edit'}
-                  </button>
-                )}
+                {(selectedLesson || state.scopeAndSequenceId) &&
+                  (state.learningGoals.length > 0 ||
+                    isEditingLearningTargets) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!isEditingLearningTargets) {
+                          // Entering edit mode - sync textarea with current targets
+                          setLearningGoalText(
+                            state.learningGoals
+                              .map((g) =>
+                                typeof g === "string" ? g : JSON.stringify(g),
+                              )
+                              .join("\n"),
+                          );
+                        } else {
+                          // Exiting edit mode - explicitly save changes
+                          const goals = learningGoalText
+                            .split("\n")
+                            .map((g) => g.trim())
+                            .filter((g) => g.length > 0);
+                          setLearningGoals(goals);
+                        }
+                        setIsEditingLearningTargets(!isEditingLearningTargets);
+                      }}
+                      className="text-sm text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
+                    >
+                      {isEditingLearningTargets ? "Done" : "Edit"}
+                    </button>
+                  )}
               </div>
 
-              {(selectedLesson || state.scopeAndSequenceId) ? (
+              {selectedLesson || state.scopeAndSequenceId ? (
                 isEditingLearningTargets ? (
                   // Edit mode - show textarea
                   <div className="space-y-3">
@@ -750,12 +875,18 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                   // Always show state.learningGoals (includes user edits)
                   <ul className="text-sm text-gray-600 list-disc list-inside space-y-1">
                     {state.learningGoals.map((target, i) => (
-                      <li key={i}>{typeof target === 'string' ? target : JSON.stringify(target)}</li>
+                      <li key={i}>
+                        {typeof target === "string"
+                          ? target
+                          : JSON.stringify(target)}
+                      </li>
                     ))}
                   </ul>
                 ) : (
                   <div className="space-y-3">
-                    <p className="text-sm text-amber-600 italic">No learning targets found - please add below</p>
+                    <p className="text-sm text-amber-600 italic">
+                      No learning targets found - please add below
+                    </p>
                     <MarkdownTextarea
                       value={learningGoalText}
                       onChange={handleLearningGoalsChange}
@@ -792,12 +923,22 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                     type="button"
                     onClick={() => {
                       setMasteryImage(null, null);
-                      if (fileInputRef.current) fileInputRef.current.value = '';
+                      if (fileInputRef.current) fileInputRef.current.value = "";
                     }}
                     className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 cursor-pointer"
                   >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -808,13 +949,26 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                   onClick={() => fileInputRef.current?.click()}
                   className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors bg-gray-50"
                 >
-                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    className="mx-auto h-12 w-12 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                   <p className="mt-2 text-gray-600">
-                    Drag and drop an image, or <span className="text-blue-600 font-medium">browse</span>
+                    Drag and drop an image, or{" "}
+                    <span className="text-blue-600 font-medium">browse</span>
                   </p>
-                  <p className="mt-1 text-xs text-gray-500">PNG, JPG, or GIF up to 10MB</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    PNG, JPG, or GIF up to 10MB
+                  </p>
                 </div>
               )}
 
@@ -830,9 +984,12 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
             {/* Additional Context (Optional) */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="mb-4">
-                <h3 className="text-base font-semibold text-gray-900">Additional Context (Optional)</h3>
+                <h3 className="text-base font-semibold text-gray-900">
+                  Additional Context (Optional)
+                </h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  Add reference images or notes to guide the worked example creation
+                  Add reference images or notes to guide the worked example
+                  creation
                 </p>
               </div>
 
@@ -848,7 +1005,7 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                     {state.additionalImages.map((img, index) => (
                       <div key={index} className="relative">
                         <img
-                          src={img.preview || img.uploadedUrl || ''}
+                          src={img.preview || img.uploadedUrl || ""}
                           alt={`Additional context ${index + 1}`}
                           className="w-full h-24 object-cover rounded-lg border border-gray-300"
                         />
@@ -857,8 +1014,18 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                           onClick={() => removeAdditionalImage(index)}
                           className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 cursor-pointer"
                         >
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
                           </svg>
                         </button>
                       </div>
@@ -873,8 +1040,18 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
                   onClick={() => additionalImagesRef.current?.click()}
                   className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center cursor-pointer hover:border-blue-400 transition-colors bg-gray-50"
                 >
-                  <svg className="mx-auto h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
+                  <svg
+                    className="mx-auto h-8 w-8 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 4v16m8-8H4"
+                    />
                   </svg>
                   <p className="mt-1 text-sm text-gray-500">
                     Add images (e.g., diagrams, previous steps, examples)
@@ -925,15 +1102,37 @@ export function Step1Inputs({ wizard }: Step1InputsProps) {
               {state.isLoading ? (
                 <>
                   <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
                   </svg>
                   <span>Processing...</span>
                 </>
               ) : (
                 <>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                    />
                   </svg>
                   <span>Analyze Problem</span>
                 </>

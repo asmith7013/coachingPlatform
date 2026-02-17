@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { GradeZod } from '@zod-schema/scm/scope-and-sequence/scope-and-sequence';
+import { z } from "zod";
+import { GradeZod } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 /**
  * Deck-level visual type (determined during Phase 1 planning)
@@ -7,18 +7,22 @@ import { GradeZod } from '@zod-schema/scm/scope-and-sequence/scope-and-sequence'
  * - html-table: Simple data tables with highlighting
  * - svg-visual: ALL other graphics (graphs, diagrams, shapes, etc.)
  */
-export const DeckVisualTypeSchema = z.enum(['text-only', 'html-table', 'svg-visual']);
+export const DeckVisualTypeSchema = z.enum([
+  "text-only",
+  "html-table",
+  "svg-visual",
+]);
 export type DeckVisualType = z.infer<typeof DeckVisualTypeSchema>;
 
 /**
  * SVG subtype (only applicable when visualType is 'svg-visual')
  */
 export const SvgSubtypeSchema = z.enum([
-  'coordinate-graph',
-  'diagram',
-  'shape',
-  'number-line',
-  'other',
+  "coordinate-graph",
+  "diagram",
+  "shape",
+  "number-line",
+  "other",
 ]);
 export type SvgSubtype = z.infer<typeof SvgSubtypeSchema>;
 
@@ -42,7 +46,7 @@ const KeyElementSchema = z.object({
 // Diagram evolution step schema
 const DiagramEvolutionStepSchema = z.object({
   header: z.string(), // e.g., "STEP 1: IDENTIFY"
-  ascii: z.string(),  // ASCII showing diagram state at this step
+  ascii: z.string(), // ASCII showing diagram state at this step
   changes: z.array(z.string()), // What changed from previous step
 });
 
@@ -62,35 +66,48 @@ const DiagramPreviewSchema = z.object({
 
 // Graph plan for coordinate graphs
 const GraphPlanSchema = z.object({
-  equations: z.array(z.object({
-    label: z.string(),
-    equation: z.string(),
-    slope: z.number().optional(),
-    yIntercept: z.number().optional(),
-    color: z.string(),
-    startPoint: z.object({ x: z.number(), y: z.number() }).optional(),
-    endPoint: z.object({ x: z.number(), y: z.number() }).optional(),
-  })),
+  equations: z.array(
+    z.object({
+      label: z.string(),
+      equation: z.string(),
+      slope: z.number().optional(),
+      yIntercept: z.number().optional(),
+      color: z.string(),
+      startPoint: z.object({ x: z.number(), y: z.number() }).optional(),
+      endPoint: z.object({ x: z.number(), y: z.number() }).optional(),
+    }),
+  ),
   scale: z.object({
     xMax: z.number().optional(),
     yMax: z.number().optional(),
     xAxisLabels: z.array(z.number()).optional(),
     yAxisLabels: z.array(z.number()).optional(),
   }),
-  keyPoints: z.array(z.object({
-    label: z.string(),
-    x: z.number(),
-    y: z.number(),
-    dataX: z.number().optional(),
-    dataY: z.number().optional(),
-  })),
-  annotations: z.array(z.object({
-    type: z.enum(['y-intercept-shift', 'parallel-label', 'slope-comparison', 'intersection-point', 'slope-triangle', 'point-label']),
-    from: z.number().optional(),
-    to: z.number().optional(),
-    label: z.string(),
-    position: z.string().optional(),
-  })),
+  keyPoints: z.array(
+    z.object({
+      label: z.string(),
+      x: z.number(),
+      y: z.number(),
+      dataX: z.number().optional(),
+      dataY: z.number().optional(),
+    }),
+  ),
+  annotations: z.array(
+    z.object({
+      type: z.enum([
+        "y-intercept-shift",
+        "parallel-label",
+        "slope-comparison",
+        "intersection-point",
+        "slope-triangle",
+        "point-label",
+      ]),
+      from: z.number().optional(),
+      to: z.number().optional(),
+      label: z.string(),
+      position: z.string().optional(),
+    }),
+  ),
 });
 
 // Problem analysis schema (from Claude during Step 2)
@@ -150,19 +167,19 @@ export type Scenario = z.infer<typeof ScenarioSchema>;
 
 // HTML Slide script schema
 const HtmlSlideScriptSchema = z.object({
-  type: z.enum(['cdn', 'inline']),
+  type: z.enum(["cdn", "inline"]),
   content: z.string(),
 });
 
 // Slide type - semantic identifier for each slide's purpose
 export const SlideTypeSchema = z.enum([
-  'teacher-instructions',
-  'big-idea',
-  'problem-setup',
-  'step',
-  'practice-preview',
-  'printable-worksheet',
-  'lesson-summary',
+  "teacher-instructions",
+  "big-idea",
+  "problem-setup",
+  "step",
+  "practice-preview",
+  "printable-worksheet",
+  "lesson-summary",
 ]);
 
 // HTML Slide schema
@@ -170,7 +187,7 @@ const HtmlSlideSchema = z.object({
   slideNumber: z.number().min(1),
   slideType: SlideTypeSchema.optional(), // Semantic slide type (optional for backward compat)
   htmlContent: z.string(), // Full HTML for the slide
-  visualType: z.enum(['html', 'p5', 'd3']).default('html'),
+  visualType: z.enum(["html", "p5", "d3"]).default("html"),
   scripts: z.array(HtmlSlideScriptSchema).optional(),
   customCSS: z.string().optional(),
 });
@@ -221,7 +238,7 @@ export const WorkedExampleDeckSchema = z.object({
   scenarios: z.array(ScenarioSchema).optional(),
 
   // Generation Info
-  generatedBy: z.enum(['ai', 'manual']),
+  generatedBy: z.enum(["ai", "manual"]),
   sourceImage: z.string().optional(),
 
   // Ownership
@@ -251,7 +268,9 @@ export const CreateWorkedExampleDeckSchema = WorkedExampleDeckSchema.omit({
 
 // Type exports
 export type WorkedExampleDeck = z.infer<typeof WorkedExampleDeckSchema>;
-export type CreateWorkedExampleDeckInput = z.infer<typeof CreateWorkedExampleDeckSchema>;
+export type CreateWorkedExampleDeckInput = z.infer<
+  typeof CreateWorkedExampleDeckSchema
+>;
 export type HtmlSlide = z.infer<typeof HtmlSlideSchema>;
 export type HtmlSlideScript = z.infer<typeof HtmlSlideScriptSchema>;
 export type SlideType = z.infer<typeof SlideTypeSchema>;

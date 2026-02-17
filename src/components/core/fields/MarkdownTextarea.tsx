@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Placeholder from '@tiptap/extension-placeholder';
-import { useEffect } from 'react';
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder";
+import { useEffect } from "react";
 
 interface MarkdownTextareaProps {
   value: string;
@@ -25,7 +25,7 @@ export function MarkdownTextarea({
   height = 150,
   label,
   hint,
-  className = '',
+  className = "",
   required = false,
 }: MarkdownTextareaProps) {
   const editor = useEditor({
@@ -35,7 +35,7 @@ export function MarkdownTextarea({
         heading: { levels: [1, 2, 3] },
       }),
       Placeholder.configure({
-        placeholder: placeholder || 'Start typing...',
+        placeholder: placeholder || "Start typing...",
       }),
     ],
     content: value,
@@ -49,7 +49,7 @@ export function MarkdownTextarea({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none focus:outline-none min-h-full p-3',
+        class: "prose prose-sm max-w-none focus:outline-none min-h-full p-3",
       },
     },
   });
@@ -78,9 +78,7 @@ export function MarkdownTextarea({
           className="h-full overflow-y-auto text-gray-900 [&_.ProseMirror]:min-h-full [&_.ProseMirror]:h-full [&_.ProseMirror_p.is-editor-empty:first-child::before]:text-gray-400 [&_.ProseMirror_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.ProseMirror_p.is-editor-empty:first-child::before]:float-left [&_.ProseMirror_p.is-editor-empty:first-child::before]:pointer-events-none"
         />
       </div>
-      {hint && (
-        <p className="text-xs text-gray-500 mt-1">{hint}</p>
-      )}
+      {hint && <p className="text-xs text-gray-500 mt-1">{hint}</p>}
     </div>
   );
 }

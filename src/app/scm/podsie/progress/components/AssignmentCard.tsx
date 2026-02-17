@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react";
-import { ArrowPathIcon, PencilIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  PencilIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
 import { AssignmentProgressTable } from "./AssignmentProgressTable";
@@ -57,9 +63,9 @@ export function AssignmentCard({
 }: AssignmentCardProps) {
   // Check if this is an assessment lesson (either by activityType or section)
   const isAssessment =
-    assignment.activityType === 'assessment' ||
-    assignment.section === 'Assessment' ||
-    assignment.section === 'Unit Assessment';
+    assignment.activityType === "assessment" ||
+    assignment.section === "Assessment" ||
+    assignment.section === "Unit Assessment";
 
   // For assessments, expand accordion by default
   const [isExpanded, setIsExpanded] = useState(isAssessment);
@@ -87,110 +93,111 @@ export function AssignmentCard({
   };
 
   // Check if this is a standalone mastery check (mastery check without a paired lesson)
-  const isStandaloneMasteryCheck = assignment.activityType === 'mastery-check' && !masteryCheckAssignment;
+  const isStandaloneMasteryCheck =
+    assignment.activityType === "mastery-check" && !masteryCheckAssignment;
 
   // Filter progress data to only show this assignment's data
   // Use podsieAssignmentId to distinguish between lesson and mastery-check with same unitLessonId
-  const filteredProgressData = useMemo(
-    () => {
-      // For standalone mastery checks, we need to get all students from the section
-      // so the table can show rows with blank lesson columns
-      if (isStandaloneMasteryCheck) {
-        // Get all unique students from the progress data for this section
-        const allStudents = progressData.filter(p =>
+  const filteredProgressData = useMemo(() => {
+    // For standalone mastery checks, we need to get all students from the section
+    // so the table can show rows with blank lesson columns
+    if (isStandaloneMasteryCheck) {
+      // Get all unique students from the progress data for this section
+      const allStudents = progressData.filter(
+        (p) =>
           p.podsieAssignmentId === assignment.podsieAssignmentId ||
-          p.rampUpId === assignment.unitLessonId
-        );
-
-        // Deduplicate by studentId
-        const seen = new Set();
-        const uniqueStudents = allStudents.filter(p => {
-          if (seen.has(p.studentId)) {
-            return false;
-          }
-          seen.add(p.studentId);
-          return true;
-        });
-
-        // Create empty lesson progress data for each student (so they appear in the table)
-        return uniqueStudents.map(p => ({
-          ...p,
-          questions: [], // No lesson questions for standalone mastery check
-          totalQuestions: 0,
-          completedCount: 0,
-          percentComplete: 0,
-          isFullyComplete: false
-        }));
-      }
-
-      const filtered = progressData.filter(p =>
-        p.podsieAssignmentId
-          ? p.podsieAssignmentId === assignment.podsieAssignmentId
-          : p.rampUpId === assignment.unitLessonId
+          p.rampUpId === assignment.unitLessonId,
       );
 
-      // Deduplicate by studentId (keep only the first occurrence of each student)
+      // Deduplicate by studentId
       const seen = new Set();
-      return filtered.filter(p => {
+      const uniqueStudents = allStudents.filter((p) => {
         if (seen.has(p.studentId)) {
           return false;
         }
         seen.add(p.studentId);
         return true;
       });
-    },
-    [progressData, assignment, isStandaloneMasteryCheck]
-  );
+
+      // Create empty lesson progress data for each student (so they appear in the table)
+      return uniqueStudents.map((p) => ({
+        ...p,
+        questions: [], // No lesson questions for standalone mastery check
+        totalQuestions: 0,
+        completedCount: 0,
+        percentComplete: 0,
+        isFullyComplete: false,
+      }));
+    }
+
+    const filtered = progressData.filter((p) =>
+      p.podsieAssignmentId
+        ? p.podsieAssignmentId === assignment.podsieAssignmentId
+        : p.rampUpId === assignment.unitLessonId,
+    );
+
+    // Deduplicate by studentId (keep only the first occurrence of each student)
+    const seen = new Set();
+    return filtered.filter((p) => {
+      if (seen.has(p.studentId)) {
+        return false;
+      }
+      seen.add(p.studentId);
+      return true;
+    });
+  }, [progressData, assignment, isStandaloneMasteryCheck]);
 
   // Filter mastery check progress data if provided
-  const filteredMasteryCheckData = useMemo(
-    () => {
-      // If there's a separate mastery check assignment, use its data
-      if (masteryCheckAssignment) {
-        const filtered = progressData.filter(p =>
-          p.podsieAssignmentId
-            ? p.podsieAssignmentId === masteryCheckAssignment.podsieAssignmentId
-            : p.rampUpId === masteryCheckAssignment.unitLessonId
-        );
+  const filteredMasteryCheckData = useMemo(() => {
+    // If there's a separate mastery check assignment, use its data
+    if (masteryCheckAssignment) {
+      const filtered = progressData.filter((p) =>
+        p.podsieAssignmentId
+          ? p.podsieAssignmentId === masteryCheckAssignment.podsieAssignmentId
+          : p.rampUpId === masteryCheckAssignment.unitLessonId,
+      );
 
-        // Deduplicate by studentId (keep only the first occurrence of each student)
-        const seen = new Set();
-        return filtered.filter(p => {
-          if (seen.has(p.studentId)) {
-            return false;
-          }
-          seen.add(p.studentId);
-          return true;
-        });
-      }
+      // Deduplicate by studentId (keep only the first occurrence of each student)
+      const seen = new Set();
+      return filtered.filter((p) => {
+        if (seen.has(p.studentId)) {
+          return false;
+        }
+        seen.add(p.studentId);
+        return true;
+      });
+    }
 
-      // If this is a standalone mastery check, use the assignment's data
-      if (isStandaloneMasteryCheck) {
-        const filtered = progressData.filter(p =>
-          p.podsieAssignmentId
-            ? p.podsieAssignmentId === assignment.podsieAssignmentId
-            : p.rampUpId === assignment.unitLessonId
-        );
+    // If this is a standalone mastery check, use the assignment's data
+    if (isStandaloneMasteryCheck) {
+      const filtered = progressData.filter((p) =>
+        p.podsieAssignmentId
+          ? p.podsieAssignmentId === assignment.podsieAssignmentId
+          : p.rampUpId === assignment.unitLessonId,
+      );
 
-        // Deduplicate by studentId (keep only the first occurrence of each student)
-        const seen = new Set();
-        return filtered.filter(p => {
-          if (seen.has(p.studentId)) {
-            return false;
-          }
-          seen.add(p.studentId);
-          return true;
-        });
-      }
+      // Deduplicate by studentId (keep only the first occurrence of each student)
+      const seen = new Set();
+      return filtered.filter((p) => {
+        if (seen.has(p.studentId)) {
+          return false;
+        }
+        seen.add(p.studentId);
+        return true;
+      });
+    }
 
-      return [];
-    },
-    [progressData, masteryCheckAssignment, assignment, isStandaloneMasteryCheck]
-  );
+    return [];
+  }, [
+    progressData,
+    masteryCheckAssignment,
+    assignment,
+    isStandaloneMasteryCheck,
+  ]);
 
   // Format unitLessonId as "Unit X, Lesson Y"
   const formatUnitLesson = (unitLessonId: string) => {
-    const parts = unitLessonId.split('.');
+    const parts = unitLessonId.split(".");
     if (parts.length === 2) {
       return `Unit ${parts[0]}, Lesson ${parts[1]}`;
     }
@@ -198,11 +205,15 @@ export function AssignmentCard({
   };
 
   // Format section with optional subsection (e.g., "Section A" or "Section A (Part 1)")
-  const formatSection = (section: string | undefined, subsection: number | undefined) => {
+  const formatSection = (
+    section: string | undefined,
+    subsection: number | undefined,
+  ) => {
     if (!section) return "";
-    const baseName = section === "Ramp Ups" || section === "Unit Assessment"
-      ? section
-      : `Section ${section}`;
+    const baseName =
+      section === "Ramp Ups" || section === "Unit Assessment"
+        ? section
+        : `Section ${section}`;
     if (subsection !== undefined) {
       return `${baseName} (Part ${subsection})`;
     }
@@ -213,7 +224,7 @@ export function AssignmentCard({
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-visible">
       {/* Card Header - Accordion Toggle */}
       <div
-        className={`${isExpanded ? 'sticky top-0 z-30 shadow-md' : 'cursor-pointer hover:bg-gray-100'} bg-gray-50 border-b border-gray-200 px-6 py-4 ${isExpanded ? '' : 'rounded-lg'} transition-colors`}
+        className={`${isExpanded ? "sticky top-0 z-30 shadow-md" : "cursor-pointer hover:bg-gray-100"} bg-gray-50 border-b border-gray-200 px-6 py-4 ${isExpanded ? "" : "rounded-lg"} transition-colors`}
         onClick={() => !isExpanded && setIsExpanded(true)}
       >
         <div className="flex items-center justify-between">
@@ -235,7 +246,9 @@ export function AssignmentCard({
                 {assignment.lessonName}
               </h3>
               <p className="text-sm text-gray-500">
-                {formatUnitLesson(assignment.unitLessonId)} • {assignment.totalQuestions} questions • {formatSection(assignment.section, assignment.subsection)}
+                {formatUnitLesson(assignment.unitLessonId)} •{" "}
+                {assignment.totalQuestions} questions •{" "}
+                {formatSection(assignment.section, assignment.subsection)}
               </p>
             </div>
           </button>
@@ -293,14 +306,16 @@ export function AssignmentCard({
                         syncing ||
                         masteryCheckSyncing ||
                         !assignment.podsieAssignmentId ||
-                        (masteryCheckAssignment && !masteryCheckAssignment.podsieAssignmentId)
+                        (masteryCheckAssignment &&
+                          !masteryCheckAssignment.podsieAssignmentId)
                       }
                       className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
                         syncingBoth ||
                         syncing ||
                         masteryCheckSyncing ||
                         !assignment.podsieAssignmentId ||
-                        (masteryCheckAssignment && !masteryCheckAssignment.podsieAssignmentId)
+                        (masteryCheckAssignment &&
+                          !masteryCheckAssignment.podsieAssignmentId)
                           ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                           : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
                       }`}

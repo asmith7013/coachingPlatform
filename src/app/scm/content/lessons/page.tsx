@@ -25,7 +25,9 @@ import { getStateTestQuestions } from "@/app/tools/state-test-scraper/actions/sc
 
 export default function LessonsOverviewPage() {
   const [selectedGrade, setSelectedGrade] = useState<ScopeSequenceTag | "">("");
-  const [availableGrades, setAvailableGrades] = useState<ScopeSequenceTag[]>([]);
+  const [availableGrades, setAvailableGrades] = useState<ScopeSequenceTag[]>(
+    [],
+  );
   const [units, setUnits] = useState<UnitWithLessons[]>([]);
   const [skillMap, setSkillMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -34,7 +36,9 @@ export default function LessonsOverviewPage() {
   const [showRampUps, setShowRampUps] = useState(false);
 
   // State test questions for the matrix
-  const [stateTestQuestions, setStateTestQuestions] = useState<StateTestQuestion[]>([]);
+  const [stateTestQuestions, setStateTestQuestions] = useState<
+    StateTestQuestion[]
+  >([]);
   const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [showSubstandards, setShowSubstandards] = useState(true);
   const [isMatrixOpen, setIsMatrixOpen] = useState(false);
@@ -159,14 +163,17 @@ export default function LessonsOverviewPage() {
   const filteredUnits = useMemo(() => {
     if (showRampUps) return units;
 
-    return units.map(unit => ({
+    return units.map((unit) => ({
       ...unit,
-      lessons: unit.lessons.filter(lesson => lesson.section !== "Ramp Ups")
+      lessons: unit.lessons.filter((lesson) => lesson.section !== "Ramp Ups"),
     }));
   }, [units, showRampUps]);
 
   // Count total lessons (filtered)
-  const totalLessons = filteredUnits.reduce((sum, unit) => sum + unit.lessons.length, 0);
+  const totalLessons = filteredUnits.reduce(
+    (sum, unit) => sum + unit.lessons.length,
+    0,
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -176,7 +183,9 @@ export default function LessonsOverviewPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Scope & Sequence</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Scope & Sequence
+                </h1>
                 <p className="text-sm text-gray-500 mt-1">
                   View all lessons organized by unit
                 </p>
@@ -208,7 +217,10 @@ export default function LessonsOverviewPage() {
               )}
               {/* Curriculum Selector */}
               <div className="flex items-center gap-3">
-                <label htmlFor="grade-filter" className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="grade-filter"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Curriculum
                 </label>
                 <select
@@ -261,66 +273,77 @@ export default function LessonsOverviewPage() {
               Select a Curriculum to View Lessons
             </h3>
             <p className="text-gray-500">
-              Use the curriculum filter above to see all lessons in the scope and sequence.
+              Use the curriculum filter above to see all lessons in the scope
+              and sequence.
             </p>
           </div>
         )}
 
         {/* Unit × Standards Matrix Accordion - Shows above units when grade is selected */}
-        {selectedGrade && !loading && stateTestQuestions.length > 0 && unitsWithStandards.length > 0 && (
-          <div className="mb-3 rounded-lg overflow-hidden border-2 border-slate-300 bg-white shadow-sm">
-            {/* Accordion Header */}
-            <button
-              type="button"
-              onClick={() => setIsMatrixOpen(!isMatrixOpen)}
-              className="w-full bg-slate-100 px-4 py-3 cursor-pointer hover:bg-slate-200 transition-colors"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="bg-slate-600 text-white text-sm font-bold px-3 py-1 rounded-full">
-                    State Test Questions
-                  </span>
-                  <h2 className="text-base font-semibold text-slate-700 text-left">
-                    Unit × Standards Matrix
-                  </h2>
-                  {loadingQuestions && <Spinner size="xs" variant="primary" />}
-                </div>
-                <div className="flex items-center gap-3">
-                  {/* <span className="text-slate-600 text-sm">
+        {selectedGrade &&
+          !loading &&
+          stateTestQuestions.length > 0 &&
+          unitsWithStandards.length > 0 && (
+            <div className="mb-3 rounded-lg overflow-hidden border-2 border-slate-300 bg-white shadow-sm">
+              {/* Accordion Header */}
+              <button
+                type="button"
+                onClick={() => setIsMatrixOpen(!isMatrixOpen)}
+                className="w-full bg-slate-100 px-4 py-3 cursor-pointer hover:bg-slate-200 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="bg-slate-600 text-white text-sm font-bold px-3 py-1 rounded-full">
+                      State Test Questions
+                    </span>
+                    <h2 className="text-base font-semibold text-slate-700 text-left">
+                      Unit × Standards Matrix
+                    </h2>
+                    {loadingQuestions && (
+                      <Spinner size="xs" variant="primary" />
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {/* <span className="text-slate-600 text-sm">
                     {stateTestQuestions.length} questions across {unitsWithStandards.length} units
                   </span> */}
-                  <svg
-                    className={`w-5 h-5 text-slate-600 transition-transform ${isMatrixOpen ? "rotate-180" : ""}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-            </button>
-
-            {/* Accordion Content */}
-            {isMatrixOpen && (
-              <div className="relative">
-                {loadingQuestions && (
-                  <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-10">
-                    <Spinner size="md" variant="primary" />
+                    <svg
+                      className={`w-5 h-5 text-slate-600 transition-transform ${isMatrixOpen ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
                   </div>
-                )}
-                <StandardsUnitMatrix
-                  questions={stateTestQuestions}
-                  units={unitsWithStandards}
-                  selectedGrade={extractGradeFromTag(selectedGrade) || ""}
-                  standardDescriptions={dynamicStandardDescriptions}
-                  showSubstandards={showSubstandards}
-                  onShowSubstandardsChange={setShowSubstandards}
-                />
-              </div>
-            )}
-          </div>
-        )}
+                </div>
+              </button>
+
+              {/* Accordion Content */}
+              {isMatrixOpen && (
+                <div className="relative">
+                  {loadingQuestions && (
+                    <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-10">
+                      <Spinner size="md" variant="primary" />
+                    </div>
+                  )}
+                  <StandardsUnitMatrix
+                    questions={stateTestQuestions}
+                    units={unitsWithStandards}
+                    selectedGrade={extractGradeFromTag(selectedGrade) || ""}
+                    standardDescriptions={dynamicStandardDescriptions}
+                    showSubstandards={showSubstandards}
+                    onShowSubstandardsChange={setShowSubstandards}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
         {/* Lessons Table */}
         {!loading && selectedGrade && filteredUnits.length > 0 && (
@@ -340,7 +363,8 @@ export default function LessonsOverviewPage() {
             </h3>
             <p className="text-gray-500">
               No lessons found for {selectedGrade}.
-              {!showRampUps && " Try enabling 'Show Ramp Ups' to see more lessons."}
+              {!showRampUps &&
+                " Try enabling 'Show Ramp Ups' to see more lessons."}
             </p>
           </div>
         )}

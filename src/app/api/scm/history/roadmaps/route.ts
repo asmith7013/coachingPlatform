@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
       // Fetch students with skillPerformances
       const students = await StudentModel.find(query)
         .select(
-          "studentID firstName lastName email section skillPerformances lastAssessmentDate"
+          "studentID firstName lastName email section skillPerformances lastAssessmentDate",
         )
         .lean();
 
@@ -69,7 +69,8 @@ export async function GET(req: NextRequest) {
 
       for (const student of students) {
         const s = student as Record<string, unknown>;
-        const studentName = `${s.firstName || ""} ${s.lastName || ""}`.trim() || "(unknown)";
+        const studentName =
+          `${s.firstName || ""} ${s.lastName || ""}`.trim() || "(unknown)";
         const studentEmail = (s.email as string) || "";
         const studentId = (s.studentID as number).toString();
 
@@ -145,7 +146,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in roadmaps history GET:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

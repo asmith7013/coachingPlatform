@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { Scenario } from '../../lib/types';
+import type { Scenario } from "../../lib/types";
 
 interface ScenarioEditorProps {
   scenario: Scenario;

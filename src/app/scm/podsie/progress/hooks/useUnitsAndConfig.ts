@@ -26,7 +26,11 @@ interface SectionConfigData {
  * Hook for fetching units and section config using React Query
  * @param school - The school to fetch config for (required for sections that exist in multiple schools)
  */
-export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: string, school?: string) {
+export function useUnitsAndConfig(
+  scopeSequenceTag: string,
+  selectedSection: string,
+  school?: string,
+) {
   const queryClient = useQueryClient();
 
   const enabled = Boolean(scopeSequenceTag && selectedSection);
@@ -46,12 +50,17 @@ export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: str
         const allUnits: UnitOption[] = [];
         if (alg1Grade8Result.success) {
           allUnits.push(
-            ...alg1Grade8Result.data.map((u) => ({ ...u, scopeSequenceTag: "Algebra 1" }))
+            ...alg1Grade8Result.data.map((u) => ({
+              ...u,
+              scopeSequenceTag: "Algebra 1",
+            })),
           );
         }
         if (alg1GradeAlg1Result.success) {
           // Only add units that aren't already in the list (avoid duplicates)
-          const existingUnitNumbers = new Set(allUnits.map((u) => u.unitNumber));
+          const existingUnitNumbers = new Set(
+            allUnits.map((u) => u.unitNumber),
+          );
           const newUnits = alg1GradeAlg1Result.data
             .filter((u) => !existingUnitNumbers.has(u.unitNumber))
             .map((u) => ({ ...u, scopeSequenceTag: "Algebra 1" }));
@@ -61,7 +70,10 @@ export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: str
       }
 
       // For other sections, load units normally
-      const unitsResult = await fetchAllUnitsByScopeTag(scopeSequenceTag, grade);
+      const unitsResult = await fetchAllUnitsByScopeTag(
+        scopeSequenceTag,
+        grade,
+      );
       if (unitsResult.success) {
         return unitsResult.data;
       }
@@ -84,12 +96,12 @@ export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: str
 
       if (configResult.success && configResult.data) {
         // Add scopeSequenceTag to each assignment from the parent config
-        const assignmentsWithScope = (configResult.data.assignmentContent || []).map(
-          (assignment: AssignmentContent) => ({
-            ...assignment,
-            scopeSequenceTag: configResult.data.scopeSequenceTag,
-          })
-        );
+        const assignmentsWithScope = (
+          configResult.data.assignmentContent || []
+        ).map((assignment: AssignmentContent) => ({
+          ...assignment,
+          scopeSequenceTag: configResult.data.scopeSequenceTag,
+        }));
         return {
           assignments: assignmentsWithScope,
           groupId: configResult.data.groupId || null,
@@ -111,16 +123,15 @@ export function useUnitsAndConfig(scopeSequenceTag: string, selectedSection: str
         (prev) => ({
           assignments: newAssignments,
           groupId: prev?.groupId || null,
-        })
+        }),
       );
     },
-    [queryClient, selectedSection]
+    [queryClient, selectedSection],
   );
 
   // Combine loading and error states
   const loading = unitsQuery.isLoading || configQuery.isLoading;
-  const error =
-    unitsQuery.error?.message || configQuery.error?.message || null;
+  const error = unitsQuery.error?.message || configQuery.error?.message || null;
 
   return {
     units: unitsQuery.data || [],

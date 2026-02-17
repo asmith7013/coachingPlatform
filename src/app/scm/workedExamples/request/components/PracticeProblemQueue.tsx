@@ -1,8 +1,11 @@
 "use client";
 
-import { XMarkIcon, ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
+import {
+  XMarkIcon,
+  ClipboardDocumentListIcon,
+} from "@heroicons/react/24/outline";
 
-export type SkillType = 'target' | 'essential' | 'helpful';
+export type SkillType = "target" | "essential" | "helpful";
 
 export interface QueuedPracticeProblem {
   skillNumber: string;
@@ -25,16 +28,16 @@ interface PracticeProblemQueueProps {
 // skill-helpful: turquoise (#009FB7)
 const colorClasses = {
   target: {
-    badge: 'bg-skill-target',
-    selectedBorder: 'ring-2 ring-skill-target ring-offset-2',
+    badge: "bg-skill-target",
+    selectedBorder: "ring-2 ring-skill-target ring-offset-2",
   },
   essential: {
-    badge: 'bg-skill-essential',
-    selectedBorder: 'ring-2 ring-skill-essential ring-offset-2',
+    badge: "bg-skill-essential",
+    selectedBorder: "ring-2 ring-skill-essential ring-offset-2",
   },
   helpful: {
-    badge: 'bg-skill-helpful',
-    selectedBorder: 'ring-2 ring-skill-helpful ring-offset-2',
+    badge: "bg-skill-helpful",
+    selectedBorder: "ring-2 ring-skill-helpful ring-offset-2",
   },
 };
 
@@ -47,11 +50,14 @@ export function PracticeProblemQueue({
   if (items.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-        <h3 className="font-semibold text-gray-900 mb-3">Consideration Queue</h3>
+        <h3 className="font-semibold text-gray-900 mb-3">
+          Consideration Queue
+        </h3>
         <div className="text-center py-8 text-gray-500">
           <ClipboardDocumentListIcon className="w-10 h-10 text-gray-400 mx-auto mb-2" />
           <p className="text-sm">
-            Browse skills and click &quot;Add to Consideration&quot; on practice problems to add them here.
+            Browse skills and click &quot;Add to Consideration&quot; on practice
+            problems to add them here.
           </p>
         </div>
       </div>
@@ -61,7 +67,9 @@ export function PracticeProblemQueue({
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900">Consideration Queue ({items.length})</h3>
+        <h3 className="font-semibold text-gray-900">
+          Consideration Queue ({items.length})
+        </h3>
         {selectedItem && (
           <span className="text-sm text-green-600 font-medium">
             ✓ Selected for request
@@ -74,17 +82,18 @@ export function PracticeProblemQueue({
 
       {/* Horizontal scrollable container */}
       <div className="overflow-x-auto pb-2">
-        <div className="flex gap-4" style={{ minWidth: 'min-content' }}>
+        <div className="flex gap-4" style={{ minWidth: "min-content" }}>
           {items.map((item, index) => {
-            const isSelected = selectedItem?.skillNumber === item.skillNumber &&
-                               selectedItem?.problemNumber === item.problemNumber;
+            const isSelected =
+              selectedItem?.skillNumber === item.skillNumber &&
+              selectedItem?.problemNumber === item.problemNumber;
             const colors = colorClasses[item.skillType];
 
             return (
               <div
                 key={`${item.skillNumber}-${item.problemNumber}-${index}`}
                 className={`relative flex-shrink-0 w-48 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden cursor-pointer transition-all hover:shadow-md ${
-                  isSelected ? colors.selectedBorder : ''
+                  isSelected ? colors.selectedBorder : ""
                 }`}
                 onClick={() => onSelect(item)}
               >
@@ -101,7 +110,9 @@ export function PracticeProblemQueue({
                 </button>
 
                 {/* Skill badge */}
-                <div className={`absolute top-1 left-1 z-10 ${colors.badge} text-white text-xs font-bold px-2 py-0.5 rounded`}>
+                <div
+                  className={`absolute top-1 left-1 z-10 ${colors.badge} text-white text-xs font-bold px-2 py-0.5 rounded`}
+                >
                   {item.skillNumber}
                 </div>
 
@@ -116,7 +127,10 @@ export function PracticeProblemQueue({
 
                 {/* Info section */}
                 <div className="p-2 border-t border-gray-200 bg-white">
-                  <div className="text-xs text-gray-600 truncate" title={item.skillTitle}>
+                  <div
+                    className="text-xs text-gray-600 truncate"
+                    title={item.skillTitle}
+                  >
                     {item.skillTitle}
                   </div>
                   <div className="text-xs font-medium text-gray-900 mt-0.5">

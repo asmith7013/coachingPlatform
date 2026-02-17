@@ -25,10 +25,7 @@ export function DetailCard({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           {icon && <span className="text-2xl">{icon}</span>}
-          <h3
-            className="text-lg font-semibold"
-            style={{ color }}
-          >
+          <h3 className="text-lg font-semibold" style={{ color }}>
             {title}
           </h3>
         </div>
@@ -67,13 +64,15 @@ interface StudentDetailRowProps {
 /**
  * Row for each student in detail card
  */
-export function StudentDetailRow({ studentName, children, stacked = false }: StudentDetailRowProps) {
+export function StudentDetailRow({
+  studentName,
+  children,
+  stacked = false,
+}: StudentDetailRowProps) {
   if (stacked) {
     return (
       <div className="p-3 bg-gray-50 rounded-md space-y-2">
-        <div className="font-medium text-gray-700">
-          {studentName}
-        </div>
+        <div className="font-medium text-gray-700">{studentName}</div>
         <div>{children}</div>
       </div>
     );

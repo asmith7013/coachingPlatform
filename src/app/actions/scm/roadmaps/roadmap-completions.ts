@@ -46,7 +46,10 @@ export interface SectionRoadmapData {
 /**
  * Helper to check if a date string falls within the date range
  */
-function isDateInRange(dateStr: string | undefined, dateRange?: DateRange): boolean {
+function isDateInRange(
+  dateStr: string | undefined,
+  dateRange?: DateRange,
+): boolean {
   if (!dateRange || !dateStr) return true; // No filtering if no date range or no date
 
   // Parse the date string (could be various formats)
@@ -68,8 +71,11 @@ function isDateInRange(dateStr: string | undefined, dateRange?: DateRange): bool
  */
 export async function getRoadmapCompletionsBySection(
   sectionIds: string[],
-  dateRange?: DateRange
-): Promise<{ success: true; data: SectionRoadmapData[] } | { success: false; error: string }> {
+  dateRange?: DateRange,
+): Promise<
+  | { success: true; data: SectionRoadmapData[] }
+  | { success: false; error: string }
+> {
   return withDbConnection(async () => {
     try {
       if (sectionIds.length === 0) {
@@ -98,7 +104,9 @@ export async function getRoadmapCompletionsBySection(
           school: config.school,
           active: true,
         })
-          .select("studentID firstName lastName masteredSkills skillPerformances")
+          .select(
+            "studentID firstName lastName masteredSkills skillPerformances",
+          )
           .lean();
 
         interface SkillAttempt {
@@ -126,7 +134,9 @@ export async function getRoadmapCompletionsBySection(
           skillPerformances?: SkillPerformance[];
         }
 
-        const studentData: StudentRoadmapData[] = (students as unknown as LeanStudent[]).map((student) => {
+        const studentData: StudentRoadmapData[] = (
+          students as unknown as LeanStudent[]
+        ).map((student) => {
           const masteredSkillsSet = new Set(student.masteredSkills || []);
           const allSkillPerformances = student.skillPerformances || [];
 
@@ -135,17 +145,23 @@ export async function getRoadmapCompletionsBySection(
           const skillPerformances = dateRange
             ? allSkillPerformances.filter((sp) => {
                 // Check if masteredDate is in range
-                if (sp.masteredDate && isDateInRange(sp.masteredDate, dateRange)) {
+                if (
+                  sp.masteredDate &&
+                  isDateInRange(sp.masteredDate, dateRange)
+                ) {
                   return true;
                 }
                 // Check if lastAttemptDate is in range
-                if (sp.lastAttemptDate && isDateInRange(sp.lastAttemptDate, dateRange)) {
+                if (
+                  sp.lastAttemptDate &&
+                  isDateInRange(sp.lastAttemptDate, dateRange)
+                ) {
                   return true;
                 }
                 // Check if any attempt is in range
                 if (sp.attempts && sp.attempts.length > 0) {
                   return sp.attempts.some((attempt) =>
-                    isDateInRange(attempt.dateCompleted, dateRange)
+                    isDateInRange(attempt.dateCompleted, dateRange),
                   );
                 }
                 return false;
@@ -158,7 +174,7 @@ export async function getRoadmapCompletionsBySection(
             for (const sp of skillPerformances) {
               if (sp.attempts && sp.attempts.length > 0) {
                 totalAttempts += sp.attempts.filter((attempt) =>
-                  isDateInRange(attempt.dateCompleted, dateRange)
+                  isDateInRange(attempt.dateCompleted, dateRange),
                 ).length;
               } else {
                 // Fallback to attemptCount if no attempts array
@@ -168,7 +184,7 @@ export async function getRoadmapCompletionsBySection(
           } else {
             totalAttempts = skillPerformances.reduce(
               (sum, sp) => sum + (sp.attemptCount || 0),
-              0
+              0,
             );
           }
 
@@ -184,14 +200,16 @@ export async function getRoadmapCompletionsBySection(
 
           // Skills attempted but not mastered (with activity in date range)
           const attemptedNotMastered = skillPerformances.filter(
-            (sp) => sp.status === "Attempted But Not Mastered"
+            (sp) => sp.status === "Attempted But Not Mastered",
           ).length;
 
           // Skills from diagnostic (in masteredSkills but not in skillPerformances)
           // Always shown regardless of date range
-          const skillPerformanceCodes = new Set(allSkillPerformances.map((sp) => sp.skillCode));
+          const skillPerformanceCodes = new Set(
+            allSkillPerformances.map((sp) => sp.skillCode),
+          );
           const masteredFromDiagnostic = [...masteredSkillsSet].filter(
-            (skill) => !skillPerformanceCodes.has(skill)
+            (skill) => !skillPerformanceCodes.has(skill),
           ).length;
 
           // Total mastered = diagnostic baseline + practice-mastered within date range
@@ -228,7 +246,10 @@ export async function getRoadmapCompletionsBySection(
 
       return { success: true, data: results };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch roadmap completions") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch roadmap completions"),
+      };
     }
   });
 }

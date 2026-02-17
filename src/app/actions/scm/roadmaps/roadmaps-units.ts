@@ -7,7 +7,7 @@ import {
   RoadmapUnitZodSchema,
   RoadmapUnitInputZodSchema,
   RoadmapUnit,
-  RoadmapUnitInput
+  RoadmapUnitInput,
 } from "@zod-schema/scm/roadmaps/roadmap-unit";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -23,11 +23,11 @@ const roadmapUnitCrud = createCrudActions({
   model: RoadmapUnitModel,
   schema: RoadmapUnitZodSchema as ZodType<RoadmapUnit>,
   inputSchema: RoadmapUnitInputZodSchema as ZodType<RoadmapUnitInput>,
-  name: 'RoadmapUnit',
-  revalidationPaths: ['/roadmaps/units', '/roadmaps/unit-scraper'],
-  sortFields: ['grade', 'unitNumber', 'unitTitle', 'createdAt', 'updatedAt'],
-  defaultSortField: 'unitNumber',
-  defaultSortOrder: 'asc'
+  name: "RoadmapUnit",
+  revalidationPaths: ["/roadmaps/units", "/roadmaps/unit-scraper"],
+  sortFields: ["grade", "unitNumber", "unitTitle", "createdAt", "updatedAt"],
+  defaultSortField: "unitNumber",
+  defaultSortOrder: "asc",
 });
 
 // Export CRUD operations (rename 'delete' to avoid reserved keyword conflict)
@@ -57,26 +57,46 @@ const ScrapedUnitSchema = z.object({
   targetCount: z.number(),
   supportCount: z.number(),
   extensionCount: z.number(),
-  targetSkills: z.array(z.object({
-    title: z.string(),
-    skillNumber: z.string(),
-    essentialSkills: z.array(z.object({
-      title: z.string(),
-      skillNumber: z.string()
-    })).default([]),
-    helpfulSkills: z.array(z.object({
-      title: z.string(),
-      skillNumber: z.string()
-    })).default([]),
-  })).default([]),
-  additionalSupportSkills: z.array(z.object({
-    title: z.string(),
-    skillNumber: z.string()
-  })).default([]),
-  extensionSkills: z.array(z.object({
-    title: z.string(),
-    skillNumber: z.string()
-  })).default([]),
+  targetSkills: z
+    .array(
+      z.object({
+        title: z.string(),
+        skillNumber: z.string(),
+        essentialSkills: z
+          .array(
+            z.object({
+              title: z.string(),
+              skillNumber: z.string(),
+            }),
+          )
+          .default([]),
+        helpfulSkills: z
+          .array(
+            z.object({
+              title: z.string(),
+              skillNumber: z.string(),
+            }),
+          )
+          .default([]),
+      }),
+    )
+    .default([]),
+  additionalSupportSkills: z
+    .array(
+      z.object({
+        title: z.string(),
+        skillNumber: z.string(),
+      }),
+    )
+    .default([]),
+  extensionSkills: z
+    .array(
+      z.object({
+        title: z.string(),
+        skillNumber: z.string(),
+      }),
+    )
+    .default([]),
   scrapedAt: z.string(),
   success: z.boolean(),
   error: z.string().optional(),
@@ -91,14 +111,21 @@ export async function bulkCreateRoadmapUnits(data: unknown) {
   return withDbConnection(async () => {
     try {
       // Expect data in format: { grade: string, units: ScrapedUnit[] }
-      const parsed = z.object({
-        grade: z.string(),
-        units: z.array(ScrapedUnitSchema)
-      }).parse(data);
+      const parsed = z
+        .object({
+          grade: z.string(),
+          units: z.array(ScrapedUnitSchema),
+        })
+        .parse(data);
 
       const { grade, units: unitsArray } = parsed;
 
-      console.log('📚 Bulk creating', unitsArray.length, 'Roadmaps units for grade:', grade);
+      console.log(
+        "📚 Bulk creating",
+        unitsArray.length,
+        "Roadmaps units for grade:",
+        grade,
+      );
 
       const results = [];
       const errors = [];
@@ -109,10 +136,18 @@ export async function bulkCreateRoadmapUnits(data: unknown) {
           // Extract unit number if not provided
           const unitNumber = extractUnitNumber(unitData.unitTitle);
 
-          console.log(`💾 Processing unit: ${unitData.unitTitle} (number: ${unitNumber})`);
-          console.log(`   📊 Target skills: ${unitData.targetSkills?.length || 0}`);
-          console.log(`   📊 Support skills: ${unitData.additionalSupportSkills?.length || 0}`);
-          console.log(`   📊 Extension skills: ${unitData.extensionSkills?.length || 0}`);
+          console.log(
+            `💾 Processing unit: ${unitData.unitTitle} (number: ${unitNumber})`,
+          );
+          console.log(
+            `   📊 Target skills: ${unitData.targetSkills?.length || 0}`,
+          );
+          console.log(
+            `   📊 Support skills: ${unitData.additionalSupportSkills?.length || 0}`,
+          );
+          console.log(
+            `   📊 Extension skills: ${unitData.extensionSkills?.length || 0}`,
+          );
 
           // 1. Save all target skills to roadmaps-skills collection
           for (const targetSkill of unitData.targetSkills) {
@@ -124,9 +159,9 @@ export async function bulkCreateRoadmapUnits(data: unknown) {
               unit: {
                 grade,
                 unitTitle: unitData.unitTitle,
-                unitNumber
+                unitNumber,
               },
-              scrapedAt: unitData.scrapedAt
+              scrapedAt: unitData.scrapedAt,
             });
 
             if (skillResult.success) {
@@ -144,72 +179,89 @@ export async function bulkCreateRoadmapUnits(data: unknown) {
             supportCount: unitData.supportCount,
             extensionCount: unitData.extensionCount,
             // Only store skill numbers (strings)
-            targetSkills: unitData.targetSkills.map(s => s.skillNumber),
-            additionalSupportSkills: unitData.additionalSupportSkills.map(s => s.skillNumber),
-            extensionSkills: unitData.extensionSkills.map(s => s.skillNumber),
+            targetSkills: unitData.targetSkills.map((s) => s.skillNumber),
+            additionalSupportSkills: unitData.additionalSupportSkills.map(
+              (s) => s.skillNumber,
+            ),
+            extensionSkills: unitData.extensionSkills.map((s) => s.skillNumber),
             scrapedAt: unitData.scrapedAt,
             success: unitData.success,
-            error: unitData.error
+            error: unitData.error,
           };
 
           // 3. Upsert the unit
           const existingUnit = await RoadmapUnitModel.findOne({
             grade,
-            unitTitle: unitData.unitTitle
+            unitTitle: unitData.unitTitle,
           });
 
           if (existingUnit) {
-            console.log('⚠️ Updating existing unit:', unitData.unitTitle);
+            console.log("⚠️ Updating existing unit:", unitData.unitTitle);
             const updateResult = await RoadmapUnitModel.findByIdAndUpdate(
               existingUnit._id,
               {
                 ...transformedUnit,
-                updatedAt: new Date().toISOString()
+                updatedAt: new Date().toISOString(),
               },
-              { new: true, runValidators: true }
+              { new: true, runValidators: true },
             );
 
             if (updateResult) {
               const saved = updateResult.toObject();
-              const targetSkills = saved.targetSkills as unknown as string[] | undefined;
-              console.log(`   ✅ Updated - Saved with ${targetSkills?.length || 0} target skill references`);
+              const targetSkills = saved.targetSkills as unknown as
+                | string[]
+                | undefined;
+              console.log(
+                `   ✅ Updated - Saved with ${targetSkills?.length || 0} target skill references`,
+              );
               results.push({
-                action: 'updated',
-                unit: saved
+                action: "updated",
+                unit: saved,
               });
             }
           } else {
-            console.log('✅ Creating new unit:', unitData.unitTitle);
+            console.log("✅ Creating new unit:", unitData.unitTitle);
             const unit = new RoadmapUnitModel({
               ...transformedUnit,
               createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
+              updatedAt: new Date().toISOString(),
             });
 
             const savedUnit = await unit.save();
             const saved = savedUnit.toObject();
-            const targetSkills = saved.targetSkills as unknown as string[] | undefined;
-            console.log(`   ✅ Created - Saved with ${targetSkills?.length || 0} target skill references`);
+            const targetSkills = saved.targetSkills as unknown as
+              | string[]
+              | undefined;
+            console.log(
+              `   ✅ Created - Saved with ${targetSkills?.length || 0} target skill references`,
+            );
             results.push({
-              action: 'created',
-              unit: saved
+              action: "created",
+              unit: saved,
             });
           }
         } catch (unitError) {
-          console.error('❌ Error processing unit:', unitData.unitTitle, unitError);
+          console.error(
+            "❌ Error processing unit:",
+            unitData.unitTitle,
+            unitError,
+          );
           errors.push({
             unitTitle: unitData.unitTitle,
             grade,
-            error: unitError instanceof Error ? unitError.message : 'Unknown error'
+            error:
+              unitError instanceof Error ? unitError.message : "Unknown error",
           });
         }
       }
 
-      console.log(`📊 Bulk operation complete: ${results.length} units processed, ${totalSkillsProcessed} skills saved, ${errors.length} errors`);
+      console.log(
+        `📊 Bulk operation complete: ${results.length} units processed, ${totalSkillsProcessed} skills saved, ${errors.length} errors`,
+      );
 
       // Revalidate relevant paths
-      revalidatePath('/roadmaps/units');
-      revalidatePath('/roadmaps/unit-scraper');
+      revalidatePath("/roadmaps/units");
+      revalidatePath("/roadmaps/unit-scraper");
 
       return {
         success: true,
@@ -219,24 +271,23 @@ export async function bulkCreateRoadmapUnits(data: unknown) {
           failed: errors.length,
           totalSkillsProcessed,
           results,
-          errors
+          errors,
         },
-        message: `Processed ${unitsArray.length} units (${totalSkillsProcessed} skills): ${results.length} successful, ${errors.length} failed`
+        message: `Processed ${unitsArray.length} units (${totalSkillsProcessed} skills): ${results.length} successful, ${errors.length} failed`,
       };
-
     } catch (error) {
-      console.error('💥 Error in bulk create Roadmaps units:', error);
+      console.error("💥 Error in bulk create Roadmaps units:", error);
 
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          error: handleValidationError(error, 'bulkCreateRoadmapUnits')
+          error: handleValidationError(error, "bulkCreateRoadmapUnits"),
         };
       }
 
       return {
         success: false,
-        error: handleServerError(error, 'bulkCreateRoadmapUnits')
+        error: handleServerError(error, "bulkCreateRoadmapUnits"),
       };
     }
   });
@@ -246,20 +297,17 @@ export async function bulkCreateRoadmapUnits(data: unknown) {
  * Get roadmap units with custom filtering
  * Extends the basic fetch operation with domain-specific filters
  */
-export async function getRoadmapUnits(options: {
-  grade?: string;
-  search?: string;
-  successOnly?: boolean;
-  limit?: number;
-} = {}) {
+export async function getRoadmapUnits(
+  options: {
+    grade?: string;
+    search?: string;
+    successOnly?: boolean;
+    limit?: number;
+  } = {},
+) {
   return withDbConnection(async () => {
     try {
-      const {
-        grade,
-        search,
-        successOnly = true,
-        limit = 100
-      } = options;
+      const { grade, search, successOnly = true, limit = 100 } = options;
 
       const query: Record<string, unknown> = {};
 
@@ -274,13 +322,12 @@ export async function getRoadmapUnits(options: {
 
       if (search) {
         query.$or = [
-          { unitTitle: { $regex: search, $options: 'i' } },
-          { 'targetSkills.title': { $regex: search, $options: 'i' } }
+          { unitTitle: { $regex: search, $options: "i" } },
+          { "targetSkills.title": { $regex: search, $options: "i" } },
         ];
       }
 
-      const units = await RoadmapUnitModel
-        .find(query)
+      const units = await RoadmapUnitModel.find(query)
         .sort({ grade: 1, unitNumber: 1 })
         .limit(limit)
         .exec();
@@ -289,15 +336,14 @@ export async function getRoadmapUnits(options: {
 
       return {
         success: true,
-        data: units.map(unit => unit.toObject()),
-        count: units.length
+        data: units.map((unit) => unit.toObject()),
+        count: units.length,
       };
-
     } catch (error) {
-      console.error('💥 Error getting Roadmap units:', error);
+      console.error("💥 Error getting Roadmap units:", error);
       return {
         success: false,
-        error: handleServerError(error, 'getRoadmapUnits')
+        error: handleServerError(error, "getRoadmapUnits"),
       };
     }
   });

@@ -14,9 +14,9 @@ This file provides guidance to Claude Code when working with this repository.
 - **Handle errors gracefully** — Server actions must always return `{ success, data?, error? }`
 - **Button Cursor** — Always add `cursor-pointer` class to clickable buttons and interactive elements
 - At the end of large changes or before making commits, always run:
-  - `npm run prebuild` — TypeScript + linting errors (DO NOT use `npm run build` as it interferes with dev server)
-  - `npm run lint` — Fix linting issues
-  - `npm run format` (do not forget this one)
+  - `npm run typecheck` — TypeScript errors (DO NOT use `npm run build` as it interferes with dev server)
+  - `npm run lint` — Linting errors
+  - `npm run format` — Prettier formatting (do not forget this one)
 
 ## Architecture
 

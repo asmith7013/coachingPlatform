@@ -12,7 +12,12 @@ import {
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { ExistingMatchRow } from "./ExistingMatchRow";
 import { CreateLessonModal } from "./CreateLessonModal";
-import type { BulkMatchResult, AssignmentMatchResult, ConflictResult, AvailableLesson } from "@/app/actions/scm/podsie/podsie-sync";
+import type {
+  BulkMatchResult,
+  AssignmentMatchResult,
+  ConflictResult,
+  AvailableLesson,
+} from "@/app/actions/scm/podsie/podsie-sync";
 import type { PodsieAssignmentInfo } from "@/app/actions/scm/podsie/podsie-sync";
 
 interface SavedQuestionMap {
@@ -26,8 +31,14 @@ interface SectionMatchResultsProps {
   result: BulkMatchResult;
   onSaveMatch: (match: AssignmentMatchResult) => Promise<void>;
   onSaveAllMatches: (matches: AssignmentMatchResult[]) => Promise<void>;
-  onManualMatch: (assignment: PodsieAssignmentInfo, lesson: AvailableLesson) => Promise<void>;
-  onUpdateQuestionMap?: (podsieAssignmentId: string, questionMapId: string) => Promise<void>;
+  onManualMatch: (
+    assignment: PodsieAssignmentInfo,
+    lesson: AvailableLesson,
+  ) => Promise<void>;
+  onUpdateQuestionMap?: (
+    podsieAssignmentId: string,
+    questionMapId: string,
+  ) => Promise<void>;
   onLessonCreated?: () => void;
   savedQuestionMaps?: SavedQuestionMap[];
   savingMatchId: number | null;
@@ -57,13 +68,15 @@ export function SectionMatchResults({
     unmatched: true,
   });
 
-  const toggleSection = (section: 'matched' | 'conflicts' | 'unmatched') => {
-    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  const toggleSection = (section: "matched" | "conflicts" | "unmatched") => {
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
   // Filter to new matches only (not already saved)
-  const newMatches = result.matches.filter(m => !m.alreadyExists && m.matchedLesson);
-  const existingMatches = result.matches.filter(m => m.alreadyExists);
+  const newMatches = result.matches.filter(
+    (m) => !m.alreadyExists && m.matchedLesson,
+  );
+  const existingMatches = result.matches.filter((m) => m.alreadyExists);
 
   const hasNewMatches = newMatches.length > 0;
   const hasConflicts = result.conflicts.length > 0;
@@ -163,7 +176,7 @@ export function SectionMatchResults({
               count={newMatches.length}
               icon={<CheckCircleIcon className="w-5 h-5 text-green-500" />}
               isExpanded={expandedSections.matched}
-              onToggle={() => toggleSection('matched')}
+              onToggle={() => toggleSection("matched")}
               bgColor="bg-green-50"
             >
               <div className="space-y-2">
@@ -172,7 +185,9 @@ export function SectionMatchResults({
                     key={`${match.podsieAssignment.assignmentId}-${match.podsieAssignment.groupName}-${idx}`}
                     match={match}
                     onSave={() => onSaveMatch(match)}
-                    isSaving={savingMatchId === match.podsieAssignment.assignmentId}
+                    isSaving={
+                      savingMatchId === match.podsieAssignment.assignmentId
+                    }
                   />
                 ))}
               </div>
@@ -196,8 +211,13 @@ export function SectionMatchResults({
                     key={`${match.podsieAssignment.assignmentId}-${match.podsieAssignment.groupName}-${idx}`}
                     match={match}
                     savedQuestionMaps={savedQuestionMaps}
-                    onUpdateQuestionMap={onUpdateQuestionMap || (async () => {})}
-                    isSaving={updatingMapId === String(match.podsieAssignment.assignmentId)}
+                    onUpdateQuestionMap={
+                      onUpdateQuestionMap || (async () => {})
+                    }
+                    isSaving={
+                      updatingMapId ===
+                      String(match.podsieAssignment.assignmentId)
+                    }
                   />
                 ))}
               </div>
@@ -209,14 +229,19 @@ export function SectionMatchResults({
             <CollapsibleSection
               title="Conflicts"
               count={result.conflicts.length}
-              icon={<ExclamationTriangleIcon className="w-5 h-5 text-yellow-500" />}
+              icon={
+                <ExclamationTriangleIcon className="w-5 h-5 text-yellow-500" />
+              }
               isExpanded={expandedSections.conflicts}
-              onToggle={() => toggleSection('conflicts')}
+              onToggle={() => toggleSection("conflicts")}
               bgColor="bg-yellow-50"
             >
               <div className="space-y-2">
                 {result.conflicts.map((conflict, idx) => (
-                  <ConflictRow key={`${conflict.podsieAssignment.assignmentId}-${conflict.podsieAssignment.groupName}-${idx}`} conflict={conflict} />
+                  <ConflictRow
+                    key={`${conflict.podsieAssignment.assignmentId}-${conflict.podsieAssignment.groupName}-${idx}`}
+                    conflict={conflict}
+                  />
                 ))}
               </div>
             </CollapsibleSection>
@@ -229,7 +254,7 @@ export function SectionMatchResults({
               count={result.unmatched.length}
               icon={<XCircleIcon className="w-5 h-5 text-red-500" />}
               isExpanded={expandedSections.unmatched}
-              onToggle={() => toggleSection('unmatched')}
+              onToggle={() => toggleSection("unmatched")}
               bgColor="bg-red-50"
             >
               <div className="space-y-2">
@@ -249,11 +274,14 @@ export function SectionMatchResults({
           )}
 
           {/* Empty state */}
-          {newMatches.length === 0 && existingMatches.length === 0 && !hasConflicts && !hasUnmatched && (
-            <div className="text-center py-8 text-gray-500">
-              No assignments found for this section
-            </div>
-          )}
+          {newMatches.length === 0 &&
+            existingMatches.length === 0 &&
+            !hasConflicts &&
+            !hasUnmatched && (
+              <div className="text-center py-8 text-gray-500">
+                No assignments found for this section
+              </div>
+            )}
         </div>
       )}
     </div>
@@ -287,7 +315,9 @@ function CollapsibleSection({
 }: CollapsibleSectionProps) {
   const [localExpanded, setLocalExpanded] = useState(!defaultCollapsed);
   const isExpanded = defaultCollapsed ? localExpanded : isExpandedProp;
-  const handleToggle = defaultCollapsed ? () => setLocalExpanded(!localExpanded) : onToggle;
+  const handleToggle = defaultCollapsed
+    ? () => setLocalExpanded(!localExpanded)
+    : onToggle;
 
   return (
     <div className={`rounded-lg ${bgColor} overflow-hidden`}>
@@ -320,8 +350,11 @@ interface MatchRowProps {
 function MatchRow({ match, onSave, isSaving }: MatchRowProps) {
   const similarityPercent = Math.round(match.similarity * 100);
   const similarityColor =
-    match.similarity >= 0.9 ? 'text-green-600' :
-    match.similarity >= 0.7 ? 'text-yellow-600' : 'text-red-600';
+    match.similarity >= 0.9
+      ? "text-green-600"
+      : match.similarity >= 0.7
+        ? "text-yellow-600"
+        : "text-red-600";
 
   return (
     <div className="flex items-center justify-between p-3 bg-white rounded border border-gray-200">
@@ -338,7 +371,8 @@ function MatchRow({ match, onSave, isSaving }: MatchRowProps) {
           <div className="flex items-center gap-2 mt-1">
             <span className="text-gray-400">→</span>
             <span className="text-sm text-indigo-600">
-              {match.matchedLesson.unitLessonId}: {match.matchedLesson.lessonName}
+              {match.matchedLesson.unitLessonId}:{" "}
+              {match.matchedLesson.lessonName}
             </span>
             <span className={`text-xs ${similarityColor}`}>
               ({similarityPercent}%)
@@ -360,7 +394,7 @@ function MatchRow({ match, onSave, isSaving }: MatchRowProps) {
             Saving
           </>
         ) : (
-          'Save'
+          "Save"
         )}
       </button>
     </div>
@@ -381,18 +415,21 @@ function ConflictRow({ conflict }: ConflictRowProps) {
         <div className="flex items-center gap-2">
           <span className="text-gray-500">Current:</span>
           <span className="text-gray-700">
-            {conflict.existingLesson.unitLessonId}: {conflict.existingLesson.name}
+            {conflict.existingLesson.unitLessonId}:{" "}
+            {conflict.existingLesson.name}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-gray-500">New match:</span>
           <span className="text-indigo-600">
-            {conflict.newMatchedLesson.unitLessonId}: {conflict.newMatchedLesson.name}
+            {conflict.newMatchedLesson.unitLessonId}:{" "}
+            {conflict.newMatchedLesson.name}
           </span>
         </div>
       </div>
       <p className="mt-2 text-xs text-yellow-700">
-        This assignment is already matched to a different lesson. Review manually in Section Configs.
+        This assignment is already matched to a different lesson. Review
+        manually in Section Configs.
       </p>
     </div>
   );
@@ -401,7 +438,10 @@ function ConflictRow({ conflict }: ConflictRowProps) {
 interface UnmatchedRowProps {
   assignment: PodsieAssignmentInfo;
   availableLessons: AvailableLesson[];
-  onManualMatch: (assignment: PodsieAssignmentInfo, lesson: AvailableLesson) => Promise<void>;
+  onManualMatch: (
+    assignment: PodsieAssignmentInfo,
+    lesson: AvailableLesson,
+  ) => Promise<void>;
   onLessonCreated?: () => void;
   scopeTag?: string;
   isSaving: boolean;
@@ -421,7 +461,14 @@ function extractUnitNumber(unitLessonId: string): string {
   return match ? match[1] : "0";
 }
 
-function UnmatchedRow({ assignment, availableLessons, onManualMatch, onLessonCreated, scopeTag, isSaving }: UnmatchedRowProps) {
+function UnmatchedRow({
+  assignment,
+  availableLessons,
+  onManualMatch,
+  onLessonCreated,
+  scopeTag,
+  isSaving,
+}: UnmatchedRowProps) {
   const [selectedLessonId, setSelectedLessonId] = useState<string>("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -449,14 +496,14 @@ function UnmatchedRow({ assignment, availableLessons, onManualMatch, onLessonCre
   }, [availableLessons]);
 
   const handleSave = () => {
-    const lesson = availableLessons.find(l => l.id === selectedLessonId);
+    const lesson = availableLessons.find((l) => l.id === selectedLessonId);
     if (lesson) {
       onManualMatch(assignment, lesson);
     }
   };
 
   const handleLessonCreated = (lessonId: string) => {
-    console.log('Created lesson:', lessonId);
+    console.log("Created lesson:", lessonId);
     // Trigger a refresh of the available lessons
     onLessonCreated?.();
   };
@@ -465,9 +512,12 @@ function UnmatchedRow({ assignment, availableLessons, onManualMatch, onLessonCre
     <div className="p-3 bg-white rounded border border-red-200">
       <div className="flex items-center justify-between mb-2">
         <div>
-          <div className="font-medium text-gray-900">{assignment.assignmentName}</div>
+          <div className="font-medium text-gray-900">
+            {assignment.assignmentName}
+          </div>
           <div className="text-xs text-gray-500 mt-1">
-            ID: {assignment.assignmentId} | {assignment.totalQuestions} questions
+            ID: {assignment.assignmentId} | {assignment.totalQuestions}{" "}
+            questions
             {assignment.moduleName && ` | ${assignment.moduleName}`}
           </div>
         </div>
@@ -481,7 +531,10 @@ function UnmatchedRow({ assignment, availableLessons, onManualMatch, onLessonCre
         >
           <option value="">Select a lesson to match...</option>
           {groupedLessons.map((group) => (
-            <optgroup key={`${group.grade}-unit-${group.unitNumber}`} label={`Grade ${group.grade} — Unit ${group.unitNumber}`}>
+            <optgroup
+              key={`${group.grade}-unit-${group.unitNumber}`}
+              label={`Grade ${group.grade} — Unit ${group.unitNumber}`}
+            >
               {group.lessons.map((lesson) => (
                 <option key={lesson.id} value={lesson.id}>
                   {lesson.unitLessonId}: {lesson.lessonName}
@@ -510,7 +563,7 @@ function UnmatchedRow({ assignment, availableLessons, onManualMatch, onLessonCre
               Saving
             </>
           ) : (
-            'Save'
+            "Save"
           )}
         </button>
       </div>

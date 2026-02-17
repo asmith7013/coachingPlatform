@@ -1,14 +1,27 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
-import { Alert } from '@/components/core/feedback/Alert';
-import { UnitScraperCredentials, ROADMAP_OPTIONS, RoadmapOption } from '../lib/types';
+import React, { useState } from "react";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/fields/Input";
+import { Alert } from "@/components/core/feedback/Alert";
+import {
+  UnitScraperCredentials,
+  ROADMAP_OPTIONS,
+  RoadmapOption,
+} from "../lib/types";
 
 interface UnitScraperFormProps {
-  onSubmit: (credentials: UnitScraperCredentials, roadmap: RoadmapOption, delay: number, delayBetweenUnits: number) => void;
-  onDebugSubmit: (credentials: UnitScraperCredentials, roadmap: RoadmapOption, delay: number) => void;
+  onSubmit: (
+    credentials: UnitScraperCredentials,
+    roadmap: RoadmapOption,
+    delay: number,
+    delayBetweenUnits: number,
+  ) => void;
+  onDebugSubmit: (
+    credentials: UnitScraperCredentials,
+    roadmap: RoadmapOption,
+    delay: number,
+  ) => void;
   isLoading: boolean;
   error: string | null;
 }
@@ -17,11 +30,11 @@ export function UnitScraperForm({
   onSubmit,
   onDebugSubmit,
   isLoading,
-  error
+  error,
 }: UnitScraperFormProps) {
   const [credentials, setCredentials] = useState<UnitScraperCredentials>({
-    email: 'alex.smith@teachinglab.org',
-    password: 'rbx1KQD3fpv7qhd!erc'
+    email: "alex.smith@teachinglab.org",
+    password: "rbx1KQD3fpv7qhd!erc",
   });
 
   const [roadmap, setRoadmap] = useState<RoadmapOption>(ROADMAP_OPTIONS[0]);
@@ -47,7 +60,8 @@ export function UnitScraperForm({
           Teach to One Roadmaps Batch Unit Scraper
         </h2>
         <p className="text-sm text-gray-600">
-          Select a roadmap (grade level) to automatically scrape ALL units within it
+          Select a roadmap (grade level) to automatically scrape ALL units
+          within it
         </p>
       </div>
 
@@ -61,7 +75,9 @@ export function UnitScraperForm({
               label="Email"
               type="email"
               value={credentials.email}
-              onChange={(e) => setCredentials(prev => ({ ...prev, email: e.target.value }))}
+              onChange={(e) =>
+                setCredentials((prev) => ({ ...prev, email: e.target.value }))
+              }
               placeholder="your.email@example.com"
               required
             />
@@ -70,7 +86,12 @@ export function UnitScraperForm({
               label="Password"
               type="password"
               value={credentials.password}
-              onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+              onChange={(e) =>
+                setCredentials((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
               placeholder="Enter your password"
               required
             />
@@ -79,7 +100,9 @@ export function UnitScraperForm({
 
         {/* Roadmap Selection Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-900">Roadmap Selection</h3>
+          <h3 className="text-lg font-medium text-gray-900">
+            Roadmap Selection
+          </h3>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -104,8 +127,9 @@ export function UnitScraperForm({
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-sm text-blue-800">
-              <strong>How it works:</strong> The scraper will navigate to the units page, select your chosen roadmap,
-              then automatically loop through and scrape every available unit in that roadmap.
+              <strong>How it works:</strong> The scraper will navigate to the
+              units page, select your chosen roadmap, then automatically loop
+              through and scrape every available unit in that roadmap.
             </p>
           </div>
         </div>
@@ -130,7 +154,9 @@ export function UnitScraperForm({
               label="Delay Between Units (ms)"
               type="number"
               value={delayBetweenUnits}
-              onChange={(e) => setDelayBetweenUnits(parseInt(e.target.value) || 2000)}
+              onChange={(e) =>
+                setDelayBetweenUnits(parseInt(e.target.value) || 2000)
+              }
               min={500}
               max={10000}
               step={500}
@@ -155,7 +181,7 @@ export function UnitScraperForm({
             intent="primary"
             fullWidth={false}
           >
-            {isLoading ? 'Scraping Units...' : 'Scrape All Units in Roadmap'}
+            {isLoading ? "Scraping Units..." : "Scrape All Units in Roadmap"}
           </Button>
 
           <Button
@@ -177,9 +203,18 @@ export function UnitScraperForm({
         <ul className="text-sm text-blue-800 space-y-1">
           <li>• Enter your Teach to One Roadmaps login credentials</li>
           <li>• Select a roadmap (grade level) from the dropdown</li>
-          <li>• Click &quot;Scrape All Units in Roadmap&quot; to begin batch scraping</li>
-          <li>• The scraper will automatically process all units in the selected roadmap</li>
-          <li>• Use &quot;Debug Mode&quot; to test with just the first 2 units and keep browser open</li>
+          <li>
+            • Click &quot;Scrape All Units in Roadmap&quot; to begin batch
+            scraping
+          </li>
+          <li>
+            • The scraper will automatically process all units in the selected
+            roadmap
+          </li>
+          <li>
+            • Use &quot;Debug Mode&quot; to test with just the first 2 units and
+            keep browser open
+          </li>
           <li>• Results will be displayed below and can be exported as JSON</li>
         </ul>
       </div>

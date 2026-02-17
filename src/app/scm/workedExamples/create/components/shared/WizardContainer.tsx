@@ -1,15 +1,25 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useWizardState, type WizardStateHook } from '../../hooks/useWizardState';
-import { WizardProgress } from './WizardProgress';
-import { WizardFooter } from './WizardFooter';
-import { Step1Inputs } from '../step1/Step1Inputs';
-import { Step2Analysis } from '../step2/Step2Analysis';
-import { Step3Slides } from '../step3/Step3Slides';
-import { getDeckBySlug } from '@/app/actions/worked-examples';
-import type { WizardStep, GradeLevel } from '../../lib/types';
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import {
+  useWizardState,
+  type WizardStateHook,
+} from "../../hooks/useWizardState";
+import { WizardProgress } from "./WizardProgress";
+import { WizardFooter } from "./WizardFooter";
+import { Step1Inputs } from "../step1/Step1Inputs";
+import { Step2Analysis } from "../step2/Step2Analysis";
+import { Step3Slides } from "../step3/Step3Slides";
+import { getDeckBySlug } from "@/app/actions/worked-examples";
+import type { WizardStep, GradeLevel } from "../../lib/types";
 
 // Context for sharing wizard state
 const WizardContext = createContext<WizardStateHook | null>(null);
@@ -17,7 +27,7 @@ const WizardContext = createContext<WizardStateHook | null>(null);
 export function useWizard() {
   const context = useContext(WizardContext);
   if (!context) {
-    throw new Error('useWizard must be used within WizardContainer');
+    throw new Error("useWizard must be used within WizardContainer");
   }
   return context;
 }
@@ -35,9 +45,9 @@ export function WizardContainer() {
   useEffect(() => {
     if (!isHydrated || initializedRef.current) return;
 
-    const editSlug = searchParams.get('editSlug');
-    const draftId = searchParams.get('draft');
-    const stepParam = searchParams.get('step');
+    const editSlug = searchParams.get("editSlug");
+    const draftId = searchParams.get("draft");
+    const stepParam = searchParams.get("step");
 
     // Priority 1: Load existing deck for editing
     if (editSlug) {
@@ -49,7 +59,7 @@ export function WizardContainer() {
         setIsLoadingDeck(false);
 
         if (!result.success || !result.data) {
-          setLoadError(result.error || 'Failed to load deck');
+          setLoadError(result.error || "Failed to load deck");
           return;
         }
 
@@ -60,11 +70,15 @@ export function WizardContainer() {
         wizard.setEditSlug(editSlug);
 
         // Load basic deck info
-        if (deck.gradeLevel) wizard.setGradeLevel(deck.gradeLevel as GradeLevel);
+        if (deck.gradeLevel)
+          wizard.setGradeLevel(deck.gradeLevel as GradeLevel);
         if (deck.unitNumber != null) wizard.setUnitNumber(deck.unitNumber);
-        if (deck.lessonNumber != null) wizard.setLessonNumber(deck.lessonNumber);
-        if (deck.scopeAndSequenceId) wizard.setScopeAndSequenceId(deck.scopeAndSequenceId);
-        if (deck.learningGoals?.length) wizard.setLearningGoals(deck.learningGoals);
+        if (deck.lessonNumber != null)
+          wizard.setLessonNumber(deck.lessonNumber);
+        if (deck.scopeAndSequenceId)
+          wizard.setScopeAndSequenceId(deck.scopeAndSequenceId);
+        if (deck.learningGoals?.length)
+          wizard.setLearningGoals(deck.learningGoals);
 
         // Load title/slug/metadata
         if (deck.title) wizard.setTitle(deck.title);
@@ -121,31 +135,42 @@ export function WizardContainer() {
     const params = new URLSearchParams(searchParams.toString());
 
     // Update step param
-    params.set('step', String(state.currentStep));
+    params.set("step", String(state.currentStep));
 
     // Update draft param if we have a scopeAndSequenceId (active draft)
     if (state.scopeAndSequenceId) {
-      params.set('draft', state.scopeAndSequenceId);
+      params.set("draft", state.scopeAndSequenceId);
     } else {
-      params.delete('draft');
+      params.delete("draft");
     }
 
     // Update URL without adding to history (use replace)
-    router.replace(`/scm/workedExamples/create?${params.toString()}`, { scroll: false });
-  }, [state.currentStep, state.scopeAndSequenceId, isHydrated, router, searchParams]);
+    router.replace(`/scm/workedExamples/create?${params.toString()}`, {
+      scroll: false,
+    });
+  }, [
+    state.currentStep,
+    state.scopeAndSequenceId,
+    isHydrated,
+    router,
+    searchParams,
+  ]);
 
   // Handle step navigation from progress bar
-  const handleStepClick = useCallback((step: WizardStep) => {
-    // Only allow navigation to completed steps (go back) or next step (advance)
-    if (step < state.currentStep) {
-      // Going back - always allowed
-      setStep(step);
-    } else if (step === state.currentStep + 1) {
-      // Advancing - only if current step requirements are met
-      // For now, just advance (individual steps handle validation)
-      setStep(step);
-    }
-  }, [state.currentStep, setStep]);
+  const handleStepClick = useCallback(
+    (step: WizardStep) => {
+      // Only allow navigation to completed steps (go back) or next step (advance)
+      if (step < state.currentStep) {
+        // Going back - always allowed
+        setStep(step);
+      } else if (step === state.currentStep + 1) {
+        // Advancing - only if current step requirements are met
+        // For now, just advance (individual steps handle validation)
+        setStep(step);
+      }
+    },
+    [state.currentStep, setStep],
+  );
 
   // Render current step
   const renderStep = () => {
@@ -178,14 +203,26 @@ export function WizardContainer() {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
         <div className="text-red-600 mb-4">
-          <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <svg
+            className="w-12 h-12 mx-auto"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-red-800 mb-2">Failed to Load Deck</h3>
+        <h3 className="text-lg font-semibold text-red-800 mb-2">
+          Failed to Load Deck
+        </h3>
         <p className="text-red-700 mb-4">{loadError}</p>
         <button
-          onClick={() => router.push('/scm/workedExamples/create')}
+          onClick={() => router.push("/scm/workedExamples/create")}
           className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 cursor-pointer"
         >
           Start Fresh

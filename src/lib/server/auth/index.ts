@@ -6,4 +6,4 @@ export {
   type AuthResult,
   type AuthError,
   type GetAuthenticatedUserResult,
-} from './getAuthenticatedUser';
+} from "./getAuthenticatedUser";

@@ -1,7 +1,11 @@
 "use client";
 
 import React from "react";
-import { getSectionBadgeLabel, type UnitScheduleLocal, type SelectionMode } from "../../calendar-old/components/types";
+import {
+  getSectionBadgeLabel,
+  type UnitScheduleLocal,
+  type SelectionMode,
+} from "../../calendar-old/components/types";
 import type { CalendarEvent } from "@zod-schema/calendar";
 import { Tooltip } from "@/components/core/feedback/Tooltip";
 
@@ -48,7 +52,11 @@ interface MonthCalendarV2Props {
   selectionMode: SelectionMode;
   selectedUnitIndex: number;
   getScheduleForDate: (dateStr: string) => ScheduleInfo | null;
-  getSectionColorIndex: (unitIndex: number, sectionId: string, subsection?: number) => number;
+  getSectionColorIndex: (
+    unitIndex: number,
+    sectionId: string,
+    subsection?: number,
+  ) => number;
   getEventsForDate: (date: Date) => CalendarEvent[];
   isDayOff: (date: Date) => boolean;
   isSectionDayOff: (date: Date) => SectionDayOffInfo;
@@ -86,11 +94,17 @@ export function MonthCalendarV2({
   return (
     <div className="bg-white rounded-lg shadow p-3 mb-4">
       <h3 className="text-sm font-semibold text-gray-900 mb-2">
-        {monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+        {monthDate.toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        })}
       </h3>
       <div className="grid grid-cols-7 gap-0.5">
         {["S", "M", "T", "W", "T", "F", "S"].map((day, idx) => (
-          <div key={`${day}-${idx}`} className="text-center text-xs font-medium text-gray-400 py-0.5">
+          <div
+            key={`${day}-${idx}`}
+            className="text-center text-xs font-medium text-gray-400 py-0.5"
+          >
             {day}
           </div>
         ))}
@@ -107,7 +121,8 @@ export function MonthCalendarV2({
           let bgColor = "bg-white";
           let textColor = "text-gray-900";
           let customBgStyle: React.CSSProperties = {};
-          let cursor = isSelecting && !weekend && !dayOff ? "cursor-pointer" : "";
+          let cursor =
+            isSelecting && !weekend && !dayOff ? "cursor-pointer" : "";
 
           // Determine color based on whether this date belongs to the selected unit
           let dateColor: { base: string; light: string } | null = null;
@@ -132,7 +147,11 @@ export function MonthCalendarV2({
 
             if (isSelectedUnit) {
               // Use section-specific color
-              const colorIdx = getSectionColorIndex(scheduleInfo.unitIndex, scheduleInfo.section.sectionId, scheduleInfo.section.subsection);
+              const colorIdx = getSectionColorIndex(
+                scheduleInfo.unitIndex,
+                scheduleInfo.section.sectionId,
+                scheduleInfo.section.subsection,
+              );
               dateColor = SECTION_COLORS[colorIdx % SECTION_COLORS.length];
               customBgStyle = { backgroundColor: dateColor.light };
               bgColor = "";
@@ -147,7 +166,10 @@ export function MonthCalendarV2({
 
           const handleClick = () => {
             if (sectionDayOffInfo.isDayOff && sectionDayOffInfo.event) {
-              onSectionDayOffClick({ date: sectionDayOffInfo.event.date, name: sectionDayOffInfo.event.name });
+              onSectionDayOffClick({
+                date: sectionDayOffInfo.event.date,
+                name: sectionDayOffInfo.event.name,
+              });
             } else if (!weekend && !dayOff && isSelecting) {
               onDateClick(dateStr);
             }
@@ -156,17 +178,20 @@ export function MonthCalendarV2({
           const title = weekend
             ? "Weekend"
             : sectionDayOffInfo.isDayOff && sectionDayOffInfo.event
-            ? `${sectionDayOffInfo.event.name} (click to delete)`
-            : dayOff
-            ? events.map((e) => e.name).join(", ") || "Day Off"
-            : scheduleInfo
-            ? `${scheduleInfo.unit.unitName} - ${scheduleInfo.section.name}`
-            : "";
+              ? `${sectionDayOffInfo.event.name} (click to delete)`
+              : dayOff
+                ? events.map((e) => e.name).join(", ") || "Day Off"
+                : scheduleInfo
+                  ? `${scheduleInfo.unit.unitName} - ${scheduleInfo.section.name}`
+                  : "";
 
-          const hasSectionEvent = sectionDayOffInfo.isDayOff && sectionDayOffInfo.event;
+          const hasSectionEvent =
+            sectionDayOffInfo.isDayOff && sectionDayOffInfo.event;
           const hasScheduleBadge = scheduleInfo && !weekend && !dayOff;
-          const isInactiveUnit = hasScheduleBadge && scheduleInfo.unitIndex !== selectedUnitIndex;
-          const cellHeight = hasSectionEvent || hasScheduleBadge ? "h-10" : "h-7";
+          const isInactiveUnit =
+            hasScheduleBadge && scheduleInfo.unitIndex !== selectedUnitIndex;
+          const cellHeight =
+            hasSectionEvent || hasScheduleBadge ? "h-10" : "h-7";
 
           const badgeColor = dateColor?.base ?? "#9CA3AF";
 
@@ -175,7 +200,9 @@ export function MonthCalendarV2({
               key={date.toISOString()}
               onClick={handleClick}
               className={`${cellHeight} rounded text-xs flex flex-col items-center justify-start pt-0.5 relative ${bgColor} ${textColor} ${cursor} ${
-                isSelecting && !weekend && !dayOff ? "hover:ring-2 hover:ring-blue-400" : ""
+                isSelecting && !weekend && !dayOff
+                  ? "hover:ring-2 hover:ring-blue-400"
+                  : ""
               } ${sectionDayOffInfo.isDayOff ? "hover:ring-2 hover:ring-gray-400" : ""}`}
               style={customBgStyle}
               title={title}
@@ -209,7 +236,10 @@ export function MonthCalendarV2({
               {isInactiveUnit && (
                 <span
                   className="text-[7px] font-bold leading-none px-1 py-0.5 rounded"
-                  style={{ backgroundColor: "white", color: INACTIVE_COLOR.base }}
+                  style={{
+                    backgroundColor: "white",
+                    color: INACTIVE_COLOR.base,
+                  }}
                 >
                   Unit {scheduleInfo.unit.unitNumber}
                 </span>

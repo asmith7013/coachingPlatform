@@ -1,11 +1,11 @@
 // src/lib/types/data-access/react-query.ts
-import { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
-import { BaseDocument } from '@core-types/document';
-import { EntityResponse, BaseResponse } from '@core-types/response';
-import { PaginatedResponse } from '@core-types/response';
-import { ErrorContext } from '@error-types';
-import { QueryParams } from '@core-types/query';
-import { ZodSchema } from 'zod';
+import { UseQueryOptions, UseMutationOptions } from "@tanstack/react-query";
+import { BaseDocument } from "@core-types/document";
+import { EntityResponse, BaseResponse } from "@core-types/response";
+import { PaginatedResponse } from "@core-types/response";
+import { ErrorContext } from "@error-types";
+import { QueryParams } from "@core-types/query";
+import { ZodSchema } from "zod";
 
 /**
  * Base configuration for React Query hooks
@@ -13,33 +13,33 @@ import { ZodSchema } from 'zod';
 export interface ReactQueryHookConfig {
   /** Entity type name for query key generation */
   entityType: string;
-  
+
   /** Default sorting and filtering options */
   defaultParams?: Partial<QueryParams>;
-  
+
   /** Valid sort fields */
   validSortFields?: string[];
-  
+
   /** Whether to persist filter state */
   persistFilters?: boolean;
-  
+
   /** Storage key for persisting filters */
   storageKey?: string;
-  
+
   /** Stale time for queries in ms */
   staleTime?: number;
-  
+
   /** Related entity types to invalidate on mutations */
   relatedEntityTypes?: string[];
-  
+
   /** Error context prefix for error reporting */
   errorContextPrefix?: string;
-  
+
   /** Additional React Query options */
-  queryOptions?: Omit<UseQueryOptions, 'queryKey' | 'queryFn'>;
-  
+  queryOptions?: Omit<UseQueryOptions, "queryKey" | "queryFn">;
+
   /** Additional mutation options */
-  mutationOptions?: Omit<UseMutationOptions, 'mutationFn'>;
+  mutationOptions?: Omit<UseMutationOptions, "mutationFn">;
 }
 
 /**
@@ -48,16 +48,16 @@ export interface ReactQueryHookConfig {
 export interface ServerActions<T, TInput> {
   /** Function to fetch list of entities - returns paginated collection */
   fetch: (params: QueryParams) => Promise<PaginatedResponse<T>>;
-  
+
   /** Function to fetch single entity by ID - returns single entity */
   fetchById?: (id: string) => Promise<EntityResponse<T>>;
-  
+
   /** Function to create a new entity - returns single entity */
   create?: (data: TInput) => Promise<EntityResponse<T>>;
-  
+
   /** Function to update an existing entity - returns single entity */
   update?: (id: string, data: Partial<TInput>) => Promise<EntityResponse<T>>;
-  
+
   /** Function to delete an entity - returns success/failure only */
   delete?: (id: string) => Promise<BaseResponse>;
 }
@@ -65,13 +65,14 @@ export interface ServerActions<T, TInput> {
 /**
  * Schema-validated hook configuration
  */
-export interface SchemaHookConfig<T extends BaseDocument, TInput> extends ReactQueryHookConfig {
+export interface SchemaHookConfig<T extends BaseDocument, TInput>
+  extends ReactQueryHookConfig {
   /** Zod schema for full entity */
   fullSchema: ZodSchema<T>;
-  
+
   /** Zod schema for input entity */
   inputSchema: ZodSchema<TInput>;
-  
+
   /** Server actions for CRUD operations */
   serverActions: ServerActions<T, TInput>;
 }
@@ -82,36 +83,36 @@ export interface SchemaHookConfig<T extends BaseDocument, TInput> extends ReactQ
 export interface ListQueryResult<T> {
   // Data
   items: T[];
-  
+
   // Pagination
   total: number;
   page: number;
   pageSize: number;
   totalPages: number;
   hasMore: boolean;
-  
+
   // Filtering and sorting
   filters: Record<string, unknown>;
   search: string;
   sortBy: string;
-  sortOrder: 'asc' | 'desc';
-  
+  sortOrder: "asc" | "desc";
+
   // Query state
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
   refetch: () => void;
-  
+
   // Actions
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
   setSearch: (search: string) => void;
   applyFilters: (filters: Record<string, unknown>) => void;
-  changeSorting: (sortBy: string, sortOrder?: 'asc' | 'desc') => void;
-  
+  changeSorting: (sortBy: string, sortOrder?: "asc" | "desc") => void;
+
   // Query parameters for debugging/advanced usage
   queryParams: Record<string, unknown>;
-  
+
   // Raw query for advanced use cases
   query: {
     data: unknown;
@@ -128,16 +129,16 @@ export interface ListQueryResult<T> {
 export interface DetailQueryResult<T> {
   /** Entity data */
   data: T | undefined;
-  
+
   /** Loading state */
   isLoading: boolean;
-  
+
   /** Error state */
   isError: boolean;
-  
+
   /** Error object if any */
   error: Error | null;
-  
+
   /** Function to refetch data */
   refetch: () => Promise<unknown>;
 }
@@ -148,37 +149,39 @@ export interface DetailQueryResult<T> {
 export interface MutationsResult<T, TInput> {
   /** Function to create entity */
   create: ((data: TInput) => void) | null;
-  
+
   /** Async function to create entity */
   createAsync: ((data: TInput) => Promise<T | undefined>) | null;
-  
+
   /** Function to update entity */
   update: ((id: string, data: Partial<TInput>) => void) | null;
-  
+
   /** Async function to update entity */
-  updateAsync: ((id: string, data: Partial<TInput>) => Promise<T | undefined>) | null;
-  
+  updateAsync:
+    | ((id: string, data: Partial<TInput>) => Promise<T | undefined>)
+    | null;
+
   /** Function to delete entity */
   delete: ((id: string) => void) | null;
-  
+
   /** Async function to delete entity */
   deleteAsync: ((id: string) => Promise<unknown>) | null;
-  
+
   /** Whether create operation is in progress */
   isCreating: boolean;
-  
+
   /** Whether update operation is in progress */
   isUpdating: boolean;
-  
+
   /** Whether delete operation is in progress */
   isDeleting: boolean;
-  
+
   /** Error from create operation */
   createError: Error | null;
-  
+
   /** Error from update operation */
   updateError: Error | null;
-  
+
   /** Error from delete operation */
   deleteError: Error | null;
 }
@@ -186,9 +189,9 @@ export interface MutationsResult<T, TInput> {
 /**
  * Combined result of entity hooks
  */
-export interface EntityResult<T extends BaseDocument, TInput> extends 
-  Omit<ListQueryResult<T>, 'refetch'>, 
-  Omit<MutationsResult<T, TInput>, ''> {
+export interface EntityResult<T extends BaseDocument, TInput>
+  extends Omit<ListQueryResult<T>, "refetch">,
+    Omit<MutationsResult<T, TInput>, ""> {
   /** Function to refetch data */
   refetch: () => Promise<unknown>;
 }
@@ -202,22 +205,21 @@ export function createQueryErrorContext(
   context: {
     metadata?: Record<string, unknown>;
     tags?: Record<string, string>;
-  } = {}
+  } = {},
 ): ErrorContext {
   return {
     component,
     operation,
     metadata: context.metadata,
-    tags: context.tags
+    tags: context.tags,
   };
 }
 
-
-  // Instead of redefining PaginationQueryParams, use the existing type
+// Instead of redefining PaginationQueryParams, use the existing type
 export interface ReactQueryHookConfig {
   /** Entity type name for query key generation */
   entityType: string;
-  
+
   /** Default sorting and filtering options */
   defaultParams?: Partial<QueryParams>;
 }

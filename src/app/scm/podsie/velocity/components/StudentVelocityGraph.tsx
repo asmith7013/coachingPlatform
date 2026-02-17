@@ -1,5 +1,8 @@
 import React, { useState, lazy, Suspense, useMemo } from "react";
-import type { StudentDailyData, DailyVelocityStats } from "@/app/actions/scm/podsie/velocity/velocity";
+import type {
+  StudentDailyData,
+  DailyVelocityStats,
+} from "@/app/actions/scm/podsie/velocity/velocity";
 import type { UnitSchedule } from "@zod-schema/calendar";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
 import { VelocityChartSkeleton } from "./VelocityGraphSkeleton";
@@ -9,59 +12,94 @@ import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 const VelocityLineChart = lazy(() =>
   import("./VelocityLineChart").then((module) => ({
     default: module.VelocityLineChart,
-  }))
+  })),
 );
 
 // Extended color palette for students (more colors needed than sections)
 const STUDENT_COLORS = [
-  '#0EA5E9', // sky-500
-  '#EF4444', // red-500
-  '#22C55E', // green-500
-  '#F59E0B', // amber-500
-  '#8B5CF6', // violet-500
-  '#EC4899', // pink-500
-  '#06B6D4', // cyan-500
-  '#F97316', // orange-500
-  '#6366F1', // indigo-500
-  '#14B8A6', // teal-500
-  '#A855F7', // purple-500
-  '#84CC16', // lime-500
-  '#3B82F6', // blue-500
-  '#DC2626', // red-600
-  '#16A34A', // green-600
-  '#D97706', // amber-600
-  '#7C3AED', // violet-600
-  '#DB2777', // pink-600
-  '#0891B2', // cyan-600
-  '#EA580C', // orange-600
+  "#0EA5E9", // sky-500
+  "#EF4444", // red-500
+  "#22C55E", // green-500
+  "#F59E0B", // amber-500
+  "#8B5CF6", // violet-500
+  "#EC4899", // pink-500
+  "#06B6D4", // cyan-500
+  "#F97316", // orange-500
+  "#6366F1", // indigo-500
+  "#14B8A6", // teal-500
+  "#A855F7", // purple-500
+  "#84CC16", // lime-500
+  "#3B82F6", // blue-500
+  "#DC2626", // red-600
+  "#16A34A", // green-600
+  "#D97706", // amber-600
+  "#7C3AED", // violet-600
+  "#DB2777", // pink-600
+  "#0891B2", // cyan-600
+  "#EA580C", // orange-600
 ];
 
 // Colors for filter group average lines
 const GROUP_COLORS = [
-  '#1F2937', // gray-800 (default for first group)
-  '#7C3AED', // violet-600
-  '#059669', // emerald-600
-  '#DC2626', // red-600
-  '#2563EB', // blue-600
+  "#1F2937", // gray-800 (default for first group)
+  "#7C3AED", // violet-600
+  "#059669", // emerald-600
+  "#DC2626", // red-600
+  "#2563EB", // blue-600
 ];
 
 // Colors for unit bar annotations (background colors with alpha)
 const UNIT_COLORS = [
-  { bg: 'rgba(59, 130, 246, 0.04)', border: 'rgba(59, 130, 246, 0.25)', text: '#1e40af' },  // blue
-  { bg: 'rgba(34, 197, 94, 0.04)', border: 'rgba(34, 197, 94, 0.25)', text: '#166534' },    // green
-  { bg: 'rgba(168, 85, 247, 0.04)', border: 'rgba(168, 85, 247, 0.25)', text: '#6b21a8' },  // purple
-  { bg: 'rgba(245, 158, 11, 0.04)', border: 'rgba(245, 158, 11, 0.25)', text: '#92400e' },  // amber
-  { bg: 'rgba(244, 63, 94, 0.04)', border: 'rgba(244, 63, 94, 0.25)', text: '#9f1239' },    // rose
-  { bg: 'rgba(6, 182, 212, 0.04)', border: 'rgba(6, 182, 212, 0.25)', text: '#0e7490' },    // cyan
-  { bg: 'rgba(249, 115, 22, 0.04)', border: 'rgba(249, 115, 22, 0.25)', text: '#9a3412' },  // orange
-  { bg: 'rgba(20, 184, 166, 0.04)', border: 'rgba(20, 184, 166, 0.25)', text: '#115e59' },  // teal
+  {
+    bg: "rgba(59, 130, 246, 0.04)",
+    border: "rgba(59, 130, 246, 0.25)",
+    text: "#1e40af",
+  }, // blue
+  {
+    bg: "rgba(34, 197, 94, 0.04)",
+    border: "rgba(34, 197, 94, 0.25)",
+    text: "#166534",
+  }, // green
+  {
+    bg: "rgba(168, 85, 247, 0.04)",
+    border: "rgba(168, 85, 247, 0.25)",
+    text: "#6b21a8",
+  }, // purple
+  {
+    bg: "rgba(245, 158, 11, 0.04)",
+    border: "rgba(245, 158, 11, 0.25)",
+    text: "#92400e",
+  }, // amber
+  {
+    bg: "rgba(244, 63, 94, 0.04)",
+    border: "rgba(244, 63, 94, 0.25)",
+    text: "#9f1239",
+  }, // rose
+  {
+    bg: "rgba(6, 182, 212, 0.04)",
+    border: "rgba(6, 182, 212, 0.25)",
+    text: "#0e7490",
+  }, // cyan
+  {
+    bg: "rgba(249, 115, 22, 0.04)",
+    border: "rgba(249, 115, 22, 0.25)",
+    text: "#9a3412",
+  }, // orange
+  {
+    bg: "rgba(20, 184, 166, 0.04)",
+    border: "rgba(20, 184, 166, 0.25)",
+    text: "#115e59",
+  }, // teal
 ];
 
 // Create a stable color map for students
 function getStudentColors(students: StudentDailyData[]): Map<number, string> {
   const colorMap = new Map<number, string>();
   students.forEach((student, index) => {
-    colorMap.set(student.studentId, STUDENT_COLORS[index % STUDENT_COLORS.length]);
+    colorMap.set(
+      student.studentId,
+      STUDENT_COLORS[index % STUDENT_COLORS.length],
+    );
   });
   return colorMap;
 }
@@ -109,11 +147,13 @@ export function StudentVelocityGraph({
   const [showFilterGroupsOnly, setShowFilterGroupsOnly] = useState(false);
 
   // Multiple filter groups - start with one group containing all students
-  const [filterGroups, setFilterGroups] = useState<FilterGroup[]>(() => [{
-    id: 'group-1',
-    selectedStudents: new Set(students.map(s => s.studentId)),
-    name: 'Group 1',
-  }]);
+  const [filterGroups, setFilterGroups] = useState<FilterGroup[]>(() => [
+    {
+      id: "group-1",
+      selectedStudents: new Set(students.map((s) => s.studentId)),
+      name: "Group 1",
+    },
+  ]);
 
   // Memoize student colors so they stay consistent
   const studentColors = useMemo(() => getStudentColors(students), [students]);
@@ -121,12 +161,12 @@ export function StudentVelocityGraph({
   if (!students || students.length === 0) return null;
 
   // Build block type map from velocity data
-  const blockTypeMap = new Map<string, 'single' | 'double' | 'none'>();
-  velocityData.forEach(d => blockTypeMap.set(d.date, d.blockType));
+  const blockTypeMap = new Map<string, "single" | "double" | "none">();
+  velocityData.forEach((d) => blockTypeMap.set(d.date, d.blockType));
 
   // Helper to check if a date is a weekend
   const isWeekend = (dateStr: string): boolean => {
-    const [year, month, day] = dateStr.split('-').map(Number);
+    const [year, month, day] = dateStr.split("-").map(Number);
     const date = new Date(year, month - 1, day);
     const dayOfWeek = date.getDay();
     return dayOfWeek === 0 || dayOfWeek === 6;
@@ -139,35 +179,49 @@ export function StudentVelocityGraph({
 
   // Process student data (for individual student lines when not in "filter groups only" mode)
   const processStudentData = (studentIds: Set<number>) => {
-    const filteredStudents = students.filter(s => studentIds.has(s.studentId));
+    const filteredStudents = students.filter((s) =>
+      studentIds.has(s.studentId),
+    );
 
     return filteredStudents.map((student) => {
       const dailyData = Object.entries(student.dailyProgress)
         .filter(([date]) => date >= startDate && date <= endDate)
         .filter(([date]) => isSchoolDay(date))
-        .filter(([, data]) => includeNotTracked || data.attendance !== 'not-tracked')
+        .filter(
+          ([, data]) => includeNotTracked || data.attendance !== "not-tracked",
+        )
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([date, data]) => {
-          const blockType = blockTypeMap.get(date) || 'none';
+          const blockType = blockTypeMap.get(date) || "none";
           // Use lessons (excludes ramp ups) or totalCompletions based on toggle
-          const completions = showRampUps ? data.totalCompletions : data.lessons;
+          const completions = showRampUps
+            ? data.totalCompletions
+            : data.lessons;
           let velocity = completions;
-          if (adjustForBlockType && blockType === 'double') {
+          if (adjustForBlockType && blockType === "double") {
             velocity = completions / 2;
           }
-          return { date, velocity, completions, blockType, attendance: data.attendance };
+          return {
+            date,
+            velocity,
+            completions,
+            blockType,
+            attendance: data.attendance,
+          };
         });
 
       const dataWithRollingAverage = dailyData.map((dataPoint, idx) => {
         const precedingDays = dailyData.slice(Math.max(0, idx - 2), idx + 1);
-        const rollingAverage = precedingDays.reduce((sum, d) => sum + d.velocity, 0) / precedingDays.length;
+        const rollingAverage =
+          precedingDays.reduce((sum, d) => sum + d.velocity, 0) /
+          precedingDays.length;
         return { ...dataPoint, rollingAverage };
       });
 
       return {
         studentId: student.studentId,
         studentName: student.studentName,
-        color: studentColors.get(student.studentId) || '#6B7280',
+        color: studentColors.get(student.studentId) || "#6B7280",
         processedData: dataWithRollingAverage,
       };
     });
@@ -175,8 +229,8 @@ export function StudentVelocityGraph({
 
   // Get all selected students across all groups
   const allSelectedStudents = new Set<number>();
-  filterGroups.forEach(group => {
-    group.selectedStudents.forEach(id => allSelectedStudents.add(id));
+  filterGroups.forEach((group) => {
+    group.selectedStudents.forEach((id) => allSelectedStudents.add(id));
   });
 
   // Process data for all selected students (for individual lines)
@@ -196,13 +250,18 @@ export function StudentVelocityGraph({
     const combinedAverageData = sortedDates.map((dateStr) => {
       const velocitiesForDate = groupStudents
         .map((student) => {
-          const dataPoint = student.processedData.find((d) => d.date === dateStr);
+          const dataPoint = student.processedData.find(
+            (d) => d.date === dateStr,
+          );
           return dataPoint ? dataPoint.velocity : null;
         })
         .filter((v): v is number => v !== null);
 
       if (velocitiesForDate.length === 0) return null;
-      return velocitiesForDate.reduce((sum, v) => sum + v, 0) / velocitiesForDate.length;
+      return (
+        velocitiesForDate.reduce((sum, v) => sum + v, 0) /
+        velocitiesForDate.length
+      );
     });
 
     // Calculate 3-day rolling average
@@ -215,7 +274,9 @@ export function StudentVelocityGraph({
         }
       }
       if (precedingValues.length === 0) return null;
-      return precedingValues.reduce((sum, v) => sum + v, 0) / precedingValues.length;
+      return (
+        precedingValues.reduce((sum, v) => sum + v, 0) / precedingValues.length
+      );
     });
 
     return { combinedAverageData, rollingAverage };
@@ -223,11 +284,15 @@ export function StudentVelocityGraph({
 
   // Create datasets for each filter group's average line
   const groupDatasets = filterGroups.map((group, groupIndex) => {
-    const { combinedAverageData, rollingAverage } = calculateGroupAverage(group);
+    const { combinedAverageData, rollingAverage } =
+      calculateGroupAverage(group);
     const color = GROUP_COLORS[groupIndex % GROUP_COLORS.length];
 
     return {
-      label: filterGroups.length === 1 ? 'Average of Selections' : `${group.name} Average`,
+      label:
+        filterGroups.length === 1
+          ? "Average of Selections"
+          : `${group.name} Average`,
       data: showRollingAverage ? rollingAverage : combinedAverageData,
       borderColor: color,
       backgroundColor: color,
@@ -245,35 +310,42 @@ export function StudentVelocityGraph({
   });
 
   // Create individual student datasets (only shown when not in "filter groups only" mode)
-  const studentDatasets = !showFilterGroupsOnly ? processedStudents.map((student) => {
-    const dataMap = new Map(student.processedData.map((d) => [d.date, d]));
+  const studentDatasets = !showFilterGroupsOnly
+    ? processedStudents.map((student) => {
+        const dataMap = new Map(student.processedData.map((d) => [d.date, d]));
 
-    return {
-      label: student.studentName.split(' ')[0],
-      data: sortedDates.map((dateStr) => {
-        const dataPoint = dataMap.get(dateStr);
-        if (!dataPoint) return null;
-        return showRollingAverage ? dataPoint.rollingAverage : dataPoint.velocity;
-      }),
-      borderColor: student.color,
-      backgroundColor: student.color,
-      fill: false,
-      tension: 0.3,
-      pointRadius: 2,
-      pointHoverRadius: 4,
-      pointBackgroundColor: student.color,
-      pointBorderColor: "#fff",
-      pointBorderWidth: 1,
-      spanGaps: false,
-    };
-  }) : [];
+        return {
+          label: student.studentName.split(" ")[0],
+          data: sortedDates.map((dateStr) => {
+            const dataPoint = dataMap.get(dateStr);
+            if (!dataPoint) return null;
+            return showRollingAverage
+              ? dataPoint.rollingAverage
+              : dataPoint.velocity;
+          }),
+          borderColor: student.color,
+          backgroundColor: student.color,
+          fill: false,
+          tension: 0.3,
+          pointRadius: 2,
+          pointHoverRadius: 4,
+          pointBackgroundColor: student.color,
+          pointBorderColor: "#fff",
+          pointBorderWidth: 1,
+          spanGaps: false,
+        };
+      })
+    : [];
 
   // Prepare chart data
   const chartData = {
     labels: sortedDates.map((dateStr) => {
-      const [year, month, day] = dateStr.split('-').map(Number);
+      const [year, month, day] = dateStr.split("-").map(Number);
       const date = new Date(year, month - 1, day);
-      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
     }),
     datasets: [...groupDatasets, ...studentDatasets],
   };
@@ -283,16 +355,20 @@ export function StudentVelocityGraph({
     0,
     ...processedStudents.flatMap((student) =>
       student.processedData.map((d) =>
-        showRollingAverage ? d.rollingAverage : d.velocity
-      )
-    )
+        showRollingAverage ? d.rollingAverage : d.velocity,
+      ),
+    ),
   );
 
   const yAxisMax = Math.max(1.5, Math.ceil(maxVelocity * 10) / 10 + 0.2);
 
   // Generate unit bar annotations (computed, not memoized to avoid conditional hook issues)
   const unitAnnotations = (() => {
-    if (!unitSchedules || unitSchedules.length === 0 || sortedDates.length === 0) {
+    if (
+      !unitSchedules ||
+      unitSchedules.length === 0 ||
+      sortedDates.length === 0
+    ) {
       return [];
     }
 
@@ -304,16 +380,19 @@ export function StudentVelocityGraph({
 
     // Format dates to match chart labels (e.g., "Sep 15")
     const formatDateToLabel = (dateStr: string) => {
-      const [year, month, day] = dateStr.split('-').map(Number);
+      const [year, month, day] = dateStr.split("-").map(Number);
       const date = new Date(year, month - 1, day);
-      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
     };
 
     const chartStartDate = sortedDates[0];
     const chartEndDate = sortedDates[sortedDates.length - 1];
 
     const annotations: {
-      type: 'box';
+      type: "box";
       xMin: string;
       xMax: string;
       yMin: number;
@@ -325,9 +404,12 @@ export function StudentVelocityGraph({
       label: {
         display: boolean;
         content: string;
-        position: { x: 'center' | 'start' | 'end'; y: 'center' | 'start' | 'end' };
+        position: {
+          x: "center" | "start" | "end";
+          y: "center" | "start" | "end";
+        };
         yAdjust: number;
-        font: { size: number; weight: 'bold' };
+        font: { size: number; weight: "bold" };
         color: string;
         backgroundColor: string;
         padding: { top: number; bottom: number; left: number; right: number };
@@ -349,7 +431,8 @@ export function StudentVelocityGraph({
       }
 
       // Clamp to chart bounds
-      const effectiveStart = unitStart < chartStartDate ? chartStartDate : unitStart;
+      const effectiveStart =
+        unitStart < chartStartDate ? chartStartDate : unitStart;
       const effectiveEnd = unitEnd > chartEndDate ? chartEndDate : unitEnd;
 
       // Find the label index for start and end
@@ -382,7 +465,7 @@ export function StudentVelocityGraph({
 
       // Create box annotation for the unit
       annotations.push({
-        type: 'box',
+        type: "box",
         xMin: startLabel,
         xMax: endLabel,
         yMin: 0,
@@ -394,9 +477,9 @@ export function StudentVelocityGraph({
         label: {
           display: true,
           content: `Unit ${unit.unitNumber}`,
-          position: { x: 'center', y: 'start' },
+          position: { x: "center", y: "start" },
           yAdjust: 6,
-          font: { size: 12, weight: 'bold' },
+          font: { size: 12, weight: "bold" },
           color: colors.text,
           backgroundColor: colors.border,
           padding: { top: 2, bottom: 2, left: 6, right: 6 },
@@ -423,21 +506,33 @@ export function StudentVelocityGraph({
         bodyColor: "#fff",
         callbacks: {
           title: function (tooltipItems: { dataIndex: number }[]) {
-            if (tooltipItems.length === 0) return '';
+            if (tooltipItems.length === 0) return "";
             const dateStr = sortedDates[tooltipItems[0].dataIndex];
-            if (!dateStr) return '';
-            const [year, month, day] = dateStr.split('-').map(Number);
+            if (!dateStr) return "";
+            const [year, month, day] = dateStr.split("-").map(Number);
             const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+            return date.toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "short",
+              day: "numeric",
+            });
           },
-          label: function (context: { dataset: { label?: string }; raw: unknown; datasetIndex: number; dataIndex: number }) {
+          label: function (context: {
+            dataset: { label?: string };
+            raw: unknown;
+            datasetIndex: number;
+            dataIndex: number;
+          }) {
             const value = Number(context.raw) || 0;
             const numGroupDatasets = groupDatasets.length;
 
             // Check if this is a group average dataset
             if (context.datasetIndex < numGroupDatasets) {
               const group = filterGroups[context.datasetIndex];
-              const groupLabel = filterGroups.length === 1 ? 'Average of Selections' : `${group.name} Average`;
+              const groupLabel =
+                filterGroups.length === 1
+                  ? "Average of Selections"
+                  : `${group.name} Average`;
               if (showRollingAverage) {
                 return [`${groupLabel}:`, `3-Day Avg: ${value.toFixed(2)}`];
               } else {
@@ -448,11 +543,13 @@ export function StudentVelocityGraph({
             // Individual student datasets
             const studentIndex = context.datasetIndex - numGroupDatasets;
             const studentData = processedStudents[studentIndex];
-            if (!studentData) return '';
+            if (!studentData) return "";
 
             const dateStr = sortedDates[context.dataIndex];
-            const dataPoint = studentData.processedData.find((d) => d.date === dateStr);
-            if (!dataPoint) return '';
+            const dataPoint = studentData.processedData.find(
+              (d) => d.date === dateStr,
+            );
+            if (!dataPoint) return "";
 
             const studentName = studentData.studentName;
             if (showRollingAverage) {
@@ -460,13 +557,17 @@ export function StudentVelocityGraph({
                 `${studentName}:`,
                 `3-Day Avg: ${value.toFixed(2)}`,
                 `Today: ${dataPoint.velocity.toFixed(1)} (${dataPoint.completions} completions)`,
-                adjustForBlockType && dataPoint.blockType === 'double' ? '(Adjusted for double block)' : '',
+                adjustForBlockType && dataPoint.blockType === "double"
+                  ? "(Adjusted for double block)"
+                  : "",
               ].filter(Boolean);
             } else {
               return [
                 `${studentName}:`,
                 `Completions: ${dataPoint.completions}`,
-                adjustForBlockType && dataPoint.blockType === 'double' ? '(Adjusted for double block)' : '',
+                adjustForBlockType && dataPoint.blockType === "double"
+                  ? "(Adjusted for double block)"
+                  : "",
               ].filter(Boolean);
             }
           },
@@ -494,55 +595,73 @@ export function StudentVelocityGraph({
   // Filter group management functions
   const addFilterGroup = () => {
     const newGroupNumber = filterGroups.length + 1;
-    setFilterGroups(prev => [...prev, {
-      id: `group-${Date.now()}`,
-      selectedStudents: new Set<number>(),
-      name: `Group ${newGroupNumber}`,
-    }]);
+    setFilterGroups((prev) => [
+      ...prev,
+      {
+        id: `group-${Date.now()}`,
+        selectedStudents: new Set<number>(),
+        name: `Group ${newGroupNumber}`,
+      },
+    ]);
   };
 
   const removeFilterGroup = (groupId: string) => {
     if (filterGroups.length <= 1) return; // Keep at least one group
-    setFilterGroups(prev => prev.filter(g => g.id !== groupId));
+    setFilterGroups((prev) => prev.filter((g) => g.id !== groupId));
   };
 
   const toggleStudentInGroup = (groupId: string, studentId: number) => {
-    setFilterGroups(prev => prev.map(group => {
-      if (group.id !== groupId) return group;
-      const next = new Set(group.selectedStudents);
-      if (next.has(studentId)) {
-        next.delete(studentId);
-      } else {
-        next.add(studentId);
-      }
-      return { ...group, selectedStudents: next };
-    }));
+    setFilterGroups((prev) =>
+      prev.map((group) => {
+        if (group.id !== groupId) return group;
+        const next = new Set(group.selectedStudents);
+        if (next.has(studentId)) {
+          next.delete(studentId);
+        } else {
+          next.add(studentId);
+        }
+        return { ...group, selectedStudents: next };
+      }),
+    );
   };
 
   const selectAllInGroup = (groupId: string) => {
-    setFilterGroups(prev => prev.map(group => {
-      if (group.id !== groupId) return group;
-      return { ...group, selectedStudents: new Set(students.map(s => s.studentId)) };
-    }));
+    setFilterGroups((prev) =>
+      prev.map((group) => {
+        if (group.id !== groupId) return group;
+        return {
+          ...group,
+          selectedStudents: new Set(students.map((s) => s.studentId)),
+        };
+      }),
+    );
   };
 
   const deselectAllInGroup = (groupId: string) => {
-    setFilterGroups(prev => prev.map(group => {
-      if (group.id !== groupId) return group;
-      return { ...group, selectedStudents: new Set() };
-    }));
+    setFilterGroups((prev) =>
+      prev.map((group) => {
+        if (group.id !== groupId) return group;
+        return { ...group, selectedStudents: new Set() };
+      }),
+    );
   };
 
   // Check if any group has selections
-  const hasAnySelections = filterGroups.some(g => g.selectedStudents.size > 0);
+  const hasAnySelections = filterGroups.some(
+    (g) => g.selectedStudents.size > 0,
+  );
 
   const content = (
     <>
       {/* Filter Groups */}
       <div className="space-y-4">
         {filterGroups.map((group, groupIndex) => {
-          const isAllSelected = students.every(s => group.selectedStudents.has(s.studentId));
-          const isSomeSelected = group.selectedStudents.size > 0 && group.selectedStudents.size < students.length;
+          const isAllSelected = students.every((s) =>
+            group.selectedStudents.has(s.studentId),
+          );
+          const isSomeSelected =
+            group.selectedStudents.size > 0 &&
+            group.selectedStudents.size < students.length;
           const groupColor = GROUP_COLORS[groupIndex % GROUP_COLORS.length];
 
           return (
@@ -554,7 +673,9 @@ export function StudentVelocityGraph({
                 <div className="flex items-center gap-4">
                   {!embedded && groupIndex === 0 && (
                     <div>
-                      <h3 className="text-sm font-medium text-gray-900">{sectionName}</h3>
+                      <h3 className="text-sm font-medium text-gray-900">
+                        {sectionName}
+                      </h3>
                       <p className="text-xs text-gray-500">{school}</p>
                     </div>
                   )}
@@ -564,7 +685,7 @@ export function StudentVelocityGraph({
                       style={{ backgroundColor: groupColor }}
                     />
                     <span className="text-xs font-medium text-gray-700 uppercase tracking-wide">
-                      {filterGroups.length === 1 ? 'Filter Group' : group.name}
+                      {filterGroups.length === 1 ? "Filter Group" : group.name}
                     </span>
                   </div>
                 </div>
@@ -580,16 +701,39 @@ export function StudentVelocityGraph({
                           ref={(input) => {
                             if (input) input.indeterminate = isSomeSelected;
                           }}
-                          onChange={() => isAllSelected ? deselectAllInGroup(group.id) : selectAllInGroup(group.id)}
+                          onChange={() =>
+                            isAllSelected
+                              ? deselectAllInGroup(group.id)
+                              : selectAllInGroup(group.id)
+                          }
                           className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
                         />
-                        <svg fill="none" viewBox="0 0 14 14" className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
-                          <path d="M3 8L6 11L11 3.5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-has-checked:opacity-100" />
-                          <path d="M3 7H11" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-has-indeterminate:opacity-100" />
+                        <svg
+                          fill="none"
+                          viewBox="0 0 14 14"
+                          className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"
+                        >
+                          <path
+                            d="M3 8L6 11L11 3.5"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="opacity-0 group-has-checked:opacity-100"
+                          />
+                          <path
+                            d="M3 7H11"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="opacity-0 group-has-indeterminate:opacity-100"
+                          />
                         </svg>
                       </div>
                     </div>
-                    <label htmlFor={`select-all-${group.id}`} className="text-xs text-gray-600 cursor-pointer">
+                    <label
+                      htmlFor={`select-all-${group.id}`}
+                      className="text-xs text-gray-600 cursor-pointer"
+                    >
                       Select All
                     </label>
                   </div>
@@ -610,30 +754,51 @@ export function StudentVelocityGraph({
               {/* Student checkboxes grid */}
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-x-4 gap-y-2">
                 {students.map((student) => {
-                  const isSelected = group.selectedStudents.has(student.studentId);
-                  const color = studentColors.get(student.studentId) || '#6B7280';
+                  const isSelected = group.selectedStudents.has(
+                    student.studentId,
+                  );
+                  const color =
+                    studentColors.get(student.studentId) || "#6B7280";
 
                   return (
-                    <div key={student.studentId} className="flex gap-2 items-center">
+                    <div
+                      key={student.studentId}
+                      className="flex gap-2 items-center"
+                    >
                       <div className="flex h-5 shrink-0 items-center">
                         <div className="group grid size-4 grid-cols-1">
                           <input
                             id={`student-${group.id}-${student.studentId}`}
                             type="checkbox"
                             checked={isSelected}
-                            onChange={() => toggleStudentInGroup(group.id, student.studentId)}
+                            onChange={() =>
+                              toggleStudentInGroup(group.id, student.studentId)
+                            }
                             className="col-start-1 row-start-1 appearance-none rounded-sm border-2 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer"
                             style={{
                               borderColor: color,
-                              backgroundColor: isSelected ? color : 'white',
+                              backgroundColor: isSelected ? color : "white",
                             }}
                           />
-                          <svg fill="none" viewBox="0 0 14 14" className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
-                            <path d="M3 8L6 11L11 3.5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="opacity-0 group-has-checked:opacity-100" />
+                          <svg
+                            fill="none"
+                            viewBox="0 0 14 14"
+                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"
+                          >
+                            <path
+                              d="M3 8L6 11L11 3.5"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="opacity-0 group-has-checked:opacity-100"
+                            />
                           </svg>
                         </div>
                       </div>
-                      <label htmlFor={`student-${group.id}-${student.studentId}`} className="text-sm text-gray-600 cursor-pointer truncate">
+                      <label
+                        htmlFor={`student-${group.id}-${student.studentId}`}
+                        className="text-sm text-gray-600 cursor-pointer truncate"
+                      >
                         {student.studentName}
                       </label>
                     </div>
@@ -663,7 +828,10 @@ export function StudentVelocityGraph({
           </div>
         ) : (
           <Suspense fallback={<VelocityChartSkeleton />}>
-            <VelocityLineChart chartData={chartData} chartOptions={chartOptions} />
+            <VelocityLineChart
+              chartData={chartData}
+              chartOptions={chartOptions}
+            />
           </Suspense>
         )}
       </div>
@@ -703,9 +871,5 @@ export function StudentVelocityGraph({
     return content;
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow p-6 mb-8">
-      {content}
-    </div>
-  );
+  return <div className="bg-white rounded-lg shadow p-6 mb-8">{content}</div>;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 
 /**
  * Layout component that previously added performance monitoring
@@ -13,4 +13,4 @@ export function PerformanceMonitorLayout({
 }) {
   // Performance monitoring has been disabled
   return <>{children}</>;
-} 
+}

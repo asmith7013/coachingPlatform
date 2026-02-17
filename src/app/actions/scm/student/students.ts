@@ -10,7 +10,9 @@ import { StudentInput } from "@zod-schema/scm/student/student";
  * Delegates to API-safe service
  */
 
-export async function fetchStudents(params: QueryParams = DEFAULT_QUERY_PARAMS) {
+export async function fetchStudents(
+  params: QueryParams = DEFAULT_QUERY_PARAMS,
+) {
   return withDbConnection(() => StudentService.fetchStudents(params));
 }
 
@@ -40,9 +42,13 @@ export async function fetchStudentsByTeacher(teacher: string) {
 }
 
 export async function fetchStudentByStudentId(studentID: number) {
-  return withDbConnection(() => StudentService.fetchStudentByStudentId(studentID));
+  return withDbConnection(() =>
+    StudentService.fetchStudentByStudentId(studentID),
+  );
 }
 
 export async function bulkCreateStudents(studentsData: StudentInput[]) {
-  return withDbConnection(() => StudentService.bulkCreateStudents(studentsData));
-} 
+  return withDbConnection(() =>
+    StudentService.bulkCreateStudents(studentsData),
+  );
+}

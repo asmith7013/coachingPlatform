@@ -3,14 +3,14 @@ import { EntityResponse } from "@core-types/response";
 export async function uploadFileWithProgress(
   file: File,
   endpoint: string,
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
 ): Promise<EntityResponse> {
   try {
     const formData = new FormData();
     formData.append("file", file);
 
     const xhr = new XMLHttpRequest();
-    
+
     return new Promise((resolve, reject) => {
       xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable && onProgress) {
@@ -27,8 +27,8 @@ export async function uploadFileWithProgress(
               success: true,
               message: `Upload successful! ${data.uploaded} items added.`,
               data: {
-                uploaded: data.uploaded
-              }
+                uploaded: data.uploaded,
+              },
             });
           } catch {
             reject(new Error("Failed to parse upload response"));
@@ -48,4 +48,4 @@ export async function uploadFileWithProgress(
   } catch (error) {
     throw handleServerError(error);
   }
-} 
+}

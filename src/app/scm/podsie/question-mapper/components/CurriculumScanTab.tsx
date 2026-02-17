@@ -44,7 +44,7 @@ export function CurriculumScanTab({ showToast }: CurriculumScanTabProps) {
   const [scanningCurriculum, setScanningCurriculum] = useState(false);
   const [exportingAll, setExportingAll] = useState(false);
   const [exportResults, setExportResults] = useState<ExportQuestionMapResult[]>(
-    []
+    [],
   );
   const [exportingPath, setExportingPath] = useState<string | null>(null);
 
@@ -78,10 +78,10 @@ export function CurriculumScanTab({ showToast }: CurriculumScanTabProps) {
       return savedMaps.some(
         (m) =>
           m.assignmentId === `curriculum:${externalId}` ||
-          m.assignmentId === externalId
+          m.assignmentId === externalId,
       );
     },
-    [savedMaps]
+    [savedMaps],
   );
 
   // Scan curriculum repo
@@ -175,7 +175,9 @@ export function CurriculumScanTab({ showToast }: CurriculumScanTabProps) {
   };
 
   // Handler for individual export
-  const handleExportSingle = async (assignment: CurriculumAssignmentSummary) => {
+  const handleExportSingle = async (
+    assignment: CurriculumAssignmentSummary,
+  ) => {
     setExportingPath(assignment.path);
 
     try {
@@ -214,10 +216,10 @@ export function CurriculumScanTab({ showToast }: CurriculumScanTabProps) {
   // Delete handler
   const handleDeleteMap = async (
     assignmentId: string,
-    assignmentName: string
+    assignmentName: string,
   ) => {
     const confirmed = window.confirm(
-      `Are you sure you want to delete the question map for "${assignmentName}"?`
+      `Are you sure you want to delete the question map for "${assignmentName}"?`,
     );
     if (!confirmed) return;
 
@@ -233,7 +235,7 @@ export function CurriculumScanTab({ showToast }: CurriculumScanTabProps) {
         });
         // Remove from local state
         setSavedMaps((prev) =>
-          prev.filter((m) => m.assignmentId !== assignmentId)
+          prev.filter((m) => m.assignmentId !== assignmentId),
         );
       } else {
         showToast({

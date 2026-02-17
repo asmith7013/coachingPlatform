@@ -44,8 +44,7 @@ export function getSlideTypeName(slideNum: number, numMoves: number): string {
   if (slideNum === 1) return "Teacher Instructions";
   if (slideNum === 2) return "Big Idea";
   if (slideNum === 3) return "Problem Setup";
-  if (slideNum >= 4 && slideNum <= 3 + numMoves)
-    return `Step ${slideNum - 3}`;
+  if (slideNum >= 4 && slideNum <= 3 + numMoves) return `Step ${slideNum - 3}`;
   const afterSteps = slideNum - 3 - numMoves;
   if (afterSteps === 1) return "Practice 1";
   if (afterSteps === 2) return "Practice 2";
@@ -474,9 +473,7 @@ export function useSlideGeneration({
           }
 
           // Generate lesson summary (slide 10) after printable
-          console.log(
-            "[generate-slides] Generating lesson summary...",
-          );
+          console.log("[generate-slides] Generating lesson summary...");
           setLoadingProgress({
             phase: "generating",
             message: "Creating Lesson Summary...",
@@ -509,7 +506,8 @@ export function useSlideGeneration({
                 body: JSON.stringify({
                   strategyName: strategyDefinition?.name || "Strategy",
                   strategyMoves: strategyDefinition?.moves || [],
-                  oneSentenceSummary: strategyDefinition?.oneSentenceSummary || "",
+                  oneSentenceSummary:
+                    strategyDefinition?.oneSentenceSummary || "",
                   bigIdea: strategyDefinition?.bigIdea || "",
                   problemType: problemAnalysis?.problemType || "Math Problem",
                   visualType: problemAnalysis?.visualType || "text-only",
@@ -573,7 +571,9 @@ export function useSlideGeneration({
               summaryError instanceof Error &&
               summaryError.name === "AbortError"
             ) {
-              console.error("[generate-slides] Lesson summary generation timed out");
+              console.error(
+                "[generate-slides] Lesson summary generation timed out",
+              );
             } else {
               console.error(
                 "[generate-slides] Lesson summary generation error:",

@@ -1,1 +1,1 @@
-export * from './coaching-stages'; 
+// Validation utilities

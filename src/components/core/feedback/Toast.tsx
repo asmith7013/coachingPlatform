@@ -1,148 +1,164 @@
-'use client'
+"use client";
 
-import { Fragment, useState } from 'react'
-import { Transition } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/20/solid'
-import { cn } from '@ui/utils/formatters'
-import { tv, type VariantProps } from 'tailwind-variants'
-import { 
-  shadows, textSize, weight, radii, paddingX, paddingY, iconSizes, flex, spaceBetween
-} from '@/lib/tokens/tokens'
-import { 
-  textColors, backgroundColors, hoverTextColors, ringColors
-} from '@/lib/tokens/colors'
-import { 
-  TextSizeToken, 
-  TextColorToken,
-  ShadowToken
-} from '@/lib/tokens/types'
+import { Fragment, useState } from "react";
+import { Transition } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/20/solid";
+import { cn } from "@ui/utils/formatters";
+import { tv, type VariantProps } from "tailwind-variants";
+import {
+  shadows,
+  textSize,
+  weight,
+  radii,
+  paddingX,
+  paddingY,
+  iconSizes,
+  flex,
+  spaceBetween,
+} from "@/lib/tokens/tokens";
+import {
+  textColors,
+  backgroundColors,
+  hoverTextColors,
+  ringColors,
+} from "@/lib/tokens/colors";
+import { TextSizeToken, TextColorToken, ShadowToken } from "@/lib/tokens/types";
 
 // Define component-specific types
-export type ToastVariant = 'success' | 'error' | 'warning' | 'info';
-export type ToastPosition = 'bottomRight' | 'topRight' | 'bottomLeft' | 'topLeft' | 'bottom' | 'top';
+export type ToastVariant = "success" | "error" | "warning" | "info";
+export type ToastPosition =
+  | "bottomRight"
+  | "topRight"
+  | "bottomLeft"
+  | "topLeft"
+  | "bottom"
+  | "top";
 
 // Define Toast variants using tv() with full token migration
 const toast = tv({
   slots: {
     // Keep structural classes, replace spacing tokens
     container: [
-      'pointer-events-none fixed inset-0 flex items-end z-[9999]',
-      paddingX.md,        // px-4 → paddingX.md
-      paddingY.lg,        // py-6 → paddingY.lg
-      'sm:items-start sm:p-6'  // Keep responsive as-is
+      "pointer-events-none fixed inset-0 flex items-end z-[9999]",
+      paddingX.md, // px-4 → paddingX.md
+      paddingY.lg, // py-6 → paddingY.lg
+      "sm:items-start sm:p-6", // Keep responsive as-is
     ],
-    wrapper: ['flex w-full flex-col items-center sm:items-end', spaceBetween.y.md],
+    wrapper: [
+      "flex w-full flex-col items-center sm:items-end",
+      spaceBetween.y.md,
+    ],
     panel: [
       // Keep structural classes
-      'pointer-events-auto w-full max-w-sm overflow-hidden',
+      "pointer-events-auto w-full max-w-sm overflow-hidden",
       // Replace with tokens
-      radii.lg,                    // rounded-lg → radii.lg
-      backgroundColors.white,       // bg-white → backgroundColors.white
-      shadows.lg,                  // shadow-lg → shadows.lg (already tokenized)
-      'ring-1 ring-black/5'        // Keep complex ring as-is for now
+      radii.lg, // rounded-lg → radii.lg
+      backgroundColors.white, // bg-white → backgroundColors.white
+      shadows.lg, // shadow-lg → shadows.lg (already tokenized)
+      "ring-1 ring-black/5", // Keep complex ring as-is for now
     ],
     content: [
       // Replace with tokens
-      paddingX.md,        // p-4 → paddingX.md + paddingY.md
-      paddingY.md
+      paddingX.md, // p-4 → paddingX.md + paddingY.md
+      paddingY.md,
     ],
-    flex: 'flex items-start',
+    flex: "flex items-start",
     icon: flex.shrink,
     iconSvg: iconSizes.lg,
-    body: ['ml-3 w-0', flex.grow, 'pt-0.5'],
+    body: ["ml-3 w-0", flex.grow, "pt-0.5"],
     title: [
-      textSize.sm,        // text-sm → textSize.sm
-      weight.medium       // font-medium → weight.medium
+      textSize.sm, // text-sm → textSize.sm
+      weight.medium, // font-medium → weight.medium
     ],
     description: [
-      'mt-1',            // Keep margin as-is
-      textSize.sm        // text-sm → textSize.sm
+      "mt-1", // Keep margin as-is
+      textSize.sm, // text-sm → textSize.sm
     ],
-    closeWrapper: ['ml-4 flex', flex.shrink],
+    closeWrapper: ["ml-4 flex", flex.shrink],
     closeButton: [
       // Keep structural classes
-      'inline-flex cursor-pointer',
+      "inline-flex cursor-pointer",
       // Replace with tokens
-      radii.md,                    // rounded-md → radii.md
-      backgroundColors.white,       // bg-white → backgroundColors.white
-      textColors.muted,            // text-gray-400 → textColors.muted
-      hoverTextColors.default,     // hover:text-gray-500 → hoverTextColors.default
-      'focus:ring-2 focus:ring-offset-2 focus:outline-hidden',  // Keep focus as-is
-      `focus:${ringColors.primary}` // focus:ring-indigo-500 → focus:ringColors.primary
+      radii.md, // rounded-md → radii.md
+      backgroundColors.white, // bg-white → backgroundColors.white
+      textColors.muted, // text-gray-400 → textColors.muted
+      hoverTextColors.default, // hover:text-gray-500 → hoverTextColors.default
+      "focus:ring-2 focus:ring-offset-2 focus:outline-hidden", // Keep focus as-is
+      `focus:${ringColors.primary}`, // focus:ring-indigo-500 → focus:ringColors.primary
     ],
-    closeIcon: iconSizes.md,     // size-5 → iconSizes.md
+    closeIcon: iconSizes.md, // size-5 → iconSizes.md
   },
   variants: {
     variant: {
       success: {
-        iconSvg: textColors.success,    // text-green-400 → textColors.success
+        iconSvg: textColors.success, // text-green-400 → textColors.success
         title: textColors.default,
         description: textColors.muted,
       },
       error: {
-        iconSvg: textColors.danger,     // text-red-400 → textColors.danger
+        iconSvg: textColors.danger, // text-red-400 → textColors.danger
         title: textColors.danger,
         description: textColors.muted,
       },
       warning: {
-        iconSvg: textColors.danger,     // text-amber-400 → textColors.danger (closest semantic)
+        iconSvg: textColors.danger, // text-amber-400 → textColors.danger (closest semantic)
         title: textColors.default,
         description: textColors.muted,
       },
       info: {
-        iconSvg: textColors.primary,    // text-blue-400 → textColors.primary
+        iconSvg: textColors.primary, // text-blue-400 → textColors.primary
         title: textColors.default,
         description: textColors.muted,
       },
     },
     position: {
       bottomRight: {
-        container: 'items-end',
-        wrapper: 'items-end',
+        container: "items-end",
+        wrapper: "items-end",
       },
       topRight: {
-        container: 'items-start',
-        wrapper: 'items-end',
+        container: "items-start",
+        wrapper: "items-end",
       },
       bottomLeft: {
-        container: 'items-end',
-        wrapper: 'items-start',
+        container: "items-end",
+        wrapper: "items-start",
       },
       topLeft: {
-        container: 'items-start',
-        wrapper: 'items-start',
+        container: "items-start",
+        wrapper: "items-start",
       },
       bottom: {
-        container: 'items-end',
-        wrapper: 'items-center',
+        container: "items-end",
+        wrapper: "items-center",
       },
       top: {
-        container: 'items-start',
-        wrapper: 'items-center',
+        container: "items-start",
+        wrapper: "items-center",
       },
     },
   },
   defaultVariants: {
-    variant: 'success',
-    position: 'bottomRight',
+    variant: "success",
+    position: "bottomRight",
   },
-})
+});
 
 // Export variant types for external use
-export type ToastVariants = VariantProps<typeof toast>
+export type ToastVariants = VariantProps<typeof toast>;
 
 export interface ToastProps extends Partial<ToastVariants> {
-  show: boolean
-  onClose: () => void
-  title: string
-  description?: string
-  icon?: React.ComponentType<{ className?: string }>
-  textSize?: TextSizeToken
-  textColor?: TextColorToken
-  shadow?: ShadowToken
-  variant?: ToastVariant
-  position?: ToastPosition
-  className?: string
+  show: boolean;
+  onClose: () => void;
+  title: string;
+  description?: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  textSize?: TextSizeToken;
+  textColor?: TextColorToken;
+  shadow?: ShadowToken;
+  variant?: ToastVariant;
+  position?: ToastPosition;
+  className?: string;
 }
 
 export function Toast({
@@ -151,17 +167,14 @@ export function Toast({
   title,
   description,
   icon: Icon,
-  variant = 'success',
-  position = 'bottomRight',
+  variant = "success",
+  position = "bottomRight",
   className,
 }: ToastProps) {
-  const styles = toast({ variant, position })
+  const styles = toast({ variant, position });
 
   return (
-    <div 
-      aria-live="assertive"
-      className={styles.container()}
-    >
+    <div aria-live="assertive" className={styles.container()}>
       <div className={styles.wrapper()}>
         <Transition
           show={show}
@@ -194,7 +207,10 @@ export function Toast({
                     onClick={onClose}
                   >
                     <span className="sr-only">Close</span>
-                    <XMarkIcon className={styles.closeIcon()} aria-hidden="true" />
+                    <XMarkIcon
+                      className={styles.closeIcon()}
+                      aria-hidden="true"
+                    />
                   </button>
                 </div>
               </div>
@@ -203,42 +219,40 @@ export function Toast({
         </Transition>
       </div>
     </div>
-  )
+  );
 }
 
 // Example wrapper component to manage toast state
 export function useToast() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [toastProps, setToastProps] = useState<Omit<ToastProps, 'show' | 'onClose'>>({
-    title: '',
-    variant: 'success',
-  })
+  const [isVisible, setIsVisible] = useState(false);
+  const [toastProps, setToastProps] = useState<
+    Omit<ToastProps, "show" | "onClose">
+  >({
+    title: "",
+    variant: "success",
+  });
 
-  const showToast = (props: Omit<ToastProps, 'show' | 'onClose'>) => {
-    setToastProps(props)
-    setIsVisible(true)
+  const showToast = (props: Omit<ToastProps, "show" | "onClose">) => {
+    setToastProps(props);
+    setIsVisible(true);
 
     // Auto-hide after 4 seconds
     setTimeout(() => {
-      setIsVisible(false)
-    }, 4000)
-  }
+      setIsVisible(false);
+    }, 4000);
+  };
 
   const hideToast = () => {
-    setIsVisible(false)
-  }
+    setIsVisible(false);
+  };
 
   const ToastComponent = () => (
-    <Toast
-      show={isVisible}
-      onClose={hideToast}
-      {...toastProps}
-    />
-  )
+    <Toast show={isVisible} onClose={hideToast} {...toastProps} />
+  );
 
   return {
     showToast,
     hideToast,
     ToastComponent,
-  }
+  };
 }

@@ -21,7 +21,7 @@ export function validateApiKey(req: NextRequest): NextResponse | null {
     console.error("SOLVES_COACHING_API_KEY environment variable is not set");
     return NextResponse.json(
       { success: false, error: "Server configuration error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -29,7 +29,7 @@ export function validateApiKey(req: NextRequest): NextResponse | null {
   if (!authHeader?.startsWith("Bearer ")) {
     return NextResponse.json(
       { success: false, error: "Missing or invalid Authorization header" },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -37,7 +37,7 @@ export function validateApiKey(req: NextRequest): NextResponse | null {
   if (token !== API_KEY) {
     return NextResponse.json(
       { success: false, error: "Invalid API key" },
-      { status: 401 }
+      { status: 401 },
     );
   }
 

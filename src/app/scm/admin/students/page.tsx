@@ -13,7 +13,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { TablePagination } from "@/components/composed/tables/features/pagination";
-import { useStudents } from "@hooks/domain/313/useStudents";
+import { useStudents } from "@hooks/scm/useStudents";
 import { createStudent } from "@actions/scm/student/students";
 import {
   createStudentDefaults,
@@ -22,12 +22,12 @@ import {
 import {
   Schools,
   AllSections,
-  Sections313,
+  Sections,
   SectionsPS19,
   SectionsX644,
-  Teachers313,
+  Teachers,
   AllSectionsType,
-  Teachers313Type,
+  TeachersType,
 } from "@schema/enum/scm";
 
 // Grade options
@@ -104,7 +104,7 @@ export default function ManageStudentsPage() {
 
   // Available options for inline editing dropdowns (deduplicated)
   const availableSections = useMemo(() => [...new Set(AllSections)], []);
-  const availableTeachers = Teachers313;
+  const availableTeachers = Teachers;
 
   // Filter students
   const filteredStudents = useMemo(() => {
@@ -205,7 +205,7 @@ export default function ManageStudentsPage() {
         const typedUpdates: Partial<Student> = {
           ...updates,
           section: updates.section as AllSectionsType | undefined,
-          teacher: updates.teacher as Teachers313Type | undefined,
+          teacher: updates.teacher as TeachersType | undefined,
         };
         await updateWithToast(id, typedUpdates);
         // Clear edit state for this student
@@ -264,7 +264,7 @@ export default function ManageStudentsPage() {
   const getSectionsForSchool = (school: string) => {
     switch (school) {
       case "IS313":
-        return [...Sections313];
+        return [...Sections];
       case "PS19":
         return [...SectionsPS19];
       case "X644":
@@ -338,7 +338,7 @@ export default function ManageStudentsPage() {
           section: formData.section as AllSectionsType,
           gradeLevel: formData.gradeLevel || undefined,
           ...(formData.teacher
-            ? { teacher: formData.teacher as Teachers313Type }
+            ? { teacher: formData.teacher as TeachersType }
             : {}),
           active: formData.active,
         };
@@ -358,7 +358,7 @@ export default function ManageStudentsPage() {
           section: formData.section as AllSectionsType,
           gradeLevel: formData.gradeLevel || undefined,
           ...(formData.teacher
-            ? { teacher: formData.teacher as Teachers313Type }
+            ? { teacher: formData.teacher as TeachersType }
             : {}),
           active: formData.active,
         });
@@ -882,7 +882,7 @@ export default function ManageStudentsPage() {
                         disabled={isSubmitting}
                       >
                         <option value="">Select teacher...</option>
-                        {Teachers313.map((teacher) => (
+                        {Teachers.map((teacher) => (
                           <option key={teacher} value={teacher}>
                             {teacher}
                           </option>

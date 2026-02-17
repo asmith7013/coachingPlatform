@@ -20,9 +20,9 @@ interface SectionPacingCardProps {
 
 // Badge styling for special populations
 const SPECIAL_POP_BADGE_STYLES: Record<string, { bg: string; text: string }> = {
-  'ICT': { bg: 'bg-indigo-100', text: 'text-indigo-800' },
-  '12-1-1': { bg: 'bg-teal-100', text: 'text-teal-800' },
-  'MLL': { bg: 'bg-orange-100', text: 'text-orange-800' },
+  ICT: { bg: "bg-indigo-100", text: "text-indigo-800" },
+  "12-1-1": { bg: "bg-teal-100", text: "text-teal-800" },
+  MLL: { bg: "bg-orange-100", text: "text-orange-800" },
 };
 
 export function SectionPacingCard({
@@ -38,16 +38,26 @@ export function SectionPacingCard({
 
   // Auto-set excludeRampUps when section is past ramp ups (currentSection is not "Ramp Up")
   useEffect(() => {
-    if (currentUnitInfo?.currentSection && currentUnitInfo.currentSection !== "Ramp Up") {
+    if (
+      currentUnitInfo?.currentSection &&
+      currentUnitInfo.currentSection !== "Ramp Up"
+    ) {
       setExcludeRampUps(true);
     }
   }, [currentUnitInfo?.currentSection]);
 
   // Derive scope tag from section
-  const scopeSequenceTag = useMemo(() => getScopeTagForSection(section), [section]);
+  const scopeSequenceTag = useMemo(
+    () => getScopeTagForSection(section),
+    [section],
+  );
 
   // Load units and config (school is required to fetch section config)
-  const { sectionConfigAssignments } = useUnitsAndConfig(scopeSequenceTag, section, school);
+  const { sectionConfigAssignments } = useUnitsAndConfig(
+    scopeSequenceTag,
+    section,
+    school,
+  );
 
   // Load all lessons for the unit (pass 'all' to get everything)
   const { lessons: allLessonsInUnit } = useLessons(
@@ -55,14 +65,28 @@ export function SectionPacingCard({
     section,
     currentUnit,
     "all",
-    sectionConfigAssignments
+    sectionConfigAssignments,
   );
 
   // Load progress data
-  const { progressData } = useProgressData(section, currentUnit, allLessonsInUnit, school);
+  const { progressData } = useProgressData(
+    section,
+    currentUnit,
+    allLessonsInUnit,
+    school,
+  );
 
   // Compute pacing data
-  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps, undefined, hideEmptySections, school);
+  const pacingData = usePacingData(
+    section,
+    currentUnit,
+    allLessonsInUnit,
+    progressData,
+    excludeRampUps,
+    undefined,
+    hideEmptySections,
+    school,
+  );
 
   // Build custom header with section badges and toggles
   const customHeader = (
@@ -82,9 +106,15 @@ export function SectionPacingCard({
           </span>
         )}
         {specialPopulations?.map((pop) => {
-          const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+          const style = SPECIAL_POP_BADGE_STYLES[pop] || {
+            bg: "bg-gray-100",
+            text: "text-gray-800",
+          };
           return (
-            <span key={pop} className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${style.bg} ${style.text}`}>
+            <span
+              key={pop}
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${style.bg} ${style.text}`}
+            >
               {pop}
             </span>
           );
@@ -116,7 +146,8 @@ export function SectionPacingCard({
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
         {customHeader}
         <p className="text-gray-500 text-sm mt-4">
-          No calendar schedule found for this section. Set up unit dates in the Unit Calendar to enable pacing tracking.
+          No calendar schedule found for this section. Set up unit dates in the
+          Unit Calendar to enable pacing tracking.
         </p>
       </div>
     );

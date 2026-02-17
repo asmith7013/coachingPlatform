@@ -27,7 +27,10 @@ export async function GET(req: NextRequest) {
     const searchParams = new URL(req.url).searchParams;
     const gradeLevel = searchParams.get("gradeLevel");
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "100", 10)));
+    const limit = Math.min(
+      100,
+      Math.max(1, parseInt(searchParams.get("limit") || "100", 10)),
+    );
     const skip = (page - 1) * limit;
 
     const result = await withDbConnection(async () => {
@@ -46,7 +49,9 @@ export async function GET(req: NextRequest) {
 
       // Fetch decks with light projection (no htmlSlides)
       const decks = await WorkedExampleDeck.find(query)
-        .select("slug title mathConcept mathStandard gradeLevel unitNumber lessonNumber learningGoals createdAt")
+        .select(
+          "slug title mathConcept mathStandard gradeLevel unitNumber lessonNumber learningGoals createdAt",
+        )
         .sort({ unitNumber: 1, lessonNumber: 1, createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -72,7 +77,7 @@ export async function GET(req: NextRequest) {
     console.error("[worked-examples] Error listing decks:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

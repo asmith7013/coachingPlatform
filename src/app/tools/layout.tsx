@@ -1,8 +1,12 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
-export default function ToolsLayout({ children }: { children: React.ReactNode }) {
+export default function ToolsLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}

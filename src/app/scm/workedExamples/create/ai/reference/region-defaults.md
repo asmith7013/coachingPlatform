@@ -40,6 +40,7 @@ answer-box: 653, 40, 280, 115
 ## Bounds Validation
 
 For each element, verify:
+
 - `x + w ≤ 940` (fits width with margin)
 - `y + h ≤ 540` (fits height)
 - Stacked elements: `first.y + first.h ≤ second.y`

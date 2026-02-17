@@ -1,6 +1,9 @@
 // src/app/api/schools/route.ts
 import { fetchSchoolsForApi } from "@/lib/server/fetchers/domain/school";
-import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
+import {
+  createReferenceEndpoint,
+  FetchFunction,
+} from "@api-handlers/reference-endpoint";
 import { School, SchoolReference } from "@zod-schema/core/school";
 
 // Simple direct mapping function that doesn't use the selector system
@@ -22,5 +25,5 @@ export const GET = createReferenceEndpoint<School, SchoolReference>({
   mapItem: mapSchoolToReferenceSimple,
   defaultSearchField: "schoolName",
   defaultLimit: 20,
-  logPrefix: "Schools API"
+  logPrefix: "Schools API",
 });

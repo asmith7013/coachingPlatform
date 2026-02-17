@@ -1,8 +1,8 @@
 "use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { AssignmentVariationModel } from '@mongoose-schema/scm/podsie';
-import { handleServerError } from '@error/handlers/server';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { AssignmentVariationModel } from "@mongoose-schema/scm/podsie";
+import { handleServerError } from "@error/handlers/server";
 
 export async function getVariationBySlug(slug: string) {
   return withDbConnection(async () => {
@@ -12,7 +12,7 @@ export async function getVariationBySlug(slug: string) {
       if (!variation) {
         return {
           success: false,
-          error: 'Assignment variation not found',
+          error: "Assignment variation not found",
         };
       }
 
@@ -20,7 +20,7 @@ export async function getVariationBySlug(slug: string) {
       if (!variation.isPublic) {
         return {
           success: false,
-          error: 'This variation is not publicly available',
+          error: "This variation is not publicly available",
         };
       }
 
@@ -34,7 +34,10 @@ export async function getVariationBySlug(slug: string) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to retrieve assignment variation'),
+        error: handleServerError(
+          error,
+          "Failed to retrieve assignment variation",
+        ),
       };
     }
   });
@@ -48,7 +51,7 @@ export async function getVariationById(variationId: string) {
       if (!variation) {
         return {
           success: false,
-          error: 'Assignment variation not found',
+          error: "Assignment variation not found",
         };
       }
 
@@ -56,7 +59,7 @@ export async function getVariationById(variationId: string) {
       if (!variation.isPublic) {
         return {
           success: false,
-          error: 'This variation is not publicly available',
+          error: "This variation is not publicly available",
         };
       }
 
@@ -70,7 +73,10 @@ export async function getVariationById(variationId: string) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to retrieve assignment variation'),
+        error: handleServerError(
+          error,
+          "Failed to retrieve assignment variation",
+        ),
       };
     }
   });

@@ -22,8 +22,11 @@ import {
  * @returns The learning content if found, or null if not found
  */
 export async function getLearningContent(
-  query: LearningContentQuery
-): Promise<{ success: true; data: LearningContent | null } | { success: false; error: string }> {
+  query: LearningContentQuery,
+): Promise<
+  | { success: true; data: LearningContent | null }
+  | { success: false; error: string }
+> {
   return withDbConnection(async () => {
     try {
       // Validate query
@@ -50,7 +53,10 @@ export async function getLearningContent(
         return { success: false, error: handleValidationError(error) };
       }
       console.error("Error fetching learning content:", error);
-      return { success: false, error: handleServerError(error, "Failed to fetch learning content") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch learning content"),
+      };
     }
   });
 }
@@ -68,8 +74,10 @@ export async function getLearningContent(
  */
 export async function saveLearningContent(
   query: LearningContentQuery,
-  content: string
-): Promise<{ success: true; data: LearningContent } | { success: false; error: string }> {
+  content: string,
+): Promise<
+  { success: true; data: LearningContent } | { success: false; error: string }
+> {
   return withDbConnection(async () => {
     try {
       // Validate query
@@ -93,7 +101,7 @@ export async function saveLearningContent(
             createdAt: new Date().toISOString(),
           },
         },
-        { upsert: true, new: true, runValidators: true }
+        { upsert: true, new: true, runValidators: true },
       ).lean();
 
       // Serialize to ensure JSON-compatible
@@ -105,7 +113,10 @@ export async function saveLearningContent(
         return { success: false, error: handleValidationError(error) };
       }
       console.error("Error saving learning content:", error);
-      return { success: false, error: handleServerError(error, "Failed to save learning content") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to save learning content"),
+      };
     }
   });
 }
@@ -121,7 +132,7 @@ export async function saveLearningContent(
  * @returns Success status
  */
 export async function deleteLearningContent(
-  query: LearningContentQuery
+  query: LearningContentQuery,
 ): Promise<{ success: true } | { success: false; error: string }> {
   return withDbConnection(async () => {
     try {
@@ -140,7 +151,7 @@ export async function deleteLearningContent(
             active: false,
             updatedAt: new Date().toISOString(),
           },
-        }
+        },
       );
 
       return { success: true };
@@ -149,7 +160,10 @@ export async function deleteLearningContent(
         return { success: false, error: handleValidationError(error) };
       }
       console.error("Error deleting learning content:", error);
-      return { success: false, error: handleServerError(error, "Failed to delete learning content") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to delete learning content"),
+      };
     }
   });
 }

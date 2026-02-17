@@ -6,8 +6,11 @@
 import { useState, useMemo } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { addPodsieAssignment } from "@/app/actions/scm/podsie/section-config";
-import { createScopeAndSequence, fetchScopeAndSequence } from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
-import { Sections313, SectionsPS19 } from "@schema/enum/scm";
+import {
+  createScopeAndSequence,
+  fetchScopeAndSequence,
+} from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
+import { Sections, SectionsPS19 } from "@schema/enum/scm";
 
 type PodsieAssignment = any; // Temporary - needs refactoring for new schema
 
@@ -40,7 +43,7 @@ export function ManualCreateAssignmentModal({
 
   // Selected sections for multi-select (initialize with current section)
   const [selectedSections, setSelectedSections] = useState<string[]>([
-    `${school}:${classSection}`
+    `${school}:${classSection}`,
   ]);
 
   // Form state
@@ -63,7 +66,7 @@ export function ManualCreateAssignmentModal({
     "D",
     "E",
     "F",
-    "Unit Assessment"
+    "Unit Assessment",
   ] as const;
 
   // Build section options grouped by school
@@ -71,8 +74,12 @@ export function ManualCreateAssignmentModal({
     const options: SectionOption[] = [];
 
     // IS313 sections
-    Sections313.forEach(section => {
-      const grade = section.startsWith('6') ? '6' : section.startsWith('7') ? '7' : '8';
+    Sections.forEach((section) => {
+      const grade = section.startsWith("6")
+        ? "6"
+        : section.startsWith("7")
+          ? "7"
+          : "8";
       options.push({
         school: "IS313",
         section,
@@ -81,8 +88,12 @@ export function ManualCreateAssignmentModal({
     });
 
     // PS19 sections
-    SectionsPS19.forEach(section => {
-      const grade = section.startsWith('6') ? '6' : section.startsWith('7') ? '7' : '8';
+    SectionsPS19.forEach((section) => {
+      const grade = section.startsWith("6")
+        ? "6"
+        : section.startsWith("7")
+          ? "7"
+          : "8";
       options.push({
         school: "PS19",
         section,
@@ -96,7 +107,7 @@ export function ManualCreateAssignmentModal({
   // Group sections by school for display
   const sectionsBySchool = useMemo(() => {
     const grouped: Record<string, SectionOption[]> = {};
-    sectionOptions.forEach(option => {
+    sectionOptions.forEach((option) => {
       if (!grouped[option.school]) {
         grouped[option.school] = [];
       }
@@ -108,9 +119,9 @@ export function ManualCreateAssignmentModal({
   // Toggle section selection
   const toggleSection = (school: string, section: string) => {
     const key = `${school}:${section}`;
-    setSelectedSections(prev => {
+    setSelectedSections((prev) => {
       if (prev.includes(key)) {
-        return prev.filter(s => s !== key);
+        return prev.filter((s) => s !== key);
       } else {
         return [...prev, key];
       }
@@ -120,17 +131,21 @@ export function ManualCreateAssignmentModal({
   // Toggle all sections for a school
   const toggleSchool = (schoolName: string) => {
     const schoolSections = sectionsBySchool[schoolName];
-    const schoolKeys = schoolSections.map(s => `${s.school}:${s.section}`);
-    const allSelected = schoolKeys.every(key => selectedSections.includes(key));
+    const schoolKeys = schoolSections.map((s) => `${s.school}:${s.section}`);
+    const allSelected = schoolKeys.every((key) =>
+      selectedSections.includes(key),
+    );
 
     if (allSelected) {
       // Deselect all
-      setSelectedSections(prev => prev.filter(key => !schoolKeys.includes(key)));
+      setSelectedSections((prev) =>
+        prev.filter((key) => !schoolKeys.includes(key)),
+      );
     } else {
       // Select all
-      setSelectedSections(prev => {
+      setSelectedSections((prev) => {
         const newSelection = [...prev];
-        schoolKeys.forEach(key => {
+        schoolKeys.forEach((key) => {
           if (!newSelection.includes(key)) {
             newSelection.push(key);
           }
@@ -170,7 +185,7 @@ export function ManualCreateAssignmentModal({
 
     if (!validateUnitLessonId(formData.unitLessonId)) {
       setFormError(
-        'Unit.Lesson ID must be in format "Unit.Lesson" (e.g., "3.15") or "Unit.RU#" (e.g., "4.RU1")'
+        'Unit.Lesson ID must be in format "Unit.Lesson" (e.g., "3.15") or "Unit.RU#" (e.g., "4.RU1")',
       );
       return;
     }
@@ -192,39 +207,50 @@ export function ManualCreateAssignmentModal({
       const failed: string[] = [];
 
       // First, ensure scope-and-sequence entry exists for this lesson
-      const sectionGrade = formData.unitLessonId.startsWith('4.') ? '8' :
-                          formData.unitLessonId.startsWith('6.') ? '6' :
-                          formData.unitLessonId.startsWith('7.') ? '7' : '8';
+      const sectionGrade = formData.unitLessonId.startsWith("4.")
+        ? "8"
+        : formData.unitLessonId.startsWith("6.")
+          ? "6"
+          : formData.unitLessonId.startsWith("7.")
+            ? "7"
+            : "8";
 
       // Determine scope tag from the first selected section
       const firstSectionKey = selectedSections[0];
-      const [, firstSection] = firstSectionKey.split(':');
-      const scopeTag = firstSection === '802' ? 'Algebra 1' : `Grade ${sectionGrade}`;
+      const [, firstSection] = firstSectionKey.split(":");
+      const scopeTag =
+        firstSection === "802" ? "Algebra 1" : `Grade ${sectionGrade}`;
 
       // Check if scope-and-sequence entry exists
       const scopeResult = await fetchScopeAndSequence({
         page: 1,
         limit: 1,
-        sortBy: 'unitLessonId',
-        sortOrder: 'asc',
+        sortBy: "unitLessonId",
+        sortOrder: "asc",
         filters: {
           unitLessonId: formData.unitLessonId,
-          scopeSequenceTag: scopeTag
+          scopeSequenceTag: scopeTag,
         },
-        search: '',
-        searchFields: []
+        search: "",
+        searchFields: [],
       });
 
       // If no scope-and-sequence entry exists, create it
-      if (!scopeResult.success || !scopeResult.items || scopeResult.items.length === 0) {
+      if (
+        !scopeResult.success ||
+        !scopeResult.items ||
+        scopeResult.items.length === 0
+      ) {
         // Extract unit number from unitLessonId (e.g., "4.RU1" -> 4)
-        const unitNumber = parseInt(formData.unitLessonId.split('.')[0]);
+        const unitNumber = parseInt(formData.unitLessonId.split(".")[0]);
         const unitName = `Unit ${unitNumber}`;
 
         // Determine lesson type based on unitLessonId pattern
-        const isRampUp = formData.unitLessonId.includes('RU');
-        const lessonType = isRampUp ? 'ramp-up' : 'lesson';
-        const lessonNumber = isRampUp ? 0 : parseInt(formData.unitLessonId.split('.')[1]) || 0;
+        const isRampUp = formData.unitLessonId.includes("RU");
+        const lessonType = isRampUp ? "ramp-up" : "lesson";
+        const lessonNumber = isRampUp
+          ? 0
+          : parseInt(formData.unitLessonId.split(".")[1]) || 0;
 
         const createScopeResult = await createScopeAndSequence({
           grade: sectionGrade,
@@ -238,19 +264,26 @@ export function ManualCreateAssignmentModal({
           scopeSequenceTag: scopeTag,
           roadmapSkills: [],
           targetSkills: [],
-          ownerIds: []
+          ownerIds: [],
         });
 
         if (!createScopeResult.success) {
-          console.warn('Failed to create scope-and-sequence entry:', createScopeResult.error);
+          console.warn(
+            "Failed to create scope-and-sequence entry:",
+            createScopeResult.error,
+          );
           // Continue anyway - the assignment can still be added
         }
       }
 
       // Add assignment to each selected section
       for (const sectionKey of selectedSections) {
-        const [sectionSchool, section] = sectionKey.split(':');
-        const sectionGradeLevel = section.startsWith('6') ? '6' : section.startsWith('7') ? '7' : '8';
+        const [sectionSchool, section] = sectionKey.split(":");
+        const sectionGradeLevel = section.startsWith("6")
+          ? "6"
+          : section.startsWith("7")
+            ? "7"
+            : "8";
 
         const assignment: PodsieAssignment = {
           unitLessonId: formData.unitLessonId,
@@ -265,7 +298,11 @@ export function ManualCreateAssignmentModal({
           notes: formData.notes || undefined,
         };
 
-        const result = await addPodsieAssignment(sectionSchool, section, assignment);
+        const result = await addPodsieAssignment(
+          sectionSchool,
+          section,
+          assignment,
+        );
 
         if (result.success) {
           successfulAdds++;
@@ -329,8 +366,10 @@ export function ManualCreateAssignmentModal({
 
             {successCount > 0 && (
               <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-                Successfully added to {successCount} section{successCount !== 1 ? 's' : ''}
-                {failedSections.length > 0 && `, ${failedSections.length} failed`}
+                Successfully added to {successCount} section
+                {successCount !== 1 ? "s" : ""}
+                {failedSections.length > 0 &&
+                  `, ${failedSections.length} failed`}
               </div>
             )}
 
@@ -339,7 +378,9 @@ export function ManualCreateAssignmentModal({
                 <div className="font-medium mb-1">Failed sections:</div>
                 <ul className="list-disc list-inside space-y-1">
                   {failedSections.map((error, idx) => (
-                    <li key={idx} className="text-xs">{error}</li>
+                    <li key={idx} className="text-xs">
+                      {error}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -351,8 +392,9 @@ export function ManualCreateAssignmentModal({
                 When to use this form
               </h4>
               <p className="text-sm text-blue-800">
-                Use this form to manually add Podsie assignments that don&apos;t appear
-                in the API fetch. You can add the same assignment to multiple sections at once.
+                Use this form to manually add Podsie assignments that don&apos;t
+                appear in the API fetch. You can add the same assignment to
+                multiple sections at once.
               </p>
             </div>
 
@@ -362,49 +404,66 @@ export function ManualCreateAssignmentModal({
                 Select Sections ({selectedSections.length} selected)
               </h4>
               <div className="space-y-3 max-h-60 overflow-y-auto">
-                {Object.entries(sectionsBySchool).map(([schoolName, sections]) => (
-                  <div key={schoolName} className="border border-gray-300 rounded-lg overflow-hidden">
-                    {/* School Header */}
+                {Object.entries(sectionsBySchool).map(
+                  ([schoolName, sections]) => (
                     <div
-                      className="bg-gray-100 px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-gray-200"
-                      onClick={() => toggleSchool(schoolName)}
+                      key={schoolName}
+                      className="border border-gray-300 rounded-lg overflow-hidden"
                     >
-                      <span className="font-semibold text-sm text-gray-900">{schoolName}</span>
-                      <span className="text-xs text-gray-600">
-                        {sections.filter(s => selectedSections.includes(`${s.school}:${s.section}`)).length} / {sections.length} selected
-                      </span>
+                      {/* School Header */}
+                      <div
+                        className="bg-gray-100 px-3 py-2 flex items-center justify-between cursor-pointer hover:bg-gray-200"
+                        onClick={() => toggleSchool(schoolName)}
+                      >
+                        <span className="font-semibold text-sm text-gray-900">
+                          {schoolName}
+                        </span>
+                        <span className="text-xs text-gray-600">
+                          {
+                            sections.filter((s) =>
+                              selectedSections.includes(
+                                `${s.school}:${s.section}`,
+                              ),
+                            ).length
+                          }{" "}
+                          / {sections.length} selected
+                        </span>
+                      </div>
+                      {/* Sections */}
+                      <div className="bg-white divide-y divide-gray-200">
+                        {sections.map((option) => {
+                          const key = `${option.school}:${option.section}`;
+                          const isSelected = selectedSections.includes(key);
+                          return (
+                            <label
+                              key={key}
+                              className="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() =>
+                                  toggleSection(option.school, option.section)
+                                }
+                                className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                              />
+                              <span className="ml-2 text-sm text-gray-900">
+                                {option.section}
+                              </span>
+                              <span className="ml-auto text-xs text-gray-500">
+                                Grade {option.gradeLevel}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
                     </div>
-                    {/* Sections */}
-                    <div className="bg-white divide-y divide-gray-200">
-                      {sections.map(option => {
-                        const key = `${option.school}:${option.section}`;
-                        const isSelected = selectedSections.includes(key);
-                        return (
-                          <label
-                            key={key}
-                            className="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => toggleSection(option.school, option.section)}
-                              className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                            />
-                            <span className="ml-2 text-sm text-gray-900">
-                              {option.section}
-                            </span>
-                            <span className="ml-auto text-xs text-gray-500">
-                              Grade {option.gradeLevel}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
+                  ),
+                )}
               </div>
               <p className="text-xs text-gray-500 mt-2">
-                Click school header to select/deselect all sections in that school
+                Click school header to select/deselect all sections in that
+                school
               </p>
             </div>
 
@@ -440,7 +499,10 @@ export function ManualCreateAssignmentModal({
                   type="text"
                   value={formData.lessonName}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, lessonName: e.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      lessonName: e.target.value,
+                    }))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., Lesson 15: Area and Volume"
@@ -460,7 +522,10 @@ export function ManualCreateAssignmentModal({
                     type="text"
                     value={formData.unitLessonId}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, unitLessonId: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        unitLessonId: e.target.value,
+                      }))
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., 3.15 or 4.RU1"
@@ -478,11 +543,14 @@ export function ManualCreateAssignmentModal({
                   <select
                     value={formData.lessonSection}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, lessonSection: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        lessonSection: e.target.value,
+                      }))
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    {LESSON_SECTION_OPTIONS.map(section => (
+                    {LESSON_SECTION_OPTIONS.map((section) => (
                       <option key={section} value={section}>
                         {section}
                       </option>
@@ -504,7 +572,9 @@ export function ManualCreateAssignmentModal({
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        assignmentType: e.target.value as "lesson" | "mastery-check",
+                        assignmentType: e.target.value as
+                          | "lesson"
+                          | "mastery-check",
                       }))
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -566,19 +636,23 @@ export function ManualCreateAssignmentModal({
               </h4>
               <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
                 <div>
-                  <span className="font-medium">Grade:</span> Auto-filled per section
+                  <span className="font-medium">Grade:</span> Auto-filled per
+                  section
                 </div>
                 <div>
                   <span className="font-medium">Active:</span> Yes
                 </div>
                 <div>
-                  <span className="font-medium">Lesson Section:</span> {formData.lessonSection}
+                  <span className="font-medium">Lesson Section:</span>{" "}
+                  {formData.lessonSection}
                 </div>
                 <div>
-                  <span className="font-medium">Assignment Type:</span> {formData.assignmentType}
+                  <span className="font-medium">Assignment Type:</span>{" "}
+                  {formData.assignmentType}
                 </div>
                 <div className="col-span-2">
-                  <span className="font-medium">Question Map:</span> Empty (can be populated later)
+                  <span className="font-medium">Question Map:</span> Empty (can
+                  be populated later)
                 </div>
               </div>
             </div>
@@ -602,8 +676,8 @@ export function ManualCreateAssignmentModal({
                 }`}
               >
                 {saving
-                  ? `Adding to ${selectedSections.length} section${selectedSections.length !== 1 ? 's' : ''}...`
-                  : `Add to ${selectedSections.length} section${selectedSections.length !== 1 ? 's' : ''}`}
+                  ? `Adding to ${selectedSections.length} section${selectedSections.length !== 1 ? "s" : ""}...`
+                  : `Add to ${selectedSections.length} section${selectedSections.length !== 1 ? "s" : ""}`}
               </button>
             </div>
           </form>

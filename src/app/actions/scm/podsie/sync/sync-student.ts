@@ -34,21 +34,25 @@ export async function syncStudentRampUpProgress(
   totalQuestions: number,
   questionMapping?: number[][],
   baseQuestionIds?: number[],
-  activityType?: 'sidekick' | 'mastery-check' | 'assessment',
-  questionIdToNumber?: { [questionId: string]: number }
+  activityType?: "sidekick" | "mastery-check" | "assessment",
+  questionIdToNumber?: { [questionId: string]: number },
 ): Promise<SyncResult> {
   try {
     // Fetch from Podsie
-    const responses = await fetchPodsieResponses(podsieAssignmentId, studentEmail);
+    const responses = await fetchPodsieResponses(
+      podsieAssignmentId,
+      studentEmail,
+    );
 
     // Process responses - use mapping if provided, or baseQuestionIds, or totalQuestions
-    const { questions: questionMap, assignmentName } = processResponsesToQuestions(
-      responses,
-      questionMapping,
-      totalQuestions,
-      baseQuestionIds,
-      questionIdToNumber
-    );
+    const { questions: questionMap, assignmentName } =
+      processResponsesToQuestions(
+        responses,
+        questionMapping,
+        totalQuestions,
+        baseQuestionIds,
+        questionIdToNumber,
+      );
 
     // Convert map to array format
     const questions: RampUpQuestion[] = [];
@@ -65,10 +69,15 @@ export async function syncStudentRampUpProgress(
           explanationScore: status?.explanationScore,
         });
       }
-    } else if (questionIdToNumber && Object.keys(questionIdToNumber).length > 0) {
+    } else if (
+      questionIdToNumber &&
+      Object.keys(questionIdToNumber).length > 0
+    ) {
       // With questionIdToNumber: use actual questionNumbers from the map
       // The questionMap keys are the actual questionNumbers (may be non-sequential like 1, 2, 4, 6, 8...)
-      const questionNumbers = Array.from(questionMap.keys()).sort((a, b) => a - b);
+      const questionNumbers = Array.from(questionMap.keys()).sort(
+        (a, b) => a - b,
+      );
       for (const qNum of questionNumbers) {
         const status = questionMap.get(qNum);
         questions.push({
@@ -128,17 +137,15 @@ export async function syncStudentRampUpProgress(
     // Update student document's podsieProgress array
     await withDbConnection(async () => {
       // First, check if entry exists and if it was previously not fully complete
-      const existingStudent = await StudentModel.findOne(
-        {
-          _id: studentId,
-          podsieProgress: {
-            $elemMatch: {
-              scopeAndSequenceId: scopeAndSequenceId,
-              podsieAssignmentId: podsieAssignmentId
-            }
-          }
-        }
-      ).lean();
+      const existingStudent = await StudentModel.findOne({
+        _id: studentId,
+        podsieProgress: {
+          $elemMatch: {
+            scopeAndSequenceId: scopeAndSequenceId,
+            podsieAssignmentId: podsieAssignmentId,
+          },
+        },
+      }).lean();
 
       interface PodsieProgressEntry {
         scopeAndSequenceId: string;
@@ -146,10 +153,14 @@ export async function syncStudentRampUpProgress(
         fullyCompletedDate?: string;
       }
 
-      const podsieProgressArray = existingStudent?.podsieProgress as PodsieProgressEntry[] | undefined;
+      const podsieProgressArray = existingStudent?.podsieProgress as
+        | PodsieProgressEntry[]
+        | undefined;
       const existingProgress = Array.isArray(podsieProgressArray)
         ? podsieProgressArray.find(
-            (p) => p.scopeAndSequenceId === scopeAndSequenceId && p.podsieAssignmentId === podsieAssignmentId
+            (p) =>
+              p.scopeAndSequenceId === scopeAndSequenceId &&
+              p.podsieAssignmentId === podsieAssignmentId,
           )
         : undefined;
 
@@ -165,15 +176,16 @@ export async function syncStudentRampUpProgress(
           podsieProgress: {
             $elemMatch: {
               scopeAndSequenceId: scopeAndSequenceId,
-              podsieAssignmentId: podsieAssignmentId
-            }
-          }
+              podsieAssignmentId: podsieAssignmentId,
+            },
+          },
         },
         {
           $set: {
             "podsieProgress.$.unitCode": unitCode,
             "podsieProgress.$.rampUpId": rampUpId,
-            "podsieProgress.$.rampUpName": assignmentName || `Unit ${unitCode} Ramp-Up`,
+            "podsieProgress.$.rampUpName":
+              assignmentName || `Unit ${unitCode} Ramp-Up`,
             "podsieProgress.$.activityType": activityType,
             "podsieProgress.$.questions": questions,
             "podsieProgress.$.totalQuestions": totalQuestions,
@@ -182,8 +194,8 @@ export async function syncStudentRampUpProgress(
             "podsieProgress.$.isFullyComplete": summary.isFullyComplete,
             "podsieProgress.$.fullyCompletedDate": finalFullyCompletedDate,
             "podsieProgress.$.lastSyncedAt": new Date().toISOString(),
-          }
-        }
+          },
+        },
       );
 
       // If no existing entry, push a new one
@@ -204,11 +216,13 @@ export async function syncStudentRampUpProgress(
                 completedCount: summary.completedCount,
                 percentComplete: summary.percentComplete,
                 isFullyComplete: summary.isFullyComplete,
-                fullyCompletedDate: summary.isFullyComplete ? fullyCompletedDate : undefined,
+                fullyCompletedDate: summary.isFullyComplete
+                  ? fullyCompletedDate
+                  : undefined,
                 lastSyncedAt: new Date().toISOString(),
-              }
-            }
-          }
+              },
+            },
+          },
         );
       }
     });

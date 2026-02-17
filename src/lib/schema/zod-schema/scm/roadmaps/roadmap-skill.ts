@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
+import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
 
 // =====================================
 // SKILL REFERENCE SCHEMA
@@ -73,20 +73,30 @@ export const RoadmapsSkillFieldsSchema = z.object({
   units: z.array(UnitReferenceSchema).default([]),
 
   // Pre-computed relationships - where this skill appears (optional for backward compatibility)
-  appearsIn: z.object({
-    asTarget: z.array(UnitReferenceSchema).default([]),
-    asEssential: z.array(z.object({
-      skillNumber: z.string(),
-      title: z.string(),
-      units: z.array(UnitReferenceSchema).default([])
-    })).default([]),
-    asHelpful: z.array(z.object({
-      skillNumber: z.string(),
-      title: z.string(),
-      units: z.array(UnitReferenceSchema).default([])
-    })).default([]),
-    asSupport: z.array(UnitReferenceSchema).default([]),
-  }).optional(),
+  appearsIn: z
+    .object({
+      asTarget: z.array(UnitReferenceSchema).default([]),
+      asEssential: z
+        .array(
+          z.object({
+            skillNumber: z.string(),
+            title: z.string(),
+            units: z.array(UnitReferenceSchema).default([]),
+          }),
+        )
+        .default([]),
+      asHelpful: z
+        .array(
+          z.object({
+            skillNumber: z.string(),
+            title: z.string(),
+            units: z.array(UnitReferenceSchema).default([]),
+          }),
+        )
+        .default([]),
+      asSupport: z.array(UnitReferenceSchema).default([]),
+    })
+    .optional(),
 
   // IM Lesson fields (optional for skills from IM lessons)
   section: z.string().optional(), // A, B, C, D
@@ -98,30 +108,34 @@ export const RoadmapsSkillFieldsSchema = z.object({
   suggestedTargetSkills: z.array(z.string()).default([]), // Array of skill descriptions with IDs
 
   // IM Lesson mappings - skills can appear in multiple lessons
-  imLessons: z.array(z.object({
-    grade: z.string().optional(), // e.g., "Grade 7", "Grade 8"
-    unitNumber: z.number(),
-    lessonNumber: z.number(),
-    lessonName: z.string().optional(),
-  })).default([]),
+  imLessons: z
+    .array(
+      z.object({
+        grade: z.string().optional(), // e.g., "Grade 7", "Grade 8"
+        unitNumber: z.number(),
+        lessonNumber: z.number(),
+        lessonName: z.string().optional(),
+      }),
+    )
+    .default([]),
 
   // Content sections
-  description: z.string().default(''),
-  skillChallengeCriteria: z.string().default(''),
-  essentialQuestion: z.string().default(''),
+  description: z.string().default(""),
+  skillChallengeCriteria: z.string().default(""),
+  essentialQuestion: z.string().default(""),
 
   // Teaching strategies and resources
-  primerHtml: z.string().default(''), // Complete primer section HTML with column layout preserved
-  launch: z.string().default(''),
-  teacherStudentStrategies: z.string().default(''),
-  modelsAndManipulatives: z.string().default(''),
-  questionsToHelp: z.string().default(''),
-  discussionQuestions: z.string().default(''),
-  commonMisconceptions: z.string().default(''),
-  additionalResources: z.string().default(''),
+  primerHtml: z.string().default(""), // Complete primer section HTML with column layout preserved
+  launch: z.string().default(""),
+  teacherStudentStrategies: z.string().default(""),
+  modelsAndManipulatives: z.string().default(""),
+  questionsToHelp: z.string().default(""),
+  discussionQuestions: z.string().default(""),
+  commonMisconceptions: z.string().default(""),
+  additionalResources: z.string().default(""),
 
   // Standards and vocabulary
-  standards: z.string().default(''),
+  standards: z.string().default(""),
   vocabulary: z.array(VocabularyTermSchema).default([]),
 
   // Media and resources
@@ -140,10 +154,14 @@ export const RoadmapsSkillFieldsSchema = z.object({
 });
 
 // Full Roadmaps Skill Schema
-export const RoadmapsSkillZodSchema = BaseDocumentSchema.merge(RoadmapsSkillFieldsSchema);
+export const RoadmapsSkillZodSchema = BaseDocumentSchema.merge(
+  RoadmapsSkillFieldsSchema,
+);
 
 // Input Schema (for creation)
-export const RoadmapsSkillInputZodSchema = toInputSchema(RoadmapsSkillZodSchema);
+export const RoadmapsSkillInputZodSchema = toInputSchema(
+  RoadmapsSkillZodSchema,
+);
 
 // =====================================
 // TYPE EXPORTS

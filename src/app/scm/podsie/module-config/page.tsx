@@ -80,7 +80,10 @@ interface ScmGroupRecord {
  * e.g. title "Lesson 3: Adding Fractions" with unitNumber 4 → "G8 M4 L3"
  * If unitNumber is not provided, uses "M?" as placeholder.
  */
-function guessZearnCode(title: string, unitNumber?: number | null): string | null {
+function guessZearnCode(
+  title: string,
+  unitNumber?: number | null,
+): string | null {
   const missionPart = unitNumber != null ? `M${unitNumber}` : "M?";
 
   const lessonMatch = title.match(/(?:lesson\s+)(\d+)/i);
@@ -131,14 +134,14 @@ function WorkedExamplesCell({
     <div className="space-y-1">
       {/* Current links */}
       {workedExamples.map((we) => (
-        <div
-          key={we.slug}
-          className="flex items-center gap-1 text-xs"
-        >
+        <div key={we.slug} className="flex items-center gap-1 text-xs">
           <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded font-medium">
             {WE_TYPE_LABELS[we.workedExampleType] ?? we.workedExampleType}
           </span>
-          <span className="text-gray-600 truncate max-w-[140px]" title={we.slug}>
+          <span
+            className="text-gray-600 truncate max-w-[140px]"
+            title={we.slug}
+          >
             {deckTitleMap[we.slug] || we.slug}
           </span>
           <button
@@ -162,7 +165,9 @@ function WorkedExamplesCell({
           {unlinkedDecks.map((d) => (
             <option key={d.slug} value={d.slug}>
               {d.title}
-              {d.unitNumber != null ? ` (U${d.unitNumber}${d.lessonNumber != null ? ` L${d.lessonNumber}` : ""})` : ""}
+              {d.unitNumber != null
+                ? ` (U${d.unitNumber}${d.lessonNumber != null ? ` L${d.lessonNumber}` : ""})`
+                : ""}
             </option>
           ))}
         </select>
@@ -255,7 +260,11 @@ export default function ModuleConfigPage() {
 
   const loadDecks = useCallback(async (grade?: string, unit?: string) => {
     try {
-      const filters: { gradeLevel?: string; unitNumber?: number; limit: number } = { limit: 500 };
+      const filters: {
+        gradeLevel?: string;
+        unitNumber?: number;
+        limit: number;
+      } = { limit: 500 };
       if (grade) filters.gradeLevel = grade;
       if (unit) {
         const n = parseInt(unit, 10);
@@ -419,12 +428,13 @@ export default function ModuleConfigPage() {
       const recordEdits = prev[recordId] ?? {};
       const current = recordEdits[assignmentId];
       // Get base from record data if no edits yet
-      const base = current !== undefined
-        ? current
-        : records
-            .find((r) => r._id === recordId)
-            ?.assignments.find((a) => a.podsieAssignmentId === assignmentId)
-            ?.workedExamples ?? [];
+      const base =
+        current !== undefined
+          ? current
+          : (records
+              .find((r) => r._id === recordId)
+              ?.assignments.find((a) => a.podsieAssignmentId === assignmentId)
+              ?.workedExamples ?? []);
       // Don't add duplicate slugs
       if (base.some((we) => we.slug === slug)) return prev;
       return {
@@ -445,12 +455,13 @@ export default function ModuleConfigPage() {
     setEditedWorkedExamples((prev) => {
       const recordEdits = prev[recordId] ?? {};
       const current = recordEdits[assignmentId];
-      const base = current !== undefined
-        ? current
-        : records
-            .find((r) => r._id === recordId)
-            ?.assignments.find((a) => a.podsieAssignmentId === assignmentId)
-            ?.workedExamples ?? [];
+      const base =
+        current !== undefined
+          ? current
+          : (records
+              .find((r) => r._id === recordId)
+              ?.assignments.find((a) => a.podsieAssignmentId === assignmentId)
+              ?.workedExamples ?? []);
       return {
         ...prev,
         [recordId]: {
@@ -488,7 +499,8 @@ export default function ModuleConfigPage() {
       // Update Zearn codes across all groups
       const hasCodeEdits = Object.keys(assignmentCodeMap).length > 0;
       if (hasCodeEdits) {
-        const codeResult = await updateZearnCodesAcrossGroups(assignmentCodeMap);
+        const codeResult =
+          await updateZearnCodesAcrossGroups(assignmentCodeMap);
         if (!codeResult.success) {
           setError(codeResult.error || "Failed to save Zearn codes");
           return;
@@ -503,7 +515,10 @@ export default function ModuleConfigPage() {
             ? { unitNumber: null }
             : { unitNumber: parseInt(unitNumStr, 10) };
 
-        const unitResult = await updatePodsieScmModule(record._id, unitNumberUpdate);
+        const unitResult = await updatePodsieScmModule(
+          record._id,
+          unitNumberUpdate,
+        );
         if (!unitResult.success) {
           setError(unitResult.error || "Failed to save unit number");
           return;
@@ -512,13 +527,17 @@ export default function ModuleConfigPage() {
 
       // Update worked examples across all groups
       const weEdits = editedWorkedExamples[record._id] || {};
-      const assignmentWeMap: Record<number, { slug: string; workedExampleType: string }[]> = {};
+      const assignmentWeMap: Record<
+        number,
+        { slug: string; workedExampleType: string }[]
+      > = {};
       for (const [assignmentIdStr, workedExamples] of Object.entries(weEdits)) {
         assignmentWeMap[Number(assignmentIdStr)] = workedExamples;
       }
       const hasWeEdits = Object.keys(assignmentWeMap).length > 0;
       if (hasWeEdits) {
-        const weResult = await updateWorkedExamplesAcrossGroups(assignmentWeMap);
+        const weResult =
+          await updateWorkedExamplesAcrossGroups(assignmentWeMap);
         if (!weResult.success) {
           setError(weResult.error || "Failed to save worked examples");
           return;
@@ -530,7 +549,8 @@ export default function ModuleConfigPage() {
       const parts: string[] = [];
       if (hasCodeEdits) parts.push(`${editedCount} Zearn code(s)`);
       if (hasWeEdits) parts.push(`${weEditedCount} worked example link(s)`);
-      if (editedUnitNumbers[record._id] !== undefined) parts.push("unit number");
+      if (editedUnitNumbers[record._id] !== undefined)
+        parts.push("unit number");
       setSuccess(
         parts.length > 0
           ? `Saved ${parts.join(", ")} across all groups`
@@ -619,7 +639,9 @@ export default function ModuleConfigPage() {
         school: editGroupValues.school || null,
       });
       if (result.success) {
-        setSuccess(`Updated group ${editGroupValues.groupName || group.podsieGroupId}`);
+        setSuccess(
+          `Updated group ${editGroupValues.groupName || group.podsieGroupId}`,
+        );
         setEditingGroupId(null);
         await loadGroups();
       } else {
@@ -702,8 +724,8 @@ export default function ModuleConfigPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h1 className="text-2xl font-bold">Module Configuration</h1>
           <p className="text-gray-600 mt-1">
-            Manage unit numbers, Zearn lesson codes, and worked example
-            mappings for pacing modules.{" "}
+            Manage unit numbers, Zearn lesson codes, and worked example mappings
+            for pacing modules.{" "}
             <span className="text-gray-500">
               {records.length} records, {distinctGroupIds.length} groups
             </span>
@@ -1018,7 +1040,9 @@ export default function ModuleConfigPage() {
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-500 font-medium">WE Decks:</span>
+              <span className="text-xs text-gray-500 font-medium">
+                WE Decks:
+              </span>
               <div className="flex items-center gap-1">
                 <label className="text-xs text-gray-500">Grade</label>
                 <select
@@ -1159,7 +1183,10 @@ export default function ModuleConfigPage() {
                         </td>
                         <td className="px-4 py-2">
                           <WorkedExamplesCell
-                            workedExamples={getWorkedExamplesValue(record, entry)}
+                            workedExamples={getWorkedExamplesValue(
+                              record,
+                              entry,
+                            )}
                             availableDecks={availableDecks}
                             deckTitleMap={deckTitleMap}
                             onAdd={(slug, type) =>

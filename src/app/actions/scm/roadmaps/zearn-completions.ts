@@ -39,37 +39,42 @@ export type ZearnHistoryRow = {
  * Adds unique lessons to each student's zearnLessons array
  */
 export async function importZearnCompletions(
-  rawData: string
-): Promise<EntityResponse<{ imported: number; skipped: number; errors: string[] }>> {
+  rawData: string,
+): Promise<
+  EntityResponse<{ imported: number; skipped: number; errors: string[] }>
+> {
   return withDbConnection(async () => {
     try {
-      const lines = rawData.trim().split('\n');
+      const lines = rawData.trim().split("\n");
 
       // Skip header row
       if (lines.length < 2) {
         return {
           success: false,
           error: "No data rows found",
-          data: { imported: 0, skipped: 0, errors: [] }
+          data: { imported: 0, skipped: 0, errors: [] },
         };
       }
 
       // Save CSV file locally (development only)
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV !== "production") {
         try {
           // Convert TSV back to CSV format
-          const csvData = lines.map(line => {
-            const parts = line.split('\t');
-            // Wrap fields in quotes and join with commas
-            return parts.map(field => `"${field}"`).join(',');
-          }).join('\n');
+          const csvData = lines
+            .map((line) => {
+              const parts = line.split("\t");
+              // Wrap fields in quotes and join with commas
+              return parts.map((field) => `"${field}"`).join(",");
+            })
+            .join("\n");
 
-          const localFilePath = '/Users/alexsmith/Documents/GitHub/tl-connect/scripts/zearn.csv';
-          await fs.writeFile(localFilePath, csvData, 'utf-8');
+          const localFilePath =
+            "/Users/alexsmith/Documents/GitHub/tl-connect/scripts/zearn.csv";
+          await fs.writeFile(localFilePath, csvData, "utf-8");
           console.log(`✓ Saved CSV file to: ${localFilePath}`);
         } catch (fileError) {
           // Log error but don't fail the import
-          console.warn('Failed to save CSV file locally:', fileError);
+          console.warn("Failed to save CSV file locally:", fileError);
         }
       }
 
@@ -81,9 +86,11 @@ export async function importZearnCompletions(
         const line = lines[i].trim();
         if (!line) continue;
 
-        const parts = line.split('\t');
+        const parts = line.split("\t");
         if (parts.length < 9) {
-          parseErrors.push(`Row ${i + 1}: Not enough columns (expected 9, got ${parts.length})`);
+          parseErrors.push(
+            `Row ${i + 1}: Not enough columns (expected 9, got ${parts.length})`,
+          );
           continue;
         }
 
@@ -106,7 +113,10 @@ export async function importZearnCompletions(
       }
 
       // Group by student SIS ID
-      const studentLessons = new Map<string, { lessons: Array<{ lessonCode: string; completionDate: string }> }>();
+      const studentLessons = new Map<
+        string,
+        { lessons: Array<{ lessonCode: string; completionDate: string }> }
+      >();
 
       for (const row of rows) {
         if (!studentLessons.has(row.sisId)) {
@@ -116,11 +126,13 @@ export async function importZearnCompletions(
         const studentData = studentLessons.get(row.sisId)!;
 
         // Check if this lesson already exists for this student (in this import batch)
-        const existingLesson = studentData.lessons.find(l => l.lessonCode === row.lesson);
+        const existingLesson = studentData.lessons.find(
+          (l) => l.lessonCode === row.lesson,
+        );
         if (!existingLesson) {
           studentData.lessons.push({
             lessonCode: row.lesson,
-            completionDate: row.completionDate
+            completionDate: row.completionDate,
           });
         }
       }
@@ -128,13 +140,23 @@ export async function importZearnCompletions(
       // Update students in database
       let imported = 0;
       let skipped = 0;
-      const missingStudents: Array<{ sisId: string; firstName?: string; lastName?: string }> = [];
+      const missingStudents: Array<{
+        sisId: string;
+        firstName?: string;
+        lastName?: string;
+      }> = [];
 
       // Get student names from the first row with each SIS ID
-      const studentNames = new Map<string, { firstName: string; lastName: string }>();
+      const studentNames = new Map<
+        string,
+        { firstName: string; lastName: string }
+      >();
       for (const row of rows) {
         if (!studentNames.has(row.sisId)) {
-          studentNames.set(row.sisId, { firstName: row.firstName, lastName: row.lastName });
+          studentNames.set(row.sisId, {
+            firstName: row.firstName,
+            lastName: row.lastName,
+          });
         }
       }
 
@@ -154,7 +176,7 @@ export async function importZearnCompletions(
           missingStudents.push({
             sisId,
             firstName: names?.firstName,
-            lastName: names?.lastName
+            lastName: names?.lastName,
           });
           parseErrors.push(`Student not found: ${sisId}`);
           skipped++;
@@ -162,11 +184,17 @@ export async function importZearnCompletions(
         }
 
         // Get existing lessons
-        const existingLessons = (student.zearnLessons || []) as unknown as Array<{ lessonCode: string; completionDate: string }>;
+        const existingLessons = (student.zearnLessons ||
+          []) as unknown as Array<{
+          lessonCode: string;
+          completionDate: string;
+        }>;
         const existingCodes = new Set(existingLessons.map((l) => l.lessonCode));
 
         // Add only new lessons
-        const newLessons = data.lessons.filter(l => !existingCodes.has(l.lessonCode));
+        const newLessons = data.lessons.filter(
+          (l) => !existingCodes.has(l.lessonCode),
+        );
 
         if (newLessons.length > 0) {
           await StudentModel.updateOne(
@@ -174,10 +202,10 @@ export async function importZearnCompletions(
             {
               $push: {
                 zearnLessons: {
-                  $each: newLessons
-                }
-              }
-            }
+                  $each: newLessons,
+                },
+              },
+            },
           );
           imported += newLessons.length;
         }
@@ -187,10 +215,12 @@ export async function importZearnCompletions(
       if (missingStudents.length > 0) {
         const emailService = new ScraperEmailService();
         await emailService.sendMissingStudentsNotification({
-          source: 'zearn',
+          source: "zearn",
           missingStudents,
           totalProcessed: rows.length,
-          timestamp: new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })
+          timestamp: new Date().toLocaleString("en-US", {
+            timeZone: "America/New_York",
+          }),
         });
       }
 
@@ -199,15 +229,15 @@ export async function importZearnCompletions(
         data: {
           imported,
           skipped,
-          errors: parseErrors
+          errors: parseErrors,
         },
-        message: `Imported ${imported} Zearn lessons, skipped ${skipped} students`
+        message: `Imported ${imported} Zearn lessons, skipped ${skipped} students`,
       };
     } catch (error) {
       return {
         success: false,
         error: handleServerError(error, "importZearnCompletions"),
-        data: { imported: 0, skipped: 0, errors: [] }
+        data: { imported: 0, skipped: 0, errors: [] },
       };
     }
   });
@@ -229,14 +259,22 @@ type StudentWithZearn = {
  * Fetch all Zearn completions for history page display
  * Returns flattened array of all student lesson completions
  */
-export async function fetchZearnCompletions(): Promise<PaginatedResponse<ZearnHistoryRow>> {
+export async function fetchZearnCompletions(): Promise<
+  PaginatedResponse<ZearnHistoryRow>
+> {
   return withDbConnection(async () => {
     try {
       // Fetch all active students with zearnLessons
-      const students = await StudentModel.find(
-        { active: true, 'zearnLessons.0': { $exists: true } },
-        { studentID: 1, firstName: 1, lastName: 1, section: 1, zearnLessons: 1 }
-      ).lean() as unknown as StudentWithZearn[];
+      const students = (await StudentModel.find(
+        { active: true, "zearnLessons.0": { $exists: true } },
+        {
+          studentID: 1,
+          firstName: 1,
+          lastName: 1,
+          section: 1,
+          zearnLessons: 1,
+        },
+      ).lean()) as unknown as StudentWithZearn[];
 
       // Flatten into rows
       const rows: ZearnHistoryRow[] = [];
@@ -247,9 +285,11 @@ export async function fetchZearnCompletions(): Promise<PaginatedResponse<ZearnHi
         for (const lesson of student.zearnLessons || []) {
           // Parse lesson code to extract grade and module
           // Format: "G8 M2 L1" or "G3 M1 L10"
-          const lessonMatch = lesson.lessonCode.match(/G(\d+)\s+M(\d+)\s+L(\d+)/);
-          const grade = lessonMatch ? lessonMatch[1] : '';
-          const moduleNum = lessonMatch ? lessonMatch[2] : '';
+          const lessonMatch = lesson.lessonCode.match(
+            /G(\d+)\s+M(\d+)\s+L(\d+)/,
+          );
+          const grade = lessonMatch ? lessonMatch[1] : "";
+          const moduleNum = lessonMatch ? lessonMatch[2] : "";
 
           rows.push({
             studentId: student.studentID.toString(),
@@ -258,7 +298,7 @@ export async function fetchZearnCompletions(): Promise<PaginatedResponse<ZearnHi
             lessonCode: lesson.lessonCode,
             completionDate: lesson.completionDate,
             grade,
-            module: moduleNum
+            module: moduleNum,
           });
         }
       }
@@ -267,7 +307,7 @@ export async function fetchZearnCompletions(): Promise<PaginatedResponse<ZearnHi
       rows.sort((a, b) => {
         // Parse dates (handle MM/DD/YY format)
         const parseDate = (dateStr: string): Date => {
-          const parts = dateStr.split('/');
+          const parts = dateStr.split("/");
           if (parts.length === 3) {
             const month = parseInt(parts[0], 10) - 1;
             const day = parseInt(parts[1], 10);
@@ -293,7 +333,7 @@ export async function fetchZearnCompletions(): Promise<PaginatedResponse<ZearnHi
         page: 1,
         limit: rows.length,
         totalPages: 1,
-        hasMore: false
+        hasMore: false,
       };
     } catch (error) {
       return {
@@ -304,7 +344,7 @@ export async function fetchZearnCompletions(): Promise<PaginatedResponse<ZearnHi
         page: 1,
         limit: 0,
         totalPages: 0,
-        hasMore: false
+        hasMore: false,
       };
     }
   });

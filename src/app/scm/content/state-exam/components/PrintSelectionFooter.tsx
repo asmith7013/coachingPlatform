@@ -24,7 +24,8 @@ export function PrintSelectionFooter({
         {/* Left: Selection count and clear button */}
         <div className="flex items-center gap-4">
           <span className="text-lg font-semibold text-blue-700">
-            {selectedCount} {selectedCount === 1 ? "question" : "questions"} selected
+            {selectedCount} {selectedCount === 1 ? "question" : "questions"}{" "}
+            selected
           </span>
           <button
             onClick={onClear}

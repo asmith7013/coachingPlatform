@@ -18,7 +18,9 @@ export interface FetchTimesheetEntriesParams {
 /**
  * Fetch timesheet entries with optional date range and project filters
  */
-export async function fetchTimesheetEntries(params: FetchTimesheetEntriesParams = {}) {
+export async function fetchTimesheetEntries(
+  params: FetchTimesheetEntriesParams = {},
+) {
   return withDbConnection(async () => {
     try {
       const { startDate, endDate, project } = params;
@@ -103,7 +105,9 @@ export async function deleteTimesheetEntry(entryId: string) {
 /**
  * Get summary statistics for timesheet entries
  */
-export async function getTimesheetSummary(params: FetchTimesheetEntriesParams = {}) {
+export async function getTimesheetSummary(
+  params: FetchTimesheetEntriesParams = {},
+) {
   return withDbConnection(async () => {
     try {
       const { startDate, endDate, project } = params;
@@ -136,7 +140,11 @@ export async function getTimesheetSummary(params: FetchTimesheetEntriesParams = 
       ];
 
       const results = await TimesheetEntryModel.aggregate(pipeline);
-      const summary = results[0] || { totalHours: 0, totalPay: 0, entryCount: 0 };
+      const summary = results[0] || {
+        totalHours: 0,
+        totalPay: 0,
+        entryCount: 0,
+      };
 
       return {
         success: true,

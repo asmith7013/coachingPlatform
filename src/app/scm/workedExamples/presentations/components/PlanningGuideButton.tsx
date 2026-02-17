@@ -1,21 +1,24 @@
-'use client';
+"use client";
 
 interface PlanningGuideButtonProps {
   isActive: boolean;
   onToggle: () => void;
 }
 
-export function PlanningGuideButton({ isActive, onToggle }: PlanningGuideButtonProps) {
+export function PlanningGuideButton({
+  isActive,
+  onToggle,
+}: PlanningGuideButtonProps) {
   return (
     <div className="relative group">
       <button
         onClick={onToggle}
         className={`print-hide w-10 h-10 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
           isActive
-            ? 'bg-blue-600 hover:bg-blue-700 text-white'
-            : 'bg-gray-700 hover:bg-gray-600 text-white'
+            ? "bg-blue-600 hover:bg-blue-700 text-white"
+            : "bg-gray-700 hover:bg-gray-600 text-white"
         }`}
-        aria-label={isActive ? 'Hide Planning Guide' : 'Show Planning Guide'}
+        aria-label={isActive ? "Hide Planning Guide" : "Show Planning Guide"}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -1,113 +1,104 @@
 // src/components/composed/cards/InfoCard.tsx
-import { tv, type VariantProps } from 'tailwind-variants';
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
-import { EllipsisHorizontalIcon } from '@heroicons/react/20/solid';
-import { textColors, backgroundColors, borderColors, paddingX, paddingY } from '@ui-tokens';
+import { tv, type VariantProps } from "tailwind-variants";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
+import {
+  textColors,
+  backgroundColors,
+  borderColors,
+  paddingX,
+  paddingY,
+} from "@ui-tokens";
 import { cn } from "@ui/utils/formatters";
 
 const infoCard = tv({
   slots: {
     container: [
-      'overflow-hidden rounded-xl border',
+      "overflow-hidden rounded-xl border",
       borderColors.light.secondary,
-      'bg-white shadow-sm',
-      'h-full',
-      'flex flex-col'
+      "bg-white shadow-sm",
+      "h-full",
+      "flex flex-col",
     ],
     header: [
-      'flex items-center gap-x-4 border-b border-gray-900/5',
+      "flex items-center gap-x-4 border-b border-gray-900/5",
       backgroundColors.light.secondary,
       paddingX.md,
       paddingY.md,
-      'flex-shrink-0'
+      "flex-shrink-0",
     ],
     avatar: [
-      'size-12 flex-none rounded-lg bg-white object-cover',
-      'ring-1 ring-gray-900/10'
+      "size-12 flex-none rounded-lg bg-white object-cover",
+      "ring-1 ring-gray-900/10",
     ],
-    title: [
-      'text-sm/6 font-medium',
-      textColors.default
-    ],
-    menuButton: [
-      '-m-2.5 block p-2.5',
-      textColors.muted,
-      'hover:text-gray-500'
-    ],
+    title: ["text-sm/6 font-medium", textColors.default],
+    menuButton: ["-m-2.5 block p-2.5", textColors.muted, "hover:text-gray-500"],
     content: [
-      '-my-3 divide-y divide-gray-100',
+      "-my-3 divide-y divide-gray-100",
       paddingX.md,
       paddingY.md,
-      'text-sm/6',
-      'flex-grow'
+      "text-sm/6",
+      "flex-grow",
     ],
-    detailRow: 'flex justify-between gap-x-4 py-3',
+    detailRow: "flex justify-between gap-x-4 py-3",
     detailLabel: textColors.muted,
     detailValue: textColors.secondary,
-    detailValueWithBadge: 'flex items-start gap-x-2',
-    detailAmount: [
-      'font-medium',
-      textColors.default
-    ],
+    detailValueWithBadge: "flex items-start gap-x-2",
+    detailAmount: ["font-medium", textColors.default],
     actions: [
-      '-mt-px flex divide-x divide-gray-200',
-      'border-t border-gray-200',
-      'flex-shrink-0'
+      "-mt-px flex divide-x divide-gray-200",
+      "border-t border-gray-200",
+      "flex-shrink-0",
     ],
     actionButton: [
-      'relative inline-flex w-0 flex-1 items-center justify-center gap-x-3',
-      'border-0 py-4 text-sm font-semibold',
+      "relative inline-flex w-0 flex-1 items-center justify-center gap-x-3",
+      "border-0 py-4 text-sm font-semibold",
       textColors.default,
-      'hover:bg-gray-50',
-      'transition-colors duration-150'
+      "hover:bg-gray-50",
+      "transition-colors duration-150",
     ],
-    actionButtonLeft: 'rounded-bl-lg',
-    actionButtonRight: 'rounded-br-lg',
-    actionIcon: [
-      'size-5',
-      textColors.muted
-    ]
+    actionButtonLeft: "rounded-bl-lg",
+    actionButtonRight: "rounded-br-lg",
+    actionIcon: ["size-5", textColors.muted],
   },
   variants: {
     size: {
       sm: {
-        header: 'p-4',
-        content: 'px-4 py-3',
-        avatar: 'size-8'
+        header: "p-4",
+        content: "px-4 py-3",
+        avatar: "size-8",
       },
       md: {
         header: paddingX.md,
         content: `${paddingX.md} ${paddingY.md}`,
-        avatar: 'size-12'
+        avatar: "size-12",
       },
       lg: {
-        header: 'p-8',
-        content: 'px-8 py-6',
-        avatar: 'size-16'
-      }
-    }
+        header: "p-8",
+        content: "px-8 py-6",
+        avatar: "size-16",
+      },
+    },
   },
   defaultVariants: {
-    size: 'md'
-  }
+    size: "md",
+  },
 });
 
 const statusBadge = tv({
-  base: [
-    'rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset'
-  ],
+  base: ["rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"],
   variants: {
     variant: {
-      success: 'text-green-700 bg-green-50 ring-green-600/20',
-      warning: 'text-yellow-700 bg-yellow-50 ring-yellow-600/20',
-      danger: 'text-red-700 bg-red-50 ring-red-600/10',
-      neutral: 'text-gray-600 bg-gray-50 ring-gray-500/10',
-      info: 'text-blue-700 bg-blue-50 ring-blue-600/20'
-    }
+      success: "text-green-700 bg-green-50 ring-green-600/20",
+      warning: "text-yellow-700 bg-yellow-50 ring-yellow-600/20",
+      danger: "text-red-700 bg-red-50 ring-red-600/10",
+      neutral: "text-gray-600 bg-gray-50 ring-gray-500/10",
+      info: "text-blue-700 bg-blue-50 ring-blue-600/20",
+    },
   },
   defaultVariants: {
-    variant: 'neutral'
-  }
+    variant: "neutral",
+  },
 });
 
 export type InfoCardVariants = VariantProps<typeof infoCard>;
@@ -118,7 +109,7 @@ interface DetailItem {
   value: string | React.ReactNode;
   badge?: {
     text: string;
-    variant?: StatusBadgeVariants['variant'];
+    variant?: StatusBadgeVariants["variant"];
   };
 }
 
@@ -147,18 +138,14 @@ interface InfoCardProps extends InfoCardVariants {
   className?: string;
 }
 
-function StatusBadge({ 
-  children, 
-  variant = 'neutral' 
-}: { 
-  children: React.ReactNode; 
-  variant?: StatusBadgeVariants['variant'] 
+function StatusBadge({
+  children,
+  variant = "neutral",
+}: {
+  children: React.ReactNode;
+  variant?: StatusBadgeVariants["variant"];
 }) {
-  return (
-    <div className={statusBadge({ variant })}>
-      {children}
-    </div>
-  );
+  return <div className={statusBadge({ variant })}>{children}</div>;
 }
 
 export function InfoCard({
@@ -167,8 +154,8 @@ export function InfoCard({
   details,
   actions = [],
   menuActions = [],
-  size = 'md',
-  className
+  size = "md",
+  className,
 }: InfoCardProps) {
   const styles = infoCard({ size });
 
@@ -189,11 +176,11 @@ export function InfoCard({
   const renderActionButton = (action: ActionButton, index: number) => {
     const isFirst = index === 0;
     const isLast = index === actions.length - 1;
-    
+
     const buttonClasses = cn(
       styles.actionButton(),
       isFirst && styles.actionButtonLeft(),
-      isLast && styles.actionButtonRight()
+      isLast && styles.actionButtonRight(),
     );
 
     const content = (
@@ -230,7 +217,7 @@ export function InfoCard({
           />
         )} */}
         <div className={styles.title()}>{title}</div>
-        
+
         {menuActions.length > 0 && (
           <Menu as="div" className="relative ml-auto">
             <MenuButton className={styles.menuButton()}>

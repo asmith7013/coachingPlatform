@@ -18,14 +18,16 @@ import { handleServerError } from "@error/handlers/server";
 // =====================================
 
 const podsieScmModuleCrud = createCrudActions({
-  model: PodsieScmModuleModel as unknown as Parameters<typeof createCrudActions>[0]['model'],
+  model: PodsieScmModuleModel as unknown as Parameters<
+    typeof createCrudActions
+  >[0]["model"],
   schema: PodsieScmModuleZodSchema as ZodType<PodsieScmModule>,
   inputSchema: PodsieScmModuleInputZodSchema as ZodType<PodsieScmModuleInput>,
-  name: 'PodsieScmModule',
-  revalidationPaths: ['/scm/podsie/module-config'],
-  sortFields: ['podsieGroupId', 'podsieModuleId', 'createdAt', 'updatedAt'],
-  defaultSortField: 'podsieGroupId',
-  defaultSortOrder: 'asc'
+  name: "PodsieScmModule",
+  revalidationPaths: ["/scm/podsie/module-config"],
+  sortFields: ["podsieGroupId", "podsieModuleId", "createdAt", "updatedAt"],
+  defaultSortField: "podsieGroupId",
+  defaultSortOrder: "asc",
 });
 
 export const createPodsieScmModule = podsieScmModuleCrud.create;
@@ -41,10 +43,14 @@ export const fetchPodsieScmModuleById = podsieScmModuleCrud.fetchById;
 /**
  * Get all distinct Podsie group IDs from the collection
  */
-export async function fetchDistinctGroupIds(): Promise<{ success: boolean; groupIds?: number[]; error?: string }> {
+export async function fetchDistinctGroupIds(): Promise<{
+  success: boolean;
+  groupIds?: number[];
+  error?: string;
+}> {
   return withDbConnection(async () => {
     try {
-      const rawIds = await PodsieScmModuleModel.distinct('podsieGroupId');
+      const rawIds = await PodsieScmModuleModel.distinct("podsieGroupId");
       const groupIds = rawIds.map((id) => Number(id));
       return {
         success: true,
@@ -68,7 +74,7 @@ export async function fetchDistinctGroupIds(): Promise<{ success: boolean; group
  * that could occur with find/modify/save patterns.
  */
 export async function updateZearnCodesAcrossGroups(
-  assignmentCodeMap: Record<number, string | null>
+  assignmentCodeMap: Record<number, string | null>,
 ): Promise<{ success: boolean; updatedCount?: number; error?: string }> {
   return withDbConnection(async () => {
     try {
@@ -90,7 +96,7 @@ export async function updateZearnCodesAcrossGroups(
           { $set: { "assignments.$[elem].zearnLessonCode": zearnCode } },
           {
             arrayFilters: [{ "elem.podsieAssignmentId": assignmentId }],
-          }
+          },
         );
 
         updatedCount += result.modifiedCount;
@@ -115,7 +121,10 @@ export async function updateZearnCodesAcrossGroups(
  * Uses atomic MongoDB updateMany with array filters to prevent race conditions.
  */
 export async function updateWorkedExamplesAcrossGroups(
-  assignmentWorkedExamplesMap: Record<number, { slug: string; workedExampleType: string }[]>
+  assignmentWorkedExamplesMap: Record<
+    number,
+    { slug: string; workedExampleType: string }[]
+  >,
 ): Promise<{ success: boolean; updatedCount?: number; error?: string }> {
   return withDbConnection(async () => {
     try {
@@ -135,7 +144,7 @@ export async function updateWorkedExamplesAcrossGroups(
           { $set: { "assignments.$[elem].workedExamples": workedExamples } },
           {
             arrayFilters: [{ "elem.podsieAssignmentId": assignmentId }],
-          }
+          },
         );
 
         updatedCount += result.modifiedCount;

@@ -41,7 +41,9 @@ export default function ImLessonUpdaterPage() {
     }
 
     // Try to find "Grade X" or "Xth Grade" pattern anywhere
-    const gradeMatch = unitName.match(/(\d+(?:st|nd|rd|th)?\s+grade|grade\s+\d+)/i);
+    const gradeMatch = unitName.match(
+      /(\d+(?:st|nd|rd|th)?\s+grade|grade\s+\d+)/i,
+    );
     if (gradeMatch) {
       return gradeMatch[1].trim();
     }
@@ -69,7 +71,7 @@ export default function ImLessonUpdaterPage() {
 
         return {
           ...item,
-          grade
+          grade,
         } as ImLessonMapping;
       });
 
@@ -83,7 +85,7 @@ export default function ImLessonUpdaterPage() {
           lessonNumber: item.lessonNumber,
           grade: item.grade,
           status: "pending",
-        }))
+        })),
       );
     } catch (err) {
       setParseError(err instanceof Error ? err.message : "Invalid JSON");
@@ -104,9 +106,7 @@ export default function ImLessonUpdaterPage() {
 
       // Update status to processing
       setResults((prev) =>
-        prev.map((r, idx) =>
-          idx === i ? { ...r, status: "processing" } : r
-        )
+        prev.map((r, idx) => (idx === i ? { ...r, status: "processing" } : r)),
       );
 
       try {
@@ -131,8 +131,8 @@ export default function ImLessonUpdaterPage() {
                     : "error",
                   message: result.message || result.error,
                 }
-              : r
-          )
+              : r,
+          ),
         );
 
         // Small delay to avoid overwhelming the server
@@ -146,8 +146,8 @@ export default function ImLessonUpdaterPage() {
                   status: "error",
                   message: err instanceof Error ? err.message : "Unknown error",
                 }
-              : r
-          )
+              : r,
+          ),
         );
       }
     }
@@ -282,9 +282,27 @@ export default function ImLessonUpdaterPage() {
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold mb-3">Parsed Data</h3>
                 <div className="text-sm text-gray-600 space-y-1">
-                  <p>Total mappings: <strong>{parsedData.length}</strong></p>
-                  <p>Unique skills: <strong>{new Set(parsedData.map(d => d.skillNumber)).size}</strong></p>
-                  <p>Unique lessons: <strong>{new Set(parsedData.map(d => `${d.unitNumber}-${d.lessonNumber}`)).size}</strong></p>
+                  <p>
+                    Total mappings: <strong>{parsedData.length}</strong>
+                  </p>
+                  <p>
+                    Unique skills:{" "}
+                    <strong>
+                      {new Set(parsedData.map((d) => d.skillNumber)).size}
+                    </strong>
+                  </p>
+                  <p>
+                    Unique lessons:{" "}
+                    <strong>
+                      {
+                        new Set(
+                          parsedData.map(
+                            (d) => `${d.unitNumber}-${d.lessonNumber}`,
+                          ),
+                        ).size
+                      }
+                    </strong>
+                  </p>
                 </div>
               </div>
             )}
@@ -392,7 +410,7 @@ export default function ImLessonUpdaterPage() {
                           </div>
                           <span
                             className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
-                              result.status
+                              result.status,
                             )}`}
                           >
                             {result.status}
@@ -408,7 +426,10 @@ export default function ImLessonUpdaterPage() {
             {results.length === 0 && (
               <div className="text-center text-gray-400 py-12">
                 <div className="text-4xl mb-2">📋</div>
-                <p>No data parsed yet. Paste JSON and click &quot;Parse JSON&quot;.</p>
+                <p>
+                  No data parsed yet. Paste JSON and click &quot;Parse
+                  JSON&quot;.
+                </p>
               </div>
             )}
           </div>

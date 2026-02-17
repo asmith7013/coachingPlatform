@@ -45,8 +45,14 @@ export default function ScopeAndSequenceUploaderPage() {
 
       // Validate each item has required fields
       const validated = parsed.map((item, index) => {
-        if (!item.grade || !item.unit || !item.unitLessonId ||
-            !item.unitNumber || !item.lessonNumber || !item.lessonName) {
+        if (
+          !item.grade ||
+          !item.unit ||
+          !item.unitLessonId ||
+          !item.unitNumber ||
+          !item.lessonNumber ||
+          !item.lessonName
+        ) {
           throw new Error(`Item at index ${index} is missing required fields`);
         }
 
@@ -55,11 +61,15 @@ export default function ScopeAndSequenceUploaderPage() {
         const lessonNumber = Number(item.lessonNumber);
 
         if (isNaN(unitNumber)) {
-          throw new Error(`Item at index ${index}: unitNumber "${item.unitNumber}" is not a valid number`);
+          throw new Error(
+            `Item at index ${index}: unitNumber "${item.unitNumber}" is not a valid number`,
+          );
         }
 
         if (isNaN(lessonNumber)) {
-          throw new Error(`Item at index ${index}: lessonNumber "${item.lessonNumber}" is not a valid number`);
+          throw new Error(
+            `Item at index ${index}: lessonNumber "${item.lessonNumber}" is not a valid number`,
+          );
         }
 
         return {
@@ -70,9 +80,15 @@ export default function ScopeAndSequenceUploaderPage() {
           lessonNumber,
           lessonName: String(item.lessonName),
           section: item.section ? String(item.section) : undefined,
-          scopeSequenceTag: item.scopeSequenceTag ? String(item.scopeSequenceTag) : undefined,
-          roadmapSkills: Array.isArray(item.roadmapSkills) ? item.roadmapSkills.map(String) : undefined,
-          targetSkills: Array.isArray(item.targetSkills) ? item.targetSkills.map(String) : undefined
+          scopeSequenceTag: item.scopeSequenceTag
+            ? String(item.scopeSequenceTag)
+            : undefined,
+          roadmapSkills: Array.isArray(item.roadmapSkills)
+            ? item.roadmapSkills.map(String)
+            : undefined,
+          targetSkills: Array.isArray(item.targetSkills)
+            ? item.targetSkills.map(String)
+            : undefined,
         } as ScopeAndSequenceEntry;
       });
 
@@ -81,11 +97,11 @@ export default function ScopeAndSequenceUploaderPage() {
       const duplicates: Array<{ index: number; key: string }> = [];
 
       validated.forEach((item, index) => {
-        const compoundKey = `${item.grade}|${item.unitLessonId}|${item.scopeSequenceTag || 'null'}`;
+        const compoundKey = `${item.grade}|${item.unitLessonId}|${item.scopeSequenceTag || "null"}`;
         if (seen.has(compoundKey)) {
           duplicates.push({
             index: index,
-            key: `Grade ${item.grade}, Lesson ${item.unitLessonId}${item.scopeSequenceTag ? `, Tag: ${item.scopeSequenceTag}` : ''}`
+            key: `Grade ${item.grade}, Lesson ${item.unitLessonId}${item.scopeSequenceTag ? `, Tag: ${item.scopeSequenceTag}` : ""}`,
           });
         } else {
           seen.set(compoundKey, index);
@@ -93,8 +109,12 @@ export default function ScopeAndSequenceUploaderPage() {
       });
 
       if (duplicates.length > 0) {
-        const duplicateList = duplicates.map(d => `  - Item ${d.index}: ${d.key}`).join('\n');
-        throw new Error(`Found ${duplicates.length} duplicate entries in JSON:\n${duplicateList}\n\nEach combination of (grade + unitLessonId + tag) must be unique.`);
+        const duplicateList = duplicates
+          .map((d) => `  - Item ${d.index}: ${d.key}`)
+          .join("\n");
+        throw new Error(
+          `Found ${duplicates.length} duplicate entries in JSON:\n${duplicateList}\n\nEach combination of (grade + unitLessonId + tag) must be unique.`,
+        );
       }
 
       setParsedData(validated);
@@ -107,7 +127,7 @@ export default function ScopeAndSequenceUploaderPage() {
           lessonName: item.lessonName,
           grade: item.grade,
           status: "pending",
-        }))
+        })),
       );
     } catch (err) {
       setParseError(err instanceof Error ? err.message : "Invalid JSON");
@@ -122,42 +142,50 @@ export default function ScopeAndSequenceUploaderPage() {
     setIsProcessing(true);
 
     // Update all to processing
-    setResults(prev => prev.map(r => ({ ...r, status: "processing" })));
+    setResults((prev) => prev.map((r) => ({ ...r, status: "processing" })));
 
     try {
       const result = await bulkUpsertScopeAndSequence(parsedData);
 
       if (result.success && result.data) {
         // Update results based on bulk operation results
-        setResults(prev => prev.map((r, idx) => {
-          const item = parsedData[idx];
-          if (result.data.created.includes(item.unitLessonId)) {
-            return { ...r, status: "success", message: "Created" };
-          } else if (result.data.updated.includes(item.unitLessonId)) {
-            return { ...r, status: "success", message: "Updated" };
-          } else {
-            const failed = result.data.failed.find(f => f.unitLessonId === item.unitLessonId);
-            return {
-              ...r,
-              status: "error",
-              message: failed?.error || "Unknown error"
-            };
-          }
-        }));
+        setResults((prev) =>
+          prev.map((r, idx) => {
+            const item = parsedData[idx];
+            if (result.data.created.includes(item.unitLessonId)) {
+              return { ...r, status: "success", message: "Created" };
+            } else if (result.data.updated.includes(item.unitLessonId)) {
+              return { ...r, status: "success", message: "Updated" };
+            } else {
+              const failed = result.data.failed.find(
+                (f) => f.unitLessonId === item.unitLessonId,
+              );
+              return {
+                ...r,
+                status: "error",
+                message: failed?.error || "Unknown error",
+              };
+            }
+          }),
+        );
       } else {
         // Mark all as error if bulk operation failed
-        setResults(prev => prev.map(r => ({
-          ...r,
-          status: "error",
-          message: result.error || "Bulk operation failed"
-        })));
+        setResults((prev) =>
+          prev.map((r) => ({
+            ...r,
+            status: "error",
+            message: result.error || "Bulk operation failed",
+          })),
+        );
       }
     } catch (err) {
-      setResults(prev => prev.map(r => ({
-        ...r,
-        status: "error",
-        message: err instanceof Error ? err.message : "Unknown error"
-      })));
+      setResults((prev) =>
+        prev.map((r) => ({
+          ...r,
+          status: "error",
+          message: err instanceof Error ? err.message : "Unknown error",
+        })),
+      );
     }
 
     setIsProcessing(false);
@@ -208,7 +236,9 @@ export default function ScopeAndSequenceUploaderPage() {
       <div className="mx-auto p-6" style={{ maxWidth: "1600px" }}>
         <div className="mb-6 flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Scope and Sequence Uploader</h1>
+            <h1 className="text-3xl font-bold mb-2">
+              Scope and Sequence Uploader
+            </h1>
             <p className="text-gray-600">
               Bulk upload curriculum scope and sequence by pasting JSON data
             </p>
@@ -296,9 +326,25 @@ export default function ScopeAndSequenceUploaderPage() {
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold mb-3">Parsed Data</h3>
                 <div className="text-sm text-gray-600 space-y-1">
-                  <p>Total lessons: <strong>{parsedData.length}</strong></p>
-                  <p>Unique grades: <strong>{new Set(parsedData.map(d => d.grade)).size}</strong></p>
-                  <p>Unique units: <strong>{new Set(parsedData.map(d => d.unitLessonId.split('.')[0])).size}</strong></p>
+                  <p>
+                    Total lessons: <strong>{parsedData.length}</strong>
+                  </p>
+                  <p>
+                    Unique grades:{" "}
+                    <strong>
+                      {new Set(parsedData.map((d) => d.grade)).size}
+                    </strong>
+                  </p>
+                  <p>
+                    Unique units:{" "}
+                    <strong>
+                      {
+                        new Set(
+                          parsedData.map((d) => d.unitLessonId.split(".")[0]),
+                        ).size
+                      }
+                    </strong>
+                  </p>
                 </div>
               </div>
             )}
@@ -354,7 +400,9 @@ export default function ScopeAndSequenceUploaderPage() {
                 {!isProcessing && summary.error > 0 && (
                   <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-sm text-red-700 font-semibold">
-                      ⚠️ {summary.error} {summary.error === 1 ? 'entry' : 'entries'} failed to upload. Check console logs for details.
+                      ⚠️ {summary.error}{" "}
+                      {summary.error === 1 ? "entry" : "entries"} failed to
+                      upload. Check console logs for details.
                     </p>
                   </div>
                 )}
@@ -391,16 +439,20 @@ export default function ScopeAndSequenceUploaderPage() {
                               {result.lessonName}
                             </div>
                             {result.message && (
-                              <div className={`text-xs ml-7 mt-1 ${
-                                result.status === "error" ? "text-red-600 font-semibold" : "text-gray-500 italic"
-                              }`}>
+                              <div
+                                className={`text-xs ml-7 mt-1 ${
+                                  result.status === "error"
+                                    ? "text-red-600 font-semibold"
+                                    : "text-gray-500 italic"
+                                }`}
+                              >
                                 {result.message}
                               </div>
                             )}
                           </div>
                           <span
                             className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
-                              result.status
+                              result.status,
                             )}`}
                           >
                             {result.status}
@@ -416,7 +468,10 @@ export default function ScopeAndSequenceUploaderPage() {
             {results.length === 0 && (
               <div className="text-center text-gray-400 py-12">
                 <BookOpenIcon className="w-12 h-12 mx-auto mb-2" />
-                <p>No data parsed yet. Paste JSON and click &quot;Parse JSON&quot;.</p>
+                <p>
+                  No data parsed yet. Paste JSON and click &quot;Parse
+                  JSON&quot;.
+                </p>
               </div>
             )}
           </div>

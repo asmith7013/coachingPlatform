@@ -7,7 +7,12 @@ import {
   flexRender,
   ColumnDef,
 } from "@tanstack/react-table";
-import type { UnitScheduleLocal, SectionSchedule, SelectionMode, LessonForSubsection } from "./types";
+import type {
+  UnitScheduleLocal,
+  SectionSchedule,
+  SelectionMode,
+  LessonForSubsection,
+} from "./types";
 import { UNIT_COLORS } from "./types";
 
 interface UnitCardProps {
@@ -15,15 +20,38 @@ interface UnitCardProps {
   unitIndex: number;
   selectionMode: SelectionMode;
   calculateSchoolDays: (startDate: string, endDate: string) => number;
-  onStartDateSelection: (unitKey: string, sectionId: string, type: "start" | "end", subsection?: number) => void;
-  onClearSectionDates: (unitKey: string, sectionId: string, subsection?: number) => void;
-  onUnitDateChange: (unitKey: string, field: "startDate" | "endDate", value: string) => void;
-  onOpenSubsections?: (unitKey: string, sectionId: string, sectionName: string, lessons: LessonForSubsection[]) => void;
+  onStartDateSelection: (
+    unitKey: string,
+    sectionId: string,
+    type: "start" | "end",
+    subsection?: number,
+  ) => void;
+  onClearSectionDates: (
+    unitKey: string,
+    sectionId: string,
+    subsection?: number,
+  ) => void;
+  onUnitDateChange: (
+    unitKey: string,
+    field: "startDate" | "endDate",
+    value: string,
+  ) => void;
+  onOpenSubsections?: (
+    unitKey: string,
+    sectionId: string,
+    sectionName: string,
+    lessons: LessonForSubsection[],
+  ) => void;
 }
 
 // Display row can be either a parent row (section header) or a section row (actual data)
 type DisplayRow =
-  | { isParentRow: true; sectionId: string; sectionName: string; allLessons: LessonForSubsection[] }
+  | {
+      isParentRow: true;
+      sectionId: string;
+      sectionName: string;
+      allLessons: LessonForSubsection[];
+    }
   | (SectionSchedule & { isParentRow: false; isChildRow: boolean });
 
 export function UnitCard({
@@ -47,7 +75,9 @@ export function UnitCard({
       if (processedSectionIds.has(section.sectionId)) return;
       processedSectionIds.add(section.sectionId);
 
-      const sectionsForId = unit.sections.filter(s => s.sectionId === section.sectionId);
+      const sectionsForId = unit.sections.filter(
+        (s) => s.sectionId === section.sectionId,
+      );
       const allLessons = sectionsForId
         .flatMap((s) => s.lessons || [])
         .sort((a, b) => a.lessonNumber - b.lessonNumber);
@@ -67,7 +97,7 @@ export function UnitCard({
           allLessons,
         });
         // Add child rows (the actual subsection data)
-        sectionsForId.forEach(s => {
+        sectionsForId.forEach((s) => {
           rows.push({ ...s, isParentRow: false, isChildRow: true });
         });
       } else {
@@ -92,7 +122,9 @@ export function UnitCard({
           if (data.isParentRow) {
             // Parent row - just show section name
             return (
-              <span className="font-medium text-gray-700 text-sm">{data.sectionName}</span>
+              <span className="font-medium text-gray-700 text-sm">
+                {data.sectionName}
+              </span>
             );
           }
 
@@ -111,11 +143,12 @@ export function UnitCard({
                     Part {section.subsection}
                   </span>
                 )}
-                {section.subsection === undefined && section.name.includes("(Unassigned)") && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 text-gray-500">
-                    Unassigned
-                  </span>
-                )}
+                {section.subsection === undefined &&
+                  section.name.includes("(Unassigned)") && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 text-gray-500">
+                      Unassigned
+                    </span>
+                  )}
               </div>
             );
           }
@@ -123,7 +156,9 @@ export function UnitCard({
           // Normal row (non-split section)
           return (
             <div className="flex items-center gap-1.5">
-              <span className="font-medium text-gray-700 text-sm">{baseName}</span>
+              <span className="font-medium text-gray-700 text-sm">
+                {baseName}
+              </span>
             </div>
           );
         },
@@ -146,7 +181,8 @@ export function UnitCard({
           }
 
           // For Ramp Up lessons (lessonNumber 0), show RU1, RU2, etc. based on position
-          const isRampUp = section.sectionId === "Ramp Up" || section.sectionId === "Ramp Ups";
+          const isRampUp =
+            section.sectionId === "Ramp Up" || section.sectionId === "Ramp Ups";
 
           return (
             <div className="flex flex-wrap gap-0.5">
@@ -181,7 +217,14 @@ export function UnitCard({
 
             return (
               <button
-                onClick={() => onOpenSubsections(unit.unitKey, data.sectionId, `Section ${data.sectionId}`, data.allLessons)}
+                onClick={() =>
+                  onOpenSubsections(
+                    unit.unitKey,
+                    data.sectionId,
+                    `Section ${data.sectionId}`,
+                    data.allLessons,
+                  )
+                }
                 className="text-[10px] px-1.5 py-0.5 rounded cursor-pointer whitespace-nowrap"
                 style={{
                   backgroundColor: unitColor.base,
@@ -211,7 +254,14 @@ export function UnitCard({
 
           return (
             <button
-              onClick={() => onOpenSubsections(unit.unitKey, section.sectionId, `Section ${section.sectionId}`, allLessons)}
+              onClick={() =>
+                onOpenSubsections(
+                  unit.unitKey,
+                  section.sectionId,
+                  `Section ${section.sectionId}`,
+                  allLessons,
+                )
+              }
               className="text-[10px] px-1.5 py-0.5 rounded cursor-pointer whitespace-nowrap"
               style={{
                 backgroundColor: "white",
@@ -247,11 +297,20 @@ export function UnitCard({
           return (
             <div className="text-xs whitespace-nowrap">
               {allocatedDays !== null ? (
-                <span style={{ color: allocatedDays >= section.lessonCount ? unitColor.base : "#DC2626" }}>
+                <span
+                  style={{
+                    color:
+                      allocatedDays >= section.lessonCount
+                        ? unitColor.base
+                        : "#DC2626",
+                  }}
+                >
                   {allocatedDays}d / {section.lessonCount}L
                 </span>
               ) : (
-                <span className="text-gray-400">- / {section.lessonCount}L</span>
+                <span className="text-gray-400">
+                  - / {section.lessonCount}L
+                </span>
               )}
             </div>
           );
@@ -275,23 +334,42 @@ export function UnitCard({
             selectionMode?.unitKey === unit.unitKey &&
             selectionMode?.sectionId === section.sectionId &&
             selectionMode?.subsection === section.subsection;
-          const isSelectingStart = isSelected && selectionMode?.type === "start";
+          const isSelectingStart =
+            isSelected && selectionMode?.type === "start";
           const isSelectingEnd = isSelected && selectionMode?.type === "end";
 
           return (
             <div className="flex items-center gap-1.5">
               {/* Start button */}
               <button
-                onClick={() => onStartDateSelection(unit.unitKey, section.sectionId, "start", section.subsection)}
+                onClick={() =>
+                  onStartDateSelection(
+                    unit.unitKey,
+                    section.sectionId,
+                    "start",
+                    section.subsection,
+                  )
+                }
                 className="text-xs px-2 py-1 rounded cursor-pointer whitespace-nowrap"
                 style={{
-                  backgroundColor: isSelectingStart || section.startDate ? unitColor.base : "white",
-                  color: isSelectingStart || section.startDate ? "white" : unitColor.base,
-                  border: !isSelectingStart && !section.startDate ? `1px solid ${unitColor.base}` : "1px solid transparent",
+                  backgroundColor:
+                    isSelectingStart || section.startDate
+                      ? unitColor.base
+                      : "white",
+                  color:
+                    isSelectingStart || section.startDate
+                      ? "white"
+                      : unitColor.base,
+                  border:
+                    !isSelectingStart && !section.startDate
+                      ? `1px solid ${unitColor.base}`
+                      : "1px solid transparent",
                 }}
               >
                 {section.startDate
-                  ? new Date(section.startDate + "T12:00:00").toLocaleDateString("en-US", {
+                  ? new Date(
+                      section.startDate + "T12:00:00",
+                    ).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })
@@ -302,31 +380,66 @@ export function UnitCard({
 
               {/* End button */}
               <button
-                onClick={() => onStartDateSelection(unit.unitKey, section.sectionId, "end", section.subsection)}
+                onClick={() =>
+                  onStartDateSelection(
+                    unit.unitKey,
+                    section.sectionId,
+                    "end",
+                    section.subsection,
+                  )
+                }
                 className="text-xs px-2 py-1 rounded cursor-pointer whitespace-nowrap"
                 style={{
-                  backgroundColor: isSelectingEnd || section.endDate ? unitColor.base : "white",
-                  color: isSelectingEnd || section.endDate ? "white" : unitColor.base,
-                  border: !isSelectingEnd && !section.endDate ? `1px solid ${unitColor.base}` : "1px solid transparent",
+                  backgroundColor:
+                    isSelectingEnd || section.endDate
+                      ? unitColor.base
+                      : "white",
+                  color:
+                    isSelectingEnd || section.endDate
+                      ? "white"
+                      : unitColor.base,
+                  border:
+                    !isSelectingEnd && !section.endDate
+                      ? `1px solid ${unitColor.base}`
+                      : "1px solid transparent",
                 }}
               >
                 {section.endDate
-                  ? new Date(section.endDate + "T12:00:00").toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })
+                  ? new Date(section.endDate + "T12:00:00").toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                      },
+                    )
                   : "End"}
               </button>
 
               {/* Clear button */}
               {(section.startDate || section.endDate) && (
                 <button
-                  onClick={() => onClearSectionDates(unit.unitKey, section.sectionId, section.subsection)}
+                  onClick={() =>
+                    onClearSectionDates(
+                      unit.unitKey,
+                      section.sectionId,
+                      section.subsection,
+                    )
+                  }
                   className="text-gray-400 hover:text-red-500 hover:bg-red-50 rounded p-0.5 cursor-pointer"
                   title="Clear dates"
                 >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               )}
@@ -335,7 +448,16 @@ export function UnitCard({
         },
       },
     ],
-    [unit.unitKey, unit.sections, unitColor, selectionMode, calculateSchoolDays, onStartDateSelection, onClearSectionDates, onOpenSubsections]
+    [
+      unit.unitKey,
+      unit.sections,
+      unitColor,
+      selectionMode,
+      calculateSchoolDays,
+      onStartDateSelection,
+      onClearSectionDates,
+      onOpenSubsections,
+    ],
   );
 
   const table = useReactTable({
@@ -359,7 +481,9 @@ export function UnitCard({
           <input
             type="date"
             value={unit.startDate || ""}
-            onChange={(e) => onUnitDateChange(unit.unitKey, "startDate", e.target.value)}
+            onChange={(e) =>
+              onUnitDateChange(unit.unitKey, "startDate", e.target.value)
+            }
             className="text-xs px-2 py-1 rounded border border-current/30 bg-white/50"
             style={{ color: unitColor.base }}
             title="Unit Start Date"
@@ -368,7 +492,9 @@ export function UnitCard({
           <input
             type="date"
             value={unit.endDate || ""}
-            onChange={(e) => onUnitDateChange(unit.unitKey, "endDate", e.target.value)}
+            onChange={(e) =>
+              onUnitDateChange(unit.unitKey, "endDate", e.target.value)
+            }
             className="text-xs px-2 py-1 rounded border border-current/30 bg-white/50"
             style={{ color: unitColor.base }}
             title="Unit End Date"
@@ -386,11 +512,19 @@ export function UnitCard({
                   <th
                     key={header.id}
                     className="px-3 py-2 text-left text-[11px] font-medium text-gray-500 uppercase tracking-wider"
-                    style={{ width: header.column.getSize() !== 150 ? header.column.getSize() : undefined }}
+                    style={{
+                      width:
+                        header.column.getSize() !== 150
+                          ? header.column.getSize()
+                          : undefined,
+                    }}
                   >
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </th>
                 ))}
               </tr>
@@ -420,7 +554,10 @@ export function UnitCard({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-3 py-2.5 align-top">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </td>
                   ))}
                 </tr>

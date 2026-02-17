@@ -1,12 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { screenshotCurriculumQuestions, type QuestionScreenshotResult } from '../actions/screenshot-questions';
+import { useState } from "react";
+import {
+  screenshotCurriculumQuestions,
+  type QuestionScreenshotResult,
+} from "../actions/screenshot-questions";
 
 export function CurriculumScreenshotDashboard() {
-  const [jsonInput, setJsonInput] = useState<string>('');
+  const [jsonInput, setJsonInput] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
-  const [results, setResults] = useState<QuestionScreenshotResult[] | null>(null);
+  const [results, setResults] = useState<QuestionScreenshotResult[] | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<{
     assessmentTitle: string;
@@ -18,7 +23,7 @@ export function CurriculumScreenshotDashboard() {
 
   const handleScreenshot = async () => {
     if (!jsonInput.trim()) {
-      setError('Please paste curriculum JSON data');
+      setError("Please paste curriculum JSON data");
       return;
     }
 
@@ -33,20 +38,29 @@ export function CurriculumScreenshotDashboard() {
 
       // Validate it has the expected structure
       if (!curriculumData.data || !curriculumData.data.assessment_problems) {
-        setError('Invalid curriculum data format. Expected data.assessment_problems array.');
+        setError(
+          "Invalid curriculum data format. Expected data.assessment_problems array.",
+        );
         setIsProcessing(false);
         return;
       }
 
-      console.log(`Processing ${curriculumData.data.assessment_problems.length} problems...`);
+      console.log(
+        `Processing ${curriculumData.data.assessment_problems.length} problems...`,
+      );
 
       const response = await screenshotCurriculumQuestions({
         curriculumData,
-        prefix: 'problem'
+        prefix: "problem",
       });
 
       if (!response.success || !response.data) {
-        const errorMsg = typeof response.error === 'string' ? response.error : 'message' in (response.error || {}) ? ((response.error || {}) as {message: string}).message : 'Failed to screenshot questions';
+        const errorMsg =
+          typeof response.error === "string"
+            ? response.error
+            : "message" in (response.error || {})
+              ? ((response.error || {}) as { message: string }).message
+              : "Failed to screenshot questions";
         setError(errorMsg);
         return;
       }
@@ -57,14 +71,13 @@ export function CurriculumScreenshotDashboard() {
         totalRequested: response.data.totalRequested,
         totalSuccessful: response.data.totalSuccessful,
         totalFailed: response.data.totalFailed,
-        duration: response.data.duration
+        duration: response.data.duration,
       });
-
     } catch (err) {
       if (err instanceof SyntaxError) {
-        setError('Invalid JSON format. Please check your input.');
+        setError("Invalid JSON format. Please check your input.");
       } else {
-        setError(err instanceof Error ? err.message : 'Unknown error occurred');
+        setError(err instanceof Error ? err.message : "Unknown error occurred");
       }
     } finally {
       setIsProcessing(false);
@@ -74,7 +87,9 @@ export function CurriculumScreenshotDashboard() {
   const handleDownloadAll = async () => {
     if (!results) return;
 
-    const successfulResults = results.filter(r => r.success && r.screenshotPath);
+    const successfulResults = results.filter(
+      (r) => r.success && r.screenshotPath,
+    );
 
     for (const result of successfulResults) {
       try {
@@ -84,11 +99,11 @@ export function CurriculumScreenshotDashboard() {
 
         // Create a download link with problem number as filename
         const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
 
         // Extract problem number from questionTitle (e.g., "Problem 1" -> "Problem-1")
-        const filename = `${result.questionTitle.replace(/\s+/g, '-')}.png`;
+        const filename = `${result.questionTitle.replace(/\s+/g, "-")}.png`;
         link.download = filename;
 
         // Trigger download
@@ -100,7 +115,7 @@ export function CurriculumScreenshotDashboard() {
         window.URL.revokeObjectURL(url);
 
         // Small delay between downloads to avoid browser blocking
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise((resolve) => setTimeout(resolve, 300));
       } catch (error) {
         console.error(`Failed to download ${result.questionTitle}:`, error);
       }
@@ -115,12 +130,16 @@ export function CurriculumScreenshotDashboard() {
             Curriculum Question Screenshot Tool
           </h1>
           <p className="text-gray-600 mb-8">
-            Paste curriculum API output (JSON) to screenshot each problem statement
+            Paste curriculum API output (JSON) to screenshot each problem
+            statement
           </p>
 
           {/* JSON Input Section */}
           <div className="mb-8">
-            <label htmlFor="json-input" className="block text-lg font-semibold mb-4">
+            <label
+              htmlFor="json-input"
+              className="block text-lg font-semibold mb-4"
+            >
               Paste Curriculum JSON Data
             </label>
             <textarea
@@ -147,14 +166,16 @@ export function CurriculumScreenshotDashboard() {
             />
             <div className="mt-4 flex items-center justify-between">
               <p className="text-sm text-gray-600">
-                {jsonInput.trim() ? '✓ JSON data entered' : 'Waiting for JSON input'}
+                {jsonInput.trim()
+                  ? "✓ JSON data entered"
+                  : "Waiting for JSON input"}
               </p>
               <button
                 onClick={handleScreenshot}
                 disabled={isProcessing || !jsonInput.trim()}
                 className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
               >
-                {isProcessing ? 'Processing...' : 'Generate Screenshots'}
+                {isProcessing ? "Processing..." : "Generate Screenshots"}
               </button>
             </div>
           </div>
@@ -170,14 +191,25 @@ export function CurriculumScreenshotDashboard() {
           {stats && (
             <div className="mb-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">{stats.assessmentTitle}</h3>
+                <h3 className="text-lg font-semibold">
+                  {stats.assessmentTitle}
+                </h3>
                 {stats.totalSuccessful > 0 && (
                   <button
                     onClick={handleDownloadAll}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center gap-2"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     Download All ({stats.totalSuccessful})
                   </button>
@@ -186,19 +218,27 @@ export function CurriculumScreenshotDashboard() {
               <div className="grid grid-cols-4 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Total Problems</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.totalRequested}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.totalRequested}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Successful</p>
-                  <p className="text-2xl font-bold text-green-600">{stats.totalSuccessful}</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {stats.totalSuccessful}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Failed</p>
-                  <p className="text-2xl font-bold text-red-600">{stats.totalFailed}</p>
+                  <p className="text-2xl font-bold text-red-600">
+                    {stats.totalFailed}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Duration</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.duration}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {stats.duration}
+                  </p>
                 </div>
               </div>
             </div>
@@ -214,13 +254,17 @@ export function CurriculumScreenshotDashboard() {
                     key={index}
                     className={`p-6 border rounded-lg ${
                       result.success
-                        ? 'bg-white border-gray-200'
-                        : 'bg-red-50 border-red-200'
+                        ? "bg-white border-gray-200"
+                        : "bg-red-50 border-red-200"
                     }`}
                   >
                     <div className="mb-4">
-                      <p className="text-lg font-semibold text-gray-900">{result.questionTitle}</p>
-                      <p className="text-sm text-gray-600">{result.questionId}</p>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {result.questionTitle}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {result.questionId}
+                      </p>
                     </div>
 
                     {result.success && result.screenshotPath ? (
@@ -244,7 +288,7 @@ export function CurriculumScreenshotDashboard() {
                     ) : (
                       <div>
                         <p className="text-sm text-red-600 font-semibold">
-                          ❌ Failed: {result.error || 'Unknown error'}
+                          ❌ Failed: {result.error || "Unknown error"}
                         </p>
                       </div>
                     )}

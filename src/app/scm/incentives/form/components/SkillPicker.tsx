@@ -10,10 +10,10 @@ interface SkillPickerProps {
   required?: boolean;
 }
 
-const CATEGORY_LABELS: Record<CategorizedSkill['category'], string> = {
-  target: '🎯 Target Skills',
-  essential: '⚡ Essential Prerequisites',
-  helpful: '💡 Helpful Prerequisites',
+const CATEGORY_LABELS: Record<CategorizedSkill["category"], string> = {
+  target: "🎯 Target Skills",
+  essential: "⚡ Essential Prerequisites",
+  helpful: "💡 Helpful Prerequisites",
 };
 
 /**
@@ -38,10 +38,14 @@ export function SkillPicker({
       try {
         const result = await fetchUnitSkills(unitId);
 
-        if (typeof result !== 'string' && result.success && result.data) {
+        if (typeof result !== "string" && result.success && result.data) {
           setSkills(result.data as CategorizedSkill[]);
         } else {
-          setError(typeof result !== 'string' && result.error ? result.error : "Failed to load skills");
+          setError(
+            typeof result !== "string" && result.error
+              ? result.error
+              : "Failed to load skills",
+          );
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -78,16 +82,23 @@ export function SkillPicker({
   }
 
   // Group skills by category
-  const groupedSkills = skills.reduce((acc, skill) => {
-    if (!acc[skill.category]) {
-      acc[skill.category] = [];
-    }
-    acc[skill.category].push(skill);
-    return acc;
-  }, {} as Record<CategorizedSkill['category'], CategorizedSkill[]>);
+  const groupedSkills = skills.reduce(
+    (acc, skill) => {
+      if (!acc[skill.category]) {
+        acc[skill.category] = [];
+      }
+      acc[skill.category].push(skill);
+      return acc;
+    },
+    {} as Record<CategorizedSkill["category"], CategorizedSkill[]>,
+  );
 
   // Render order
-  const categoryOrder: CategorizedSkill['category'][] = ['target', 'essential', 'helpful'];
+  const categoryOrder: CategorizedSkill["category"][] = [
+    "target",
+    "essential",
+    "helpful",
+  ];
 
   return (
     <select

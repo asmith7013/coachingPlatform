@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { AuthenticateWithRedirectCallback } from '@clerk/nextjs';
+import { AuthenticateWithRedirectCallback } from "@clerk/nextjs";
 
 /**
  * SSO Callback page - handles OAuth redirect from Google

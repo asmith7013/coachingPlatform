@@ -72,7 +72,7 @@ export function SectionAccordion({
   hideExpandAll = false,
 }: SectionAccordionProps) {
   const [openItems, setOpenItems] = useState<Set<string>>(
-    () => new Set(defaultOpenItems)
+    () => new Set(defaultOpenItems),
   );
 
   const allOpen = items ? openItems.size === items.length : false;
@@ -100,7 +100,12 @@ export function SectionAccordion({
   };
 
   return (
-    <div className={cn("bg-white rounded-lg shadow mb-6 overflow-hidden", className)}>
+    <div
+      className={cn(
+        "bg-white rounded-lg shadow mb-6 overflow-hidden",
+        className,
+      )}
+    >
       {/* Section Header */}
       <div
         className="px-4 py-3 border-b border-gray-200"
@@ -161,9 +166,7 @@ export function SectionAccordion({
           ))}
         </div>
       ) : children ? (
-        <div className="px-4 py-4">
-          {children}
-        </div>
+        <div className="px-4 py-4">{children}</div>
       ) : null}
     </div>
   );

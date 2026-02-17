@@ -1,11 +1,11 @@
 "use client";
 
-import React from 'react';
-import { useRoadmapsScraper } from './hooks/useRoadmapsScraper';
-import { RoadmapsScraperForm } from './components/RoadmapsScraperForm';
-import { ResultsDisplay } from './components/ResultsDisplay';
-import { Alert } from '@/components/core/feedback/Alert';
-import { RoadmapsCredentials } from './lib/types';
+import React from "react";
+import { useRoadmapsScraper } from "./hooks/useRoadmapsScraper";
+import { RoadmapsScraperForm } from "./components/RoadmapsScraperForm";
+import { ResultsDisplay } from "./components/ResultsDisplay";
+import { Alert } from "@/components/core/feedback/Alert";
+import { RoadmapsCredentials } from "./lib/types";
 
 export default function RoadmapsScraperPage() {
   const {
@@ -23,33 +23,49 @@ export default function RoadmapsScraperPage() {
     validateCredentials,
     clearResults,
     // clearError,
-    reset
+    reset,
   } = useRoadmapsScraper();
 
-  const handleSubmit = async (credentials: RoadmapsCredentials, urls: string[], delay: number) => {
+  const handleSubmit = async (
+    credentials: RoadmapsCredentials,
+    urls: string[],
+    delay: number,
+  ) => {
     await scrapeSkills(credentials, urls, delay);
   };
 
-  const handleDebugSubmit = async (credentials: RoadmapsCredentials, urls: string[], delay: number) => {
+  const handleDebugSubmit = async (
+    credentials: RoadmapsCredentials,
+    urls: string[],
+    delay: number,
+  ) => {
     await scrapeSkillsDebug(credentials, urls, delay);
   };
 
-  const handleValidateCredentials = async (credentials: RoadmapsCredentials) => {
+  const handleValidateCredentials = async (
+    credentials: RoadmapsCredentials,
+  ) => {
     await validateCredentials(credentials);
   };
 
   return (
-    <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8" style={{ maxWidth: "1600px" }}>
+    <div
+      className="mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      style={{ maxWidth: "1600px" }}
+    >
       {/* Header */}
       <div className="mb-8">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Roadmaps Skill Scraper</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Roadmaps Skill Scraper
+            </h1>
             <p className="mt-2 text-gray-600">
-              Extract educational skill content from Teach to One Roadmaps platform
+              Extract educational skill content from Teach to One Roadmaps
+              platform
             </p>
           </div>
-          
+
           {(results.length > 0 || error) && (
             <button
               onClick={reset}
@@ -96,7 +112,7 @@ export default function RoadmapsScraperPage() {
               <div
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 style={{
-                  width: `${currentSkillIndex !== undefined ? ((currentSkillIndex + 1) / totalSkills) * 100 : 0}%`
+                  width: `${currentSkillIndex !== undefined ? ((currentSkillIndex + 1) / totalSkills) * 100 : 0}%`,
                 }}
               />
             </div>
@@ -112,7 +128,7 @@ export default function RoadmapsScraperPage() {
                 Scraped skill content and extraction results
               </p>
             </div>
-            
+
             <ResultsDisplay
               results={results}
               lastResponse={lastResponse}
@@ -126,19 +142,23 @@ export default function RoadmapsScraperPage() {
         {/* Instructions */}
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">How to Use</h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-medium text-gray-800 mb-2">Getting Started</h4>
+              <h4 className="font-medium text-gray-800 mb-2">
+                Getting Started
+              </h4>
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Enter your Roadmaps login credentials</li>
                 <li>• Paste skill URLs (one per line)</li>
                 <li>• Test credentials before scraping</li>
               </ul>
             </div>
-            
+
             <div>
-              <h4 className="font-medium text-gray-800 mb-2">What Gets Extracted</h4>
+              <h4 className="font-medium text-gray-800 mb-2">
+                What Gets Extracted
+              </h4>
               <ul className="text-sm text-gray-600 space-y-1">
                 <li>• Skill title and description</li>
                 <li>• Essential questions and criteria</li>
@@ -148,10 +168,11 @@ export default function RoadmapsScraperPage() {
               </ul>
             </div>
           </div>
-          
+
           <div className="mt-4 pt-4 border-t border-gray-200">
             <p className="text-sm text-gray-600">
-              <strong>Example URL format:</strong> https://roadmaps.teachtoone.org/skill/660
+              <strong>Example URL format:</strong>{" "}
+              https://roadmaps.teachtoone.org/skill/660
             </p>
           </div>
         </div>

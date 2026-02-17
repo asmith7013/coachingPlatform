@@ -10,14 +10,52 @@ export const DOMAIN_LABELS: Record<string, string> = {
 };
 
 // Domain colors for badges
-export const DOMAIN_COLORS: Record<string, { bg: string; border: string; text: string; badge: string }> = {
-  EE: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", badge: "bg-blue-500" },
-  G: { bg: "bg-green-50", border: "border-green-200", text: "text-green-700", badge: "bg-green-500" },
-  RP: { bg: "bg-teal-50", border: "border-teal-200", text: "text-teal-700", badge: "bg-teal-500" },
-  NS: { bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-700", badge: "bg-orange-500" },
-  SP: { bg: "bg-pink-50", border: "border-pink-200", text: "text-pink-700", badge: "bg-pink-500" },
-  F: { bg: "bg-purple-50", border: "border-purple-200", text: "text-purple-700", badge: "bg-purple-500" },
-  Other: { bg: "bg-gray-50", border: "border-gray-200", text: "text-gray-700", badge: "bg-gray-500" },
+export const DOMAIN_COLORS: Record<
+  string,
+  { bg: string; border: string; text: string; badge: string }
+> = {
+  EE: {
+    bg: "bg-blue-50",
+    border: "border-blue-200",
+    text: "text-blue-700",
+    badge: "bg-blue-500",
+  },
+  G: {
+    bg: "bg-green-50",
+    border: "border-green-200",
+    text: "text-green-700",
+    badge: "bg-green-500",
+  },
+  RP: {
+    bg: "bg-teal-50",
+    border: "border-teal-200",
+    text: "text-teal-700",
+    badge: "bg-teal-500",
+  },
+  NS: {
+    bg: "bg-orange-50",
+    border: "border-orange-200",
+    text: "text-orange-700",
+    badge: "bg-orange-500",
+  },
+  SP: {
+    bg: "bg-pink-50",
+    border: "border-pink-200",
+    text: "text-pink-700",
+    badge: "bg-pink-500",
+  },
+  F: {
+    bg: "bg-purple-50",
+    border: "border-purple-200",
+    text: "text-purple-700",
+    badge: "bg-purple-500",
+  },
+  Other: {
+    bg: "bg-gray-50",
+    border: "border-gray-200",
+    text: "text-gray-700",
+    badge: "bg-gray-500",
+  },
 };
 
 // Standard descriptions for tooltips
@@ -36,7 +74,8 @@ export const STANDARD_DESCRIPTIONS: Record<string, string> = {
   "8.G.2": "Describe congruence using transformations",
   "8.G.3": "Describe dilations and similarity transformations",
   "8.G.4": "Understand similarity of two-dimensional figures",
-  "8.G.5": "Use angle relationships (parallel lines, triangles, exterior angles)",
+  "8.G.5":
+    "Use angle relationships (parallel lines, triangles, exterior angles)",
   "8.G.6": "Explain the Pythagorean Theorem and its converse",
   "8.G.7": "Apply the Pythagorean Theorem in real-world problems",
   "8.G.8": "Apply the Pythagorean Theorem to find distance",
@@ -59,8 +98,10 @@ export const STANDARD_DESCRIPTIONS: Record<string, string> = {
   "7.RP.1": "Compute unit rates with ratios of fractions",
   "7.RP.2": "Recognize and represent proportional relationships",
   "7.RP.3": "Use proportional relationships to solve problems",
-  "7.NS.1": "Apply and extend properties of operations to add/subtract rationals",
-  "7.NS.2": "Apply and extend properties of operations to multiply/divide rationals",
+  "7.NS.1":
+    "Apply and extend properties of operations to add/subtract rationals",
+  "7.NS.2":
+    "Apply and extend properties of operations to multiply/divide rationals",
   "7.NS.3": "Solve real-world problems with rational numbers",
   "7.EE.1": "Apply properties of operations to add, subtract, factor, expand",
   "7.EE.2": "Rewrite expressions in different forms",
@@ -81,25 +122,40 @@ export const STANDARD_DESCRIPTIONS: Record<string, string> = {
   "7.SP.7": "Develop probability models",
   "7.SP.8": "Find probabilities of compound events",
   // Grade 7 substandards (scraped from NY Standards documentation)
-  "7.EE.4a": "Solve word problems leading to equations of the form px + q = r and p(x + q) = r",
-  "7.EE.4b": "Solve word problems leading to inequalities of the form px + q > r or px + q < r",
-  "7.NS.1a": "Describe situations in which opposite quantities combine to make 0",
+  "7.EE.4a":
+    "Solve word problems leading to equations of the form px + q = r and p(x + q) = r",
+  "7.EE.4b":
+    "Solve word problems leading to inequalities of the form px + q > r or px + q < r",
+  "7.NS.1a":
+    "Describe situations in which opposite quantities combine to make 0",
   "7.NS.1b": "Understand p + q as the number located a distance |q| from p",
-  "7.NS.1c": "Understand subtraction of rational numbers as adding the additive inverse",
-  "7.NS.1d": "Apply properties of operations as strategies to add and subtract rational numbers",
-  "7.NS.2a": "Understand that multiplication is extended from fractions to rational numbers",
-  "7.NS.2b": "Understand that integers can be divided, provided that the divisor is not zero",
-  "7.NS.2c": "Apply properties of operations as strategies to multiply and divide rational numbers",
+  "7.NS.1c":
+    "Understand subtraction of rational numbers as adding the additive inverse",
+  "7.NS.1d":
+    "Apply properties of operations as strategies to add and subtract rational numbers",
+  "7.NS.2a":
+    "Understand that multiplication is extended from fractions to rational numbers",
+  "7.NS.2b":
+    "Understand that integers can be divided, provided that the divisor is not zero",
+  "7.NS.2c":
+    "Apply properties of operations as strategies to multiply and divide rational numbers",
   "7.NS.2d": "Convert a rational number to a decimal using long division",
   "7.RP.2a": "Decide whether two quantities are in a proportional relationship",
-  "7.RP.2b": "Identify the constant of proportionality (unit rate) in tables, graphs, equations",
+  "7.RP.2b":
+    "Identify the constant of proportionality (unit rate) in tables, graphs, equations",
   "7.RP.2c": "Represent proportional relationships by equations",
-  "7.RP.2d": "Explain what a point (x, y) on the graph of a proportional relationship means",
-  "7.SP.7a": "Develop a uniform probability model by assigning equal probability to all outcomes",
-  "7.SP.7b": "Develop a probability model by observing frequencies in data from a chance process",
-  "7.SP.8a": "Understand that the probability of a compound event is the fraction of outcomes",
-  "7.SP.8b": "Represent sample spaces for compound events using lists, tables and tree diagrams",
-  "7.SP.8c": "Design and use a simulation to generate frequencies for compound events",
+  "7.RP.2d":
+    "Explain what a point (x, y) on the graph of a proportional relationship means",
+  "7.SP.7a":
+    "Develop a uniform probability model by assigning equal probability to all outcomes",
+  "7.SP.7b":
+    "Develop a probability model by observing frequencies in data from a chance process",
+  "7.SP.8a":
+    "Understand that the probability of a compound event is the fraction of outcomes",
+  "7.SP.8b":
+    "Represent sample spaces for compound events using lists, tables and tree diagrams",
+  "7.SP.8c":
+    "Design and use a simulation to generate frequencies for compound events",
   // Grade 6 standards
   "6.RP.1": "Understand ratio concepts and ratio language",
   "6.RP.2": "Understand unit rate concepts",

@@ -10,6 +10,7 @@ Both CLI and browser contexts use this same instruction set.
 **The problem image is the MASTERY CHECK QUESTION** - the actual question students will answer on their exit ticket or assessment.
 
 **Your job is to create a worked example that:**
+
 1. Teaches the SAME mathematical skill
 2. Uses the SAME strategy and steps
 3. Uses DIFFERENT context and numbers than the mastery check
@@ -23,6 +24,7 @@ Both CLI and browser contexts use this same instruction set.
 **BEFORE doing any analysis, you MUST first transcribe EXACTLY what you see in the image.**
 
 This includes:
+
 - All text (problem statement, questions, instructions)
 - All numbers and mathematical expressions
 - Any diagrams, tables, or visual elements (describe them precisely)
@@ -42,22 +44,26 @@ This includes:
 **This is the foundation — everything else builds on this analysis.**
 
 **1a: Solve the Problem**
+
 - Work through the mastery check step-by-step
 - Write out your complete solution with reasoning
 - Identify the final answer
 
 **1b: Identify Mathematical Structure**
 Be SPECIFIC, not vague:
+
 - ✅ "solving two-step equations with variables on both sides"
 - ❌ "algebra"
 
 Ask yourself:
+
 - What mathematical relationships are present?
 - What prior knowledge does this assume?
 - What format is the answer expected in?
 
 **1c: Articulate What Correct Understanding Looks Like**
 This is the essential piece — what does a student need to understand to get this problem correct?
+
 - What mathematical knowledge must they apply?
 - What key insight separates students who get it right from those who don't?
 - What does the correct reasoning process look like?
@@ -70,22 +76,27 @@ This is the essential piece — what does a student need to understand to get th
 
 **2a: First Draft (Detailed)**
 Articulate what students need to know, do, or understand to get the exit ticket correct:
+
 - Use bullet sub-points for each key understanding
 - Explicitly connect to the exit ticket: "Here is the Big Idea, here is how it shows up in what students must do on the exit ticket, and here is where misconceptions can block them"
 - Include mathematical structure and reasoning, not just procedures
 
 **Example (from Gr8 Unit 4 Lesson 7 — All/Some/No Solutions):**
+
 > - A one variable equation of the form ax + b = cx + d has infinite solutions if the coefficients are equal and the constants are equal (a = c and b = d)
 > - A one variable equation has no solutions if the coefficients are equal but the constants are unequal (a = c but b ≠ d)
 > - A one variable equation has one solution if the coefficients are unequal (a ≠ c)
 
 **2b: Revised Draft (Simplified)**
 Distill to:
+
 - One sentence capturing the core mathematical principle
 - 2-4 supporting structural patterns
 
 **Example:**
+
 > The structure of an equation helps us predict how many solutions it will have.
+>
 > - ax + b = ax + b (same coefficients, same constants): infinite solutions
 > - ax + b = ax + d (same coefficients, different constants): no solutions
 > - ax + b = cx + d (different coefficients): one solution
@@ -97,6 +108,7 @@ The simplified Big Idea goes into `strategyDefinition.bigIdea`. The detailed ver
 **This is the most critical step — misconceptions DRIVE the number of worked example steps.**
 
 For EACH anticipated misconception, provide:
+
 1. **The misconception** — what the student incorrectly believes
 2. **What their work looks like** — specific wrong answers/choices they'd make on the exit ticket
 3. **Root cause** — why they make this mistake (what understanding they're missing)
@@ -104,6 +116,7 @@ For EACH anticipated misconception, provide:
 **The number of misconceptions you identify here will determine the number of steps in your worked example.** Each step should directly address one or more misconceptions. If you identify 2 key stumbling blocks, design 2 steps. If you identify 4, design 4 steps. Aim for 2-5 misconceptions (3 is typical).
 
 **Example (Gr8 Unit 4 Lesson 7):**
+
 1. Student thinks that a different constant (other than 8) will yield ONE solution
    - What it looks like: For "one value of x," they write "10" (a constant, not a variable term)
    - Root cause: Doesn't understand that differing constants with same coefficients means NO solution
@@ -119,17 +132,21 @@ For EACH anticipated misconception, provide:
 **Map each misconception to a worked example step. This is where you explicitly connect the design to the exit ticket.**
 
 For each misconception from Step 3:
+
 - Describe which step will address it and HOW
 - If a misconception needs its own dedicated step, give it one
 - If two misconceptions can be addressed in the same step, group them
 
 Write a brief design rationale explaining:
+
 - Why the worked example is structured this way
 - How the steps connect back to what students need for the exit ticket
 - What discovery questions ("What do you notice?") will guide students toward the Big Idea
 
 **Example:**
+
 > I want to create problems where students work with equations that have none, one, and infinite solutions so they can compare how they are different. I want them to notice both the structure of the equation and the structure of the solution.
+>
 > - Step 1 addresses misconception 3 (assumes one solution): Show equations with ONE solution so students see the baseline
 > - Step 2 addresses misconception 1 (different constant = one solution): Show equations with NO solutions so students see what happens when coefficients match but constants differ
 > - Step 3 addresses misconception 2 (confuses no/infinite): Show equations with INFINITE solutions so students can compare with Step 2
@@ -140,12 +157,14 @@ Write a brief design rationale explaining:
 
 **5a: Name the Strategy**
 Give it a clear, memorable name:
+
 - "Balance and Isolate"
 - "Find the Unit Rate"
 - "Plot and Connect"
 
 **5b: State it in One Sentence**
 Student-facing explanation:
+
 - "To solve this, we [VERB] the [OBJECT] to find [GOAL]"
 
 **5c: Identify Moves (2-5, determined by misconceptions)**
@@ -154,37 +173,43 @@ Each move: [Action verb] → [What it accomplishes] → [Which misconception it 
 
 **5d: Define Consistent Language**
 These step verbs MUST:
+
 - Be the EXACT same throughout all slides
 - Appear on every slide header ("STEP 1: [VERB]")
 - Be referenced in CFU questions
 
 **5e: Define Discovery Questions**
 For each step, define a "What do you notice?" style question that guides students toward the Big Idea:
+
 - "What do you notice about the structure of the equations?"
 - "What pattern do you see in the solutions?"
 - "How does this compare to what we saw in the previous step?"
 
 ### STEP 6: Create Three Scenarios
+
 **ALL must use DIFFERENT contexts from the mastery check:**
 
-| Scenario | Purpose | Context Rule |
-|----------|---------|--------------|
-| 1 | Worked Example (full scaffolding) | DIFFERENT from mastery check |
-| 2 | Practice (NO scaffolding) | DIFFERENT from mastery check AND Scenario 1 |
-| 3 | Practice (NO scaffolding) | DIFFERENT from ALL above |
+| Scenario | Purpose                           | Context Rule                                |
+| -------- | --------------------------------- | ------------------------------------------- |
+| 1        | Worked Example (full scaffolding) | DIFFERENT from mastery check                |
+| 2        | Practice (NO scaffolding)         | DIFFERENT from mastery check AND Scenario 1 |
+| 3        | Practice (NO scaffolding)         | DIFFERENT from ALL above                    |
 
 **DO:**
+
 - Match context to grade level interests (gaming, social media, sports, STEM)
 - Keep mathematical difficulty identical
 - Give each scenario a visual anchor (icon/theme)
 
 **DO NOT:**
+
 - Use the same context as the mastery check
 - Use the same numbers as the mastery check
 - Change the problem type between scenarios
 
 **IMPORTANT: Scenario Graph Plans**
 If the problem requires a coordinate graph (`visualType: svg-visual`, `svgSubtype: coordinate-graph`), create a `graphPlan` for EACH scenario with that scenario's specific equations and values:
+
 - Each scenario has different numbers, so each needs its own equations, scale, keyPoints, and annotations
 - The graph structure (number of lines, annotation type) stays the same across scenarios
 - Only the specific values change based on each scenario's numbers
@@ -193,6 +218,7 @@ Example: If Scenario 1 uses "y = 25x + 50" and Scenario 2 uses "y = 15x + 30", e
 
 **IMPORTANT: Scenario 1 Diagram Evolution**
 Scenario 1 is the worked example, so it MUST have its own `diagramEvolution` with its specific numbers in the ASCII art:
+
 - The `diagramEvolution` shows how the visual develops step-by-step for Scenario 1's context/numbers
 - Scenario 1's `diagramEvolution` will be used for the worked example slides (slides 3-6)
 - Scenarios 2 and 3 do NOT need `diagramEvolution` (they are practice problems on the printable slide)
@@ -228,6 +254,7 @@ Example: If the mastery check divides 24 among 4 groups but Scenario 1 divides 3
 
 **8a: List Your Equations**
 Write out every line/equation that will appear:
+
 ```
 Line 1: y = [equation] (e.g., y = 5x)
 Line 2: y = [equation] (e.g., y = 5x + 20)
@@ -235,12 +262,14 @@ Line 2: y = [equation] (e.g., y = 5x + 20)
 
 **8b: Calculate Key Data Points (REQUIRED in graphPlan.keyPoints)**
 For EACH line, calculate y at key x values. These MUST be included in the `keyPoints` array:
+
 - Y-intercepts (where line crosses y-axis)
 - Solution points (the answer to the problem)
 - Any point specifically asked about in the problem
 - Points used for slope triangles or annotations
 
 Example:
+
 ```
 Line 1: y = 5x
   - At x=0: y = 0 (y-intercept) → keyPoint: { label: "y-intercept Line 1", x: 0, y: 0 }
@@ -253,6 +282,7 @@ Line 2: y = 5x + 20
 **CRITICAL:** Every important point that will be marked with a dot or label on the graph MUST appear in `keyPoints`.
 
 **8c: Determine Scale (≤10 ticks on each axis)**
+
 - X_MAX: rightmost x-value needed (common: 4, 5, 6, 8, 10)
   - X_MAX ≤6: count by 1s
   - X_MAX >6: count by 2s
@@ -265,6 +295,7 @@ Line 2: y = 5x + 20
 
 **8d: Plan Annotations**
 What mathematical relationship to show?
+
 - Y-intercept shift (vertical arrow showing difference)
 - Parallel lines (same slope label)
 - Slope comparison
@@ -280,6 +311,7 @@ This is the most important preview for teachers - it shows EXACTLY how the visua
 
 **9a: Create Initial State**
 Show the diagram as it appears on the Problem Setup slide (Slide 3):
+
 - For coordinate graphs: axes with scale labels, but no lines drawn yet
 - For tape diagrams: the total bar with the unknown marked
 - For hanger diagrams: the initial equation on the balance
@@ -287,17 +319,20 @@ Show the diagram as it appears on the Problem Setup slide (Slide 3):
 
 **9b: Create Step-by-Step Evolution**
 For EACH strategy move, show:
+
 1. The diagram state AFTER that step is completed (building cumulatively on previous steps)
 2. What was added/changed from the previous state
 3. Use ASCII art that matches the visual type
 
 **9c: Match Steps to Strategy Moves**
 The number of steps in diagramEvolution MUST match strategyDefinition.moves.length:
+
 - 2 moves = 2 evolution steps
 - 3 moves = 3 evolution steps
 - 5 moves = 5 evolution steps
 
 **Example for Coordinate Graph (2-line system of equations):**
+
 ```json
 "diagramEvolution": {
   "initialState": "    y\n  50│\n    │\n  40│\n    │\n  30│\n    │\n  20│\n    │\n  10│\n    │\n   0└────┬────┬────┬────┬──── x\n        2    4    6    8",
@@ -322,6 +357,7 @@ The number of steps in diagramEvolution MUST match strategyDefinition.moves.leng
 ```
 
 **Example for Tape Diagram (division problem):**
+
 ```json
 "diagramEvolution": {
   "initialState": "Total: 24 stickers to share among 4 friends\n\n┌────────────────────────────────────────┐\n│                 24                     │\n└────────────────────────────────────────┘",
@@ -406,6 +442,7 @@ The number of steps in diagramEvolution MUST match strategyDefinition.moves.leng
 ## Output Format
 
 **For the complete JSON output schema, see:**
+
 ```
 Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/output-schema.md
 ```

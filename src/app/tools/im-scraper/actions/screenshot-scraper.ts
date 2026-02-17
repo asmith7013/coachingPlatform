@@ -1,8 +1,8 @@
 "use server";
 
 import { z } from "zod";
-import { IMCredentialsZodSchema } from '../lib/types';
-import { IMScreenshotScraper } from '../lib/im-screenshot-scraper';
+import { IMCredentialsZodSchema } from "../lib/types";
+import { IMScreenshotScraper } from "../lib/im-screenshot-scraper";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
 
@@ -12,7 +12,7 @@ import { handleValidationError } from "@error/handlers/validation";
 const ScreenshotScrapingRequestSchema = z.object({
   credentials: IMCredentialsZodSchema,
   lessonUrls: z.array(z.string().url()).min(1, "At least one URL is required"),
-  delayBetweenRequests: z.number().min(0).default(2000)
+  delayBetweenRequests: z.number().min(0).default(2000),
 });
 
 /**
@@ -23,7 +23,7 @@ const ScreenshotResultSchema = z.object({
   success: z.boolean(),
   screenshotPath: z.string().optional(),
   error: z.string().optional(),
-  scrapedAt: z.string()
+  scrapedAt: z.string(),
 });
 
 /**
@@ -38,12 +38,16 @@ const ScreenshotScrapingResponseSchema = z.object({
   errors: z.array(z.string()),
   startTime: z.string(),
   endTime: z.string(),
-  duration: z.string()
+  duration: z.string(),
 });
 
-export type ScreenshotScrapingRequest = z.infer<typeof ScreenshotScrapingRequestSchema>;
+export type ScreenshotScrapingRequest = z.infer<
+  typeof ScreenshotScrapingRequestSchema
+>;
 export type ScreenshotResult = z.infer<typeof ScreenshotResultSchema>;
-export type ScreenshotScrapingResponse = z.infer<typeof ScreenshotScrapingResponseSchema>;
+export type ScreenshotScrapingResponse = z.infer<
+  typeof ScreenshotScrapingResponseSchema
+>;
 
 /**
  * Server action to screenshot Student Task Statement sections from provided URLs
@@ -57,26 +61,31 @@ export async function screenshotStudentTasks(request: unknown) {
     const validatedRequest = ScreenshotScrapingRequestSchema.parse(request);
     const { credentials, lessonUrls, delayBetweenRequests } = validatedRequest;
 
-    console.log('📸 Starting screenshot scraping for Student Task Statements...');
+    console.log(
+      "📸 Starting screenshot scraping for Student Task Statements...",
+    );
     console.log(`   URLs: ${lessonUrls.length}`);
 
     // Initialize scraper
     scraper = new IMScreenshotScraper();
     await scraper.initialize();
     scraper.setCredentials(credentials);
-    console.log('✅ Screenshot scraper initialized');
+    console.log("✅ Screenshot scraper initialized");
 
     // Start screenshotting
-    const results = await scraper.screenshotPages(lessonUrls, delayBetweenRequests);
+    const results = await scraper.screenshotPages(
+      lessonUrls,
+      delayBetweenRequests,
+    );
 
     const endTime = new Date().toISOString();
     const duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
 
     // Count successful and failed screenshots
-    const successful = results.filter(result => result.success);
-    const failed = results.filter(result => !result.success);
+    const successful = results.filter((result) => result.success);
+    const failed = results.filter((result) => !result.success);
 
-    console.log('📊 Screenshot Results:');
+    console.log("📊 Screenshot Results:");
     console.log(`   ✅ Successful: ${successful.length}`);
     console.log(`   ❌ Failed: ${failed.length}`);
 
@@ -86,10 +95,10 @@ export async function screenshotStudentTasks(request: unknown) {
       totalSuccessful: successful.length,
       totalFailed: failed.length,
       results,
-      errors: failed.map(result => result.error).filter(Boolean) as string[],
+      errors: failed.map((result) => result.error).filter(Boolean) as string[],
       startTime,
       endTime,
-      duration
+      duration,
     };
 
     // Validate response structure
@@ -97,25 +106,24 @@ export async function screenshotStudentTasks(request: unknown) {
 
     return {
       success: true,
-      data: validatedResponse
+      data: validatedResponse,
     };
-
   } catch (error) {
     const endTime = new Date().toISOString();
     const _duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
 
-    console.error('Error in screenshotStudentTasks:', error);
+    console.error("Error in screenshotStudentTasks:", error);
 
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: handleValidationError(error)
+        error: handleValidationError(error),
       };
     }
 
     return {
       success: false,
-      error: handleServerError(error, 'screenshotStudentTasks')
+      error: handleServerError(error, "screenshotStudentTasks"),
     };
   } finally {
     // Always clean up the scraper
@@ -123,7 +131,7 @@ export async function screenshotStudentTasks(request: unknown) {
       try {
         await scraper.close();
       } catch (closeError) {
-        console.error('Error closing scraper:', closeError);
+        console.error("Error closing scraper:", closeError);
       }
     }
   }
@@ -140,7 +148,7 @@ export async function screenshotStudentTasksDebug(request: unknown) {
     const validatedRequest = ScreenshotScrapingRequestSchema.parse(request);
     const { credentials, lessonUrls, delayBetweenRequests } = validatedRequest;
 
-    console.log('🐛 Starting DEBUG screenshot scraping...');
+    console.log("🐛 Starting DEBUG screenshot scraping...");
 
     // Initialize scraper in DEBUG MODE
     scraper = new IMScreenshotScraper();
@@ -149,17 +157,20 @@ export async function screenshotStudentTasksDebug(request: unknown) {
 
     // Limit to first 2 URLs for debugging
     const debugUrls = lessonUrls.slice(0, 2);
-    console.log('🔍 Testing URLs:', debugUrls);
+    console.log("🔍 Testing URLs:", debugUrls);
 
-    const results = await scraper.screenshotPages(debugUrls, delayBetweenRequests);
+    const results = await scraper.screenshotPages(
+      debugUrls,
+      delayBetweenRequests,
+    );
 
     const endTime = new Date().toISOString();
     const duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
 
-    const successful = results.filter(result => result.success);
-    const failed = results.filter(result => !result.success);
+    const successful = results.filter((result) => result.success);
+    const failed = results.filter((result) => !result.success);
 
-    console.log('📊 Debug Results:');
+    console.log("📊 Debug Results:");
     console.log(`   ✅ Successful: ${successful.length}`);
     console.log(`   ❌ Failed: ${failed.length}`);
 
@@ -169,36 +180,35 @@ export async function screenshotStudentTasksDebug(request: unknown) {
       totalSuccessful: successful.length,
       totalFailed: failed.length,
       results,
-      errors: failed.map(result => result.error).filter(Boolean) as string[],
+      errors: failed.map((result) => result.error).filter(Boolean) as string[],
       startTime,
       endTime,
-      duration
+      duration,
     };
 
     const validatedResponse = ScreenshotScrapingResponseSchema.parse(response);
 
-    console.log('🎯 Debug session complete. Browser window will stay open.');
+    console.log("🎯 Debug session complete. Browser window will stay open.");
 
     return {
       success: true,
-      data: validatedResponse
+      data: validatedResponse,
     };
-
   } catch (error) {
-    console.error('💥 Error in debug screenshot scraping:', error);
+    console.error("💥 Error in debug screenshot scraping:", error);
 
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: handleValidationError(error)
+        error: handleValidationError(error),
       };
     }
 
     return {
       success: false,
-      error: handleServerError(error, 'screenshotStudentTasksDebug')
+      error: handleServerError(error, "screenshotStudentTasksDebug"),
     };
   } finally {
-    console.log('⏸️  Browser staying open for inspection...');
+    console.log("⏸️  Browser staying open for inspection...");
   }
 }

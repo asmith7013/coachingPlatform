@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Spinner } from '@/components/core/feedback/Spinner';
-import { createScopeAndSequence } from '@/app/actions/scm/scope-and-sequence/scope-and-sequence';
+import React, { useState, useEffect } from "react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Spinner } from "@/components/core/feedback/Spinner";
+import { createScopeAndSequence } from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
 import {
   GRADE_OPTIONS,
   SECTION_OPTIONS,
   LESSON_TYPE_OPTIONS,
   SCOPE_SEQUENCE_TAG_OPTIONS,
-} from '@zod-schema/scm/scope-and-sequence/scope-and-sequence';
+} from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 interface CreateLessonModalProps {
   isOpen: boolean;
@@ -25,36 +25,42 @@ export function CreateLessonModal({
   isOpen,
   onClose,
   onCreated,
-  initialLessonName = '',
+  initialLessonName = "",
   initialScopeTag,
 }: CreateLessonModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Form state
-  const [grade, setGrade] = useState<string>('8');
-  const [unit, setUnit] = useState('');
-  const [unitLessonId, setUnitLessonId] = useState('');
+  const [grade, setGrade] = useState<string>("8");
+  const [unit, setUnit] = useState("");
+  const [unitLessonId, setUnitLessonId] = useState("");
   const [unitNumber, setUnitNumber] = useState<number>(1);
   const [lessonNumber, setLessonNumber] = useState<number>(1);
   const [lessonName, setLessonName] = useState(initialLessonName);
-  const [lessonTitle, setLessonTitle] = useState('');
-  const [lessonType, setLessonType] = useState<string>('assessment');
-  const [section, setSection] = useState<string>('Unit Assessment');
-  const [scopeSequenceTag, setScopeSequenceTag] = useState<string>(initialScopeTag || 'Grade 8');
+  const [lessonTitle, setLessonTitle] = useState("");
+  const [lessonType, setLessonType] = useState<string>("assessment");
+  const [section, setSection] = useState<string>("Unit Assessment");
+  const [scopeSequenceTag, setScopeSequenceTag] = useState<string>(
+    initialScopeTag || "Grade 8",
+  );
 
   // Reset form when modal opens
   useEffect(() => {
     if (isOpen) {
       setLessonName(initialLessonName);
-      setScopeSequenceTag(initialScopeTag || 'Grade 8');
+      setScopeSequenceTag(initialScopeTag || "Grade 8");
       setError(null);
 
       // Auto-detect grade from initial lesson name (e.g., "Mid-Unit Assessment 8.3" -> grade 8)
       const gradeMatch = initialLessonName.match(/(\d+)\.\d+/);
       if (gradeMatch) {
         const detectedGrade = gradeMatch[1];
-        if (GRADE_OPTIONS.includes(detectedGrade as typeof GRADE_OPTIONS[number])) {
+        if (
+          GRADE_OPTIONS.includes(
+            detectedGrade as (typeof GRADE_OPTIONS)[number],
+          )
+        ) {
           setGrade(detectedGrade);
         }
       }
@@ -72,9 +78,9 @@ export function CreateLessonModal({
 
   // Auto-generate unitLessonId when unitNumber changes
   useEffect(() => {
-    if (lessonType === 'assessment') {
+    if (lessonType === "assessment") {
       // For assessments, use unit number with suffix
-      const suffix = lessonName.toLowerCase().includes('mid-unit') ? 'MU' : '1';
+      const suffix = lessonName.toLowerCase().includes("mid-unit") ? "MU" : "1";
       setUnitLessonId(`${unitNumber}.${suffix}`);
     }
   }, [unitNumber, lessonType, lessonName]);
@@ -86,8 +92,8 @@ export function CreateLessonModal({
 
   // Auto-update scopeSequenceTag when grade changes
   useEffect(() => {
-    if (grade === 'Algebra 1') {
-      setScopeSequenceTag('Algebra 1');
+    if (grade === "Algebra 1") {
+      setScopeSequenceTag("Algebra 1");
     } else {
       setScopeSequenceTag(`Grade ${grade}`);
     }
@@ -100,16 +106,17 @@ export function CreateLessonModal({
 
     try {
       const result = await createScopeAndSequence({
-        grade: grade as '6' | '7' | '8' | 'Algebra 1',
+        grade: grade as "6" | "7" | "8" | "Algebra 1",
         unit,
         unitLessonId,
         unitNumber,
         lessonNumber,
         lessonName,
         lessonTitle: lessonTitle || lessonName,
-        lessonType: lessonType as 'lesson' | 'rampUp' | 'assessment',
-        section: section as typeof SECTION_OPTIONS[number],
-        scopeSequenceTag: scopeSequenceTag as typeof SCOPE_SEQUENCE_TAG_OPTIONS[number],
+        lessonType: lessonType as "lesson" | "rampUp" | "assessment",
+        section: section as (typeof SECTION_OPTIONS)[number],
+        scopeSequenceTag:
+          scopeSequenceTag as (typeof SCOPE_SEQUENCE_TAG_OPTIONS)[number],
         roadmapSkills: [],
         targetSkills: [],
         standards: [],
@@ -121,10 +128,10 @@ export function CreateLessonModal({
         onCreated(String(result.data._id));
         onClose();
       } else {
-        setError(result.error || 'Failed to create lesson');
+        setError(result.error || "Failed to create lesson");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setIsSubmitting(false);
     }
@@ -179,7 +186,7 @@ export function CreateLessonModal({
                 >
                   {GRADE_OPTIONS.map((g) => (
                     <option key={g} value={g}>
-                      {g === 'Algebra 1' ? 'Algebra 1' : `Grade ${g}`}
+                      {g === "Algebra 1" ? "Algebra 1" : `Grade ${g}`}
                     </option>
                   ))}
                 </select>
@@ -246,7 +253,11 @@ export function CreateLessonModal({
                 >
                   {LESSON_TYPE_OPTIONS.map((type) => (
                     <option key={type} value={type}>
-                      {type === 'lesson' ? 'Lesson' : type === 'rampUp' ? 'Ramp Up' : 'Assessment'}
+                      {type === "lesson"
+                        ? "Lesson"
+                        : type === "rampUp"
+                          ? "Ramp Up"
+                          : "Assessment"}
                     </option>
                   ))}
                 </select>
@@ -292,7 +303,9 @@ export function CreateLessonModal({
                 <input
                   type="number"
                   value={lessonNumber}
-                  onChange={(e) => setLessonNumber(parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    setLessonNumber(parseInt(e.target.value) || 0)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   required
                 />
@@ -348,7 +361,7 @@ export function CreateLessonModal({
                     Creating...
                   </>
                 ) : (
-                  'Create Lesson'
+                  "Create Lesson"
                 )}
               </button>
             </div>

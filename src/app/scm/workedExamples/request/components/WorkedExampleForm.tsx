@@ -80,7 +80,10 @@ export function WorkedExampleForm({
 
       {/* Misconception Description */}
       <div className="mb-6">
-        <label htmlFor="misconception" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="misconception"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           Describe the misconception or struggle *
         </label>
         <textarea
@@ -96,7 +99,10 @@ export function WorkedExampleForm({
       {/* Math Details Row */}
       <div className="grid grid-cols-2 gap-6 mb-6">
         <div>
-          <label htmlFor="mathConcept" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="mathConcept"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Math Concept *
           </label>
           <input
@@ -109,7 +115,10 @@ export function WorkedExampleForm({
           />
         </div>
         <div>
-          <label htmlFor="mathStandard" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="mathStandard"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Math Standard *
           </label>
           <input
@@ -125,7 +134,10 @@ export function WorkedExampleForm({
 
       {/* Learning Goals */}
       <div className="mb-6">
-        <label htmlFor="learningGoals" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="learningGoals"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           Learning Goals (one per line)
         </label>
         <textarea
@@ -148,7 +160,10 @@ export function WorkedExampleForm({
 
       {/* Additional Notes */}
       <div className="mb-6">
-        <label htmlFor="additionalNotes" className="block text-sm font-medium text-gray-700 mb-2">
+        <label
+          htmlFor="additionalNotes"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
           Additional Notes (optional)
         </label>
         <textarea

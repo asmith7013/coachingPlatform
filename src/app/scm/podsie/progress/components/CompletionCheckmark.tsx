@@ -1,5 +1,8 @@
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { CheckCircleIcon as CheckCircleOutlineIcon, CheckIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon as CheckCircleOutlineIcon,
+  CheckIcon,
+} from "@heroicons/react/24/outline";
 import { getCompletionDateInfo } from "@/lib/utils/completion-date-helpers";
 import { Tooltip } from "@/components/core/feedback/Tooltip";
 
@@ -86,17 +89,19 @@ export function CompletionCheckmark({
   const sizeClass = sizeClasses[size];
 
   // Determine tooltip text
-  const tooltipText = title || (
-    completionInfo.formattedDate
+  const tooltipText =
+    title ||
+    (completionInfo.formattedDate
       ? `Completed: ${completionInfo.formattedDate}`
-      : "Completed"
-  );
+      : "Completed");
 
   // Render filled checkmark for today's completions
   if (completionInfo.iconStyle === "today") {
     return (
       <Tooltip content={tooltipText}>
-        <CheckCircleIcon className={`${sizeClass} ${filledColorClasses[color]} mx-auto`} />
+        <CheckCircleIcon
+          className={`${sizeClass} ${filledColorClasses[color]} mx-auto`}
+        />
       </Tooltip>
     );
   }
@@ -105,7 +110,9 @@ export function CompletionCheckmark({
   if (completionInfo.iconStyle === "yesterday") {
     return (
       <Tooltip content={tooltipText}>
-        <CheckCircleOutlineIcon className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`} />
+        <CheckCircleOutlineIcon
+          className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`}
+        />
       </Tooltip>
     );
   }
@@ -113,7 +120,9 @@ export function CompletionCheckmark({
   // Render plain checkmark for earlier completions (prior days)
   return (
     <Tooltip content={tooltipText}>
-      <CheckIcon className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`} />
+      <CheckIcon
+        className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`}
+      />
     </Tooltip>
   );
 }
@@ -159,14 +168,18 @@ export function SimpleCheckmark({
   if (!completed) {
     return (
       <Tooltip content={title}>
-        <CheckCircleOutlineIcon className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`} />
+        <CheckCircleOutlineIcon
+          className={`${sizeClass} ${outlineColorClasses[color]} mx-auto`}
+        />
       </Tooltip>
     );
   }
 
   return (
     <Tooltip content={title}>
-      <CheckCircleIcon className={`${sizeClass} ${filledColorClasses[color]} mx-auto`} />
+      <CheckCircleIcon
+        className={`${sizeClass} ${filledColorClasses[color]} mx-auto`}
+      />
     </Tooltip>
   );
 }

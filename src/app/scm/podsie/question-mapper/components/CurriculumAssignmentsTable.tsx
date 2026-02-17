@@ -2,7 +2,10 @@
 
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { Spinner } from "@/components/core/feedback/Spinner";
-import type { CurriculumAssignmentSummary, ExportQuestionMapResult } from "./types";
+import type {
+  CurriculumAssignmentSummary,
+  ExportQuestionMapResult,
+} from "./types";
 
 interface CurriculumAssignmentsTableProps {
   assignments: CurriculumAssignmentSummary[];
@@ -60,7 +63,7 @@ export function CurriculumAssignmentsTable({
           <tbody className="bg-white divide-y divide-gray-200">
             {assignments.map((assignment) => {
               const exportResult = exportResults.find(
-                (r) => r.externalId === assignment.externalId
+                (r) => r.externalId === assignment.externalId,
               );
               const inDb = isInDatabase(assignment.externalId);
               const isExporting = exportingPath === assignment.path;

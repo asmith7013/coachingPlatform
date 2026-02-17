@@ -1,5 +1,9 @@
-import type { ErrorCategory, ErrorOptions, ErrorSeverity } from '@error-types/core';
-import type { ErrorContext } from '@error-types/context';
+import type {
+  ErrorCategory,
+  ErrorOptions,
+  ErrorSeverity,
+} from "@error-types/core";
+import type { ErrorContext } from "@error-types/context";
 
 /**
  * Base application error with standardized properties
@@ -15,13 +19,16 @@ export class AppError extends Error {
   public meta: Record<string, unknown>;
   /** Source information */
   public context?: ErrorContext;
-  
-  constructor(message: string, options: ErrorOptions & { context?: ErrorContext } = {}) {
+
+  constructor(
+    message: string,
+    options: ErrorOptions & { context?: ErrorContext } = {},
+  ) {
     super(message);
     this.name = this.constructor.name;
     this.code = options.code;
-    this.severity = options.severity || 'error';
-    this.category = options.category || 'unknown';
+    this.severity = options.severity || "error";
+    this.category = options.category || "unknown";
     this.meta = options.meta || {};
     this.context = options.context;
   }
@@ -32,14 +39,18 @@ export class AppError extends Error {
  */
 export class ValidationError extends AppError {
   public fields?: Record<string, string>;
-  
-  constructor(message: string, fields?: Record<string, string>, context?: ErrorContext) {
+
+  constructor(
+    message: string,
+    fields?: Record<string, string>,
+    context?: ErrorContext,
+  ) {
     super(message, {
-      code: 'VALIDATION_ERROR',
-      category: 'validation',
-      severity: 'warning',
+      code: "VALIDATION_ERROR",
+      category: "validation",
+      severity: "warning",
       context,
-      meta: { fields }
+      meta: { fields },
     });
     this.fields = fields;
   }
@@ -50,14 +61,14 @@ export class ValidationError extends AppError {
  */
 export class NetworkError extends AppError {
   public statusCode?: number;
-  
+
   constructor(message: string, statusCode?: number, context?: ErrorContext) {
     super(message, {
-      code: statusCode ? `HTTP_${statusCode}` : 'NETWORK_ERROR',
-      category: 'network',
-      severity: statusCode && statusCode >= 500 ? 'error' : 'warning',
+      code: statusCode ? `HTTP_${statusCode}` : "NETWORK_ERROR",
+      category: "network",
+      severity: statusCode && statusCode >= 500 ? "error" : "warning",
       context,
-      meta: { statusCode }
+      meta: { statusCode },
     });
     this.statusCode = statusCode;
   }
@@ -69,10 +80,10 @@ export class NetworkError extends AppError {
 export class PermissionError extends AppError {
   constructor(message: string, context?: ErrorContext) {
     super(message, {
-      code: 'PERMISSION_DENIED',
-      category: 'permission',
-      severity: 'error',
-      context
+      code: "PERMISSION_DENIED",
+      category: "permission",
+      severity: "error",
+      context,
     });
   }
 }
@@ -83,10 +94,10 @@ export class PermissionError extends AppError {
 export class BusinessError extends AppError {
   constructor(message: string, code?: string, context?: ErrorContext) {
     super(message, {
-      code: code || 'BUSINESS_RULE_VIOLATION',
-      category: 'business',
-      severity: 'warning',
-      context
+      code: code || "BUSINESS_RULE_VIOLATION",
+      category: "business",
+      severity: "warning",
+      context,
     });
   }
 }
@@ -97,13 +108,13 @@ export class BusinessError extends AppError {
 export class DatabaseError extends AppError {
   constructor(message: string, operation?: string, context?: ErrorContext) {
     super(message, {
-      code: 'DATABASE_ERROR',
-      category: 'system',
-      severity: 'error',
+      code: "DATABASE_ERROR",
+      category: "system",
+      severity: "error",
       context: {
         ...context,
-        operation: operation || context?.operation
-      }
+        operation: operation || context?.operation,
+      },
     });
   }
 }
@@ -116,12 +127,12 @@ export class NotFoundError extends AppError {
     super(
       id ? `${entityType} with ID ${id} not found` : `${entityType} not found`,
       {
-        code: 'NOT_FOUND',
-        category: 'business',
-        severity: 'warning',
+        code: "NOT_FOUND",
+        category: "business",
+        severity: "warning",
         context,
-        meta: { entityType, id }
-      }
+        meta: { entityType, id },
+      },
     );
   }
-} 
+}

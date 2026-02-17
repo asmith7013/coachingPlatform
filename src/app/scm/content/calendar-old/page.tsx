@@ -2,7 +2,12 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import type { CalendarEvent } from "@zod-schema/calendar";
-import { ChevronLeftIcon, ChevronRightIcon, DocumentDuplicateIcon, PlusIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  DocumentDuplicateIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import {
   AddDayOffModal,
@@ -17,7 +22,10 @@ import {
   type SubsectionsModalState,
 } from "./components";
 import { SubsectionsModal } from "./components/SubsectionsModal";
-import { useCalendarPageData, type SavedUnitSchedule } from "./hooks/useCalendarPageData";
+import {
+  useCalendarPageData,
+  type SavedUnitSchedule,
+} from "./hooks/useCalendarPageData";
 
 // localStorage key for persisting user selections
 const CALENDAR_STORAGE_KEY = "roadmaps-calendar-selection";
@@ -36,7 +44,8 @@ const GRADE_OPTIONS = [
 export default function CalendarPage() {
   const [schoolYear] = useState(DEFAULT_SCHOOL_YEAR);
   const [selectedGrade, setSelectedGrade] = useState("6");
-  const [selectedSection, setSelectedSection] = useState<SectionConfigOption | null>(null);
+  const [selectedSection, setSelectedSection] =
+    useState<SectionConfigOption | null>(null);
 
   // Use the React Query powered hook
   const {
@@ -65,8 +74,12 @@ export default function CalendarPage() {
   const [selectedUnits, setSelectedUnits] = useState<Set<number>>(new Set());
   const [showAddDayOffModal, setShowAddDayOffModal] = useState(false);
   const [showDeleteDayOffModal, setShowDeleteDayOffModal] = useState(false);
-  const [dayOffToDelete, setDayOffToDelete] = useState<{ date: string; name: string } | null>(null);
-  const [subsectionsModal, setSubsectionsModal] = useState<SubsectionsModalState | null>(null);
+  const [dayOffToDelete, setDayOffToDelete] = useState<{
+    date: string;
+    name: string;
+  } | null>(null);
+  const [subsectionsModal, setSubsectionsModal] =
+    useState<SubsectionsModalState | null>(null);
 
   // Selection state for interactive date picking
   const [selectionMode, setSelectionMode] = useState<SelectionMode>(null);
@@ -78,7 +91,9 @@ export default function CalendarPage() {
   });
 
   // Track pending section restore
-  const [pendingSectionKey, setPendingSectionKey] = useState<string | null>(null);
+  const [pendingSectionKey, setPendingSectionKey] = useState<string | null>(
+    null,
+  );
   const [hasAttemptedRestore, setHasAttemptedRestore] = useState(false);
 
   // Load saved selection from localStorage on mount
@@ -104,7 +119,9 @@ export default function CalendarPage() {
     try {
       const data = {
         grade: selectedGrade,
-        sectionKey: selectedSection ? `${selectedSection.school}|${selectedSection.classSection}` : null,
+        sectionKey: selectedSection
+          ? `${selectedSection.school}|${selectedSection.classSection}`
+          : null,
       };
       localStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify(data));
     } catch (error) {
@@ -114,14 +131,21 @@ export default function CalendarPage() {
 
   // Restore pending section once configs are loaded
   useEffect(() => {
-    if (hasAttemptedRestore || !pendingSectionKey || sectionConfigs.length === 0) return;
+    if (
+      hasAttemptedRestore ||
+      !pendingSectionKey ||
+      sectionConfigs.length === 0
+    )
+      return;
 
     const [school, classSection] = pendingSectionKey.split("|");
     const section = sectionConfigs.find(
-      (s: SectionConfigOption) => s.school === school && s.classSection === classSection
+      (s: SectionConfigOption) =>
+        s.school === school && s.classSection === classSection,
     );
     if (section) {
-      const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
+      const scopeTag =
+        selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
       if (section.scopeSequenceTag === scopeTag) {
         setSelectedSection(section);
       }
@@ -159,11 +183,16 @@ export default function CalendarPage() {
 
       return count;
     },
-    [daysOff, sectionDaysOff]
+    [daysOff, sectionDaysOff],
   );
 
   // Handle clicking a section to start date selection
-  const startDateSelection = (unitKey: string, sectionId: string, type: "start" | "end", subsection?: number) => {
+  const startDateSelection = (
+    unitKey: string,
+    sectionId: string,
+    type: "start" | "end",
+    subsection?: number,
+  ) => {
     setSelectionMode({ type, unitKey, sectionId, subsection });
   };
 
@@ -176,12 +205,15 @@ export default function CalendarPage() {
             s.grade === grade &&
             s.unitNumber === unitNumber &&
             (s as { school?: string }).school === selectedSection.school &&
-            (s as { classSection?: string }).classSection === selectedSection.classSection
+            (s as { classSection?: string }).classSection ===
+              selectedSection.classSection,
         );
       }
-      return savedSchedules.find((s) => s.grade === grade && s.unitNumber === unitNumber);
+      return savedSchedules.find(
+        (s) => s.grade === grade && s.unitNumber === unitNumber,
+      );
     },
-    [savedSchedules, selectedSection]
+    [savedSchedules, selectedSection],
   );
 
   // Handle clearing section dates
@@ -190,7 +222,10 @@ export default function CalendarPage() {
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
       if (!unit) return;
 
-      const existingSchedule = findExistingSchedule(unit.grade, unit.unitNumber);
+      const existingSchedule = findExistingSchedule(
+        unit.grade,
+        unit.unitNumber,
+      );
       if (!existingSchedule) return;
 
       clearSectionDates.mutate({
@@ -201,7 +236,7 @@ export default function CalendarPage() {
         subsection,
       });
     },
-    [unitSchedules, findExistingSchedule, clearSectionDates]
+    [unitSchedules, findExistingSchedule, clearSectionDates],
   );
 
   // Handle updating unit-level dates
@@ -210,7 +245,10 @@ export default function CalendarPage() {
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
       if (!unit) return;
 
-      const existingSchedule = findExistingSchedule(unit.grade, unit.unitNumber);
+      const existingSchedule = findExistingSchedule(
+        unit.grade,
+        unit.unitNumber,
+      );
 
       updateUnitDates.mutate({
         unitKey,
@@ -223,7 +261,7 @@ export default function CalendarPage() {
         existingScheduleId: existingSchedule?._id,
       });
     },
-    [unitSchedules, findExistingSchedule, updateUnitDates]
+    [unitSchedules, findExistingSchedule, updateUnitDates],
   );
 
   // Handle clicking a date in the calendar
@@ -231,11 +269,12 @@ export default function CalendarPage() {
     (dateStr: string) => {
       if (!selectionMode) return;
 
-      const { type, unitKey, sectionId, subsection, pendingStartDate } = selectionMode;
+      const { type, unitKey, sectionId, subsection, pendingStartDate } =
+        selectionMode;
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
       // Find section matching both sectionId and subsection
       const section = unit?.sections.find(
-        (s) => s.sectionId === sectionId && s.subsection === subsection
+        (s) => s.sectionId === sectionId && s.subsection === subsection,
       );
 
       if (!unit || !section) {
@@ -243,13 +282,17 @@ export default function CalendarPage() {
         return;
       }
 
-      const existingSchedule = findExistingSchedule(unit.grade, unit.unitNumber);
+      const existingSchedule = findExistingSchedule(
+        unit.grade,
+        unit.unitNumber,
+      );
 
       // When setting end date, use pendingStartDate if available (from auto-switch)
       // This handles the case where optimistic update hasn't propagated yet
-      const startDate = type === "start"
-        ? dateStr
-        : (section.startDate || pendingStartDate || "");
+      const startDate =
+        type === "start"
+          ? dateStr
+          : section.startDate || pendingStartDate || "";
 
       updateSectionDates.mutate({
         unitKey,
@@ -267,34 +310,57 @@ export default function CalendarPage() {
       // Auto-switch to end date selection after setting start date
       // Store the start date we just set in case optimistic update hasn't propagated
       if (type === "start") {
-        setSelectionMode({ type: "end", unitKey, sectionId, subsection, pendingStartDate: dateStr });
+        setSelectionMode({
+          type: "end",
+          unitKey,
+          sectionId,
+          subsection,
+          pendingStartDate: dateStr,
+        });
       } else {
         setSelectionMode(null);
       }
     },
-    [selectionMode, unitSchedules, findExistingSchedule, updateSectionDates]
+    [selectionMode, unitSchedules, findExistingSchedule, updateSectionDates],
   );
 
   // Handle copying schedules to other sections
-  const handleCopyToSections = useCallback((unitNumbers: number[]) => {
-    if (!selectedSection || copyTargets.size === 0 || unitNumbers.length === 0) return;
+  const handleCopyToSections = useCallback(
+    (unitNumbers: number[]) => {
+      if (
+        !selectedSection ||
+        copyTargets.size === 0 ||
+        unitNumbers.length === 0
+      )
+        return;
 
-    const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
-    const targetSections = sectionConfigs.filter(
-      (s) => s.scopeSequenceTag === scopeTag && copyTargets.has(`${s.school}|${s.classSection}`)
-    );
+      const scopeTag =
+        selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
+      const targetSections = sectionConfigs.filter(
+        (s) =>
+          s.scopeSequenceTag === scopeTag &&
+          copyTargets.has(`${s.school}|${s.classSection}`),
+      );
 
-    copySchedules.mutate(
-      { targetSections, unitNumbers },
-      {
-        onSuccess: () => {
-          setShowCopyModal(false);
-          setCopyTargets(new Set());
-          setSelectedUnits(new Set());
+      copySchedules.mutate(
+        { targetSections, unitNumbers },
+        {
+          onSuccess: () => {
+            setShowCopyModal(false);
+            setCopyTargets(new Set());
+            setSelectedUnits(new Set());
+          },
         },
-      }
-    );
-  }, [selectedSection, selectedGrade, sectionConfigs, copyTargets, copySchedules]);
+      );
+    },
+    [
+      selectedSection,
+      selectedGrade,
+      sectionConfigs,
+      copyTargets,
+      copySchedules,
+    ],
+  );
 
   // Handle adding a section day off
   const handleAddDayOff = useCallback(
@@ -303,12 +369,18 @@ export default function CalendarPage() {
       name: string,
       shiftSchedule: boolean,
       targetSections: Array<{ school: string; classSection: string }>,
-      hasMathClass: boolean
+      hasMathClass: boolean,
     ) => {
-      await addDayOff.mutateAsync({ date, name, shiftSchedule, targetSections, hasMathClass });
+      await addDayOff.mutateAsync({
+        date,
+        name,
+        shiftSchedule,
+        targetSections,
+        hasMathClass,
+      });
       setShowAddDayOffModal(false);
     },
-    [addDayOff]
+    [addDayOff],
   );
 
   // Handle deleting a section day off
@@ -318,12 +390,17 @@ export default function CalendarPage() {
       setShowDeleteDayOffModal(false);
       setDayOffToDelete(null);
     },
-    [deleteDayOff]
+    [deleteDayOff],
   );
 
   // Handle opening subsections modal
   const handleOpenSubsections = useCallback(
-    (unitKey: string, sectionId: string, sectionName: string, lessons: LessonForSubsection[]) => {
+    (
+      unitKey: string,
+      sectionId: string,
+      sectionName: string,
+      lessons: LessonForSubsection[],
+    ) => {
       const unit = unitSchedules.find((u) => u.unitKey === unitKey);
       if (!unit) return;
 
@@ -336,7 +413,7 @@ export default function CalendarPage() {
         grade: unit.grade,
       });
     },
-    [unitSchedules]
+    [unitSchedules],
   );
 
   // Handle saving subsections
@@ -348,7 +425,10 @@ export default function CalendarPage() {
       }
 
       // Normalize section ID: "Ramp Up" in schedules = "Ramp Ups" in scope-and-sequence
-      const scopeSection = subsectionsModal.sectionId === "Ramp Up" ? "Ramp Ups" : subsectionsModal.sectionId;
+      const scopeSection =
+        subsectionsModal.sectionId === "Ramp Up"
+          ? "Ramp Ups"
+          : subsectionsModal.sectionId;
 
       // Parse unitKey to get unit number (format: "grade-unitNumber")
       const unitKeyParts = subsectionsModal.unitKey.split("-");
@@ -377,7 +457,7 @@ export default function CalendarPage() {
         console.error("[handleSaveSubsections] Error:", error);
       }
     },
-    [subsectionsModal, selectedSection, updateSubsections, schoolYear]
+    [subsectionsModal, selectedSection, updateSubsections, schoolYear],
   );
 
   // Get unit/section info for a date (only when a section is selected)
@@ -389,14 +469,19 @@ export default function CalendarPage() {
         const unit = unitSchedules[i];
         for (let j = 0; j < unit.sections.length; j++) {
           const section = unit.sections[j];
-          if (section.startDate && section.endDate && dateStr >= section.startDate && dateStr <= section.endDate) {
+          if (
+            section.startDate &&
+            section.endDate &&
+            dateStr >= section.startDate &&
+            dateStr <= section.endDate
+          ) {
             return { unitIndex: i, sectionIndex: j, unit, section };
           }
         }
       }
       return null;
     },
-    [selectedSection, unitSchedules]
+    [selectedSection, unitSchedules],
   );
 
   const getEventsForDate = useCallback(
@@ -405,7 +490,7 @@ export default function CalendarPage() {
       const dateStr = date.toISOString().split("T")[0];
       return calendar.events.filter((e) => e.date === dateStr);
     },
-    [calendar]
+    [calendar],
   );
 
   const isDayOff = useCallback(
@@ -415,16 +500,21 @@ export default function CalendarPage() {
       if (sectionDaysOff.some((d) => d.date === dateStr)) return true;
       return false;
     },
-    [daysOff, sectionDaysOff]
+    [daysOff, sectionDaysOff],
   );
 
   const isSectionDayOff = useCallback(
-    (date: Date): { isDayOff: boolean; event?: { date: string; name: string; hasMathClass?: boolean } } => {
+    (
+      date: Date,
+    ): {
+      isDayOff: boolean;
+      event?: { date: string; name: string; hasMathClass?: boolean };
+    } => {
       const dateStr = date.toISOString().split("T")[0];
       const event = sectionDaysOff.find((d) => d.date === dateStr);
       return { isDayOff: !!event, event };
     },
-    [sectionDaysOff]
+    [sectionDaysOff],
   );
 
   const isWeekend = (date: Date): boolean => {
@@ -433,21 +523,29 @@ export default function CalendarPage() {
   };
 
   const prevMonth = () => {
-    setCurrentMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+    setCurrentMonth(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1),
+    );
   };
 
   const nextMonth = () => {
-    setCurrentMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+    setCurrentMonth(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1),
+    );
   };
 
-  const handleSectionDayOffClick = useCallback((event: { date: string; name: string }) => {
-    setDayOffToDelete(event);
-    setShowDeleteDayOffModal(true);
-  }, []);
+  const handleSectionDayOffClick = useCallback(
+    (event: { date: string; name: string }) => {
+      setDayOffToDelete(event);
+      setShowDeleteDayOffModal(true);
+    },
+    [],
+  );
 
   // Matching sections for the current grade
   const matchingSections = useMemo(() => {
-    const scopeTag = selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
+    const scopeTag =
+      selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;
     return sectionConfigs.filter((s) => s.scopeSequenceTag === scopeTag);
   }, [sectionConfigs, selectedGrade]);
 
@@ -467,13 +565,18 @@ export default function CalendarPage() {
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Unit Calendar by Section</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Unit Calendar by Section
+            </h1>
             <p className="text-sm text-gray-500">
               {schoolYear} School Year
-              {isMutating && <span className="ml-2 text-blue-600">Saving...</span>}
+              {isMutating && (
+                <span className="ml-2 text-blue-600">Saving...</span>
+              )}
               {selectionMode && (
                 <span className="ml-2 text-green-600">
-                  Click a date to set {selectionMode.type} for Section {selectionMode.sectionId}
+                  Click a date to set {selectionMode.type} for Section{" "}
+                  {selectionMode.sectionId}
                 </span>
               )}
             </p>
@@ -502,14 +605,20 @@ export default function CalendarPage() {
             ) : matchingSections.length > 0 ? (
               <div className="flex items-center gap-2">
                 <select
-                  value={selectedSection ? `${selectedSection.school}|${selectedSection.classSection}` : ""}
+                  value={
+                    selectedSection
+                      ? `${selectedSection.school}|${selectedSection.classSection}`
+                      : ""
+                  }
                   onChange={(e) => {
                     if (e.target.value === "") {
                       setSelectedSection(null);
                     } else {
                       const [school, classSection] = e.target.value.split("|");
                       const section = matchingSections.find(
-                        (s) => s.school === school && s.classSection === classSection
+                        (s) =>
+                          s.school === school &&
+                          s.classSection === classSection,
                       );
                       setSelectedSection(section || null);
                     }
@@ -518,7 +627,10 @@ export default function CalendarPage() {
                 >
                   <option value="">Select a class section...</option>
                   {matchingSections.map((s) => (
-                    <option key={`${s.school}|${s.classSection}`} value={`${s.school}|${s.classSection}`}>
+                    <option
+                      key={`${s.school}|${s.classSection}`}
+                      value={`${s.school}|${s.classSection}`}
+                    >
                       {s.school} - {s.classSection}
                       {s.teacher ? ` (${s.teacher})` : ""}
                     </option>
@@ -565,7 +677,8 @@ export default function CalendarPage() {
       <div className="flex h-[calc(100vh-80px)]">
         {/* Left column - Unit cards */}
         <div className="w-1/2 p-4 overflow-y-auto border-r border-gray-200 relative">
-          {(isContentLoading || (pendingSectionKey && sectionConfigs.length === 0)) && (
+          {(isContentLoading ||
+            (pendingSectionKey && sectionConfigs.length === 0)) && (
             <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
               <div className="flex items-center gap-2 text-blue-600">
                 <Spinner size="sm" variant="primary" />
@@ -583,7 +696,12 @@ export default function CalendarPage() {
           {!selectedSection && !pendingSectionKey ? (
             <div className="h-full">
               <div className="bg-white rounded-lg shadow-md p-8 h-full flex flex-col items-center justify-center text-center">
-                <svg className="w-12 h-12 mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-12 h-12 mb-4 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -591,9 +709,12 @@ export default function CalendarPage() {
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <p className="text-lg font-medium text-gray-900 mb-2">Select a Class Section</p>
+                <p className="text-lg font-medium text-gray-900 mb-2">
+                  Select a Class Section
+                </p>
                 <p className="text-sm text-gray-500 max-w-xs">
-                  Choose a grade and class section from the dropdown above to view and edit the unit schedule.
+                  Choose a grade and class section from the dropdown above to
+                  view and edit the unit schedule.
                 </p>
               </div>
             </div>
@@ -624,27 +745,42 @@ export default function CalendarPage() {
             <div className="absolute inset-0 bg-gray-100/70 flex items-center justify-center z-10">
               <div className="flex items-center gap-2 text-blue-600">
                 <Spinner size="sm" variant="primary" />
-                <span className="text-sm font-medium">Updating calendar...</span>
+                <span className="text-sm font-medium">
+                  Updating calendar...
+                </span>
               </div>
             </div>
           )}
 
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-4 bg-white rounded-lg shadow px-4 py-2">
-            <button onClick={prevMonth} className="p-1 hover:bg-gray-100 rounded cursor-pointer">
+            <button
+              onClick={prevMonth}
+              className="p-1 hover:bg-gray-100 rounded cursor-pointer"
+            >
               <ChevronLeftIcon className="h-5 w-5" />
             </button>
             <span className="text-sm font-medium">
-              {currentMonth.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+              {currentMonth.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              })}
             </span>
-            <button onClick={nextMonth} className="p-1 hover:bg-gray-100 rounded cursor-pointer">
+            <button
+              onClick={nextMonth}
+              className="p-1 hover:bg-gray-100 rounded cursor-pointer"
+            >
               <ChevronRightIcon className="h-5 w-5" />
             </button>
           </div>
 
           {/* Calendar months stacked vertically */}
           {[0, 1, 2].map((offset) => {
-            const monthDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + offset, 1);
+            const monthDate = new Date(
+              currentMonth.getFullYear(),
+              currentMonth.getMonth() + offset,
+              1,
+            );
             return (
               <MonthCalendar
                 key={monthDate.toISOString()}
@@ -677,7 +813,10 @@ export default function CalendarPage() {
                 <div key={unit.unitNumber} className="flex items-center gap-1">
                   <div
                     className="w-3 h-3 rounded"
-                    style={{ backgroundColor: UNIT_COLORS[index % UNIT_COLORS.length].light }}
+                    style={{
+                      backgroundColor:
+                        UNIT_COLORS[index % UNIT_COLORS.length].light,
+                    }}
                   />
                   <span>U{unit.unitNumber}</span>
                 </div>
@@ -700,7 +839,11 @@ export default function CalendarPage() {
           copying={copySchedules.isPending}
           sourceSection={selectedSection}
           otherSections={matchingSections.filter(
-            (s) => !(s.school === selectedSection.school && s.classSection === selectedSection.classSection)
+            (s) =>
+              !(
+                s.school === selectedSection.school &&
+                s.classSection === selectedSection.classSection
+              ),
           )}
           copyTargets={copyTargets}
           setCopyTargets={setCopyTargets}

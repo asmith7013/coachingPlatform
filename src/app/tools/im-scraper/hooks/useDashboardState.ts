@@ -1,18 +1,21 @@
 "use client";
 
-import React from 'react';
-import { IMCredentials, SectionLessonSelection } from '../lib/types';
-import { generateIMUrls as generateUrlsAction } from '../actions/scraper';
+import React from "react";
+import { IMCredentials, SectionLessonSelection } from "../lib/types";
+import { generateIMUrls as generateUrlsAction } from "../actions/scraper";
 
 interface UseDashboardStateProps {
   clearError: () => void;
   reset: () => void;
 }
 
-export function useDashboardState({ clearError, reset }: UseDashboardStateProps) {
+export function useDashboardState({
+  clearError,
+  reset,
+}: UseDashboardStateProps) {
   const [credentials, setCredentials] = React.useState<IMCredentials>({
-    email: 'alex.smith@teachinglab.org',
-    password: 'rFw&Yn3%7w2Dc502'
+    email: "alex.smith@teachinglab.org",
+    password: "rFw&Yn3%7w2Dc502",
   });
 
   const [enableClaudeExport, setEnableClaudeExport] = React.useState(false);
@@ -24,7 +27,7 @@ export function useDashboardState({ clearError, reset }: UseDashboardStateProps)
     endUnit: 1,
     selectedSections: [] as string[],
     sectionLessons: {} as SectionLessonSelection,
-    delayBetweenRequests: 2000
+    delayBetweenRequests: 2000,
   });
 
   const [urls, setUrls] = React.useState<string[]>([]);
@@ -41,27 +44,31 @@ export function useDashboardState({ clearError, reset }: UseDashboardStateProps)
         startUnit: urlParams.startUnit,
         endUnit: urlParams.endUnit,
         sectionLessons: urlParams.sectionLessons,
-        delayBetweenRequests: urlParams.delayBetweenRequests
+        delayBetweenRequests: urlParams.delayBetweenRequests,
       });
-      
+
       if (response.success && response.data) {
         setUrls(response.data.urls);
       } else {
         clearError();
-        console.error('URL generation failed:', response.error);
+        console.error("URL generation failed:", response.error);
       }
     } catch (err) {
-      console.error('URL generation error:', err);
+      console.error("URL generation error:", err);
       clearError();
     }
   };
 
   const handleReset = () => {
-    if (window.confirm('This will clear all results and reset the scraper. Are you sure?')) {
+    if (
+      window.confirm(
+        "This will clear all results and reset the scraper. Are you sure?",
+      )
+    ) {
       reset();
       setCredentials({
-        email: 'alex.smith@teachinglab.org',
-        password: 'rFw&Yn3%7w2Dc502'
+        email: "alex.smith@teachinglab.org",
+        password: "rFw&Yn3%7w2Dc502",
       });
       setUrlParams({
         grade: 6,
@@ -69,7 +76,7 @@ export function useDashboardState({ clearError, reset }: UseDashboardStateProps)
         endUnit: 1,
         selectedSections: [],
         sectionLessons: {},
-        delayBetweenRequests: 2000
+        delayBetweenRequests: 2000,
       });
       setUrls([]);
       setEnableClaudeExport(false);
@@ -90,6 +97,6 @@ export function useDashboardState({ clearError, reset }: UseDashboardStateProps)
     urls,
     setUrls,
     handleGenerateUrls,
-    handleReset
+    handleReset,
   };
 }

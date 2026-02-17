@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const StateTestQuestionSchema = new mongoose.Schema(
   {
@@ -12,8 +12,8 @@ const StateTestQuestionSchema = new mongoose.Schema(
     questionType: { type: String, required: true }, // From scraper
     responseType: {
       type: String,
-      enum: ['multipleChoice', 'constructedResponse'],
-      required: false
+      enum: ["multipleChoice", "constructedResponse"],
+      required: false,
     },
     points: { type: Number, required: false }, // Point value
     answer: { type: String, required: false }, // Correct answer
@@ -23,9 +23,9 @@ const StateTestQuestionSchema = new mongoose.Schema(
     pageIndex: { type: Number, required: true }, // 1-based position on source page
   },
   {
-    collection: 'state-test-questions',
+    collection: "state-test-questions",
     timestamps: true,
-  }
+  },
 );
 
 // Compound index for common queries
@@ -33,4 +33,4 @@ StateTestQuestionSchema.index({ grade: 1, examYear: 1 });
 
 export const StateTestQuestionModel =
   mongoose.models.StateTestQuestion ||
-  mongoose.model('StateTestQuestion', StateTestQuestionSchema);
+  mongoose.model("StateTestQuestion", StateTestQuestionSchema);

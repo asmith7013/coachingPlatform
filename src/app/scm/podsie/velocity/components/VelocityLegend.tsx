@@ -1,14 +1,22 @@
 import React from "react";
 import { UserIcon } from "@heroicons/react/24/outline";
-import { Legend, LegendGroup, LegendItem } from "@/components/core/feedback/Legend";
+import {
+  Legend,
+  LegendGroup,
+  LegendItem,
+} from "@/components/core/feedback/Legend";
 
 // Shared icon components for reuse
 const LessonBadge = () => (
-  <span className="px-2 py-1 bg-blue-500 text-white rounded font-bold text-xs leading-none">3</span>
+  <span className="px-2 py-1 bg-blue-500 text-white rounded font-bold text-xs leading-none">
+    3
+  </span>
 );
 
 const RampUpBadge = () => (
-  <span className="px-2 py-1 bg-orange-500 text-white rounded font-bold text-xs leading-none">2</span>
+  <span className="px-2 py-1 bg-orange-500 text-white rounded font-bold text-xs leading-none">
+    2
+  </span>
 );
 
 const SingleBlockIcon = () => (
@@ -98,19 +106,27 @@ export function TableLegend() {
       {/* Attendance group */}
       <LegendGroup>
         <LegendItem
-          icon={<div className="w-4 h-4 bg-green-100 border border-green-300 rounded" />}
+          icon={
+            <div className="w-4 h-4 bg-green-100 border border-green-300 rounded" />
+          }
           label="Present"
         />
         <LegendItem
-          icon={<div className="w-4 h-4 bg-yellow-100 border border-yellow-300 rounded" />}
+          icon={
+            <div className="w-4 h-4 bg-yellow-100 border border-yellow-300 rounded" />
+          }
           label="Late"
         />
         <LegendItem
-          icon={<div className="w-4 h-4 bg-red-100 border border-red-300 rounded" />}
+          icon={
+            <div className="w-4 h-4 bg-red-100 border border-red-300 rounded" />
+          }
           label="Absent"
         />
         <LegendItem
-          icon={<div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded" />}
+          icon={
+            <div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded" />
+          }
           label="Not Tracked"
         />
       </LegendGroup>
@@ -147,11 +163,15 @@ export function VelocityLegend() {
 
         {/* Activity completion badges (shared) */}
         <div className="flex items-center gap-2">
-          <span className="px-2 py-1 bg-blue-500 text-white rounded font-bold text-xs leading-none">3</span>
+          <span className="px-2 py-1 bg-blue-500 text-white rounded font-bold text-xs leading-none">
+            3
+          </span>
           <span>Lessons</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="px-2 py-1 bg-orange-500 text-white rounded font-bold text-xs leading-none">2</span>
+          <span className="px-2 py-1 bg-orange-500 text-white rounded font-bold text-xs leading-none">
+            2
+          </span>
           <span>Ramp Ups</span>
         </div>
 

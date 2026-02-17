@@ -3,7 +3,11 @@
 import { useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { useDeactivatedDecks, deactivatedDecksKeys, workedExampleDecksKeys } from "../hooks";
+import {
+  useDeactivatedDecks,
+  deactivatedDecksKeys,
+  workedExampleDecksKeys,
+} from "../hooks";
 import type { WorkedExampleDeck } from "@zod-schema/scm/worked-example";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { ConfirmationDialog } from "@/components/composed/dialogs/ConfirmationDialog";
@@ -19,7 +23,8 @@ const GRADE_ORDER: Record<string, number> = {
 };
 
 export default function DeactivatedPresentations() {
-  const [reactivateModalDeck, setReactivateModalDeck] = useState<WorkedExampleDeck | null>(null);
+  const [reactivateModalDeck, setReactivateModalDeck] =
+    useState<WorkedExampleDeck | null>(null);
   const [isReactivating, setIsReactivating] = useState(false);
   const queryClient = useQueryClient();
 
@@ -49,7 +54,10 @@ export default function DeactivatedPresentations() {
   const decksByGrade = useMemo(() => {
     const groups: Record<string, WorkedExampleDeck[]> = {};
     for (const deck of sortedDecks) {
-      const gradeKey = deck.gradeLevel === 'Algebra 1' ? 'Algebra 1' : `Grade ${deck.gradeLevel}`;
+      const gradeKey =
+        deck.gradeLevel === "Algebra 1"
+          ? "Algebra 1"
+          : `Grade ${deck.gradeLevel}`;
       if (!groups[gradeKey]) {
         groups[gradeKey] = [];
       }
@@ -74,10 +82,10 @@ export default function DeactivatedPresentations() {
         queryClient.invalidateQueries({ queryKey: workedExampleDecksKeys.all });
         setReactivateModalDeck(null);
       } else {
-        console.error('Failed to reactivate:', result.error);
+        console.error("Failed to reactivate:", result.error);
       }
     } catch (error) {
-      console.error('Error reactivating deck:', error);
+      console.error("Error reactivating deck:", error);
     } finally {
       setIsReactivating(false);
     }
@@ -134,8 +142,10 @@ export default function DeactivatedPresentations() {
           <div className="space-y-8">
             {Object.entries(decksByGrade)
               .sort(([a], [b]) => {
-                const gradeA = GRADE_ORDER[a.replace('Grade ', '')] || GRADE_ORDER[a] || 99;
-                const gradeB = GRADE_ORDER[b.replace('Grade ', '')] || GRADE_ORDER[b] || 99;
+                const gradeA =
+                  GRADE_ORDER[a.replace("Grade ", "")] || GRADE_ORDER[a] || 99;
+                const gradeB =
+                  GRADE_ORDER[b.replace("Grade ", "")] || GRADE_ORDER[b] || 99;
                 return gradeA - gradeB;
               })
               .map(([gradeName, gradeDecks]) => (
@@ -143,7 +153,8 @@ export default function DeactivatedPresentations() {
                   <h2 className="text-xl font-bold text-gray-800 mb-4">
                     {gradeName}
                     <span className="ml-2 text-sm font-normal text-gray-500">
-                      ({gradeDecks.length} {gradeDecks.length === 1 ? 'deck' : 'decks'})
+                      ({gradeDecks.length}{" "}
+                      {gradeDecks.length === 1 ? "deck" : "decks"})
                     </span>
                   </h2>
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -171,7 +182,8 @@ export default function DeactivatedPresentations() {
                             </h3>
                             {deck.createdAt && (
                               <p className="text-xs text-gray-500 mt-1">
-                                Created: {new Date(deck.createdAt).toLocaleDateString()}
+                                Created:{" "}
+                                {new Date(deck.createdAt).toLocaleDateString()}
                               </p>
                             )}
                           </div>

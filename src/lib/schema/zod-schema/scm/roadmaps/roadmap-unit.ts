@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
+import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
 
 // =====================================
 // ROADMAP UNIT SCHEMA (Simplified to skill number references)
@@ -34,7 +34,9 @@ export const RoadmapUnitFieldsSchema = z.object({
 });
 
 // Full Roadmap Unit Schema
-export const RoadmapUnitZodSchema = BaseDocumentSchema.merge(RoadmapUnitFieldsSchema);
+export const RoadmapUnitZodSchema = BaseDocumentSchema.merge(
+  RoadmapUnitFieldsSchema,
+);
 
 // Input Schema (for creation)
 export const RoadmapUnitInputZodSchema = toInputSchema(RoadmapUnitZodSchema);

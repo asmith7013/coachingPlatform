@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { listAssignmentVariations } from '@/app/actions/scm/podsie/assignment-variations';
-import type { AssignmentVariation } from '@/lib/schema/zod-schema/scm/podsie/assignment-variation';
-import { Spinner } from '@/components/core/feedback/Spinner';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { listAssignmentVariations } from "@/app/actions/scm/podsie/assignment-variations";
+import type { AssignmentVariation } from "@/lib/schema/zod-schema/scm/podsie/assignment-variation";
+import { Spinner } from "@/components/core/feedback/Spinner";
 
 type VariationWithCount = AssignmentVariation & { questionCount: number };
 
@@ -12,7 +12,9 @@ export default function AssignmentVariationsList() {
   const [variations, setVariations] = useState<VariationWithCount[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [expandedVariation, setExpandedVariation] = useState<string | null>(null);
+  const [expandedVariation, setExpandedVariation] = useState<string | null>(
+    null,
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -23,10 +25,10 @@ export default function AssignmentVariationsList() {
         if (result.success && result.data) {
           setVariations(result.data as VariationWithCount[]);
         } else {
-          setError(result.error || 'Failed to load variations');
+          setError(result.error || "Failed to load variations");
         }
       } catch {
-        setError('An error occurred while loading variations');
+        setError("An error occurred while loading variations");
       } finally {
         setLoading(false);
       }
@@ -82,23 +84,27 @@ export default function AssignmentVariationsList() {
         <div className="space-y-8">
           {/* Group variations by unit */}
           {Object.entries(
-            variations.reduce((groups, variation) => {
-              const unitKey = variation.unitNumber !== undefined
-                ? `Unit ${variation.unitNumber}`
-                : 'No Unit';
-              if (!groups[unitKey]) {
-                groups[unitKey] = [];
-              }
-              groups[unitKey].push(variation);
-              return groups;
-            }, {} as Record<string, VariationWithCount[]>)
+            variations.reduce(
+              (groups, variation) => {
+                const unitKey =
+                  variation.unitNumber !== undefined
+                    ? `Unit ${variation.unitNumber}`
+                    : "No Unit";
+                if (!groups[unitKey]) {
+                  groups[unitKey] = [];
+                }
+                groups[unitKey].push(variation);
+                return groups;
+              },
+              {} as Record<string, VariationWithCount[]>,
+            ),
           )
             .sort(([a], [b]) => {
               // Sort by unit number, "No Unit" goes last
-              if (a === 'No Unit') return 1;
-              if (b === 'No Unit') return -1;
-              const numA = parseInt(a.replace('Unit ', ''));
-              const numB = parseInt(b.replace('Unit ', ''));
+              if (a === "No Unit") return 1;
+              if (b === "No Unit") return -1;
+              const numA = parseInt(a.replace("Unit ", ""));
+              const numB = parseInt(b.replace("Unit ", ""));
               return numA - numB;
             })
             .map(([unitName, unitVariations]) => (
@@ -108,7 +114,9 @@ export default function AssignmentVariationsList() {
                 </h2>
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {unitVariations
-                    .sort((a, b) => (a.lessonNumber || 0) - (b.lessonNumber || 0))
+                    .sort(
+                      (a, b) => (a.lessonNumber || 0) - (b.lessonNumber || 0),
+                    )
                     .map((variation) => (
                       <div
                         key={variation.slug}
@@ -145,60 +153,85 @@ export default function AssignmentVariationsList() {
                           )}
 
                           <p className="text-xs text-gray-500">
-                            {variation.questionCount} question{variation.questionCount !== 1 ? 's' : ''}
+                            {variation.questionCount} question
+                            {variation.questionCount !== 1 ? "s" : ""}
                           </p>
 
                           <div className="mt-4 pt-4 border-t border-gray-100">
                             <div className="flex items-center justify-between text-xs text-gray-500">
                               <span>
-                                {variation.generatedBy === 'ai' ? '🤖 AI Generated' : '✍️ Manual'}
+                                {variation.generatedBy === "ai"
+                                  ? "🤖 AI Generated"
+                                  : "✍️ Manual"}
                               </span>
                               <span>
-                                {new Date(variation.createdAt!).toLocaleDateString()}
+                                {new Date(
+                                  variation.createdAt!,
+                                ).toLocaleDateString()}
                               </span>
                             </div>
                           </div>
                         </button>
 
                         {/* Expandable section for questions preview */}
-                        {variation.questions && variation.questions.length > 0 && (
-                          <div className="border-t border-gray-100">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setExpandedVariation(expandedVariation === variation.slug ? null : variation.slug);
-                              }}
-                              className="w-full px-6 py-3 text-left text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-between cursor-pointer"
-                            >
-                              <span>Question Preview</span>
-                              <svg
-                                className={`w-4 h-4 transition-transform ${expandedVariation === variation.slug ? 'rotate-180' : ''}`}
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
+                        {variation.questions &&
+                          variation.questions.length > 0 && (
+                            <div className="border-t border-gray-100">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedVariation(
+                                    expandedVariation === variation.slug
+                                      ? null
+                                      : variation.slug,
+                                  );
+                                }}
+                                className="w-full px-6 py-3 text-left text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-between cursor-pointer"
                               >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                              </svg>
-                            </button>
-                            {expandedVariation === variation.slug && (
-                              <div className="px-6 pb-4">
-                                <ul className="space-y-2 text-xs text-gray-600">
-                                  {variation.questions.slice(0, 3).map((q, idx) => (
-                                    <li key={idx} className="flex items-start">
-                                      <span className="mr-2 font-semibold text-gray-800">Q{q.questionNumber}:</span>
-                                      <span className="truncate">{q.questionTitle}</span>
-                                    </li>
-                                  ))}
-                                  {variation.questions.length > 3 && (
-                                    <li className="text-gray-400 italic">
-                                      + {variation.questions.length - 3} more questions
-                                    </li>
-                                  )}
-                                </ul>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                                <span>Question Preview</span>
+                                <svg
+                                  className={`w-4 h-4 transition-transform ${expandedVariation === variation.slug ? "rotate-180" : ""}`}
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 9l-7 7-7-7"
+                                  />
+                                </svg>
+                              </button>
+                              {expandedVariation === variation.slug && (
+                                <div className="px-6 pb-4">
+                                  <ul className="space-y-2 text-xs text-gray-600">
+                                    {variation.questions
+                                      .slice(0, 3)
+                                      .map((q, idx) => (
+                                        <li
+                                          key={idx}
+                                          className="flex items-start"
+                                        >
+                                          <span className="mr-2 font-semibold text-gray-800">
+                                            Q{q.questionNumber}:
+                                          </span>
+                                          <span className="truncate">
+                                            {q.questionTitle}
+                                          </span>
+                                        </li>
+                                      ))}
+                                    {variation.questions.length > 3 && (
+                                      <li className="text-gray-400 italic">
+                                        + {variation.questions.length - 3} more
+                                        questions
+                                      </li>
+                                    )}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          )}
                       </div>
                     ))}
                 </div>

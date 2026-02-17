@@ -1,10 +1,10 @@
-import React from 'react';
-import type { Field } from '@ui-types/form';
-import type { AnyFieldApi } from '@tanstack/react-form';
-import { Input } from '@components/core/fields/Input';
-import { Select } from '@components/core/fields/Select';
-import { Textarea } from '@components/core/fields/Textarea';
-import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
+import React from "react";
+import type { Field } from "@ui-types/form";
+import type { AnyFieldApi } from "@tanstack/react-form";
+import { Input } from "@components/core/fields/Input";
+import { Select } from "@components/core/fields/Select";
+import { Textarea } from "@components/core/fields/Textarea";
+import { ReferenceSelect } from "@components/core/fields/ReferenceSelect";
 
 /**
  * Hook that renders fields based on field configuration
@@ -22,18 +22,18 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
     const errorMessage = hasError ? fieldApi.state.meta.errors[0] : undefined;
 
     switch (field.type) {
-      case 'text':
-      case 'email':
-      case 'password':
+      case "text":
+      case "email":
+      case "password":
         return (
           <div className="space-y-1">
             <Input
               type={field.type}
-              value={fieldApi.state.value || ''}
+              value={fieldApi.state.value || ""}
               onChange={(e) => fieldApi.handleChange(e.target.value)}
               onBlur={fieldApi.handleBlur}
               {...commonProps}
-              className={hasError ? 'border-destructive' : ''}
+              className={hasError ? "border-destructive" : ""}
             />
             {errorMessage && (
               <p className="text-sm text-destructive">{errorMessage}</p>
@@ -41,16 +41,16 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
           </div>
         );
 
-      case 'date':
+      case "date":
         return (
           <div className="space-y-1">
             <Input
               type="date"
-              value={fieldApi.state.value || ''}
+              value={fieldApi.state.value || ""}
               onChange={(e) => fieldApi.handleChange(e.target.value)}
               onBlur={fieldApi.handleBlur}
               {...commonProps}
-              className={hasError ? 'border-destructive' : ''}
+              className={hasError ? "border-destructive" : ""}
             />
             {errorMessage && (
               <p className="text-sm text-destructive">{errorMessage}</p>
@@ -58,7 +58,7 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
           </div>
         );
 
-      case 'checkbox':
+      case "checkbox":
         return (
           <div className="space-y-1">
             <label className="flex items-center space-x-2">
@@ -68,7 +68,7 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
                 onChange={(e) => fieldApi.handleChange(e.target.checked)}
                 onBlur={fieldApi.handleBlur}
                 {...commonProps}
-                className={hasError ? 'border-destructive' : ''}
+                className={hasError ? "border-destructive" : ""}
               />
               <span className="text-sm">{field.label}</span>
             </label>
@@ -78,7 +78,7 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
           </div>
         );
 
-      case 'select':
+      case "select":
         return (
           <div className="space-y-1">
             <Select
@@ -86,7 +86,7 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
               onChange={fieldApi.handleChange}
               options={field.options || []}
               {...commonProps}
-              className={hasError ? 'border-destructive' : ''}
+              className={hasError ? "border-destructive" : ""}
             />
             {errorMessage && (
               <p className="text-sm text-destructive">{errorMessage}</p>
@@ -94,15 +94,15 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
           </div>
         );
 
-      case 'textarea':
+      case "textarea":
         return (
           <div className="space-y-1">
             <Textarea
-              value={fieldApi.state.value || ''}
+              value={fieldApi.state.value || ""}
               onChange={(e) => fieldApi.handleChange(e.target.value)}
               onBlur={fieldApi.handleBlur}
               {...commonProps}
-              className={hasError ? 'border-destructive' : ''}
+              className={hasError ? "border-destructive" : ""}
             />
             {errorMessage && (
               <p className="text-sm text-destructive">{errorMessage}</p>
@@ -110,12 +110,12 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
           </div>
         );
 
-      case 'reference':
+      case "reference":
         return (
           <div className="space-y-1">
             <ReferenceSelect
-              url={field.url || ''}
-              value={fieldApi.state.value || (field.multiple ? [] : '')}
+              url={field.url || ""}
+              value={fieldApi.state.value || (field.multiple ? [] : "")}
               onChange={fieldApi.handleChange}
               onBlur={fieldApi.handleBlur}
               multiple={field.multiple}
@@ -124,7 +124,7 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
               error={hasError}
               placeholder={field.placeholder}
               entityType={field.entityType}
-              className={hasError ? 'border-destructive' : ''}
+              className={hasError ? "border-destructive" : ""}
             />
             {errorMessage && (
               <p className="text-sm text-destructive">{errorMessage}</p>
@@ -142,4 +142,4 @@ export function useFieldRenderer<T extends Record<string, unknown>>() {
   };
 
   return { renderField };
-} 
+}

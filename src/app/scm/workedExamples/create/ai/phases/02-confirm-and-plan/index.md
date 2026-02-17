@@ -1,12 +1,15 @@
 # Phase 2: Confirm & Plan
 
 ## Purpose
+
 Present your analysis to the user, get their confirmation, and plan the three scenarios - all using DIFFERENT contexts from the mastery check. Also surface backward-planning details so the user can validate the instructional design.
 
 ## Output Format: PPTX-Compatible HTML
+
 All slides will be **PPTX-compatible HTML** (960×540px, light theme). Slide count varies based on step count (2-5 steps). See `03-generate-slides/02-technical-rules.md` for technical specs.
 
 ## Prerequisites
+
 - Phase 1 complete
 - You have completed the backward planning analysis (following analyze-problem.md Steps 1-6)
 - Your output matches the output-schema.md JSON structure
@@ -17,12 +20,12 @@ All slides will be **PPTX-compatible HTML** (960×540px, light theme). Slide cou
 
 The user provided a **mastery check question**. ALL scenarios you create must use **different contexts and numbers** from that question:
 
-| What | Context |
-|------|---------|
+| What                         | Context                                  |
+| ---------------------------- | ---------------------------------------- |
 | Mastery Check (user's input) | The ACTUAL question students will answer |
-| Scenario 1 (Worked Example) | DIFFERENT context - teaches the strategy |
-| Scenario 2 (Practice) | DIFFERENT context - first practice |
-| Scenario 3 (Practice) | DIFFERENT context - second practice |
+| Scenario 1 (Worked Example)  | DIFFERENT context - teaches the strategy |
+| Scenario 2 (Practice)        | DIFFERENT context - first practice       |
+| Scenario 3 (Practice)        | DIFFERENT context - second practice      |
 
 **Students will see:** Worked Example → Practice 1 → Practice 2 → (then later) Mastery Check
 
@@ -85,6 +88,7 @@ Note: These scenarios all teach the same skill as your mastery check but use dif
 The evolution was already generated in Phase 1 using `reference/diagram-patterns.md` as a guide. Present it here so the user can confirm the visual progression is correct before proceeding.
 
 **Example:**
+
 ```
 **Diagram Evolution (Scenario 1 - Chicken Nuggets):**
 
@@ -129,6 +133,7 @@ Does this match what you're looking for? Should I proceed or adjust anything?
 **STOP HERE. Do not proceed until the user responds.**
 
 The user might:
+
 - **Confirm** ("yes", "proceed", "looks good") → Continue to Step 2.3
 - **Request changes** → Adjust your analysis/strategy and re-present
 - **Ask questions** → Answer them, then re-confirm
@@ -141,29 +146,29 @@ The user might:
 
 **Choose ONE visual type that best represents the math:**
 
-| Visual Type | Use For | Key Details to Plan |
-|-------------|---------|---------------------|
-| `tape-diagram` | Division, multiplication, part-whole | boxes, values per box, total, unknown position |
-| `coordinate-graph` | Linear equations, rates, proportions | equations, scale, keyPoints, annotations |
-| `double-number-line` | Ratios, unit rates, percentages | quantity A values, quantity B values, alignment |
-| `area-model` | Multiplication, distributive property | dimensions, partial products |
-| `number-line` | Integers, inequalities, operations | range, marked points, arrows |
-| `ratio-table` | Equivalent ratios, scaling | column values, scale factors |
-| `hanger-diagram` | Equation solving, balance | left side, right side, shapes |
-| `input-output-table` | Functions, patterns, rules | input values, output values, rule |
-| `grid-diagram` | Area by counting, decomposing shapes | rows, cols, shaded regions, unit label |
-| `net-diagram` | Surface area, 3D→2D unfolding | shape type, faces with dimensions, fold lines |
-| `measurement-diagram` | Base & height, labeled dimensions | shape type, labeled measurements, right angle indicators |
-| `discrete-diagram` | Objects in groups, discrete ratios | groups, items per group, total, visual type |
-| `base-ten-diagram` | Place value, decimal operations | ones, tens, hundreds blocks, operation |
-| `dot-plot` | Data distributions, frequencies | data points, axis range, label |
-| `box-plot` | Quartiles, variability, outliers | min, Q1, median, Q3, max, outliers |
-| `bar-graph` | Comparing frequencies, categories | categories, values, orientation |
-| `tree-diagram` | Probability, sample spaces | branches, probabilities, outcomes |
-| `circle-diagram` | Circles with labeled parts | radius, diameter, circumference, center point |
-| `scale-drawing` | Maps, floor plans, blueprints | scale factor, actual/drawing measurements |
-| `scaled-figures` | Original vs copy comparison | original dims, scale factor, copy dims |
-| `other` | Custom diagrams not listed above | describe visual structure and key elements |
+| Visual Type           | Use For                               | Key Details to Plan                                      |
+| --------------------- | ------------------------------------- | -------------------------------------------------------- |
+| `tape-diagram`        | Division, multiplication, part-whole  | boxes, values per box, total, unknown position           |
+| `coordinate-graph`    | Linear equations, rates, proportions  | equations, scale, keyPoints, annotations                 |
+| `double-number-line`  | Ratios, unit rates, percentages       | quantity A values, quantity B values, alignment          |
+| `area-model`          | Multiplication, distributive property | dimensions, partial products                             |
+| `number-line`         | Integers, inequalities, operations    | range, marked points, arrows                             |
+| `ratio-table`         | Equivalent ratios, scaling            | column values, scale factors                             |
+| `hanger-diagram`      | Equation solving, balance             | left side, right side, shapes                            |
+| `input-output-table`  | Functions, patterns, rules            | input values, output values, rule                        |
+| `grid-diagram`        | Area by counting, decomposing shapes  | rows, cols, shaded regions, unit label                   |
+| `net-diagram`         | Surface area, 3D→2D unfolding         | shape type, faces with dimensions, fold lines            |
+| `measurement-diagram` | Base & height, labeled dimensions     | shape type, labeled measurements, right angle indicators |
+| `discrete-diagram`    | Objects in groups, discrete ratios    | groups, items per group, total, visual type              |
+| `base-ten-diagram`    | Place value, decimal operations       | ones, tens, hundreds blocks, operation                   |
+| `dot-plot`            | Data distributions, frequencies       | data points, axis range, label                           |
+| `box-plot`            | Quartiles, variability, outliers      | min, Q1, median, Q3, max, outliers                       |
+| `bar-graph`           | Comparing frequencies, categories     | categories, values, orientation                          |
+| `tree-diagram`        | Probability, sample spaces            | branches, probabilities, outcomes                        |
+| `circle-diagram`      | Circles with labeled parts            | radius, diameter, circumference, center point            |
+| `scale-drawing`       | Maps, floor plans, blueprints         | scale factor, actual/drawing measurements                |
+| `scaled-figures`      | Original vs copy comparison           | original dims, scale factor, copy dims                   |
+| `other`               | Custom diagrams not listed above      | describe visual structure and key elements               |
 
 **Visual selection happens ONCE in analysis, then applies to ALL scenarios.**
 
@@ -182,6 +187,7 @@ The mastery check is what students will answer AFTER completing the worked examp
 ### Scenario Requirements
 
 Each scenario MUST:
+
 - Use the **exact same mathematical structure** as the mastery check
 - Require the **exact same strategy** to solve
 - Use **DIFFERENT numbers and context** from the mastery check (and from each other)
@@ -209,12 +215,12 @@ Visual Progression (Scenario 1):
 
 **Examples by Visual Type:**
 
-| Visual Type | Setup Shows | Step 1 Adds | Step 2 Adds | Final Step Adds |
-|-------------|-------------|-------------|-------------|-----------------|
-| Tape diagram | Empty tape with ? and total | Boxes with value per box | Highlight the count | Answer label |
-| Coordinate graph | Blank axes with labels | First line plotted | Second line plotted | Intersection labeled |
-| Hanger diagram | Initial balanced equation | Subtraction from both sides | Division both sides | Variable isolated |
-| Double number line | Two lines with known values | Unit rate marked | Scale factor applied | Unknown value found |
+| Visual Type        | Setup Shows                 | Step 1 Adds                 | Step 2 Adds          | Final Step Adds      |
+| ------------------ | --------------------------- | --------------------------- | -------------------- | -------------------- |
+| Tape diagram       | Empty tape with ? and total | Boxes with value per box    | Highlight the count  | Answer label         |
+| Coordinate graph   | Blank axes with labels      | First line plotted          | Second line plotted  | Intersection labeled |
+| Hanger diagram     | Initial balanced equation   | Subtraction from both sides | Division both sides  | Variable isolated    |
+| Double number line | Two lines with known values | Unit rate marked            | Scale factor applied | Unknown value found  |
 
 ### ⚠️ Conciseness: Define Problem Reminders NOW
 
@@ -231,6 +237,7 @@ For each scenario, create the **condensed problem reminder** that will appear on
 ### Scenario Design Principles
 
 **DO:**
+
 - Match context to grade level interests (gaming, social media, sports, etc.)
 - Keep mathematical difficulty identical to mastery check
 - Ensure the same moves apply in the same order
@@ -239,6 +246,7 @@ For each scenario, create the **condensed problem reminder** that will appear on
 - **Verify each scenario is clearly different from the mastery check**
 
 **DO NOT:**
+
 - Use the same context as the mastery check question
 - Use the same numbers as the mastery check question
 - Change the problem type
@@ -296,6 +304,7 @@ Scenario 3 (Practice):
 Each scenario MUST have its own VisualPlan with values specific to that scenario's numbers.
 
 **tape-diagram:**
+
 ```
 VisualPlan:
   boxes: [number of boxes]
@@ -305,6 +314,7 @@ VisualPlan:
 ```
 
 **coordinate-graph:** (See `phases/01-collect-and-analyze/graph-planning.md` for full planning)
+
 ```
 VisualPlan:
   equations: ["y = 2x + 3", "y = 0.5x"]
@@ -312,9 +322,11 @@ VisualPlan:
   keyPoints: [{ label: "y-intercept", x: 0, y: 3 }, { label: "solution", x: 4, y: 11 }]
   annotations: ["y-intercept shift", "parallel lines"]
 ```
+
 **Note:** Coordinate graphs require detailed planning. After selecting this visual type, read `graph-planning.md` and complete the full GraphPlan with equations, calculated endpoints, scale tables, and annotation positions.
 
 **double-number-line:**
+
 ```
 VisualPlan:
   quantityA: { label: "cups", values: [0, 2, 4, 6] }
@@ -323,6 +335,7 @@ VisualPlan:
 ```
 
 **area-model:**
+
 ```
 VisualPlan:
   dimensions: [width, height] or [a+b, c+d]
@@ -330,6 +343,7 @@ VisualPlan:
 ```
 
 **number-line:**
+
 ```
 VisualPlan:
   range: [min, max]
@@ -338,6 +352,7 @@ VisualPlan:
 ```
 
 **ratio-table:**
+
 ```
 VisualPlan:
   rows: [{ label: "apples", values: [2, 4, 6, "?"] }]
@@ -345,6 +360,7 @@ VisualPlan:
 ```
 
 **hanger-diagram:**
+
 ```
 VisualPlan:
   leftSide: "3x + 1"
@@ -353,6 +369,7 @@ VisualPlan:
 ```
 
 **input-output-table:**
+
 ```
 VisualPlan:
   rule: "×3 + 2" or "y = 3x + 2"
@@ -362,6 +379,7 @@ VisualPlan:
 ```
 
 **grid-diagram:**
+
 ```
 VisualPlan:
   rows: [number of rows]
@@ -372,6 +390,7 @@ VisualPlan:
 ```
 
 **net-diagram:**
+
 ```
 VisualPlan:
   shapeType: "rectangular-prism" | "triangular-prism" | "pyramid" | "cube"
@@ -381,6 +400,7 @@ VisualPlan:
 ```
 
 **measurement-diagram:**
+
 ```
 VisualPlan:
   shapeType: "triangle" | "parallelogram" | "trapezoid" | "rectangle"
@@ -390,6 +410,7 @@ VisualPlan:
 ```
 
 **discrete-diagram:**
+
 ```
 VisualPlan:
   groups: [number of groups]
@@ -400,6 +421,7 @@ VisualPlan:
 ```
 
 **base-ten-diagram:**
+
 ```
 VisualPlan:
   hundreds: [number of hundred blocks]
@@ -410,6 +432,7 @@ VisualPlan:
 ```
 
 **dot-plot:**
+
 ```
 VisualPlan:
   dataPoints: [2, 3, 3, 4, 4, 4, 5, 5, 6]
@@ -419,6 +442,7 @@ VisualPlan:
 ```
 
 **box-plot:**
+
 ```
 VisualPlan:
   min: 12
@@ -432,6 +456,7 @@ VisualPlan:
 ```
 
 **bar-graph:**
+
 ```
 VisualPlan:
   categories: ["Red", "Blue", "Green", "Yellow"]
@@ -442,6 +467,7 @@ VisualPlan:
 ```
 
 **tree-diagram:**
+
 ```
 VisualPlan:
   levels: [
@@ -453,6 +479,7 @@ VisualPlan:
 ```
 
 **circle-diagram:**
+
 ```
 VisualPlan:
   radius: 5
@@ -464,6 +491,7 @@ VisualPlan:
 ```
 
 **scale-drawing:**
+
 ```
 VisualPlan:
   scaleFactor: "1 cm : 10 m" or "1:100"
@@ -473,6 +501,7 @@ VisualPlan:
 ```
 
 **scaled-figures:**
+
 ```
 VisualPlan:
   originalDimensions: [{ label: "width", value: 4 }, { label: "height", value: 6 }]
@@ -483,6 +512,7 @@ VisualPlan:
 ```
 
 **other:** (custom diagrams)
+
 ```
 VisualPlan:
   description: "[What the visual shows]"
@@ -490,6 +520,7 @@ VisualPlan:
   labels: ["label 1", "label 2", ...]
   annotations: ["what to highlight or emphasize"]
 ```
+
 **Note:** For custom diagrams, reference `reference/diagram-patterns.md` for SVG implementation patterns.
 
 ---
@@ -501,6 +532,7 @@ After user confirms and scenarios are defined, update the progress file:
 **File:** `src/app/presentations/{slug}/.worked-example-progress.json`
 
 Update these fields:
+
 ```json
 {
   "phase": 2,
@@ -519,6 +551,7 @@ Use the Read tool to read the current file, then use Edit to update only the cha
 ## Phase 2 Completion Checklist
 
 Before proceeding, verify:
+
 - [ ] User has explicitly confirmed your understanding
 - [ ] User has approved the **Diagram Evolution** (step-by-step visual progression)
 - [ ] Three scenarios are defined
@@ -536,6 +569,7 @@ Before proceeding, verify:
 **When Phase 2 is complete (user has confirmed):**
 
 Use the Read tool to read the Phase 3 instructions:
+
 ```
 Read: .claude/skills/create-worked-example-sg/phases/03-generate-slides/00-overview.md
 ```

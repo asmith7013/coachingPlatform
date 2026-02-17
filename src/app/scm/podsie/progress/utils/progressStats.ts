@@ -14,10 +14,10 @@ export function calculateSummaryStats(data: ProgressData[]): SummaryStats {
 
   const avgCompletion = Math.round(
     studentsWithProgress.reduce((sum, p) => sum + p.percentComplete, 0) /
-      studentsWithProgress.length
+      studentsWithProgress.length,
   );
   const fullyComplete = studentsWithProgress.filter(
-    (p) => p.isFullyComplete
+    (p) => p.isFullyComplete,
   ).length;
 
   return {

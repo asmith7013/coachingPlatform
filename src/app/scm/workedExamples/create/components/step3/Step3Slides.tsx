@@ -562,11 +562,13 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
       let finalSlug = state.slug;
 
       // Extract lesson summary slide for edit mode too
-      const editLessonSummarySlide = slides.find(
-        (slide) => slide.slideType === 'lesson-summary',
-      ) ?? slides.find(
-        (slide) => slide.htmlContent.includes('LESSON SUMMARY') && slide.htmlContent.includes('print-page'),
-      );
+      const editLessonSummarySlide =
+        slides.find((slide) => slide.slideType === "lesson-summary") ??
+        slides.find(
+          (slide) =>
+            slide.htmlContent.includes("LESSON SUMMARY") &&
+            slide.htmlContent.includes("print-page"),
+        );
 
       if (state.editSlug) {
         // Edit mode: update the existing deck instead of creating a new one
@@ -609,11 +611,13 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
         finalSlug = state.editSlug;
       } else {
         // Extract lesson summary slide (prefer slideType, fallback to HTML content search)
-        const lessonSummarySlide = slides.find(
-          (slide) => slide.slideType === 'lesson-summary',
-        ) ?? slides.find(
-          (slide) => slide.htmlContent.includes('LESSON SUMMARY') && slide.htmlContent.includes('print-page'),
-        );
+        const lessonSummarySlide =
+          slides.find((slide) => slide.slideType === "lesson-summary") ??
+          slides.find(
+            (slide) =>
+              slide.htmlContent.includes("LESSON SUMMARY") &&
+              slide.htmlContent.includes("print-page"),
+          );
 
         // Create mode: save as a new deck
         const deckData: CreateWorkedExampleDeckInput = {
@@ -671,7 +675,7 @@ export function Step3Slides({ wizard }: Step3SlidesProps) {
           await updateDeckMetadata(finalSlug, {
             podsieAssignmentId: state.podsieAssignmentId,
             podsieAssignmentTitle: state.podsieAssignmentTitle,
-            workedExampleType: 'masteryCheck',
+            workedExampleType: "masteryCheck",
           });
         }
       }

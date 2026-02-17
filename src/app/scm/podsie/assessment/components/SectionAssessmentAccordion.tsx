@@ -2,10 +2,16 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/solid";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { useToast } from "@/components/core/feedback/Toast";
-import { fetchRampUpProgress, syncSectionRampUpProgress } from "@/app/actions/scm/podsie/podsie-sync";
+import {
+  fetchRampUpProgress,
+  syncSectionRampUpProgress,
+} from "@/app/actions/scm/podsie/podsie-sync";
 import { AssignmentCard } from "../../progress/components/AssignmentCard";
 import { getScopeTagForSection } from "../../progress/utils/sectionHelpers";
 import { calculateSummaryStats } from "../../progress/utils/progressStats";
@@ -39,22 +45,29 @@ export function SectionAssessmentAccordion({
 
   // Unit and assessment selection state
   const [selectedUnits, setSelectedUnits] = useState<number[]>([]);
-  const [selectedAssessmentUnit, setSelectedAssessmentUnit] = useState<number | null>(null);
-  const [allAssessmentData, setAllAssessmentData] = useState<AssessmentData[]>([]);
+  const [selectedAssessmentUnit, setSelectedAssessmentUnit] = useState<
+    number | null
+  >(null);
+  const [allAssessmentData, setAllAssessmentData] = useState<AssessmentData[]>(
+    [],
+  );
   const [loadingAssessments, setLoadingAssessments] = useState(false);
   const [syncing, setSyncing] = useState<string | null>(null);
 
   const { showToast, ToastComponent } = useToast();
 
   // Derived scope tag
-  const scopeSequenceTag = useMemo(() => getScopeTagForSection(sectionName), [sectionName]);
+  const scopeSequenceTag = useMemo(
+    () => getScopeTagForSection(sectionName),
+    [sectionName],
+  );
 
   // Load units and config
-  const { units, sectionConfigAssignments, loading: loadingUnits } = useUnitsAndConfig(
-    scopeSequenceTag,
-    sectionName,
-    school
-  );
+  const {
+    units,
+    sectionConfigAssignments,
+    loading: loadingUnits,
+  } = useUnitsAndConfig(scopeSequenceTag, sectionName, school);
 
   // Helper to extract unit number from unitLessonId (e.g., "3.15" -> 3)
   const getUnitNumberFromId = (unitLessonId: string): number => {
@@ -69,7 +82,10 @@ export function SectionAssessmentAccordion({
       : [...selectedUnits, unitNumber].sort((a, b) => a - b);
     setSelectedUnits(newUnits);
 
-    if (selectedAssessmentUnit === unitNumber && !newUnits.includes(unitNumber)) {
+    if (
+      selectedAssessmentUnit === unitNumber &&
+      !newUnits.includes(unitNumber)
+    ) {
       setSelectedAssessmentUnit(null);
     }
   };
@@ -91,19 +107,24 @@ export function SectionAssessmentAccordion({
       for (const unitNumber of selectedUnits) {
         const unitAssignments = sectionConfigAssignments.filter((a) => {
           const assignmentUnitNumber = getUnitNumberFromId(a.unitLessonId);
-          return assignmentUnitNumber === unitNumber && a.section === "Unit Assessment";
+          return (
+            assignmentUnitNumber === unitNumber &&
+            a.section === "Unit Assessment"
+          );
         });
 
         for (const assignment of unitAssignments) {
           if (isCancelled) return;
 
           const assessmentActivity = assignment.podsieActivities?.find(
-            (activity) => activity.activityType === "assessment"
+            (activity) => activity.activityType === "assessment",
           );
 
           if (!assessmentActivity) continue;
 
-          const grade = scopeSequenceTag.replace("Grade ", "").replace("Algebra 1", "8");
+          const grade = scopeSequenceTag
+            .replace("Grade ", "")
+            .replace("Algebra 1", "8");
           const unitCode = `${grade}.${unitNumber}`;
 
           const result = await fetchRampUpProgress(
@@ -111,7 +132,7 @@ export function SectionAssessmentAccordion({
             unitCode,
             assignment.unitLessonId,
             assessmentActivity.podsieAssignmentId,
-            school
+            school,
           );
 
           if (result.success) {
@@ -156,7 +177,12 @@ export function SectionAssessmentAccordion({
       isCancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sectionId, selectedUnitsKey, sectionConfigAssignments.length, scopeSequenceTag]);
+  }, [
+    sectionId,
+    selectedUnitsKey,
+    sectionConfigAssignments.length,
+    scopeSequenceTag,
+  ]);
 
   // Sync handler
   const handleSyncAssignment = async (assignment: LessonConfig) => {
@@ -172,7 +198,10 @@ export function SectionAssessmentAccordion({
         ? assignment.podsieQuestionMap.filter((q) => q.isRoot !== false)
         : [];
 
-      const baseQuestionIds = rootQuestions.length > 0 ? rootQuestions.map((q) => Number(q.questionId)) : undefined;
+      const baseQuestionIds =
+        rootQuestions.length > 0
+          ? rootQuestions.map((q) => Number(q.questionId))
+          : undefined;
 
       const questionIdToNumber: { [questionId: string]: number } = {};
       if (rootQuestions.length > 0) {
@@ -191,12 +220,15 @@ export function SectionAssessmentAccordion({
         {
           testMode: false,
           baseQuestionIds,
-          questionIdToNumber: Object.keys(questionIdToNumber).length > 0 ? questionIdToNumber : undefined,
+          questionIdToNumber:
+            Object.keys(questionIdToNumber).length > 0
+              ? questionIdToNumber
+              : undefined,
           variations: assignment.variations ?? 3,
           q1HasVariations: assignment.q1HasVariations ?? false,
           activityType: assignment.activityType,
         },
-        school
+        school,
       );
 
       if (result.success) {
@@ -213,7 +245,7 @@ export function SectionAssessmentAccordion({
           unitCode,
           assignment.unitLessonId,
           assignment.podsieAssignmentId,
-          school
+          school,
         );
 
         if (progressResult.success) {
@@ -221,8 +253,8 @@ export function SectionAssessmentAccordion({
             prev.map((a) =>
               a.assignment.podsieAssignmentId === assignment.podsieAssignmentId
                 ? { ...a, progressData: progressResult.data }
-                : a
-            )
+                : a,
+            ),
           );
         }
       } else {
@@ -247,9 +279,10 @@ export function SectionAssessmentAccordion({
   };
 
   // Get selected assessment for detailed view
-  const selectedAssessment = selectedAssessmentUnit !== null
-    ? allAssessmentData.find((a) => a.unitNumber === selectedAssessmentUnit)
-    : null;
+  const selectedAssessment =
+    selectedAssessmentUnit !== null
+      ? allAssessmentData.find((a) => a.unitNumber === selectedAssessmentUnit)
+      : null;
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -332,15 +365,21 @@ export function SectionAssessmentAccordion({
               ) : allAssessmentData.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-gray-400 text-4xl mb-4">📊</div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Assessments Found</h3>
-                  <p className="text-gray-600">No unit assessments found for the selected units.</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No Assessments Found
+                  </h3>
+                  <p className="text-gray-600">
+                    No unit assessments found for the selected units.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-6">
                   {/* Summary Table */}
                   <div className="border border-gray-200 rounded-lg overflow-hidden">
                     <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
-                      <h3 className="text-sm font-semibold text-gray-900">Assessment Summary</h3>
+                      <h3 className="text-sm font-semibold text-gray-900">
+                        Assessment Summary
+                      </h3>
                       <p className="text-xs text-gray-500 mt-1">
                         Click on a unit column header to view detailed scores
                       </p>
@@ -361,8 +400,13 @@ export function SectionAssessmentAccordion({
                       <AssignmentCard
                         assignment={selectedAssessment.assignment}
                         progressData={selectedAssessment.progressData}
-                        syncing={syncing === `${selectedAssessment.assignment.unitLessonId}-assessment`}
-                        onSync={() => handleSyncAssignment(selectedAssessment.assignment)}
+                        syncing={
+                          syncing ===
+                          `${selectedAssessment.assignment.unitLessonId}-assessment`
+                        }
+                        onSync={() =>
+                          handleSyncAssignment(selectedAssessment.assignment)
+                        }
                         calculateSummaryStats={calculateSummaryStats}
                       />
                     </div>

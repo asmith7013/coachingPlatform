@@ -1,7 +1,10 @@
 "use client";
 
 import React from "react";
-import { ExclamationTriangleIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ExclamationTriangleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import type { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 interface DeleteConfirmModalProps {
@@ -51,7 +54,8 @@ export function DeleteConfirmModal({
               <span className="font-medium">Unit:</span> {entry.unit}
             </p>
             <p>
-              <span className="font-medium">Lesson:</span> {entry.unitLessonId} - {entry.lessonName}
+              <span className="font-medium">Lesson:</span> {entry.unitLessonId}{" "}
+              - {entry.lessonName}
             </p>
           </div>
           <p className="text-red-600 text-sm mt-4">

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 interface ExportSuccessViewProps {
   savedSlug: string;
@@ -18,17 +18,29 @@ export function ExportSuccessView({
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 text-center py-12 space-y-6">
       <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-        <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        <svg
+          className="w-8 h-8 text-green-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 13l4 4L19 7"
+          />
         </svg>
       </div>
 
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900">Exported to Google Slides!</h2>
+        <h2 className="text-2xl font-semibold text-gray-900">
+          Exported to Google Slides!
+        </h2>
         <p className="text-gray-600 mt-2">
           {unitNumber && lessonNumber
             ? `Unit ${unitNumber} Lesson ${lessonNumber} has been saved and exported.`
-            : 'Your worked example has been saved and exported.'}
+            : "Your worked example has been saved and exported."}
         </p>
       </div>
 

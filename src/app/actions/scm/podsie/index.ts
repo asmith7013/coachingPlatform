@@ -40,5 +40,5 @@ export {
   type AssignmentMatchResult,
   type ConflictResult,
   type SaveMatchInput,
-  type AvailableLesson
+  type AvailableLesson,
 } from "./bulk-match";

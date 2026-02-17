@@ -11,7 +11,7 @@ export const AttemptZodSchema = z.object({
   attemptNumber: z.number(),
   dateCompleted: z.string(),
   score: z.string(),
-  passed: z.boolean()
+  passed: z.boolean(),
 });
 
 /**
@@ -34,7 +34,7 @@ export const SkillPerformanceZodSchema = z.object({
   bestScore: z.string().optional(),
   attemptCount: z.number().default(0),
   masteredDate: z.string().optional(),
-  lastAttemptDate: z.string().optional()
+  lastAttemptDate: z.string().optional(),
 });
 
 /**
@@ -45,7 +45,7 @@ export const RoadmapsStudentDataZodSchema = z.object({
   studentName: z.string(),
   schoolId: z.string(),
   assessmentDate: z.string(),
-  skillPerformances: z.array(SkillPerformanceZodSchema)
+  skillPerformances: z.array(SkillPerformanceZodSchema),
 });
 
 // Export types

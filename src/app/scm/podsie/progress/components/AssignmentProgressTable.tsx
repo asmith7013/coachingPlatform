@@ -55,7 +55,7 @@ export function AssignmentProgressTable({
   isAssessment = false,
 }: AssignmentProgressTableProps) {
   // Check if we have actual lesson data (students with synced lesson progress)
-  const hasLessonData = progressData.some(p => p.totalQuestions > 0);
+  const hasLessonData = progressData.some((p) => p.totalQuestions > 0);
 
   // Only show question columns if we have lesson data
   // (Don't show for mastery-check-only assignments)
@@ -64,45 +64,45 @@ export function AssignmentProgressTable({
   // Generate question column headers
   // If questionMap is provided and showAllQuestions is true, use all questions (roots + variants)
   // Otherwise, show only root questions
-  const questionColumns = useMemo(
-    () => {
-      if (!showQuestionColumns) return [];
+  const questionColumns = useMemo(() => {
+    if (!showQuestionColumns) return [];
 
-      if (questionMap && questionMap.length > 0) {
-        // Filter based on showAllQuestions toggle
-        const filteredQuestions = showAllQuestions
-          ? questionMap // Show all questions (roots + variants)
-          : questionMap.filter(q => q.isRoot); // Show only root questions
+    if (questionMap && questionMap.length > 0) {
+      // Filter based on showAllQuestions toggle
+      const filteredQuestions = showAllQuestions
+        ? questionMap // Show all questions (roots + variants)
+        : questionMap.filter((q) => q.isRoot); // Show only root questions
 
-        return filteredQuestions.map(q => ({
-          questionNumber: q.questionNumber,
-          questionId: q.questionId,
-          isRoot: q.isRoot,
-          variantNumber: q.variantNumber,
-          // Display label: "Q2" for root, "Q2-V1" for variant 1, etc.
-          label: q.isRoot || q.variantNumber === undefined
+      return filteredQuestions.map((q) => ({
+        questionNumber: q.questionNumber,
+        questionId: q.questionId,
+        isRoot: q.isRoot,
+        variantNumber: q.variantNumber,
+        // Display label: "Q2" for root, "Q2-V1" for variant 1, etc.
+        label:
+          q.isRoot || q.variantNumber === undefined
             ? `Q${q.questionNumber}`
-            : `Q${q.questionNumber}-V${q.variantNumber}`
-        }));
-      }
-
-      // Fallback: show only root questions
-      return Array.from({ length: totalQuestions }, (_, i) => ({
-        questionNumber: i + 1,
-        questionId: String(i + 1),
-        isRoot: true,
-        label: `Q${i + 1}`
+            : `Q${q.questionNumber}-V${q.variantNumber}`,
       }));
-    },
-    [showQuestionColumns, totalQuestions, questionMap, showAllQuestions]
-  );
+    }
+
+    // Fallback: show only root questions
+    return Array.from({ length: totalQuestions }, (_, i) => ({
+      questionNumber: i + 1,
+      questionId: String(i + 1),
+      isRoot: true,
+      label: `Q${i + 1}`,
+    }));
+  }, [showQuestionColumns, totalQuestions, questionMap, showAllQuestions]);
 
   // Calculate per-question completion rates (only for synced students)
   const questionStats = useMemo(() => {
     const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
     return questionColumns.map((col) => {
       const completed = syncedStudents.filter((p) =>
-        p.questions.find((q) => q.questionNumber === col.questionNumber && q.completed)
+        p.questions.find(
+          (q) => q.questionNumber === col.questionNumber && q.completed,
+        ),
       ).length;
 
       // For assessments, calculate average score per question
@@ -112,10 +112,16 @@ export function AssignmentProgressTable({
         let studentsWithResponse = 0;
 
         // Loop through ALL synced students, not just those with completedCount > 0
-        syncedStudents.forEach(student => {
-          const question = student.questions.find(q => q.questionNumber === col.questionNumber);
+        syncedStudents.forEach((student) => {
+          const question = student.questions.find(
+            (q) => q.questionNumber === col.questionNumber,
+          );
           // Only include if the student has a response (correctScore or explanationScore exists)
-          if (question && (question.correctScore !== undefined || question.explanationScore !== undefined)) {
+          if (
+            question &&
+            (question.correctScore !== undefined ||
+              question.explanationScore !== undefined)
+          ) {
             const correctScore = question.correctScore ?? 0;
             const explanationScore = question.explanationScore ?? 0;
             totalScore += correctScore + explanationScore;
@@ -123,7 +129,8 @@ export function AssignmentProgressTable({
           }
         });
 
-        avgScore = studentsWithResponse > 0 ? totalScore / studentsWithResponse : 0;
+        avgScore =
+          studentsWithResponse > 0 ? totalScore / studentsWithResponse : 0;
       }
 
       return {
@@ -196,11 +203,14 @@ export function AssignmentProgressTable({
               <td className="px-4 py-2 text-center text-sm font-bold text-purple-800 bg-purple-50">
                 {(() => {
                   // For Zearn, count all students (not just those with synced lesson data)
-                  const zearnCompleted = progressData.filter(p => p.zearnCompleted).length;
+                  const zearnCompleted = progressData.filter(
+                    (p) => p.zearnCompleted,
+                  ).length;
                   return progressData.length > 0
                     ? Math.round((zearnCompleted / progressData.length) * 100)
                     : 0;
-                })()}%
+                })()}
+                %
               </td>
             )}
             {questionStats.map((stat, idx) => (
@@ -210,8 +220,12 @@ export function AssignmentProgressTable({
               >
                 {isAssessment ? (
                   <div className="flex flex-col items-center">
-                    <span className="font-semibold">{stat.avgScore.toFixed(1)}/4</span>
-                    <span className="text-[10px]">({Math.round((stat.avgScore / 4) * 100)}%)</span>
+                    <span className="font-semibold">
+                      {stat.avgScore.toFixed(1)}/4
+                    </span>
+                    <span className="text-[10px]">
+                      ({Math.round((stat.avgScore / 4) * 100)}%)
+                    </span>
                   </div>
                 ) : (
                   `${stat.percent}%`
@@ -221,41 +235,58 @@ export function AssignmentProgressTable({
             {masteryCheckProgressData.length > 0 && (
               <td className="px-4 py-2 text-center text-sm font-bold text-blue-800">
                 {(() => {
-                  const synced = masteryCheckProgressData.filter((p) => p.totalQuestions > 0);
-                  const completed = synced.filter(p => p.isFullyComplete).length;
+                  const synced = masteryCheckProgressData.filter(
+                    (p) => p.totalQuestions > 0,
+                  );
+                  const completed = synced.filter(
+                    (p) => p.isFullyComplete,
+                  ).length;
                   return synced.length > 0
                     ? Math.round((completed / synced.length) * 100)
                     : 0;
-                })()}%
+                })()}
+                %
               </td>
             )}
             {isAssessment && (
               <>
                 <td className="px-4 py-2 text-center text-sm font-bold text-blue-800 bg-blue-100">
                   {(() => {
-                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+                    const syncedStudents = progressData.filter(
+                      (p) => p.totalQuestions > 0,
+                    );
                     // Only include students who have at least one response
-                    const studentsWithResponses = syncedStudents.filter(student =>
-                      student.questions.some(q => q.correctScore !== undefined || q.explanationScore !== undefined)
+                    const studentsWithResponses = syncedStudents.filter(
+                      (student) =>
+                        student.questions.some(
+                          (q) =>
+                            q.correctScore !== undefined ||
+                            q.explanationScore !== undefined,
+                        ),
                     );
 
-                    if (studentsWithResponses.length === 0) return '—';
+                    if (studentsWithResponses.length === 0) return "—";
 
                     // Calculate total points across all students with responses
                     let totalPointsReceived = 0;
 
-                    studentsWithResponses.forEach(student => {
-                      student.questions.forEach(q => {
+                    studentsWithResponses.forEach((student) => {
+                      student.questions.forEach((q) => {
                         // Only count questions that were actually answered
-                        if (q.correctScore !== undefined || q.explanationScore !== undefined) {
+                        if (
+                          q.correctScore !== undefined ||
+                          q.explanationScore !== undefined
+                        ) {
                           const correctScore = q.correctScore ?? 0;
                           const explanationScore = q.explanationScore ?? 0;
-                          totalPointsReceived += correctScore + explanationScore;
+                          totalPointsReceived +=
+                            correctScore + explanationScore;
                         }
                       });
                     });
 
-                    const avgPointsReceived = totalPointsReceived / studentsWithResponses.length;
+                    const avgPointsReceived =
+                      totalPointsReceived / studentsWithResponses.length;
                     const possiblePoints = totalQuestions * 4;
 
                     return `${avgPointsReceived.toFixed(1)}/${possiblePoints}`;
@@ -263,34 +294,46 @@ export function AssignmentProgressTable({
                 </td>
                 <td className="px-4 py-2 text-center text-sm font-bold text-blue-800 bg-blue-100">
                   {(() => {
-                    const syncedStudents = progressData.filter((p) => p.totalQuestions > 0);
+                    const syncedStudents = progressData.filter(
+                      (p) => p.totalQuestions > 0,
+                    );
                     // Only include students who have at least one response
-                    const studentsWithResponses = syncedStudents.filter(student =>
-                      student.questions.some(q => q.correctScore !== undefined || q.explanationScore !== undefined)
+                    const studentsWithResponses = syncedStudents.filter(
+                      (student) =>
+                        student.questions.some(
+                          (q) =>
+                            q.correctScore !== undefined ||
+                            q.explanationScore !== undefined,
+                        ),
                     );
 
-                    if (studentsWithResponses.length === 0) return '—';
+                    if (studentsWithResponses.length === 0) return "—";
 
                     // Calculate total points across all students with responses
                     let totalPointsReceived = 0;
 
-                    studentsWithResponses.forEach(student => {
-                      student.questions.forEach(q => {
+                    studentsWithResponses.forEach((student) => {
+                      student.questions.forEach((q) => {
                         // Only count questions that were actually answered
-                        if (q.correctScore !== undefined || q.explanationScore !== undefined) {
+                        if (
+                          q.correctScore !== undefined ||
+                          q.explanationScore !== undefined
+                        ) {
                           const correctScore = q.correctScore ?? 0;
                           const explanationScore = q.explanationScore ?? 0;
-                          totalPointsReceived += correctScore + explanationScore;
+                          totalPointsReceived +=
+                            correctScore + explanationScore;
                         }
                       });
                     });
 
-                    const avgPointsReceived = totalPointsReceived / studentsWithResponses.length;
+                    const avgPointsReceived =
+                      totalPointsReceived / studentsWithResponses.length;
                     const possiblePoints = totalQuestions * 4;
 
                     return possiblePoints > 0
                       ? `${Math.round((avgPointsReceived / possiblePoints) * 100)}%`
-                      : '—';
+                      : "—";
                   })()}
                 </td>
               </>
@@ -302,9 +345,10 @@ export function AssignmentProgressTable({
           {progressData.map((progress, idx) => {
             // Find matching mastery check data for this student
             const masteryCheckProgress = masteryCheckProgressData.find(
-              mc => mc.studentId === progress.studentId
+              (mc) => mc.studentId === progress.studentId,
             );
-            const masteryCheckSynced = masteryCheckProgress && masteryCheckProgress.totalQuestions > 0;
+            const masteryCheckSynced =
+              masteryCheckProgress && masteryCheckProgress.totalQuestions > 0;
 
             // Student has synced if they have lesson data OR mastery check data
             const hasSynced = progress.totalQuestions > 0 || masteryCheckSynced;
@@ -363,14 +407,17 @@ export function AssignmentProgressTable({
                 {questionColumns.map((col, idx) => {
                   if (!hasSynced) {
                     return (
-                      <td key={`${col.questionId}-${idx}`} className="px-3 py-3 text-center">
+                      <td
+                        key={`${col.questionId}-${idx}`}
+                        className="px-3 py-3 text-center"
+                      >
                         <span className="text-gray-300">—</span>
                       </td>
                     );
                   }
 
                   const question = progress.questions.find(
-                    (q) => q.questionNumber === col.questionNumber
+                    (q) => q.questionNumber === col.questionNumber,
                   );
                   const isCompleted = question?.completed ?? false;
 
@@ -380,18 +427,38 @@ export function AssignmentProgressTable({
                     const explanationScore = question?.explanationScore;
 
                     return (
-                      <td key={`${col.questionId}-${idx}`} className="px-3 py-3 text-center">
-                        {correctScore !== undefined || explanationScore !== undefined ? (
+                      <td
+                        key={`${col.questionId}-${idx}`}
+                        className="px-3 py-3 text-center"
+                      >
+                        {correctScore !== undefined ||
+                        explanationScore !== undefined ? (
                           <div className="flex flex-col items-center gap-0.5">
                             {/* Correct/Incorrect Icon */}
                             <div>
                               {correctScore === 1 ? (
-                                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                <svg
+                                  className="w-4 h-4 text-green-600"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clipRule="evenodd"
+                                  />
                                 </svg>
                               ) : correctScore === 0 ? (
-                                <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                <svg
+                                  className="w-4 h-4 text-red-600"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clipRule="evenodd"
+                                  />
                                 </svg>
                               ) : (
                                 <span className="text-gray-300 text-xs">—</span>
@@ -400,11 +467,15 @@ export function AssignmentProgressTable({
                             {/* Explanation Score */}
                             <div className="text-xs font-medium text-gray-600">
                               {explanationScore !== undefined ? (
-                                <span className={
-                                  explanationScore === 3 ? "text-green-700" :
-                                  explanationScore === 2 ? "text-yellow-700" :
-                                  "text-red-700"
-                                }>
+                                <span
+                                  className={
+                                    explanationScore === 3
+                                      ? "text-green-700"
+                                      : explanationScore === 2
+                                        ? "text-yellow-700"
+                                        : "text-red-700"
+                                  }
+                                >
                                   {explanationScore}/3
                                 </span>
                               ) : (
@@ -421,7 +492,10 @@ export function AssignmentProgressTable({
 
                   // Regular Checkmark Mode
                   return (
-                    <td key={`${col.questionId}-${idx}`} className="px-3 py-3 text-center">
+                    <td
+                      key={`${col.questionId}-${idx}`}
+                      className="px-3 py-3 text-center"
+                    >
                       <CompletionCheckmark
                         completed={isCompleted}
                         completedAt={question?.completedAt}
@@ -435,12 +509,15 @@ export function AssignmentProgressTable({
                 {masteryCheckProgressData.length > 0 && (
                   <td className="px-4 py-3 text-center">
                     <CompletionCheckmark
-                      completed={Boolean(masteryCheckSynced && masteryCheckProgress?.isFullyComplete)}
+                      completed={Boolean(
+                        masteryCheckSynced &&
+                          masteryCheckProgress?.isFullyComplete,
+                      )}
                       completedAt={
                         masteryCheckProgress?.isFullyComplete
                           ? masteryCheckProgress.questions
-                              .filter(q => q.completedAt)
-                              .map(q => q.completedAt!)
+                              .filter((q) => q.completedAt)
+                              .map((q) => q.completedAt!)
                               .sort()[0] // Get earliest completion date
                           : undefined
                       }
@@ -456,11 +533,15 @@ export function AssignmentProgressTable({
                       {hasSynced ? (
                         <span className="text-sm font-semibold text-gray-900">
                           {(() => {
-                            const pointsReceived = progress.questions.reduce((sum, q) => {
-                              const correctScore = q.correctScore ?? 0;
-                              const explanationScore = q.explanationScore ?? 0;
-                              return sum + correctScore + explanationScore;
-                            }, 0);
+                            const pointsReceived = progress.questions.reduce(
+                              (sum, q) => {
+                                const correctScore = q.correctScore ?? 0;
+                                const explanationScore =
+                                  q.explanationScore ?? 0;
+                                return sum + correctScore + explanationScore;
+                              },
+                              0,
+                            );
                             const possiblePoints = totalQuestions * 4;
                             return `${pointsReceived}/${possiblePoints}`;
                           })()}
@@ -473,15 +554,19 @@ export function AssignmentProgressTable({
                       {hasSynced ? (
                         <span className="text-sm font-bold text-gray-900">
                           {(() => {
-                            const pointsReceived = progress.questions.reduce((sum, q) => {
-                              const correctScore = q.correctScore ?? 0;
-                              const explanationScore = q.explanationScore ?? 0;
-                              return sum + correctScore + explanationScore;
-                            }, 0);
+                            const pointsReceived = progress.questions.reduce(
+                              (sum, q) => {
+                                const correctScore = q.correctScore ?? 0;
+                                const explanationScore =
+                                  q.explanationScore ?? 0;
+                                return sum + correctScore + explanationScore;
+                              },
+                              0,
+                            );
                             const possiblePoints = totalQuestions * 4;
                             return possiblePoints > 0
                               ? `${Math.round((pointsReceived / possiblePoints) * 100)}%`
-                              : '—';
+                              : "—";
                           })()}
                         </span>
                       ) : (

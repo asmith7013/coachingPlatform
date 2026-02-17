@@ -1,17 +1,17 @@
-import { 
-  RawSpreadsheetRow, 
-  SpreadsheetHeaders, 
+import {
+  RawSpreadsheetRow,
+  SpreadsheetHeaders,
   SpreadsheetNormalizationResult,
-  BatchSpreadsheetResult
-} from './types/spreadsheet-types';
-import { SpreadsheetProcessor } from './processors/spreadsheet-processor';
+  BatchSpreadsheetResult,
+} from "./types/spreadsheet-types";
+import { SpreadsheetProcessor } from "./processors/spreadsheet-processor";
 
 /**
  * Normalize a single row to events with comprehensive error handling
  */
 export function normalizeRowToEvents(
   rawRow: RawSpreadsheetRow,
-  headers: SpreadsheetHeaders
+  headers: SpreadsheetHeaders,
 ): SpreadsheetNormalizationResult {
   const processor = new SpreadsheetProcessor(headers);
   return processor.processRow(rawRow, headers);
@@ -22,7 +22,7 @@ export function normalizeRowToEvents(
  */
 export function normalizeMultipleRows(
   rawRows: RawSpreadsheetRow[],
-  headers: SpreadsheetHeaders
+  headers: SpreadsheetHeaders,
 ): BatchSpreadsheetResult {
   const processor = new SpreadsheetProcessor(headers);
   return processor.processRows(rawRows, headers);
@@ -37,17 +37,17 @@ export function validateHeaders(headers: SpreadsheetHeaders): {
   suggestions?: string;
 } {
   const requiredColumns = [
-    'Date',
-    'Student ID', 
-    'First Name',
-    'Last Name',
-    'Teacher',
-    'Section',
-    'Class length (min)',
-    'Attendance'
+    "Date",
+    "Student ID",
+    "First Name",
+    "Last Name",
+    "Teacher",
+    "Section",
+    "Class length (min)",
+    "Attendance",
   ];
 
-  const normalizedHeaders = headers.map(h => h.trim().toLowerCase());
+  const normalizedHeaders = headers.map((h) => h.trim().toLowerCase());
   const missingRequired: string[] = [];
 
   for (const required of requiredColumns) {
@@ -60,8 +60,9 @@ export function validateHeaders(headers: SpreadsheetHeaders): {
   return {
     success: missingRequired.length === 0,
     missingRequired,
-    suggestions: missingRequired.length > 0 
-      ? `Missing required columns: ${missingRequired.join(', ')}. Available columns: ${headers.join(', ')}`
-      : undefined
+    suggestions:
+      missingRequired.length > 0
+        ? `Missing required columns: ${missingRequired.join(", ")}. Available columns: ${headers.join(", ")}`
+        : undefined,
   };
 }

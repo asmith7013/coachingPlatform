@@ -1,5 +1,8 @@
-import mongoose from 'mongoose';
-import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import mongoose from "mongoose";
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 const cycleFields = {
   cycleNum: { type: Number, required: true },
@@ -8,13 +11,13 @@ const cycleFields = {
   implementationIndicator: { type: String, required: true },
   supportCycle: { type: String },
   lookFors: [{ type: String, required: true }],
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
 const CycleSchema = new mongoose.Schema(cycleFields, {
   ...standardSchemaOptions,
-  collection: 'cycles'
+  collection: "cycles",
 });
 
-export const CycleModel = mongoose.models.Cycle || 
-  mongoose.model('Cycle', CycleSchema);
+export const CycleModel =
+  mongoose.models.Cycle || mongoose.model("Cycle", CycleSchema);

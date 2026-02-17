@@ -1,5 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchZearnCompletions, type ZearnHistoryRow } from "@/app/actions/scm/roadmaps/zearn-completions";
+import {
+  fetchZearnCompletions,
+  type ZearnHistoryRow,
+} from "@/app/actions/scm/roadmaps/zearn-completions";
 
 export type { ZearnHistoryRow };
 

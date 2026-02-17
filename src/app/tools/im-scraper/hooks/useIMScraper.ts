@@ -1,16 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 import {
   scrapeIMCooldowns,
   scrapeIMCooldownsDebug,
   generateIMUrls as generateUrlsAction,
-  testSingleURL
-} from '../actions/scraper';
+  testSingleURL,
+} from "../actions/scraper";
 import {
   IMCredentials,
   IMScrapingResponse,
   IMUrlGeneration,
-  IMLesson
-} from '../lib/types';
+  IMLesson,
+} from "../lib/types";
 
 export interface IMScraperState {
   results: IMLesson[];
@@ -26,9 +26,22 @@ export interface IMScraperState {
 }
 
 export interface IMScraperActions {
-  scrapeCustomUrls: (credentials: IMCredentials, urls: string[], delay?: number, enableClaudeExport?: boolean) => Promise<void>;
-  scrapeCustomUrlsDebug: (credentials: IMCredentials, urls: string[], delay?: number, enableClaudeExport?: boolean) => Promise<void>;
-  generateAndScrapeUrls: (credentials: IMCredentials, params: IMUrlGeneration) => Promise<void>;
+  scrapeCustomUrls: (
+    credentials: IMCredentials,
+    urls: string[],
+    delay?: number,
+    enableClaudeExport?: boolean,
+  ) => Promise<void>;
+  scrapeCustomUrlsDebug: (
+    credentials: IMCredentials,
+    urls: string[],
+    delay?: number,
+    enableClaudeExport?: boolean,
+  ) => Promise<void>;
+  generateAndScrapeUrls: (
+    credentials: IMCredentials,
+    params: IMUrlGeneration,
+  ) => Promise<void>;
   testUrl: (credentials: IMCredentials, url: string) => Promise<void>;
   clearResults: () => void;
   clearError: () => void;
@@ -41,7 +54,7 @@ const initialState: IMScraperState = {
   error: null,
   lastResponse: null,
   isTesting: false,
-  testResult: null
+  testResult: null,
 };
 
 /**
@@ -53,163 +66,177 @@ export function useIMScraper(): IMScraperState & IMScraperActions {
   const [state, setState] = useState<IMScraperState>(initialState);
 
   const setLoading = useCallback((loading: boolean) => {
-    setState(prev => ({ ...prev, isLoading: loading }));
+    setState((prev) => ({ ...prev, isLoading: loading }));
   }, []);
 
   const setError = useCallback((error: string | null) => {
-    setState(prev => ({ ...prev, error }));
+    setState((prev) => ({ ...prev, error }));
   }, []);
 
-  const setResults = useCallback((results: IMLesson[], response?: IMScrapingResponse) => {
-    setState(prev => ({
-      ...prev,
-      results,
-      lastResponse: response || null
-    }));
-  }, []);
+  const setResults = useCallback(
+    (results: IMLesson[], response?: IMScrapingResponse) => {
+      setState((prev) => ({
+        ...prev,
+        results,
+        lastResponse: response || null,
+      }));
+    },
+    [],
+  );
 
-  const scrapeCustomUrls = useCallback(async (
-    credentials: IMCredentials, 
-    urls: string[], 
-    delay: number = 2000,
-    enableClaudeExport: boolean = false
-  ) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await scrapeIMCooldowns({
-        credentials,
-        lessonUrls: urls,
-        delayBetweenRequests: delay,
-        enableClaudeExport
-      });
-      
-      if (response.success && response.data) {
-        setResults(response.data.lessons, response.data);
-      } else {
-        setError(response.error || 'Unknown error occurred');
+  const scrapeCustomUrls = useCallback(
+    async (
+      credentials: IMCredentials,
+      urls: string[],
+      delay: number = 2000,
+      enableClaudeExport: boolean = false,
+    ) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await scrapeIMCooldowns({
+          credentials,
+          lessonUrls: urls,
+          delayBetweenRequests: delay,
+          enableClaudeExport,
+        });
+
+        if (response.success && response.data) {
+          setResults(response.data.lessons, response.data);
+        } else {
+          setError(response.error || "Unknown error occurred");
+          setResults([]);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        setError(errorMessage);
         setResults([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      setError(errorMessage);
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [setLoading, setError, setResults]);
+    },
+    [setLoading, setError, setResults],
+  );
 
-  const scrapeCustomUrlsDebug = useCallback(async (
-    credentials: IMCredentials, 
-    urls: string[], 
-    delay: number = 3000,
-    enableClaudeExport: boolean = false
-  ) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      console.log('🚀 Starting debug scraping session from hook...');
-      const response = await scrapeIMCooldownsDebug({
-        credentials,
-        lessonUrls: urls,
-        delayBetweenRequests: delay,
-        enableClaudeExport
-      });
-      
-      if (response.success && response.data) {
-        setResults(response.data.lessons, response.data);
-        console.log('✅ Debug scraping completed successfully');
-      } else {
-        setError(response.error || 'Unknown error occurred');
+  const scrapeCustomUrlsDebug = useCallback(
+    async (
+      credentials: IMCredentials,
+      urls: string[],
+      delay: number = 3000,
+      enableClaudeExport: boolean = false,
+    ) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        console.log("🚀 Starting debug scraping session from hook...");
+        const response = await scrapeIMCooldownsDebug({
+          credentials,
+          lessonUrls: urls,
+          delayBetweenRequests: delay,
+          enableClaudeExport,
+        });
+
+        if (response.success && response.data) {
+          setResults(response.data.lessons, response.data);
+          console.log("✅ Debug scraping completed successfully");
+        } else {
+          setError(response.error || "Unknown error occurred");
+          setResults([]);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        console.error("❌ Debug scraping error:", err);
+        setError(errorMessage);
         setResults([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      console.error('❌ Debug scraping error:', err);
-      setError(errorMessage);
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [setLoading, setError, setResults]);
+    },
+    [setLoading, setError, setResults],
+  );
 
-  const generateAndScrapeUrls = useCallback(async (
-    credentials: IMCredentials, 
-    params: IMUrlGeneration
-  ) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      // First generate URLs
-      const urlResponse = await generateUrlsAction(params);
-      
-      if (!urlResponse.success) {
-        setError(urlResponse.error || 'Unknown error occurred');
-        return;
-      }
-      
-      if (!urlResponse.data) {
-        setError('No data received from URL generation');
-        return;
-      }
-      
-      const { urls } = urlResponse.data;
-      
-      // Then scrape the generated URLs
-      const scrapeResponse = await scrapeIMCooldowns({
-        credentials,
-        lessonUrls: urls,
-        delayBetweenRequests: 2000
-      });
-      
-      if (scrapeResponse.success && scrapeResponse.data) {
-        setResults(scrapeResponse.data.lessons, scrapeResponse.data);
-      } else {
-        setError(scrapeResponse.error || 'Unknown error occurred');
+  const generateAndScrapeUrls = useCallback(
+    async (credentials: IMCredentials, params: IMUrlGeneration) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        // First generate URLs
+        const urlResponse = await generateUrlsAction(params);
+
+        if (!urlResponse.success) {
+          setError(urlResponse.error || "Unknown error occurred");
+          return;
+        }
+
+        if (!urlResponse.data) {
+          setError("No data received from URL generation");
+          return;
+        }
+
+        const { urls } = urlResponse.data;
+
+        // Then scrape the generated URLs
+        const scrapeResponse = await scrapeIMCooldowns({
+          credentials,
+          lessonUrls: urls,
+          delayBetweenRequests: 2000,
+        });
+
+        if (scrapeResponse.success && scrapeResponse.data) {
+          setResults(scrapeResponse.data.lessons, scrapeResponse.data);
+        } else {
+          setError(scrapeResponse.error || "Unknown error occurred");
+          setResults([]);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        setError(errorMessage);
         setResults([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      setError(errorMessage);
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [setLoading, setError, setResults]);
+    },
+    [setLoading, setError, setResults],
+  );
 
+  const testUrl = useCallback(
+    async (credentials: IMCredentials, url: string) => {
+      setState((prev) => ({ ...prev, isTesting: true, testResult: null }));
+      setError(null);
 
+      try {
+        const response = await testSingleURL({ credentials, url });
 
-  const testUrl = useCallback(async (credentials: IMCredentials, url: string) => {
-    setState(prev => ({ ...prev, isTesting: true, testResult: null }));
-    setError(null);
-    
-    try {
-      const response = await testSingleURL({ credentials, url });
-      
-      if (response.success && response.data) {
-        setState(prev => ({ ...prev, testResult: response.data }));
-      } else {
-        setError(response.error || 'Unknown error occurred');
-        setState(prev => ({ ...prev, testResult: null }));
+        if (response.success && response.data) {
+          setState((prev) => ({ ...prev, testResult: response.data }));
+        } else {
+          setError(response.error || "Unknown error occurred");
+          setState((prev) => ({ ...prev, testResult: null }));
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        setError(errorMessage);
+        setState((prev) => ({ ...prev, testResult: null }));
+      } finally {
+        setState((prev) => ({ ...prev, isTesting: false }));
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      setError(errorMessage);
-      setState(prev => ({ ...prev, testResult: null }));
-    } finally {
-      setState(prev => ({ ...prev, isTesting: false }));
-    }
-  }, [setError]);
+    },
+    [setError],
+  );
 
   const clearResults = useCallback(() => {
-    setState(prev => ({ 
-      ...prev, 
-      results: [], 
+    setState((prev) => ({
+      ...prev,
+      results: [],
       lastResponse: null,
-      testResult: null 
+      testResult: null,
     }));
   }, []);
 
@@ -229,7 +256,7 @@ export function useIMScraper(): IMScraperState & IMScraperActions {
     testUrl,
     clearResults,
     clearError,
-    reset
+    reset,
   };
 }
 
@@ -244,18 +271,19 @@ export function useIMUrlGenerator() {
   const generateUrls = useCallback(async (params: IMUrlGeneration) => {
     setIsGenerating(true);
     setError(null);
-    
+
     try {
       const response = await generateUrlsAction(params);
-      
+
       if (response.success && response.data) {
         setGeneratedUrls(response.data.urls);
       } else {
-        setError(response.error || 'Unknown error occurred');
+        setError(response.error || "Unknown error occurred");
         setGeneratedUrls([]);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error occurred";
       setError(errorMessage);
       setGeneratedUrls([]);
     } finally {
@@ -273,6 +301,6 @@ export function useIMUrlGenerator() {
     error,
     generatedUrls,
     generateUrls,
-    clearUrls
+    clearUrls,
   };
 }

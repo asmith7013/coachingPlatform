@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { NavigationControlsProps } from '../types';
+import type { NavigationControlsProps } from "../types";
 
 export function NavigationControls({
   currentSlide,

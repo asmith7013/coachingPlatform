@@ -9,7 +9,7 @@ import {
   PodsieCompletion,
   PodsieCompletionInput,
   PodsieCompletionQuery,
-  PodsieCompletionQuerySchema
+  PodsieCompletionQuerySchema,
 } from "@zod-schema/scm/podsie/podsie-completion";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -21,14 +21,25 @@ import { handleValidationError } from "@error/handlers/validation";
 // =====================================
 
 const podsieCompletionCrud = createCrudActions({
-  model: PodsieCompletionModel as unknown as Parameters<typeof createCrudActions>[0]['model'],
+  model: PodsieCompletionModel as unknown as Parameters<
+    typeof createCrudActions
+  >[0]["model"],
   schema: PodsieCompletionZodSchema as ZodType<PodsieCompletion>,
   inputSchema: PodsieCompletionInputZodSchema as ZodType<PodsieCompletionInput>,
-  name: 'PodsieCompletion',
-  revalidationPaths: ['/roadmaps/scope-and-sequence', '/roadmaps/ramp-up-progress'],
-  sortFields: ['school', 'classSection', 'unitLessonId', 'createdAt', 'updatedAt'],
-  defaultSortField: 'unitLessonId',
-  defaultSortOrder: 'asc'
+  name: "PodsieCompletion",
+  revalidationPaths: [
+    "/roadmaps/scope-and-sequence",
+    "/roadmaps/ramp-up-progress",
+  ],
+  sortFields: [
+    "school",
+    "classSection",
+    "unitLessonId",
+    "createdAt",
+    "updatedAt",
+  ],
+  defaultSortField: "unitLessonId",
+  defaultSortOrder: "asc",
 });
 
 // Export CRUD operations
@@ -46,7 +57,9 @@ export const fetchPodsieCompletionById = podsieCompletionCrud.fetchById;
  * Fetch Podsie completion configs by query
  * Supports filtering by school, classSection, unitLessonId, and active status
  */
-export async function fetchPodsieCompletionByQuery(query: PodsieCompletionQuery) {
+export async function fetchPodsieCompletionByQuery(
+  query: PodsieCompletionQuery,
+) {
   return withDbConnection(async () => {
     try {
       // Validate query
@@ -55,9 +68,12 @@ export async function fetchPodsieCompletionByQuery(query: PodsieCompletionQuery)
       // Build MongoDB filter
       const filter: Record<string, unknown> = {};
       if (validatedQuery.school) filter.school = validatedQuery.school;
-      if (validatedQuery.classSection) filter.classSection = validatedQuery.classSection;
-      if (validatedQuery.unitLessonId) filter.unitLessonId = validatedQuery.unitLessonId;
-      if (validatedQuery.active !== undefined) filter.active = validatedQuery.active;
+      if (validatedQuery.classSection)
+        filter.classSection = validatedQuery.classSection;
+      if (validatedQuery.unitLessonId)
+        filter.unitLessonId = validatedQuery.unitLessonId;
+      if (validatedQuery.active !== undefined)
+        filter.active = validatedQuery.active;
 
       const results = await PodsieCompletionModel.find(filter)
         .sort({ unitLessonId: 1 })
@@ -65,19 +81,22 @@ export async function fetchPodsieCompletionByQuery(query: PodsieCompletionQuery)
 
       return {
         success: true,
-        data: results
+        data: results,
       };
     } catch (error) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          error: handleValidationError(error)
+          error: handleValidationError(error),
         };
       }
-      console.error('💥 Error fetching Podsie completion configs:', error);
+      console.error("💥 Error fetching Podsie completion configs:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch Podsie completion configs")
+        error: handleServerError(
+          error,
+          "Failed to fetch Podsie completion configs",
+        ),
       };
     }
   });
@@ -105,7 +124,7 @@ export async function upsertPodsieCompletion(data: {
       // Validate input
       const validatedData = PodsieCompletionInputZodSchema.parse({
         ...data,
-        ownerIds: []
+        ownerIds: [],
       });
 
       // Upsert by compound key: school + classSection + unitLessonId
@@ -113,39 +132,42 @@ export async function upsertPodsieCompletion(data: {
         {
           school: data.school,
           classSection: data.classSection,
-          unitLessonId: data.unitLessonId
+          unitLessonId: data.unitLessonId,
         },
         {
           $set: {
             ...validatedData,
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           },
           $setOnInsert: {
-            createdAt: new Date().toISOString()
-          }
+            createdAt: new Date().toISOString(),
+          },
         },
-        { upsert: true, new: true, runValidators: true }
+        { upsert: true, new: true, runValidators: true },
       );
 
-      revalidatePath('/roadmaps/scope-and-sequence');
-      revalidatePath('/roadmaps/ramp-up-progress');
+      revalidatePath("/roadmaps/scope-and-sequence");
+      revalidatePath("/roadmaps/ramp-up-progress");
 
       return {
         success: true,
         data: result.toObject(),
-        message: `Saved Podsie config for ${data.school} ${data.classSection} - ${data.unitLessonId}`
+        message: `Saved Podsie config for ${data.school} ${data.classSection} - ${data.unitLessonId}`,
       };
     } catch (error) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          error: handleValidationError(error)
+          error: handleValidationError(error),
         };
       }
-      console.error('💥 Error upserting Podsie completion config:', error);
+      console.error("💥 Error upserting Podsie completion config:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to save Podsie completion config")
+        error: handleServerError(
+          error,
+          "Failed to save Podsie completion config",
+        ),
       };
     }
   });
@@ -158,7 +180,7 @@ export async function upsertPodsieCompletion(data: {
 export async function getPodsieConfigForSection(
   school: string,
   classSection: string,
-  unitLessonId: string
+  unitLessonId: string,
 ) {
   return withDbConnection(async () => {
     try {
@@ -166,18 +188,18 @@ export async function getPodsieConfigForSection(
         school,
         classSection,
         unitLessonId,
-        active: true
+        active: true,
       }).lean();
 
       return {
         success: true,
-        data: result
+        data: result,
       };
     } catch (error) {
-      console.error('💥 Error fetching Podsie config:', error);
+      console.error("💥 Error fetching Podsie config:", error);
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch Podsie config")
+        error: handleServerError(error, "Failed to fetch Podsie config"),
       };
     }
   });
@@ -200,14 +222,14 @@ export async function bulkUpsertPodsieCompletion(
     totalQuestions?: number;
     active?: boolean;
     notes?: string;
-  }>
+  }>,
 ) {
   return withDbConnection(async () => {
     try {
       const results = {
         created: 0,
         updated: 0,
-        failed: [] as Array<{ unitLessonId: string; error: string }>
+        failed: [] as Array<{ unitLessonId: string; error: string }>,
       };
 
       for (const config of configs) {
@@ -217,7 +239,7 @@ export async function bulkUpsertPodsieCompletion(
           const existing = await PodsieCompletionModel.countDocuments({
             school: config.school,
             classSection: config.classSection,
-            unitLessonId: config.unitLessonId
+            unitLessonId: config.unitLessonId,
           });
           if (existing === 1) {
             results.created++;
@@ -227,24 +249,30 @@ export async function bulkUpsertPodsieCompletion(
         } else {
           results.failed.push({
             unitLessonId: config.unitLessonId,
-            error: result.error || "Unknown error"
+            error: result.error || "Unknown error",
           });
         }
       }
 
-      revalidatePath('/roadmaps/scope-and-sequence');
-      revalidatePath('/roadmaps/ramp-up-progress');
+      revalidatePath("/roadmaps/scope-and-sequence");
+      revalidatePath("/roadmaps/ramp-up-progress");
 
       return {
         success: true,
         data: results,
-        message: `Processed ${configs.length} configs: ${results.created} created, ${results.updated} updated, ${results.failed.length} failed`
+        message: `Processed ${configs.length} configs: ${results.created} created, ${results.updated} updated, ${results.failed.length} failed`,
       };
     } catch (error) {
-      console.error('💥 Error bulk upserting Podsie completion configs:', error);
+      console.error(
+        "💥 Error bulk upserting Podsie completion configs:",
+        error,
+      );
       return {
         success: false,
-        error: handleServerError(error, "Failed to bulk upsert Podsie completion configs")
+        error: handleServerError(
+          error,
+          "Failed to bulk upsert Podsie completion configs",
+        ),
       };
     }
   });

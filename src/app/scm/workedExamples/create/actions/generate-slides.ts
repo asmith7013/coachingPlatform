@@ -3,15 +3,20 @@
 // NOTE: This server action is NOT used by the wizard (which uses the API route with SSE streaming).
 // If you need to use this action, set maxDuration in the calling page's route segment config.
 
-import Anthropic from '@anthropic-ai/sdk';
-import { handleAnthropicError } from '@error/handlers/anthropic';
-import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
+import Anthropic from "@anthropic-ai/sdk";
+import { handleAnthropicError } from "@error/handlers/anthropic";
+import { MODEL_FOR_TASK } from "@/lib/api/integrations/claude/models";
 import {
   GENERATE_SLIDES_SYSTEM_PROMPT,
   buildGenerateSlidesPrompt,
-} from '../lib/prompts';
-import type { GenerateSlidesResponse, ProblemAnalysis, StrategyDefinition, Scenario } from '../lib/types';
-import type { HtmlSlide } from '@zod-schema/scm/worked-example';
+} from "../lib/prompts";
+import type {
+  GenerateSlidesResponse,
+  ProblemAnalysis,
+  StrategyDefinition,
+  Scenario,
+} from "../lib/types";
+import type { HtmlSlide } from "@zod-schema/scm/worked-example";
 
 interface GenerateSlidesInput {
   gradeLevel: string;
@@ -26,8 +31,10 @@ interface GenerateSlidesInput {
 /**
  * Generate HTML slides for a worked example
  */
-export async function generateSlides(input: GenerateSlidesInput): Promise<GenerateSlidesResponse> {
-  console.log('[generateSlides] Starting slide generation...');
+export async function generateSlides(
+  input: GenerateSlidesInput,
+): Promise<GenerateSlidesResponse> {
+  console.log("[generateSlides] Starting slide generation...");
 
   try {
     const {
@@ -43,10 +50,10 @@ export async function generateSlides(input: GenerateSlidesInput): Promise<Genera
     // Check for API key
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
-      console.error('[generateSlides] ANTHROPIC_API_KEY not found');
+      console.error("[generateSlides] ANTHROPIC_API_KEY not found");
       return {
         success: false,
-        error: 'ANTHROPIC_API_KEY not configured',
+        error: "ANTHROPIC_API_KEY not configured",
       };
     }
 
@@ -62,10 +69,10 @@ export async function generateSlides(input: GenerateSlidesInput): Promise<Genera
       learningGoals,
       problemAnalysis,
       strategyDefinition,
-      scenarios
+      scenarios,
     );
 
-    console.log('[generateSlides] Calling Claude API with streaming...');
+    console.log("[generateSlides] Calling Claude API with streaming...");
     const startTime = Date.now();
 
     // Use stream: true for long-running requests (required by SDK for high max_tokens)
@@ -76,23 +83,30 @@ export async function generateSlides(input: GenerateSlidesInput): Promise<Genera
       system: GENERATE_SLIDES_SYSTEM_PROMPT,
       messages: [
         {
-          role: 'user',
+          role: "user",
           content: userPrompt,
         },
       ],
     });
 
     // Collect streamed text
-    let fullText = '';
+    let fullText = "";
     for await (const event of stream) {
-      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+      if (
+        event.type === "content_block_delta" &&
+        event.delta.type === "text_delta"
+      ) {
         fullText += event.delta.text;
       }
     }
 
     const elapsed = Date.now() - startTime;
-    console.log('[generateSlides] Claude API response received in', elapsed, 'ms');
-    console.log('[generateSlides] Response text length:', fullText.length);
+    console.log(
+      "[generateSlides] Claude API response received in",
+      elapsed,
+      "ms",
+    );
+    console.log("[generateSlides] Response text length:", fullText.length);
 
     // Parse slides from response using separator
     const slideHtmls = parseSlides(fullText);
@@ -100,7 +114,7 @@ export async function generateSlides(input: GenerateSlidesInput): Promise<Genera
     if (slideHtmls.length === 0) {
       return {
         success: false,
-        error: 'No slides found in response',
+        error: "No slides found in response",
       };
     }
 
@@ -117,10 +131,10 @@ export async function generateSlides(input: GenerateSlidesInput): Promise<Genera
       data: { slides },
     };
   } catch (error) {
-    console.error('Error generating slides:', error);
+    console.error("Error generating slides:", error);
     return {
       success: false,
-      error: handleAnthropicError(error, 'Generate slides'),
+      error: handleAnthropicError(error, "Generate slides"),
     };
   }
 }
@@ -130,19 +144,20 @@ export async function generateSlides(input: GenerateSlidesInput): Promise<Genera
  */
 function parseSlides(text: string): string[] {
   // Split by the separator we specified in the prompt
-  const separator = '===SLIDE_SEPARATOR===';
+  const separator = "===SLIDE_SEPARATOR===";
 
   if (text.includes(separator)) {
     return text
       .split(separator)
-      .map(s => s.trim())
-      .filter(s => s.length > 0 && s.includes('<'));
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0 && s.includes("<"));
   }
 
   // Fallback: try to split by HTML document patterns
   // Look for complete HTML blocks
   const htmlBlocks: string[] = [];
-  const regex = /<div[^>]*class="slide-container"[^>]*>[\s\S]*?(?=<div[^>]*class="slide-container"|$)/gi;
+  const regex =
+    /<div[^>]*class="slide-container"[^>]*>[\s\S]*?(?=<div[^>]*class="slide-container"|$)/gi;
   let match;
 
   while ((match = regex.exec(text)) !== null) {
@@ -154,7 +169,7 @@ function parseSlides(text: string): string[] {
   }
 
   // Last resort: return the whole text as one slide
-  if (text.includes('<')) {
+  if (text.includes("<")) {
     return [text.trim()];
   }
 
@@ -164,25 +179,35 @@ function parseSlides(text: string): string[] {
 /**
  * Detect visual type from HTML content
  */
-function detectVisualType(html: string): 'html' | 'p5' | 'd3' {
+function detectVisualType(html: string): "html" | "p5" | "d3" {
   const lower = html.toLowerCase();
 
-  if (lower.includes('p5.js') || lower.includes('createcanvas') || lower.includes('p5cdn')) {
-    return 'p5';
+  if (
+    lower.includes("p5.js") ||
+    lower.includes("createcanvas") ||
+    lower.includes("p5cdn")
+  ) {
+    return "p5";
   }
 
-  if (lower.includes('d3.js') || lower.includes('d3.select') || lower.includes('d3cdn')) {
-    return 'd3';
+  if (
+    lower.includes("d3.js") ||
+    lower.includes("d3.select") ||
+    lower.includes("d3cdn")
+  ) {
+    return "d3";
   }
 
-  return 'html';
+  return "html";
 }
 
 /**
  * Extract script references from HTML
  */
-function extractScripts(html: string): { type: 'cdn' | 'inline'; content: string }[] | undefined {
-  const scripts: { type: 'cdn' | 'inline'; content: string }[] = [];
+function extractScripts(
+  html: string,
+): { type: "cdn" | "inline"; content: string }[] | undefined {
+  const scripts: { type: "cdn" | "inline"; content: string }[] = [];
 
   // Match script tags
   const scriptRegex = /<script([^>]*)>([\s\S]*?)<\/script>/gi;
@@ -195,9 +220,9 @@ function extractScripts(html: string): { type: 'cdn' | 'inline'; content: string
     // Check if it's a CDN script (has src attribute)
     const srcMatch = attrs.match(/src=["']([^"']+)["']/);
     if (srcMatch) {
-      scripts.push({ type: 'cdn', content: srcMatch[1] });
+      scripts.push({ type: "cdn", content: srcMatch[1] });
     } else if (content) {
-      scripts.push({ type: 'inline', content });
+      scripts.push({ type: "inline", content });
     }
   }
 

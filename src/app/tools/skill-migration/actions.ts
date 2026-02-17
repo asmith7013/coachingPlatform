@@ -14,33 +14,59 @@ export async function testSingleSkillMigration(skillNumber: string) {
   return withDbConnection(async () => {
     try {
       // Get the skill
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const skill = await RoadmapsSkillModel.findOne({ skillNumber }).lean() as any;
+      const skill = (await RoadmapsSkillModel.findOne({
+        skillNumber,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }).lean()) as any;
 
       if (!skill) {
         return {
           success: false,
-          error: { message: `Skill ${skillNumber} not found` }
+          error: { message: `Skill ${skillNumber} not found` },
         };
       }
 
       console.log(`Found skill: ${skill.title}`);
-      console.log(`Current appearsIn:`, skill.appearsIn || 'undefined');
+      console.log(`Current appearsIn:`, skill.appearsIn || "undefined");
 
       // Initialize appearsIn object
       const appearsIn = {
-        asTarget: [] as Array<{ grade: string; unitTitle: string; unitNumber: number }>,
-        asEssential: [] as Array<{ skillNumber: string; title: string; units: Array<{ grade: string; unitTitle: string; unitNumber: number }> }>,
-        asHelpful: [] as Array<{ skillNumber: string; title: string; units: Array<{ grade: string; unitTitle: string; unitNumber: number }> }>,
-        asSupport: [] as Array<{ grade: string; unitTitle: string; unitNumber: number }>
+        asTarget: [] as Array<{
+          grade: string;
+          unitTitle: string;
+          unitNumber: number;
+        }>,
+        asEssential: [] as Array<{
+          skillNumber: string;
+          title: string;
+          units: Array<{
+            grade: string;
+            unitTitle: string;
+            unitNumber: number;
+          }>;
+        }>,
+        asHelpful: [] as Array<{
+          skillNumber: string;
+          title: string;
+          units: Array<{
+            grade: string;
+            unitTitle: string;
+            unitNumber: number;
+          }>;
+        }>,
+        asSupport: [] as Array<{
+          grade: string;
+          unitTitle: string;
+          unitNumber: number;
+        }>,
       };
 
       // Find units
       const units = await RoadmapUnitModel.find({
         $or: [
           { targetSkills: skillNumber },
-          { additionalSupportSkills: skillNumber }
-        ]
+          { additionalSupportSkills: skillNumber },
+        ],
       }).lean();
 
       console.log(`Found ${units.length} units`);
@@ -49,7 +75,7 @@ export async function testSingleSkillMigration(skillNumber: string) {
         const unitRef = {
           grade: unit.grade,
           unitTitle: unit.unitTitle,
-          unitNumber: unit.unitNumber ?? 0
+          unitNumber: unit.unitNumber ?? 0,
         };
 
         if (unit.targetSkills?.includes(skillNumber)) {
@@ -62,49 +88,59 @@ export async function testSingleSkillMigration(skillNumber: string) {
       }
 
       // Find essential
-      const essentialSkills = await RoadmapsSkillModel.find({
-        "essentialSkills.skillNumber": skillNumber
-      }, { skillNumber: 1, title: 1, units: 1 }).lean();
+      const essentialSkills = await RoadmapsSkillModel.find(
+        {
+          "essentialSkills.skillNumber": skillNumber,
+        },
+        { skillNumber: 1, title: 1, units: 1 },
+      ).lean();
 
-      console.log(`Found ${essentialSkills.length} skills that need this as essential`);
-      appearsIn.asEssential = essentialSkills.map(s => ({
+      console.log(
+        `Found ${essentialSkills.length} skills that need this as essential`,
+      );
+      appearsIn.asEssential = essentialSkills.map((s) => ({
         skillNumber: s.skillNumber,
         title: s.title,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         units: (s.units || []).map((u: any) => ({
           grade: u.grade,
           unitTitle: u.unitTitle,
-          unitNumber: u.unitNumber
-        }))
+          unitNumber: u.unitNumber,
+        })),
       }));
 
       // Find helpful
-      const helpfulSkills = await RoadmapsSkillModel.find({
-        "helpfulSkills.skillNumber": skillNumber
-      }, { skillNumber: 1, title: 1, units: 1 }).lean();
+      const helpfulSkills = await RoadmapsSkillModel.find(
+        {
+          "helpfulSkills.skillNumber": skillNumber,
+        },
+        { skillNumber: 1, title: 1, units: 1 },
+      ).lean();
 
-      console.log(`Found ${helpfulSkills.length} skills that use this as helpful`);
-      appearsIn.asHelpful = helpfulSkills.map(s => ({
+      console.log(
+        `Found ${helpfulSkills.length} skills that use this as helpful`,
+      );
+      appearsIn.asHelpful = helpfulSkills.map((s) => ({
         skillNumber: s.skillNumber,
         title: s.title,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         units: (s.units || []).map((u: any) => ({
           grade: u.grade,
           unitTitle: u.unitTitle,
-          unitNumber: u.unitNumber
-        }))
+          unitNumber: u.unitNumber,
+        })),
       }));
 
-      console.log('Computed appearsIn:', JSON.stringify(appearsIn, null, 2));
+      console.log("Computed appearsIn:", JSON.stringify(appearsIn, null, 2));
 
       // Update
-      console.log('Attempting update...');
+      console.log("Attempting update...");
       const updateResult = await RoadmapsSkillModel.updateOne(
         { skillNumber },
-        { $set: { appearsIn } }
+        { $set: { appearsIn } },
       );
 
-      console.log('Update result:', updateResult);
+      console.log("Update result:", updateResult);
 
       return {
         success: true,
@@ -115,17 +151,16 @@ export async function testSingleSkillMigration(skillNumber: string) {
             acknowledged: updateResult.acknowledged,
             matchedCount: updateResult.matchedCount,
             modifiedCount: updateResult.modifiedCount,
-            upsertedCount: updateResult.upsertedCount
+            upsertedCount: updateResult.upsertedCount,
           },
-          appearsIn
-        }
+          appearsIn,
+        },
       };
-
     } catch (error) {
-      console.error('💥 Test failed:', error);
+      console.error("💥 Test failed:", error);
       return {
         success: false,
-        error: handleServerError(error, 'testSingleSkillMigration')
+        error: handleServerError(error, "testSingleSkillMigration"),
       };
     }
   });
@@ -148,12 +183,12 @@ interface MigrationResult {
  * Run the skill appearsIn migration for all skills
  */
 export async function runSkillAppearsInMigration() {
-  console.log('🚀 Starting skill appearsIn migration...');
+  console.log("🚀 Starting skill appearsIn migration...");
 
   return withDbConnection(async () => {
     try {
       // Get all skills
-      console.log('📊 Fetching all skills...');
+      console.log("📊 Fetching all skills...");
       const allSkills = await RoadmapsSkillModel.find({}).lean();
       console.log(`Found ${allSkills.length} skills to process`);
 
@@ -168,103 +203,142 @@ export async function runSkillAppearsInMigration() {
 
         // Log progress every 10 skills
         if (processed % 10 === 0) {
-          console.log(`📝 Progress: ${processed}/${allSkills.length} (${Math.round(processed / allSkills.length * 100)}%)`);
+          console.log(
+            `📝 Progress: ${processed}/${allSkills.length} (${Math.round((processed / allSkills.length) * 100)}%)`,
+          );
         }
 
         try {
           // Initialize appearsIn object
           const appearsIn = {
-            asTarget: [] as Array<{ grade: string; unitTitle: string; unitNumber: number }>,
-            asEssential: [] as Array<{ skillNumber: string; title: string; units: Array<{ grade: string; unitTitle: string; unitNumber: number }> }>,
-            asHelpful: [] as Array<{ skillNumber: string; title: string; units: Array<{ grade: string; unitTitle: string; unitNumber: number }> }>,
-            asSupport: [] as Array<{ grade: string; unitTitle: string; unitNumber: number }>
+            asTarget: [] as Array<{
+              grade: string;
+              unitTitle: string;
+              unitNumber: number;
+            }>,
+            asEssential: [] as Array<{
+              skillNumber: string;
+              title: string;
+              units: Array<{
+                grade: string;
+                unitTitle: string;
+                unitNumber: number;
+              }>;
+            }>,
+            asHelpful: [] as Array<{
+              skillNumber: string;
+              title: string;
+              units: Array<{
+                grade: string;
+                unitTitle: string;
+                unitNumber: number;
+              }>;
+            }>,
+            asSupport: [] as Array<{
+              grade: string;
+              unitTitle: string;
+              unitNumber: number;
+            }>,
           };
 
           // 1. Find units where this skill appears as target or support
-          const units = await RoadmapUnitModel.find({
-            $or: [
-              { targetSkills: skill.skillNumber },
-              { additionalSupportSkills: skill.skillNumber }
-            ]
-          }, {
-            grade: 1,
-            unitTitle: 1,
-            unitNumber: 1,
-            targetSkills: 1,
-            additionalSupportSkills: 1
-          }).lean();
+          const units = await RoadmapUnitModel.find(
+            {
+              $or: [
+                { targetSkills: skill.skillNumber },
+                { additionalSupportSkills: skill.skillNumber },
+              ],
+            },
+            {
+              grade: 1,
+              unitTitle: 1,
+              unitNumber: 1,
+              targetSkills: 1,
+              additionalSupportSkills: 1,
+            },
+          ).lean();
 
           // Categorize units
           for (const unit of units) {
             const unitRef = {
               grade: unit.grade,
               unitTitle: unit.unitTitle,
-              unitNumber: unit.unitNumber ?? 0
+              unitNumber: unit.unitNumber ?? 0,
             };
 
             if (unit.targetSkills?.includes(skill.skillNumber)) {
               appearsIn.asTarget.push(unitRef);
-            } else if (unit.additionalSupportSkills?.includes(skill.skillNumber)) {
+            } else if (
+              unit.additionalSupportSkills?.includes(skill.skillNumber)
+            ) {
               appearsIn.asSupport.push(unitRef);
             }
           }
 
           // 2. Find skills that have this as an essential skill
-          const essentialSkills = await RoadmapsSkillModel.find({
-            "essentialSkills.skillNumber": skill.skillNumber
-          }, {
-            skillNumber: 1,
-            title: 1,
-            units: 1
-          }).lean();
+          const essentialSkills = await RoadmapsSkillModel.find(
+            {
+              "essentialSkills.skillNumber": skill.skillNumber,
+            },
+            {
+              skillNumber: 1,
+              title: 1,
+              units: 1,
+            },
+          ).lean();
 
-          appearsIn.asEssential = essentialSkills.map(s => ({
+          appearsIn.asEssential = essentialSkills.map((s) => ({
             skillNumber: s.skillNumber,
             title: s.title,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             units: (s.units || []).map((u: any) => ({
               grade: u.grade,
               unitTitle: u.unitTitle,
-              unitNumber: u.unitNumber
-            }))
+              unitNumber: u.unitNumber,
+            })),
           }));
 
           // 3. Find skills that have this as a helpful skill
-          const helpfulSkills = await RoadmapsSkillModel.find({
-            "helpfulSkills.skillNumber": skill.skillNumber
-          }, {
-            skillNumber: 1,
-            title: 1,
-            units: 1
-          }).lean();
+          const helpfulSkills = await RoadmapsSkillModel.find(
+            {
+              "helpfulSkills.skillNumber": skill.skillNumber,
+            },
+            {
+              skillNumber: 1,
+              title: 1,
+              units: 1,
+            },
+          ).lean();
 
-          appearsIn.asHelpful = helpfulSkills.map(s => ({
+          appearsIn.asHelpful = helpfulSkills.map((s) => ({
             skillNumber: s.skillNumber,
             title: s.title,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             units: (s.units || []).map((u: any) => ({
               grade: u.grade,
               unitTitle: u.unitTitle,
-              unitNumber: u.unitNumber
-            }))
+              unitNumber: u.unitNumber,
+            })),
           }));
 
           // Update the skill with computed data
           const updateResult = await RoadmapsSkillModel.updateOne(
             { skillNumber: skill.skillNumber },
-            { $set: { appearsIn } }
+            { $set: { appearsIn } },
           );
 
           if (!updateResult.acknowledged) {
-            throw new Error('Update was not acknowledged by database');
+            throw new Error("Update was not acknowledged by database");
           }
 
           if (updateResult.matchedCount === 0) {
-            throw new Error('Skill not found in database');
+            throw new Error("Skill not found in database");
           }
 
           if (updateResult.modifiedCount === 0) {
-            console.warn(`⚠️  Skill ${skill.skillNumber} was not modified (may already have appearsIn)`);
+            console.warn(
+              `⚠️  Skill ${skill.skillNumber} was not modified (may already have appearsIn)`,
+            );
           }
 
           updated++;
@@ -277,24 +351,27 @@ export async function runSkillAppearsInMigration() {
               asTarget: appearsIn.asTarget.length,
               asEssential: appearsIn.asEssential.length,
               asHelpful: appearsIn.asHelpful.length,
-              asSupport: appearsIn.asSupport.length
-            }
+              asSupport: appearsIn.asSupport.length,
+            },
           });
-
         } catch (error) {
           failed++;
-          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-          console.error(`❌ Failed to process skill ${skill.skillNumber}:`, errorMsg);
+          const errorMsg =
+            error instanceof Error ? error.message : "Unknown error";
+          console.error(
+            `❌ Failed to process skill ${skill.skillNumber}:`,
+            errorMsg,
+          );
           results.push({
             skillNumber: skill.skillNumber,
             title: skill.title,
             success: false,
-            error: errorMsg
+            error: errorMsg,
           });
         }
       }
 
-      console.log('\n✅ Migration complete!');
+      console.log("\n✅ Migration complete!");
       console.log(`   Total: ${allSkills.length}`);
       console.log(`   Updated: ${updated}`);
       console.log(`   Failed: ${failed}`);
@@ -306,15 +383,14 @@ export async function runSkillAppearsInMigration() {
           processed,
           updated,
           failed,
-          results
-        }
+          results,
+        },
       };
-
     } catch (error) {
-      console.error('💥 Migration failed:', error);
+      console.error("💥 Migration failed:", error);
       return {
         success: false,
-        error: handleServerError(error, 'runSkillAppearsInMigration')
+        error: handleServerError(error, "runSkillAppearsInMigration"),
       };
     }
   });

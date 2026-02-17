@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 const schemaFields = {
   date: { type: String, required: true },
@@ -14,17 +17,18 @@ const schemaFields = {
   weeklyMinutes: { type: String, required: false },
   importedAt: { type: String, required: false },
   importedBy: { type: String, required: false },
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
 const ZearnImportRecordSchema = new mongoose.Schema(schemaFields, {
   ...standardSchemaOptions,
-  collection: 'zearn_import_records'
+  collection: "zearn_import_records",
 });
 
 // Add indexes for performance
 ZearnImportRecordSchema.index({ date: 1, section: 1, teacher: 1 });
 ZearnImportRecordSchema.index({ studentID: 1, lessonTitle: 1 });
 
-export const ZearnImportRecordModel = mongoose.models.ZearnImportRecord || 
-  mongoose.model("ZearnImportRecord", ZearnImportRecordSchema); 
+export const ZearnImportRecordModel =
+  mongoose.models.ZearnImportRecord ||
+  mongoose.model("ZearnImportRecord", ZearnImportRecordSchema);

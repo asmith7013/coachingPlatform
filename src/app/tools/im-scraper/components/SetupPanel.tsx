@@ -1,13 +1,13 @@
 "use client";
 
-import React from 'react';
-import { IMCredentials, SectionLessonSelection } from '../lib/types';
-import { CredentialsForm } from './CredentialsForm';
-import { LessonSelectionForm } from './LessonSelectionForm';
-import { ClaudeExportToggle } from './ClaudeExportToggle';
-import { UrlPreview } from './UrlPreview';
-import { ActionButtons } from './ActionButtons';
-import { ErrorDisplay } from './ErrorDisplay';
+import React from "react";
+import { IMCredentials, SectionLessonSelection } from "../lib/types";
+import { CredentialsForm } from "./CredentialsForm";
+import { LessonSelectionForm } from "./LessonSelectionForm";
+import { ClaudeExportToggle } from "./ClaudeExportToggle";
+import { UrlPreview } from "./UrlPreview";
+import { ActionButtons } from "./ActionButtons";
+import { ErrorDisplay } from "./ErrorDisplay";
 
 interface SetupPanelProps {
   credentials: IMCredentials;
@@ -20,7 +20,11 @@ interface SetupPanelProps {
     sectionLessons: SectionLessonSelection;
     delayBetweenRequests: number;
   };
-  onUrlParamsChange: (updater: (prev: SetupPanelProps['urlParams']) => SetupPanelProps['urlParams']) => void;
+  onUrlParamsChange: (
+    updater: (
+      prev: SetupPanelProps["urlParams"],
+    ) => SetupPanelProps["urlParams"],
+  ) => void;
   enableClaudeExport: boolean;
   onClaudeExportToggle: (enabled: boolean) => void;
   urls: string[];
@@ -47,7 +51,7 @@ export function SetupPanel({
   onGenerateUrls,
   onStartScraping,
   onDebugScrape,
-  onTestUrl
+  onTestUrl,
 }: SetupPanelProps) {
   // Helper function to get available lessons (1-20)
   const getAvailableLessons = (): number[] => {
@@ -62,7 +66,7 @@ export function SetupPanel({
           Enter credentials and select specific lessons to scrape
         </p>
       </div>
-      
+
       <div className="bg-white rounded-lg shadow p-6 space-y-6">
         <CredentialsForm
           credentials={credentials}
@@ -79,9 +83,9 @@ export function SetupPanel({
           enableClaudeExport={enableClaudeExport}
           onToggle={onClaudeExportToggle}
         />
-        
+
         <UrlPreview urls={urls} />
-        
+
         <ActionButtons
           urlParams={urlParams}
           credentials={credentials}
@@ -93,7 +97,7 @@ export function SetupPanel({
           onDebugScrape={onDebugScrape}
           onTestUrl={onTestUrl}
         />
-        
+
         <ErrorDisplay error={error} />
       </div>
     </div>

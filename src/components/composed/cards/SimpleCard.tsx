@@ -1,23 +1,23 @@
 "use client";
 
-import React from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
-import { cn } from '@ui/utils/formatters';
-import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
-import { 
-  paddingX, 
-  paddingY, 
-  textSize, 
-  weight, 
-  radii, 
-  shadows 
-} from '@ui-tokens';
-import { 
-  textColors, 
-  backgroundColors, 
-  borderColors, 
-  ringColors 
-} from '@ui-tokens';
+import React from "react";
+import { tv, type VariantProps } from "tailwind-variants";
+import { cn } from "@ui/utils/formatters";
+import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
+import {
+  paddingX,
+  paddingY,
+  textSize,
+  weight,
+  radii,
+  shadows,
+} from "@ui-tokens";
+import {
+  textColors,
+  backgroundColors,
+  borderColors,
+  ringColors,
+} from "@ui-tokens";
 
 /**
  * SimpleCard component styles using Tailwind Variants
@@ -27,91 +27,92 @@ import {
 const simpleCard = tv({
   slots: {
     container: [
-      'col-span-1 flex',
-      radii.md,                      // rounded-md → radii.md
-      shadows.sm                     // shadow-sm → shadows.sm
+      "col-span-1 flex",
+      radii.md, // rounded-md → radii.md
+      shadows.sm, // shadow-sm → shadows.sm
     ],
     colorSection: [
-      'flex w-16 shrink-0 items-center justify-center rounded-l-md',
-      textSize.sm,                   // text-sm → textSize.sm
-      weight.medium,                 // font-medium → weight.medium
-      textColors.white               // text-white → textColors.white
+      "flex w-16 shrink-0 items-center justify-center rounded-l-md",
+      textSize.sm, // text-sm → textSize.sm
+      weight.medium, // font-medium → weight.medium
+      textColors.white, // text-white → textColors.white
     ],
     contentContainer: [
-      'flex flex-1 items-center justify-between truncate rounded-r-md',
-      'border-t border-r border-b',
-      borderColors.muted,            // border-gray-200 → borderColors.muted
-      backgroundColors.white         // bg-white → backgroundColors.white
+      "flex flex-1 items-center justify-between truncate rounded-r-md",
+      "border-t border-r border-b",
+      borderColors.muted, // border-gray-200 → borderColors.muted
+      backgroundColors.white, // bg-white → backgroundColors.white
     ],
     contentText: [
-      'flex-1 truncate',
-      paddingX.md,                   // px-4 → paddingX.md
-      paddingY.sm,                   // py-2 → paddingY.sm
-      textSize.sm                    // text-sm → textSize.sm
+      "flex-1 truncate",
+      paddingX.md, // px-4 → paddingX.md
+      paddingY.sm, // py-2 → paddingY.sm
+      textSize.sm, // text-sm → textSize.sm
     ],
     title: [
-      weight.medium,                 // font-medium → weight.medium
-      textColors.default,            // text-gray-900 → textColors.default
-      `hover:${textColors.muted}`    // hover:text-gray-600 → hover:textColors.muted
+      weight.medium, // font-medium → weight.medium
+      textColors.default, // text-gray-900 → textColors.default
+      `hover:${textColors.muted}`, // hover:text-gray-600 → hover:textColors.muted
     ],
     subtitle: [
-      textColors.muted               // text-gray-500 → textColors.muted
+      textColors.muted, // text-gray-500 → textColors.muted
     ],
     actionContainer: [
-      'shrink-0',
-      paddingX.sm                    // pr-2 → paddingX.sm
+      "shrink-0",
+      paddingX.sm, // pr-2 → paddingX.sm
     ],
     actionButton: [
-      'inline-flex size-8 items-center justify-center',
-      radii.full,                    // rounded-full → radii.full
-      'bg-transparent',
-      backgroundColors.white,        // bg-white → backgroundColors.white
-      textColors.muted,              // text-gray-400 → textColors.muted
+      "inline-flex size-8 items-center justify-center",
+      radii.full, // rounded-full → radii.full
+      "bg-transparent",
+      backgroundColors.white, // bg-white → backgroundColors.white
+      textColors.muted, // text-gray-400 → textColors.muted
       `hover:${textColors.default}`, // hover:text-gray-500 → hover:textColors.default
-      'focus:ring-2',
-      ringColors.primary,            // focus:ring-indigo-500 → ringColors.primary
-      'focus:ring-offset-2 focus:outline-hidden'
-    ]
+      "focus:ring-2",
+      ringColors.primary, // focus:ring-indigo-500 → ringColors.primary
+      "focus:ring-offset-2 focus:outline-hidden",
+    ],
   },
   variants: {
     colorVariant: {
       // Map some to semantic colors
-      pink: { colorSection: 'bg-pink-600' },
-      purple: { colorSection: 'bg-purple-600' },
-      yellow: { colorSection: 'bg-yellow-500' },
-      green: { colorSection: backgroundColors.success },      // bg-green-500 → backgroundColors.success
-      blue: { colorSection: backgroundColors.primary },       // bg-blue-600 → backgroundColors.primary
-      red: { colorSection: backgroundColors.danger },         // bg-red-600 → backgroundColors.danger
-      indigo: { colorSection: 'bg-indigo-600' },
-      gray: { colorSection: backgroundColors.secondary },     // bg-gray-600 → backgroundColors.secondary
+      pink: { colorSection: "bg-pink-600" },
+      purple: { colorSection: "bg-purple-600" },
+      yellow: { colorSection: "bg-yellow-500" },
+      green: { colorSection: backgroundColors.success }, // bg-green-500 → backgroundColors.success
+      blue: { colorSection: backgroundColors.primary }, // bg-blue-600 → backgroundColors.primary
+      red: { colorSection: backgroundColors.danger }, // bg-red-600 → backgroundColors.danger
+      indigo: { colorSection: "bg-indigo-600" },
+      gray: { colorSection: backgroundColors.secondary }, // bg-gray-600 → backgroundColors.secondary
     },
     clickable: {
-      true: { 
-        container: 'cursor-pointer hover:shadow-md transition-shadow duration-200',
-        title: `hover:${textColors.muted}`                   // hover:text-gray-600 → hover:textColors.muted
+      true: {
+        container:
+          "cursor-pointer hover:shadow-md transition-shadow duration-200",
+        title: `hover:${textColors.muted}`, // hover:text-gray-600 → hover:textColors.muted
       },
-      false: {}
+      false: {},
     },
     size: {
-      sm: { 
-        colorSection: [`w-12`, textSize.xs],                 // w-12 text-xs → w-12 textSize.xs
-        contentText: [paddingX.lg, 'py-1.5', textSize.xs]   // px-3 py-1.5 text-xs → paddingX.lg py-1.5 textSize.xs
+      sm: {
+        colorSection: [`w-12`, textSize.xs], // w-12 text-xs → w-12 textSize.xs
+        contentText: [paddingX.lg, "py-1.5", textSize.xs], // px-3 py-1.5 text-xs → paddingX.lg py-1.5 textSize.xs
       },
-      md: { 
-        colorSection: [`w-16`, textSize.sm],                 // w-16 text-sm → w-16 textSize.sm
-        contentText: [paddingX.md, paddingY.sm, textSize.sm] // px-4 py-2 text-sm → paddingX.md paddingY.sm textSize.sm
+      md: {
+        colorSection: [`w-16`, textSize.sm], // w-16 text-sm → w-16 textSize.sm
+        contentText: [paddingX.md, paddingY.sm, textSize.sm], // px-4 py-2 text-sm → paddingX.md paddingY.sm textSize.sm
       },
-      lg: { 
-        colorSection: [`w-20`, textSize.base],               // w-20 text-base → w-20 textSize.base
-        contentText: [paddingX.lg, paddingY.lg, textSize.base] // px-5 py-3 text-base → paddingX.lg paddingY.lg textSize.base
-      }
-    }
+      lg: {
+        colorSection: [`w-20`, textSize.base], // w-20 text-base → w-20 textSize.base
+        contentText: [paddingX.lg, paddingY.lg, textSize.base], // px-5 py-3 text-base → paddingX.lg paddingY.lg textSize.base
+      },
+    },
   },
   defaultVariants: {
-    colorVariant: 'blue',
+    colorVariant: "blue",
     clickable: false,
-    size: 'md'
-  }
+    size: "md",
+  },
 });
 
 export type SimpleCardVariants = VariantProps<typeof simpleCard>;
@@ -142,7 +143,7 @@ interface SimpleCardProps extends SimpleCardVariants {
 /**
  * SimpleCard component that recreates the Tailwind UI card pattern
  * with a colored left section, content area, and optional action menu
- * 
+ *
  * @example
  * ```tsx
  * <SimpleCard
@@ -170,9 +171,9 @@ export function SimpleCard({
   className,
   actionIcon,
   actionLabel = "Open options",
-  colorVariant = 'blue',
+  colorVariant = "blue",
   clickable = false,
-  size = 'md',
+  size = "md",
   ...props
 }: SimpleCardProps) {
   const styles = simpleCard({ colorVariant, clickable, size });
@@ -193,35 +194,26 @@ export function SimpleCard({
     }
   };
 
-  const TitleComponent = href && !onClick ? 'a' : 'span';
+  const TitleComponent = href && !onClick ? "a" : "span";
   const titleProps = href && !onClick ? { href } : {};
 
   return (
-    <li 
+    <li
       className={cn(styles.container(), className)}
-      onClick={(onClick || href) ? handleCardClick : undefined}
+      onClick={onClick || href ? handleCardClick : undefined}
       {...props}
     >
       {/* Colored Left Section */}
-      <div className={styles.colorSection()}>
-        {initials}
-      </div>
+      <div className={styles.colorSection()}>{initials}</div>
 
       {/* Content Container */}
       <div className={styles.contentContainer()}>
         {/* Main Content */}
         <div className={styles.contentText()}>
-          <TitleComponent 
-            className={styles.title()}
-            {...titleProps}
-          >
+          <TitleComponent className={styles.title()} {...titleProps}>
             {title}
           </TitleComponent>
-          {subtitle && (
-            <p className={styles.subtitle()}>
-              {subtitle}
-            </p>
-          )}
+          {subtitle && <p className={styles.subtitle()}>{subtitle}</p>}
         </div>
 
         {/* Action Button */}
@@ -233,7 +225,9 @@ export function SimpleCard({
               onClick={handleActionClick}
             >
               <span className="sr-only">{actionLabel}</span>
-              {actionIcon || <EllipsisVerticalIcon aria-hidden="true" className="size-5" />}
+              {actionIcon || (
+                <EllipsisVerticalIcon aria-hidden="true" className="size-5" />
+              )}
             </button>
           </div>
         )}
@@ -245,4 +239,4 @@ export function SimpleCard({
 /**
  * Export the styles for potential reuse in other components
  */
-export const simpleCardStyles = simpleCard; 
+export const simpleCardStyles = simpleCard;

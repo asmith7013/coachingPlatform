@@ -5,7 +5,7 @@
  * Handles the nuances of ramp-ups, assessments, and regular lessons.
  */
 
-export type LessonType = 'lesson' | 'rampUp' | 'assessment';
+export type LessonType = "lesson" | "rampUp" | "assessment";
 
 export interface LessonDisplayOptions {
   /**
@@ -62,7 +62,7 @@ export function formatLessonDisplay(
   lessonNumber: number | string,
   options: LessonDisplayOptions = {},
   lessonType?: LessonType,
-  lessonTitle?: string
+  lessonTitle?: string,
 ): string {
   const { showLessonNumber = false, section, usePureTitle = false } = options;
 
@@ -80,7 +80,7 @@ export function formatLessonDisplay(
   const type = lessonType || getLessonType(lessonName, section);
 
   // For ramp-ups and assessments, return as-is (they already have descriptive prefixes)
-  if (type === 'rampUp' || type === 'assessment') {
+  if (type === "rampUp" || type === "assessment") {
     return lessonName;
   }
 
@@ -115,14 +115,17 @@ export function formatLessonDisplay(
  * extractLessonTitle("Projecting and Scaling")
  * // => "Projecting and Scaling"  (no prefix to remove)
  */
-export function extractLessonTitle(lessonName: string, lessonTitle?: string): string {
+export function extractLessonTitle(
+  lessonName: string,
+  lessonTitle?: string,
+): string {
   // If title already provided from DB, use it
   if (lessonTitle) {
     return lessonTitle;
   }
 
   // Remove "Ramp Up #N:" or "Ramp Up N:" prefix
-  const withoutRampUp = lessonName.replace(/^Ramp Up #?\d+:\s*/i, '');
+  const withoutRampUp = lessonName.replace(/^Ramp Up #?\d+:\s*/i, "");
 
   // For assessments, keep the full name (it's already the title)
   if (lessonName.match(/^End of Unit Assessment/i)) {
@@ -155,7 +158,7 @@ export function extractLessonTitle(lessonName: string, lessonTitle?: string): st
 export function getLessonType(
   lessonName: string,
   section?: string,
-  lessonType?: LessonType
+  lessonType?: LessonType,
 ): LessonType {
   // If type already provided from DB, use it
   if (lessonType) {
@@ -164,23 +167,23 @@ export function getLessonType(
 
   // Check lesson name for indicators
   if (/^Ramp Up/i.test(lessonName)) {
-    return 'rampUp';
+    return "rampUp";
   }
 
   if (/^End of Unit Assessment/i.test(lessonName)) {
-    return 'assessment';
+    return "assessment";
   }
 
   // Fallback: check section
-  if (section === 'Ramp Ups') {
-    return 'rampUp';
+  if (section === "Ramp Ups") {
+    return "rampUp";
   }
 
-  if (section === 'Unit Assessment') {
-    return 'assessment';
+  if (section === "Unit Assessment") {
+    return "assessment";
   }
 
-  return 'lesson';
+  return "lesson";
 }
 
 /**
@@ -212,18 +215,18 @@ export function buildLessonDisplayName(
   lessonType: LessonType,
   lessonNumber: number | string,
   lessonTitle: string,
-  options: LessonDisplayOptions = {}
+  options: LessonDisplayOptions = {},
 ): string {
   const { showLessonNumber = false } = options;
 
   switch (lessonType) {
-    case 'rampUp':
+    case "rampUp":
       return `Ramp Up ${lessonNumber}: ${lessonTitle}`;
 
-    case 'assessment':
+    case "assessment":
       return lessonTitle; // Title already includes "End of Unit Assessment"
 
-    case 'lesson':
+    case "lesson":
       if (showLessonNumber) {
         return `Lesson ${lessonNumber}: ${lessonTitle}`;
       }
@@ -249,5 +252,5 @@ export function buildLessonDisplayName(
  * // => "Ramp Up 1: Division of Fractions"  (already standardized)
  */
 export function standardizeRampUpName(lessonName: string): string {
-  return lessonName.replace(/^Ramp Up #(\d+):/i, 'Ramp Up $1:');
+  return lessonName.replace(/^Ramp Up #(\d+):/i, "Ramp Up $1:");
 }

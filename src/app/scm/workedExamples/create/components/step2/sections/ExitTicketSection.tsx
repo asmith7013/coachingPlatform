@@ -8,9 +8,7 @@ interface ExitTicketSectionProps {
   problemAnalysis: ProblemAnalysis;
 }
 
-export function ExitTicketSection({
-  problemAnalysis,
-}: ExitTicketSectionProps) {
+export function ExitTicketSection({ problemAnalysis }: ExitTicketSectionProps) {
   return (
     <SectionAccordion
       title="Exit Ticket Analysis"
@@ -67,9 +65,7 @@ export function ExitTicketSection({
                 title: "Graph Plan",
                 icon: null,
                 content: (
-                  <GraphPlanDisplay
-                    graphPlan={problemAnalysis.graphPlan!}
-                  />
+                  <GraphPlanDisplay graphPlan={problemAnalysis.graphPlan!} />
                 ),
               },
             ]

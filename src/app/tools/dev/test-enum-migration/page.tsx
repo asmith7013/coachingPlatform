@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { EventFieldsSchema } from '@/lib/schema/zod-schema/schedules/schedule';
-import { DurationValues, SessionPurposes } from '@enums';
-import { Button } from '@/components/core/Button';
+import { useState } from "react";
+import { EventFieldsSchema } from "@/lib/schema/zod-schema/schedules/schedule";
+import { DurationValues, SessionPurposes } from "@enums";
+import { Button } from "@/components/core/Button";
 
 // Type for the validation result
 type EventItemResult = {
@@ -14,7 +14,8 @@ type EventItemResult = {
 
 // Simple test component to verify enum migration
 export default function TestEnumMigrationPage() {
-  const [validationResult, setValidationResult] = useState<EventItemResult | null>(null);
+  const [validationResult, setValidationResult] =
+    useState<EventItemResult | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const testEventItemValidation = () => {
@@ -23,21 +24,20 @@ export default function TestEnumMigrationPage() {
       const testData = {
         eventType: Object.values(SessionPurposes)[0],
         staff: ["staffId1", "staffId2"],
-        duration: DurationValues[0] // String duration ("15")
+        duration: DurationValues[0], // String duration ("15")
       };
-      
+
       // The Zod schema will transform the string duration to a number
       const result = EventFieldsSchema.parse(testData);
       setValidationResult(result as unknown as EventItemResult);
       setValidationError(null);
-      
+
       // Verify duration was transformed to number
-      console.log('Original duration (string):', testData.duration);
-      console.log('Transformed duration (number):', result.duration);
-      console.log('Type of duration after validation:', typeof result.duration);
-      
+      console.log("Original duration (string):", testData.duration);
+      console.log("Transformed duration (number):", result.duration);
+      console.log("Type of duration after validation:", typeof result.duration);
     } catch (error) {
-      console.error('Validation error:', error);
+      console.error("Validation error:", error);
       setValidationError(JSON.stringify(error, null, 2));
       setValidationResult(null);
     }
@@ -46,13 +46,13 @@ export default function TestEnumMigrationPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Enum Migration Test</h1>
-      
+
       <div className="mb-6">
         <Button onClick={testEventItemValidation}>
           Test EventItem Validation
         </Button>
       </div>
-      
+
       {validationResult && (
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-2">Validation Result:</h2>
@@ -61,10 +61,12 @@ export default function TestEnumMigrationPage() {
           </pre>
         </div>
       )}
-      
+
       {validationError && (
         <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-2 text-red-600">Validation Error:</h2>
+          <h2 className="text-xl font-semibold mb-2 text-red-600">
+            Validation Error:
+          </h2>
           <pre className="bg-red-50 p-4 rounded text-red-600">
             {validationError}
           </pre>
@@ -72,4 +74,4 @@ export default function TestEnumMigrationPage() {
       )}
     </div>
   );
-} 
+}

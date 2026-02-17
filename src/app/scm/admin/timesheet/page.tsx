@@ -18,7 +18,15 @@ import type { TimesheetEntry } from "@zod-schema/scm/timesheet/timesheet-entry";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
 // Register Chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+);
 
 // Helper to get week start date (Sunday)
 function getWeekStart(dateStr: string): string {
@@ -49,7 +57,7 @@ const TASK_COLORS: Record<string, string> = {
   "Lead Facilitation": "#8b5cf6", // purple
   "Content Training": "#ec4899", // pink
   "Local Travel": "#6366f1", // indigo
-  "Other": "#6b7280", // gray
+  Other: "#6b7280", // gray
 };
 
 // Helper to categorize tasks
@@ -65,12 +73,18 @@ function categorizeTask(task: string): string {
 
 // Format currency with commas
 function formatCurrency(value: number): string {
-  return value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }
 
 // Format number with commas
 function formatNumber(value: number, decimals: number = 1): string {
-  return value.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  return value.toLocaleString("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
 }
 
 export default function TimesheetPage() {
@@ -78,7 +92,8 @@ export default function TimesheetPage() {
   const [startDate, setStartDate] = useState(() => {
     const now = new Date();
     // Use Sept 1 of current year, or previous year if before Sept
-    const year = now.getMonth() >= 8 ? now.getFullYear() : now.getFullYear() - 1;
+    const year =
+      now.getMonth() >= 8 ? now.getFullYear() : now.getFullYear() - 1;
     return `${year}-09-01`;
   });
   const [endDate, setEndDate] = useState(() => {
@@ -86,7 +101,12 @@ export default function TimesheetPage() {
   });
 
   // Fetch entries using React Query
-  const { data: entries = [], isLoading: loading, error, refetch } = useTimesheetEntries({
+  const {
+    data: entries = [],
+    isLoading: loading,
+    error,
+    refetch,
+  } = useTimesheetEntries({
     startDate,
     endDate,
   });
@@ -116,7 +136,7 @@ export default function TimesheetPage() {
 
   // Sort dates descending
   const sortedDates = Object.keys(groupedEntries).sort(
-    (a, b) => new Date(b).getTime() - new Date(a).getTime()
+    (a, b) => new Date(b).getTime() - new Date(a).getTime(),
   );
 
   // Calculate totals
@@ -135,17 +155,19 @@ export default function TimesheetPage() {
 
     entries.forEach((entry) => {
       const category = categorizeTask(entry.task);
-      categoryTotals[category] = (categoryTotals[category] || 0) + entry.totalPay;
+      categoryTotals[category] =
+        (categoryTotals[category] || 0) + entry.totalPay;
     });
 
     // Sort by value descending
-    const sorted = Object.entries(categoryTotals)
-      .sort((a, b) => b[1] - a[1]);
+    const sorted = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
 
     return {
       labels: sorted.map(([label]) => label),
       values: sorted.map(([, value]) => value),
-      colors: sorted.map(([label]) => TASK_COLORS[label] || TASK_COLORS["Other"]),
+      colors: sorted.map(
+        ([label]) => TASK_COLORS[label] || TASK_COLORS["Other"],
+      ),
     };
   }, [entries]);
 
@@ -189,7 +211,10 @@ export default function TimesheetPage() {
 
   // Calculate earnings and hours by week
   const weeklyData = useMemo(() => {
-    const weekTotals: Record<string, { pay: number; hours: number; tlStudioHours: number }> = {};
+    const weekTotals: Record<
+      string,
+      { pay: number; hours: number; tlStudioHours: number }
+    > = {};
 
     entries.forEach((entry) => {
       const weekStart = getWeekStart(entry.date);
@@ -205,7 +230,9 @@ export default function TimesheetPage() {
     });
 
     // Sort by week date ascending
-    const sorted = Object.entries(weekTotals).sort((a, b) => a[0].localeCompare(b[0]));
+    const sorted = Object.entries(weekTotals).sort((a, b) =>
+      a[0].localeCompare(b[0]),
+    );
 
     return {
       weekStarts: sorted.map(([weekStart]) => weekStart),
@@ -262,7 +289,9 @@ export default function TimesheetPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Timesheet Entries</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Timesheet Entries
+          </h1>
           <p className="text-gray-600 mt-2">
             Track and view your submitted timesheet entries
           </p>
@@ -305,8 +334,12 @@ export default function TimesheetPage() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm font-medium text-gray-500">Total Entries</div>
-            <div className="text-2xl font-bold text-gray-900">{entries.length}</div>
+            <div className="text-sm font-medium text-gray-500">
+              Total Entries
+            </div>
+            <div className="text-2xl font-bold text-gray-900">
+              {entries.length}
+            </div>
           </div>
           <div className="bg-white rounded-lg shadow p-4">
             <div className="text-sm font-medium text-gray-500">Total Hours</div>
@@ -321,7 +354,9 @@ export default function TimesheetPage() {
             </div>
           </div>
           <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm font-medium text-gray-500">Hours This Week</div>
+            <div className="text-sm font-medium text-gray-500">
+              Hours This Week
+            </div>
             <div className="text-2xl font-bold text-blue-600">
               {formatNumber(hoursThisWeek)}
             </div>
@@ -389,7 +424,10 @@ export default function TimesheetPage() {
                     const pay = weeklyData.payValues[index];
                     const avgRate = hours > 0 ? pay / hours : 0;
                     return (
-                      <tr key={weeklyData.weekStarts[index]} className="hover:bg-gray-50">
+                      <tr
+                        key={weeklyData.weekStarts[index]}
+                        className="hover:bg-gray-50"
+                      >
                         <td className="px-4 py-3 text-sm text-gray-900">
                           {label}
                         </td>
@@ -418,13 +456,21 @@ export default function TimesheetPage() {
                       {formatNumber(totalHours)}
                     </td>
                     <td className="px-4 py-3 text-sm font-semibold text-blue-600 text-right">
-                      {formatNumber(weeklyData.tlStudioHoursValues.reduce((sum, h) => sum + h, 0))}
+                      {formatNumber(
+                        weeklyData.tlStudioHoursValues.reduce(
+                          (sum, h) => sum + h,
+                          0,
+                        ),
+                      )}
                     </td>
                     <td className="px-4 py-3 text-sm font-semibold text-green-600 text-right">
                       ${formatCurrency(totalPay)}
                     </td>
                     <td className="px-4 py-3 text-sm font-semibold text-gray-600 text-right">
-                      ${totalHours > 0 ? formatCurrency(totalPay / totalHours) : "0.00"}
+                      $
+                      {totalHours > 0
+                        ? formatCurrency(totalPay / totalHours)
+                        : "0.00"}
                     </td>
                   </tr>
                 </tfoot>
@@ -442,7 +488,9 @@ export default function TimesheetPage() {
 
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <div className="text-red-700">{error instanceof Error ? error.message : "An error occurred"}</div>
+            <div className="text-red-700">
+              {error instanceof Error ? error.message : "An error occurred"}
+            </div>
           </div>
         )}
 
@@ -485,30 +533,33 @@ export default function TimesheetPage() {
                     <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Total
                     </th>
-                    <th className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
-
-                    </th>
+                    <th className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {[...entries]
-                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime(),
+                    )
                     .map((entry) => {
-                      const displayDate = new Date(entry.date + "T12:00:00").toLocaleDateString(
-                        "en-US",
-                        {
-                          weekday: "short",
-                          month: "short",
-                          day: "numeric",
-                        }
-                      );
+                      const displayDate = new Date(
+                        entry.date + "T12:00:00",
+                      ).toLocaleDateString("en-US", {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                      });
                       return (
                         <tr key={entry._id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
                             {displayDate}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-900">
-                            <div className="max-w-xs truncate" title={entry.task}>
+                            <div
+                              className="max-w-xs truncate"
+                              title={entry.task}
+                            >
                               {entry.task}
                             </div>
                           </td>

@@ -14,7 +14,7 @@ interface AddDayOffModalProps {
     name: string,
     shiftSchedule: boolean,
     targetSections: Array<{ school: string; classSection: string }>,
-    hasMathClass: boolean
+    hasMathClass: boolean,
   ) => Promise<void>;
   saving: boolean;
   currentSection: SectionConfigOption;
@@ -31,12 +31,12 @@ export function AddDayOffModal({
   allSections,
   unitSchedules,
 }: AddDayOffModalProps) {
-  const [date, setDate] = useState('');
-  const [name, setName] = useState('');
+  const [date, setDate] = useState("");
+  const [name, setName] = useState("");
   const [shiftSchedule, setShiftSchedule] = useState(true);
   const [hasMathClass, setHasMathClass] = useState(false); // Default: no math class
   const [selectedSections, setSelectedSections] = useState<Set<string>>(
-    new Set([`${currentSection.school}|${currentSection.classSection}`])
+    new Set([`${currentSection.school}|${currentSection.classSection}`]),
   );
 
   // Check if the selected date falls within any scheduled range
@@ -69,8 +69,8 @@ export function AddDayOffModal({
     e.preventDefault();
     if (!date || !name) return;
 
-    const targets = Array.from(selectedSections).map(key => {
-      const [school, classSection] = key.split('|');
+    const targets = Array.from(selectedSections).map((key) => {
+      const [school, classSection] = key.split("|");
       return { school, classSection };
     });
 
@@ -85,7 +85,8 @@ export function AddDayOffModal({
         <div>
           <span>Add Section Event</span>
           <p className="text-sm text-gray-500 mt-1 font-normal">
-            Add an event for {currentSection.school} - {currentSection.classSection}
+            Add an event for {currentSection.school} -{" "}
+            {currentSection.classSection}
           </p>
         </div>
       }
@@ -96,7 +97,9 @@ export function AddDayOffModal({
         <div className="px-6 py-4 space-y-4">
           {/* Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Date
+            </label>
             <input
               type="date"
               value={date}
@@ -108,7 +111,9 @@ export function AddDayOffModal({
 
           {/* Name of Event */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name of Event</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Name of Event
+            </label>
             <input
               type="text"
               value={name}
@@ -121,11 +126,17 @@ export function AddDayOffModal({
 
           {/* Math Class Toggle */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Does math class happen?</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Does math class happen?
+            </label>
             <div className="flex gap-4">
-              <label className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
-                !hasMathClass ? 'border-gray-400 bg-gray-100' : 'border-gray-200 hover:bg-gray-50'
-              }`}>
+              <label
+                className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
+                  !hasMathClass
+                    ? "border-gray-400 bg-gray-100"
+                    : "border-gray-200 hover:bg-gray-50"
+                }`}
+              >
                 <input
                   type="radio"
                   name="mathClass"
@@ -134,13 +145,21 @@ export function AddDayOffModal({
                   className="h-4 w-4 text-gray-600 cursor-pointer"
                 />
                 <div>
-                  <div className="text-sm font-medium text-gray-900">No Math Class</div>
-                  <div className="text-xs text-gray-500">Testing, assembly, no school</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    No Math Class
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Testing, assembly, no school
+                  </div>
                 </div>
               </label>
-              <label className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
-                hasMathClass ? 'border-gray-600 bg-gray-50' : 'border-gray-200 hover:bg-gray-50'
-              }`}>
+              <label
+                className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
+                  hasMathClass
+                    ? "border-gray-600 bg-gray-50"
+                    : "border-gray-200 hover:bg-gray-50"
+                }`}
+              >
                 <input
                   type="radio"
                   name="mathClass"
@@ -149,8 +168,12 @@ export function AddDayOffModal({
                   className="h-4 w-4 text-gray-600 cursor-pointer"
                 />
                 <div>
-                  <div className="text-sm font-medium text-gray-900">Math Class Happens</div>
-                  <div className="text-xs text-gray-500">Pop quiz, special lesson</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    Math Class Happens
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Pop quiz, special lesson
+                  </div>
                 </div>
               </label>
             </div>
@@ -159,13 +182,18 @@ export function AddDayOffModal({
           {/* Sections checkboxes */}
           {allSections.length > 1 && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Apply to Sections</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Apply to Sections
+              </label>
               <div className="space-y-2 max-h-32 overflow-y-auto">
                 {allSections.map((section) => {
                   const key = `${section.school}|${section.classSection}`;
                   const isChecked = selectedSections.has(key);
                   return (
-                    <label key={key} className="flex items-center gap-2 cursor-pointer">
+                    <label
+                      key={key}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
                       <input
                         type="checkbox"
                         checked={isChecked}
@@ -182,7 +210,12 @@ export function AddDayOffModal({
                       />
                       <span className="text-sm text-gray-700">
                         {section.school} - {section.classSection}
-                        {section.teacher && <span className="text-gray-400"> ({section.teacher})</span>}
+                        {section.teacher && (
+                          <span className="text-gray-400">
+                            {" "}
+                            ({section.teacher})
+                          </span>
+                        )}
                       </span>
                     </label>
                   );
@@ -201,7 +234,9 @@ export function AddDayOffModal({
                   onChange={(e) => setShiftSchedule(e.target.checked)}
                   className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500 cursor-pointer"
                 />
-                <span className="text-sm text-gray-700">Shift schedule forward by 1 day</span>
+                <span className="text-sm text-gray-700">
+                  Shift schedule forward by 1 day
+                </span>
               </label>
               {dateInScheduledRange && (
                 <p className="text-xs text-amber-600 mt-1 ml-6">
@@ -228,7 +263,11 @@ export function AddDayOffModal({
           >
             {saving ? (
               <>
-                <Spinner size="xs" variant="default" className="border-white border-t-amber-200" />
+                <Spinner
+                  size="xs"
+                  variant="default"
+                  className="border-white border-t-amber-200"
+                />
                 Adding...
               </>
             ) : (

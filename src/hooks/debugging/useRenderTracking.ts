@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 /**
  * Hook to track the number of renders for a component
@@ -9,13 +9,13 @@ import { useEffect, useRef } from 'react';
  */
 export function useRenderCounter(componentName: string) {
   const renderCount = useRef(0);
-  
+
   useEffect(() => {
     renderCount.current += 1;
     console.log(`🔄 ${componentName} rendered: ${renderCount.current} times`);
   });
-  
+
   return renderCount.current;
 }
 
-export default useRenderCounter; 
+export default useRenderCounter;

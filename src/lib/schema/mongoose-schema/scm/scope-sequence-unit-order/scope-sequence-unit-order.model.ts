@@ -1,5 +1,8 @@
-import mongoose from 'mongoose';
-import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import mongoose from "mongoose";
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 // =====================================
 // SCOPE SEQUENCE UNIT ORDER MODEL
@@ -15,12 +18,15 @@ const SCOPE_SEQUENCE_TAG_VALUES = [
 const GRADE_VALUES = ["6", "7", "8", "Algebra 1"] as const;
 
 // Unit order item subdocument schema
-const UnitOrderItemSchema = new mongoose.Schema({
-  order: { type: Number, required: true },
-  unitNumber: { type: Number, required: true },
-  unitName: { type: String, required: true },
-  grade: { type: String, required: true, enum: GRADE_VALUES },
-}, { _id: false });
+const UnitOrderItemSchema = new mongoose.Schema(
+  {
+    order: { type: Number, required: true },
+    unitNumber: { type: Number, required: true },
+    unitName: { type: String, required: true },
+    grade: { type: String, required: true, enum: GRADE_VALUES },
+  },
+  { _id: false },
+);
 
 const scopeSequenceUnitOrderFields = {
   scopeSequenceTag: {
@@ -35,17 +41,23 @@ const scopeSequenceUnitOrderFields = {
     default: [],
   },
 
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
-const ScopeSequenceUnitOrderSchema = new mongoose.Schema(scopeSequenceUnitOrderFields, {
-  ...standardSchemaOptions,
-  collection: 'scope-sequence-unit-order'
-});
+const ScopeSequenceUnitOrderSchema = new mongoose.Schema(
+  scopeSequenceUnitOrderFields,
+  {
+    ...standardSchemaOptions,
+    collection: "scope-sequence-unit-order",
+  },
+);
 
 // Delete existing model to force schema refresh
 if (mongoose.models.ScopeSequenceUnitOrder) {
   delete mongoose.models.ScopeSequenceUnitOrder;
 }
 
-export const ScopeSequenceUnitOrderModel = mongoose.model('ScopeSequenceUnitOrder', ScopeSequenceUnitOrderSchema);
+export const ScopeSequenceUnitOrderModel = mongoose.model(
+  "ScopeSequenceUnitOrder",
+  ScopeSequenceUnitOrderSchema,
+);

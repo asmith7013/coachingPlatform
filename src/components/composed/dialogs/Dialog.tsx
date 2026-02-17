@@ -1,41 +1,41 @@
-'use client';
+"use client";
 
-import { Fragment, ReactNode } from 'react';
-import { Dialog as HDialog, Transition } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/solid';
-import { cn } from '@ui/utils/formatters';
-import { tv, type VariantProps } from 'tailwind-variants';
-import { 
-  shadows, 
-  textSize, 
-  weight, 
-  paddingX, 
-  paddingY, 
-  radii 
-} from '@/lib/tokens/tokens';
-import { textColors, backgroundColors } from '@/lib/tokens/colors';
+import { Fragment, ReactNode } from "react";
+import { Dialog as HDialog, Transition } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import { cn } from "@ui/utils/formatters";
+import { tv, type VariantProps } from "tailwind-variants";
+import {
+  shadows,
+  textSize,
+  weight,
+  paddingX,
+  paddingY,
+  radii,
+} from "@/lib/tokens/tokens";
+import { textColors, backgroundColors } from "@/lib/tokens/colors";
 
 // Create dialog variants using tv()
 const dialog = tv({
   slots: {
-    backdrop: 'fixed inset-0 bg-black/40 backdrop-blur-sm',
-    container: 'fixed inset-0 overflow-y-auto',
+    backdrop: "fixed inset-0 bg-black/40 backdrop-blur-sm",
+    container: "fixed inset-0 overflow-y-auto",
     wrapper: `flex min-h-full items-start justify-center ${paddingX.md} py-10`,
     panel: `${backgroundColors.white} ${radii.lg} w-full max-h-[90vh] overflow-y-auto`,
-    closeButton: 'absolute right-4 top-4 focus:outline-none',
-    closeIcon: 'h-6 w-6',
+    closeButton: "absolute right-4 top-4 focus:outline-none",
+    closeIcon: "h-6 w-6",
     title: `mb-4 pr-8 ${weight.semibold}`,
   },
   variants: {
     size: {
-      sm: { panel: 'max-w-md' },               // 28rem (448px)
-      md: { panel: 'max-w-xl' },               // 36rem (576px) 
-      lg: { panel: 'max-w-3xl' },              // 48rem (768px)
-      xl: { panel: 'max-w-5xl' },              // 64rem (1024px)
-      full: { panel: 'max-w-full w-[calc(100%-2rem)]' }, // Full width minus margin
+      sm: { panel: "max-w-md" }, // 28rem (448px)
+      md: { panel: "max-w-xl" }, // 36rem (576px)
+      lg: { panel: "max-w-3xl" }, // 48rem (768px)
+      xl: { panel: "max-w-5xl" }, // 64rem (1024px)
+      full: { panel: "max-w-full w-[calc(100%-2rem)]" }, // Full width minus margin
     },
     padding: {
-      none: { panel: 'p-0', title: 'px-6 pt-6' },
+      none: { panel: "p-0", title: "px-6 pt-6" },
       sm: { panel: `${paddingX.md} ${paddingY.md}` },
       md: { panel: `${paddingX.lg} ${paddingY.lg}` },
       lg: { panel: `${paddingX.xl} ${paddingY.xl}` },
@@ -52,24 +52,24 @@ const dialog = tv({
       lg: { title: textSize.xl },
     },
     closeButtonColor: {
-      default: { 
+      default: {
         closeButton: `${textColors.muted} hover:${textColors.primary}`,
       },
-      muted: { 
+      muted: {
         closeButton: `${textColors.muted} hover:${textColors.default}`,
       },
-      danger: { 
+      danger: {
         closeButton: `${textColors.muted} hover:${textColors.danger}`,
       },
-    }
+    },
   },
   defaultVariants: {
-    size: 'md',
-    padding: 'md',
-    shadow: 'lg',
-    titleSize: 'md',
-    closeButtonColor: 'default',
-  }
+    size: "md",
+    padding: "md",
+    shadow: "lg",
+    titleSize: "md",
+    closeButtonColor: "default",
+  },
 });
 
 // Export variant types for external use
@@ -93,19 +93,19 @@ export function Dialog({
   onClose,
   title,
   children,
-  size = 'md',
-  padding = 'md',
-  shadow = 'lg',
-  titleSize = 'md',
-  closeButtonColor = 'default',
+  size = "md",
+  padding = "md",
+  shadow = "lg",
+  titleSize = "md",
+  closeButtonColor = "default",
   maxWidth,
   className,
   showCloseButton = true,
 }: DialogProps) {
   const styles = dialog({ size, padding, shadow, titleSize, closeButtonColor });
-  
+
   // Use the custom maxWidth if provided, otherwise use the size variant
-  const panelClasses = maxWidth 
+  const panelClasses = maxWidth
     ? cn(styles.panel(), className, maxWidth)
     : cn(styles.panel(), className);
 
@@ -141,10 +141,7 @@ export function Dialog({
               <HDialog.Panel className={panelClasses}>
                 {/* Close button */}
                 {showCloseButton && (
-                  <button
-                    onClick={onClose}
-                    className={styles.closeButton()}
-                  >
+                  <button onClick={onClose} className={styles.closeButton()}>
                     <XMarkIcon className={styles.closeIcon()} />
                     <span className="sr-only">Close</span>
                   </button>

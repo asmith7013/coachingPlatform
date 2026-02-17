@@ -22,20 +22,22 @@ All slides are **960x540px, light theme**. CFU/Answer boxes use PPTX animation (
 
 **Read files in numbered order. Each file has ONE job.**
 
-| Step | File | What It Contains | When to Read |
-|------|------|------------------|--------------|
-| 1 | **00-overview.md** (this file) | Phase purpose, reading order, execution flow | Start here |
-| 2 | **01-slide-by-slide.md** | Per-slide protocol, what each slide contains | Before generating |
-| 3 | **02-technical-rules.md** | PPTX constraints, data attributes, colors | Before generating |
-| 4 | **03-pedagogy.md** | Teaching principles, CFU rules, conciseness | Before generating |
-| 5 | **04-svg-workflow.md** | SVG pixel math, graph creation | **Only if Visual Type = SVG** |
+| Step | File                           | What It Contains                             | When to Read                  |
+| ---- | ------------------------------ | -------------------------------------------- | ----------------------------- |
+| 1    | **00-overview.md** (this file) | Phase purpose, reading order, execution flow | Start here                    |
+| 2    | **01-slide-by-slide.md**       | Per-slide protocol, what each slide contains | Before generating             |
+| 3    | **02-technical-rules.md**      | PPTX constraints, data attributes, colors    | Before generating             |
+| 4    | **03-pedagogy.md**             | Teaching principles, CFU rules, conciseness  | Before generating             |
+| 5    | **04-svg-workflow.md**         | SVG pixel math, graph creation               | **Only if Visual Type = SVG** |
 
 **Also read (referenced from card-patterns):**
+
 - `card-patterns/README.md` - Index of HTML patterns
 - `../../reference/diagram-patterns.md` - Non-graph SVG patterns (tape diagrams, hangers, etc.)
 - `visuals/annotation-zones.md` - Quick zone reference for annotations
 
 **Checklists (use during/after generation):**
+
 - `checklists/pre-flight.md` - Verify BEFORE writing each slide
 - `checklists/completion.md` - Verify AFTER all 10 slides done
 
@@ -102,6 +104,7 @@ Read: 03-pedagogy.md         ← Teaching principles
 ```
 
 **Also read from reference folder:**
+
 ```
 Read: ../../reference/styling.md        ← Colors, fonts, layout classes
 Read: ../../reference/layout-presets.md ← Layout presets + regions
@@ -113,14 +116,15 @@ Read: ../../reference/layout-presets.md ← Layout presets + regions
 
 Most slides use just 3 patterns:
 
-| Region | Pattern | Purpose |
-|--------|---------|---------|
-| Header | `title-zone.html` | Badge + Title + Subtitle |
-| Left column | `content-box.html` | Equations, text (main content) |
+| Region               | Pattern                 | Purpose                                     |
+| -------------------- | ----------------------- | ------------------------------------------- |
+| Header               | `title-zone.html`       | Badge + Title + Subtitle                    |
+| Left column          | `content-box.html`      | Equations, text (main content)              |
 | Left column (bottom) | `problem-reminder.html` | Problem reminder at bottom left (≤15 words) |
-| Right column | `svg-visual` | Diagrams, graphs (see visuals/) |
+| Right column         | `svg-visual`            | Diagrams, graphs (see visuals/)             |
 
 **Plus overlays and special cases:**
+
 - `cfu-answer-card.html` → CFU/Answer boxes stacked on same slide (animated, appear on click)
 - `graph-snippet.html` → Coordinate graphs (recalculate pixels)
 - `slide-teacher-instructions.html` → Slide 1 only (teacher-facing)
@@ -137,6 +141,7 @@ Most slides use just 3 patterns:
 Write each slide to a separate file. The number of step slides (S) varies from 2-5 (default 3), so the total file count varies accordingly.
 
 **Example with 3 steps (default):**
+
 ```
 src/app/presentations/{slug}/
 ├── slide-1.html   (Teacher Instructions - Big Idea, Learning Targets, Strategy)
@@ -173,6 +178,7 @@ Use the Write tool for each slide file.
 **When all slides are written (total count depends on step count):**
 
 Use the Read tool to read the Phase 4 instructions:
+
 ```
 Read: .claude/skills/create-worked-example-sg/phases/04-save-to-database.md
 ```

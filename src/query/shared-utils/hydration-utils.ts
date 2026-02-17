@@ -1,5 +1,5 @@
-import { dehydrate, hydrate, QueryClient } from '@tanstack/react-query';
-import { captureError, createErrorContext } from '@error';
+import { dehydrate, hydrate, QueryClient } from "@tanstack/react-query";
+import { captureError, createErrorContext } from "@error";
 
 /**
  * Core serialization utilities shared between client and server code
@@ -14,7 +14,10 @@ export function dehydrateState(client: QueryClient): unknown {
   try {
     return dehydrate(client);
   } catch (error) {
-    captureError(error, createErrorContext('QuerySerialization', 'dehydrateState'));
+    captureError(
+      error,
+      createErrorContext("QuerySerialization", "dehydrateState"),
+    );
     throw error;
   }
 }
@@ -24,11 +27,17 @@ export function dehydrateState(client: QueryClient): unknown {
  * @param client The query client to hydrate
  * @param dehydratedState The dehydrated state to hydrate with
  */
-export function hydrateState(client: QueryClient, dehydratedState: unknown): void {
+export function hydrateState(
+  client: QueryClient,
+  dehydratedState: unknown,
+): void {
   try {
     hydrate(client, dehydratedState);
   } catch (error) {
-    captureError(error, createErrorContext('QuerySerialization', 'hydrateState'));
+    captureError(
+      error,
+      createErrorContext("QuerySerialization", "hydrateState"),
+    );
     throw error;
   }
 }
@@ -44,7 +53,7 @@ export async function prefetchMultipleQueries(
   queries: Array<{
     queryKey: unknown[];
     queryFn: () => Promise<unknown>;
-  }>
+  }>,
 ): Promise<void> {
   try {
     await Promise.all(
@@ -52,11 +61,14 @@ export async function prefetchMultipleQueries(
         client.prefetchQuery({
           queryKey,
           queryFn,
-        })
-      )
+        }),
+      ),
     );
   } catch (error) {
-    captureError(error, createErrorContext('QuerySerialization', 'prefetchMultipleQueries'));
+    captureError(
+      error,
+      createErrorContext("QuerySerialization", "prefetchMultipleQueries"),
+    );
     throw error;
   }
-} 
+}

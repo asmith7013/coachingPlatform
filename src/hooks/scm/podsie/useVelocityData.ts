@@ -42,7 +42,7 @@ export function useVelocityData(
   selectedSections: string[],
   sectionOptions: SectionOption[],
   schoolYear: string,
-  includeNotTracked: boolean
+  includeNotTracked: boolean,
 ) {
   const queryClient = useQueryClient();
 
@@ -63,7 +63,7 @@ export function useVelocityData(
             SCHOOL_YEAR_START,
             SCHOOL_YEAR_END,
             includeNotTracked,
-            true // includeStudentDetails
+            true, // includeStudentDetails
           );
 
           if (!result.success || !result.data) {
@@ -93,12 +93,13 @@ export function useVelocityData(
             throw new Error(`Section ${sectionId} not found`);
           }
 
-          const scopeTag = section.scopeSequenceTag || `Grade ${section.gradeLevel}`;
+          const scopeTag =
+            section.scopeSequenceTag || `Grade ${section.gradeLevel}`;
           const result = await fetchSectionUnitSchedules(
             schoolYear,
             scopeTag,
             section.school,
-            section.classSection
+            section.classSection,
           );
 
           if (!result.success) {
@@ -173,7 +174,7 @@ export function useVelocityData(
         queryKey: velocityKeys.section(sectionId, includeNotTracked),
       });
     },
-    [queryClient, includeNotTracked]
+    [queryClient, includeNotTracked],
   );
 
   /**

@@ -1,44 +1,44 @@
-'use client'
+"use client";
 
-import { ReactNode } from 'react'
-import { tv, type VariantProps } from 'tailwind-variants'
-import { textColors } from '@/lib/tokens/tokens'
+import { ReactNode } from "react";
+import { tv, type VariantProps } from "tailwind-variants";
+import { textColors } from "@/lib/tokens/tokens";
 
 const tableCell = tv({
-  base: 'px-4 py-3',
+  base: "px-4 py-3",
   variants: {
     textSize: {
-      xs: 'text-xs',
-      sm: 'text-sm',
-      base: 'text-base',
-      lg: 'text-lg',
-      xl: 'text-xl',
+      xs: "text-xs",
+      sm: "text-sm",
+      base: "text-base",
+      lg: "text-lg",
+      xl: "text-xl",
     },
     align: {
-      left: 'text-left',
-      center: 'text-center',
-      right: 'text-right'
+      left: "text-left",
+      center: "text-center",
+      right: "text-right",
     },
     variant: {
       default: textColors.default,
       muted: textColors.muted,
       accent: textColors.accent,
-      danger: textColors.danger
-    }
+      danger: textColors.danger,
+    },
   },
   defaultVariants: {
-    textSize: 'base',
-    align: 'left',
-    variant: 'default'
-  }
-})
+    textSize: "base",
+    align: "left",
+    variant: "default",
+  },
+});
 
-export type TableCellVariants = VariantProps<typeof tableCell>
-export const tableCellStyles = tableCell
+export type TableCellVariants = VariantProps<typeof tableCell>;
+export const tableCellStyles = tableCell;
 
 interface TableCellProps extends TableCellVariants {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }
 
 export function TableCell({
@@ -46,11 +46,11 @@ export function TableCell({
   className,
   align,
   textSize,
-  variant
+  variant,
 }: TableCellProps) {
   return (
     <td className={tableCell({ align, textSize, variant, className })}>
       {children}
     </td>
-  )
+  );
 }
