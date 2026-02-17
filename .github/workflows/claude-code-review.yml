@@ -1,0 +1,58 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+
+    # Prevent multiple simultaneous reviews for the same PR
+    concurrency:
+      group: claude-review-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      id-token: write
+      actions: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Code Review
+        id: claude-review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          track_progress: true
+
+          claude_args: |
+            --model claude-opus-4-5-20251101
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh search:*),Bash(gh api:*)"
+
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Please review this pull request and provide feedback on:
+            - Code quality and best practices
+            - Potential bugs or issues
+            - Performance considerations (especially MongoDB query efficiency)
+            - Security concerns
+            - Mongoose and Zod schema sync (dual schema system must stay in sync)
+            - Server action error handling (must return `{ success, data?, error? }`)
+            - TypeScript strictness (avoid `any` types; never use `eslint-disable` comments)
+
+            Use the repository's CLAUDE.md for guidance on style and conventions.
+            Be constructive and helpful in your feedback.
+
+            Use `gh pr comment` with your Bash tool to leave your review as a top-level comment on the PR.
+            Use `mcp__github_inline_comment__create_inline_comment` for specific code-level feedback.

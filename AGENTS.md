@@ -1,8 +1,21 @@
 # AGENTS.md
 
-This file contains specialized prompts and workflows for Claude Code agents working on this codebase.
+This file contains operational workflows and reference material for Claude Code agents.
 
-## Available Agents
+## MongoDB Query Reference
+
+@.claude/mongosh-queries/SKILL.md
+@.claude/mongosh-queries/students.md
+@.claude/mongosh-queries/podsie.md
+@.claude/mongosh-queries/curriculum.md
+@.claude/mongosh-queries/zearn.md
+@.claude/mongosh-queries/roadmaps.md
+@.claude/mongosh-queries/sections.md
+@.claude/mongosh-queries/calendar.md
+@.claude/mongosh-queries/analytics.md
+@.claude/mongosh-queries/data-fixes.md
+
+## Agent Workflows
 
 ### Database Investigation Agent
 
@@ -15,27 +28,6 @@ This file contains specialized prompts and workflows for Claude Code agents work
 3. Check for data inconsistencies (e.g., ID format mismatches)
 4. Report findings with sample documents and counts
 5. Suggest fixes based on discovered issues
-
-**Example commands:**
-
-```bash
-# Find all documents in a collection
-mongosh "$DATABASE_URL" --eval "db['collection-name'].find().limit(5).forEach(printjson);"
-
-# Check for ID format issues
-mongosh "$DATABASE_URL" --eval "
-db.students.findOne({}, { studentID: 1 });
-db['other-collection'].findOne({}, { studentId: 1 });
-"
-
-# Count documents by field
-mongosh "$DATABASE_URL" --eval "
-db['collection-name'].aggregate([
-  { \$group: { _id: '\$field', count: { \$sum: 1 } } },
-  { \$sort: { count: -1 } }
-]).forEach(printjson);
-"
-```
 
 ### Schema Sync Agent
 
@@ -100,72 +92,27 @@ db['collection-name'].find({ /* old format */ }).forEach(doc => {
 - Are Zod schemas validating correctly?
 - Are error states being handled?
 
-## Agent Best Practices
+## Best Practices
 
 ### When Working with Database
 
-1. **Always investigate before modifying** - Use `find()` and `countDocuments()` first
-2. **Sample before bulk operations** - Test on one document before updating many
-3. **Check related collections** - ID mismatches often span multiple collections
-4. **Document schema changes** - Update both CLAUDE.md and inline comments
+1. **Always investigate before modifying** — Use `find()` and `countDocuments()` first
+2. **Sample before bulk operations** — Test on one document before updating many
+3. **Check related collections** — ID mismatches often span multiple collections
+4. **Document schema changes** — Update both CLAUDE.md and inline comments
 
 ### When Fixing Bugs
 
-1. **Reproduce the issue** - Understand what the user is seeing
-2. **Check the data** - Use mongosh to inspect actual database records
-3. **Trace the flow** - Follow data from database → server action → component
-4. **Verify the fix** - Test with actual data, not just types
-
-### When Creating New Features
-
-1. **Follow existing patterns** - Look at similar features first
-2. **Use existing schemas** - Extend rather than create new ones when possible
-3. **Handle errors gracefully** - Always return `{ success, data?, error? }`
-4. **Test with real data** - Don't rely on mocked data alone
-
-## Common Debugging Commands
-
-### Check Active Students
-
-```bash
-mongosh "mongodb+srv://..." --eval "
-db.students.find({ active: true }).count();
-db.students.find({ active: true }).limit(3).forEach(s => print(s.studentID, s.firstName, s.lastName));
-"
-```
-
-### Find Orphaned Records
-
-```bash
-mongosh "mongodb+srv://..." --eval "
-// Find assessment records without matching students
-const assessmentIds = db['roadmaps-student-data'].distinct('studentId');
-print('Assessment student IDs:', assessmentIds);
-
-assessmentIds.forEach(id => {
-  const student = db.students.findOne({ studentID: id });
-  if (!student) {
-    print('⚠️  No student found for ID:', id);
-  }
-});
-"
-```
-
-### Check Collection Indexes
-
-```bash
-mongosh "mongodb+srv://..." --eval "
-db['collection-name'].getIndexes().forEach(idx => {
-  print(idx.name, ':', JSON.stringify(idx.key));
-});
-"
-```
+1. **Reproduce the issue** — Understand what the user is seeing
+2. **Check the data** — Use mongosh to inspect actual database records
+3. **Trace the flow** — Follow data from database → server action → component
+4. **Verify the fix** — Test with actual data, not just types
 
 ## Emergency Procedures
 
 ### Rollback a Bad Migration
 
-1. Never delete data immediately - mark as deleted instead
+1. Never delete data immediately — mark as deleted instead
 2. Keep backups in a separate collection: `db['collection-backup-YYYYMMDD']`
 3. Use transactions when possible (though not all MongoDB versions support them)
 

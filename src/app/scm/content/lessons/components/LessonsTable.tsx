@@ -168,7 +168,7 @@ export function LessonsTable({ units, skillMap, totalLessons }: LessonsTableProp
                             {displayStandards.length > 0 ? (
                               <div className="flex flex-wrap gap-1">
                                 {displayStandards.map((std, idx) => (
-                                  <Tooltip key={idx} content={std.text} position="bottom">
+                                  <Tooltip key={idx} content={std.text} position="bottom" clickable>
                                     <span
                                       className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs cursor-help ${
                                         std.context === "buildingTowards"
