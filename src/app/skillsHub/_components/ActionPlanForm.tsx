@@ -94,7 +94,7 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
       },
       steps: validSteps.map((s) => ({
         description: s.description.trim(),
-        dueDate: s.dueDate?.toISOString() ?? null,
+        dueDate: s.dueDate ?? null,
         evidenceOfCompletion: s.evidenceOfCompletion.trim() || null,
         skillIds: s.skillIds.length > 0 ? s.skillIds : skillIds,
       })),
