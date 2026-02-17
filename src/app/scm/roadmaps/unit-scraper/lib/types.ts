@@ -10,10 +10,10 @@ export const ROADMAP_OPTIONS = [
   "Illustrative Math New York - 6th Grade",
   "Illustrative Math New York - 7th Grade",
   "Illustrative Math New York - 8th Grade",
-  "Illustrative Math New York - Algebra 1"
+  "Illustrative Math New York - Algebra 1",
 ] as const;
 
-export type RoadmapOption = typeof ROADMAP_OPTIONS[number];
+export type RoadmapOption = (typeof ROADMAP_OPTIONS)[number];
 
 export const RoadmapSchema = z.enum(ROADMAP_OPTIONS);
 
@@ -66,11 +66,19 @@ export type UnitData = z.infer<typeof UnitDataSchema>;
 // =====================================
 
 export const UnitScraperCredentialsSchema = z.object({
-  email: z.string().email("Please enter a valid email address").default("alex.smith@teachinglab.org"),
-  password: z.string().min(1, "Password is required").default("rbx1KQD3fpv7qhd!erc")
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .default("alex.smith@teachinglab.org"),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .default("rbx1KQD3fpv7qhd!erc"),
 });
 
-export type UnitScraperCredentials = z.infer<typeof UnitScraperCredentialsSchema>;
+export type UnitScraperCredentials = z.infer<
+  typeof UnitScraperCredentialsSchema
+>;
 
 // =====================================
 // SCRAPING REQUEST SCHEMA
@@ -80,7 +88,7 @@ export const UnitScrapingRequestSchema = z.object({
   credentials: UnitScraperCredentialsSchema,
   roadmap: RoadmapSchema,
   delayBetweenRequests: z.number().min(500).max(10000).optional().default(1000),
-  delayBetweenUnits: z.number().min(500).max(10000).optional().default(2000)
+  delayBetweenUnits: z.number().min(500).max(10000).optional().default(2000),
 });
 
 export type UnitScrapingRequest = z.infer<typeof UnitScrapingRequestSchema>;
@@ -99,7 +107,7 @@ export const UnitScrapingResponseSchema = z.object({
   errors: z.array(z.string()).default([]),
   startTime: z.string(),
   endTime: z.string(),
-  duration: z.string()
+  duration: z.string(),
 });
 
 export type UnitScrapingResponse = z.infer<typeof UnitScrapingResponseSchema>;

@@ -3,10 +3,7 @@
 // =====================================
 
 // Types
-export type {
-  AttendanceSyncResult,
-  AttendanceSyncOptions,
-} from "./types";
+export type { AttendanceSyncResult, AttendanceSyncOptions } from "./types";
 
 // API Functions
 export { fetchPodsieAttendance } from "./api/fetch-attendance";

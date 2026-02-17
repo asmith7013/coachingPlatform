@@ -3,8 +3,8 @@
  * Updates status to only show "Demonstrated" for 80% or 100% scores
  */
 
-import { StudentModel } from '@/lib/schema/mongoose-schema/scm/student/student.model';
-import { connectToDB } from '@server/db/connection';
+import { StudentModel } from "@/lib/schema/mongoose-schema/scm/student/student.model";
+import { connectToDB } from "@server/db/connection";
 
 /**
  * Extract numeric score from percentage string
@@ -20,18 +20,20 @@ function getNumericScore(scoreString: string): number {
  * - 60% or lower: "Attempted But Not Passed" ⏳
  * - Not attempted: "Not Started"
  */
-function getStatus(bestScore: number): "Demonstrated" | "Attempted But Not Passed" | "Not Started" {
+function getStatus(
+  bestScore: number,
+): "Demonstrated" | "Attempted But Not Passed" | "Not Started" {
   if (bestScore === 80 || bestScore === 100) return "Demonstrated";
   if (bestScore > 0) return "Attempted But Not Passed";
   return "Not Started";
 }
 
 async function migrateAssessmentStatus() {
-  console.log('🔄 Starting assessment status migration...');
+  console.log("🔄 Starting assessment status migration...");
 
   try {
     await connectToDB();
-    console.log('✅ Connected to database');
+    console.log("✅ Connected to database");
 
     // Fetch all students
     const students = await StudentModel.find({}).lean();
@@ -43,9 +45,15 @@ async function migrateAssessmentStatus() {
     for (const student of students) {
       const s = student as Record<string, unknown>;
       const studentName = `${s.lastName}, ${s.firstName}`;
-      const skillPerformances = s.skillPerformances as Array<Record<string, unknown>>;
+      const skillPerformances = s.skillPerformances as Array<
+        Record<string, unknown>
+      >;
 
-      if (!skillPerformances || !Array.isArray(skillPerformances) || skillPerformances.length === 0) {
+      if (
+        !skillPerformances ||
+        !Array.isArray(skillPerformances) ||
+        skillPerformances.length === 0
+      ) {
         console.log(`  ⏭️  Skipping ${studentName} (no skill performances)`);
         continue;
       }
@@ -60,7 +68,9 @@ async function migrateAssessmentStatus() {
         // Calculate best score from attempts
         let bestScore = 0;
         if (attempts && Array.isArray(attempts) && attempts.length > 0) {
-          const scores = attempts.map(a => getNumericScore(a.score as string));
+          const scores = attempts.map((a) =>
+            getNumericScore(a.score as string),
+          );
           bestScore = Math.max(...scores);
         }
 
@@ -70,7 +80,9 @@ async function migrateAssessmentStatus() {
 
         // Check if status changed
         if (newStatus !== oldStatus) {
-          console.log(`    🔄 ${skill.skillCode}: "${oldStatus}" → "${newStatus}" (${bestScore}%)`);
+          console.log(
+            `    🔄 ${skill.skillCode}: "${oldStatus}" → "${newStatus}" (${bestScore}%)`,
+          );
           studentHasChanges = true;
           skillsUpdated++;
         }
@@ -79,11 +91,11 @@ async function migrateAssessmentStatus() {
         updatedSkillPerformances.push({
           ...skill,
           status: newStatus,
-          bestScore: `${bestScore}%`
+          bestScore: `${bestScore}%`,
         });
 
         // Add to mastered skills if demonstrated
-        if (newStatus === 'Demonstrated') {
+        if (newStatus === "Demonstrated") {
           newMasteredSkills.push(skill.skillCode as string);
         }
       }
@@ -95,23 +107,24 @@ async function migrateAssessmentStatus() {
           {
             $set: {
               skillPerformances: updatedSkillPerformances,
-              masteredSkills: newMasteredSkills
-            }
-          }
+              masteredSkills: newMasteredSkills,
+            },
+          },
         );
         studentsUpdated++;
-        console.log(`  ✅ Updated ${studentName} (${newMasteredSkills.length} mastered skills)`);
+        console.log(
+          `  ✅ Updated ${studentName} (${newMasteredSkills.length} mastered skills)`,
+        );
       } else {
         console.log(`  ⏭️  No changes for ${studentName}`);
       }
     }
 
-    console.log('\n✅ Migration complete!');
+    console.log("\n✅ Migration complete!");
     console.log(`   📝 Students updated: ${studentsUpdated}`);
     console.log(`   🎯 Skills updated: ${skillsUpdated}`);
-
   } catch (error) {
-    console.error('❌ Migration failed:', error);
+    console.error("❌ Migration failed:", error);
     throw error;
   }
 }
@@ -119,10 +132,10 @@ async function migrateAssessmentStatus() {
 // Run the migration
 migrateAssessmentStatus()
   .then(() => {
-    console.log('✅ Script completed successfully');
+    console.log("✅ Script completed successfully");
     process.exit(0);
   })
   .catch((error) => {
-    console.error('💥 Script failed:', error);
+    console.error("💥 Script failed:", error);
     process.exit(1);
   });

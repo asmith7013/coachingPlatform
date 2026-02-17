@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/core/feedback/Badge';
-import type { GraphPlan } from '../../lib/types';
+import { Badge } from "@/components/core/feedback/Badge";
+import type { GraphPlan } from "../../lib/types";
 
 interface GraphPlanDisplayProps {
   graphPlan: GraphPlan;
@@ -10,33 +10,54 @@ interface GraphPlanDisplayProps {
 
 // Helper to safely render a value that might be an object
 function safeRender(value: unknown): string {
-  if (value === null || value === undefined) return '';
-  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+  if (value === null || value === undefined) return "";
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
     return String(value);
   }
   return JSON.stringify(value);
 }
 
-export function GraphPlanDisplay({ graphPlan, compact = false }: GraphPlanDisplayProps) {
+export function GraphPlanDisplay({
+  graphPlan,
+  compact = false,
+}: GraphPlanDisplayProps) {
   return (
     <div className={compact ? "space-y-3" : ""}>
       {/* Equations with Line Endpoints */}
       <div className={compact ? "mb-3" : "border-b border-gray-200 pb-4"}>
-        <h5 className={compact ? "text-xs font-medium text-gray-500 mb-2" : "text-sm font-semibold text-gray-700 mb-2"}>
+        <h5
+          className={
+            compact
+              ? "text-xs font-medium text-gray-500 mb-2"
+              : "text-sm font-semibold text-gray-700 mb-2"
+          }
+        >
           {compact ? "Equations" : "Lines (with endpoints)"}
         </h5>
         <div className="space-y-2">
           {graphPlan.equations.map((eq, i) => (
-            <div key={i} className="bg-gray-50 rounded p-2 text-sm border border-gray-200">
+            <div
+              key={i}
+              className="bg-gray-50 rounded p-2 text-sm border border-gray-200"
+            >
               <div className="flex items-center gap-2 mb-1">
                 <span
                   className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: typeof eq.color === 'string' ? eq.color : '#888' }}
+                  style={{
+                    backgroundColor:
+                      typeof eq.color === "string" ? eq.color : "#888",
+                  }}
                 />
                 <code className="text-gray-700 bg-white px-1.5 py-0.5 rounded text-xs border border-gray-200">
                   {safeRender(eq.equation)}
                 </code>
-                <span className="text-gray-400 text-xs">m={safeRender(eq.slope)}, b={safeRender(eq.yIntercept)}</span>
+                <span className="text-gray-400 text-xs">
+                  m={safeRender(eq.slope)}, b={safeRender(eq.yIntercept)}
+                </span>
               </div>
               {/* Line Endpoints */}
               <div className="grid grid-cols-2 gap-2 text-xs ml-5">
@@ -44,7 +65,8 @@ export function GraphPlanDisplay({ graphPlan, compact = false }: GraphPlanDispla
                   <span className="text-gray-500">Start:</span>
                   {eq.startPoint ? (
                     <code className="text-green-700 bg-green-50 px-1 py-0.5 rounded text-xs">
-                      ({safeRender(eq.startPoint.x)}, {safeRender(eq.startPoint.y)})
+                      ({safeRender(eq.startPoint.x)},{" "}
+                      {safeRender(eq.startPoint.y)})
                     </code>
                   ) : (
                     <span className="text-amber-600 text-xs">missing</span>
@@ -67,20 +89,57 @@ export function GraphPlanDisplay({ graphPlan, compact = false }: GraphPlanDispla
       </div>
 
       {/* Scale */}
-      <div className={compact ? "mb-3" : (graphPlan.keyPoints && graphPlan.keyPoints.length > 0 ? "border-b border-gray-200 py-4" : "py-4")}>
-        <h5 className={compact ? "text-xs font-medium text-gray-500 mb-1" : "text-sm font-semibold text-gray-700 mb-2"}>Scale</h5>
+      <div
+        className={
+          compact
+            ? "mb-3"
+            : graphPlan.keyPoints && graphPlan.keyPoints.length > 0
+              ? "border-b border-gray-200 py-4"
+              : "py-4"
+        }
+      >
+        <h5
+          className={
+            compact
+              ? "text-xs font-medium text-gray-500 mb-1"
+              : "text-sm font-semibold text-gray-700 mb-2"
+          }
+        >
+          Scale
+        </h5>
         <div className="text-sm text-gray-600">
-          X: 0 to {graphPlan.scale.xMax} ({graphPlan.scale.xAxisLabels?.join(', ')}) | Y: 0 to {graphPlan.scale.yMax} ({graphPlan.scale.yAxisLabels?.join(', ')})
+          X: 0 to {graphPlan.scale.xMax} (
+          {graphPlan.scale.xAxisLabels?.join(", ")}) | Y: 0 to{" "}
+          {graphPlan.scale.yMax} ({graphPlan.scale.yAxisLabels?.join(", ")})
         </div>
       </div>
 
       {/* Key Points */}
       {graphPlan.keyPoints && graphPlan.keyPoints.length > 0 && (
-        <div className={compact ? "mb-3" : (graphPlan.annotations && graphPlan.annotations.length > 0 ? "border-b border-gray-200 py-4" : "py-4")}>
-          <h5 className={compact ? "text-xs font-medium text-gray-500 mb-1" : "text-sm font-semibold text-gray-700 mb-2"}>Key Points</h5>
+        <div
+          className={
+            compact
+              ? "mb-3"
+              : graphPlan.annotations && graphPlan.annotations.length > 0
+                ? "border-b border-gray-200 py-4"
+                : "py-4"
+          }
+        >
+          <h5
+            className={
+              compact
+                ? "text-xs font-medium text-gray-500 mb-1"
+                : "text-sm font-semibold text-gray-700 mb-2"
+            }
+          >
+            Key Points
+          </h5>
           <div className="space-y-1">
             {graphPlan.keyPoints.map((pt, ptIdx) => (
-              <div key={ptIdx} className="text-sm text-gray-600 flex items-center gap-2">
+              <div
+                key={ptIdx}
+                className="text-sm text-gray-600 flex items-center gap-2"
+              >
                 <span className="font-medium">{safeRender(pt.label)}:</span>
                 <code className="text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded text-xs border border-purple-200">
                   ({safeRender(pt.x)}, {safeRender(pt.y)})
@@ -94,14 +153,29 @@ export function GraphPlanDisplay({ graphPlan, compact = false }: GraphPlanDispla
       {/* Annotations */}
       {graphPlan.annotations && graphPlan.annotations.length > 0 && (
         <div className={compact ? "" : "pt-4"}>
-          <h5 className={compact ? "text-xs font-medium text-gray-500 mb-1" : "text-sm font-semibold text-gray-700 mb-2"}>Annotations</h5>
+          <h5
+            className={
+              compact
+                ? "text-xs font-medium text-gray-500 mb-1"
+                : "text-sm font-semibold text-gray-700 mb-2"
+            }
+          >
+            Annotations
+          </h5>
           <div className="space-y-1">
             {graphPlan.annotations.map((ann, annIdx) => (
-              <div key={annIdx} className="text-sm text-gray-600 flex items-center gap-2">
-                <Badge intent="info" size="xs">{safeRender(ann.type)}</Badge>
+              <div
+                key={annIdx}
+                className="text-sm text-gray-600 flex items-center gap-2"
+              >
+                <Badge intent="info" size="xs">
+                  {safeRender(ann.type)}
+                </Badge>
                 <span>{safeRender(ann.label)}</span>
                 {ann.from !== undefined && ann.to !== undefined && (
-                  <span className="text-gray-500 text-xs">(y: {safeRender(ann.from)} → {safeRender(ann.to)})</span>
+                  <span className="text-gray-500 text-xs">
+                    (y: {safeRender(ann.from)} → {safeRender(ann.to)})
+                  </span>
                 )}
               </div>
             ))}

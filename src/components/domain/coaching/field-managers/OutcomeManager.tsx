@@ -1,5 +1,3 @@
-
-
 // "use client";
 
 // import React, { useState } from 'react';
@@ -10,11 +8,11 @@
 // import { Card } from '@/components/composed/cards/Card';
 // import { Heading } from '@/components/core/typography/Heading';
 // import { Text } from '@/components/core/typography/Text';
-// import { 
-//   PlusIcon, 
-//   TrashIcon, 
-//   ChevronDownIcon, 
-//   ChevronRightIcon 
+// import {
+//   PlusIcon,
+//   TrashIcon,
+//   ChevronDownIcon,
+//   ChevronRightIcon
 // } from '@heroicons/react/24/outline';
 // import type { Outcome, Metric } from '@zod-schema/cap/coaching-action-plan';
 // import { getMetricCollectionMethodLabel } from '@/lib/ui/forms/fieldConfig/coaching/coaching-action-plan-config';
@@ -89,7 +87,7 @@
 //       currentValue: '',
 //       notes: ''
 //     };
-    
+
 //     const updated = [...outcomes];
 //     updated[outcomeIndex] = {
 //       ...updated[outcomeIndex],
@@ -154,7 +152,7 @@
 //         <div className="space-y-3">
 //           {outcomes.map((outcome, outcomeIndex) => {
 //             const isExpanded = expandedOutcomes.includes(outcomeIndex);
-            
+
 //             return (
 //               <Card key={outcomeIndex} padding="md" className="border">
 //                 {/* Outcome Header */}
@@ -173,7 +171,7 @@
 //                       {getOutcomeTitle(outcome, outcomeIndex)}
 //                     </Text>
 //                   </button>
-                  
+
 //                   <Button
 //                     intent="danger"
 //                     appearance="outline"
@@ -262,7 +260,7 @@
 //                                     required
 //                                   />
 //                                 </div>
-                                
+
 //                                 <Select
 //                                   label="Collection Method"
 //                                   value={metric.collectionMethod}
@@ -272,7 +270,7 @@
 //                                     label: getMetricCollectionMethodLabel(method)
 //                                   }))}
 //                                 />
-                                
+
 //                                 <Input
 //                                   label="Target Goal"
 //                                   value={metric.targetValue}
@@ -280,14 +278,14 @@
 //                                   placeholder="Target value or goal"
 //                                   required
 //                                 />
-                                
+
 //                                 <Input
 //                                   label="Current Value"
 //                                   value={metric.currentValue || ''}
 //                                   onChange={(e) => updateMetric(outcomeIndex, metricIndex, 'currentValue', e.target.value)}
 //                                   placeholder="Current measured value (optional)"
 //                                 />
-                                
+
 //                                 <div className="md:col-span-1">
 //                                   <Textarea
 //                                     label="Notes"
@@ -312,4 +310,4 @@
 //       )}
 //     </div>
 //   );
-// } 
+// }

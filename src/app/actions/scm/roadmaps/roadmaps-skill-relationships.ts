@@ -19,7 +19,7 @@ interface UnitReference {
   grade: string;
   unitTitle: string;
   unitNumber: number;
-  role: 'target' | 'support';
+  role: "target" | "support";
 }
 
 interface SkillRelationships {
@@ -43,31 +43,31 @@ export async function fetchSkillRelationships(skillNumber: string) {
       const results: SkillRelationships = {
         essentialFor: [],
         helpfulFor: [],
-        units: []
+        units: [],
       };
 
       // Find skills that have this as an essential skill
       const essentialSkills = await RoadmapsSkillModel.find(
         { "essentialSkills.skillNumber": skillNumber },
-        { skillNumber: 1, title: 1, units: 1 }
+        { skillNumber: 1, title: 1, units: 1 },
       ).lean();
 
-      results.essentialFor = essentialSkills.map(skill => ({
+      results.essentialFor = essentialSkills.map((skill) => ({
         skillNumber: skill.skillNumber,
         title: skill.title,
-        units: skill.units
+        units: skill.units,
       }));
 
       // Find skills that have this as a helpful skill
       const helpfulSkills = await RoadmapsSkillModel.find(
         { "helpfulSkills.skillNumber": skillNumber },
-        { skillNumber: 1, title: 1, units: 1 }
+        { skillNumber: 1, title: 1, units: 1 },
       ).lean();
 
-      results.helpfulFor = helpfulSkills.map(skill => ({
+      results.helpfulFor = helpfulSkills.map((skill) => ({
         skillNumber: skill.skillNumber,
         title: skill.title,
-        units: skill.units
+        units: skill.units,
       }));
 
       // Find units where this skill appears
@@ -75,34 +75,36 @@ export async function fetchSkillRelationships(skillNumber: string) {
         {
           $or: [
             { targetSkills: skillNumber },
-            { additionalSupportSkills: skillNumber }
-          ]
+            { additionalSupportSkills: skillNumber },
+          ],
         },
         {
           grade: 1,
           unitTitle: 1,
           unitNumber: 1,
           targetSkills: 1,
-          additionalSupportSkills: 1
-        }
+          additionalSupportSkills: 1,
+        },
       ).lean();
 
-      results.units = units.map(unit => ({
+      results.units = units.map((unit) => ({
         grade: unit.grade,
         unitTitle: unit.unitTitle,
         unitNumber: unit.unitNumber ?? 0,
-        role: unit.targetSkills?.includes(skillNumber) ? 'target' as const : 'support' as const
+        role: unit.targetSkills?.includes(skillNumber)
+          ? ("target" as const)
+          : ("support" as const),
       }));
 
       return {
         success: true,
-        data: results
+        data: results,
       };
     } catch (error) {
-      console.error('💥 Error fetching skill relationships:', error);
+      console.error("💥 Error fetching skill relationships:", error);
       return {
         success: false,
-        error: handleServerError(error, 'fetchSkillRelationships')
+        error: handleServerError(error, "fetchSkillRelationships"),
       };
     }
   });

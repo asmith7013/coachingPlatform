@@ -8,7 +8,11 @@
   "lessonNumber": 8,
   "scopeAndSequenceId": "68ff7f1b5d8ca031d603232e",
   "strategyName": "Compare the Parts",
-  "strategySteps": ["IDENTIFY THE SLOPE", "IDENTIFY THE Y-INTERCEPT", "COMPARE"],
+  "strategySteps": [
+    "IDENTIFY THE SLOPE",
+    "IDENTIFY THE Y-INTERCEPT",
+    "COMPARE"
+  ],
   "learningGoals": [
     "Coordinate features of equations (y = mx + b) to graphs, including lines with negative y-intercepts",
     "Create and compare graphs that represent linear relationships with the same rate of change but different initial values"

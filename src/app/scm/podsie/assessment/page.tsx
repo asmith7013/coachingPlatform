@@ -42,7 +42,7 @@ export default function AssessmentPage() {
     setSelectedSections((prev) =>
       prev.includes(sectionId)
         ? prev.filter((id) => id !== sectionId)
-        : [...prev, sectionId]
+        : [...prev, sectionId],
     );
   };
 
@@ -79,7 +79,14 @@ export default function AssessmentPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <DeprecationModal links={[{ label: "Go to Assessment Data on Podsie", url: "https://www.podsie.org/teacher/sandbox/assessmentMultiSection" }]} />
+      <DeprecationModal
+        links={[
+          {
+            label: "Go to Assessment Data on Podsie",
+            url: "https://www.podsie.org/teacher/sandbox/assessmentMultiSection",
+          },
+        ]}
+      />
       <div className="mx-auto" style={{ maxWidth: "1600px" }}>
         {/* Page Title */}
         <div className="mb-6">
@@ -109,7 +116,9 @@ export default function AssessmentPage() {
         {/* No Sections Selected */}
         {selectedSections.length === 0 && (
           <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-            <p className="text-gray-600">Select sections above to view unit assessments</p>
+            <p className="text-gray-600">
+              Select sections above to view unit assessments
+            </p>
           </div>
         )}
 
@@ -141,13 +150,15 @@ export default function AssessmentPage() {
 
             {/* Summary Tables - one per scope tag */}
             <div className="space-y-6">
-              {Array.from(sectionsByScope.entries()).map(([scopeTag, sections]) => (
-                <ScopeSummaryTable
-                  key={scopeTag}
-                  scopeTag={scopeTag}
-                  sections={sections}
-                />
-              ))}
+              {Array.from(sectionsByScope.entries()).map(
+                ([scopeTag, sections]) => (
+                  <ScopeSummaryTable
+                    key={scopeTag}
+                    scopeTag={scopeTag}
+                    sections={sections}
+                  />
+                ),
+              )}
             </div>
           </div>
         )}
@@ -155,7 +166,9 @@ export default function AssessmentPage() {
         {/* Section Accordions */}
         {selectedSectionsData.length > 0 && (
           <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-gray-900">Detailed Progress</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Detailed Progress
+            </h2>
             {selectedSectionsData.map((sectionOpt) => (
               <SectionAssessmentAccordion
                 key={sectionOpt.id}

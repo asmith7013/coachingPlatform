@@ -1,14 +1,17 @@
-'use client';
+"use client";
 
-import type { PrintButtonProps } from '../types';
+import type { PrintButtonProps } from "../types";
 
 export function PrintButton({ slide }: PrintButtonProps) {
   const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
     // Strip embedded <style> blocks from AI-generated HTML so only our styles apply
-    const cleanedContent = slide.htmlContent.replace(/<style[\s\S]*?<\/style>/gi, '');
+    const cleanedContent = slide.htmlContent.replace(
+      /<style[\s\S]*?<\/style>/gi,
+      "",
+    );
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -57,7 +60,7 @@ export function PrintButton({ slide }: PrintButtonProps) {
             break-after: auto !important;
           }
         </style>
-        ${slide.customCSS ? `<style>${slide.customCSS}</style>` : ''}
+        ${slide.customCSS ? `<style>${slide.customCSS}</style>` : ""}
       </head>
       <body>
         ${cleanedContent}
@@ -67,18 +70,24 @@ export function PrintButton({ slide }: PrintButtonProps) {
     printWindow.document.close();
 
     // Directly override inline styles on DOM elements for Safari compatibility
-    const container = printWindow.document.querySelector('.slide-container') as HTMLElement;
+    const container = printWindow.document.querySelector(
+      ".slide-container",
+    ) as HTMLElement;
     if (container) {
-      container.style.cssText = 'display:block;position:static;width:8.5in;height:auto;overflow:visible;background:white;margin:0;padding:0;';
+      container.style.cssText =
+        "display:block;position:static;width:8.5in;height:auto;overflow:visible;background:white;margin:0;padding:0;";
     }
-    const pages = printWindow.document.querySelectorAll('.print-page') as NodeListOf<HTMLElement>;
+    const pages = printWindow.document.querySelectorAll(
+      ".print-page",
+    ) as NodeListOf<HTMLElement>;
     pages.forEach((page) => {
-      page.style.cssText = 'display:block;width:8.5in;height:10.5in;overflow:hidden;margin:0.25in 0;padding:0.5in;border:none;box-sizing:border-box;background:white;page-break-after:always;';
+      page.style.cssText =
+        "display:block;width:8.5in;height:10.5in;overflow:hidden;margin:0.25in 0;padding:0.5in;border:none;box-sizing:border-box;background:white;page-break-after:always;";
     });
     if (pages.length > 0) {
       const lastPage = pages[pages.length - 1];
-      lastPage.style.pageBreakAfter = 'auto';
-      lastPage.style.setProperty('break-after', 'auto');
+      lastPage.style.pageBreakAfter = "auto";
+      lastPage.style.setProperty("break-after", "auto");
     }
 
     setTimeout(() => {

@@ -1,110 +1,374 @@
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+<div
+  class="slide-container"
+  style="
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #121212 0%, #14141e 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 40px 60px 120px 60px;
+    color: #ffffff;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+    position: relative;
+  "
+>
+  <h2
+    style="
+      font-size: 36px;
+      font-weight: 700;
+      color: #60a5fa;
+      margin: 0 0 15px 0;
+      text-transform: uppercase;
+    "
+  >
+    Step 1: READ the Coordinates
+  </h2>
 
-    <h2 style="font-size: 36px; font-weight: 700; color: #60a5fa; margin: 0 0 15px 0; text-transform: uppercase;">Step 1: READ the Coordinates</h2>
+  <div style="display: flex; gap: 40px; flex: 1; align-items: center">
+    <!-- Graph with highlighted point -->
+    <div
+      style="
+        flex: 1.2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      "
+    >
+      <svg viewBox="0 0 320 260" style="width: 100%; max-height: 380px">
+        <!-- Grid lines -->
+        <g stroke="#334155" stroke-width="0.5">
+          <line x1="110" y1="35" x2="110" y2="210" />
+          <line x1="170" y1="35" x2="170" y2="210" />
+          <line x1="230" y1="35" x2="230" y2="210" />
+          <line x1="290" y1="35" x2="290" y2="210" />
+          <line x1="50" y1="175" x2="290" y2="175" />
+          <line x1="50" y1="140" x2="290" y2="140" />
+          <line x1="50" y1="105" x2="290" y2="105" />
+          <line x1="50" y1="70" x2="290" y2="70" />
+          <line x1="50" y1="35" x2="290" y2="35" />
+        </g>
 
-    <div style="display: flex; gap: 40px; flex: 1; align-items: center;">
-        <!-- Graph with highlighted point -->
-        <div style="flex: 1.2; display: flex; flex-direction: column; align-items: center;">
-            <svg viewBox="0 0 320 260" style="width: 100%; max-height: 380px;">
-                <!-- Grid lines -->
-                <g stroke="#334155" stroke-width="0.5">
-                    <line x1="110" y1="35" x2="110" y2="210"/>
-                    <line x1="170" y1="35" x2="170" y2="210"/>
-                    <line x1="230" y1="35" x2="230" y2="210"/>
-                    <line x1="290" y1="35" x2="290" y2="210"/>
-                    <line x1="50" y1="175" x2="290" y2="175"/>
-                    <line x1="50" y1="140" x2="290" y2="140"/>
-                    <line x1="50" y1="105" x2="290" y2="105"/>
-                    <line x1="50" y1="70" x2="290" y2="70"/>
-                    <line x1="50" y1="35" x2="290" y2="35"/>
-                </g>
+        <!-- Axes -->
+        <line
+          x1="50"
+          y1="210"
+          x2="290"
+          y2="210"
+          stroke="#94a3b8"
+          stroke-width="2"
+        />
+        <line
+          x1="50"
+          y1="35"
+          x2="50"
+          y2="210"
+          stroke="#94a3b8"
+          stroke-width="2"
+        />
 
-                <!-- Axes -->
-                <line x1="50" y1="210" x2="290" y2="210" stroke="#94a3b8" stroke-width="2"/>
-                <line x1="50" y1="35" x2="50" y2="210" stroke="#94a3b8" stroke-width="2"/>
+        <!-- X-axis labels -->
+        <text x="50" y="230" fill="#94a3b8" font-size="12" text-anchor="middle">
+          0
+        </text>
+        <text
+          x="110"
+          y="230"
+          fill="#94a3b8"
+          font-size="12"
+          text-anchor="middle"
+        >
+          2
+        </text>
+        <text
+          x="170"
+          y="230"
+          fill="#94a3b8"
+          font-size="12"
+          text-anchor="middle"
+        >
+          4
+        </text>
+        <text
+          x="230"
+          y="230"
+          fill="#94a3b8"
+          font-size="12"
+          text-anchor="middle"
+        >
+          6
+        </text>
+        <text
+          x="290"
+          y="230"
+          fill="#94a3b8"
+          font-size="12"
+          text-anchor="middle"
+        >
+          8
+        </text>
+        <text
+          x="170"
+          y="252"
+          fill="#94a3b8"
+          font-size="13"
+          text-anchor="middle"
+        >
+          premium subscriptions
+        </text>
 
-                <!-- X-axis labels -->
-                <text x="50" y="230" fill="#94a3b8" font-size="12" text-anchor="middle">0</text>
-                <text x="110" y="230" fill="#94a3b8" font-size="12" text-anchor="middle">2</text>
-                <text x="170" y="230" fill="#94a3b8" font-size="12" text-anchor="middle">4</text>
-                <text x="230" y="230" fill="#94a3b8" font-size="12" text-anchor="middle">6</text>
-                <text x="290" y="230" fill="#94a3b8" font-size="12" text-anchor="middle">8</text>
-                <text x="170" y="252" fill="#94a3b8" font-size="13" text-anchor="middle">premium subscriptions</text>
+        <!-- Y-axis labels -->
+        <text x="42" y="214" fill="#94a3b8" font-size="12" text-anchor="end">
+          0
+        </text>
+        <text x="42" y="179" fill="#94a3b8" font-size="12" text-anchor="end">
+          2
+        </text>
+        <text x="42" y="144" fill="#94a3b8" font-size="12" text-anchor="end">
+          4
+        </text>
+        <text x="42" y="109" fill="#94a3b8" font-size="12" text-anchor="end">
+          6
+        </text>
+        <text x="42" y="74" fill="#94a3b8" font-size="12" text-anchor="end">
+          8
+        </text>
+        <text x="42" y="39" fill="#94a3b8" font-size="12" text-anchor="end">
+          10
+        </text>
+        <text
+          x="15"
+          y="125"
+          fill="#94a3b8"
+          font-size="13"
+          text-anchor="middle"
+          transform="rotate(-90, 15, 125)"
+        >
+          basic subscriptions
+        </text>
 
-                <!-- Y-axis labels -->
-                <text x="42" y="214" fill="#94a3b8" font-size="12" text-anchor="end">0</text>
-                <text x="42" y="179" fill="#94a3b8" font-size="12" text-anchor="end">2</text>
-                <text x="42" y="144" fill="#94a3b8" font-size="12" text-anchor="end">4</text>
-                <text x="42" y="109" fill="#94a3b8" font-size="12" text-anchor="end">6</text>
-                <text x="42" y="74" fill="#94a3b8" font-size="12" text-anchor="end">8</text>
-                <text x="42" y="39" fill="#94a3b8" font-size="12" text-anchor="end">10</text>
-                <text x="15" y="125" fill="#94a3b8" font-size="13" text-anchor="middle" transform="rotate(-90, 15, 125)">basic subscriptions</text>
+        <!-- Line 1: 7 subscriptions total -->
+        <line
+          x1="50"
+          y1="87.5"
+          x2="260"
+          y2="210"
+          stroke="#60a5fa"
+          stroke-width="3"
+        />
+        <text x="235" y="195" fill="#60a5fa" font-size="10" font-weight="bold">
+          7 subs
+        </text>
 
-                <!-- Line 1: 7 subscriptions total -->
-                <line x1="50" y1="87.5" x2="260" y2="210" stroke="#60a5fa" stroke-width="3"/>
-                <text x="235" y="195" fill="#60a5fa" font-size="10" font-weight="bold">7 subs</text>
+        <!-- Line 2: $50 budget -->
+        <line
+          x1="50"
+          y1="35"
+          x2="200"
+          y2="210"
+          stroke="#d946ef"
+          stroke-width="3"
+        />
+        <text x="70" y="55" fill="#d946ef" font-size="10" font-weight="bold">
+          $50
+        </text>
 
-                <!-- Line 2: $50 budget -->
-                <line x1="50" y1="35" x2="200" y2="210" stroke="#d946ef" stroke-width="3"/>
-                <text x="70" y="55" fill="#d946ef" font-size="10" font-weight="bold">$50</text>
+        <!-- HIGHLIGHTED POINT on blue line at (2, 5) → (110, 122.5) -->
+        <circle
+          cx="110"
+          cy="122.5"
+          r="10"
+          fill="none"
+          stroke="#fbbf24"
+          stroke-width="3"
+          stroke-dasharray="5,3"
+        />
+        <circle cx="110" cy="122.5" r="5" fill="#fbbf24" />
 
-                <!-- HIGHLIGHTED POINT on blue line at (2, 5) → (110, 122.5) -->
-                <circle cx="110" cy="122.5" r="10" fill="none" stroke="#fbbf24" stroke-width="3" stroke-dasharray="5,3"/>
-                <circle cx="110" cy="122.5" r="5" fill="#fbbf24"/>
+        <!-- Dashed lines to axes -->
+        <line
+          x1="110"
+          y1="122.5"
+          x2="110"
+          y2="210"
+          stroke="#fbbf24"
+          stroke-width="2"
+          stroke-dasharray="5,5"
+        />
+        <line
+          x1="50"
+          y1="122.5"
+          x2="110"
+          y2="122.5"
+          stroke="#fbbf24"
+          stroke-width="2"
+          stroke-dasharray="5,5"
+        />
 
-                <!-- Dashed lines to axes -->
-                <line x1="110" y1="122.5" x2="110" y2="210" stroke="#fbbf24" stroke-width="2" stroke-dasharray="5,5"/>
-                <line x1="50" y1="122.5" x2="110" y2="122.5" stroke="#fbbf24" stroke-width="2" stroke-dasharray="5,5"/>
-
-                <!-- Question mark on the point -->
-                <text x="125" y="115" fill="#fbbf24" font-size="18" font-weight="bold">?</text>
-            </svg>
-        </div>
-
-        <!-- Context panel -->
-        <div style="flex: 0.8; display: flex; flex-direction: column; gap: 20px;">
-            <div style="background: rgba(251, 191, 36, 0.15); border: 2px solid #fbbf24; border-radius: 12px; padding: 20px;">
-                <p style="font-size: 18px; color: #fbbf24; font-weight: 700; margin: 0 0 10px 0;">I see a point on the blue line...</p>
-                <p style="font-size: 16px; color: #e2e8f0; margin: 0;">To READ coordinates, I follow from the point:</p>
-                <ul style="color: #e2e8f0; font-size: 16px; margin: 10px 0 0 0; padding-left: 20px;">
-                    <li>Down to the x-axis for the first number</li>
-                    <li>Left to the y-axis for the second number</li>
-                </ul>
-            </div>
-
-            <div style="background: rgba(96, 165, 250, 0.1); border-radius: 12px; padding: 15px;">
-                <p style="font-size: 14px; color: #60a5fa; margin: 0;">The blue line shows combos with <strong>7 subscriptions total</strong></p>
-            </div>
-        </div>
+        <!-- Question mark on the point -->
+        <text x="125" y="115" fill="#fbbf24" font-size="18" font-weight="bold">
+          ?
+        </text>
+      </svg>
     </div>
+
+    <!-- Context panel -->
+    <div style="flex: 0.8; display: flex; flex-direction: column; gap: 20px">
+      <div
+        style="
+          background: rgba(251, 191, 36, 0.15);
+          border: 2px solid #fbbf24;
+          border-radius: 12px;
+          padding: 20px;
+        "
+      >
+        <p
+          style="
+            font-size: 18px;
+            color: #fbbf24;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+          "
+        >
+          I see a point on the blue line...
+        </p>
+        <p style="font-size: 16px; color: #e2e8f0; margin: 0">
+          To READ coordinates, I follow from the point:
+        </p>
+        <ul
+          style="
+            color: #e2e8f0;
+            font-size: 16px;
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+          "
+        >
+          <li>Down to the x-axis for the first number</li>
+          <li>Left to the y-axis for the second number</li>
+        </ul>
+      </div>
+
+      <div
+        style="
+          background: rgba(96, 165, 250, 0.1);
+          border-radius: 12px;
+          padding: 15px;
+        "
+      >
+        <p style="font-size: 14px; color: #60a5fa; margin: 0">
+          The blue line shows combos with <strong>7 subscriptions total</strong>
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Toggle button -->
-<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('cfu-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
-    ↓ Show Question
+<button
+  id="toggle-hint"
+  onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('cfu-box').style.transform='translateY(0)';"
+  style="
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #94a3b8;
+    font-size: 16px;
+    background: rgba(148, 163, 184, 0.1);
+    border: 2px solid #94a3b8;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    animation: pulse 2s ease-in-out infinite;
+    z-index: 200;
+    user-select: none;
+  "
+>
+  ↓ Show Question
 </button>
 
 <!-- CFU Box at bottom -->
-<div id="cfu-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
-    <div style="background: #f59e0b; border-top: 4px solid #fbbf24; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
-        <button onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
-            ×
-        </button>
-        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">❓ CHECK FOR UNDERSTANDING</div>
-        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
-            How did I READ the coordinates of this point? What numbers does the x-axis and y-axis tell me?
-        </span>
+<div
+  id="cfu-box"
+  style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+    z-index: 100;
+  "
+>
+  <div
+    style="
+      background: #f59e0b;
+      border-top: 4px solid #fbbf24;
+      padding: 1.25rem 2rem;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+    "
+  >
+    <button
+      onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';"
+      style="
+        position: absolute;
+        top: 0.75rem;
+        right: 1rem;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.2);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #000;
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 1;
+        transition: background 0.2s;
+      "
+    >
+      ×
+    </button>
+    <div
+      style="
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-right: 12px;
+      "
+    >
+      ❓ CHECK FOR UNDERSTANDING
     </div>
+    <span style="color: #000000; font-size: 1.1rem; font-weight: 600">
+      How did I READ the coordinates of this point? What numbers does the x-axis
+      and y-axis tell me?
+    </span>
+  </div>
 </div>
 
 <style>
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
 
-#toggle-hint:hover {
+  #toggle-hint:hover {
     background: rgba(148, 163, 184, 0.2);
     transform: translateX(-50%) scale(1.05);
-}
+  }
 </style>

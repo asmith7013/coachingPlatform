@@ -8,6 +8,12 @@
 │   │   ├── import-patterns.md
 │   │   └── project-structure.md
 │   ├── architecture-overview.md
+│   ├── betterFaster
+│   │   ├── classroom-behavior-intervention-plan.md
+│   │   ├── get-better-faster.json
+│   │   ├── management.md
+│   │   ├── rigor.md
+│   │   └── scm-teacher-skills.json
 │   ├── components
 │   │   ├── component-system.md
 │   │   ├── composed-components.md
@@ -117,6 +123,8 @@
 │   │   ├── podsie.md
 │   │   └── roadmap.html
 │   ├── question-variant-integration.md
+│   ├── specs
+│   │   └── skills-hub.md
 │   ├── table-of-contents.md
 │   ├── tanstack-table-implementation.md
 │   ├── token-tailwind-mapping.md
@@ -196,6 +204,7 @@
 │   │   └── migrate-subsection-index.ts
 │   ├── debug-803-unit3.js
 │   ├── delete-all-students.ts
+│   ├── extract-exam-questions.mjs
 │   ├── find-missing-standards.js
 │   ├── fix-remaining-imports.js
 │   ├── generate-theme-css.ts
@@ -214,6 +223,7 @@
 │   ├── migrate-standards-from-html.ts
 │   ├── migrate-substandards.ts
 │   ├── normalize-standard-codes.ts
+│   ├── replace-alg1-screenshots.mjs
 │   ├── run-attendance-sync.ts
 │   ├── run-podsie-sync.ts
 │   ├── run-scraper.ts
@@ -336,6 +346,8 @@
 │   │   │   │   │   ├── podsie-completion.ts
 │   │   │   │   │   ├── podsie-history.ts
 │   │   │   │   │   ├── podsie-question-map
+│   │   │   │   │   ├── podsie-scm-group.ts
+│   │   │   │   │   ├── podsie-scm-module.ts
 │   │   │   │   │   ├── podsie-sync.legacy.ts
 │   │   │   │   │   ├── podsie-sync.ts
 │   │   │   │   │   ├── processing
@@ -479,9 +491,20 @@
 │   │   │   ├── podsie
 │   │   │   │   ├── assignments
 │   │   │   │   │   └── sync
-│   │   │   │   └── lesson-progress
-│   │   │   │       ├── copy
-│   │   │   │       └── route.ts
+│   │   │   │   ├── incentives
+│   │   │   │   │   ├── activities
+│   │   │   │   │   ├── activity-types
+│   │   │   │   │   ├── recent
+│   │   │   │   │   ├── submit
+│   │   │   │   │   ├── summary
+│   │   │   │   │   └── test-email
+│   │   │   │   ├── lesson-progress
+│   │   │   │   │   ├── copy
+│   │   │   │   │   ├── groups
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── scm-groups
+│   │   │   │       ├── route.ts
+│   │   │   │       └── youtube
 │   │   │   ├── presentations
 │   │   │   │   └── html
 │   │   │   │       └── [slug]
@@ -501,6 +524,10 @@
 │   │   │   │   │   └── zearn
 │   │   │   │   ├── podsie
 │   │   │   │   │   └── worked-examples
+│   │   │   │   ├── podsie-assignments
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── podsie-modules
+│   │   │   │   │   └── route.ts
 │   │   │   │   └── worked-examples
 │   │   │   │       ├── [slug]
 │   │   │   │       ├── edit-analysis
@@ -509,6 +536,7 @@
 │   │   │   │       ├── export-google-slides
 │   │   │   │       ├── export-pptx
 │   │   │   │       ├── export-pptx-stream
+│   │   │   │       ├── generate-lesson-summary
 │   │   │   │       ├── generate-printable
 │   │   │   │       ├── generate-slides
 │   │   │   │       ├── optimize-slides
@@ -914,6 +942,7 @@
 │   │   │   ├── content
 │   │   │   │   ├── calendar
 │   │   │   │   │   ├── components
+│   │   │   │   │   ├── hooks
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── calendar-old
 │   │   │   │   │   ├── components
@@ -935,7 +964,8 @@
 │   │   │   │       ├── edit
 │   │   │   │       ├── hooks.ts
 │   │   │   │       ├── page.tsx
-│   │   │   │       └── types.ts
+│   │   │   │       ├── types.ts
+│   │   │   │       └── utils.ts
 │   │   │   ├── incentives
 │   │   │   │   ├── data
 │   │   │   │   │   ├── TrackingTables.tsx
@@ -969,11 +999,15 @@
 │   │   │   │   │   ├── components
 │   │   │   │   │   ├── page.tsx
 │   │   │   │   │   └── page.tsx.backup
+│   │   │   │   ├── components
+│   │   │   │   │   └── DeprecationModal.tsx
 │   │   │   │   ├── hooks
 │   │   │   │   ├── import-attendance
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── manage-configs
 │   │   │   │   │   ├── actions.ts
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── module-config
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── pace
 │   │   │   │   │   ├── components
@@ -987,6 +1021,8 @@
 │   │   │   │   │   └── utils
 │   │   │   │   ├── question-mapper
 │   │   │   │   │   ├── components
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── scm-groups
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── section-configs
 │   │   │   │   │   ├── components
@@ -1091,7 +1127,9 @@
 │   │   │   │   └── zearn
 │   │   │   │       └── page.tsx
 │   │   │   ├── tools
-│   │   │   │   └── problem-attic-scraper
+│   │   │   │   ├── problem-attic-scraper
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── screenshot-cropper
 │   │   │   │       └── page.tsx
 │   │   │   └── workedExamples
 │   │   │       ├── create
@@ -1100,6 +1138,7 @@
 │   │   │       │   ├── actions
 │   │   │       │   ├── ai
 │   │   │       │   ├── components
+│   │   │       │   ├── exemplar.md
 │   │   │       │   ├── hooks
 │   │   │       │   ├── layout.tsx
 │   │   │       │   ├── lib
@@ -1116,6 +1155,7 @@
 │   │   │       ├── page.tsx
 │   │   │       ├── presentations
 │   │   │       │   ├── PresentationModal.tsx
+│   │   │       │   ├── Stopwatch.tsx
 │   │   │       │   ├── components
 │   │   │       │   ├── index.ts
 │   │   │       │   ├── planningSteps.ts
@@ -1224,6 +1264,7 @@
 │   │   │   │   └── page.tsx
 │   │   │   ├── state-test-scraper
 │   │   │   │   ├── actions
+│   │   │   │   │   ├── crop-actions.ts
 │   │   │   │   │   ├── replace-screenshots.ts
 │   │   │   │   │   └── scrape.ts
 │   │   │   │   └── lib
@@ -2233,7 +2274,8 @@
 │   │   │   ├── podsie-question-mapping.ts
 │   │   │   ├── question-variant-analyzer.ts
 │   │   │   ├── question-variant-mapping.ts
-│   │   │   └── section-config-helpers.ts
+│   │   │   ├── section-config-helpers.ts
+│   │   │   └── student-matching.ts
 │   │   └── validation
 │   │       ├── coaching-stages.ts
 │   │       └── index.ts
@@ -2310,4 +2352,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-697 directories, 1614 files
+717 directories, 1636 files

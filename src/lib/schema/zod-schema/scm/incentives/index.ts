@@ -3,4 +3,4 @@
  * Re-exports all incentives schemas for convenient importing
  */
 
-export * from './activity-type-config';
+export * from "./activity-type-config";

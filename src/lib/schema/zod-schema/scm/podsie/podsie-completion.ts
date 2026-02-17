@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
+import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
 import { AllSectionsZod, SchoolsZod } from "@schema/enum/scm";
 
 // =====================================
@@ -10,7 +10,11 @@ import { AllSectionsZod, SchoolsZod } from "@schema/enum/scm";
  * Podsie question mapping - maps question numbers to Podsie question IDs
  */
 export const PodsieQuestionMapSchema = z.object({
-  questionNumber: z.number().int().positive().describe("Question number (1-based index)"),
+  questionNumber: z
+    .number()
+    .int()
+    .positive()
+    .describe("Question number (1-based index)"),
   questionId: z.string().describe("Podsie question ID"),
 });
 
@@ -34,44 +38,79 @@ export const PodsieCompletionFieldsSchema = z.object({
   // =====================================
 
   school: SchoolsZod.describe("School identifier (IS313, PS19, or X644)"),
-  classSection: AllSectionsZod.describe("Class section (e.g., '802', '803', '601')"),
+  classSection: AllSectionsZod.describe(
+    "Class section (e.g., '802', '803', '601')",
+  ),
 
   // Reference to scope-and-sequence
-  scopeAndSequenceId: z.string().optional().describe("MongoDB ObjectId reference to scope-and-sequence document"),
+  scopeAndSequenceId: z
+    .string()
+    .optional()
+    .describe("MongoDB ObjectId reference to scope-and-sequence document"),
 
   // Denormalized for easy querying (copied from scope-and-sequence)
-  unitLessonId: z.string().describe("Unit.Lesson ID (e.g., '3.15', '4.RU1') from scope-and-sequence"),
-  grade: z.string().optional().describe("Grade level (denormalized from scope-and-sequence)"),
-  lessonName: z.string().optional().describe("Lesson name (denormalized for display)"),
+  unitLessonId: z
+    .string()
+    .describe("Unit.Lesson ID (e.g., '3.15', '4.RU1') from scope-and-sequence"),
+  grade: z
+    .string()
+    .optional()
+    .describe("Grade level (denormalized from scope-and-sequence)"),
+  lessonName: z
+    .string()
+    .optional()
+    .describe("Lesson name (denormalized for display)"),
 
   // =====================================
   // PODSIE INTEGRATION DATA
   // =====================================
 
-  podsieAssignmentId: z.string().describe("Podsie assignment ID for this section's version"),
-  podsieQuestionMap: z.array(PodsieQuestionMapSchema).default([]).describe("Map of question numbers to Podsie question IDs"),
-  totalQuestions: z.number().int().positive().optional().describe("Total questions in the assessment"),
+  podsieAssignmentId: z
+    .string()
+    .describe("Podsie assignment ID for this section's version"),
+  podsieQuestionMap: z
+    .array(PodsieQuestionMapSchema)
+    .default([])
+    .describe("Map of question numbers to Podsie question IDs"),
+  totalQuestions: z
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .describe("Total questions in the assessment"),
 
   // =====================================
   // METADATA
   // =====================================
 
-  active: z.boolean().default(true).describe("Whether this config is currently active"),
-  notes: z.string().optional().describe("Optional notes about this section's configuration"),
+  active: z
+    .boolean()
+    .default(true)
+    .describe("Whether this config is currently active"),
+  notes: z
+    .string()
+    .optional()
+    .describe("Optional notes about this section's configuration"),
 });
 
 // Full schema with base document fields
-export const PodsieCompletionZodSchema = BaseDocumentSchema.merge(PodsieCompletionFieldsSchema);
+export const PodsieCompletionZodSchema = BaseDocumentSchema.merge(
+  PodsieCompletionFieldsSchema,
+);
 
 // Input schema for creation
-export const PodsieCompletionInputZodSchema = toInputSchema(PodsieCompletionZodSchema);
+export const PodsieCompletionInputZodSchema = toInputSchema(
+  PodsieCompletionZodSchema,
+);
 
 // =====================================
 // TYPE EXPORTS
 // =====================================
 
 export type PodsieCompletion = z.infer<typeof PodsieCompletionZodSchema>;
-export type PodsieCompletionInput = z.infer<typeof PodsieCompletionInputZodSchema>;
+export type PodsieCompletionInput = z.infer<
+  typeof PodsieCompletionInputZodSchema
+>;
 
 // =====================================
 // HELPER TYPES

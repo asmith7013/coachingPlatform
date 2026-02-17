@@ -1,18 +1,25 @@
-import React from 'react';
-import { tv } from 'tailwind-variants';
-import { Input } from '@/components/core/fields/Input';
-import { FormData } from '../../page';
+import React from "react";
+import { tv } from "tailwind-variants";
+import { Input } from "@/components/core/fields/Input";
+import { FormData } from "../../page";
 
 interface BasicInfoProps {
   formData: FormData;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  handleInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => void;
 }
 
 const fieldLabel = tv({
-  base: "text-sm font-medium text-gray-700 mb-1"
+  base: "text-sm font-medium text-gray-700 mb-1",
 });
 
-const BasicInfo: React.FC<BasicInfoProps> = ({ formData, handleInputChange }) => {
+const BasicInfo: React.FC<BasicInfoProps> = ({
+  formData,
+  handleInputChange,
+}) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <div>
@@ -60,4 +67,4 @@ const BasicInfo: React.FC<BasicInfoProps> = ({ formData, handleInputChange }) =>
   );
 };
 
-export default BasicInfo; 
+export default BasicInfo;

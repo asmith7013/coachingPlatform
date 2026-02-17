@@ -3,7 +3,8 @@ import { ExampleSketch } from "../../types";
 export const TAPE_DIAGRAM_DYNAMIC_BUILDER: ExampleSketch = {
   id: "tape-diagram-dynamic-builder",
   name: "Dynamic Tape Diagram Builder",
-  description: "Interactive builder to create tape diagrams by dragging and resizing variables (x) and constants, with proportional sizing based on total value",
+  description:
+    "Interactive builder to create tape diagrams by dragging and resizing variables (x) and constants, with proportional sizing based on total value",
   code: `// ==========================================
 // CONFIGURATION - Easily modifiable
 // ==========================================
@@ -733,5 +734,5 @@ function removePart(id) {
   if (selectedPartId === id) {
     selectedPartId = null;
   }
-}`
+}`,
 };

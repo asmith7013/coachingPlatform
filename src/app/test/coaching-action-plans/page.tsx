@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Card } from '@/components/composed/cards/Card';
-import { Button } from '@/components/core/Button';
-import { Badge } from '@/components/core/feedback/Badge';
-import { Select } from '@/components/core/fields/Select';
+import React, { useState } from "react";
+import { Card } from "@/components/composed/cards/Card";
+import { Button } from "@/components/core/Button";
+import { Badge } from "@/components/core/feedback/Badge";
+import { Select } from "@/components/core/fields/Select";
 
 import {
   CoachingActionPlan,
   CoachingActionPlanInput,
-  createCoachingActionPlanDefaults
-} from '@zod-schema/core/cap';
-import { useCoachingActionPlans } from '@/hooks/domain';
-import { Alert } from '@/components/core/feedback/Alert';
+  createCoachingActionPlanDefaults,
+} from "@zod-schema/core/cap";
+import { useCoachingActionPlans } from "@/hooks/domain";
+import { Alert } from "@/components/core/feedback/Alert";
 
 // =====================================
 // TYPES AND INTERFACES
@@ -40,21 +40,21 @@ interface TestState {
 function generateTestPlan(): CoachingActionPlanInput {
   const timestamp = Date.now();
   const basePlan = createCoachingActionPlanDefaults({
-    userId: 'test-user-id',
-    schoolId: '507f1f77bcf86cd799439013',
-    teacherId: '507f1f77bcf86cd799439011',
-    coachId: '507f1f77bcf86cd799439012',
-    academicYear: '2024-2025'
+    userId: "test-user-id",
+    schoolId: "507f1f77bcf86cd799439013",
+    teacherId: "507f1f77bcf86cd799439011",
+    coachId: "507f1f77bcf86cd799439012",
+    academicYear: "2024-2025",
   });
   return {
     ...basePlan,
     title: `Test CAP  ${timestamp}`,
-    rationale: 'Test rationale using  flattened schema',
-    goalDescription: 'Test goal description for  structure',
-    startDate: new Date('2024-02-01').toISOString(),
-    endDate: new Date('2024-05-01').toISOString(),
+    rationale: "Test rationale using  flattened schema",
+    goalDescription: "Test goal description for  structure",
+    startDate: new Date("2024-02-01").toISOString(),
+    endDate: new Date("2024-05-01").toISOString(),
     cycleLength: 3,
-    status: 'draft'
+    status: "draft",
   };
 }
 
@@ -68,11 +68,11 @@ export default function CoachingActionPlanCRUDTest() {
     items: plans,
     isLoading: isLoadingList,
     error: listError,
-    refetch: refetchPlans
+    refetch: refetchPlans,
   } = useCoachingActionPlans.list({
     limit: 20,
-    sortBy: 'createdAt',
-    sortOrder: 'desc'
+    sortBy: "createdAt",
+    sortOrder: "desc",
   });
 
   const {
@@ -84,14 +84,16 @@ export default function CoachingActionPlanCRUDTest() {
     isDeleting,
     createError,
     updateError,
-    deleteError
+    deleteError,
   } = useCoachingActionPlans.mutations() || {};
 
   // Only keep local state for results, testPlan, and selectedPlanId
-  const [state, setState] = useState<Pick<TestState, 'results' | 'testPlan' | 'selectedPlanId'>>({
+  const [state, setState] = useState<
+    Pick<TestState, "results" | "testPlan" | "selectedPlanId">
+  >({
     results: [],
     testPlan: null,
-    selectedPlanId: null
+    selectedPlanId: null,
   });
 
   // Compute loading state inline
@@ -102,17 +104,22 @@ export default function CoachingActionPlanCRUDTest() {
   // HELPER FUNCTIONS
   // =====================================
 
-  const addResult = (operation: string, success: boolean, data?: unknown, error?: string) => {
+  const addResult = (
+    operation: string,
+    success: boolean,
+    data?: unknown,
+    error?: string,
+  ) => {
     const result: TestResult = {
       operation,
       success,
       data,
-      error
+      error,
     };
-    
-    setState(prev => ({
+
+    setState((prev) => ({
       ...prev,
-      results: [result, ...prev.results]
+      results: [result, ...prev.results],
     }));
   };
 
@@ -123,75 +130,90 @@ export default function CoachingActionPlanCRUDTest() {
   const testCreate = async () => {
     try {
       const testPlan = generateTestPlan();
-      setState(prev => ({ ...prev, testPlan }));
-      
+      setState((prev) => ({ ...prev, testPlan }));
+
       const result = await createAsync?.(testPlan as CoachingActionPlan);
-      
-      setState(prev => ({ 
+
+      setState((prev) => ({
         ...prev,
-        selectedPlanId: result?.data?._id || null
+        selectedPlanId: result?.data?._id || null,
       }));
-      addResult('CREATE', true, result);
-      
+      addResult("CREATE", true, result);
+
       // Refetch to update list
       await refetchPlans();
     } catch (error) {
-      addResult('CREATE', false, undefined, error instanceof Error ? error.message : 'Unknown error');
+      addResult(
+        "CREATE",
+        false,
+        undefined,
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   };
 
   const testUpdate = async () => {
     if (!state.selectedPlanId) {
-      addResult('UPDATE', false, undefined, 'No plan selected');
+      addResult("UPDATE", false, undefined, "No plan selected");
       return;
     }
     try {
       const updateData: Partial<CoachingActionPlanInput> = {
         title: `Updated Plan  ${Date.now()}`,
-        status: 'active',
-        goalDescription: 'Updated goal description using  schema'
+        status: "active",
+        goalDescription: "Updated goal description using  schema",
       };
       const result = await updateAsync?.(state.selectedPlanId, updateData);
-      addResult('UPDATE', true, result);
+      addResult("UPDATE", true, result);
       refetchPlans();
     } catch (error) {
-      addResult('UPDATE', false, undefined, error instanceof Error ? error.message : 'Unknown error');
+      addResult(
+        "UPDATE",
+        false,
+        undefined,
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   };
 
   const testDelete = async () => {
     if (!state.selectedPlanId) {
-      addResult('DELETE', false, undefined, 'No plan selected');
+      addResult("DELETE", false, undefined, "No plan selected");
       return;
     }
 
     try {
       await deleteAsync?.(state.selectedPlanId);
-      
-      setState(prev => ({
+
+      setState((prev) => ({
         ...prev,
-        selectedPlanId: null
+        selectedPlanId: null,
       }));
-      addResult('DELETE', true, { message: 'Plan deleted successfully' });
-      
+      addResult("DELETE", true, { message: "Plan deleted successfully" });
+
       // Refetch to update list
       refetchPlans();
     } catch (error) {
-      addResult('DELETE', false, undefined, error instanceof Error ? error.message : 'Unknown error');
+      addResult(
+        "DELETE",
+        false,
+        undefined,
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   };
 
   const runAllTests = async () => {
     // Domain hook handles fetching automatically
     await testCreate();
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     await testUpdate();
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     // Note: Not running delete automatically to preserve test data
   };
 
   const clearResults = () => {
-    setState(prev => ({ ...prev, results: [] }));
+    setState((prev) => ({ ...prev, results: [] }));
   };
 
   // =====================================
@@ -202,120 +224,132 @@ export default function CoachingActionPlanCRUDTest() {
     <div className="container mx-auto p-6 space-y-6">
       <Card>
         <Card.Header>
-          <h1 className="text-xl font-semibold">Coaching Action Plan CRUD Test Suite</h1>
+          <h1 className="text-xl font-semibold">
+            Coaching Action Plan CRUD Test Suite
+          </h1>
         </Card.Header>
         <Card.Body className="space-y-4">
           {/* Control Panel */}
           <div className="flex flex-wrap gap-2">
-            <Button 
-              onClick={testCreate}
-              intent="primary"
-              disabled={isLoading}
-            >
-              {isCreating ? 'Creating...' : 'Test Create'}
+            <Button onClick={testCreate} intent="primary" disabled={isLoading}>
+              {isCreating ? "Creating..." : "Test Create"}
             </Button>
-            
-            <Button 
+
+            <Button
               onClick={testUpdate}
               intent="secondary"
               disabled={isLoading || !state.selectedPlanId}
             >
-              {isUpdating ? 'Updating...' : 'Test Update'}
+              {isUpdating ? "Updating..." : "Test Update"}
             </Button>
-            
-            <Button 
+
+            <Button
               onClick={testDelete}
               intent="danger"
               disabled={isLoading || !state.selectedPlanId}
             >
-              {isDeleting ? 'Deleting...' : 'Test Delete'}
+              {isDeleting ? "Deleting..." : "Test Delete"}
             </Button>
-            
-            <Button 
-              onClick={runAllTests}
-              intent="success"
-              disabled={isLoading}
-            >
+
+            <Button onClick={runAllTests} intent="success" disabled={isLoading}>
               Run All Tests
             </Button>
-            
-            <Button 
-              onClick={clearResults}
-              intent="secondary"
-            >
+
+            <Button onClick={clearResults} intent="secondary">
               Clear Results
             </Button>
           </div>
 
           {/* Plan Selection */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Selected Plan for Testing:</label>
+            <label className="text-sm font-medium">
+              Selected Plan for Testing:
+            </label>
             <Select
-              value={state.selectedPlanId || ''}
-              onChange={(value: string) => setState(prev => ({ 
-                ...prev, 
-                selectedPlanId: value || null 
-              }))}
-              options={[
-                { value: '', label: 'Select a plan...' },
-                ...currentPlans.map(plan => ({
-                  value: plan._id,
-                  label: `${plan.title} (${plan.status})`
+              value={state.selectedPlanId || ""}
+              onChange={(value: string) =>
+                setState((prev) => ({
+                  ...prev,
+                  selectedPlanId: value || null,
                 }))
+              }
+              options={[
+                { value: "", label: "Select a plan..." },
+                ...currentPlans.map((plan) => ({
+                  value: plan._id,
+                  label: `${plan.title} (${plan.status})`,
+                })),
               ]}
               placeholder="Select a plan..."
             />
           </div>
 
           {/* Loading State */}
-          {isLoading && (
-            <Alert intent="info">
-              Operation in progress...
-            </Alert>
-          )}
+          {isLoading && <Alert intent="info">Operation in progress...</Alert>}
 
           {/* Error States */}
           {listError && (
             <Alert intent="warning">
-              List Error: {listError instanceof Error ? listError.message : 'Unknown error'}
+              List Error:{" "}
+              {listError instanceof Error ? listError.message : "Unknown error"}
             </Alert>
           )}
-          
+
           {createError && (
             <Alert intent="warning">
-              Create Error: {createError instanceof Error ? createError.message : 'Unknown error'}
+              Create Error:{" "}
+              {createError instanceof Error
+                ? createError.message
+                : "Unknown error"}
             </Alert>
           )}
-          
+
           {updateError && (
             <Alert intent="warning">
-              Update Error: {updateError instanceof Error ? updateError.message : 'Unknown error'}
+              Update Error:{" "}
+              {updateError instanceof Error
+                ? updateError.message
+                : "Unknown error"}
             </Alert>
           )}
-          
+
           {deleteError && (
             <Alert intent="warning">
-              Delete Error: {deleteError instanceof Error ? deleteError.message : 'Unknown error'}
+              Delete Error:{" "}
+              {deleteError instanceof Error
+                ? deleteError.message
+                : "Unknown error"}
             </Alert>
           )}
 
           {/* Current Plans List */}
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Current Plans ({currentPlans.length})</h3>
+            <h3 className="text-lg font-semibold">
+              Current Plans ({currentPlans.length})
+            </h3>
             <div className="max-h-40 overflow-y-auto border rounded p-2">
               {currentPlans.length === 0 ? (
                 <p className="text-gray-500">No plans found</p>
               ) : (
                 <div className="space-y-1">
                   {currentPlans.map((plan) => (
-                    <div key={plan._id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <div
+                      key={plan._id}
+                      className="flex items-center justify-between p-2 bg-gray-50 rounded"
+                    >
                       <div>
                         <span className="font-medium">{plan.title}</span>
-                        <Badge intent="neutral" className="ml-2">{plan.status}</Badge>
-                        <Badge intent="info" className="ml-1">{plan.academicYear}</Badge>
+                        <Badge intent="neutral" className="ml-2">
+                          {plan.status}
+                        </Badge>
+                        <Badge intent="info" className="ml-1">
+                          {plan.academicYear}
+                        </Badge>
                       </div>
                       <div className="text-right text-sm text-gray-500">
-                        <div>{plan.ipgCoreAction} - {plan.ipgSubCategory}</div>
+                        <div>
+                          {plan.ipgCoreAction} - {plan.ipgSubCategory}
+                        </div>
                         <div>Cycles: {plan.cycleLength}</div>
                       </div>
                     </div>
@@ -328,17 +362,42 @@ export default function CoachingActionPlanCRUDTest() {
           {/* Test Plan Preview */}
           {state.testPlan && (
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold">Last Generated Test Plan ( Schema)</h3>
+              <h3 className="text-lg font-semibold">
+                Last Generated Test Plan ( Schema)
+              </h3>
               <div className="max-h-60 overflow-y-auto border rounded p-2">
                 <div className="space-y-2 text-sm">
-                  <div><strong>Title:</strong> {String(state.testPlan.title)}</div>
-                  <div><strong>Goal:</strong> {String(state.testPlan.goalDescription)}</div>
-                  <div><strong>IPG Focus:</strong> {String(state.testPlan.ipgCoreAction)} - {String(state.testPlan.ipgSubCategory)}</div>
-                  <div><strong>Academic Year:</strong> {String(state.testPlan.academicYear)}</div>
-                  <div><strong>Cycle Length:</strong> {String(state.testPlan.cycleLength)}</div>
-                  <div><strong>Status:</strong> {String(state.testPlan.status)}</div>
-                  <div><strong>Start Date:</strong> {String(state.testPlan.startDate)}</div>
-                  <div><strong>Rationale:</strong> {String(state.testPlan.rationale)}</div>
+                  <div>
+                    <strong>Title:</strong> {String(state.testPlan.title)}
+                  </div>
+                  <div>
+                    <strong>Goal:</strong>{" "}
+                    {String(state.testPlan.goalDescription)}
+                  </div>
+                  <div>
+                    <strong>IPG Focus:</strong>{" "}
+                    {String(state.testPlan.ipgCoreAction)} -{" "}
+                    {String(state.testPlan.ipgSubCategory)}
+                  </div>
+                  <div>
+                    <strong>Academic Year:</strong>{" "}
+                    {String(state.testPlan.academicYear)}
+                  </div>
+                  <div>
+                    <strong>Cycle Length:</strong>{" "}
+                    {String(state.testPlan.cycleLength)}
+                  </div>
+                  <div>
+                    <strong>Status:</strong> {String(state.testPlan.status)}
+                  </div>
+                  <div>
+                    <strong>Start Date:</strong>{" "}
+                    {String(state.testPlan.startDate)}
+                  </div>
+                  <div>
+                    <strong>Rationale:</strong>{" "}
+                    {String(state.testPlan.rationale)}
+                  </div>
                 </div>
               </div>
             </div>
@@ -346,7 +405,9 @@ export default function CoachingActionPlanCRUDTest() {
 
           {/* Test Results */}
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Test Results ({state.results.length})</h3>
+            <h3 className="text-lg font-semibold">
+              Test Results ({state.results.length})
+            </h3>
             <div className="max-h-80 overflow-y-auto border rounded p-2">
               {state.results.length === 0 ? (
                 <p className="text-gray-500">No test results yet</p>
@@ -357,16 +418,16 @@ export default function CoachingActionPlanCRUDTest() {
                       <div className="flex items-center justify-between">
                         <span className="font-medium">{result.operation}</span>
                         <Badge intent={result.success ? "success" : "danger"}>
-                          {result.success ? 'SUCCESS' : 'FAILED'}
+                          {result.success ? "SUCCESS" : "FAILED"}
                         </Badge>
                       </div>
-                      
+
                       {result.error && (
                         <div className="mt-2 text-red-600 text-sm">
                           Error: {result.error}
                         </div>
                       )}
-                      
+
                       {/* {result.data && (
                         <details className="mt-2">
                           <summary className="cursor-pointer text-sm text-gray-600">
@@ -385,7 +446,9 @@ export default function CoachingActionPlanCRUDTest() {
           </div>
 
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-semibold text-blue-800">Updated Infrastructure Used:</h4>
+            <h4 className="font-semibold text-blue-800">
+              Updated Infrastructure Used:
+            </h4>
             <ul className="mt-2 text-sm text-blue-700 space-y-1">
               <li>✅ CoachingActionPlan Schema (flattened structure)</li>
               <li>✅ Domain hooks with CRUD factory pattern</li>

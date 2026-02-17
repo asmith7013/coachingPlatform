@@ -1,6 +1,6 @@
 /**
  * Monday.com GraphQL Queries
- * 
+ *
  * This file contains all GraphQL queries and mutations used for
  * the Monday.com integration. Centralizing these helps maintain consistency
  * and makes updates easier.

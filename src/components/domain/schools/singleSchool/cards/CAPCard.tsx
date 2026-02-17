@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card } from '@/components/composed/cards/Card';
+import { Card } from "@/components/composed/cards/Card";
 import { CoachingActionPlanDashboard } from "@/components/features/coaching/CAPDashboard";
 
 interface MetricsCardProps {
@@ -20,4 +20,4 @@ export function CAPCard({}: MetricsCardProps) {
       <CoachingActionPlanDashboard />
     </Card>
   );
-} 
+}

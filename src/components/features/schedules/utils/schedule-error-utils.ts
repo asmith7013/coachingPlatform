@@ -1,5 +1,5 @@
-import { ErrorContext } from '@error-types';
-import { createErrorContext } from '@error/core/context';
+import { ErrorContext } from "@error-types";
+import { createErrorContext } from "@error/core/context";
 
 /**
  * Create error context for schedule components feature operations
@@ -7,14 +7,14 @@ import { createErrorContext } from '@error/core/context';
  */
 export function createScheduleComponentsErrorContext(
   operation: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
 ): ErrorContext {
-  return createErrorContext('ScheduleComponents', operation, {
-    category: 'business',
+  return createErrorContext("ScheduleComponents", operation, {
+    category: "business",
     metadata: {
-      feature: 'schedulesComponents',
-      ...metadata
-    }
+      feature: "schedulesComponents",
+      ...metadata,
+    },
   });
 }
 
@@ -26,12 +26,12 @@ export function createScheduleComponentsDataErrorContext(
   operation: string,
   schoolId: string,
   date: string,
-  additionalMetadata?: Record<string, unknown>
+  additionalMetadata?: Record<string, unknown>,
 ): ErrorContext {
   return createScheduleComponentsErrorContext(operation, {
     schoolId,
     date,
-    ...additionalMetadata
+    ...additionalMetadata,
   });
 }
 

@@ -13,9 +13,5 @@
     "Compare and contrast equations that have no solutions or infinitely many solutions",
     "Create linear equations in one variable that have either no solutions or infinitely many solutions, using structure"
   ],
-  "scenarios": [
-    "Daily Login Rewards",
-    "Follower Growth",
-    "Gym Streak Points"
-  ]
+  "scenarios": ["Daily Login Rewards", "Follower Growth", "Gym Streak Points"]
 }

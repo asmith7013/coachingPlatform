@@ -1,52 +1,60 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Button } from '@components/core/Button';
-import { Card } from '@components/composed/cards';
-import { useSearchParams } from 'next/navigation';
-import { Text } from '@components/core/typography/Text';
-import { Heading } from '@components/core/typography/Heading';
+import React, { useState, useEffect, useCallback } from "react";
+import { Button } from "@components/core/Button";
+import { Card } from "@components/composed/cards";
+import { useSearchParams } from "next/navigation";
+import { Text } from "@components/core/typography/Text";
+import { Heading } from "@components/core/typography/Heading";
 
 // Import existing domain hook and types from the established schema
-import { useClassroomObservations } from '@hooks/domain/observations/useClassroomObservations';
-import { 
+import { useClassroomObservations } from "@hooks/domain/observations/useClassroomObservations";
+import {
   useClassroomObservationDefaultsSimple,
   type ClassroomObservationInput,
-  ClassroomObservationInputZodSchema
-} from '@zod-schema/visits/classroom-observation';
+  ClassroomObservationInputZodSchema,
+} from "@zod-schema/visits/classroom-observation";
 
 // Import tab components
-import { BasicInfoTab } from '@components/features/classroomNotes/tabs/BasicInfoTab';
-import { FeedbackTab } from '@components/features/classroomNotes/tabs/FeedbackTab';
-import { LessonFlowTab } from '@components/features/classroomNotes/tabs/LessonFlowTab';
-import { ProgressMonitoringTab } from '@components/features/classroomNotes/tabs/ProgressMonitoringTab';
-import { TimeAndTranscriptsTab } from '@components/features/classroomNotes/tabs/TimeAndTranscriptsTab';
-import { useAutoSave } from '@hooks/utilities/useAutoSave';
+import { BasicInfoTab } from "@components/features/classroomNotes/tabs/BasicInfoTab";
+import { FeedbackTab } from "@components/features/classroomNotes/tabs/FeedbackTab";
+import { LessonFlowTab } from "@components/features/classroomNotes/tabs/LessonFlowTab";
+import { ProgressMonitoringTab } from "@components/features/classroomNotes/tabs/ProgressMonitoringTab";
+import { TimeAndTranscriptsTab } from "@components/features/classroomNotes/tabs/TimeAndTranscriptsTab";
+import { useAutoSave } from "@hooks/utilities/useAutoSave";
 
-type TabKey = 'basic' | 'feedback' | 'lessonFlow' | 'monitoring' | 'timeTranscripts';
+type TabKey =
+  | "basic"
+  | "feedback"
+  | "lessonFlow"
+  | "monitoring"
+  | "timeTranscripts";
 
 const TABS = {
-  basic: 'Basic Info',
-  feedback: 'Feedback',
-  lessonFlow: 'Lesson Flow',
-  monitoring: 'Progress Monitoring',
-  timeTranscripts: 'Time & Transcripts'
+  basic: "Basic Info",
+  feedback: "Feedback",
+  lessonFlow: "Lesson Flow",
+  monitoring: "Progress Monitoring",
+  timeTranscripts: "Time & Transcripts",
 };
 
 const ClassroomNotesExample = () => {
   const searchParams = useSearchParams();
-  const teacherId = searchParams.get('teacherId');
+  const teacherId = searchParams.get("teacherId");
   // Tab state
-  const [activeTab, setActiveTab] = useState<TabKey>('basic');
+  const [activeTab, setActiveTab] = useState<TabKey>("basic");
   // Enhanced hooks for different capabilities
   const observationsWithToast = useClassroomObservations.withNotifications();
   const observationsWithCache = useClassroomObservations.withInvalidation();
   const formDefaults = useClassroomObservationDefaultsSimple({
-    cycle: 'Demo Cycle',
-    session: 'Demo Session',
+    cycle: "Demo Cycle",
+    session: "Demo Session",
   });
-  const [formData, setFormData] = useState<ClassroomObservationInput>(formDefaults);
-  const [selectedTeacher, setSelectedTeacher] = useState<string>(teacherId || '');
+  const [formData, setFormData] =
+    useState<ClassroomObservationInput>(formDefaults);
+  const [selectedTeacher, setSelectedTeacher] = useState<string>(
+    teacherId || "",
+  );
   const [observationId, setObservationId] = useState<string | null>(null);
   const autoSaveHook = useClassroomObservations.withAutoSave();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,9 +72,9 @@ const ClassroomNotesExample = () => {
       try {
         const draftId = await autoSaveHook.createInitialDraft(formData);
         setObservationId(draftId);
-        console.log('Initial draft created:', draftId);
+        console.log("Initial draft created:", draftId);
       } catch (error) {
-        console.error('Failed to create initial draft:', error);
+        console.error("Failed to create initial draft:", error);
       }
     };
     if (!observationId) {
@@ -77,135 +85,166 @@ const ClassroomNotesExample = () => {
 
   // Add autosave hook usage
   const { triggerSave } = useAutoSave(
-    autoSaveHook.createAutoSaveConfig(observationId || '', formData)
+    autoSaveHook.createAutoSaveConfig(observationId || "", formData),
   );
 
   // Trigger autosave when form data changes
   useEffect(() => {
     if (observationId && formData) {
       triggerSave();
-      console.log('Autosave triggered for:', observationId);
+      console.log("Autosave triggered for:", observationId);
     }
   }, [formData, observationId, triggerSave]);
 
   // Handle input changes (keep existing logic)
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    console.log('Field changed:', name, value); // Debug log
-    if (name.includes('.')) {
-      const parts = name.split('.');
-      if (parts.length === 2) {
-        const [section, field] = parts;
-        if (section === 'timeTracking') {
-          setFormData(prev => ({
-            ...prev,
-            timeTracking: {
-              ...(prev.timeTracking as object),
-              [field]: field === 'startedWhenMinutes' ? (value ? Number(value) : undefined) : value
-            }
-          }));
-        } else if (section === 'transcripts') {
-          setFormData(prev => ({
-            ...prev,
-            transcripts: {
-              ...(prev.transcripts as object),
-              [field]: value
-            }
-          }));
+  const handleInputChange = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => {
+      const { name, value } = e.target;
+      console.log("Field changed:", name, value); // Debug log
+      if (name.includes(".")) {
+        const parts = name.split(".");
+        if (parts.length === 2) {
+          const [section, field] = parts;
+          if (section === "timeTracking") {
+            setFormData((prev) => ({
+              ...prev,
+              timeTracking: {
+                ...(prev.timeTracking as object),
+                [field]:
+                  field === "startedWhenMinutes"
+                    ? value
+                      ? Number(value)
+                      : undefined
+                    : value,
+              },
+            }));
+          } else if (section === "transcripts") {
+            setFormData((prev) => ({
+              ...prev,
+              transcripts: {
+                ...(prev.transcripts as object),
+                [field]: value,
+              },
+            }));
+          }
+        } else if (parts.length === 3) {
+          const [section, activityType, field] = parts;
+          if (section === "lessonFlow") {
+            setFormData((prev) => ({
+              ...prev,
+              lessonFlow: {
+                ...(prev.lessonFlow as object),
+                [activityType]: {
+                  ...((
+                    prev.lessonFlow as Record<string, Record<string, unknown>>
+                  )?.[activityType] || {}),
+                  [field]: value,
+                },
+              },
+            }));
+          }
         }
-      } else if (parts.length === 3) {
-        const [section, activityType, field] = parts;
-        if (section === 'lessonFlow') {
-          setFormData(prev => ({
-            ...prev,
-            lessonFlow: {
-              ...(prev.lessonFlow as object),
-              [activityType]: {
-                ...((prev.lessonFlow as Record<string, Record<string, unknown>>)?.[activityType] || {}),
-                [field]: value
-              }
-            }
-          }));
-        }
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
       }
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-  }, []);
+    },
+    [],
+  );
 
   // Handle array fields (feedback sections, learning targets)
-  const handleArrayFieldChange = useCallback((fieldPath: string, value: string[]) => {
-    const parts = fieldPath.split('.');
-    if (parts.length === 2 && parts[0] === 'feedback') {
-      const feedbackField = parts[1] as keyof typeof formData.feedback;
-      setFormData(prev => ({
-        ...prev,
-        feedback: {
-          ...(prev.feedback as object),
-          [feedbackField]: value
-        }
-      }));
-    } else if (fieldPath === 'learningTargets') {
-      setFormData(prev => ({
-        ...prev,
-        learningTargets: value
-      }));
-    }
-  }, [formData, setFormData]);
+  const handleArrayFieldChange = useCallback(
+    (fieldPath: string, value: string[]) => {
+      const parts = fieldPath.split(".");
+      if (parts.length === 2 && parts[0] === "feedback") {
+        const feedbackField = parts[1] as keyof typeof formData.feedback;
+        setFormData((prev) => ({
+          ...prev,
+          feedback: {
+            ...(prev.feedback as object),
+            [feedbackField]: value,
+          },
+        }));
+      } else if (fieldPath === "learningTargets") {
+        setFormData((prev) => ({
+          ...prev,
+          learningTargets: value,
+        }));
+      }
+    },
+    [formData, setFormData],
+  );
 
   // Handle checkbox changes
   const handleCheckboxChange = useCallback((criterionIndex: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       progressMonitoring: {
         ...(prev.progressMonitoring as object),
-        observedCriteria: (prev.progressMonitoring as { observedCriteria: Array<{ observed: boolean }> }).observedCriteria.map((criterion: { observed: boolean }, index: number) =>
-          index === criterionIndex
-            ? { ...criterion, observed: !criterion.observed }
-            : criterion
-        )
-      }
+        observedCriteria: (
+          prev.progressMonitoring as {
+            observedCriteria: Array<{ observed: boolean }>;
+          }
+        ).observedCriteria.map(
+          (criterion: { observed: boolean }, index: number) =>
+            index === criterionIndex
+              ? { ...criterion, observed: !criterion.observed }
+              : criterion,
+        ),
+      },
     }));
   }, []);
 
   // Enhanced form submission - finalize draft
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      if (!observationId) {
-        const result = await observationsWithToast.createWithToast(formData);
-        if (result.success) {
-          setObservationId(result.data._id);
-        } else {
-          throw new Error(result.error || 'Failed to create observation');
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        if (!observationId) {
+          const result = await observationsWithToast.createWithToast(formData);
+          if (result.success) {
+            setObservationId(result.data._id);
+          } else {
+            throw new Error(result.error || "Failed to create observation");
+          }
+          return;
         }
-        return;
+        const validatedData =
+          ClassroomObservationInputZodSchema.parse(formData);
+        const result = await observationsWithToast.updateWithToast(
+          observationId,
+          {
+            ...validatedData,
+            status: "completed",
+            isDraft: false,
+            submittedAt: new Date().toISOString(),
+          },
+        );
+        if (result.success) {
+          await observationsWithCache.refreshObservation(observationId);
+          console.log("Observation finalized successfully");
+        } else {
+          throw new Error(result.error || "Failed to update observation");
+        }
+      } catch (error) {
+        console.error("Error finalizing observation:", error);
+        setSubmitError(
+          error instanceof Error ? error.message : "An unknown error occurred",
+        );
+      } finally {
+        setIsSubmitting(false);
       }
-      const validatedData = ClassroomObservationInputZodSchema.parse(formData);
-      const result = await observationsWithToast.updateWithToast(observationId, {
-        ...validatedData,
-        status: 'completed',
-        isDraft: false,
-        submittedAt: new Date().toISOString()
-      });
-      if (result.success) {
-        await observationsWithCache.refreshObservation(observationId);
-        console.log("Observation finalized successfully");
-      } else {
-        throw new Error(result.error || 'Failed to update observation');
-      }
-    } catch (error) {
-      console.error("Error finalizing observation:", error);
-      setSubmitError(error instanceof Error ? error.message : 'An unknown error occurred');
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [observationId, formData, observationsWithToast, observationsWithCache]);
+    },
+    [observationId, formData, observationsWithToast, observationsWithCache],
+  );
 
   // Timer functions (placeholder)
   const startStopwatch = useCallback(() => {
@@ -217,7 +256,7 @@ const ClassroomNotesExample = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'basic':
+      case "basic":
         return (
           <BasicInfoTab
             formData={formData}
@@ -226,7 +265,7 @@ const ClassroomNotesExample = () => {
             onTeacherChange={setSelectedTeacher}
           />
         );
-      case 'feedback':
+      case "feedback":
         return (
           <FeedbackTab
             formData={formData}
@@ -234,21 +273,21 @@ const ClassroomNotesExample = () => {
             onArrayFieldChange={handleArrayFieldChange}
           />
         );
-      case 'lessonFlow':
+      case "lessonFlow":
         return (
           <LessonFlowTab
             formData={formData}
             onInputChange={handleInputChange}
           />
         );
-      case 'monitoring':
+      case "monitoring":
         return (
           <ProgressMonitoringTab
             formData={formData}
             onCheckboxChange={handleCheckboxChange}
           />
         );
-      case 'timeTranscripts':
+      case "timeTranscripts":
         return (
           <TimeAndTranscriptsTab
             formData={formData}
@@ -271,7 +310,8 @@ const ClassroomNotesExample = () => {
             Classroom Observation Notes
           </Heading>
           <Text color="muted">
-            Comprehensive classroom observation notes with schema-driven functionality
+            Comprehensive classroom observation notes with schema-driven
+            functionality
           </Text>
         </div>
         <form onSubmit={handleSubmit}>
@@ -280,14 +320,14 @@ const ClassroomNotesExample = () => {
               <div className="flex items-center justify-between">
                 <Heading level="h3">Observation Details</Heading>
                 <div className="flex space-x-3">
-                  <Button 
-                    type="button" 
-                    appearance="outline" 
+                  <Button
+                    type="button"
+                    appearance="outline"
                     onClick={startStopwatch}
                   >
                     Start Timer
                   </Button>
-                  <Button 
+                  <Button
                     type="button"
                     appearance="outline"
                     onClick={pauseStopwatch}
@@ -310,8 +350,8 @@ const ClassroomNotesExample = () => {
                       onClick={() => setActiveTab(key as TabKey)}
                       className={`py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
                         activeTab === key
-                          ? 'border-blue-500 text-blue-600'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          ? "border-blue-500 text-blue-600"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                       }`}
                     >
                       {title}
@@ -320,24 +360,23 @@ const ClassroomNotesExample = () => {
                 </nav>
               </div>
               {/* Tab Content */}
-              <div className="min-h-[600px]">
-                {renderTabContent()}
-              </div>
+              <div className="min-h-[600px]">{renderTabContent()}</div>
             </Card.Body>
             <Card.Footer>
               <div className="flex justify-end space-x-3">
                 <Button appearance="outline" type="button">
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isSubmitting}
                   loading={isSubmitting}
                 >
-                  {isSubmitting 
-                    ? 'Saving...' 
-                    : (observationId ? 'Finalize Observation' : 'Save Observation Notes')
-                  }
+                  {isSubmitting
+                    ? "Saving..."
+                    : observationId
+                      ? "Finalize Observation"
+                      : "Save Observation Notes"}
                 </Button>
               </div>
               {submitError && (

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { MLRAppearsInCard } from '../routines/MLRAppearsInCard';
+import React, { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { MLRAppearsInCard } from "../routines/MLRAppearsInCard";
 
 export type Lesson = {
   grade: string;
@@ -14,7 +14,7 @@ export type Lesson = {
     isWarmUp?: boolean;
     routines: string[];
   }[];
-  curriculum: 'ILC' | 'Kendall Hunt';
+  curriculum: "ILC" | "Kendall Hunt";
 };
 
 type Props = {
@@ -22,11 +22,11 @@ type Props = {
   selectedRoutines: string[];
   selectedLesson?: string;
   setSelectedLesson: (lesson: string) => void;
-  curriculum: 'ILC' | 'Kendall Hunt';
+  curriculum: "ILC" | "Kendall Hunt";
   renderLessonContent: (
     lesson: Lesson,
     selectedRoutines: string[],
-    isSelected: boolean
+    isSelected: boolean,
   ) => React.ReactNode;
 };
 
@@ -36,14 +36,19 @@ export function LessonDetailView({
   selectedLesson,
   setSelectedLesson,
   curriculum,
-  renderLessonContent
+  renderLessonContent,
 }: Props) {
   const lessonRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const [justSelectedLesson, setJustSelectedLesson] = React.useState<string | null>(null);
+  const [justSelectedLesson, setJustSelectedLesson] = React.useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     if (selectedLesson && lessonRefs.current[selectedLesson]) {
-      lessonRefs.current[selectedLesson]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      lessonRefs.current[selectedLesson]?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
       setJustSelectedLesson(selectedLesson);
       // Reset the pulse animation after it completes
       const timer = setTimeout(() => setJustSelectedLesson(null), 1000);
@@ -68,14 +73,18 @@ export function LessonDetailView({
           return (
             <motion.div
               key={lesson.lessonNumber}
-              ref={el => {
+              ref={(el) => {
                 lessonRefs.current[lesson.lessonNumber] = el;
               }}
               className="scroll-mt-20"
-              animate={isPulsing ? {
-                scale: [1, 1.02, 1],
-                transition: { duration: 0.5 }
-              } : {}}
+              animate={
+                isPulsing
+                  ? {
+                      scale: [1, 1.02, 1],
+                      transition: { duration: 0.5 },
+                    }
+                  : {}
+              }
             >
               {renderLessonContent(lesson, selectedRoutines, isSelected)}
             </motion.div>
@@ -83,4 +92,4 @@ export function LessonDetailView({
         })}
     </div>
   );
-} 
+}

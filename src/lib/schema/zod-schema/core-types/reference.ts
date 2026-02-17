@@ -7,14 +7,15 @@ import { z } from "zod";
  * - label: The display text
  * - value: The value to use in forms/selects (usually same as _id)
  */
-export const BaseReferenceZodSchema = z.object({
+export const BaseReferenceZodSchema = z
+  .object({
     _id: z.string(),
     label: z.string(),
     value: z.string(),
-}).strict();
+  })
+  .strict();
 
 /**
  * Type for the base reference schema
  */
 export type BaseReference = z.infer<typeof BaseReferenceZodSchema>;
-  

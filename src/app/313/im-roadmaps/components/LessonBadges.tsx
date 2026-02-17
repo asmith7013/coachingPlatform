@@ -1,4 +1,4 @@
-import { RoadmapsLesson } from '@zod-schema/scm/roadmaps/roadmap';
+import { RoadmapsLesson } from "@zod-schema/scm/roadmaps/roadmap";
 
 interface LessonBadgesProps {
   lessons: RoadmapsLesson[];
@@ -6,13 +6,20 @@ interface LessonBadgesProps {
   onLessonSelect: (lessonId: string) => void;
 }
 
-export function LessonBadges({ lessons, selectedLessonId, onLessonSelect }: LessonBadgesProps) {
+export function LessonBadges({
+  lessons,
+  selectedLessonId,
+  onLessonSelect,
+}: LessonBadgesProps) {
   // Group lessons by section
-  const lessonsBySection = lessons.reduce((acc, lesson) => {
-    if (!acc[lesson.section as string]) acc[lesson.section as string] = [];
-    acc[lesson.section as string].push(lesson);
-    return acc;
-  }, {} as Record<string, RoadmapsLesson[]>);
+  const lessonsBySection = lessons.reduce(
+    (acc, lesson) => {
+      if (!acc[lesson.section as string]) acc[lesson.section as string] = [];
+      acc[lesson.section as string].push(lesson);
+      return acc;
+    },
+    {} as Record<string, RoadmapsLesson[]>,
+  );
 
   // Sort sections alphabetically
   const sortedSections = Object.keys(lessonsBySection).sort();
@@ -33,14 +40,18 @@ export function LessonBadges({ lessons, selectedLessonId, onLessonSelect }: Less
                   onClick={() => onLessonSelect(lesson._id)}
                   className={`w-full text-left px-3 py-2 rounded-lg border transition-colors text-sm ${
                     selectedLessonId === lesson._id
-                      ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                      : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                      ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
                   }`}
                 >
                   <div className="font-medium">Lesson {lesson.lesson}</div>
-                  <div className={`text-xs mt-1 ${
-                    selectedLessonId === lesson._id ? 'text-blue-100' : 'text-gray-500'
-                  }`}>
+                  <div
+                    className={`text-xs mt-1 ${
+                      selectedLessonId === lesson._id
+                        ? "text-blue-100"
+                        : "text-gray-500"
+                    }`}
+                  >
                     {lesson.lessonName}
                   </div>
                 </button>

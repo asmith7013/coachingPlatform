@@ -1,8 +1,8 @@
-import React from 'react';
-import { FormSection } from '@/components/composed/forms/FormSection';
-import { Input } from '@/components/core/fields/Input';
-import { Label } from '@/components/core/fields/Label';
-import { Select } from '@/components/core/fields/Select';
+import React from "react";
+import { FormSection } from "@/components/composed/forms/FormSection";
+import { Input } from "@/components/core/fields/Input";
+import { Label } from "@/components/core/fields/Label";
+import { Select } from "@/components/core/fields/Select";
 
 interface ProjectDetailsFormProps {
   projectTitle: string;
@@ -19,7 +19,7 @@ export function ProjectDetailsForm({
   projectNotes,
   setProjectNotes,
   projectWhen,
-  setProjectWhen
+  setProjectWhen,
 }: ProjectDetailsFormProps) {
   return (
     <FormSection title="Project Details">
@@ -31,7 +31,7 @@ export function ProjectDetailsForm({
           onChange={(e) => setProjectTitle(e.target.value)}
         />
       </div>
-      
+
       <div className="mb-4">
         <Label htmlFor="projectNotes">Project Notes</Label>
         <Input
@@ -40,16 +40,16 @@ export function ProjectDetailsForm({
           onChange={(e) => setProjectNotes(e.target.value)}
         />
       </div>
-      
+
       <div className="mb-4">
         <Label htmlFor="projectWhen">When</Label>
-        <Select 
+        <Select
           options={[
             { value: "today", label: "Today" },
             { value: "tomorrow", label: "Tomorrow" },
             { value: "evening", label: "Evening" },
             { value: "someday", label: "Someday" },
-            { value: "anytime", label: "Anytime" }
+            { value: "anytime", label: "Anytime" },
           ]}
           value={projectWhen}
           onChange={(value) => setProjectWhen(value as string)}
@@ -58,4 +58,4 @@ export function ProjectDetailsForm({
       </div>
     </FormSection>
   );
-} 
+}

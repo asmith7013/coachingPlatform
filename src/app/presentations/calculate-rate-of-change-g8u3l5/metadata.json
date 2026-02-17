@@ -13,9 +13,5 @@
     "Compare and contrast proportional and nonproportional linear relationships",
     "Interpret features of the graph (slope and y-intercept) of a non-proportional linear relationship"
   ],
-  "scenarios": [
-    "Streaming Subscribers",
-    "Stacking Chairs",
-    "Stacking Cups"
-  ]
+  "scenarios": ["Streaming Subscribers", "Stacking Chairs", "Stacking Cups"]
 }

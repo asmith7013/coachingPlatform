@@ -3,7 +3,7 @@
  * - <Heading /> - Need to create this component
  * - <Text /> - Need to create this component
  * - <Card /> - Need to create this component
- * 
+ *
  * ⛳ Missing Token Mappings:
  * - shadow-md -> Need to add shadow tokens
  * - border-b -> Need to add border utility tokens
@@ -12,11 +12,11 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from '@/components/core/Button';
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Input } from '@/components/core/fields/Input';
+import { Button } from "@/components/core/Button";
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { Input } from "@/components/core/fields/Input";
 
 interface BulkUploadFormProps {
   title: string;
@@ -45,7 +45,7 @@ export default function BulkUploadForm({
 
   const handleUpload = async () => {
     if (!file) return;
-    
+
     try {
       setIsUploading(true);
       const uploadMessage = await onUpload(file);
@@ -56,14 +56,10 @@ export default function BulkUploadForm({
       setIsUploading(false);
     }
   };
-  
+
   return (
     <div className="w-full">
-      <Card 
-        shadow="md"
-        padding="md"
-        className="bg-primary"
-      >
+      <Card shadow="md" padding="md" className="bg-primary">
         <div className="space-y-4">
           <Heading level="h3">{title}</Heading>
           {description && (
@@ -71,10 +67,10 @@ export default function BulkUploadForm({
               {description}
             </Text>
           )}
-          <Input 
-            type="file" 
+          <Input
+            type="file"
             accept={accept}
-            onChange={handleFileChange} 
+            onChange={handleFileChange}
             disabled={disabled || isUploading}
           />
           <Button
@@ -87,9 +83,13 @@ export default function BulkUploadForm({
             {isUploading ? "Uploading..." : "Upload"}
           </Button>
           {message && (
-            <Text 
+            <Text
               textSize="base"
-              color={message.toLowerCase().includes("successful") ? "accent" : "danger"}
+              color={
+                message.toLowerCase().includes("successful")
+                  ? "accent"
+                  : "danger"
+              }
             >
               {message}
             </Text>

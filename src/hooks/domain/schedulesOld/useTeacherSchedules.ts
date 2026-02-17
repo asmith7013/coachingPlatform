@@ -1,31 +1,29 @@
-import { createCrudHooks } from '@query/client/factories/crud-factory';
+import { createCrudHooks } from "@query/client/factories/crud-factory";
+import { TeacherScheduleZodSchema } from "@/lib/schema/zod-schema/schedules/schedule";
 import {
-  TeacherScheduleZodSchema
-} from '@/lib/schema/zod-schema/schedules/schedule';
-import { 
-  fetchTeacherSchedules, 
-  fetchTeacherScheduleById, 
-  createTeacherSchedule, 
-  updateTeacherSchedule, 
-  deleteTeacherSchedule
-} from '@/app/actions/schedulesOld/schedule';
+  fetchTeacherSchedules,
+  fetchTeacherScheduleById,
+  createTeacherSchedule,
+  updateTeacherSchedule,
+  deleteTeacherSchedule,
+} from "@/app/actions/schedulesOld/schedule";
 
 /**
  * Custom React Query hooks for Teacher Schedule entity
  * SIMPLIFIED: Direct CRUD factory usage, no unnecessary transformation
  */
 const teacherScheduleHooks = createCrudHooks({
-  entityType: 'teacherSchedules',
+  entityType: "teacherSchedules",
   schema: TeacherScheduleZodSchema as never,
   serverActions: {
     fetch: fetchTeacherSchedules,
     fetchById: fetchTeacherScheduleById,
     create: createTeacherSchedule,
     update: updateTeacherSchedule,
-    delete: deleteTeacherSchedule
+    delete: deleteTeacherSchedule,
   },
-  validSortFields: ['teacher', 'school', 'createdAt', 'updatedAt'],
-  relatedEntityTypes: ['schools', 'staff']
+  validSortFields: ["teacher", "school", "createdAt", "updatedAt"],
+  relatedEntityTypes: ["schools", "staff"],
 });
 
 // Export with domain-specific names
@@ -41,15 +39,15 @@ export const useTeacherSchedules = {
   list: useTeacherSchedulesList,
   byId: useTeacherScheduleById,
   mutations: useTeacherSchedulesMutations,
-  manager: useTeacherScheduleManager
+  manager: useTeacherScheduleManager,
 };
 
 // Export individual hooks for backward compatibility
-export { 
-  useTeacherSchedulesList, 
-  useTeacherScheduleById, 
-  useTeacherSchedulesMutations, 
-  useTeacherScheduleManager
+export {
+  useTeacherSchedulesList,
+  useTeacherScheduleById,
+  useTeacherSchedulesMutations,
+  useTeacherScheduleManager,
 };
 
-export default useTeacherSchedules; 
+export default useTeacherSchedules;

@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-import { standardDocumentFields, standardSchemaOptions } from '@mongoose-schema/shared-options';
+import {
+  standardDocumentFields,
+  standardSchemaOptions,
+} from "@mongoose-schema/shared-options";
 
 // Define schema fields, mirroring Zod schema structure
 const schemaFields = {
@@ -14,11 +17,14 @@ const schemaFields = {
   nextSteps: [{ type: String, required: true }], // Next steps from visit
   teacherReflection: { type: String, required: false },
   coachNotes: { type: String, required: false },
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
 // Create schema with timestamps and standard transform
-const CapImplementationRecordSchema = new mongoose.Schema(schemaFields, standardSchemaOptions);
+const CapImplementationRecordSchema = new mongoose.Schema(
+  schemaFields,
+  standardSchemaOptions,
+);
 
 // Add indexes for performance
 CapImplementationRecordSchema.index({ date: 1 });
@@ -28,5 +34,6 @@ CapImplementationRecordSchema.index({ visitNumber: 1 });
 CapImplementationRecordSchema.index({ ownerIds: 1 });
 
 // Create model, checking for existing models
-export const CapImplementationRecordModel = mongoose.models.CapImplementationRecord || 
+export const CapImplementationRecordModel =
+  mongoose.models.CapImplementationRecord ||
   mongoose.model("CapImplementationRecord", CapImplementationRecordSchema);

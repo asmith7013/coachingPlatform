@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
-import { Heading, Text } from '@/components/core/typography';
-import { ErrorBoundary } from '@/components/error/ErrorBoundary';
-import { TeacherSelectionPanel, VisitScheduleGrid } from './components';
-import { useScheduleDisplayData } from './hooks/useScheduleDisplayData';
-import { useVisitSchedules } from '@/hooks/domain/schedules/useVisitSchedules';
-import { ScheduleAssignmentType } from '@/lib/schema/enum/shared-enums';
-import { handleClientError } from '@error/handlers/client';
-import { handleValidationError } from '@error/handlers/validation';
-import { createScheduleErrorContext, createScheduleDataErrorContext } from './utils/schedule-error-utils';
-import { ZodError } from 'zod';
-import { 
+import React, { useState } from "react";
+import { Heading, Text } from "@/components/core/typography";
+import { ErrorBoundary } from "@/components/error/ErrorBoundary";
+import { TeacherSelectionPanel, VisitScheduleGrid } from "./components";
+import { useScheduleDisplayData } from "./hooks/useScheduleDisplayData";
+import { useVisitSchedules } from "@/hooks/domain/schedules/useVisitSchedules";
+import { ScheduleAssignmentType } from "@/lib/schema/enum/shared-enums";
+import { handleClientError } from "@error/handlers/client";
+import { handleValidationError } from "@error/handlers/validation";
+import {
+  createScheduleErrorContext,
+  createScheduleDataErrorContext,
+} from "./utils/schedule-error-utils";
+import { ZodError } from "zod";
+import {
   VisitSchedule,
-  VisitScheduleInput 
-} from '@zod-schema/schedules/schedule-documents';
-import { VisitScheduleBlock } from '@zod-schema/schedules/schedule-events';
+  VisitScheduleInput,
+} from "@zod-schema/schedules/schedule-documents";
+import { VisitScheduleBlock } from "@zod-schema/schedules/schedule-events";
 
 interface VisitScheduleTestPageProps {
   schoolId: string;
@@ -34,13 +37,13 @@ const VisitScheduleErrorFallback = (error: Error, resetError: () => void) => (
   </div>
 );
 
-export const VisitScheduleTestPage: React.FC<VisitScheduleTestPageProps> = ({ 
-  schoolId, 
-  date 
+export const VisitScheduleTestPage: React.FC<VisitScheduleTestPageProps> = ({
+  schoolId,
+  date,
 }) => {
   return (
-    <ErrorBoundary 
-      context="VisitSchedule" 
+    <ErrorBoundary
+      context="VisitSchedule"
       fallback={VisitScheduleErrorFallback}
     >
       <VisitScheduleTestPageContent schoolId={schoolId} date={date} />
@@ -48,13 +51,13 @@ export const VisitScheduleTestPage: React.FC<VisitScheduleTestPageProps> = ({
   );
 };
 
-const VisitScheduleTestPageContent: React.FC<VisitScheduleTestPageProps> = ({ 
-  schoolId, 
-  date 
+const VisitScheduleTestPageContent: React.FC<VisitScheduleTestPageProps> = ({
+  schoolId,
+  date,
 }) => {
   // Local state
   const [selectedTeacher, setSelectedTeacher] = useState<string | null>(null);
-  
+
   // Use simplified data hooks with standard error pattern
   const scheduleData = useScheduleDisplayData(schoolId, date);
   const visitSchedules = useVisitSchedules.list({ filters: { schoolId } });
@@ -65,44 +68,66 @@ const VisitScheduleTestPageContent: React.FC<VisitScheduleTestPageProps> = ({
 
   const _createTestVisitSchedule = async () => {
     if (!scheduleData.bellSchedule) {
-      const errorContext = createScheduleDataErrorContext('createTestSchedule', schoolId, date);
-      handleClientError(new Error('Bell schedule not available'), errorContext);
+      const errorContext = createScheduleDataErrorContext(
+        "createTestSchedule",
+        schoolId,
+        date,
+      );
+      handleClientError(new Error("Bell schedule not available"), errorContext);
       return;
     }
-    
+
     const testVisitSchedule: VisitScheduleInput = {
       scheduleType: "visitSchedule",
       schoolId,
       dayIndices: [0], // Monday
-      cycleId: "test-cycle-id", 
+      cycleId: "test-cycle-id",
       date: date,
-      coachingActionPlanId: "test-cap-id", 
-      coachId: "test-coach-id", 
+      coachingActionPlanId: "test-cap-id",
+      coachId: "test-coach-id",
       bellScheduleId: scheduleData.bellSchedule._id,
-      timeBlocks: [], 
-      ownerIds: []
+      timeBlocks: [],
+      ownerIds: [],
     };
 
     try {
       if (!visitScheduleMutations.createAsync) {
-        const errorContext = createScheduleErrorContext('mutationAccess', {
-          availableMethods: Object.keys(visitScheduleMutations)
+        const errorContext = createScheduleErrorContext("mutationAccess", {
+          availableMethods: Object.keys(visitScheduleMutations),
         });
-        handleClientError(new Error('createAsync mutation not available'), errorContext);
+        handleClientError(
+          new Error("createAsync mutation not available"),
+          errorContext,
+        );
         return;
       }
-      
-      const result = await visitScheduleMutations.createAsync(testVisitSchedule as VisitSchedule);
+
+      const result = await visitScheduleMutations.createAsync(
+        testVisitSchedule as VisitSchedule,
+      );
       if (!result || !result.data || !result.data._id) {
-        const errorContext = createScheduleDataErrorContext('createTestSchedule', schoolId, date, {
-          result
-        });
-        handleClientError(new Error('Failed to create test visit schedule'), errorContext);
+        const errorContext = createScheduleDataErrorContext(
+          "createTestSchedule",
+          schoolId,
+          date,
+          {
+            result,
+          },
+        );
+        handleClientError(
+          new Error("Failed to create test visit schedule"),
+          errorContext,
+        );
       }
     } catch (error) {
-      const errorContext = createScheduleDataErrorContext('createTestSchedule', schoolId, date, {
-        testVisitSchedule
-      });
+      const errorContext = createScheduleDataErrorContext(
+        "createTestSchedule",
+        schoolId,
+        date,
+        {
+          testVisitSchedule,
+        },
+      );
       handleClientError(error, errorContext);
     }
   };
@@ -112,26 +137,45 @@ const VisitScheduleTestPageContent: React.FC<VisitScheduleTestPageProps> = ({
   };
 
   const handlePeriodSchedule = async (
-    periodNumber: number, 
-    portion: ScheduleAssignmentType
+    periodNumber: number,
+    portion: ScheduleAssignmentType,
   ) => {
-    console.log('🎯 handlePeriodSchedule called:', { periodNumber, portion, selectedTeacher, currentVisitScheduleId: currentVisitSchedule?._id });
-    
-    if (!selectedTeacher || !currentVisitSchedule || !scheduleData.bellSchedule) {
-      const errorContext = createScheduleErrorContext('scheduleVisit', {
+    console.log("🎯 handlePeriodSchedule called:", {
+      periodNumber,
+      portion,
+      selectedTeacher,
+      currentVisitScheduleId: currentVisitSchedule?._id,
+    });
+
+    if (
+      !selectedTeacher ||
+      !currentVisitSchedule ||
+      !scheduleData.bellSchedule
+    ) {
+      const errorContext = createScheduleErrorContext("scheduleVisit", {
         selectedTeacher: !!selectedTeacher,
         currentVisitSchedule: !!currentVisitSchedule,
-        bellSchedule: !!scheduleData.bellSchedule
+        bellSchedule: !!scheduleData.bellSchedule,
       });
-      handleClientError(new Error('Missing required data for scheduling'), errorContext);
+      handleClientError(
+        new Error("Missing required data for scheduling"),
+        errorContext,
+      );
       return;
     }
 
     // Find the time slot for this period from bell schedule
-    const timeSlot = scheduleData.bellSchedule.timeBlocks?.find(slot => slot.periodNumber === periodNumber);
+    const timeSlot = scheduleData.bellSchedule.timeBlocks?.find(
+      (slot) => slot.periodNumber === periodNumber,
+    );
     if (!timeSlot) {
-      const errorContext = createScheduleErrorContext('findTimeSlot', { periodNumber });
-      handleClientError(new Error(`No time slot found for period ${periodNumber}`), errorContext);
+      const errorContext = createScheduleErrorContext("findTimeSlot", {
+        periodNumber,
+      });
+      handleClientError(
+        new Error(`No time slot found for period ${periodNumber}`),
+        errorContext,
+      );
       return;
     }
 
@@ -147,70 +191,88 @@ const VisitScheduleTestPageContent: React.FC<VisitScheduleTestPageProps> = ({
       portion,
     };
 
-    console.log('🎯 Creating time block:', newTimeBlock);
-    
+    console.log("🎯 Creating time block:", newTimeBlock);
+
     try {
       if (!visitScheduleMutations.updateAsync) {
-        const errorContext = createScheduleErrorContext('mutationAccess', {
-          availableMethods: Object.keys(visitScheduleMutations)
+        const errorContext = createScheduleErrorContext("mutationAccess", {
+          availableMethods: Object.keys(visitScheduleMutations),
         });
-        handleClientError(new Error('updateAsync mutation not available'), errorContext);
+        handleClientError(
+          new Error("updateAsync mutation not available"),
+          errorContext,
+        );
         return;
       }
 
       // Update with new time block
-      const updatedTimeBlocks = [...(currentVisitSchedule.timeBlocks || []), newTimeBlock];
-      console.log('🎯 Updating with blocks:', updatedTimeBlocks.length);
-      
-      const updateResult = await visitScheduleMutations.updateAsync(currentVisitSchedule._id, {
-        timeBlocks: updatedTimeBlocks
-      });
-      
-      console.log('✅ Update result:', updateResult);
-      
+      const updatedTimeBlocks = [
+        ...(currentVisitSchedule.timeBlocks || []),
+        newTimeBlock,
+      ];
+      console.log("🎯 Updating with blocks:", updatedTimeBlocks.length);
+
+      const updateResult = await visitScheduleMutations.updateAsync(
+        currentVisitSchedule._id,
+        {
+          timeBlocks: updatedTimeBlocks,
+        },
+      );
+
+      console.log("✅ Update result:", updateResult);
+
       // Check for validation errors in response
       if (updateResult && !updateResult.success) {
         // Handle 422 validation errors specifically
-        if (updateResult.error?.includes('[422]')) {
-          const errorContext = createScheduleErrorContext('validation', {
+        if (updateResult.error?.includes("[422]")) {
+          const errorContext = createScheduleErrorContext("validation", {
             timeBlock: newTimeBlock,
             periodNumber,
             portion,
-            selectedTeacher
+            selectedTeacher,
           });
           const formattedError = handleValidationError(
-            new ZodError([{ 
-              code: 'custom', 
-              message: updateResult.error || 'Validation failed',
-              path: ['timeBlocks']
-            }]), 
-            errorContext
+            new ZodError([
+              {
+                code: "custom",
+                message: updateResult.error || "Validation failed",
+                path: ["timeBlocks"],
+              },
+            ]),
+            errorContext,
           );
-          console.error('❌ Validation Error:', formattedError);
+          console.error("❌ Validation Error:", formattedError);
           return;
         }
-        
+
         // Handle other API errors
-        const errorContext = createScheduleErrorContext('updateSchedule', {
+        const errorContext = createScheduleErrorContext("updateSchedule", {
           updateResult,
-          timeBlocksCount: updatedTimeBlocks.length
+          timeBlocksCount: updatedTimeBlocks.length,
         });
-        handleClientError(new Error(updateResult.error || 'Update failed'), errorContext);
+        handleClientError(
+          new Error(updateResult.error || "Update failed"),
+          errorContext,
+        );
         return;
       }
-      
+
       // Refresh data
-      console.log('🔄 Refetching visit schedules...');
+      console.log("🔄 Refetching visit schedules...");
       await visitSchedules.refetch();
-      console.log('✅ Refetch complete');
-      
+      console.log("✅ Refetch complete");
     } catch (error) {
-      const errorContext = createScheduleDataErrorContext('scheduleVisit', schoolId, date, {
-        periodNumber,
-        portion,
-        selectedTeacher,
-        timeBlockData: newTimeBlock
-      });
+      const errorContext = createScheduleDataErrorContext(
+        "scheduleVisit",
+        schoolId,
+        date,
+        {
+          periodNumber,
+          portion,
+          selectedTeacher,
+          timeBlockData: newTimeBlock,
+        },
+      );
       handleClientError(error, errorContext);
     }
   };
@@ -232,7 +294,9 @@ const VisitScheduleTestPageContent: React.FC<VisitScheduleTestPageProps> = ({
     return (
       <div className="p-8">
         <Heading level="h2">No Schedule Data Available</Heading>
-        <Text>School ID: {schoolId} | Date: {date}</Text>
+        <Text>
+          School ID: {schoolId} | Date: {date}
+        </Text>
       </div>
     );
   }
@@ -253,7 +317,9 @@ const VisitScheduleTestPageContent: React.FC<VisitScheduleTestPageProps> = ({
       {/* Page Header */}
       <div>
         <Heading level="h1">Visit Schedule Test Page</Heading>
-        <Text className="text-gray-600">School: {scheduleData.school?.schoolName} | Date: {date}</Text>
+        <Text className="text-gray-600">
+          School: {scheduleData.school?.schoolName} | Date: {date}
+        </Text>
         {currentVisitSchedule && (
           <Text className="text-sm text-green-600">
             Current Visit Schedule ID: {currentVisitSchedule._id}
@@ -284,9 +350,12 @@ const VisitScheduleTestPageContent: React.FC<VisitScheduleTestPageProps> = ({
         <Heading level="h3">Debug Information</Heading>
         <div className="mt-2 space-y-1 text-sm">
           <div>Total Teachers: {staff.length}</div>
-          <div>Selected Teacher: {selectedTeacher || 'None'}</div>
+          <div>Selected Teacher: {selectedTeacher || "None"}</div>
           <div>Visit Schedules: {visitSchedules.items.length}</div>
-          <div>Current Schedule Time Blocks: {currentVisitSchedule?.timeBlocks?.length || 0}</div>
+          <div>
+            Current Schedule Time Blocks:{" "}
+            {currentVisitSchedule?.timeBlocks?.length || 0}
+          </div>
           <div>Bell Schedule: {bellSchedule?.name}</div>
         </div>
       </div>
@@ -294,4 +363,4 @@ const VisitScheduleTestPageContent: React.FC<VisitScheduleTestPageProps> = ({
   );
 };
 
-export default VisitScheduleTestPage; 
+export default VisitScheduleTestPage;

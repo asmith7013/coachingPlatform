@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card } from '@/components/composed/cards';
-import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
-import { ClassroomObservation } from '@/lib/schema/zod-schema/visits/classroom-observation';
-import { ObservationCard } from './ObservationCard';
-import { SkeletonContainer } from '@/components/composed/feedback/SkeletonContainer';
-import { ObservationListSkeleton } from '@/components/domain/observations/ObservationListSkeleton';
+import React from "react";
+import { Card } from "@/components/composed/cards";
+import { Text } from "@/components/core/typography/Text";
+import { Heading } from "@/components/core/typography/Heading";
+import { ClassroomObservation } from "@/lib/schema/zod-schema/visits/classroom-observation";
+import { ObservationCard } from "./ObservationCard";
+import { SkeletonContainer } from "@/components/composed/feedback/SkeletonContainer";
+import { ObservationListSkeleton } from "@/components/domain/observations/ObservationListSkeleton";
 
 interface ObservationsListProps {
   observations: ClassroomObservation[];
@@ -26,7 +26,7 @@ export function ObservationsList({
   onEdit,
   onDelete,
   onView,
-  deletingIds = []
+  deletingIds = [],
 }: ObservationsListProps) {
   return (
     <SkeletonContainer
@@ -47,15 +47,17 @@ export function ObservationsList({
         <Card.Header>
           <Heading level="h3">Existing Observations</Heading>
           <Text textSize="sm" color="muted">
-            {observations.length} observation{observations.length !== 1 ? 's' : ''}
+            {observations.length} observation
+            {observations.length !== 1 ? "s" : ""}
           </Text>
         </Card.Header>
-        
+
         <Card.Body>
           {observations.length === 0 ? (
             <div className="text-center py-8">
               <Text color="muted">
-                No observations found. Create your first observation using the form above.
+                No observations found. Create your first observation using the
+                form above.
               </Text>
             </div>
           ) : (
@@ -77,4 +79,4 @@ export function ObservationsList({
       </Card>
     </SkeletonContainer>
   );
-} 
+}

@@ -1,5 +1,5 @@
-import { type SchoolInput } from '@zod-schema/core/school';
-import type { Field } from '@ui-types/form';
+import { type SchoolInput } from "@zod-schema/core/school";
+import type { Field } from "@ui-types/form";
 
 /**
  * Simple field configuration for School forms
@@ -13,21 +13,21 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
     placeholder: "Enter school number",
   },
   {
-    name: "district", 
+    name: "district",
     label: "District",
     type: "text",
     placeholder: "Enter district name",
   },
   {
     name: "schoolName",
-    label: "School Name", 
+    label: "School Name",
     type: "text",
     placeholder: "Enter school name",
   },
   {
     name: "address",
     label: "Address",
-    type: "text", 
+    type: "text",
     placeholder: "Enter full address (optional)",
   },
   {
@@ -54,7 +54,7 @@ export const SchoolFieldConfig: Field<SchoolInput>[] = [
       { value: "Grade 9", label: "Grade 9" },
       { value: "Grade 10", label: "Grade 10" },
       { value: "Grade 11", label: "Grade 11" },
-      { value: "Grade 12", label: "Grade 12" }
-    ]
-  }
-]; 
+      { value: "Grade 12", label: "Grade 12" },
+    ],
+  },
+];

@@ -20,12 +20,12 @@ export interface RawAssessment {
 }
 
 // Import Student type for fuzzy matching
-import { Student } from '@/lib/schema/zod-schema/scm/student/student';
+import { Student } from "@/lib/schema/zod-schema/scm/student/student";
 
 // Fuzzy matching types
 export interface StudentMatch {
   student: Student;
-  confidence: 'high' | 'medium' | 'low' | 'none';
+  confidence: "high" | "medium" | "low" | "none";
   score: number;
 }
 
@@ -39,8 +39,8 @@ export interface AttemptData {
 
 export interface StudentRow {
   name: string;
-  matchedStudent: Student | null;  // NEW: Add matched student
-  matchConfidence: 'high' | 'medium' | 'low' | 'none';  // NEW: Add confidence
+  matchedStudent: Student | null; // NEW: Add matched student
+  matchConfidence: "high" | "medium" | "low" | "none"; // NEW: Add confidence
   bestResponse: AttemptData;
   firstAttempt: AttemptData;
   secondAttempt: AttemptData;
@@ -50,4 +50,4 @@ export interface AssessmentData {
   id: string;
   title: string;
   grades: RawStudentResponse[];
-} 
+}

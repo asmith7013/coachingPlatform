@@ -1,1 +1,1 @@
-export * from './rubrics'; 
+export * from "./rubrics";

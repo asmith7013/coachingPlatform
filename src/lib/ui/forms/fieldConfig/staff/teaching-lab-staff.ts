@@ -1,5 +1,5 @@
-import type { Field } from '@ui-types/form';
-import type { TeachingLabStaffInput } from '@zod-schema/core/staff';
+import type { Field } from "@ui-types/form";
+import type { TeachingLabStaffInput } from "@zod-schema/core/staff";
 
 /**
  * Simple field configuration for Teaching Lab Staff forms
@@ -25,8 +25,8 @@ export const TeachingLabStaffFieldConfig: Field<TeachingLabStaffInput>[] = [
     options: [
       { value: "Coach", label: "Coach" },
       { value: "Manager", label: "Manager" },
-      { value: "Admin", label: "Admin" }
-    ]
+      { value: "Admin", label: "Admin" },
+    ],
   },
   {
     name: "rolesTL",
@@ -37,8 +37,8 @@ export const TeachingLabStaffFieldConfig: Field<TeachingLabStaffInput>[] = [
       { value: "Math Specialist", label: "Math Specialist" },
       { value: "ELA Specialist", label: "ELA Specialist" },
       { value: "Coach", label: "Coach" },
-      { value: "Manager", label: "Manager" }
-    ]
+      { value: "Manager", label: "Manager" },
+    ],
   },
   {
     name: "schools",
@@ -60,5 +60,5 @@ export const TeachingLabStaffFieldConfig: Field<TeachingLabStaffInput>[] = [
     type: "reference",
     url: "/api/districts",
     multiple: true,
-  }
-]; 
+  },
+];

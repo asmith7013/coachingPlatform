@@ -1,11 +1,11 @@
 /**
  * Generic hook for optimistic mutations with React Query
- * 
+ *
  * This hook provides a standardized approach to handling optimistic updates
  * with proper error handling and cache invalidation.
  */
-import { useQueryClient, QueryKey } from '@tanstack/react-query';
-import { useStandardMutation } from '@query/client/hooks/mutations/useStandardMutation';
+import { useQueryClient, QueryKey } from "@tanstack/react-query";
+import { useStandardMutation } from "@query/client/hooks/mutations/useStandardMutation";
 
 /**
  * Options for optimistic mutation behavior
@@ -13,41 +13,49 @@ import { useStandardMutation } from '@query/client/hooks/mutations/useStandardMu
 export interface OptimisticMutationOptions<TData, TError, TContext, TResult> {
   /** Query keys to invalidate on success */
   invalidateQueries?: QueryKey[];
-  
+
   /** Function to update cache optimistically before mutation completes */
   onMutate?: (newData: TData) => Promise<TContext>;
-  
+
   /** Function to roll back optimistic update on error */
-  onError?: (err: TError, newData: TData, context: TContext | undefined) => void;
-  
+  onError?: (
+    err: TError,
+    newData: TData,
+    context: TContext | undefined,
+  ) => void;
+
   /** Additional actions on success */
-  onSuccess?: (data: TResult, variables: TData, context: TContext | undefined) => void;
-  
+  onSuccess?: (
+    data: TResult,
+    variables: TData,
+    context: TContext | undefined,
+  ) => void;
+
   /** Error handler context for debugging */
   errorContext?: string;
-  
+
   /** Whether to retry on failure */
   retry?: boolean | number;
 }
 
 /**
  * Hook for handling mutations with optimistic updates
- * 
+ *
  * @param mutationFn - The function to call for the mutation
  * @param options - Configuration options for the mutation
  */
 export function useOptimisticMutation<TData, TResult, TError, TContext>(
   mutationFn: (data: TData) => Promise<TResult>,
-  options?: OptimisticMutationOptions<TData, TError, TContext, TResult>
+  options?: OptimisticMutationOptions<TData, TError, TContext, TResult>,
 ) {
   const queryClient = useQueryClient();
-  const { 
-    invalidateQueries, 
-    onMutate, 
-    onError, 
+  const {
+    invalidateQueries,
+    onMutate,
+    onError,
     onSuccess,
-    errorContext = 'Mutation',
-    retry = 1
+    errorContext = "Mutation",
+    retry = 1,
   } = options || {};
 
   return useStandardMutation(
@@ -59,18 +67,18 @@ export function useOptimisticMutation<TData, TResult, TError, TContext>(
           // If invalidation queries are provided, cancel related queries
           if (invalidateQueries?.length) {
             await Promise.all(
-              invalidateQueries.map(queryKey => 
-                queryClient.cancelQueries({ queryKey })
-              )
+              invalidateQueries.map((queryKey) =>
+                queryClient.cancelQueries({ queryKey }),
+              ),
             );
           }
-          
+
           // Run the optimistic update function
           return await onMutate(newData);
         }
         return undefined;
       },
-      
+
       // Error handling with rollback
       onError: (err, newData, context) => {
         // Handle errors and rollback optimistic updates
@@ -78,25 +86,25 @@ export function useOptimisticMutation<TData, TResult, TError, TContext>(
           onError(err as TError, newData, context as TContext);
         }
       },
-      
+
       // Success handling with cache invalidation
       onSuccess: (data, variables, context) => {
         // Invalidate relevant queries on success
         if (invalidateQueries?.length) {
-          invalidateQueries.forEach(queryKey => {
+          invalidateQueries.forEach((queryKey) => {
             queryClient.invalidateQueries({ queryKey });
           });
         }
-        
+
         // Run additional success callback if provided
         if (onSuccess) {
           onSuccess(data, variables, context as TContext);
         }
       },
-      
+
       // Retry configuration
       retry,
     },
-    errorContext
+    errorContext,
   );
 }

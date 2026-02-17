@@ -16,7 +16,10 @@ This folder contains all React components related to the Monday.com integration.
 Import components from the top-level export:
 
 ```tsx
-import { MondayUserFinder, ConnectionTest } from '@/components/integrations/monday';
+import {
+  MondayUserFinder,
+  ConnectionTest,
+} from "@/components/integrations/monday";
 
 function MyComponent() {
   return (
@@ -35,4 +38,4 @@ function MyComponent() {
 3. Use types from the `/types` folder for consistency
 4. Add new components to the appropriate subfolder
 5. Export all components through the subfolder's index.ts file
-6. Update the main index.ts file to export from new subfolders 
+6. Update the main index.ts file to export from new subfolders

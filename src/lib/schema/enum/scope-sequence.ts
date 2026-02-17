@@ -5,7 +5,7 @@ import { z } from "zod";
  */
 export const Grade6LessonsZod = z.enum([
   "G6 U2 L01",
-  "G6 U2 L02", 
+  "G6 U2 L02",
   "G6 U2 L03",
   "G6 U2 L04",
   "G6 U2 L05",
@@ -31,7 +31,7 @@ export const Grade6LessonsZod = z.enum([
   "G6 U3 L13",
   "G6 U3 L14",
   "G6 U3 L16",
-  "G6 U3 L17"
+  "G6 U3 L17",
 ]);
 
 /**
@@ -60,7 +60,7 @@ export const Grade7LessonsZod = z.enum([
   "G7 U6 L13",
   "G7 U6 L14",
   "G7 U6 L15",
-  "G7 U6 L16"
+  "G7 U6 L16",
 ]);
 
 /**
@@ -87,13 +87,17 @@ export const Grade8LessonsZod = z.enum([
   "G8 U5 L02",
   "G8 U5 L03",
   "G8 U5 L04",
-  "G8 U5 L05"
+  "G8 U5 L05",
 ]);
 
 /**
  * Union of all lessons across grades
  */
-export const AllLessonsZod = z.union([Grade6LessonsZod, Grade7LessonsZod, Grade8LessonsZod]);
+export const AllLessonsZod = z.union([
+  Grade6LessonsZod,
+  Grade7LessonsZod,
+  Grade8LessonsZod,
+]);
 
 /**
  * Grade level enum
@@ -153,26 +157,26 @@ export interface ProgressStats {
 }
 
 export function calculateProgress(
-  completedLessons: string[], 
-  grade: GradeLevel
+  completedLessons: string[],
+  grade: GradeLevel,
 ): ProgressStats {
   const allLessons = getLessonsForGrade(grade);
-  const gradeCompletedLessons = completedLessons.filter(lesson => 
-    isLessonForGrade(lesson, grade)
+  const gradeCompletedLessons = completedLessons.filter((lesson) =>
+    isLessonForGrade(lesson, grade),
   );
-  
+
   const completed = gradeCompletedLessons.length;
   const total = allLessons.length;
   const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-  const remaining = allLessons.filter(lesson => 
-    !gradeCompletedLessons.includes(lesson)
+  const remaining = allLessons.filter(
+    (lesson) => !gradeCompletedLessons.includes(lesson),
   );
-  
+
   return {
     completed,
     total,
     percentage,
     remaining,
-    completedLessons: gradeCompletedLessons
+    completedLessons: gradeCompletedLessons,
   };
-} 
+}

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Search, X } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Search, X } from "lucide-react";
 
 interface StaffSearchProps {
   value: string;
@@ -8,19 +8,19 @@ interface StaffSearchProps {
   className?: string;
 }
 
-export function StaffSearch({ 
-  value, 
-  onChange, 
+export function StaffSearch({
+  value,
+  onChange,
   placeholder = "Search staff...",
-  className = ""
+  className = "",
 }: StaffSearchProps) {
   const [inputValue, setInputValue] = useState(value);
-  
+
   // Update local state when prop changes
   useEffect(() => {
     setInputValue(value);
   }, [value]);
-  
+
   // Debounce search to avoid too many requests
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -28,10 +28,10 @@ export function StaffSearch({
         onChange(inputValue);
       }
     }, 300);
-    
+
     return () => clearTimeout(timer);
   }, [inputValue, onChange, value]);
-  
+
   return (
     <div className={`relative ${className}`}>
       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -49,8 +49,8 @@ export function StaffSearch({
           type="button"
           className="absolute inset-y-0 right-0 flex items-center pr-3"
           onClick={() => {
-            setInputValue('');
-            onChange('');
+            setInputValue("");
+            onChange("");
           }}
         >
           <X size={16} className="text-gray-400 hover:text-gray-500" />
@@ -58,4 +58,4 @@ export function StaffSearch({
       )}
     </div>
   );
-} 
+}

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export interface ScheduleUIState {
   selectedTeacher: string | null;
@@ -19,33 +19,36 @@ export function useScheduleUI() {
   const [uiState, setUIState] = useState<ScheduleUIState>({
     selectedTeacher: null,
     selectedPeriod: null,
-    openDropdown: null
+    openDropdown: null,
   });
-  
-  const selectTeacherPeriod = useCallback((teacherId: string, period: number) => {
-    setUIState(prev => ({ 
-      ...prev, 
-      selectedTeacher: teacherId, 
-      selectedPeriod: period 
-    }));
-  }, []);
-  
+
+  const selectTeacherPeriod = useCallback(
+    (teacherId: string, period: number) => {
+      setUIState((prev) => ({
+        ...prev,
+        selectedTeacher: teacherId,
+        selectedPeriod: period,
+      }));
+    },
+    [],
+  );
+
   const clearSelection = useCallback(() => {
-    setUIState(prev => ({ 
-      ...prev, 
-      selectedTeacher: null, 
-      selectedPeriod: null 
+    setUIState((prev) => ({
+      ...prev,
+      selectedTeacher: null,
+      selectedPeriod: null,
     }));
   }, []);
-  
+
   const toggleDropdown = useCallback((dropdownId: string | null) => {
-    setUIState(prev => ({ ...prev, openDropdown: dropdownId }));
+    setUIState((prev) => ({ ...prev, openDropdown: dropdownId }));
   }, []);
 
   return {
     uiState,
     selectTeacherPeriod,
     clearSelection,
-    toggleDropdown
+    toggleDropdown,
   };
-} 
+}

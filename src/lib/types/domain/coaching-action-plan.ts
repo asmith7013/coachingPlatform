@@ -1,7 +1,10 @@
 // Domain types for Coaching Action Plan components and workflows
 // These interfaces match the example component patterns and extend the schema types
 
-import { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
+import {
+  CoachingActionPlan,
+  CoachingActionPlanInput,
+} from "@zod-schema/core/cap";
 
 // ===== CORE COMPONENT INTERFACES =====
 
@@ -22,7 +25,7 @@ export interface ActionPlanStageProps {
  */
 export interface MetricType {
   name: string;
-  type: 'IPG' | 'L&R' | 'Project' | 'Other';
+  type: "IPG" | "L&R" | "Project" | "Other";
   ratings: { score: number; description: string }[];
 }
 
@@ -69,7 +72,7 @@ export interface IPGFocusCardsProps {
   options: Array<{
     value: string;
     label: string;
-    colorCode: 'primary' | 'secondary' | 'success';
+    colorCode: "primary" | "secondary" | "success";
   }>;
   className?: string;
 }
@@ -86,7 +89,7 @@ export interface IPGSubsectionCardsProps {
     label: string;
     description: string;
   }>;
-  parentColor: 'primary' | 'secondary' | 'success';
+  parentColor: "primary" | "secondary" | "success";
   className?: string;
 }
 
@@ -152,7 +155,7 @@ export interface CoachingActionPlanWizardProps {
   initialData?: Partial<CoachingActionPlanInput>;
   onSave: (data: CoachingActionPlanInput) => void;
   onCancel?: () => void;
-  mode?: 'create' | 'edit';
+  mode?: "create" | "edit";
   className?: string;
 }
 
@@ -161,10 +164,10 @@ export interface CoachingActionPlanWizardProps {
  */
 export interface Stage1FormData {
   needsAndFocus: {
-    ipgCoreAction: string;      // ✅ Aligned with schema: ipgCoreAction
-    ipgSubCategory: string;     // ✅ Aligned with schema: ipgSubCategory
-    rationale: string;          // ✅ Aligned with schema: rationale
-    pdfAttachment?: string;     // ✅ Aligned with schema: pdfAttachment (optional)
+    ipgCoreAction: string; // ✅ Aligned with schema: ipgCoreAction
+    ipgSubCategory: string; // ✅ Aligned with schema: ipgSubCategory
+    rationale: string; // ✅ Aligned with schema: rationale
+    pdfAttachment?: string; // ✅ Aligned with schema: pdfAttachment (optional)
   };
 }
 
@@ -287,17 +290,21 @@ export interface ActionPlanProps {
 /**
  * Color mapping for IPG core actions
  */
-export type IPGColorCode = 'primary' | 'secondary' | 'success';
+export type IPGColorCode = "primary" | "secondary" | "success";
 
 /**
  * Status types for coaching action plans
  */
-export type CoachingActionPlanStatus = 'draft' | 'active' | 'completed' | 'archived';
+export type CoachingActionPlanStatus =
+  | "draft"
+  | "active"
+  | "completed"
+  | "archived";
 
 /**
  * Visit arc types for implementation records
  */
-export type VisitArcType = 'Pre-Brief' | 'Observation' | 'Debrief';
+export type VisitArcType = "Pre-Brief" | "Observation" | "Debrief";
 
 /**
  * Metric rating scale (1-4 point scale)
@@ -360,17 +367,17 @@ export interface UseCoachingActionPlanReturn {
   actionPlan: CoachingActionPlan | null;
   isLoading: boolean;
   error: Error | null;
-  
+
   // Actions
   save: (data: CoachingActionPlanInput) => Promise<void>;
   update: (id: string, data: Partial<CoachingActionPlanInput>) => Promise<void>;
   delete: (id: string) => Promise<void>;
-  
+
   // Stage management
   currentStage: number;
   setCurrentStage: (stage: number) => void;
   canProceedToStage: (stage: number) => boolean;
-  
+
   // Validation
   validation: StageValidation;
   validateStage: (stage: number) => boolean;
@@ -384,18 +391,25 @@ export interface UseIPGSelectionReturn {
   // Selection state
   selectedCoreAction: string | null;
   selectedSubsection: string | null;
-  
+
   // Actions
   selectCoreAction: (coreAction: string) => void;
   selectSubsection: (subsection: string) => void;
   clearSelection: () => void;
-  
+
   // Data
-  coreActionOptions: Array<{ value: string; label: string; colorCode: IPGColorCode }>;
-  subsectionOptions: Array<{ value: string; label: string; description: string }>;
-  
+  coreActionOptions: Array<{
+    value: string;
+    label: string;
+    colorCode: IPGColorCode;
+  }>;
+  subsectionOptions: Array<{
+    value: string;
+    label: string;
+    description: string;
+  }>;
+
   // State
   isSelectionComplete: boolean;
   selectedColor: IPGColorCode | null;
 }
-

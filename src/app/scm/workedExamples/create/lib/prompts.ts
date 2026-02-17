@@ -42,7 +42,7 @@ import {
   COMPLETION_CHECKLIST,
   SVG_COORDINATE_PLANES,
   ANNOTATION_ZONES,
-} from '../ai';
+} from "../ai";
 
 // Re-export shared content for backward compatibility
 export const PEDAGOGY_RULES = SHARED_PEDAGOGY_RULES;
@@ -366,7 +366,7 @@ export function buildAnalyzePrompt(
   lessonNumber: number | null,
   lessonName: string,
   learningGoals: string[],
-  additionalContext?: string
+  additionalContext?: string,
 ): string {
   // Build additional context section if provided
   const additionalContextSection = additionalContext?.trim()
@@ -379,15 +379,15 @@ ${additionalContext.trim()}
 - Choosing the strategy name and approach
 - Creating practice problem contexts/themes
 - Deciding what to emphasize in explanations`
-    : '';
+    : "";
 
   return `Analyze this mastery check question image.
 
 Context:
 - Grade Level: ${gradeLevel}
-- Unit: ${unitNumber ?? 'Not specified'}
-- Lesson: ${lessonNumber ?? 'Not specified'} - ${lessonName || 'Not specified'}
-- Learning Targets: ${learningGoals.length > 0 ? learningGoals.join('; ') : 'Not specified'}${additionalContextSection}
+- Unit: ${unitNumber ?? "Not specified"}
+- Lesson: ${lessonNumber ?? "Not specified"} - ${lessonName || "Not specified"}
+- Learning Targets: ${learningGoals.length > 0 ? learningGoals.join("; ") : "Not specified"}${additionalContextSection}
 
 Instructions (backward planning protocol — exit ticket is the essential source of truth):
 1. Deep Exit Ticket Analysis: solve step-by-step, identify mathematical structure, articulate what correct understanding looks like
@@ -400,7 +400,7 @@ Instructions (backward planning protocol — exit ticket is the essential source
    - initialState: ASCII showing Problem Setup slide for Scenario 1's numbers
    - keyElements: Array explaining each visual element
    - steps: One entry per strategy move (must match strategyDefinition.moves.length)
-${additionalContext ? "8. Apply the teacher's additional context preferences when creating scenarios and choosing strategy" : ''}
+${additionalContext ? "8. Apply the teacher's additional context preferences when creating scenarios and choosing strategy" : ""}
 
 **⚠️ REQUIRED FIELDS - Your response MUST include:**
 - scenarios[0].diagramEvolution (with initialState, keyElements, and steps array using Scenario 1's numbers)
@@ -424,8 +424,13 @@ export function buildGenerateSlidesPrompt(
     problemType: string;
     mathematicalStructure: string;
     solution: { step: number; description: string; reasoning: string }[];
-    visualType: 'text-only' | 'html-table' | 'svg-visual';
-    svgSubtype?: 'coordinate-graph' | 'diagram' | 'shape' | 'number-line' | 'other';
+    visualType: "text-only" | "html-table" | "svg-visual";
+    svgSubtype?:
+      | "coordinate-graph"
+      | "diagram"
+      | "shape"
+      | "number-line"
+      | "other";
     graphPlan?: {
       equations: {
         label: string;
@@ -516,7 +521,7 @@ export function buildGenerateSlidesPrompt(
       keyElements: { element: string; represents: string }[];
       steps: { header: string; ascii: string; changes: string[] }[];
     };
-  }[]
+  }[],
 ): string {
   // Dynamic slide count based on number of strategy moves
   const numMoves = strategyDefinition.moves.length;
@@ -531,24 +536,24 @@ export function buildGenerateSlidesPrompt(
       const slideNum = 4 + i;
       const prevStepsNote =
         i === 0
-          ? ''
-          : ` with step${i > 1 ? 's' : ''} 1${i > 1 ? `-${i}` : ''} complete`;
+          ? ""
+          : ` with step${i > 1 ? "s" : ""} 1${i > 1 ? `-${i}` : ""} complete`;
       const isLast = i === numMoves - 1;
-      return `${slideNum}. **Step ${i + 1} + CFU + Answer** - Show step ${i + 1}${isLast ? ' (final)' : ''}${prevStepsNote}, both CFU and Answer at y=40 (Answer overlays CFU on second click)`;
+      return `${slideNum}. **Step ${i + 1} + CFU + Answer** - Show step ${i + 1}${isLast ? " (final)" : ""}${prevStepsNote}, both CFU and Answer at y=40 (Answer overlays CFU on second click)`;
     })
-    .join('\n');
+    .join("\n");
 
   // Build slide type reference table rows for step slides
   const stepTableRows = strategyDefinition.moves
     .map(
       (_, i) =>
-        `| ${4 + i} | Step ${i + 1} + CFU + Answer | Both boxes stacked (animated) | generate-new |`
+        `| ${4 + i} | Step ${i + 1} + CFU + Answer | Both boxes stacked (animated) | generate-new |`,
     )
-    .join('\n');
+    .join("\n");
 
   // Build graph plan section if visualType is svg-visual with coordinate-graph subtype
   // CRITICAL: Use Scenario 1's graphPlan (worked example) for slides, NOT mastery check's graphPlan
-  let graphPlanSection = '';
+  let graphPlanSection = "";
   const workedExampleGraphPlan = scenarios[0]?.graphPlan;
   const graphPlanToUse = workedExampleGraphPlan || problemAnalysis.graphPlan;
 
@@ -556,8 +561,8 @@ export function buildGenerateSlidesPrompt(
   const diagramEvolutionToUse = scenarios[0]?.diagramEvolution;
 
   if (
-    problemAnalysis.visualType === 'svg-visual' &&
-    problemAnalysis.svgSubtype === 'coordinate-graph' &&
+    problemAnalysis.visualType === "svg-visual" &&
+    problemAnalysis.svgSubtype === "coordinate-graph" &&
     graphPlanToUse
   ) {
     const gp = graphPlanToUse;
@@ -577,7 +582,7 @@ export function buildGenerateSlidesPrompt(
         const startPixelY = toPixelY(e.startPoint?.y ?? e.yIntercept);
         const endPixelX = toPixelX(e.endPoint?.x ?? xMax);
         const endPixelY = toPixelY(
-          e.endPoint?.y ?? e.slope * xMax + e.yIntercept
+          e.endPoint?.y ?? e.slope * xMax + e.yIntercept,
         );
 
         return `### ${e.label}: ${e.equation} (${e.color})
@@ -591,10 +596,10 @@ export function buildGenerateSlidesPrompt(
 
 **SVG line element:**
 \`\`\`html
-<line x1="${startPixelX}" y1="${startPixelY}" x2="${endPixelX}" y2="${endPixelY}" stroke="${e.color}" stroke-width="3" marker-end="url(#line-arrow-${e.label.toLowerCase().replace(/\s+/g, '-')})"/>
+<line x1="${startPixelX}" y1="${startPixelY}" x2="${endPixelX}" y2="${endPixelY}" stroke="${e.color}" stroke-width="3" marker-end="url(#line-arrow-${e.label.toLowerCase().replace(/\s+/g, "-")})"/>
 \`\`\``;
       })
-      .join('\n\n');
+      .join("\n\n");
 
     graphPlanSection = `
 ## 📊 GRAPH PLAN (PRE-CALCULATED - USE THESE EXACT VALUES)
@@ -602,8 +607,8 @@ export function buildGenerateSlidesPrompt(
 **Scale:**
 - X_MAX: ${xMax}
 - Y_MAX: ${yMax}
-- X-axis labels: ${gp.scale.xAxisLabels.join(', ')}
-- Y-axis labels: ${gp.scale.yAxisLabels.join(', ')}
+- X-axis labels: ${gp.scale.xAxisLabels.join(", ")}
+- Y-axis labels: ${gp.scale.yAxisLabels.join(", ")}
 
 **Pixel conversion formulas (for reference):**
 - pixelX = 40 + (dataX / ${xMax}) * 220
@@ -621,10 +626,10 @@ ${lineInstructions}
 ---
 
 **Key Points (for data point circles/labels):**
-${gp.keyPoints.map((p) => `- ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join('\n')}
+${gp.keyPoints.map((p) => `- ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join("\n")}
 
 **Annotations:**
-${gp.annotations.map((a) => `- Type: ${a.type}, Label: "${a.label}"${a.from !== undefined ? `, from y=${a.from} to y=${a.to}` : ''}`).join('\n')}
+${gp.annotations.map((a) => `- Type: ${a.type}, Label: "${a.label}"${a.from !== undefined ? `, from y=${a.from} to y=${a.to}` : ""}`).join("\n")}
 `;
   }
 
@@ -638,15 +643,15 @@ Generate HTML slides for this worked example.
 
 ## Context
 - Grade Level: ${gradeLevel}
-- Unit ${unitNumber ?? ''} Lesson ${lessonNumber ?? ''}
-- Learning Targets: ${learningGoals.join('; ')}
+- Unit ${unitNumber ?? ""} Lesson ${lessonNumber ?? ""}
+- Learning Targets: ${learningGoals.join("; ")}
 
 ## Problem Analysis
 - Type: ${problemAnalysis.problemType}
 - Structure: ${problemAnalysis.mathematicalStructure}
 - Visual Type: ${problemAnalysis.visualType}
 - Solution Steps:
-${problemAnalysis.solution.map((s) => `  ${s.step}. ${s.description} (${s.reasoning})`).join('\n')}
+${problemAnalysis.solution.map((s) => `  ${s.step}. ${s.description} (${s.reasoning})`).join("\n")}
 ${graphPlanSection}${
     diagramEvolutionToUse
       ? `
@@ -666,23 +671,23 @@ ${diagramEvolutionToUse.steps
 ${step.ascii}
 \`\`\`
 **Changes in this step:**
-${step.changes.map((c) => `- ${c}`).join('\n')}
-`
+${step.changes.map((c) => `- ${c}`).join("\n")}
+`,
   )
-  .join('\n')}
+  .join("\n")}
 
 **IMPORTANT:** Each slide's visual must match the corresponding evolution step above.
 `
-      : ''
+      : ""
   }
 
 ## Strategy
 - Name: ${strategyDefinition.name}
 - Summary: ${strategyDefinition.oneSentenceSummary}
 - Moves:
-${strategyDefinition.moves.map((m, i) => `  ${i + 1}. ${m.verb}: ${m.description} -> ${m.result}`).join('\n')}
-- Slide Headers: ${strategyDefinition.slideHeaders.join(', ')}
-- CFU Templates: ${strategyDefinition.cfuQuestionTemplates.join('; ')}
+${strategyDefinition.moves.map((m, i) => `  ${i + 1}. ${m.verb}: ${m.description} -> ${m.result}`).join("\n")}
+- Slide Headers: ${strategyDefinition.slideHeaders.join(", ")}
+- CFU Templates: ${strategyDefinition.cfuQuestionTemplates.join("; ")}
 
 ## Scenarios
 ${scenarios
@@ -708,14 +713,14 @@ Description: ${s.description}`;
 **Graph Plan for Practice ${i}:**
 - Scale: X_MAX=${xMax}, Y_MAX=${yMax}
 - Equations:
-${gp.equations.map((e) => `  - ${e.label}: ${e.equation} (start: ${e.startPoint?.x ?? 0},${e.startPoint?.y ?? e.yIntercept} → end: ${e.endPoint?.x ?? xMax},${e.endPoint?.y ?? e.slope * xMax + e.yIntercept})`).join('\n')}
+${gp.equations.map((e) => `  - ${e.label}: ${e.equation} (start: ${e.startPoint?.x ?? 0},${e.startPoint?.y ?? e.yIntercept} → end: ${e.endPoint?.x ?? xMax},${e.endPoint?.y ?? e.slope * xMax + e.yIntercept})`).join("\n")}
 - Key Points:
-${gp.keyPoints.map((p) => `  - ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join('\n')}`;
+${gp.keyPoints.map((p) => `  - ${p.label}: data(${p.x}, ${p.y}) → pixel(${toPixelX(p.x)}, ${toPixelY(p.y)})`).join("\n")}`;
     }
 
     return scenarioText;
   })
-  .join('\n')}
+  .join("\n")}
 
 ## Instructions - PPTX-Compatible Slides
 
@@ -793,7 +798,7 @@ Each slide MUST have body with width: 960px; height: 540px.`;
 /**
  * Types for context-aware generation
  */
-export type GenerationMode = 'full' | 'continue' | 'update';
+export type GenerationMode = "full" | "continue" | "update";
 
 export interface HtmlSlideInput {
   slideNumber: number;
@@ -812,13 +817,13 @@ export interface UpdateInstructions {
 export function buildContinuePrompt(
   existingSlides: HtmlSlideInput[],
   fullSlideCount: number,
-  basePrompt: string
+  basePrompt: string,
 ): string {
   const existingSlidesContext = existingSlides
     .map(
-      (s, i) => `--- SLIDE ${i + 1} (ALREADY CREATED) ---\n${s.htmlContent}\n`
+      (s, i) => `--- SLIDE ${i + 1} (ALREADY CREATED) ---\n${s.htmlContent}\n`,
     )
-    .join('\n');
+    .join("\n");
 
   return `You are CONTINUING slide generation for a worked example deck.
 
@@ -848,16 +853,16 @@ IMPORTANT:
 export function buildUpdatePrompt(
   existingSlides: HtmlSlideInput[],
   updateInstructions: UpdateInstructions,
-  basePrompt: string
+  basePrompt: string,
 ): string {
   const slidesToUpdate = updateInstructions.slideNumbers;
   const existingSlidesContext = existingSlides
     .map((s, i) => {
       const slideNum = i + 1;
       const needsUpdate = slidesToUpdate.includes(slideNum);
-      return `--- SLIDE ${slideNum} ${needsUpdate ? '(NEEDS UPDATE)' : '(KEEP AS-IS)'} ---\n${s.htmlContent}\n`;
+      return `--- SLIDE ${slideNum} ${needsUpdate ? "(NEEDS UPDATE)" : "(KEEP AS-IS)"} ---\n${s.htmlContent}\n`;
     })
-    .join('\n');
+    .join("\n");
 
   return `You are UPDATING specific slides in an existing worked example deck.
 
@@ -865,12 +870,12 @@ export function buildUpdatePrompt(
 ${existingSlidesContext}
 
 ## YOUR TASK
-Regenerate ONLY slides ${slidesToUpdate.join(', ')} with the following changes:
+Regenerate ONLY slides ${slidesToUpdate.join(", ")} with the following changes:
 
 ${updateInstructions.changes}
 
 ## RULES
-1. Output ONLY the updated slides (slides ${slidesToUpdate.join(', ')})
+1. Output ONLY the updated slides (slides ${slidesToUpdate.join(", ")})
 2. Maintain the same overall structure and style as the existing slides
 3. Use ===SLIDE_SEPARATOR=== between each slide
 4. Output slides in order (lowest number first)

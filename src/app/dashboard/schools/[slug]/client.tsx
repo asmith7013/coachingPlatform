@@ -2,14 +2,20 @@
 
 import React from "react";
 import { Line } from "react-chartjs-2";
-import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement } from "chart.js";
-import { Card } from '@components/composed/cards/Card';
-import { Heading, Text } from '@components/core/typography';
-import { typography, paddingY, stack } from '@lib/tokens/tokens';
-import { cn } from '@ui/utils/formatters';
+import {
+  Chart as ChartJS,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+} from "chart.js";
+import { Card } from "@components/composed/cards/Card";
+import { Heading, Text } from "@components/core/typography";
+import { typography, paddingY, stack } from "@lib/tokens/tokens";
+import { cn } from "@ui/utils/formatters";
 import { useSchoolById } from "@hooks/domain/useSchools";
 import { useNYCPSStaff } from "@hooks/domain/staff/useNYCPSStaff";
-import { Alert, Spinner, Badge } from '@components/core/feedback';
+import { Alert, Spinner, Badge } from "@components/core/feedback";
 import { NYCPSStaff } from "@zod-schema/core/staff";
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
@@ -18,7 +24,7 @@ type LookFor = string;
 type Period = { period: string; time: string };
 
 // Mock data for schedules and lookFors - would be replaced with actual API data
-const scheduleData: Record<string,Period[]> = {
+const scheduleData: Record<string, Period[]> = {
   "1": [
     { period: "1", time: "8:00 - 8:45 AM" },
     { period: "2", time: "8:50 - 9:35 AM" },
@@ -30,52 +36,68 @@ const scheduleData: Record<string,Period[]> = {
 };
 
 const lookForsData: Record<string, LookFor[]> = {
-  "1": ["Clear Learning Target", "Multiple Representations", "Student Discourse"],
-  "2": ["Checking for Understanding", "Explicit Modeling", "Academic Language Use"],
+  "1": [
+    "Clear Learning Target",
+    "Multiple Representations",
+    "Student Discourse",
+  ],
+  "2": [
+    "Checking for Understanding",
+    "Explicit Modeling",
+    "Academic Language Use",
+  ],
 };
 
 interface SchoolDetailClientProps {
   schoolId: string;
 }
 
-export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps) {
+export default function SchoolDetailClient({
+  schoolId,
+}: SchoolDetailClientProps) {
   // Use the React Query hook to fetch school by ID
-  const { 
-    data: school, 
-    isLoading: schoolLoading, 
-    error: schoolError 
+  const {
+    data: school,
+    isLoading: schoolLoading,
+    error: schoolError,
   } = useSchoolById(schoolId);
-  
+
   // Fetch staff for this school
-  const { 
-    items: nycpsStaff, 
+  const {
+    items: nycpsStaff,
     isLoading: staffLoading,
-    error: staffError 
+    error: staffError,
   } = useNYCPSStaff({ schools: [schoolId] });
 
   // Combined loading state
   const loading = schoolLoading || staffLoading;
-  
+
   // Combined error handling
-  const error = schoolError ? 
-    schoolError.message : 
-    staffError ? 
-      staffError.message : 
-      null;
+  const error = schoolError
+    ? schoolError.message
+    : staffError
+      ? staffError.message
+      : null;
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-40">
-      <Spinner size="lg" />
-      <Text textSize="base" className="ml-3">Loading school details...</Text>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-40">
+        <Spinner size="lg" />
+        <Text textSize="base" className="ml-3">
+          Loading school details...
+        </Text>
+      </div>
+    );
 
-  if (error || !school) return (
-    <Alert>
-      <Alert.Title>Error Loading School</Alert.Title>
-      <Alert.Description>{error || "Failed to load school"}</Alert.Description>
-    </Alert>
-  );
+  if (error || !school)
+    return (
+      <Alert>
+        <Alert.Title>Error Loading School</Alert.Title>
+        <Alert.Description>
+          {error || "Failed to load school"}
+        </Alert.Description>
+      </Alert>
+    );
 
   const lookFors = lookForsData[school._id] ?? [];
   const schedule = scheduleData[school._id] ?? [];
@@ -96,7 +118,7 @@ export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps
     <>
       <Card className="p-6 mb-8">
         <div className="flex items-center gap-4 mb-4">
-          <div className="text-3xl">{school.emoji || '🏫'}</div>
+          <div className="text-3xl">{school.emoji || "🏫"}</div>
           <div>
             <Heading level="h2">{school.schoolName}</Heading>
             <Text textSize="base" color="muted" className="mt-1">
@@ -114,16 +136,20 @@ export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps
             )}
           </div>
         </div>
-        
-        <Heading level="h3" className="mt-6 mb-2">Grade Levels</Heading>
+
+        <Heading level="h3" className="mt-6 mb-2">
+          Grade Levels
+        </Heading>
         <div className="flex flex-wrap gap-2">
           {school.gradeLevelsSupported?.map((grade, index) => (
             <Badge key={index}>{grade}</Badge>
           ))}
         </div>
       </Card>
-      
-      <Heading level="h3" className="mt-8 mb-4">Staff</Heading>
+
+      <Heading level="h3" className="mt-8 mb-4">
+        Staff
+      </Heading>
       {nycpsStaff && nycpsStaff.length > 0 ? (
         <div className="flex flex-wrap gap-4">
           {nycpsStaff.map((person: NYCPSStaff) => (
@@ -135,18 +161,21 @@ export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps
       )}
 
       <Card className={stack.md} padding="md" radius="lg">
-        <Heading level="h2" className={cn(typography.weight.medium, 'text-primary', stack.md)}>
+        <Heading
+          level="h2"
+          className={cn(typography.weight.medium, "text-primary", stack.md)}
+        >
           Look Fors
         </Heading>
         <div className="flex flex-wrap gap-2">
-          {lookFors.map((lookFor : LookFor, index : number) => (
-            <span 
-              key={index} 
+          {lookFors.map((lookFor: LookFor, index: number) => (
+            <span
+              key={index}
               className={cn(
                 paddingY.sm,
-                'bg-primary',
-                'text-white',
-                'rounded-full text-sm px-3'
+                "bg-primary",
+                "text-white",
+                "rounded-full text-sm px-3",
               )}
             >
               {lookFor}
@@ -156,7 +185,10 @@ export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps
       </Card>
 
       <Card className={stack.md} padding="md" radius="lg">
-        <Heading level="h2" className={cn(typography.weight.medium, 'text-primary', stack.md)}>
+        <Heading
+          level="h2"
+          className={cn(typography.weight.medium, "text-primary", stack.md)}
+        >
           Schedule
         </Heading>
         <div className="overflow-x-auto">
@@ -168,10 +200,12 @@ export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps
               </tr>
             </thead>
             <tbody>
-              {schedule.map((entry : Period, index : number) => (
+              {schedule.map((entry: Period, index: number) => (
                 <tr key={index} className="border-b border-surface">
-                  <td className={cn(paddingY.sm, 'text-text')}>{entry.period}</td>
-                  <td className={cn(paddingY.sm, 'text-text')}>{entry.time}</td>
+                  <td className={cn(paddingY.sm, "text-text")}>
+                    {entry.period}
+                  </td>
+                  <td className={cn(paddingY.sm, "text-text")}>{entry.time}</td>
                 </tr>
               ))}
             </tbody>
@@ -180,7 +214,10 @@ export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps
       </Card>
 
       <Card className={stack.md} padding="md" radius="lg">
-        <Heading level="h2" className={cn(typography.weight.medium, 'text-primary', stack.md)}>
+        <Heading
+          level="h2"
+          className={cn(typography.weight.medium, "text-primary", stack.md)}
+        >
           LookFors Trends
         </Heading>
         <div className="w-full h-64">
@@ -189,4 +226,4 @@ export default function SchoolDetailClient({ schoolId }: SchoolDetailClientProps
       </Card>
     </>
   );
-} 
+}

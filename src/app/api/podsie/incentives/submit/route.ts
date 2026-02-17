@@ -44,13 +44,13 @@ export async function POST(req: NextRequest) {
     if (!Array.isArray(submissions) || submissions.length === 0) {
       return NextResponse.json(
         { success: false, error: "submissions must be a non-empty array" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Resolve student emails to MongoDB IDs
     const emails = submissions.map(
-      (s: { studentEmail: string }) => s.studentEmail
+      (s: { studentEmail: string }) => s.studentEmail,
     );
 
     const studentMap = await withDbConnection(async () => {
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
           error: "No students could be matched by email",
           unmatchedEmails,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -89,14 +89,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       ...result,
-      unmatchedEmails:
-        unmatchedEmails.length > 0 ? unmatchedEmails : undefined,
+      unmatchedEmails: unmatchedEmails.length > 0 ? unmatchedEmails : undefined,
     });
   } catch (error) {
     console.error("Error in incentives submit:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

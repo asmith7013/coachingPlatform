@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { Card } from '@/components/composed/cards/Card';
-import { Select } from '@/components/core/fields/Select';
+import { Card } from "@/components/composed/cards/Card";
+import { Select } from "@/components/core/fields/Select";
 
 export const domainOptions = [
-  { value: 'C1', label: 'C1: Creating a Culture of Learning' },
-  { value: 'C2', label: 'C2: Facilitating Instruction' },
-  { value: 'C3', label: 'C3: Student Engagement' },
+  { value: "C1", label: "C1: Creating a Culture of Learning" },
+  { value: "C2", label: "C2: Facilitating Instruction" },
+  { value: "C3", label: "C3: Student Engagement" },
 ];
 
 interface Props {
@@ -26,4 +26,4 @@ export function RubricFilterPanel({ selectedDomain, onChange }: Props) {
       />
     </Card>
   );
-} 
+}

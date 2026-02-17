@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react';
-import { Alert } from '@/components/core/feedback/Alert';
+import React from "react";
+import { Alert } from "@/components/core/feedback/Alert";
 
 interface ScraperResults {
   scrapeResults: {
@@ -39,13 +39,19 @@ interface ResultsDisplayProps {
   isLoading: boolean;
 }
 
-export function ResultsDisplay({ results, batchResults, error, isLoading }: ResultsDisplayProps) {
+export function ResultsDisplay({
+  results,
+  batchResults,
+  error,
+  isLoading,
+}: ResultsDisplayProps) {
   if (isLoading) {
     return (
       <Alert intent="info">
         <Alert.Title>Scraping in Progress</Alert.Title>
         <Alert.Description>
-          Please wait while we scrape assessment data and update student records...
+          Please wait while we scrape assessment data and update student
+          records...
         </Alert.Description>
       </Alert>
     );
@@ -69,7 +75,9 @@ export function ResultsDisplay({ results, batchResults, error, isLoading }: Resu
         {/* Success Message */}
         <Alert intent={hasErrors ? "warning" : "success"}>
           <Alert.Title>
-            {hasErrors ? 'Batch Completed with Warnings' : 'Batch Scraping Complete!'}
+            {hasErrors
+              ? "Batch Completed with Warnings"
+              : "Batch Scraping Complete!"}
           </Alert.Title>
           <Alert.Description>
             All sections scraped and student records updated
@@ -78,7 +86,9 @@ export function ResultsDisplay({ results, batchResults, error, isLoading }: Resu
 
         {/* Batch Scraping Results */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Batch Scraping Results</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            Batch Scraping Results
+          </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <div className="text-sm text-gray-500">Total Configurations</div>
@@ -109,10 +119,14 @@ export function ResultsDisplay({ results, batchResults, error, isLoading }: Resu
 
         {/* Batch Update Results */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Database Update Results</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">
+            Database Update Results
+          </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div>
-              <div className="text-sm text-gray-500">Total Students Updated</div>
+              <div className="text-sm text-gray-500">
+                Total Students Updated
+              </div>
               <div className="text-2xl font-semibold text-green-600">
                 {batchResults.updateResults.totalStudentsUpdated}
               </div>
@@ -162,7 +176,7 @@ export function ResultsDisplay({ results, batchResults, error, isLoading }: Resu
       {/* Success Message */}
       <Alert intent={hasErrors ? "warning" : "success"}>
         <Alert.Title>
-          {hasErrors ? 'Completed with Warnings' : 'Success!'}
+          {hasErrors ? "Completed with Warnings" : "Success!"}
         </Alert.Title>
         <Alert.Description>
           Assessment data scraped and student records updated
@@ -171,7 +185,9 @@ export function ResultsDisplay({ results, batchResults, error, isLoading }: Resu
 
       {/* Scraping Results */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Scraping Results</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Scraping Results
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <div className="text-sm text-gray-500">Total Rows</div>
@@ -202,7 +218,9 @@ export function ResultsDisplay({ results, batchResults, error, isLoading }: Resu
 
       {/* Update Results */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Database Update Results</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">
+          Database Update Results
+        </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <div className="text-sm text-gray-500">Students Updated</div>

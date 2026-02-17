@@ -12,18 +12,18 @@ export {
   getPortionLabel,
   isPeriodPortionAvailable,
   createDropZoneItems,
-  getTotalBlocksCount
-} from './schedule-helpers';
+  getTotalBlocksCount,
+} from "./schedule-helpers";
 
 // Styling helpers
 export {
   getEventStyling,
   getTeacherCellStyle,
-  getPlanningIconStyle
-} from './schedule-styling-helpers';
+  getPlanningIconStyle,
+} from "./schedule-styling-helpers";
 
 // Error handling utilities
 export {
   createScheduleComponentsErrorContext,
-  createScheduleComponentsDataErrorContext
-} from './schedule-error-utils'; 
+  createScheduleComponentsDataErrorContext,
+} from "./schedule-error-utils";

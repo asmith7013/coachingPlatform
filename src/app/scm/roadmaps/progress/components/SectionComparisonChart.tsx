@@ -3,7 +3,10 @@
 import React from "react";
 import { cn } from "@ui/utils/formatters";
 import type { SectionRoadmapData } from "@/app/actions/scm/roadmaps/roadmap-completions";
-import { StackedSkillsBarChart, type BarDataItem } from "./StackedSkillsBarChart";
+import {
+  StackedSkillsBarChart,
+  type BarDataItem,
+} from "./StackedSkillsBarChart";
 
 interface SectionComparisonChartProps {
   sections: {
@@ -24,15 +27,16 @@ function calculateSectionAverages(data: SectionRoadmapData | undefined) {
 
   const totalDiagnostic = data.students.reduce(
     (sum, s) => sum + s.masteredFromDiagnostic,
-    0
+    0,
   );
   const totalPractice = data.students.reduce(
     (sum, s) => sum + s.masteredFromPractice,
-    0
+    0,
   );
 
   return {
-    avgDiagnostic: Math.round((totalDiagnostic / data.students.length) * 10) / 10,
+    avgDiagnostic:
+      Math.round((totalDiagnostic / data.students.length) * 10) / 10,
     avgPractice: Math.round((totalPractice / data.students.length) * 10) / 10,
     studentCount: data.students.length,
   };

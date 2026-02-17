@@ -1,8 +1,14 @@
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { exportAndResetDailySheets, testGoogleSheetsConnection } from '@actions/scm/google-sheets-export';
-import { ExportConfig, ExportResult } from '@zod-schema/integrations/google-sheets-export';
-import { EntityResponse } from '@core-types/response';
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import {
+  exportAndResetDailySheets,
+  testGoogleSheetsConnection,
+} from "@actions/scm/google-sheets-export";
+import {
+  ExportConfig,
+  ExportResult,
+} from "@zod-schema/integrations/google-sheets-export";
+import { EntityResponse } from "@core-types/response";
 
 interface UseGoogleSheetsExportReturn {
   exportData: (config: ExportConfig) => Promise<void>;
@@ -11,17 +17,21 @@ interface UseGoogleSheetsExportReturn {
   isTesting: boolean;
   exportResult: ExportResult | null;
   error: string | null;
-  connectionStatus: 'idle' | 'success' | 'error';
+  connectionStatus: "idle" | "success" | "error";
   resetState: () => void;
 }
 
 export function useGoogleSheetsExport(): UseGoogleSheetsExportReturn {
   const [exportResult, setExportResult] = useState<ExportResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [connectionStatus, setConnectionStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
 
   const exportMutation = useMutation({
-    mutationFn: async (config: ExportConfig): Promise<EntityResponse<ExportResult>> => {
+    mutationFn: async (
+      config: ExportConfig,
+    ): Promise<EntityResponse<ExportResult>> => {
       return exportAndResetDailySheets(config);
     },
     onSuccess: (response) => {
@@ -29,14 +39,14 @@ export function useGoogleSheetsExport(): UseGoogleSheetsExportReturn {
         setExportResult(response.data);
         setError(null);
       } else {
-        setError(response.error || 'Export failed');
+        setError(response.error || "Export failed");
         setExportResult(null);
       }
     },
     onError: (error: Error) => {
       setError(error.message);
       setExportResult(null);
-    }
+    },
   });
 
   const connectionMutation = useMutation({
@@ -45,17 +55,17 @@ export function useGoogleSheetsExport(): UseGoogleSheetsExportReturn {
     },
     onSuccess: (response) => {
       if (response.success) {
-        setConnectionStatus('success');
+        setConnectionStatus("success");
         setError(null);
       } else {
-        setConnectionStatus('error');
-        setError(response.error || 'Connection test failed');
+        setConnectionStatus("error");
+        setError(response.error || "Connection test failed");
       }
     },
     onError: (error: Error) => {
-      setConnectionStatus('error');
+      setConnectionStatus("error");
       setError(error.message);
-    }
+    },
   });
 
   const exportData = async (config: ExportConfig) => {
@@ -66,14 +76,14 @@ export function useGoogleSheetsExport(): UseGoogleSheetsExportReturn {
 
   const testConnection = async (spreadsheetId: string) => {
     setError(null);
-    setConnectionStatus('idle');
+    setConnectionStatus("idle");
     await connectionMutation.mutateAsync(spreadsheetId);
   };
 
   const resetState = () => {
     setExportResult(null);
     setError(null);
-    setConnectionStatus('idle');
+    setConnectionStatus("idle");
     exportMutation.reset();
     connectionMutation.reset();
   };
@@ -86,6 +96,6 @@ export function useGoogleSheetsExport(): UseGoogleSheetsExportReturn {
     exportResult,
     error,
     connectionStatus,
-    resetState
+    resetState,
   };
-} 
+}

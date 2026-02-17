@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { Alert } from '@/components/core/feedback/Alert';
-import { Card } from '@/components/composed/cards/Card';
-import { UserForm } from './UserForm';
-import { UserDetails } from './UserDetails';
-import { MondayUser } from '@lib/integrations/monday/types/api';
-import { ConnectionTest } from '../../common';
+import { useState, useRef, useEffect } from "react";
+import { Alert } from "@/components/core/feedback/Alert";
+import { Card } from "@/components/composed/cards/Card";
+import { UserForm } from "./UserForm";
+import { UserDetails } from "./UserDetails";
+import { MondayUser } from "@lib/integrations/monday/types/api";
+import { ConnectionTest } from "../../common";
 
 // Extended MondayUser interface for additional properties
 interface ExtendedMondayUser extends MondayUser {
@@ -29,8 +29,14 @@ export interface MondayUserFinderProps {
   className?: string;
 }
 
-export function MondayUserFinder({ onUserSelect, onStaffCreated, className }: MondayUserFinderProps) {
-  const [selectedUser, setSelectedUser] = useState<ExtendedMondayUser | null>(null);
+export function MondayUserFinder({
+  onUserSelect,
+  onStaffCreated,
+  className,
+}: MondayUserFinderProps) {
+  const [selectedUser, setSelectedUser] = useState<ExtendedMondayUser | null>(
+    null,
+  );
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   // Keep track of timeouts to clear them
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -41,42 +47,42 @@ export function MondayUserFinder({ onUserSelect, onStaffCreated, className }: Mo
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
-    
+
     // Clear success message when searching for a new user
     setSuccessMessage(null);
-    
+
     // Create an extended user with optional properties that might be available
     const extendedUser: ExtendedMondayUser = {
       ...user,
       // These properties may not exist in the base MondayUser type
       photo_thumb: (user as ExtendedMondayUser).photo_thumb,
-      title: (user as ExtendedMondayUser).title
+      title: (user as ExtendedMondayUser).title,
     };
-    
+
     setSelectedUser(extendedUser);
     onUserSelect?.(user);
   };
 
   const handleStaffCreated = () => {
-    setSuccessMessage('Staff member created successfully');
-    
+    setSuccessMessage("Staff member created successfully");
+
     // If there's a callback, we'll call it with some synthetic staff data
     if (onStaffCreated && selectedUser) {
       const newStaff: StaffMember = {
         _id: `staff-${selectedUser.id}`,
         staffName: selectedUser.name,
         email: selectedUser.email,
-        mondayId: selectedUser.id
+        mondayId: selectedUser.id,
       };
-      
+
       onStaffCreated(newStaff);
     }
-    
+
     // Reset after a few seconds
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-    
+
     timeoutRef.current = setTimeout(() => {
       setSuccessMessage(null);
       timeoutRef.current = null;
@@ -111,15 +117,15 @@ export function MondayUserFinder({ onUserSelect, onStaffCreated, className }: Mo
             <Alert.Description>{successMessage}</Alert.Description>
           </Alert>
         )}
-      
+
         {/* Search form */}
         <UserForm onUserFound={handleUserFound} />
-        
+
         {/* User details if a user is selected */}
         {selectedUser && (
           <div className="mt-4">
             <h3 className="text-sm font-medium mb-2">User Details</h3>
-            <UserDetails 
+            <UserDetails
               user={selectedUser}
               onStaffCreated={handleStaffCreated}
             />
@@ -128,4 +134,4 @@ export function MondayUserFinder({ onUserSelect, onStaffCreated, className }: Mo
       </div>
     </Card>
   );
-} 
+}

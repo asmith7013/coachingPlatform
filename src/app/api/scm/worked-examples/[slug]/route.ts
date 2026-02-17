@@ -15,7 +15,7 @@ import { validateApiKey } from "@server/auth/api-key";
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   const authError = validateApiKey(req);
   if (authError) return authError;
@@ -26,7 +26,7 @@ export async function GET(
     if (!slug) {
       return NextResponse.json(
         { success: false, error: "slug parameter is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +36,9 @@ export async function GET(
         isPublic: true,
         deactivated: { $ne: true },
       })
-        .select("slug title mathConcept mathStandard gradeLevel unitNumber lessonNumber learningGoals htmlSlides createdAt updatedAt")
+        .select(
+          "slug title mathConcept mathStandard gradeLevel unitNumber lessonNumber learningGoals htmlSlides createdAt updatedAt",
+        )
         .lean();
 
       return deck;
@@ -45,7 +47,7 @@ export async function GET(
     if (!result) {
       return NextResponse.json(
         { success: false, error: `Deck not found: ${slug}` },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -57,7 +59,7 @@ export async function GET(
     console.error("[worked-examples] Error fetching deck:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

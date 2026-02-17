@@ -7,7 +7,11 @@ import {
   TableCellsIcon,
 } from "@heroicons/react/24/outline";
 import { ToggleSwitch } from "@/components/core/fields/ToggleSwitch";
-import { StudentGraphLegend, CalendarLegend, TableLegend } from "./VelocityLegend";
+import {
+  StudentGraphLegend,
+  CalendarLegend,
+  TableLegend,
+} from "./VelocityLegend";
 
 interface AccordionItemProps {
   title: string;
@@ -18,7 +22,14 @@ interface AccordionItemProps {
   onToggle: () => void;
 }
 
-function AccordionItem({ title, icon, children, legend, isOpen, onToggle }: AccordionItemProps) {
+function AccordionItem({
+  title,
+  icon,
+  children,
+  legend,
+  isOpen,
+  onToggle,
+}: AccordionItemProps) {
   return (
     <div className="border-b border-gray-200 last:border-b-0">
       <button
@@ -66,14 +77,12 @@ export function SectionAccordion({
   studentTableContent,
 }: SectionAccordionProps) {
   // Track which accordions are open - all closed by default
-  const [openItems, setOpenItems] = useState<Set<string>>(() =>
-    new Set()
-  );
+  const [openItems, setOpenItems] = useState<Set<string>>(() => new Set());
 
   const allOpen = openItems.size === 3;
 
   const toggleItem = (item: string) => {
-    setOpenItems(prev => {
+    setOpenItems((prev) => {
       const next = new Set(prev);
       if (next.has(item)) {
         next.delete(item);
@@ -86,7 +95,7 @@ export function SectionAccordion({
 
   const toggleAll = (open: boolean) => {
     if (open) {
-      setOpenItems(new Set(['graph', 'calendar', 'table']));
+      setOpenItems(new Set(["graph", "calendar", "table"]));
     } else {
       setOpenItems(new Set());
     }
@@ -97,7 +106,7 @@ export function SectionAccordion({
       {/* Section Header */}
       <div
         className="px-4 py-3 border-b border-gray-200"
-        style={{ backgroundColor: color || '#4F46E5' }}
+        style={{ backgroundColor: color || "#4F46E5" }}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -123,8 +132,8 @@ export function SectionAccordion({
           title="Student Velocity Rolling 3-Day Average"
           icon={<ChartBarIcon className="h-5 w-5 text-gray-400" />}
           legend={<StudentGraphLegend />}
-          isOpen={openItems.has('graph')}
-          onToggle={() => toggleItem('graph')}
+          isOpen={openItems.has("graph")}
+          onToggle={() => toggleItem("graph")}
         >
           {studentGraphContent}
         </AccordionItem>
@@ -132,8 +141,8 @@ export function SectionAccordion({
           title="Calendar View"
           icon={<CalendarDaysIcon className="h-5 w-5 text-gray-400" />}
           legend={<CalendarLegend />}
-          isOpen={openItems.has('calendar')}
-          onToggle={() => toggleItem('calendar')}
+          isOpen={openItems.has("calendar")}
+          onToggle={() => toggleItem("calendar")}
         >
           {calendarContent}
         </AccordionItem>
@@ -141,8 +150,8 @@ export function SectionAccordion({
           title="Student Detail Table"
           icon={<TableCellsIcon className="h-5 w-5 text-gray-400" />}
           legend={<TableLegend />}
-          isOpen={openItems.has('table')}
-          onToggle={() => toggleItem('table')}
+          isOpen={openItems.has("table")}
+          onToggle={() => toggleItem("table")}
         >
           {studentTableContent}
         </AccordionItem>

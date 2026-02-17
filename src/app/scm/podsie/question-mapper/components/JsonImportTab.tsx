@@ -13,7 +13,11 @@ import {
 } from "@/app/actions/scm/podsie/podsie-question-map";
 import { QuestionMapResults } from "./QuestionMapResults";
 import { transformCurriculumToQuestionMap } from "./utils";
-import type { CurriculumData, PodsieQuestionMap, ExistingMapping } from "./types";
+import type {
+  CurriculumData,
+  PodsieQuestionMap,
+  ExistingMapping,
+} from "./types";
 
 interface ShowToastParams {
   title: string;
@@ -75,7 +79,7 @@ export function JsonImportTab({ showToast }: JsonImportTabProps) {
         !curriculumData.summary
       ) {
         throw new Error(
-          "Invalid JSON structure. Expected assignment, questions, and summary fields."
+          "Invalid JSON structure. Expected assignment, questions, and summary fields.",
         );
       }
 
@@ -140,7 +144,7 @@ export function JsonImportTab({ showToast }: JsonImportTabProps) {
     // Confirm if overwriting existing
     if (existingMapping) {
       const confirmed = window.confirm(
-        `This will overwrite the existing mapping for "${existingMapping.assignmentName}". Continue?`
+        `This will overwrite the existing mapping for "${existingMapping.assignmentName}". Continue?`,
       );
       if (!confirmed) return;
     }

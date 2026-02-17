@@ -2,11 +2,11 @@
 
 import { createCrudActions } from "@server/crud";
 import { BellScheduleModel } from "@/lib/schema/mongoose-schema/schedules/schedule-documents.model";
-import { 
-  BellScheduleZodSchema, 
+import {
+  BellScheduleZodSchema,
   BellScheduleInputZodSchema,
   type BellSchedule,
-  type BellScheduleInput
+  type BellScheduleInput,
 } from "@/lib/schema/zod-schema/schedules/schedule-documents";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { QueryParams } from "@core-types/query";
@@ -19,9 +19,9 @@ const bellScheduleActions = createCrudActions({
   inputSchema: BellScheduleInputZodSchema as ZodType<BellScheduleInput>,
   name: "Bell Schedule",
   revalidationPaths: ["/dashboard/schedules"],
-  sortFields: ['name', 'schoolId', 'bellScheduleType', 'createdAt'],
-  defaultSortField: 'name',
-  defaultSortOrder: 'asc'
+  sortFields: ["name", "schoolId", "bellScheduleType", "createdAt"],
+  defaultSortField: "name",
+  defaultSortOrder: "asc",
 });
 
 // Export standard CRUD functions with connection handling
@@ -33,7 +33,10 @@ export async function createBellSchedule(data: BellScheduleInput) {
   return withDbConnection(() => bellScheduleActions.create(data));
 }
 
-export async function updateBellSchedule(id: string, data: Partial<BellScheduleInput>) {
+export async function updateBellSchedule(
+  id: string,
+  data: Partial<BellScheduleInput>,
+) {
   return withDbConnection(() => bellScheduleActions.update(id, data));
 }
 
@@ -43,4 +46,4 @@ export async function deleteBellSchedule(id: string) {
 
 export async function fetchBellScheduleById(id: string) {
   return withDbConnection(() => bellScheduleActions.fetchById(id));
-} 
+}

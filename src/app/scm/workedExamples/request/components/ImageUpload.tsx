@@ -81,7 +81,9 @@ export function ImageUpload({
               <CameraIcon className="w-10 h-10 text-gray-400 mx-auto mb-2" />
               <p className="text-gray-600">
                 Drop an image here or{" "}
-                <span className="text-blue-600 hover:text-blue-800">browse</span>
+                <span className="text-blue-600 hover:text-blue-800">
+                  browse
+                </span>
               </p>
               <p className="text-sm text-gray-400 mt-1">
                 Upload a screenshot of the practice problem

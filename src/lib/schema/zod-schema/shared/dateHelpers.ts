@@ -1,5 +1,5 @@
 // src/lib/data-schema/zod-schema/shared/dateHelpers.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 // Re-export date utilities for consistency
 export {
@@ -19,50 +19,49 @@ export {
   navigateMonth,
   addDays,
   subtractDays,
-  getRelativeDateDescription
-} from '@/lib/data-processing/transformers/utils/date-utils';
+  getRelativeDateDescription,
+} from "@/lib/data-processing/transformers/utils/date-utils";
 
 /**
  * Enhanced date field transformer that handles various date formats
  * including strings, Date objects, and timestamps
  */
-export const zDateField = z.preprocess(
-  (val) => {
+export const zDateField = z
+  .preprocess((val) => {
     // Handle existing Date objects
     if (val instanceof Date) {
       return val;
     }
-    
+
     // Handle string date formats
-    if (typeof val === 'string' && val.trim() !== '') {
+    if (typeof val === "string" && val.trim() !== "") {
       const date = new Date(val);
       return isNaN(date.getTime()) ? null : date;
     }
-    
+
     // Handle timestamps (numbers)
-    if (typeof val === 'number') {
+    if (typeof val === "number") {
       const date = new Date(val);
       return isNaN(date.getTime()) ? null : date;
     }
-    
+
     // Handle MongoDB extended JSON format
-    if (val && typeof val === 'object' && '$date' in val) {
+    if (val && typeof val === "object" && "$date" in val) {
       const date = new Date(val.$date as string);
       return isNaN(date.getTime()) ? null : date;
     }
-    
+
     return null;
-  },
-  z.date().nullable()
-).transform(val => val || undefined);
+  }, z.date().nullable())
+  .transform((val) => val || undefined);
 
 /**
  * Schema for validating ISO date strings only
  */
 export const isoDateStringSchema = z
   .string()
-  .refine(val => !isNaN(new Date(val).getTime()), {
-    message: "Invalid ISO date string format"
+  .refine((val) => !isNaN(new Date(val).getTime()), {
+    message: "Invalid ISO date string format",
   });
 
 /**
@@ -70,11 +69,11 @@ export const isoDateStringSchema = z
  */
 export const dateStringSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, { 
-    message: "Date must be in YYYY-MM-DD format" 
+  .regex(/^\d{4}-\d{2}-\d{2}$/, {
+    message: "Date must be in YYYY-MM-DD format",
   })
-  .refine(val => !isNaN(new Date(val).getTime()), {
-    message: "Invalid date"
+  .refine((val) => !isNaN(new Date(val).getTime()), {
+    message: "Invalid date",
   });
 
 /**

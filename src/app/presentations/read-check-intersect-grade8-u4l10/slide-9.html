@@ -1,13 +1,47 @@
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 40px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif;">
+<div
+  class="slide-container"
+  style="
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #121212 0%, #14141e 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 40px 60px;
+    color: #ffffff;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  "
+>
+  <h2
+    style="
+      font-size: 42px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+    "
+  >
+    Your Turn: Coffee Shop Order
+  </h2>
+  <p style="font-size: 20px; color: #94a3b8; margin: 0 0 20px 0">
+    Lattes cost <strong style="color: #f97316">$4</strong> each. Pastries cost
+    <strong style="color: #a855f7">$2</strong> each.
+  </p>
 
-    <h2 style="font-size: 42px; font-weight: 700; color: #e2e8f0; margin: 0 0 10px 0; text-transform: uppercase;">Your Turn: Coffee Shop Order</h2>
-    <p style="font-size: 20px; color: #94a3b8; margin: 0 0 20px 0;">Lattes cost <strong style="color: #f97316;">$4</strong> each. Pastries cost <strong style="color: #a855f7;">$2</strong> each.</p>
-
-    <div style="display: flex; gap: 40px; flex: 1; align-items: center;">
-        <!-- Graph -->
-        <div style="flex: 1.2; display: flex; flex-direction: column; align-items: center;">
-            <svg viewBox="0 0 320 260" style="width: 100%; max-height: 400px;">
-                <!--
+  <div style="display: flex; gap: 40px; flex: 1; align-items: center">
+    <!-- Graph -->
+    <div
+      style="
+        flex: 1.2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      "
+    >
+      <svg viewBox="0 0 320 260" style="width: 100%; max-height: 400px">
+        <!--
                 X: lattes (0-6)
                 Y: pastries (0-8)
                 Origin: (50, 210), Width: 240, Height: 175
@@ -15,89 +49,257 @@
                 Y: pixelY = 210 - (dataY / 8) * 175 = 210 - dataY * 21.875
                 -->
 
-                <!-- Grid lines -->
-                <g stroke="#334155" stroke-width="0.5">
-                    <line x1="90" y1="35" x2="90" y2="210"/>
-                    <line x1="130" y1="35" x2="130" y2="210"/>
-                    <line x1="170" y1="35" x2="170" y2="210"/>
-                    <line x1="210" y1="35" x2="210" y2="210"/>
-                    <line x1="250" y1="35" x2="250" y2="210"/>
-                    <line x1="290" y1="35" x2="290" y2="210"/>
-                    <line x1="50" y1="166.25" x2="290" y2="166.25"/>
-                    <line x1="50" y1="122.5" x2="290" y2="122.5"/>
-                    <line x1="50" y1="78.75" x2="290" y2="78.75"/>
-                    <line x1="50" y1="35" x2="290" y2="35"/>
-                </g>
+        <!-- Grid lines -->
+        <g stroke="#334155" stroke-width="0.5">
+          <line x1="90" y1="35" x2="90" y2="210" />
+          <line x1="130" y1="35" x2="130" y2="210" />
+          <line x1="170" y1="35" x2="170" y2="210" />
+          <line x1="210" y1="35" x2="210" y2="210" />
+          <line x1="250" y1="35" x2="250" y2="210" />
+          <line x1="290" y1="35" x2="290" y2="210" />
+          <line x1="50" y1="166.25" x2="290" y2="166.25" />
+          <line x1="50" y1="122.5" x2="290" y2="122.5" />
+          <line x1="50" y1="78.75" x2="290" y2="78.75" />
+          <line x1="50" y1="35" x2="290" y2="35" />
+        </g>
 
-                <!-- Axes -->
-                <line x1="50" y1="210" x2="290" y2="210" stroke="#94a3b8" stroke-width="2"/>
-                <line x1="50" y1="35" x2="50" y2="210" stroke="#94a3b8" stroke-width="2"/>
+        <!-- Axes -->
+        <line
+          x1="50"
+          y1="210"
+          x2="290"
+          y2="210"
+          stroke="#94a3b8"
+          stroke-width="2"
+        />
+        <line
+          x1="50"
+          y1="35"
+          x2="50"
+          y2="210"
+          stroke="#94a3b8"
+          stroke-width="2"
+        />
 
-                <!-- X-axis labels -->
-                <text x="50" y="228" fill="#94a3b8" font-size="12" text-anchor="middle">0</text>
-                <text x="90" y="228" fill="#94a3b8" font-size="12" text-anchor="middle">1</text>
-                <text x="130" y="228" fill="#94a3b8" font-size="12" text-anchor="middle">2</text>
-                <text x="170" y="228" fill="#94a3b8" font-size="12" text-anchor="middle">3</text>
-                <text x="210" y="228" fill="#94a3b8" font-size="12" text-anchor="middle">4</text>
-                <text x="250" y="228" fill="#94a3b8" font-size="12" text-anchor="middle">5</text>
-                <text x="290" y="228" fill="#94a3b8" font-size="12" text-anchor="middle">6</text>
-                <text x="170" y="250" fill="#94a3b8" font-size="13" text-anchor="middle">lattes</text>
+        <!-- X-axis labels -->
+        <text x="50" y="228" fill="#94a3b8" font-size="12" text-anchor="middle">
+          0
+        </text>
+        <text x="90" y="228" fill="#94a3b8" font-size="12" text-anchor="middle">
+          1
+        </text>
+        <text
+          x="130"
+          y="228"
+          fill="#94a3b8"
+          font-size="12"
+          text-anchor="middle"
+        >
+          2
+        </text>
+        <text
+          x="170"
+          y="228"
+          fill="#94a3b8"
+          font-size="12"
+          text-anchor="middle"
+        >
+          3
+        </text>
+        <text
+          x="210"
+          y="228"
+          fill="#94a3b8"
+          font-size="12"
+          text-anchor="middle"
+        >
+          4
+        </text>
+        <text
+          x="250"
+          y="228"
+          fill="#94a3b8"
+          font-size="12"
+          text-anchor="middle"
+        >
+          5
+        </text>
+        <text
+          x="290"
+          y="228"
+          fill="#94a3b8"
+          font-size="12"
+          text-anchor="middle"
+        >
+          6
+        </text>
+        <text
+          x="170"
+          y="250"
+          fill="#94a3b8"
+          font-size="13"
+          text-anchor="middle"
+        >
+          lattes
+        </text>
 
-                <!-- Y-axis labels -->
-                <text x="42" y="214" fill="#94a3b8" font-size="12" text-anchor="end">0</text>
-                <text x="42" y="170" fill="#94a3b8" font-size="12" text-anchor="end">2</text>
-                <text x="42" y="126" fill="#94a3b8" font-size="12" text-anchor="end">4</text>
-                <text x="42" y="82" fill="#94a3b8" font-size="12" text-anchor="end">6</text>
-                <text x="42" y="39" fill="#94a3b8" font-size="12" text-anchor="end">8</text>
-                <text x="15" y="125" fill="#94a3b8" font-size="13" text-anchor="middle" transform="rotate(-90, 15, 125)">pastries</text>
+        <!-- Y-axis labels -->
+        <text x="42" y="214" fill="#94a3b8" font-size="12" text-anchor="end">
+          0
+        </text>
+        <text x="42" y="170" fill="#94a3b8" font-size="12" text-anchor="end">
+          2
+        </text>
+        <text x="42" y="126" fill="#94a3b8" font-size="12" text-anchor="end">
+          4
+        </text>
+        <text x="42" y="82" fill="#94a3b8" font-size="12" text-anchor="end">
+          6
+        </text>
+        <text x="42" y="39" fill="#94a3b8" font-size="12" text-anchor="end">
+          8
+        </text>
+        <text
+          x="15"
+          y="125"
+          fill="#94a3b8"
+          font-size="13"
+          text-anchor="middle"
+          transform="rotate(-90, 15, 125)"
+        >
+          pastries
+        </text>
 
-                <!-- Line 1: 5 items total (l + p = 5) -->
-                <!-- (0,5) → (50, 100.625), (5,0) → (250, 210) -->
-                <line x1="50" y1="100.625" x2="250" y2="210" stroke="#f97316" stroke-width="3"/>
-                <text x="210" y="183" fill="#f97316" font-size="11" font-weight="bold">5 items total</text>
+        <!-- Line 1: 5 items total (l + p = 5) -->
+        <!-- (0,5) → (50, 100.625), (5,0) → (250, 210) -->
+        <line
+          x1="50"
+          y1="100.625"
+          x2="250"
+          y2="210"
+          stroke="#f97316"
+          stroke-width="3"
+        />
+        <text x="210" y="183" fill="#f97316" font-size="11" font-weight="bold">
+          5 items total
+        </text>
 
-                <!-- Line 2: $16 budget (4l + 2p = 16 → p = 8 - 2l) -->
-                <!-- (0,8) → (50, 35), (4,0) → (210, 210) -->
-                <line x1="50" y1="35" x2="210" y2="210" stroke="#a855f7" stroke-width="3"/>
-                <text x="100" y="75" fill="#a855f7" font-size="11" font-weight="bold">$16 budget</text>
+        <!-- Line 2: $16 budget (4l + 2p = 16 → p = 8 - 2l) -->
+        <!-- (0,8) → (50, 35), (4,0) → (210, 210) -->
+        <line
+          x1="50"
+          y1="35"
+          x2="210"
+          y2="210"
+          stroke="#a855f7"
+          stroke-width="3"
+        />
+        <text x="100" y="75" fill="#a855f7" font-size="11" font-weight="bold">
+          $16 budget
+        </text>
 
-                <!-- Points on orange line (l + p = 5) -->
-                <!-- (1,4): x=50+40=90, y=210-87.5=122.5 -->
-                <circle cx="90" cy="122.5" r="4" fill="#f97316"/>
-                <!-- (2,3): x=50+80=130, y=210-65.625=144.375 -->
-                <circle cx="130" cy="144.375" r="4" fill="#f97316"/>
-                <!-- (4,1): x=50+160=210, y=210-21.875=188.125 -->
-                <circle cx="210" cy="188.125" r="4" fill="#f97316"/>
+        <!-- Points on orange line (l + p = 5) -->
+        <!-- (1,4): x=50+40=90, y=210-87.5=122.5 -->
+        <circle cx="90" cy="122.5" r="4" fill="#f97316" />
+        <!-- (2,3): x=50+80=130, y=210-65.625=144.375 -->
+        <circle cx="130" cy="144.375" r="4" fill="#f97316" />
+        <!-- (4,1): x=50+160=210, y=210-21.875=188.125 -->
+        <circle cx="210" cy="188.125" r="4" fill="#f97316" />
 
-                <!-- Points on purple line (4l + 2p = 16, p = 8 - 2l) -->
-                <!-- (1,6): x=50+40=90, y=210-131.25=78.75 -->
-                <circle cx="90" cy="78.75" r="4" fill="#a855f7"/>
-                <!-- (2,4): x=50+80=130, y=210-87.5=122.5 -->
-                <circle cx="130" cy="122.5" r="4" fill="#a855f7"/>
+        <!-- Points on purple line (4l + 2p = 16, p = 8 - 2l) -->
+        <!-- (1,6): x=50+40=90, y=210-131.25=78.75 -->
+        <circle cx="90" cy="78.75" r="4" fill="#a855f7" />
+        <!-- (2,4): x=50+80=130, y=210-87.5=122.5 -->
+        <circle cx="130" cy="122.5" r="4" fill="#a855f7" />
 
-                <!-- Intersection point (3, 2): x=50+120=170, y=210-43.75=166.25 -->
-                <circle cx="170" cy="166.25" r="6" fill="#4ade80" stroke="#fff" stroke-width="2"/>
-            </svg>
-        </div>
-
-        <!-- Problem text -->
-        <div style="flex: 0.8; display: flex; flex-direction: column; gap: 20px;">
-            <div style="background: rgba(249, 115, 22, 0.15); border: 2px solid #f97316; border-radius: 12px; padding: 18px;">
-                <p style="font-size: 16px; color: #f97316; font-weight: 700; margin: 0 0 8px 0;">ORANGE LINE</p>
-                <p style="font-size: 17px; color: #e2e8f0; margin: 0;">Combinations that give you exactly <strong>5 items</strong> total</p>
-            </div>
-
-            <div style="background: rgba(168, 85, 247, 0.15); border: 2px solid #a855f7; border-radius: 12px; padding: 18px;">
-                <p style="font-size: 16px; color: #a855f7; font-weight: 700; margin: 0 0 8px 0;">PURPLE LINE</p>
-                <p style="font-size: 17px; color: #e2e8f0; margin: 0;">Combinations that cost exactly <strong>$16</strong></p>
-            </div>
-
-            <div style="background: rgba(74, 222, 128, 0.15); border: 2px solid #4ade80; border-radius: 12px; padding: 18px;">
-                <p style="font-size: 16px; color: #4ade80; font-weight: 700; margin: 0 0 10px 0;">YOUR TASK</p>
-                <p style="font-size: 16px; color: #e2e8f0; margin: 0;">1. Name one order with 5 items.</p>
-                <p style="font-size: 16px; color: #e2e8f0; margin: 6px 0 0 0;">2. Name one order costing $16.</p>
-                <p style="font-size: 16px; color: #e2e8f0; margin: 6px 0 0 0;">3. What order gives you <strong>BOTH</strong>?</p>
-            </div>
-        </div>
+        <!-- Intersection point (3, 2): x=50+120=170, y=210-43.75=166.25 -->
+        <circle
+          cx="170"
+          cy="166.25"
+          r="6"
+          fill="#4ade80"
+          stroke="#fff"
+          stroke-width="2"
+        />
+      </svg>
     </div>
+
+    <!-- Problem text -->
+    <div style="flex: 0.8; display: flex; flex-direction: column; gap: 20px">
+      <div
+        style="
+          background: rgba(249, 115, 22, 0.15);
+          border: 2px solid #f97316;
+          border-radius: 12px;
+          padding: 18px;
+        "
+      >
+        <p
+          style="
+            font-size: 16px;
+            color: #f97316;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+          "
+        >
+          ORANGE LINE
+        </p>
+        <p style="font-size: 17px; color: #e2e8f0; margin: 0">
+          Combinations that give you exactly <strong>5 items</strong> total
+        </p>
+      </div>
+
+      <div
+        style="
+          background: rgba(168, 85, 247, 0.15);
+          border: 2px solid #a855f7;
+          border-radius: 12px;
+          padding: 18px;
+        "
+      >
+        <p
+          style="
+            font-size: 16px;
+            color: #a855f7;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+          "
+        >
+          PURPLE LINE
+        </p>
+        <p style="font-size: 17px; color: #e2e8f0; margin: 0">
+          Combinations that cost exactly <strong>$16</strong>
+        </p>
+      </div>
+
+      <div
+        style="
+          background: rgba(74, 222, 128, 0.15);
+          border: 2px solid #4ade80;
+          border-radius: 12px;
+          padding: 18px;
+        "
+      >
+        <p
+          style="
+            font-size: 16px;
+            color: #4ade80;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+          "
+        >
+          YOUR TASK
+        </p>
+        <p style="font-size: 16px; color: #e2e8f0; margin: 0">
+          1. Name one order with 5 items.
+        </p>
+        <p style="font-size: 16px; color: #e2e8f0; margin: 6px 0 0 0">
+          2. Name one order costing $16.
+        </p>
+        <p style="font-size: 16px; color: #e2e8f0; margin: 6px 0 0 0">
+          3. What order gives you <strong>BOTH</strong>?
+        </p>
+      </div>
+    </div>
+  </div>
 </div>

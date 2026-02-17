@@ -1,9 +1,9 @@
-import React from 'react';
-import { TodaysVisitProvider } from './context/TodaysVisitContext';
-import { VisitOverviewCard } from './components/VisitOverviewCard';
-import { FocusAndGoalsCard } from './components/FocusAndGoalsCard';
-import { MetricsToMeasureCard } from './components/MetricsToMeasureCard';
-import { ScheduleDisplayCard } from './components/ScheduleDisplayCard';
+import React from "react";
+import { TodaysVisitProvider } from "./context/TodaysVisitContext";
+import { VisitOverviewCard } from "./components/VisitOverviewCard";
+import { FocusAndGoalsCard } from "./components/FocusAndGoalsCard";
+import { MetricsToMeasureCard } from "./components/MetricsToMeasureCard";
+import { ScheduleDisplayCard } from "./components/ScheduleDisplayCard";
 
 interface TodaysVisitDashboardProps {
   coachId?: string;
@@ -11,10 +11,10 @@ interface TodaysVisitDashboardProps {
   className?: string;
 }
 
-export function TodaysVisitDashboard({ 
-  coachId, 
-  schoolId, 
-  className = '' 
+export function TodaysVisitDashboard({
+  coachId,
+  schoolId,
+  className = "",
 }: TodaysVisitDashboardProps) {
   return (
     <TodaysVisitProvider coachId={coachId} schoolId={schoolId}>
@@ -28,4 +28,4 @@ export function TodaysVisitDashboard({
       </div>
     </TodaysVisitProvider>
   );
-} 
+}

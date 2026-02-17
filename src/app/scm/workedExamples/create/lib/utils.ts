@@ -34,14 +34,14 @@ export function formatElapsedTime(seconds: number): string {
 export function formatElapsedTimeShort(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 }
 
 /**
  * Check if a file is a valid image type.
  */
 export function isValidImageFile(file: File): boolean {
-  return file.type.startsWith('image/');
+  return file.type.startsWith("image/");
 }
 
 /**

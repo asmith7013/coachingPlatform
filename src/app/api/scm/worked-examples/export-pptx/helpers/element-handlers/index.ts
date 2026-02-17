@@ -1,6 +1,6 @@
-import pptxgen from '@bapunhansdah/pptxgenjs';
-import { PptxElement } from '../types';
-import { pxToInches } from '../constants';
+import pptxgen from "@bapunhansdah/pptxgenjs";
+import { PptxElement } from "../types";
+import { pxToInches } from "../constants";
 
 // Import individual handlers
 import {
@@ -12,81 +12,84 @@ import {
   addStrategyName,
   addStrategySummary,
   addDefaultText,
-} from './simple-elements';
+} from "./simple-elements";
 
-import {
-  addContentBox,
-  addLearningGoalBox,
-  addStyledBox,
-} from './boxes';
+import { addContentBox, addLearningGoalBox, addStyledBox } from "./boxes";
 
-import { addColumnContent } from './column-content';
-import { isSimpleTextContent } from './utils';
+import { addColumnContent } from "./column-content";
+import { isSimpleTextContent } from "./utils";
 
 /**
  * Render a single pptx element as native pptxgenjs shapes/text
  * Data-driven approach - uses exact coordinates from data-pptx-* attributes
  */
 export function addPptxElement(slide: pptxgen.Slide, el: PptxElement): void {
-  const x = pxToInches(el.x, 'w');
-  const y = pxToInches(el.y, 'h');
-  const w = pxToInches(el.w, 'w');
-  const h = pxToInches(el.h, 'h');
+  const x = pxToInches(el.x, "w");
+  const y = pxToInches(el.y, "h");
+  const w = pxToInches(el.w, "w");
+  const h = pxToInches(el.h, "h");
 
   switch (el.regionType) {
-    case 'badge':
+    case "badge":
       addBadge(slide, el, x, y, w, h);
       break;
 
-    case 'title':
+    case "title":
       addTitle(slide, el, x, y, w, h);
       break;
 
-    case 'subtitle':
+    case "subtitle":
       addSubtitle(slide, el, x, y, w, h);
       break;
 
-    case 'footnote':
+    case "footnote":
       addFootnote(slide, el, x, y, w, h);
       break;
 
-    case 'cfu-box':
-      addStyledBox(slide, el, 'FEF3C7', 'F59E0B', '92400E', 'CHECK FOR UNDERSTANDING');
+    case "cfu-box":
+      addStyledBox(
+        slide,
+        el,
+        "FEF3C7",
+        "F59E0B",
+        "92400E",
+        "CHECK FOR UNDERSTANDING",
+      );
       break;
 
-    case 'answer-box':
-      addStyledBox(slide, el, 'DCFCE7', '22C55E', '166534', 'ANSWER');
+    case "answer-box":
+      addStyledBox(slide, el, "DCFCE7", "22C55E", "166534", "ANSWER");
       break;
 
-    case 'left-column':
-    case 'content':
+    case "left-column":
+    case "content":
       addColumnContent(slide, el);
       break;
 
-    case 'content-box':
-    case 'problem-statement':
-    case 'task-instruction':
+    case "content-box":
+    case "problem-statement":
+    case "task-instruction":
       addContentBox(slide, el, x, y, w, h);
       break;
 
-    case 'learning-goal-box':
+    case "learning-goal-box":
       addLearningGoalBox(slide, el, x, y, w, h);
       break;
 
-    case 'strategy-badge':
+    case "strategy-badge":
       addStrategyBadge(slide, el, x, y, w, h);
       break;
 
-    case 'strategy-name':
+    case "strategy-name":
       addStrategyName(slide, el, x, y, w, h);
       break;
 
-    case 'strategy-summary':
+    case "strategy-summary":
       addStrategySummary(slide, el, x, y, w, h);
       break;
 
-    case 'right-column':
-    case 'problem-visual':
+    case "right-column":
+    case "problem-visual":
       // Render simple content natively, complex content will be screenshot later
       if (isSimpleTextContent(el.content)) {
         addColumnContent(slide, el);
@@ -94,7 +97,7 @@ export function addPptxElement(slide: pptxgen.Slide, el: PptxElement): void {
       // If complex (tables, SVG, etc.), do nothing - handled by screenshot in processSlide
       break;
 
-    case 'svg-container':
+    case "svg-container":
       // Skip - handled separately via image rendering
       break;
 

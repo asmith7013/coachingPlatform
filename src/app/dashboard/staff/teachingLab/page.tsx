@@ -11,18 +11,13 @@ import { TablePagination } from "@/components/composed/tables/features/paginatio
 
 export default function TeachingLabStaffPage() {
   // const [searchTerm, _setSearchTerm] = useState("");
-  const {
-    error,
-    total,
-    page,
-    setPage,
-  } = useTeachingLabStaff({});
+  const { error, total, page, setPage } = useTeachingLabStaff({});
 
   const totalPages = Math.ceil((total || 0) / 10);
 
   return (
     <DashboardLayout>
-      <PageHeader 
+      <PageHeader
         title="Teaching Lab Staff"
         subtitle="Browse and manage Teaching Lab staff members"
         actions={[
@@ -30,8 +25,8 @@ export default function TeachingLabStaffPage() {
             label: "Add Staff",
             icon: PlusIcon,
             onClick: () => {}, // This would be replaced with navigation or modal opening
-            intent: "primary"
-          }
+            intent: "primary",
+          },
         ]}
       />
 
@@ -65,4 +60,4 @@ export default function TeachingLabStaffPage() {
       )}
     </DashboardLayout>
   );
-} 
+}

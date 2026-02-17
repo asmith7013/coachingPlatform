@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card } from '@/components/composed/cards/Card';
-import { Input } from '@/components/core/fields/Input';
-import { Button } from '@/components/core/Button';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
+import { useState } from "react";
+import { Card } from "@/components/composed/cards/Card";
+import { Input } from "@/components/core/fields/Input";
+import { Button } from "@/components/core/Button";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
 
 interface StudentAuthProps {
   onAuthenticate: (email: string) => Promise<void>;
@@ -13,8 +13,12 @@ interface StudentAuthProps {
   error: string | null;
 }
 
-export function StudentAuth({ onAuthenticate, isLoading, error }: StudentAuthProps) {
-  const [email, setEmail] = useState('');
+export function StudentAuth({
+  onAuthenticate,
+  isLoading,
+  error,
+}: StudentAuthProps) {
+  const [email, setEmail] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +38,7 @@ export function StudentAuth({ onAuthenticate, isLoading, error }: StudentAuthPro
             </Text>
           </div>
         </Card.Header>
-        
+
         <Card.Body>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -48,26 +52,29 @@ export function StudentAuth({ onAuthenticate, isLoading, error }: StudentAuthPro
                 className="w-full"
               />
             </div>
-            
+
             {error && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                <Text color="danger" textSize="sm">{error}</Text>
+                <Text color="danger" textSize="sm">
+                  {error}
+                </Text>
               </div>
             )}
-            
-            <Button 
-              type="submit" 
-              intent="primary" 
+
+            <Button
+              type="submit"
+              intent="primary"
               className="w-full"
               disabled={!email.trim() || isLoading}
               loading={isLoading}
             >
-              {isLoading ? 'Verifying...' : 'Access Dashboard'}
+              {isLoading ? "Verifying..." : "Access Dashboard"}
             </Button>
-            
+
             <div className="text-center">
               <Text textSize="xs" color="muted">
-                Having trouble? Make sure you&apos;re using your DOE email address.
+                Having trouble? Make sure you&apos;re using your DOE email
+                address.
               </Text>
             </div>
           </form>
@@ -75,4 +82,4 @@ export function StudentAuth({ onAuthenticate, isLoading, error }: StudentAuthPro
       </Card>
     </div>
   );
-} 
+}

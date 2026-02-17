@@ -1,23 +1,23 @@
 "use client";
 
-import React, { useState } from 'react';
-import { ActionPlanStage } from '../components/ActionPlanStage';
-import { MetricsBuilder } from '../components/MetricsBuilder';
-import { CoachingMovesBuilder } from '../components/CoachingMovesBuilder';
-import { ImplementationRecordCard } from '../components/ImplementationRecordCard';
-import { IPGFocusCards } from '../components/IPGFocusCards';
-import { IPGSubsectionCards } from '../components/IPGSubsectionCards';
-import { Textarea } from '@/components/core/fields/Textarea';
-import { Input } from '@/components/core/fields/Input';
-import { Button } from '@/components/core/Button';
-import { Plus, Edit2 } from 'lucide-react';
-import ipgData from '@/lib/ui/json/ipg.json';
-import { getTodayString } from '@/lib/data-processing/transformers/utils/date-utils';
+import React, { useState } from "react";
+import { ActionPlanStage } from "../components/ActionPlanStage";
+import { MetricsBuilder } from "../components/MetricsBuilder";
+import { CoachingMovesBuilder } from "../components/CoachingMovesBuilder";
+import { ImplementationRecordCard } from "../components/ImplementationRecordCard";
+import { IPGFocusCards } from "../components/IPGFocusCards";
+import { IPGSubsectionCards } from "../components/IPGSubsectionCards";
+import { Textarea } from "@/components/core/fields/Textarea";
+import { Input } from "@/components/core/fields/Input";
+import { Button } from "@/components/core/Button";
+import { Plus, Edit2 } from "lucide-react";
+import ipgData from "@/lib/ui/json/ipg.json";
+import { getTodayString } from "@/lib/data-processing/transformers/utils/date-utils";
 // import { semanticColors } from '@/lib/tokens/colors';
 
 interface MetricType {
   name: string;
-  type: 'IPG' | 'L&R' | 'Project' | 'Other';
+  type: "IPG" | "L&R" | "Project" | "Other";
   ratings: { score: number; description: string }[];
 }
 
@@ -42,36 +42,42 @@ interface ImplementationRecordType {
 
 export default function Example3Page() {
   // Update Stage 1 state
-  const [selectedCoreAction, setSelectedCoreAction] = useState<string | null>(null);
-  const [selectedSubsection, setSelectedSubsection] = useState<string | null>(null);
-  const [rationale, setRationale] = useState('');
-  
+  const [selectedCoreAction, setSelectedCoreAction] = useState<string | null>(
+    null,
+  );
+  const [selectedSubsection, setSelectedSubsection] = useState<string | null>(
+    null,
+  );
+  const [rationale, setRationale] = useState("");
+
   // Stage 2 state
-  const [smartGoal, setSmartGoal] = useState('');
+  const [smartGoal, setSmartGoal] = useState("");
   const [metrics, setMetrics] = useState<MetricType[]>([
-    { 
-      name: 'Teacher Metric (IPG?)', 
-      type: 'IPG',
+    {
+      name: "Teacher Metric (IPG?)",
+      type: "IPG",
       ratings: [
-        { score: 4, description: '' },
-        { score: 3, description: '' },
-        { score: 2, description: '' },
-        { score: 1, description: '' }
-      ]
-    }
+        { score: 4, description: "" },
+        { score: 3, description: "" },
+        { score: 2, description: "" },
+        { score: 1, description: "" },
+      ],
+    },
   ]);
-  
+
   // Stage 3 state
   const [coachingMoves, setCoachingMoves] = useState<CoachingMoveType[]>([
-    { category: '', specificMove: '', toolsResources: '' }
+    { category: "", specificMove: "", toolsResources: "" },
   ]);
-  const [implementationRecords, setImplementationRecords] = useState<ImplementationRecordType[]>([]);
-  
+  const [implementationRecords, setImplementationRecords] = useState<
+    ImplementationRecordType[]
+  >([]);
+
   // Stage 4 state
   const [goalMet, setGoalMet] = useState<boolean | null>(null);
-  const [impactOnLearning, setImpactOnLearning] = useState('');
-  const [buildOnThis, setBuildOnThis] = useState('');
-  const [spotlightLink, setSpotlightLink] = useState('');
+  const [impactOnLearning, setImpactOnLearning] = useState("");
+  const [buildOnThis, setBuildOnThis] = useState("");
+  const [spotlightLink, setSpotlightLink] = useState("");
 
   // Handle Core Action selection
   const handleCoreActionSelect = (value: string) => {
@@ -88,7 +94,7 @@ export default function Example3Page() {
 
   // Get current core action data
   const currentCoreAction = ipgData.find(
-    action => `CA${action.coreAction}` === selectedCoreAction
+    (action) => `CA${action.coreAction}` === selectedCoreAction,
   );
 
   // Determine if we should show the focus box
@@ -101,31 +107,40 @@ export default function Example3Page() {
       proposedArc: [],
       movesSelected: [],
       metrics: {},
-      evidenceLink: '',
-      teacherNotes: '',
-      studentNotes: '',
-      nextStep: '',
+      evidenceLink: "",
+      teacherNotes: "",
+      studentNotes: "",
+      nextStep: "",
       nextStepDone: false,
-      betweenSessionSupport: ''
+      betweenSessionSupport: "",
     };
     setImplementationRecords([...implementationRecords, newRecord]);
   };
 
-  const updateImplementationRecord = (index: number, record: ImplementationRecordType) => {
+  const updateImplementationRecord = (
+    index: number,
+    record: ImplementationRecordType,
+  ) => {
     const updated = [...implementationRecords];
     updated[index] = record;
     setImplementationRecords(updated);
   };
 
   const deleteImplementationRecord = (index: number) => {
-    setImplementationRecords(implementationRecords.filter((_, i) => i !== index));
+    setImplementationRecords(
+      implementationRecords.filter((_, i) => i !== index),
+    );
   };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-center mb-2">Coaching Action Plan</h1>
-        <p className="text-center text-gray-600">Transform teaching practice through structured coaching cycles</p>
+        <h1 className="text-3xl font-bold text-center mb-2">
+          Coaching Action Plan
+        </h1>
+        <p className="text-center text-gray-600">
+          Transform teaching practice through structured coaching cycles
+        </p>
       </div>
 
       {/* Stage 1: Identify Needs & Determine Focus */}
@@ -140,7 +155,7 @@ export default function Example3Page() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Area of Focus (IPG Category)
             </label>
-            
+
             {/* Show cards if no complete selection, otherwise show the gray box */}
             {!showFocusBox ? (
               <>
@@ -148,9 +163,21 @@ export default function Example3Page() {
                   selectedValue={selectedCoreAction || undefined}
                   onSelect={handleCoreActionSelect}
                   options={[
-                    { value: 'CA1', label: 'Focus, Coherence, and Rigor', colorCode: 'primary' },
-                    { value: 'CA2', label: 'Instructional Practices', colorCode: 'secondary' },
-                    { value: 'CA3', label: 'Mathematical Practices', colorCode: 'success' }
+                    {
+                      value: "CA1",
+                      label: "Focus, Coherence, and Rigor",
+                      colorCode: "primary",
+                    },
+                    {
+                      value: "CA2",
+                      label: "Instructional Practices",
+                      colorCode: "secondary",
+                    },
+                    {
+                      value: "CA3",
+                      label: "Mathematical Practices",
+                      colorCode: "success",
+                    },
                   ]}
                 />
 
@@ -160,20 +187,23 @@ export default function Example3Page() {
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
                       {selectedCoreAction}: {currentCoreAction.title}
                     </h3>
-                    
+
                     <div className="ml-8 mb-6">
                       <h4 className="text-sm font-medium text-gray-600 mb-3">
                         Select specific focus area:
                       </h4>
                     </div>
-                    
+
                     <IPGSubsectionCards
                       subsections={currentCoreAction.sections}
                       selectedSubsection={selectedSubsection}
                       onSelect={setSelectedSubsection}
                       parentColor={
-                        selectedCoreAction === 'CA1' ? 'primary' :
-                        selectedCoreAction === 'CA2' ? 'secondary' : 'success'
+                        selectedCoreAction === "CA1"
+                          ? "primary"
+                          : selectedCoreAction === "CA2"
+                            ? "secondary"
+                            : "success"
                       }
                     />
                   </div>
@@ -185,12 +215,15 @@ export default function Example3Page() {
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                   <p className="text-sm text-gray-600">Selected Focus Area:</p>
                   <p className="font-medium">
-                    {selectedCoreAction}.{selectedSubsection} - {
-                      currentCoreAction?.sections.find(s => s.section === selectedSubsection)?.description
+                    {selectedCoreAction}.{selectedSubsection} -{" "}
+                    {
+                      currentCoreAction?.sections.find(
+                        (s) => s.section === selectedSubsection,
+                      )?.description
                     }
                   </p>
                 </div>
-                
+
                 {/* Edit button positioned on the right */}
                 <Button
                   intent="secondary"
@@ -220,11 +253,7 @@ export default function Example3Page() {
       </ActionPlanStage>
 
       {/* Stage 2: Set Goals */}
-      <ActionPlanStage
-        number={2}
-        title="Set Goals"
-        className="mb-8"
-      >
+      <ActionPlanStage number={2} title="Set Goals" className="mb-8">
         <div className="space-y-6">
           <div>
             <h3 className="font-semibold text-lg mb-2">SMART Goal Set</h3>
@@ -238,14 +267,11 @@ export default function Example3Page() {
             />
           </div>
 
-          <MetricsBuilder
-            metrics={metrics}
-            onMetricsChange={setMetrics}
-          />
+          <MetricsBuilder metrics={metrics} onMetricsChange={setMetrics} />
         </div>
         <CoachingMovesBuilder
-            moves={coachingMoves}
-            onMovesChange={setCoachingMoves}
+          moves={coachingMoves}
+          onMovesChange={setCoachingMoves}
         />
       </ActionPlanStage>
 
@@ -256,11 +282,11 @@ export default function Example3Page() {
         className="mb-8"
       >
         <div className="space-y-6">
-
-
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-lg">Implementation Record - Decision Log & Progress Monitoring</h3>
+              <h3 className="font-semibold text-lg">
+                Implementation Record - Decision Log & Progress Monitoring
+              </h3>
               <Button
                 intent="primary"
                 appearance="outline"
@@ -273,7 +299,7 @@ export default function Example3Page() {
                 Add Session
               </Button>
             </div>
-            
+
             {implementationRecords.map((record, index) => (
               <ImplementationRecordCard
                 key={index}
@@ -288,7 +314,8 @@ export default function Example3Page() {
 
             {implementationRecords.length === 0 && (
               <div className="text-center py-8 text-gray-500 border rounded-lg">
-                No implementation records yet. Click &quot;Add Session&quot; to begin tracking progress.
+                No implementation records yet. Click &quot;Add Session&quot; to
+                begin tracking progress.
               </div>
             )}
           </div>
@@ -296,16 +323,14 @@ export default function Example3Page() {
       </ActionPlanStage>
 
       {/* Stage 4: Analyze & Discuss */}
-      <ActionPlanStage
-        number={4}
-        title="Analyze + Discuss"
-        className="mb-8"
-      >
+      <ActionPlanStage number={4} title="Analyze + Discuss" className="mb-8">
         <div className="space-y-4">
           <h3 className="font-semibold text-lg mb-2">Reflection</h3>
-          
+
           <div>
-            <label className="block text-sm font-medium mb-2">Was the goal met?</label>
+            <label className="block text-sm font-medium mb-2">
+              Was the goal met?
+            </label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2">
                 <input

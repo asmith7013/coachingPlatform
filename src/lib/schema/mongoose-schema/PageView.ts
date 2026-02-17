@@ -1,4 +1,4 @@
-import { Schema, model, models } from 'mongoose';
+import { Schema, model, models } from "mongoose";
 
 const PageViewSchema = new Schema(
   {
@@ -16,8 +16,8 @@ const PageViewSchema = new Schema(
   },
   {
     timestamps: true,
-    collection: 'page-views',
-  }
+    collection: "page-views",
+  },
 );
 
 // Compound indexes for common queries
@@ -26,8 +26,11 @@ PageViewSchema.index({ page: 1, timestamp: -1 });
 PageViewSchema.index({ sessionId: 1, timestamp: 1 });
 
 // Auto-expire old page views after 90 days (optional - can be adjusted or removed)
-PageViewSchema.index({ timestamp: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
+PageViewSchema.index(
+  { timestamp: 1 },
+  { expireAfterSeconds: 60 * 60 * 24 * 90 },
+);
 
-const PageView = models.PageView || model('PageView', PageViewSchema);
+const PageView = models.PageView || model("PageView", PageViewSchema);
 
 export default PageView;

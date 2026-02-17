@@ -1,17 +1,21 @@
-import { redirect } from 'next/navigation';
-import { Metadata } from 'next';
-import { getAuthenticatedUser } from '@/lib/server/auth';
+import { redirect } from "next/navigation";
+import { Metadata } from "next";
+import { getAuthenticatedUser } from "@/lib/server/auth";
 
 export const metadata: Metadata = {
-  title: 'School Calendar',
+  title: "School Calendar",
 };
 
-const ALLOWED_DOMAINS = ['schools.nyc.gov', 'teachinglab.org', 'teachinglabstudio.com'];
+const ALLOWED_DOMAINS = [
+  "schools.nyc.gov",
+  "teachinglab.org",
+  "teachinglabstudio.com",
+];
 
 function isAllowedDomain(email: string | null | undefined): boolean {
   if (!email) return false;
 
-  const domain = email.split('@')[1];
+  const domain = email.split("@")[1];
   return ALLOWED_DOMAINS.includes(domain);
 }
 
@@ -21,7 +25,7 @@ export default async function CalendarLayout({
   children: React.ReactNode;
 }) {
   // Skip authentication in development (localhost)
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isDevelopment = process.env.NODE_ENV === "development";
 
   if (isDevelopment) {
     return <>{children}</>;
@@ -32,7 +36,7 @@ export default async function CalendarLayout({
 
   // Require authentication - redirect to sign-in if not logged in
   if (!authResult.success) {
-    const currentPath = '/calendar';
+    const currentPath = "/calendar";
     redirect(`/sign-in?redirect_url=${encodeURIComponent(currentPath)}`);
   }
 
@@ -44,15 +48,18 @@ export default async function CalendarLayout({
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md text-center">
           <div className="text-red-600 text-5xl mb-4">🚫</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Access Denied
+          </h1>
           <p className="text-gray-600 mb-4">
-            Access to the Calendar is restricted to authorized email domains only.
+            Access to the Calendar is restricted to authorized email domains
+            only.
           </p>
           <p className="text-sm text-gray-500 mb-6">
-            Allowed domains: {ALLOWED_DOMAINS.map(d => `@${d}`).join(', ')}
+            Allowed domains: {ALLOWED_DOMAINS.map((d) => `@${d}`).join(", ")}
           </p>
           <p className="text-sm text-gray-400 mb-6">
-            Your email: <strong>{email || 'Unknown'}</strong>
+            Your email: <strong>{email || "Unknown"}</strong>
           </p>
           <a
             href="/sign-out"

@@ -1,8 +1,8 @@
-import { z } from 'zod';
-import { 
-  PaginationParamsZodSchema, 
-  QueryParamsZodSchema,  
-} from '@zod-schema/core-types/query';
+import { z } from "zod";
+import {
+  PaginationParamsZodSchema,
+  QueryParamsZodSchema,
+} from "@zod-schema/core-types/query";
 
 /**
  * Basic pagination parameters
@@ -15,8 +15,6 @@ export type PaginationParams = z.infer<typeof PaginationParamsZodSchema>;
 export type QueryParams = z.infer<typeof QueryParamsZodSchema>;
 
 export const DEFAULT_QUERY_PARAMS: QueryParams = QueryParamsZodSchema.parse({});
-
-
 
 /**
  * Metadata for pagination

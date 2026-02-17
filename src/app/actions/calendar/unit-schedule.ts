@@ -1,14 +1,17 @@
 "use server";
 
 import { ZodType } from "zod";
-import { UnitScheduleModel, SchoolCalendarModel } from "@mongoose-schema/calendar";
+import {
+  UnitScheduleModel,
+  SchoolCalendarModel,
+} from "@mongoose-schema/calendar";
 import { SectionConfigModel } from "@mongoose-schema/scm/podsie";
 import {
   UnitScheduleZodSchema,
   UnitScheduleInputZodSchema,
   type UnitSchedule,
   type UnitScheduleInput,
-  type UnitSection
+  type UnitSection,
 } from "@zod-schema/calendar";
 import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -22,9 +25,9 @@ const unitScheduleActions = createCrudActions({
   inputSchema: UnitScheduleInputZodSchema as ZodType<UnitScheduleInput>,
   name: "UnitSchedule",
   revalidationPaths: ["/calendar"],
-  sortFields: ['unitNumber', 'createdAt', 'updatedAt'],
-  defaultSortField: 'unitNumber',
-  defaultSortOrder: 'asc'
+  sortFields: ["unitNumber", "createdAt", "updatedAt"],
+  defaultSortField: "unitNumber",
+  defaultSortOrder: "asc",
 });
 
 // Export the generated actions with connection handling
@@ -36,7 +39,10 @@ export async function createUnitSchedule(data: UnitScheduleInput) {
   return withDbConnection(() => unitScheduleActions.create(data));
 }
 
-export async function updateUnitSchedule(id: string, data: Partial<UnitScheduleInput>) {
+export async function updateUnitSchedule(
+  id: string,
+  data: Partial<UnitScheduleInput>,
+) {
   return withDbConnection(() => unitScheduleActions.update(id, data));
 }
 
@@ -64,12 +70,12 @@ export async function fetchUnitSchedules(schoolYear: string, grade: string) {
 
       return {
         success: true,
-        data: serialized as UnitSchedule[]
+        data: serialized as UnitSchedule[],
       };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch unit schedules")
+        error: handleServerError(error, "Failed to fetch unit schedules"),
       };
     }
   });
@@ -90,7 +96,7 @@ export async function fetchUnitSchedule(id: string) {
 export async function updateUnitSection(
   unitId: string,
   sectionId: string,
-  sectionData: Partial<UnitSection>
+  sectionData: Partial<UnitSection>,
 ) {
   return withDbConnection(async () => {
     try {
@@ -119,7 +125,7 @@ export async function updateUnitSection(
       const schedule = await UnitScheduleModel.findOneAndUpdate(
         { _id: unitId, "sections.sectionId": sectionId },
         { $set: updateFields },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!schedule) {
@@ -130,7 +136,7 @@ export async function updateUnitSection(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to update unit section")
+        error: handleServerError(error, "Failed to update unit section"),
       };
     }
   });
@@ -142,7 +148,7 @@ export async function updateUnitSection(
 export async function calculateActualDays(
   startDate: string,
   endDate: string,
-  daysOff: string[]
+  daysOff: string[],
 ): Promise<number> {
   const start = new Date(startDate);
   const end = new Date(endDate);
@@ -153,7 +159,7 @@ export async function calculateActualDays(
 
   while (current <= end) {
     const dayOfWeek = current.getDay();
-    const dateStr = current.toISOString().split('T')[0];
+    const dateStr = current.toISOString().split("T")[0];
 
     // Count if it's a weekday and not a day off
     if (dayOfWeek !== 0 && dayOfWeek !== 6 && !daysOffSet.has(dateStr)) {
@@ -191,29 +197,29 @@ export async function upsertUnitSchedule(data: {
         {
           schoolYear: data.schoolYear,
           grade: data.grade,
-          unitNumber: data.unitNumber
+          unitNumber: data.unitNumber,
         },
         {
           $set: {
             unitName: data.unitName,
-            startDate: data.startDate || '',
-            endDate: data.endDate || '',
-            sections: data.sections.map(s => ({
+            startDate: data.startDate || "",
+            endDate: data.endDate || "",
+            sections: data.sections.map((s) => ({
               sectionId: s.sectionId,
               subsection: s.subsection,
               name: s.name,
-              startDate: s.startDate || '',
-              endDate: s.endDate || '',
+              startDate: s.startDate || "",
+              endDate: s.endDate || "",
               plannedDays: s.lessonCount || 0,
             })),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           },
           $setOnInsert: {
             createdAt: new Date().toISOString(),
-            ownerIds: []
-          }
+            ownerIds: [],
+          },
         },
-        { upsert: true, new: true }
+        { upsert: true, new: true },
       ).lean();
 
       // Fully serialize for client (handles ObjectIds and other MongoDB types)
@@ -223,7 +229,7 @@ export async function upsertUnitSchedule(data: {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to save unit schedule")
+        error: handleServerError(error, "Failed to save unit schedule"),
       };
     }
   });
@@ -237,7 +243,7 @@ export async function updateUnitDates(
   grade: string,
   unitNumber: number,
   startDate: string,
-  endDate: string
+  endDate: string,
 ) {
   return withDbConnection(async () => {
     try {
@@ -251,10 +257,10 @@ export async function updateUnitDates(
           $set: {
             startDate,
             endDate,
-            updatedAt: new Date().toISOString()
-          }
+            updatedAt: new Date().toISOString(),
+          },
         },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!schedule) {
@@ -268,7 +274,7 @@ export async function updateUnitDates(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to update unit dates")
+        error: handleServerError(error, "Failed to update unit dates"),
       };
     }
   });
@@ -285,7 +291,7 @@ export async function updateSectionDates(
   sectionId: string,
   startDate: string,
   endDate: string,
-  subsection?: number
+  subsection?: number,
 ) {
   return withDbConnection(async () => {
     try {
@@ -300,9 +306,12 @@ export async function updateSectionDates(
         sections: {
           $elemMatch: {
             sectionId: sectionId,
-            subsection: subsection !== undefined ? subsection : { $in: [null, undefined] }
-          }
-        }
+            subsection:
+              subsection !== undefined
+                ? subsection
+                : { $in: [null, undefined] },
+          },
+        },
       };
 
       const schedule = await UnitScheduleModel.findOneAndUpdate(
@@ -311,10 +320,10 @@ export async function updateSectionDates(
           $set: {
             "sections.$.startDate": startDate,
             "sections.$.endDate": endDate,
-            updatedAt: new Date().toISOString()
-          }
+            updatedAt: new Date().toISOString(),
+          },
         },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!schedule) {
@@ -328,7 +337,7 @@ export async function updateSectionDates(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to update section dates")
+        error: handleServerError(error, "Failed to update section dates"),
       };
     }
   });
@@ -347,7 +356,7 @@ export async function fetchSectionUnitSchedules(
   schoolYear: string,
   scopeSequenceTag: string,
   school: string,
-  classSection: string
+  classSection: string,
 ) {
   return withDbConnection(async () => {
     try {
@@ -355,7 +364,7 @@ export async function fetchSectionUnitSchedules(
         schoolYear,
         scopeSequenceTag,
         school,
-        classSection
+        classSection,
       };
 
       // Sort by grade first (so Grade 8 prereqs come before Algebra 1), then by unitNumber
@@ -368,7 +377,10 @@ export async function fetchSectionUnitSchedules(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to fetch section unit schedules")
+        error: handleServerError(
+          error,
+          "Failed to fetch section unit schedules",
+        ),
       };
     }
   });
@@ -407,7 +419,7 @@ export async function upsertSectionUnitSchedule(data: {
         grade: data.grade,
         school: data.school,
         classSection: data.classSection,
-        unitNumber: data.unitNumber
+        unitNumber: data.unitNumber,
       };
 
       const schedule = await UnitScheduleModel.findOneAndUpdate(
@@ -415,24 +427,24 @@ export async function upsertSectionUnitSchedule(data: {
         {
           $set: {
             unitName: data.unitName,
-            startDate: data.startDate || '',
-            endDate: data.endDate || '',
-            sections: data.sections.map(s => ({
+            startDate: data.startDate || "",
+            endDate: data.endDate || "",
+            sections: data.sections.map((s) => ({
               sectionId: s.sectionId,
               subsection: s.subsection,
               name: s.name,
-              startDate: s.startDate || '',
-              endDate: s.endDate || '',
+              startDate: s.startDate || "",
+              endDate: s.endDate || "",
               plannedDays: s.lessonCount || 0,
             })),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           },
           $setOnInsert: {
             createdAt: new Date().toISOString(),
-            ownerIds: []
-          }
+            ownerIds: [],
+          },
         },
-        { upsert: true, new: true }
+        { upsert: true, new: true },
       ).lean();
 
       const serialized = JSON.parse(JSON.stringify(schedule));
@@ -440,7 +452,7 @@ export async function upsertSectionUnitSchedule(data: {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to save section unit schedule")
+        error: handleServerError(error, "Failed to save section unit schedule"),
       };
     }
   });
@@ -461,7 +473,7 @@ export async function updateSectionUnitDates(
   sectionId: string,
   startDate: string,
   endDate: string,
-  subsection?: number
+  subsection?: number,
 ) {
   return withDbConnection(async () => {
     try {
@@ -479,9 +491,12 @@ export async function updateSectionUnitDates(
         sections: {
           $elemMatch: {
             sectionId: sectionId,
-            subsection: subsection !== undefined ? subsection : { $in: [null, undefined] }
-          }
-        }
+            subsection:
+              subsection !== undefined
+                ? subsection
+                : { $in: [null, undefined] },
+          },
+        },
       };
 
       const schedule = await UnitScheduleModel.findOneAndUpdate(
@@ -490,10 +505,10 @@ export async function updateSectionUnitDates(
           $set: {
             "sections.$.startDate": startDate,
             "sections.$.endDate": endDate,
-            updatedAt: new Date().toISOString()
-          }
+            updatedAt: new Date().toISOString(),
+          },
         },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!schedule) {
@@ -505,7 +520,7 @@ export async function updateSectionUnitDates(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to update section unit dates")
+        error: handleServerError(error, "Failed to update section unit dates"),
       };
     }
   });
@@ -523,7 +538,7 @@ export async function updateSectionUnitLevelDates(
   classSection: string,
   unitNumber: number,
   startDate: string,
-  endDate: string
+  endDate: string,
 ) {
   return withDbConnection(async () => {
     try {
@@ -534,16 +549,16 @@ export async function updateSectionUnitLevelDates(
           grade,
           school,
           classSection,
-          unitNumber
+          unitNumber,
         },
         {
           $set: {
             startDate,
             endDate,
-            updatedAt: new Date().toISOString()
-          }
+            updatedAt: new Date().toISOString(),
+          },
         },
-        { new: true }
+        { new: true },
       ).lean();
 
       if (!schedule) {
@@ -555,7 +570,10 @@ export async function updateSectionUnitLevelDates(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to update section unit level dates")
+        error: handleServerError(
+          error,
+          "Failed to update section unit level dates",
+        ),
       };
     }
   });
@@ -573,7 +591,7 @@ export async function copySectionUnitSchedules(
   fromClassSection: string,
   toSchool: string,
   toClassSection: string,
-  unitNumbers?: number[]
+  unitNumbers?: number[],
 ) {
   return withDbConnection(async () => {
     try {
@@ -582,7 +600,7 @@ export async function copySectionUnitSchedules(
         schoolYear,
         scopeSequenceTag,
         school: fromSchool,
-        classSection: fromClassSection
+        classSection: fromClassSection,
       };
 
       if (unitNumbers && unitNumbers.length > 0) {
@@ -593,7 +611,10 @@ export async function copySectionUnitSchedules(
       const sourceSchedules = await UnitScheduleModel.find(query).lean();
 
       if (sourceSchedules.length === 0) {
-        return { success: false, error: "No schedules found in source section" };
+        return {
+          success: false,
+          error: "No schedules found in source section",
+        };
       }
 
       // Copy each schedule to the target section
@@ -606,24 +627,24 @@ export async function copySectionUnitSchedules(
             grade: source.grade,
             school: toSchool,
             classSection: toClassSection,
-            unitNumber: source.unitNumber
+            unitNumber: source.unitNumber,
           },
           {
             $set: {
               unitName: source.unitName,
-              startDate: source.startDate || '',
-              endDate: source.endDate || '',
+              startDate: source.startDate || "",
+              endDate: source.endDate || "",
               sections: source.sections,
               color: source.color,
               notes: source.notes,
-              updatedAt: new Date().toISOString()
+              updatedAt: new Date().toISOString(),
             },
             $setOnInsert: {
               createdAt: new Date().toISOString(),
-              ownerIds: []
-            }
+              ownerIds: [],
+            },
           },
-          { upsert: true, new: true }
+          { upsert: true, new: true },
         ).lean();
         results.push(copied);
       }
@@ -632,15 +653,15 @@ export async function copySectionUnitSchedules(
       // This ensures lessons are properly mapped to subsections in the target
       const copiedUnitNumbers = results
         .filter((r): r is NonNullable<typeof r> => r !== null)
-        .map(r => (r as { unitNumber?: number }).unitNumber)
-        .filter((n): n is number => typeof n === 'number');
+        .map((r) => (r as { unitNumber?: number }).unitNumber)
+        .filter((n): n is number => typeof n === "number");
       if (copiedUnitNumbers.length > 0) {
         await copySubsectionAssignments(
           fromSchool,
           fromClassSection,
           toSchool,
           toClassSection,
-          copiedUnitNumbers as number[]
+          copiedUnitNumbers as number[],
         );
       }
 
@@ -648,12 +669,15 @@ export async function copySectionUnitSchedules(
       return {
         success: true,
         data: serialized as UnitSchedule[],
-        message: `Copied ${results.length} unit schedules`
+        message: `Copied ${results.length} unit schedules`,
       };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to copy section unit schedules")
+        error: handleServerError(
+          error,
+          "Failed to copy section unit schedules",
+        ),
       };
     }
   });
@@ -668,7 +692,7 @@ async function copySubsectionAssignments(
   fromClassSection: string,
   toSchool: string,
   toClassSection: string,
-  unitNumbers: number[]
+  unitNumbers: number[],
 ) {
   // Type for assignmentContent entries
   type AssignmentContentEntry = {
@@ -683,10 +707,10 @@ async function copySubsectionAssignments(
   };
 
   // Fetch source section config
-  const sourceConfig = await SectionConfigModel.findOne({
+  const sourceConfig = (await SectionConfigModel.findOne({
     school: fromSchool,
-    classSection: fromClassSection
-  }).lean() as { assignmentContent?: AssignmentContentEntry[] } | null;
+    classSection: fromClassSection,
+  }).lean()) as { assignmentContent?: AssignmentContentEntry[] } | null;
 
   if (!sourceConfig?.assignmentContent) {
     return; // No assignments to copy
@@ -694,12 +718,14 @@ async function copySubsectionAssignments(
 
   // Filter assignments that have subsections and belong to the copied units
   // unitLessonId format is like "3.1", "3.2" - the first number is the unit
-  const assignmentsWithSubsections = sourceConfig.assignmentContent.filter(a => {
-    if (a.subsection === undefined) return false;
-    if (!a.unitLessonId) return false;
-    const unitNum = parseInt(a.unitLessonId.split('.')[0], 10);
-    return unitNumbers.includes(unitNum);
-  });
+  const assignmentsWithSubsections = sourceConfig.assignmentContent.filter(
+    (a) => {
+      if (a.subsection === undefined) return false;
+      if (!a.unitLessonId) return false;
+      const unitNum = parseInt(a.unitLessonId.split(".")[0], 10);
+      return unitNumbers.includes(unitNum);
+    },
+  );
 
   if (assignmentsWithSubsections.length === 0) {
     return; // No subsection assignments to copy
@@ -708,7 +734,7 @@ async function copySubsectionAssignments(
   // Find or create target section config
   let targetConfig = await SectionConfigModel.findOne({
     school: toSchool,
-    classSection: toClassSection
+    classSection: toClassSection,
   });
 
   if (!targetConfig) {
@@ -716,23 +742,24 @@ async function copySubsectionAssignments(
     targetConfig = new SectionConfigModel({
       school: toSchool,
       classSection: toClassSection,
-      gradeLevel: sourceConfig.assignmentContent[0]?.grade || '6',
+      gradeLevel: sourceConfig.assignmentContent[0]?.grade || "6",
       active: true,
       assignmentContent: [],
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
   }
 
   // Get existing assignment content array
-  const existingContent = (targetConfig.assignmentContent || []) as unknown as AssignmentContentEntry[];
+  const existingContent = (targetConfig.assignmentContent ||
+    []) as unknown as AssignmentContentEntry[];
 
   // Helper to normalize ObjectId/string to comparable string
   const normalizeId = (id: unknown): string => {
-    if (!id) return '';
-    if (typeof id === 'object' && id !== null) {
-      if ('$oid' in id) return String((id as { $oid: string }).$oid);
-      if ('str' in id) return String((id as { str: string }).str);
+    if (!id) return "";
+    if (typeof id === "object" && id !== null) {
+      if ("$oid" in id) return String((id as { $oid: string }).$oid);
+      if ("str" in id) return String((id as { str: string }).str);
     }
     return String(id);
   };
@@ -746,13 +773,15 @@ async function copySubsectionAssignments(
     let existingIndex = existingContent.findIndex(
       (a: AssignmentContentEntry) =>
         normalizeId(a.scopeAndSequenceId) === sourceId &&
-        a.podsieActivities && a.podsieActivities.length > 0
+        a.podsieActivities &&
+        a.podsieActivities.length > 0,
     );
 
     // Fallback: try without Podsie constraint
     if (existingIndex < 0) {
       existingIndex = existingContent.findIndex(
-        (a: AssignmentContentEntry) => normalizeId(a.scopeAndSequenceId) === sourceId
+        (a: AssignmentContentEntry) =>
+          normalizeId(a.scopeAndSequenceId) === sourceId,
       );
     }
 
@@ -761,7 +790,8 @@ async function copySubsectionAssignments(
       existingIndex = existingContent.findIndex(
         (a: AssignmentContentEntry) =>
           a.unitLessonId === sourceAssignment.unitLessonId &&
-          a.podsieActivities && a.podsieActivities.length > 0
+          a.podsieActivities &&
+          a.podsieActivities.length > 0,
       );
     }
 
@@ -773,7 +803,8 @@ async function copySubsectionAssignments(
   }
 
   targetConfig.assignmentContent = existingContent as never;
-  (targetConfig as unknown as Record<string, unknown>).updatedAt = new Date().toISOString();
+  (targetConfig as unknown as Record<string, unknown>).updatedAt =
+    new Date().toISOString();
   await targetConfig.save();
 }
 
@@ -826,24 +857,28 @@ export async function syncScheduleSubsections(data: {
         grade: data.grade,
         school: data.school,
         classSection: data.classSection,
-        unitNumber: data.unitNumber
+        unitNumber: data.unitNumber,
       }).lean<LeanUnitSchedule>();
 
       if (!existingSchedule) {
         // No schedule exists yet - nothing to sync
-        return { success: true, data: null, message: "No existing schedule to sync" };
+        return {
+          success: true,
+          data: null,
+          message: "No existing schedule to sync",
+        };
       }
 
       // Get dates from the old section entry (if it exists)
       const oldSection = existingSchedule.sections?.find(
-        (s) => s.sectionId === data.sectionId && s.subsection === undefined
+        (s) => s.sectionId === data.sectionId && s.subsection === undefined,
       );
       const preservedStartDate = oldSection?.startDate || "";
       const preservedEndDate = oldSection?.endDate || "";
 
       // Remove all existing entries for this sectionId (both the base and any subsections)
       const otherSections = (existingSchedule.sections || []).filter(
-        (s) => s.sectionId !== data.sectionId
+        (s) => s.sectionId !== data.sectionId,
       );
 
       // Create new section entries for each subsection
@@ -860,30 +895,38 @@ export async function syncScheduleSubsections(data: {
       // Rebuild sections array maintaining order:
       // The sections should be in order: Ramp Up, A, A:1, A:2, B, B:1, B:2, ..., Unit Test
       // Sort by sectionId, then by subsection (undefined first, then 1, 2, 3...)
-      const allSections = [...otherSections, ...newSectionEntries].sort((a, b) => {
-        // First sort by sectionId
-        const aIsRampUp = a.sectionId === "Ramp Up" || a.sectionId === "Ramp Ups";
-        const bIsRampUp = b.sectionId === "Ramp Up" || b.sectionId === "Ramp Ups";
-        const aIsUnitTest = a.sectionId === "Unit Test" || a.sectionId === "Unit Assessment";
-        const bIsUnitTest = b.sectionId === "Unit Test" || b.sectionId === "Unit Assessment";
+      const allSections = [...otherSections, ...newSectionEntries].sort(
+        (a, b) => {
+          // First sort by sectionId
+          const aIsRampUp =
+            a.sectionId === "Ramp Up" || a.sectionId === "Ramp Ups";
+          const bIsRampUp =
+            b.sectionId === "Ramp Up" || b.sectionId === "Ramp Ups";
+          const aIsUnitTest =
+            a.sectionId === "Unit Test" || a.sectionId === "Unit Assessment";
+          const bIsUnitTest =
+            b.sectionId === "Unit Test" || b.sectionId === "Unit Assessment";
 
-        // Ramp Up always first
-        if (aIsRampUp && !bIsRampUp) return -1;
-        if (!aIsRampUp && bIsRampUp) return 1;
-        // Unit Test always last
-        if (aIsUnitTest && !bIsUnitTest) return 1;
-        if (!aIsUnitTest && bIsUnitTest) return -1;
+          // Ramp Up always first
+          if (aIsRampUp && !bIsRampUp) return -1;
+          if (!aIsRampUp && bIsRampUp) return 1;
+          // Unit Test always last
+          if (aIsUnitTest && !bIsUnitTest) return 1;
+          if (!aIsUnitTest && bIsUnitTest) return -1;
 
-        // Otherwise sort alphabetically by sectionId
-        if (a.sectionId !== b.sectionId) {
-          return a.sectionId.localeCompare(b.sectionId);
-        }
+          // Otherwise sort alphabetically by sectionId
+          if (a.sectionId !== b.sectionId) {
+            return a.sectionId.localeCompare(b.sectionId);
+          }
 
-        // Same sectionId - sort by subsection (undefined first)
-        if (a.subsection === undefined && b.subsection !== undefined) return -1;
-        if (a.subsection !== undefined && b.subsection === undefined) return 1;
-        return (a.subsection || 0) - (b.subsection || 0);
-      });
+          // Same sectionId - sort by subsection (undefined first)
+          if (a.subsection === undefined && b.subsection !== undefined)
+            return -1;
+          if (a.subsection !== undefined && b.subsection === undefined)
+            return 1;
+          return (a.subsection || 0) - (b.subsection || 0);
+        },
+      );
 
       // Update the schedule
       const updated = await UnitScheduleModel.findByIdAndUpdate(
@@ -891,10 +934,10 @@ export async function syncScheduleSubsections(data: {
         {
           $set: {
             sections: allSections,
-            updatedAt: new Date().toISOString()
-          }
+            updatedAt: new Date().toISOString(),
+          },
         },
-        { new: true }
+        { new: true },
       ).lean();
 
       const serialized = JSON.parse(JSON.stringify(updated));
@@ -902,7 +945,7 @@ export async function syncScheduleSubsections(data: {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to sync schedule subsections")
+        error: handleServerError(error, "Failed to sync schedule subsections"),
       };
     }
   });
@@ -921,7 +964,7 @@ function getNextSchoolDay(dateStr: string, daysOffSet: Set<string>): string {
 
   while (true) {
     const dayOfWeek = date.getDay();
-    const newDateStr = date.toISOString().split('T')[0];
+    const newDateStr = date.toISOString().split("T")[0];
 
     // Skip weekends and days off
     if (dayOfWeek !== 0 && dayOfWeek !== 6 && !daysOffSet.has(newDateStr)) {
@@ -935,13 +978,16 @@ function getNextSchoolDay(dateStr: string, daysOffSet: Set<string>): string {
 /**
  * Helper: Get the previous school day (skips weekends and days off)
  */
-function getPreviousSchoolDay(dateStr: string, daysOffSet: Set<string>): string {
+function getPreviousSchoolDay(
+  dateStr: string,
+  daysOffSet: Set<string>,
+): string {
   const date = new Date(dateStr + "T12:00:00");
   date.setDate(date.getDate() - 1);
 
   while (true) {
     const dayOfWeek = date.getDay();
-    const newDateStr = date.toISOString().split('T')[0];
+    const newDateStr = date.toISOString().split("T")[0];
 
     // Skip weekends and days off
     if (dayOfWeek !== 0 && dayOfWeek !== 6 && !daysOffSet.has(newDateStr)) {
@@ -962,16 +1008,22 @@ export async function shiftSectionScheduleForward(
   school: string,
   classSection: string,
   afterDate: string,
-  globalDaysOff: string[]
+  globalDaysOff: string[],
 ) {
   return withDbConnection(async () => {
     try {
       const daysOffSet = new Set(globalDaysOff);
 
       // Fetch existing section events to skip over them when shifting
-      const calendar = await SchoolCalendarModel.findOne({ schoolYear })
-        .select('events')
-        .lean() as { events?: Array<{ date: string; school?: string; classSection?: string }> } | null;
+      const calendar = (await SchoolCalendarModel.findOne({ schoolYear })
+        .select("events")
+        .lean()) as {
+        events?: Array<{
+          date: string;
+          school?: string;
+          classSection?: string;
+        }>;
+      } | null;
 
       if (calendar?.events) {
         // Add section-specific event dates to the skip set
@@ -987,7 +1039,7 @@ export async function shiftSectionScheduleForward(
         schoolYear,
         scopeSequenceTag,
         school,
-        classSection
+        classSection,
       }).lean();
 
       if (schedules.length === 0) {
@@ -998,23 +1050,32 @@ export async function shiftSectionScheduleForward(
 
       for (const schedule of schedules) {
         let needsUpdate = false;
-        const updatedSections = schedule.sections.map((section: { sectionId: string; startDate?: string; endDate?: string }) => {
-          const updated = { ...section };
+        const updatedSections = schedule.sections.map(
+          (section: {
+            sectionId: string;
+            startDate?: string;
+            endDate?: string;
+          }) => {
+            const updated = { ...section };
 
-          // Shift start date if it's on or after the day off date
-          if (updated.startDate && updated.startDate >= afterDate) {
-            updated.startDate = getNextSchoolDay(updated.startDate, daysOffSet);
-            needsUpdate = true;
-          }
+            // Shift start date if it's on or after the day off date
+            if (updated.startDate && updated.startDate >= afterDate) {
+              updated.startDate = getNextSchoolDay(
+                updated.startDate,
+                daysOffSet,
+              );
+              needsUpdate = true;
+            }
 
-          // Shift end date if it's on or after the day off date
-          if (updated.endDate && updated.endDate >= afterDate) {
-            updated.endDate = getNextSchoolDay(updated.endDate, daysOffSet);
-            needsUpdate = true;
-          }
+            // Shift end date if it's on or after the day off date
+            if (updated.endDate && updated.endDate >= afterDate) {
+              updated.endDate = getNextSchoolDay(updated.endDate, daysOffSet);
+              needsUpdate = true;
+            }
 
-          return updated;
-        });
+            return updated;
+          },
+        );
 
         // Also shift unit-level dates if they exist and are on or after the day off date
         let updatedStartDate = schedule.startDate;
@@ -1037,10 +1098,10 @@ export async function shiftSectionScheduleForward(
                 sections: updatedSections,
                 startDate: updatedStartDate,
                 endDate: updatedEndDate,
-                updatedAt: new Date().toISOString()
-              }
+                updatedAt: new Date().toISOString(),
+              },
             },
-            { new: true }
+            { new: true },
           ).lean();
           results.push(updated);
         }
@@ -1050,12 +1111,15 @@ export async function shiftSectionScheduleForward(
       return {
         success: true,
         data: serialized as UnitSchedule[],
-        message: `Shifted ${results.length} unit schedules forward`
+        message: `Shifted ${results.length} unit schedules forward`,
       };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to shift section schedules forward")
+        error: handleServerError(
+          error,
+          "Failed to shift section schedules forward",
+        ),
       };
     }
   });
@@ -1071,16 +1135,22 @@ export async function shiftSectionScheduleBack(
   school: string,
   classSection: string,
   afterDate: string,
-  globalDaysOff: string[]
+  globalDaysOff: string[],
 ) {
   return withDbConnection(async () => {
     try {
       const daysOffSet = new Set(globalDaysOff);
 
       // Fetch existing section events to skip over them when shifting
-      const calendar = await SchoolCalendarModel.findOne({ schoolYear })
-        .select('events')
-        .lean() as { events?: Array<{ date: string; school?: string; classSection?: string }> } | null;
+      const calendar = (await SchoolCalendarModel.findOne({ schoolYear })
+        .select("events")
+        .lean()) as {
+        events?: Array<{
+          date: string;
+          school?: string;
+          classSection?: string;
+        }>;
+      } | null;
 
       if (calendar?.events) {
         // Add section-specific event dates to the skip set
@@ -1096,7 +1166,7 @@ export async function shiftSectionScheduleBack(
         schoolYear,
         scopeSequenceTag,
         school,
-        classSection
+        classSection,
       }).lean();
 
       if (schedules.length === 0) {
@@ -1107,30 +1177,45 @@ export async function shiftSectionScheduleBack(
 
       for (const schedule of schedules) {
         let needsUpdate = false;
-        const updatedSections = schedule.sections.map((section: { sectionId: string; startDate?: string; endDate?: string }) => {
-          const updated = { ...section };
+        const updatedSections = schedule.sections.map(
+          (section: {
+            sectionId: string;
+            startDate?: string;
+            endDate?: string;
+          }) => {
+            const updated = { ...section };
 
-          // Shift start date back if it's after the afterDate
-          if (updated.startDate && updated.startDate > afterDate) {
-            updated.startDate = getPreviousSchoolDay(updated.startDate, daysOffSet);
-            needsUpdate = true;
-          }
+            // Shift start date back if it's after the afterDate
+            if (updated.startDate && updated.startDate > afterDate) {
+              updated.startDate = getPreviousSchoolDay(
+                updated.startDate,
+                daysOffSet,
+              );
+              needsUpdate = true;
+            }
 
-          // Shift end date back if it's after the afterDate
-          if (updated.endDate && updated.endDate > afterDate) {
-            updated.endDate = getPreviousSchoolDay(updated.endDate, daysOffSet);
-            needsUpdate = true;
-          }
+            // Shift end date back if it's after the afterDate
+            if (updated.endDate && updated.endDate > afterDate) {
+              updated.endDate = getPreviousSchoolDay(
+                updated.endDate,
+                daysOffSet,
+              );
+              needsUpdate = true;
+            }
 
-          return updated;
-        });
+            return updated;
+          },
+        );
 
         // Also shift unit-level dates if they exist and are after afterDate
         let updatedStartDate = schedule.startDate;
         let updatedEndDate = schedule.endDate;
 
         if (schedule.startDate && schedule.startDate > afterDate) {
-          updatedStartDate = getPreviousSchoolDay(schedule.startDate, daysOffSet);
+          updatedStartDate = getPreviousSchoolDay(
+            schedule.startDate,
+            daysOffSet,
+          );
           needsUpdate = true;
         }
         if (schedule.endDate && schedule.endDate > afterDate) {
@@ -1146,10 +1231,10 @@ export async function shiftSectionScheduleBack(
                 sections: updatedSections,
                 startDate: updatedStartDate,
                 endDate: updatedEndDate,
-                updatedAt: new Date().toISOString()
-              }
+                updatedAt: new Date().toISOString(),
+              },
             },
-            { new: true }
+            { new: true },
           ).lean();
           results.push(updated);
         }
@@ -1159,12 +1244,15 @@ export async function shiftSectionScheduleBack(
       return {
         success: true,
         data: serialized as UnitSchedule[],
-        message: `Shifted ${results.length} unit schedules backward`
+        message: `Shifted ${results.length} unit schedules backward`,
       };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to shift section schedules backward")
+        error: handleServerError(
+          error,
+          "Failed to shift section schedules backward",
+        ),
       };
     }
   });

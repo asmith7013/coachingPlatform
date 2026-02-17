@@ -1,20 +1,20 @@
 "use client";
 
-import React from 'react';
-import { useForm } from '@tanstack/react-form';
-import { FormLayout } from '@components/composed/forms/FormLayout';
-import { Input } from '@components/core/fields/Input';
-import { Textarea } from '@components/core/fields/Textarea';
-import { Select } from '@components/core/fields/Select';
-import { 
+import React from "react";
+import { useForm } from "@tanstack/react-form";
+import { FormLayout } from "@components/composed/forms/FormLayout";
+import { Input } from "@components/core/fields/Input";
+import { Textarea } from "@components/core/fields/Textarea";
+import { Select } from "@components/core/fields/Select";
+import {
   CoachingActionPlanInputZodSchema,
-  type CoachingActionPlanInput
-} from '@zod-schema/core/cap';
-import { 
+  type CoachingActionPlanInput,
+} from "@zod-schema/core/cap";
+import {
   IPGCoreActionZod,
   IPGSubCategoryZod,
-  CoachingActionPlanStatusZod
-} from '@enums';
+  CoachingActionPlanStatusZod,
+} from "@enums";
 
 interface CAPStage2Props {
   data: CoachingActionPlanInput;
@@ -22,10 +22,10 @@ interface CAPStage2Props {
   className?: string;
 }
 
-export function CoachingActionPlanStage2({ 
+export function CoachingActionPlanStage2({
   data,
   onChange,
-  className
+  className,
 }: CAPStage2Props) {
   const form = useForm({
     defaultValues: data,
@@ -38,56 +38,54 @@ export function CoachingActionPlanStage2({
   });
 
   // Create options for select fields
-  const ipgCoreActionOptions = IPGCoreActionZod.options.map(option => ({
+  const ipgCoreActionOptions = IPGCoreActionZod.options.map((option) => ({
     value: option,
-    label: option
+    label: option,
   }));
 
-  const ipgSubCategoryOptions = IPGSubCategoryZod.options.map(option => ({
+  const ipgSubCategoryOptions = IPGSubCategoryZod.options.map((option) => ({
     value: option,
-    label: option
+    label: option,
   }));
 
-  const statusOptions = CoachingActionPlanStatusZod.options.map(option => ({
+  const statusOptions = CoachingActionPlanStatusZod.options.map((option) => ({
     value: option,
-    label: option.charAt(0).toUpperCase() + option.slice(1)
+    label: option.charAt(0).toUpperCase() + option.slice(1),
   }));
 
   return (
     <div className={className}>
-      <FormLayout 
-        title="Stage 2: Goal Definition" 
-        isSubmitting={form.state.isSubmitting} 
-        canSubmit={form.state.canSubmit} 
+      <FormLayout
+        title="Stage 2: Goal Definition"
+        isSubmitting={form.state.isSubmitting}
+        canSubmit={form.state.canSubmit}
         submitLabel="Save Changes"
       >
-        <form 
-          onSubmit={(e) => { 
-            e.preventDefault(); 
-            form.handleSubmit(); 
-          }} 
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
           className="space-y-6"
         >
-          
           {/* Goal Description */}
           <form.Field name="goalDescription">
             {(field) => (
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Goal Description
-                </label>
+                <label className="text-sm font-medium">Goal Description</label>
                 <Textarea
-                  value={(field.state.value as string) || ''}
+                  value={(field.state.value as string) || ""}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="Describe the primary goal for this coaching plan..."
                   rows={4}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
@@ -96,19 +94,18 @@ export function CoachingActionPlanStage2({
           <form.Field name="ipgCoreAction">
             {(field) => (
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  IPG Core Action
-                </label>
+                <label className="text-sm font-medium">IPG Core Action</label>
                 <Select
-                  value={(field.state.value as string) || 'CA1'}
+                  value={(field.state.value as string) || "CA1"}
                   onChange={field.handleChange}
                   options={ipgCoreActionOptions}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
@@ -117,19 +114,18 @@ export function CoachingActionPlanStage2({
           <form.Field name="ipgSubCategory">
             {(field) => (
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  IPG Sub Category
-                </label>
+                <label className="text-sm font-medium">IPG Sub Category</label>
                 <Select
-                  value={(field.state.value as string) || 'CA1A'}
+                  value={(field.state.value as string) || "CA1A"}
                   onChange={field.handleChange}
                   options={ipgSubCategoryOptions}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
@@ -138,21 +134,20 @@ export function CoachingActionPlanStage2({
           <form.Field name="rationale">
             {(field) => (
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Rationale
-                </label>
+                <label className="text-sm font-medium">Rationale</label>
                 <Textarea
-                  value={(field.state.value as string | number) || ''}
+                  value={(field.state.value as string | number) || ""}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="Explain the rationale for selecting this focus area..."
                   rows={3}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
@@ -165,17 +160,18 @@ export function CoachingActionPlanStage2({
                   Expected Impact on Student Learning
                 </label>
                 <Textarea
-                  value={(field.state.value as string | number) || ''}
+                  value={(field.state.value as string | number) || ""}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="Describe the expected impact on student learning outcomes..."
                   rows={3}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
@@ -188,17 +184,18 @@ export function CoachingActionPlanStage2({
                   Lessons Learned (Previous Cycles)
                 </label>
                 <Textarea
-                  value={(field.state.value as string | number) || ''}
+                  value={(field.state.value as string | number) || ""}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="What key lessons were learned from previous coaching cycles?"
                   rows={3}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
@@ -211,17 +208,18 @@ export function CoachingActionPlanStage2({
                   Recommendations for Next Cycle
                 </label>
                 <Textarea
-                  value={(field.state.value as string | number) || ''}
+                  value={(field.state.value as string | number) || ""}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="What recommendations do you have for the next coaching cycle?"
                   rows={3}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
@@ -230,19 +228,18 @@ export function CoachingActionPlanStage2({
           <form.Field name="status">
             {(field) => (
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Plan Status
-                </label>
+                <label className="text-sm font-medium">Plan Status</label>
                 <Select
-                  value={(field.state.value as string) || 'draft'}
+                  value={(field.state.value as string) || "draft"}
                   onChange={field.handleChange}
                   options={statusOptions}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
@@ -262,11 +259,12 @@ export function CoachingActionPlanStage2({
                   min={1}
                   max={10}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
@@ -275,20 +273,19 @@ export function CoachingActionPlanStage2({
           <form.Field name="startDate">
             {(field) => (
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Start Date
-                </label>
+                <label className="text-sm font-medium">Start Date</label>
                 <Input
                   type="date"
-                  value={(field.state.value as string | number) || ''}
+                  value={(field.state.value as string | number) || ""}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
@@ -302,32 +299,30 @@ export function CoachingActionPlanStage2({
                 </label>
                 <Input
                   type="date"
-                  value={(field.state.value as string | number) || ''}
+                  value={(field.state.value as string | number) || ""}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                 />
-                {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
+                {field.state.meta.errors?.length > 0 &&
+                  typeof field.state.meta.errors[0] === "string" && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]}
+                    </p>
+                  )}
               </div>
             )}
           </form.Field>
 
           {/* Form-level error display */}
-          <form.Subscribe 
-            selector={(state) => state.errorMap}
-          >
-            {(errorMap) => 
-              typeof errorMap.onChange === 'string' && (
+          <form.Subscribe selector={(state) => state.errorMap}>
+            {(errorMap) =>
+              typeof errorMap.onChange === "string" && (
                 <div className="text-sm text-destructive">
                   <strong>Form Error:</strong> {errorMap.onChange}
                 </div>
               )
             }
           </form.Subscribe>
-
         </form>
       </FormLayout>
     </div>

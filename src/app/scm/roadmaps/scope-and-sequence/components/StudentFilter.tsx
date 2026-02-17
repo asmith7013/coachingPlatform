@@ -34,9 +34,9 @@ function getScopeSectionsForTag(scopeSequenceTag: string): string[] {
   if (!roadmapName) return [];
 
   // Find all sections that have this roadmap (primary or secondary)
-  return SECTION_ROADMAP_CONFIG
-    .filter(config => config.roadmaps.some(r => r.roadmapName === roadmapName))
-    .map(config => config.section);
+  return SECTION_ROADMAP_CONFIG.filter((config) =>
+    config.roadmaps.some((r) => r.roadmapName === roadmapName),
+  ).map((config) => config.section);
 }
 
 export function StudentFilter({
@@ -47,7 +47,7 @@ export function StudentFilter({
   selectedStudents = [],
   multiSelect = false,
   maxStudents = 5,
-  scopeSequenceTag
+  scopeSequenceTag,
 }: StudentFilterProps) {
   const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,8 +58,8 @@ export function StudentFilter({
 
   // Get sections allowed for this curriculum (memoized to prevent unnecessary re-renders)
   const allowedSections = useMemo(
-    () => scopeSequenceTag ? getScopeSectionsForTag(scopeSequenceTag) : [],
-    [scopeSequenceTag]
+    () => (scopeSequenceTag ? getScopeSectionsForTag(scopeSequenceTag) : []),
+    [scopeSequenceTag],
   );
 
   // Load all students on mount
@@ -70,7 +70,11 @@ export function StudentFilter({
   // Reset section selection when scopeSequenceTag changes
   useEffect(() => {
     // If current section is not in allowed sections, reset it
-    if (allowedSections.length > 0 && selectedSection && !allowedSections.includes(selectedSection)) {
+    if (
+      allowedSections.length > 0 &&
+      selectedSection &&
+      !allowedSections.includes(selectedSection)
+    ) {
       setSelectedSection("");
       // Clear student selections
       if (multiSelect && onStudentsSelect) {
@@ -82,22 +86,33 @@ export function StudentFilter({
         onSectionSelect("");
       }
     }
-  }, [scopeSequenceTag, allowedSections, selectedSection, onSectionSelect, multiSelect, onStudentsSelect, onStudentSelect]);
+  }, [
+    scopeSequenceTag,
+    allowedSections,
+    selectedSection,
+    onSectionSelect,
+    multiSelect,
+    onStudentsSelect,
+    onStudentSelect,
+  ]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
 
     if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isDropdownOpen]);
 
@@ -111,7 +126,7 @@ export function StudentFilter({
         sortOrder: "asc",
         filters: { active: true },
         search: "",
-        searchFields: []
+        searchFields: [],
       });
 
       if (response.success && response.items) {
@@ -127,11 +142,13 @@ export function StudentFilter({
   const handleStudentSelect = (student: Student) => {
     if (multiSelect && onStudentsSelect) {
       // Check if student is already selected
-      const isAlreadySelected = selectedStudents.some(s => s._id === student._id);
+      const isAlreadySelected = selectedStudents.some(
+        (s) => s._id === student._id,
+      );
 
       if (isAlreadySelected) {
         // Remove student
-        onStudentsSelect(selectedStudents.filter(s => s._id !== student._id));
+        onStudentsSelect(selectedStudents.filter((s) => s._id !== student._id));
       } else if (selectedStudents.length < maxStudents) {
         // Add student
         onStudentsSelect([...selectedStudents, student]);
@@ -153,24 +170,28 @@ export function StudentFilter({
 
   const removeStudent = (studentId: string) => {
     if (multiSelect && onStudentsSelect) {
-      onStudentsSelect(selectedStudents.filter(s => s._id !== studentId));
+      onStudentsSelect(selectedStudents.filter((s) => s._id !== studentId));
     }
   };
 
   // Get unique sections from all students, filtered by allowed sections if specified
-  const uniqueSections = Array.from(new Set(allStudents.map(s => s.section)))
-    .filter(section => allowedSections.length === 0 || allowedSections.includes(section))
+  const uniqueSections = Array.from(new Set(allStudents.map((s) => s.section)))
+    .filter(
+      (section) =>
+        allowedSections.length === 0 || allowedSections.includes(section),
+    )
     .sort();
 
   // Filter students by selected section
   const sectionFilteredStudents = selectedSection
-    ? allStudents.filter(s => s.section === selectedSection)
+    ? allStudents.filter((s) => s.section === selectedSection)
     : allStudents;
 
   // Further filter by search query
   const filteredStudents = searchQuery
-    ? sectionFilteredStudents.filter(student => {
-        const fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
+    ? sectionFilteredStudents.filter((student) => {
+        const fullName =
+          `${student.firstName} ${student.lastName}`.toLowerCase();
         return fullName.includes(searchQuery.toLowerCase());
       })
     : sectionFilteredStudents;
@@ -179,7 +200,10 @@ export function StudentFilter({
     <div className="relative space-y-3">
       {/* Section Filter */}
       <div>
-        <label htmlFor="section-filter" className="block text-xs font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="section-filter"
+          className="block text-xs font-medium text-gray-700 mb-1"
+        >
           Filter by Section
         </label>
         <select
@@ -198,7 +222,7 @@ export function StudentFilter({
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
         >
           <option value="">All Sections</option>
-          {uniqueSections.map(section => (
+          {uniqueSections.map((section) => (
             <option key={section} value={section}>
               {section}
             </option>
@@ -208,8 +232,13 @@ export function StudentFilter({
 
       {/* Student Filter */}
       <div>
-        <label htmlFor="student-filter" className="block text-xs font-medium text-gray-700 mb-1">
-          {multiSelect ? `Select Students (max ${maxStudents})` : 'Select Student'}
+        <label
+          htmlFor="student-filter"
+          className="block text-xs font-medium text-gray-700 mb-1"
+        >
+          {multiSelect
+            ? `Select Students (max ${maxStudents})`
+            : "Select Student"}
         </label>
 
         {multiSelect ? (
@@ -233,20 +262,25 @@ export function StudentFilter({
                       No students found
                     </div>
                   ) : (
-                    filteredStudents.map(student => {
-                      const isSelected = selectedStudents.some(s => s._id === student._id);
-                      const canSelect = selectedStudents.length < maxStudents || isSelected;
+                    filteredStudents.map((student) => {
+                      const isSelected = selectedStudents.some(
+                        (s) => s._id === student._id,
+                      );
+                      const canSelect =
+                        selectedStudents.length < maxStudents || isSelected;
 
                       return (
                         <div
                           key={student._id}
-                          onClick={() => canSelect && handleStudentSelect(student)}
+                          onClick={() =>
+                            canSelect && handleStudentSelect(student)
+                          }
                           className={`px-3 py-2 border-b border-gray-200 last:border-b-0 cursor-pointer transition-colors ${
                             isSelected
-                              ? 'bg-blue-50 hover:bg-blue-100'
+                              ? "bg-blue-50 hover:bg-blue-100"
                               : canSelect
-                                ? 'hover:bg-gray-50'
-                                : 'opacity-50 cursor-not-allowed'
+                                ? "hover:bg-gray-50"
+                                : "opacity-50 cursor-not-allowed"
                           }`}
                         >
                           <div className="flex items-center gap-2">
@@ -259,7 +293,9 @@ export function StudentFilter({
                             <span className="text-sm">
                               {student.firstName} {student.lastName}
                             </span>
-                            <span className="text-xs text-gray-500">({student.section})</span>
+                            <span className="text-xs text-gray-500">
+                              ({student.section})
+                            </span>
                           </div>
                         </div>
                       );
@@ -272,12 +308,14 @@ export function StudentFilter({
             {/* Selected students chips */}
             {selectedStudents.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
-                {selectedStudents.map(student => (
+                {selectedStudents.map((student) => (
                   <div
                     key={student._id}
                     className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs"
                   >
-                    <span>{student.firstName} {student.lastName}</span>
+                    <span>
+                      {student.firstName} {student.lastName}
+                    </span>
                     <button
                       onClick={() => removeStudent(student._id)}
                       className="hover:bg-blue-200 rounded-full p-0.5"
@@ -291,7 +329,8 @@ export function StudentFilter({
 
             {selectedStudents.length > 0 && (
               <div className="mt-1 text-xs text-gray-600">
-                {selectedStudents.length} student{selectedStudents.length !== 1 ? 's' : ''} selected
+                {selectedStudents.length} student
+                {selectedStudents.length !== 1 ? "s" : ""} selected
               </div>
             )}
           </>
@@ -302,7 +341,9 @@ export function StudentFilter({
               id="student-filter"
               value={selectedStudent?._id || ""}
               onChange={(e) => {
-                const student = filteredStudents.find(s => s._id === e.target.value);
+                const student = filteredStudents.find(
+                  (s) => s._id === e.target.value,
+                );
                 if (student) {
                   handleStudentSelect(student);
                 } else {
@@ -313,7 +354,7 @@ export function StudentFilter({
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
             >
               <option value="">No Student Selected</option>
-              {filteredStudents.map(student => (
+              {filteredStudents.map((student) => (
                 <option key={student._id} value={student._id}>
                   {student.firstName} {student.lastName} ({student.section})
                 </option>

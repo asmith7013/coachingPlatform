@@ -23,4 +23,4 @@ export interface EventEntry {
 export interface CoachingLogFormData {
   formFields: FormFieldEntry[];
   formUrl: string;
-} 
+}

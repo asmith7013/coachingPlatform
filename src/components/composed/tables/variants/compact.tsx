@@ -1,35 +1,35 @@
-'use client'
+"use client";
 
-import { Table, type TableVariants } from '../Table'
-import { tv, type VariantProps } from 'tailwind-variants'
-import { TableColumnSchema } from '@ui/table-schema'
+import { Table, type TableVariants } from "../Table";
+import { tv, type VariantProps } from "tailwind-variants";
+import { TableColumnSchema } from "@ui/table-schema";
 
 const compactTable = tv({
-  base: 'text-sm leading-tight',
+  base: "text-sm leading-tight",
   variants: {
     spacing: {
-      sm: 'space-y-2',
-      md: 'space-y-3',
-      lg: 'space-y-4'
-    }
+      sm: "space-y-2",
+      md: "space-y-3",
+      lg: "space-y-4",
+    },
   },
   defaultVariants: {
-    spacing: 'md'
-  }
-})
+    spacing: "md",
+  },
+});
 
-export type CompactTableVariants = VariantProps<typeof compactTable>
-export const compactTableStyles = compactTable
+export type CompactTableVariants = VariantProps<typeof compactTable>;
+export const compactTableStyles = compactTable;
 
 interface CompactTableProps<T> extends TableVariants, CompactTableVariants {
-  data: T[]
-  columns: TableColumnSchema<T>[]
-  className?: string
-  title?: string
-  description?: string
-  actions?: React.ReactNode
-  onEdit?: (item: T) => void
-  emptyMessage?: string
+  data: T[];
+  columns: TableColumnSchema<T>[];
+  className?: string;
+  title?: string;
+  description?: string;
+  actions?: React.ReactNode;
+  onEdit?: (item: T) => void;
+  emptyMessage?: string;
 }
 
 export function CompactTable<T>({
@@ -47,5 +47,5 @@ export function CompactTable<T>({
       textSize="sm"
       {...props}
     />
-  )
+  );
 }

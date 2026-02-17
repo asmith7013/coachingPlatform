@@ -1,4 +1,4 @@
-import { BaseDocument } from '@core-types/document';
+import { BaseDocument } from "@core-types/document";
 
 /**
  * Core Monday.com board structure
@@ -31,7 +31,7 @@ export interface MondayColumn {
 /**
  * Item (row) in a Monday.com board
  */
-export interface MondayItem extends Pick<BaseDocument, 'id'> {
+export interface MondayItem extends Pick<BaseDocument, "id"> {
   id: string;
   name: string;
   board_id?: string;

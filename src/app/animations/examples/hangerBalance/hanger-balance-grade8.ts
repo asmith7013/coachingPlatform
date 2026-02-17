@@ -3,7 +3,8 @@ import { ExampleSketch } from "../../types";
 export const HANGER_BALANCE_GRADE8: ExampleSketch = {
   id: "hanger-balance-grade8",
   name: "Hanger Balance - Grade 8",
-  description: "Interactive hanger balance showing systems of equations concept. Left: 2 circles + 4 squares. Right: 2 squares + 4 triangles + 2 circles.",
+  description:
+    "Interactive hanger balance showing systems of equations concept. Left: 2 circles + 4 squares. Right: 2 squares + 4 triangles + 2 circles.",
   code: `// ==========================================
 // CONFIGURATION
 // ==========================================

@@ -1,115 +1,265 @@
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 40px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif;">
-    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-        <span style="font-size: 40px;">🐢</span>
-        <h2 style="font-size: 36px; font-weight: 700; color: #e2e8f0; margin: 0; text-transform: uppercase;">The Turtle Race</h2>
-    </div>
-    <p style="font-size: 20px; color: #94a3b8; margin-bottom: 15px;">This graph represents the positions of two turtles in a race.</p>
+<div
+  class="slide-container"
+  style="
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #121212 0%, #14141e 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 40px 60px;
+    color: #ffffff;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  "
+>
+  <div
+    style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px"
+  >
+    <span style="font-size: 40px">🐢</span>
+    <h2
+      style="
+        font-size: 36px;
+        font-weight: 700;
+        color: #e2e8f0;
+        margin: 0;
+        text-transform: uppercase;
+      "
+    >
+      The Turtle Race
+    </h2>
+  </div>
+  <p style="font-size: 20px; color: #94a3b8; margin-bottom: 15px">
+    This graph represents the positions of two turtles in a race.
+  </p>
 
-    <div style="display: flex; justify-content: center; align-items: center; flex: 1;">
-        <svg viewBox="0 0 420 440" style="max-width: 500px; width: 100%;">
-            <!-- Grid: x=50px per sec, y=20px per 1cm -->
-            <!-- Y: 390=0cm, 370=1cm, 350=2cm... 30=18cm (360px total, 20px per cm) -->
-            <!-- X: 60=0sec, 110=1sec, 160=2sec, 210=3sec, 260=4sec, 310=5sec, 360=6sec (50px per sec) -->
-            <!-- Grid lines drawn explicitly to match axis labels -->
-            <!-- Horizontal lines every 20px (1cm) from y=30 to y=390 -->
-            <g stroke="#334155" stroke-width="0.5">
-                <!-- Horizontal grid lines -->
-                <line x1="60" y1="30" x2="360" y2="30"/>
-                <line x1="60" y1="50" x2="360" y2="50"/>
-                <line x1="60" y1="70" x2="360" y2="70"/>
-                <line x1="60" y1="90" x2="360" y2="90"/>
-                <line x1="60" y1="110" x2="360" y2="110"/>
-                <line x1="60" y1="130" x2="360" y2="130"/>
-                <line x1="60" y1="150" x2="360" y2="150"/>
-                <line x1="60" y1="170" x2="360" y2="170"/>
-                <line x1="60" y1="190" x2="360" y2="190"/>
-                <line x1="60" y1="210" x2="360" y2="210"/>
-                <line x1="60" y1="230" x2="360" y2="230"/>
-                <line x1="60" y1="250" x2="360" y2="250"/>
-                <line x1="60" y1="270" x2="360" y2="270"/>
-                <line x1="60" y1="290" x2="360" y2="290"/>
-                <line x1="60" y1="310" x2="360" y2="310"/>
-                <line x1="60" y1="330" x2="360" y2="330"/>
-                <line x1="60" y1="350" x2="360" y2="350"/>
-                <line x1="60" y1="370" x2="360" y2="370"/>
-                <line x1="60" y1="390" x2="360" y2="390"/>
-                <!-- Vertical grid lines every 50px (1 sec) -->
-                <line x1="60" y1="30" x2="60" y2="390"/>
-                <line x1="110" y1="30" x2="110" y2="390"/>
-                <line x1="160" y1="30" x2="160" y2="390"/>
-                <line x1="210" y1="30" x2="210" y2="390"/>
-                <line x1="260" y1="30" x2="260" y2="390"/>
-                <line x1="310" y1="30" x2="310" y2="390"/>
-                <line x1="360" y1="30" x2="360" y2="390"/>
-            </g>
+  <div
+    style="display: flex; justify-content: center; align-items: center; flex: 1"
+  >
+    <svg viewBox="0 0 420 440" style="max-width: 500px; width: 100%">
+      <!-- Grid: x=50px per sec, y=20px per 1cm -->
+      <!-- Y: 390=0cm, 370=1cm, 350=2cm... 30=18cm (360px total, 20px per cm) -->
+      <!-- X: 60=0sec, 110=1sec, 160=2sec, 210=3sec, 260=4sec, 310=5sec, 360=6sec (50px per sec) -->
+      <!-- Grid lines drawn explicitly to match axis labels -->
+      <!-- Horizontal lines every 20px (1cm) from y=30 to y=390 -->
+      <g stroke="#334155" stroke-width="0.5">
+        <!-- Horizontal grid lines -->
+        <line x1="60" y1="30" x2="360" y2="30" />
+        <line x1="60" y1="50" x2="360" y2="50" />
+        <line x1="60" y1="70" x2="360" y2="70" />
+        <line x1="60" y1="90" x2="360" y2="90" />
+        <line x1="60" y1="110" x2="360" y2="110" />
+        <line x1="60" y1="130" x2="360" y2="130" />
+        <line x1="60" y1="150" x2="360" y2="150" />
+        <line x1="60" y1="170" x2="360" y2="170" />
+        <line x1="60" y1="190" x2="360" y2="190" />
+        <line x1="60" y1="210" x2="360" y2="210" />
+        <line x1="60" y1="230" x2="360" y2="230" />
+        <line x1="60" y1="250" x2="360" y2="250" />
+        <line x1="60" y1="270" x2="360" y2="270" />
+        <line x1="60" y1="290" x2="360" y2="290" />
+        <line x1="60" y1="310" x2="360" y2="310" />
+        <line x1="60" y1="330" x2="360" y2="330" />
+        <line x1="60" y1="350" x2="360" y2="350" />
+        <line x1="60" y1="370" x2="360" y2="370" />
+        <line x1="60" y1="390" x2="360" y2="390" />
+        <!-- Vertical grid lines every 50px (1 sec) -->
+        <line x1="60" y1="30" x2="60" y2="390" />
+        <line x1="110" y1="30" x2="110" y2="390" />
+        <line x1="160" y1="30" x2="160" y2="390" />
+        <line x1="210" y1="30" x2="210" y2="390" />
+        <line x1="260" y1="30" x2="260" y2="390" />
+        <line x1="310" y1="30" x2="310" y2="390" />
+        <line x1="360" y1="30" x2="360" y2="390" />
+      </g>
 
-            <!-- Axes -->
-            <line x1="60" y1="390" x2="360" y2="390" stroke="#64748b" stroke-width="2"/>
-            <line x1="60" y1="30" x2="60" y2="390" stroke="#64748b" stroke-width="2"/>
-            <polygon points="60,25 55,35 65,35" fill="#64748b"/>
-            <polygon points="365,390 355,385 355,395" fill="#64748b"/>
+      <!-- Axes -->
+      <line
+        x1="60"
+        y1="390"
+        x2="360"
+        y2="390"
+        stroke="#64748b"
+        stroke-width="2"
+      />
+      <line
+        x1="60"
+        y1="30"
+        x2="60"
+        y2="390"
+        stroke="#64748b"
+        stroke-width="2"
+      />
+      <polygon points="60,25 55,35 65,35" fill="#64748b" />
+      <polygon points="365,390 355,385 355,395" fill="#64748b" />
 
-            <!-- Y-axis labels (distance traveled cm) 0-18, every 1cm -->
-            <!-- Y coordinates: 390=0, 370=1, 350=2, 330=3, 310=4, 290=5, 270=6, 250=7, 230=8, 210=9, 190=10, 170=11, 150=12, 130=13, 110=14, 90=15, 70=16, 50=17, 30=18 -->
-            <text x="50" y="395" fill="#94a3b8" font-size="11" text-anchor="end">0</text>
-            <text x="50" y="375" fill="#94a3b8" font-size="11" text-anchor="end">1</text>
-            <text x="50" y="355" fill="#94a3b8" font-size="11" text-anchor="end">2</text>
-            <text x="50" y="335" fill="#94a3b8" font-size="11" text-anchor="end">3</text>
-            <text x="50" y="315" fill="#94a3b8" font-size="11" text-anchor="end">4</text>
-            <text x="50" y="295" fill="#94a3b8" font-size="11" text-anchor="end">5</text>
-            <text x="50" y="275" fill="#94a3b8" font-size="11" text-anchor="end">6</text>
-            <text x="50" y="255" fill="#94a3b8" font-size="11" text-anchor="end">7</text>
-            <text x="50" y="235" fill="#94a3b8" font-size="11" text-anchor="end">8</text>
-            <text x="50" y="215" fill="#94a3b8" font-size="11" text-anchor="end">9</text>
-            <text x="50" y="195" fill="#94a3b8" font-size="11" text-anchor="end">10</text>
-            <text x="50" y="175" fill="#94a3b8" font-size="11" text-anchor="end">11</text>
-            <text x="50" y="155" fill="#94a3b8" font-size="11" text-anchor="end">12</text>
-            <text x="50" y="135" fill="#94a3b8" font-size="11" text-anchor="end">13</text>
-            <text x="50" y="115" fill="#94a3b8" font-size="11" text-anchor="end">14</text>
-            <text x="50" y="95" fill="#94a3b8" font-size="11" text-anchor="end">15</text>
-            <text x="50" y="75" fill="#94a3b8" font-size="11" text-anchor="end">16</text>
-            <text x="50" y="55" fill="#94a3b8" font-size="11" text-anchor="end">17</text>
-            <text x="50" y="35" fill="#94a3b8" font-size="11" text-anchor="end">18</text>
+      <!-- Y-axis labels (distance traveled cm) 0-18, every 1cm -->
+      <!-- Y coordinates: 390=0, 370=1, 350=2, 330=3, 310=4, 290=5, 270=6, 250=7, 230=8, 210=9, 190=10, 170=11, 150=12, 130=13, 110=14, 90=15, 70=16, 50=17, 30=18 -->
+      <text x="50" y="395" fill="#94a3b8" font-size="11" text-anchor="end">
+        0
+      </text>
+      <text x="50" y="375" fill="#94a3b8" font-size="11" text-anchor="end">
+        1
+      </text>
+      <text x="50" y="355" fill="#94a3b8" font-size="11" text-anchor="end">
+        2
+      </text>
+      <text x="50" y="335" fill="#94a3b8" font-size="11" text-anchor="end">
+        3
+      </text>
+      <text x="50" y="315" fill="#94a3b8" font-size="11" text-anchor="end">
+        4
+      </text>
+      <text x="50" y="295" fill="#94a3b8" font-size="11" text-anchor="end">
+        5
+      </text>
+      <text x="50" y="275" fill="#94a3b8" font-size="11" text-anchor="end">
+        6
+      </text>
+      <text x="50" y="255" fill="#94a3b8" font-size="11" text-anchor="end">
+        7
+      </text>
+      <text x="50" y="235" fill="#94a3b8" font-size="11" text-anchor="end">
+        8
+      </text>
+      <text x="50" y="215" fill="#94a3b8" font-size="11" text-anchor="end">
+        9
+      </text>
+      <text x="50" y="195" fill="#94a3b8" font-size="11" text-anchor="end">
+        10
+      </text>
+      <text x="50" y="175" fill="#94a3b8" font-size="11" text-anchor="end">
+        11
+      </text>
+      <text x="50" y="155" fill="#94a3b8" font-size="11" text-anchor="end">
+        12
+      </text>
+      <text x="50" y="135" fill="#94a3b8" font-size="11" text-anchor="end">
+        13
+      </text>
+      <text x="50" y="115" fill="#94a3b8" font-size="11" text-anchor="end">
+        14
+      </text>
+      <text x="50" y="95" fill="#94a3b8" font-size="11" text-anchor="end">
+        15
+      </text>
+      <text x="50" y="75" fill="#94a3b8" font-size="11" text-anchor="end">
+        16
+      </text>
+      <text x="50" y="55" fill="#94a3b8" font-size="11" text-anchor="end">
+        17
+      </text>
+      <text x="50" y="35" fill="#94a3b8" font-size="11" text-anchor="end">
+        18
+      </text>
 
-            <!-- X-axis labels (elapsed time sec) 0-6 -->
-            <text x="110" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">1</text>
-            <text x="160" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">2</text>
-            <text x="210" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">3</text>
-            <text x="260" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">4</text>
-            <text x="310" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">5</text>
-            <text x="360" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">6</text>
+      <!-- X-axis labels (elapsed time sec) 0-6 -->
+      <text x="110" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">
+        1
+      </text>
+      <text x="160" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">
+        2
+      </text>
+      <text x="210" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">
+        3
+      </text>
+      <text x="260" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">
+        4
+      </text>
+      <text x="310" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">
+        5
+      </text>
+      <text x="360" y="410" fill="#94a3b8" font-size="13" text-anchor="middle">
+        6
+      </text>
 
-            <!-- Axis titles -->
-            <text x="15" y="210" fill="#cbd5e1" font-size="14" text-anchor="middle" transform="rotate(-90, 15, 210)">distance traveled (cm)</text>
-            <text x="210" y="435" fill="#cbd5e1" font-size="14" text-anchor="middle">elapsed time (sec)</text>
+      <!-- Axis titles -->
+      <text
+        x="15"
+        y="210"
+        fill="#cbd5e1"
+        font-size="14"
+        text-anchor="middle"
+        transform="rotate(-90, 15, 210)"
+      >
+        distance traveled (cm)
+      </text>
+      <text x="210" y="435" fill="#cbd5e1" font-size="14" text-anchor="middle">
+        elapsed time (sec)
+      </text>
 
-            <!-- Line f (red/steeper - faster turtle) - 6 cm/sec -->
-            <!-- Points: (0,0), (1,6), (2,12), (3,18) -->
-            <!-- Pixel: (60,390), (110,270), (160,150), (210,30) -->
-            <line x1="60" y1="390" x2="210" y2="30" stroke="#ef4444" stroke-width="3"/>
-            <circle cx="110" cy="270" r="5" fill="#ef4444"/>
-            <circle cx="160" cy="150" r="5" fill="#ef4444"/>
-            <circle cx="210" cy="30" r="5" fill="#ef4444"/>
-            <text x="215" y="25" fill="#ef4444" font-size="18" font-weight="bold" font-style="italic">f</text>
+      <!-- Line f (red/steeper - faster turtle) - 6 cm/sec -->
+      <!-- Points: (0,0), (1,6), (2,12), (3,18) -->
+      <!-- Pixel: (60,390), (110,270), (160,150), (210,30) -->
+      <line
+        x1="60"
+        y1="390"
+        x2="210"
+        y2="30"
+        stroke="#ef4444"
+        stroke-width="3"
+      />
+      <circle cx="110" cy="270" r="5" fill="#ef4444" />
+      <circle cx="160" cy="150" r="5" fill="#ef4444" />
+      <circle cx="210" cy="30" r="5" fill="#ef4444" />
+      <text
+        x="215"
+        y="25"
+        fill="#ef4444"
+        font-size="18"
+        font-weight="bold"
+        font-style="italic"
+      >
+        f
+      </text>
 
-            <!-- Line g (blue/less steep - slower turtle) - 2 cm/sec -->
-            <!-- Points: (0,0), (1,2), (2,4), (3,6), (4,8), (5,10), (6,12) -->
-            <!-- Pixel: (60,390), (110,350), (160,310), (210,270), (260,230), (310,190), (360,150) -->
-            <line x1="60" y1="390" x2="360" y2="150" stroke="#3b82f6" stroke-width="3"/>
-            <circle cx="160" cy="310" r="5" fill="#3b82f6"/>
-            <circle cx="260" cy="230" r="5" fill="#3b82f6"/>
-            <circle cx="360" cy="150" r="5" fill="#3b82f6"/>
-            <text x="365" y="145" fill="#3b82f6" font-size="18" font-weight="bold" font-style="italic">g</text>
+      <!-- Line g (blue/less steep - slower turtle) - 2 cm/sec -->
+      <!-- Points: (0,0), (1,2), (2,4), (3,6), (4,8), (5,10), (6,12) -->
+      <!-- Pixel: (60,390), (110,350), (160,310), (210,270), (260,230), (310,190), (360,150) -->
+      <line
+        x1="60"
+        y1="390"
+        x2="360"
+        y2="150"
+        stroke="#3b82f6"
+        stroke-width="3"
+      />
+      <circle cx="160" cy="310" r="5" fill="#3b82f6" />
+      <circle cx="260" cy="230" r="5" fill="#3b82f6" />
+      <circle cx="360" cy="150" r="5" fill="#3b82f6" />
+      <text
+        x="365"
+        y="145"
+        fill="#3b82f6"
+        font-size="18"
+        font-weight="bold"
+        font-style="italic"
+      >
+        g
+      </text>
 
-            <!-- Origin point -->
-            <circle cx="60" cy="390" r="4" fill="#fbbf24"/>
-            <text x="55" y="405" fill="#94a3b8" font-size="12" text-anchor="end">O</text>
-        </svg>
-    </div>
+      <!-- Origin point -->
+      <circle cx="60" cy="390" r="4" fill="#fbbf24" />
+      <text x="55" y="405" fill="#94a3b8" font-size="12" text-anchor="end">
+        O
+      </text>
+    </svg>
+  </div>
 
-    <div style="background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 15px 20px; border-radius: 0 8px 8px 0; margin-top: 10px;">
-        <p style="font-size: 18px; color: #fbbf24; margin: 0; font-weight: 600;">
-            <strong>Your Task:</strong> Draw a line for a third turtle that is going <em>half as fast</em> as the turtle described by line g. Then explain how your line shows "half as fast."
-        </p>
-    </div>
+  <div
+    style="
+      background: rgba(251, 191, 36, 0.1);
+      border-left: 4px solid #fbbf24;
+      padding: 15px 20px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 10px;
+    "
+  >
+    <p style="font-size: 18px; color: #fbbf24; margin: 0; font-weight: 600">
+      <strong>Your Task:</strong> Draw a line for a third turtle that is going
+      <em>half as fast</em> as the turtle described by line g. Then explain how
+      your line shows "half as fast."
+    </p>
+  </div>
 </div>

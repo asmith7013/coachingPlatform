@@ -92,7 +92,9 @@ export interface SkillInfo {
 /**
  * Fetch all lessons organized by unit order for a given scope sequence tag
  */
-export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceTag): Promise<{
+export async function fetchLessonsWithUnitOrder(
+  scopeSequenceTag: ScopeSequenceTag,
+): Promise<{
   success: boolean;
   data?: {
     units: UnitWithLessons[];
@@ -103,12 +105,14 @@ export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceT
   return withDbConnection(async () => {
     try {
       // 1. Fetch unit order for this scope sequence tag
-      const unitOrderDoc = await ScopeSequenceUnitOrderModel.findOne({ scopeSequenceTag }).lean<UnitOrderDoc>();
+      const unitOrderDoc = await ScopeSequenceUnitOrderModel.findOne({
+        scopeSequenceTag,
+      }).lean<UnitOrderDoc>();
 
       if (!unitOrderDoc) {
         return {
           success: false,
-          error: `No unit order found for ${scopeSequenceTag}`
+          error: `No unit order found for ${scopeSequenceTag}`,
         };
       }
 
@@ -117,18 +121,19 @@ export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceT
       // 2. Build query conditions for all units
       // For Algebra 1, we need to query by both unitNumber AND grade
       // For other curricula, just scopeSequenceTag is enough
-      const unitConditions = unitOrder.map(unit => ({
+      const unitConditions = unitOrder.map((unit) => ({
         scopeSequenceTag,
         unitNumber: unit.unitNumber,
         grade: unit.grade,
       }));
 
       // 3. Fetch all lessons for all units in one query
-      const lessons = await ScopeAndSequenceModel
-        .find({
-          $or: unitConditions
-        })
-        .select('_id unitLessonId lessonNumber lessonName lessonTitle lessonType section standards learningTargets roadmapSkills unitNumber grade')
+      const lessons = await ScopeAndSequenceModel.find({
+        $or: unitConditions,
+      })
+        .select(
+          "_id unitLessonId lessonNumber lessonName lessonTitle lessonType section standards learningTargets roadmapSkills unitNumber grade",
+        )
         .lean<LessonDoc[]>();
 
       // 4. Group lessons by unit (using unitNumber + grade as key)
@@ -144,7 +149,7 @@ export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceT
 
         // Collect skill numbers for batch lookup
         const roadmapSkills = lesson.roadmapSkills || [];
-        roadmapSkills.forEach(skill => allSkillNumbers.add(skill));
+        roadmapSkills.forEach((skill) => allSkillNumbers.add(skill));
 
         lessonsByUnit.get(key)!.push({
           _id: String(lesson._id),
@@ -152,7 +157,7 @@ export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceT
           lessonNumber: lesson.lessonNumber,
           lessonName: lesson.lessonName,
           lessonTitle: lesson.lessonTitle,
-          lessonType: lesson.lessonType as LessonData['lessonType'],
+          lessonType: lesson.lessonType as LessonData["lessonType"],
           section: lesson.section,
           standards: (lesson.standards || []) as LessonStandard[],
           learningTargets: lesson.learningTargets || [],
@@ -162,20 +167,20 @@ export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceT
 
       // 5. Sort lessons within each unit by section order, then lesson number
       const sectionOrder: Record<string, number> = {
-        'Ramp Ups': 0,
-        'A': 1,
-        'B': 2,
-        'C': 3,
-        'D': 4,
-        'E': 5,
-        'F': 6,
-        'Unit Assessment': 7,
+        "Ramp Ups": 0,
+        A: 1,
+        B: 2,
+        C: 3,
+        D: 4,
+        E: 5,
+        F: 6,
+        "Unit Assessment": 7,
       };
 
       for (const [, unitLessons] of lessonsByUnit) {
         unitLessons.sort((a, b) => {
-          const sectionA = sectionOrder[a.section || ''] ?? 99;
-          const sectionB = sectionOrder[b.section || ''] ?? 99;
+          const sectionA = sectionOrder[a.section || ""] ?? 99;
+          const sectionB = sectionOrder[b.section || ""] ?? 99;
           if (sectionA !== sectionB) return sectionA - sectionB;
           return a.lessonNumber - b.lessonNumber;
         });
@@ -184,9 +189,10 @@ export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceT
       // 6. Batch fetch skill titles
       const skillMap: Record<string, string> = {};
       if (allSkillNumbers.size > 0) {
-        const skills = await RoadmapsSkillModel
-          .find({ skillNumber: { $in: Array.from(allSkillNumbers) } })
-          .select('skillNumber title')
+        const skills = await RoadmapsSkillModel.find({
+          skillNumber: { $in: Array.from(allSkillNumbers) },
+        })
+          .select("skillNumber title")
           .lean<SkillDoc[]>();
 
         for (const skill of skills) {
@@ -195,7 +201,7 @@ export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceT
       }
 
       // 7. Build final response with units in order
-      const units: UnitWithLessons[] = unitOrder.map(unit => ({
+      const units: UnitWithLessons[] = unitOrder.map((unit) => ({
         order: unit.order,
         unitNumber: unit.unitNumber,
         unitName: unit.unitName,
@@ -208,13 +214,13 @@ export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceT
         data: {
           units,
           skillMap,
-        }
+        },
       };
     } catch (error) {
-      console.error('Error fetching lessons with unit order:', error);
+      console.error("Error fetching lessons with unit order:", error);
       return {
         success: false,
-        error: handleServerError(error, 'fetchLessonsWithUnitOrder')
+        error: handleServerError(error, "fetchLessonsWithUnitOrder"),
       };
     }
   });
@@ -223,7 +229,9 @@ export async function fetchLessonsWithUnitOrder(scopeSequenceTag: ScopeSequenceT
 /**
  * Fetch lessons for multiple scope sequence tags at once (for export)
  */
-export async function fetchMultipleGradesData(tags: ScopeSequenceTag[]): Promise<{
+export async function fetchMultipleGradesData(
+  tags: ScopeSequenceTag[],
+): Promise<{
   success: boolean;
   data?: Array<{
     tag: ScopeSequenceTag;
@@ -240,12 +248,16 @@ export async function fetchMultipleGradesData(tags: ScopeSequenceTag[]): Promise
           if (!result.success || !result.data) {
             return null;
           }
-          return { tag, units: result.data.units, skillMap: result.data.skillMap };
-        })
+          return {
+            tag,
+            units: result.data.units,
+            skillMap: result.data.skillMap,
+          };
+        }),
       );
 
       const successfulResults = results.filter(
-        (r): r is NonNullable<typeof r> => r !== null
+        (r): r is NonNullable<typeof r> => r !== null,
       );
 
       return { success: true, data: successfulResults };
@@ -269,16 +281,18 @@ export async function getAvailableScopeTags(): Promise<{
 }> {
   return withDbConnection(async () => {
     try {
-      const tags = await ScopeSequenceUnitOrderModel.distinct('scopeSequenceTag') as unknown as string[];
+      const tags = (await ScopeSequenceUnitOrderModel.distinct(
+        "scopeSequenceTag",
+      )) as unknown as string[];
       return {
         success: true,
-        data: tags.sort() as ScopeSequenceTag[]
+        data: tags.sort() as ScopeSequenceTag[],
       };
     } catch (error) {
-      console.error('Error fetching available scope tags:', error);
+      console.error("Error fetching available scope tags:", error);
       return {
         success: false,
-        error: handleServerError(error, 'getAvailableScopeTags')
+        error: handleServerError(error, "getAvailableScopeTags"),
       };
     }
   });

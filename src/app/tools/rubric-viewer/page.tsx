@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { RubricViewer } from '@/components/domain/rubrics/RubricViewer';
-import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
+import { RubricViewer } from "@/components/domain/rubrics/RubricViewer";
+import { DashboardPage } from "@/components/composed/layouts/DashboardPage";
 
 export default function RubricViewerPage() {
   return (
@@ -12,4 +12,4 @@ export default function RubricViewerPage() {
       <RubricViewer />
     </DashboardPage>
   );
-} 
+}

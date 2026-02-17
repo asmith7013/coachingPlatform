@@ -1,10 +1,10 @@
-import React from 'react';
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Badge } from '@/components/core/feedback/Badge';
-import { ChartBarIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
-import { useTodaysVisitData } from '../context/TodaysVisitContext';
+import React from "react";
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { Badge } from "@/components/core/feedback/Badge";
+import { ChartBarIcon, ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
+import { useTodaysVisitData } from "../context/TodaysVisitContext";
 
 export function MetricsToMeasureCard() {
   const { todaysVisit, isLoading } = useTodaysVisitData();
@@ -82,16 +82,24 @@ export function MetricsToMeasureCard() {
               {/* Values */}
               <div className="grid grid-cols-3 gap-4 pt-2">
                 <div className="space-y-1">
-                  <Text textSize="xs" color="muted" className="font-medium uppercase tracking-wide">
+                  <Text
+                    textSize="xs"
+                    color="muted"
+                    className="font-medium uppercase tracking-wide"
+                  >
                     Baseline
                   </Text>
                   <Text textSize="sm" color="default" className="font-mono">
-                    {metric.baselineValue || '—'}
+                    {metric.baselineValue || "—"}
                   </Text>
                 </div>
-                
+
                 <div className="space-y-1">
-                  <Text textSize="xs" color="muted" className="font-medium uppercase tracking-wide">
+                  <Text
+                    textSize="xs"
+                    color="muted"
+                    className="font-medium uppercase tracking-wide"
+                  >
                     Target
                   </Text>
                   <div className="flex items-center gap-1">
@@ -101,13 +109,17 @@ export function MetricsToMeasureCard() {
                     </Text>
                   </div>
                 </div>
-                
+
                 <div className="space-y-1">
-                  <Text textSize="xs" color="muted" className="font-medium uppercase tracking-wide">
+                  <Text
+                    textSize="xs"
+                    color="muted"
+                    className="font-medium uppercase tracking-wide"
+                  >
                     Current
                   </Text>
                   <Text textSize="sm" color="default" className="font-mono">
-                    {metric.currentValue || '—'}
+                    {metric.currentValue || "—"}
                   </Text>
                 </div>
               </div>
@@ -119,7 +131,11 @@ export function MetricsToMeasureCard() {
         {todaysVisit.weeklyPlan?.progressMonitoring && (
           <div className="border-t pt-4">
             <div className="space-y-2">
-              <Text textSize="sm" color="muted" className="font-medium uppercase tracking-wide">
+              <Text
+                textSize="sm"
+                color="muted"
+                className="font-medium uppercase tracking-wide"
+              >
                 Progress Monitoring Plan
               </Text>
               <Text color="default" textSize="sm">
@@ -131,4 +147,4 @@ export function MetricsToMeasureCard() {
       </div>
     </Card>
   );
-} 
+}

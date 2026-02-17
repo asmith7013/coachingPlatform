@@ -2,11 +2,11 @@
 
 import { createCrudActions } from "@server/crud";
 import { CoachingLogModel } from "@mongoose-schema/visits/coaching-log.model";
-import { 
+import {
   CoachingLog,
-  CoachingLogZodSchema, 
+  CoachingLogZodSchema,
   CoachingLogInputZodSchema,
-  type CoachingLogInput
+  type CoachingLogInput,
 } from "@zod-schema/visits/coaching-log";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { QueryParams } from "@core-types/query";
@@ -19,9 +19,9 @@ const coachingLogActions = createCrudActions({
   inputSchema: CoachingLogInputZodSchema as ZodType<CoachingLogInput>,
   name: "Coaching Log",
   revalidationPaths: ["/dashboard/coaching-logs"],
-  sortFields: ['reasonDone', 'totalDuration', 'createdAt', 'updatedAt'],
-  defaultSortField: 'createdAt',
-  defaultSortOrder: 'desc'
+  sortFields: ["reasonDone", "totalDuration", "createdAt", "updatedAt"],
+  defaultSortField: "createdAt",
+  defaultSortOrder: "desc",
 });
 
 // Export individual functions with connection handling
@@ -29,7 +29,10 @@ export async function createCoachingLog(data: CoachingLogInput) {
   return withDbConnection(() => coachingLogActions.create(data));
 }
 
-export async function updateCoachingLog(id: string, data: Partial<CoachingLogInput>) {
+export async function updateCoachingLog(
+  id: string,
+  data: Partial<CoachingLogInput>,
+) {
   return withDbConnection(() => coachingLogActions.update(id, data));
 }
 
@@ -43,4 +46,4 @@ export async function fetchCoachingLogs(params: QueryParams) {
 
 export async function fetchCoachingLogById(id: string) {
   return withDbConnection(() => coachingLogActions.fetchById(id));
-} 
+}

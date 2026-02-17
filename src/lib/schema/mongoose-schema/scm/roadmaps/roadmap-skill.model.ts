@@ -1,6 +1,9 @@
 // src/lib/schema/mongoose-schema/scm/roadmap-skill.model.ts
-import mongoose from 'mongoose';
-import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import mongoose from "mongoose";
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 // =====================================
 // ROADMAPS SKILL MODEL (Comprehensive)
@@ -60,24 +63,28 @@ const roadmapsSkillFields = {
     type: {
       asTarget: { type: [unitReferenceSchema], default: [] },
       asEssential: {
-        type: [{
-          skillNumber: { type: String, required: true },
-          title: { type: String, required: true },
-          units: { type: [unitReferenceSchema], default: [] }
-        }],
-        default: []
+        type: [
+          {
+            skillNumber: { type: String, required: true },
+            title: { type: String, required: true },
+            units: { type: [unitReferenceSchema], default: [] },
+          },
+        ],
+        default: [],
       },
       asHelpful: {
-        type: [{
-          skillNumber: { type: String, required: true },
-          title: { type: String, required: true },
-          units: { type: [unitReferenceSchema], default: [] }
-        }],
-        default: []
+        type: [
+          {
+            skillNumber: { type: String, required: true },
+            title: { type: String, required: true },
+            units: { type: [unitReferenceSchema], default: [] },
+          },
+        ],
+        default: [],
       },
-      asSupport: { type: [unitReferenceSchema], default: [] }
+      asSupport: { type: [unitReferenceSchema], default: [] },
     },
-    required: false
+    required: false,
   },
 
   // IM Lesson fields (optional for skills from IM lessons)
@@ -93,24 +100,24 @@ const roadmapsSkillFields = {
   imLessons: { type: [imLessonSchema], default: [] },
 
   // Content sections
-  description: { type: String, default: '' },
-  skillChallengeCriteria: { type: String, default: '' },
-  essentialQuestion: { type: String, default: '' },
+  description: { type: String, default: "" },
+  skillChallengeCriteria: { type: String, default: "" },
+  essentialQuestion: { type: String, default: "" },
 
   // Complete primer section HTML with column layout preserved
-  primerHtml: { type: String, default: '' },
+  primerHtml: { type: String, default: "" },
 
   // Teaching strategies and resources
-  launch: { type: String, default: '' },
-  teacherStudentStrategies: { type: String, default: '' },
-  modelsAndManipulatives: { type: String, default: '' },
-  questionsToHelp: { type: String, default: '' },
-  discussionQuestions: { type: String, default: '' },
-  commonMisconceptions: { type: String, default: '' },
-  additionalResources: { type: String, default: '' },
+  launch: { type: String, default: "" },
+  teacherStudentStrategies: { type: String, default: "" },
+  modelsAndManipulatives: { type: String, default: "" },
+  questionsToHelp: { type: String, default: "" },
+  discussionQuestions: { type: String, default: "" },
+  commonMisconceptions: { type: String, default: "" },
+  additionalResources: { type: String, default: "" },
 
   // Standards and vocabulary
-  standards: { type: String, default: '' },
+  standards: { type: String, default: "" },
   vocabulary: { type: [vocabularyTermSchema], default: [] },
 
   // Media and resources
@@ -127,13 +134,14 @@ const roadmapsSkillFields = {
   success: { type: Boolean, required: true, default: true, index: true },
   error: { type: String },
 
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
 const RoadmapsSkillSchema = new mongoose.Schema(roadmapsSkillFields, {
   ...standardSchemaOptions,
-  collection: 'roadmaps-skills'
+  collection: "roadmaps-skills",
 });
 
-export const RoadmapsSkillModel = mongoose.models.RoadmapsSkill ||
-  mongoose.model('RoadmapsSkill', RoadmapsSkillSchema);
+export const RoadmapsSkillModel =
+  mongoose.models.RoadmapsSkill ||
+  mongoose.model("RoadmapsSkill", RoadmapsSkillSchema);

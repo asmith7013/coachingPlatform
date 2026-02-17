@@ -1,11 +1,11 @@
 "use client";
 
-import React from 'react';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
-import { Textarea } from '@/components/core/fields/Textarea';
-import { Text } from '@/components/core/typography/Text';
-import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import React from "react";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/fields/Input";
+import { Textarea } from "@/components/core/fields/Textarea";
+import { Text } from "@/components/core/typography/Text";
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 interface ArrayFieldManagerProps {
   label: string;
@@ -14,63 +14,63 @@ interface ArrayFieldManagerProps {
   placeholder?: string;
   helpText?: string;
   addButtonLabel?: string;
-  fieldType?: 'input' | 'textarea';
+  fieldType?: "input" | "textarea";
   maxItems?: number;
   minItems?: number;
   emptyMessage?: string;
-  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info';
+  variant?: "default" | "success" | "warning" | "danger" | "info";
   required?: boolean;
   className?: string;
 }
 
 const variantStyles = {
   default: {
-    label: 'text-gray-700',
-    container: 'border-gray-200',
-    button: 'border-gray-300'
+    label: "text-gray-700",
+    container: "border-gray-200",
+    button: "border-gray-300",
   },
   success: {
-    label: 'text-green-700',
-    container: 'border-green-200 bg-green-50',
-    button: 'border-green-300'
+    label: "text-green-700",
+    container: "border-green-200 bg-green-50",
+    button: "border-green-300",
   },
   warning: {
-    label: 'text-orange-700', 
-    container: 'border-orange-200 bg-orange-50',
-    button: 'border-orange-300'
+    label: "text-orange-700",
+    container: "border-orange-200 bg-orange-50",
+    button: "border-orange-300",
   },
   danger: {
-    label: 'text-red-700',
-    container: 'border-red-200 bg-red-50',
-    button: 'border-red-300'
+    label: "text-red-700",
+    container: "border-red-200 bg-red-50",
+    button: "border-red-300",
   },
   info: {
-    label: 'text-blue-700',
-    container: 'border-blue-200 bg-blue-50',
-    button: 'border-blue-300'
-  }
+    label: "text-blue-700",
+    container: "border-blue-200 bg-blue-50",
+    button: "border-blue-300",
+  },
 };
 
 export function ArrayFieldManager({
   label,
   items,
   onChange,
-  placeholder = 'Enter item',
+  placeholder = "Enter item",
   helpText,
-  addButtonLabel = 'Add Item',
-  fieldType = 'input',
+  addButtonLabel = "Add Item",
+  fieldType = "input",
   maxItems,
   minItems = 0,
-  emptyMessage = 'No items added yet.',
-  variant = 'default',
+  emptyMessage = "No items added yet.",
+  variant = "default",
   required = false,
-  className = ''
+  className = "",
 }: ArrayFieldManagerProps) {
   const styles = variantStyles[variant];
 
   const addItem = () => {
     if (!maxItems || items.length < maxItems) {
-      onChange([...items, '']);
+      onChange([...items, ""]);
     }
   };
 
@@ -93,15 +93,15 @@ export function ArrayFieldManager({
     <div className={`space-y-3 ${className}`}>
       {/* Header */}
       <div className="flex justify-between items-center">
-        <Text 
-          textSize="sm" 
-          color="default" 
+        <Text
+          textSize="sm"
+          color="default"
           className={`font-medium ${styles.label}`}
         >
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </Text>
-        
+
         {canAdd && (
           <Button
             intent="secondary"
@@ -133,7 +133,7 @@ export function ArrayFieldManager({
         ) : (
           items.map((item, index) => (
             <div key={index} className="flex gap-2 items-start">
-              {fieldType === 'textarea' ? (
+              {fieldType === "textarea" ? (
                 <Textarea
                   value={item}
                   onChange={(e) => updateItem(index, e.target.value)}
@@ -149,7 +149,7 @@ export function ArrayFieldManager({
                   className="flex-1"
                 />
               )}
-              
+
               {canRemove && (
                 <Button
                   intent="danger"
@@ -175,4 +175,4 @@ export function ArrayFieldManager({
       )}
     </div>
   );
-} 
+}

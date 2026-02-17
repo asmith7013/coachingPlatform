@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import type { EditImage } from './AiEditInput';
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import type { EditImage } from "./AiEditInput";
 
 interface EditContextCardProps {
   images: EditImage[];
@@ -29,7 +29,8 @@ export function EditContextCard({
     setMounted(true);
   }, []);
 
-  const hasContent = images.length > 0 || slidesToEdit.length > 0 || contextSlides.length > 0;
+  const hasContent =
+    images.length > 0 || slidesToEdit.length > 0 || contextSlides.length > 0;
 
   if (!hasContent || !mounted) return null;
 
@@ -79,7 +80,9 @@ export function EditContextCard({
       {/* Images */}
       {images.length > 0 && (
         <div>
-          <div className="text-xs text-gray-500 font-medium mb-1.5">Images:</div>
+          <div className="text-xs text-gray-500 font-medium mb-1.5">
+            Images:
+          </div>
           <div className="flex gap-2 flex-wrap">
             {images.map((img, index) => (
               <div key={index} className="relative group">

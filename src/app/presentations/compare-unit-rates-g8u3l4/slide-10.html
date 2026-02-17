@@ -1,65 +1,244 @@
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 50px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif;">
+<div
+  class="slide-container"
+  style="
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #121212 0%, #14141e 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 50px 60px;
+    color: #ffffff;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  "
+>
+  <h2
+    style="
+      font-size: 42px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin: 0 0 15px 0;
+      text-transform: uppercase;
+    "
+  >
+    Challenge: The Streaming Showdown
+  </h2>
+  <p
+    style="
+      font-size: 20px;
+      line-height: 1.5;
+      color: #cbd5e1;
+      margin: 0 0 25px 0;
+    "
+  >
+    Two streaming platforms have different pricing structures. Compare the
+    value!
+  </p>
 
-    <h2 style="font-size: 42px; font-weight: 700; color: #e2e8f0; margin: 0 0 15px 0; text-transform: uppercase;">Challenge: The Streaming Showdown</h2>
-    <p style="font-size: 20px; line-height: 1.5; color: #cbd5e1; margin: 0 0 25px 0;">Two streaming platforms have different pricing structures. Compare the value!</p>
+  <div
+    style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; flex: 1"
+  >
+    <!-- Platform A - Table -->
+    <div
+      style="
+        background: rgba(236, 72, 153, 0.1);
+        border: 2px solid #ec4899;
+        border-radius: 16px;
+        padding: 25px;
+      "
+    >
+      <h3
+        style="
+          font-size: 26px;
+          color: #ec4899;
+          margin: 0 0 15px 0;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        "
+      >
+        <span style="font-size: 30px">📺</span> Platform A: "StreamMax"
+      </h3>
+      <p style="font-size: 15px; color: #94a3b8; margin: 0 0 15px 0">
+        Information shown in the table below:
+      </p>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; flex: 1;">
-
-        <!-- Platform A - Table -->
-        <div style="background: rgba(236, 72, 153, 0.1); border: 2px solid #ec4899; border-radius: 16px; padding: 25px;">
-            <h3 style="font-size: 26px; color: #ec4899; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 30px;">📺</span> Platform A: "StreamMax"
-            </h3>
-            <p style="font-size: 15px; color: #94a3b8; margin: 0 0 15px 0;">Information shown in the table below:</p>
-
-            <table style="width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.3); border-radius: 8px; overflow: hidden;">
-                <thead>
-                    <tr style="background: rgba(236, 72, 153, 0.3);">
-                        <th style="padding: 14px; text-align: center; font-size: 16px; color: #e2e8f0; border-bottom: 2px solid #ec4899;">Months</th>
-                        <th style="padding: 14px; text-align: center; font-size: 16px; color: #e2e8f0; border-bottom: 2px solid #ec4899;">Total Cost ($)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="padding: 14px; text-align: center; font-size: 22px; color: #ffffff; border-bottom: 1px solid #333;">3</td>
-                        <td style="padding: 14px; text-align: center; font-size: 22px; color: #ffffff; border-bottom: 1px solid #333;">36</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 14px; text-align: center; font-size: 22px; color: #ffffff; border-bottom: 1px solid #333;">6</td>
-                        <td style="padding: 14px; text-align: center; font-size: 22px; color: #ffffff; border-bottom: 1px solid #333;">72</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 14px; text-align: center; font-size: 22px; color: #ffffff;">12</td>
-                        <td style="padding: 14px; text-align: center; font-size: 22px; color: #ffffff;">144</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Platform B - Equation -->
-        <div style="background: rgba(59, 130, 246, 0.1); border: 2px solid #3b82f6; border-radius: 16px; padding: 25px;">
-            <h3 style="font-size: 26px; color: #3b82f6; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 30px;">🎬</span> Platform B: "ViewPlus"
-            </h3>
-            <p style="font-size: 15px; color: #94a3b8; margin: 0 0 15px 0;">Described by the equation:</p>
-
-            <div style="background: rgba(0,0,0,0.4); border-radius: 12px; padding: 30px; text-align: center; margin-top: 20px;">
-                <p style="font-size: 34px; color: #3b82f6; margin: 0; font-weight: 700;">y = 10x</p>
-                <p style="font-size: 15px; color: #94a3b8; margin: 15px 0 0 0;">where <strong>x</strong> = months and <strong>y</strong> = total cost ($)</p>
-            </div>
-        </div>
+      <table
+        style="
+          width: 100%;
+          border-collapse: collapse;
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 8px;
+          overflow: hidden;
+        "
+      >
+        <thead>
+          <tr style="background: rgba(236, 72, 153, 0.3)">
+            <th
+              style="
+                padding: 14px;
+                text-align: center;
+                font-size: 16px;
+                color: #e2e8f0;
+                border-bottom: 2px solid #ec4899;
+              "
+            >
+              Months
+            </th>
+            <th
+              style="
+                padding: 14px;
+                text-align: center;
+                font-size: 16px;
+                color: #e2e8f0;
+                border-bottom: 2px solid #ec4899;
+              "
+            >
+              Total Cost ($)
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td
+              style="
+                padding: 14px;
+                text-align: center;
+                font-size: 22px;
+                color: #ffffff;
+                border-bottom: 1px solid #333;
+              "
+            >
+              3
+            </td>
+            <td
+              style="
+                padding: 14px;
+                text-align: center;
+                font-size: 22px;
+                color: #ffffff;
+                border-bottom: 1px solid #333;
+              "
+            >
+              36
+            </td>
+          </tr>
+          <tr>
+            <td
+              style="
+                padding: 14px;
+                text-align: center;
+                font-size: 22px;
+                color: #ffffff;
+                border-bottom: 1px solid #333;
+              "
+            >
+              6
+            </td>
+            <td
+              style="
+                padding: 14px;
+                text-align: center;
+                font-size: 22px;
+                color: #ffffff;
+                border-bottom: 1px solid #333;
+              "
+            >
+              72
+            </td>
+          </tr>
+          <tr>
+            <td
+              style="
+                padding: 14px;
+                text-align: center;
+                font-size: 22px;
+                color: #ffffff;
+              "
+            >
+              12
+            </td>
+            <td
+              style="
+                padding: 14px;
+                text-align: center;
+                font-size: 22px;
+                color: #ffffff;
+              "
+            >
+              144
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Question Box -->
-    <div style="background: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24; padding: 20px 25px; border-radius: 0 12px 12px 0; margin-top: 25px;">
-        <p style="font-size: 20px; color: #fbbf24; margin: 0; font-weight: 600;">
-            <strong>Questions:</strong>
+    <!-- Platform B - Equation -->
+    <div
+      style="
+        background: rgba(59, 130, 246, 0.1);
+        border: 2px solid #3b82f6;
+        border-radius: 16px;
+        padding: 25px;
+      "
+    >
+      <h3
+        style="
+          font-size: 26px;
+          color: #3b82f6;
+          margin: 0 0 15px 0;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        "
+      >
+        <span style="font-size: 30px">🎬</span> Platform B: "ViewPlus"
+      </h3>
+      <p style="font-size: 15px; color: #94a3b8; margin: 0 0 15px 0">
+        Described by the equation:
+      </p>
+
+      <div
+        style="
+          background: rgba(0, 0, 0, 0.4);
+          border-radius: 12px;
+          padding: 30px;
+          text-align: center;
+          margin-top: 20px;
+        "
+      >
+        <p style="font-size: 34px; color: #3b82f6; margin: 0; font-weight: 700">
+          y = 10x
         </p>
-        <p style="font-size: 18px; color: #e2e8f0; margin: 10px 0 0 0;">
-            1. If you subscribed for 8 months, which platform would cost MORE? How much more?
+        <p style="font-size: 15px; color: #94a3b8; margin: 15px 0 0 0">
+          where <strong>x</strong> = months and <strong>y</strong> = total cost
+          ($)
         </p>
-        <p style="font-size: 18px; color: #e2e8f0; margin: 8px 0 0 0;">
-            2. Which platform is the better deal? Explain your reasoning.
-        </p>
+      </div>
     </div>
+  </div>
+
+  <!-- Question Box -->
+  <div
+    style="
+      background: rgba(251, 191, 36, 0.15);
+      border-left: 4px solid #fbbf24;
+      padding: 20px 25px;
+      border-radius: 0 12px 12px 0;
+      margin-top: 25px;
+    "
+  >
+    <p style="font-size: 20px; color: #fbbf24; margin: 0; font-weight: 600">
+      <strong>Questions:</strong>
+    </p>
+    <p style="font-size: 18px; color: #e2e8f0; margin: 10px 0 0 0">
+      1. If you subscribed for 8 months, which platform would cost MORE? How
+      much more?
+    </p>
+    <p style="font-size: 18px; color: #e2e8f0; margin: 8px 0 0 0">
+      2. Which platform is the better deal? Explain your reasoning.
+    </p>
+  </div>
 </div>

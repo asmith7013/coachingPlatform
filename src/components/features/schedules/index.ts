@@ -3,31 +3,31 @@
 // =====================================
 
 // Main container component
-export { ScheduleBuilderContainer } from './ScheduleBuilderContainer';
+export { ScheduleBuilderContainer } from "./ScheduleBuilderContainer";
 
 // Main components
-export { ScheduleGrid } from './ScheduleGrid';
-export { TeacherPeriodCell } from './TeacherPeriodCell';
-export { DropZoneCell } from './DropZoneCell';
+export { ScheduleGrid } from "./ScheduleGrid";
+export { TeacherPeriodCell } from "./TeacherPeriodCell";
+export { DropZoneCell } from "./DropZoneCell";
 
 // Supporting components
-export { PlanningStatusBar } from './PlanningStatusBar';
-export { ScheduleLegend } from './ScheduleLegend';
-export { SchedulePreview } from './SchedulePreview';
-export { ScheduleFooter } from './ScheduleFooter';
+export { PlanningStatusBar } from "./PlanningStatusBar";
+export { ScheduleLegend } from "./ScheduleLegend";
+export { SchedulePreview } from "./SchedulePreview";
+export { ScheduleFooter } from "./ScheduleFooter";
 
 // Dialog components
-export { ClearScheduleDialog } from './ClearScheduleDialog';
+export { ClearScheduleDialog } from "./ClearScheduleDialog";
 
 // Hooks
-export * from './hooks';
+export * from "./hooks";
 
 // Utility exports
-export * from './utils';
+export * from "./utils";
 export {
   createScheduleComponentsErrorContext,
-  createScheduleComponentsDataErrorContext
-} from './utils';
+  createScheduleComponentsDataErrorContext,
+} from "./utils";
 
 // Types
-export * from './types'; 
+export * from "./types";

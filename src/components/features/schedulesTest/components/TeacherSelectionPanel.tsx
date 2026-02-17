@@ -1,9 +1,9 @@
-import React from 'react';
-import { Button } from '@/components/core/Button';
-import { Heading, Text } from '@/components/core/typography';
-import type { NYCPSStaff } from '@zod-schema/core/staff';
-import type { TeacherSchedule } from '@zod-schema/schedules/schedule-documents';
-import { getTeacherSchedule } from '@/lib/schema/reference/schedules';
+import React from "react";
+import { Button } from "@/components/core/Button";
+import { Heading, Text } from "@/components/core/typography";
+import type { NYCPSStaff } from "@zod-schema/core/staff";
+import type { TeacherSchedule } from "@zod-schema/schedules/schedule-documents";
+import { getTeacherSchedule } from "@/lib/schema/reference/schedules";
 
 interface TeacherSelectionPanelProps {
   teachers: NYCPSStaff[];
@@ -16,7 +16,7 @@ export const TeacherSelectionPanel: React.FC<TeacherSelectionPanelProps> = ({
   teachers,
   teacherSchedules,
   selectedTeacher,
-  onTeacherSelect
+  onTeacherSelect,
 }) => {
   return (
     <div className="space-y-4">
@@ -32,9 +32,13 @@ export const TeacherSelectionPanel: React.FC<TeacherSelectionPanelProps> = ({
               onClick={() => onTeacherSelect(teacher._id)}
               className="flex flex-col items-start p-4 min-w-[200px] h-auto"
             >
-              <Text className="font-semibold text-left">{teacher.staffName}</Text>
+              <Text className="font-semibold text-left">
+                {teacher.staffName}
+              </Text>
               <Text className="text-sm opacity-75 text-left">
-                {schedule ? `${schedule.timeBlocks?.length || 0} periods scheduled` : 'No schedule'}
+                {schedule
+                  ? `${schedule.timeBlocks?.length || 0} periods scheduled`
+                  : "No schedule"}
               </Text>
             </Button>
           );
@@ -42,4 +46,4 @@ export const TeacherSelectionPanel: React.FC<TeacherSelectionPanelProps> = ({
       </div>
     </div>
   );
-}; 
+};

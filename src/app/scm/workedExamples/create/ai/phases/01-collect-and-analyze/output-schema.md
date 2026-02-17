@@ -33,7 +33,10 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
     "diagramEvolution": {
       "initialState": "ASCII showing the initial diagram state (Problem Setup slide)",
       "keyElements": [
-        { "element": "element name", "represents": "what it represents mathematically" }
+        {
+          "element": "element name",
+          "represents": "what it represents mathematically"
+        }
       ],
       "steps": [
         {
@@ -62,10 +65,21 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
         "yAxisLabels": [0, 10, 20, 30, 40, 50]
       },
       "keyPoints": [
-        { "label": "y-intercept Line 1", "x": 0, "y": 0, "dataX": 0, "dataY": 0 }
+        {
+          "label": "y-intercept Line 1",
+          "x": 0,
+          "y": 0,
+          "dataX": 0,
+          "dataY": 0
+        }
       ],
       "annotations": [
-        { "type": "y-intercept-shift | parallel-label | slope-comparison | intersection-point | slope-triangle | point-label", "from": 0, "to": 20, "label": "+20" }
+        {
+          "type": "y-intercept-shift | parallel-label | slope-comparison | intersection-point | slope-triangle | point-label",
+          "from": 0,
+          "to": 20,
+          "label": "+20"
+        }
       ]
     }
   },
@@ -74,14 +88,27 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
     "oneSentenceSummary": "To solve this, we [VERB] the [OBJECT] to find [GOAL]",
     "bigIdea": "The core mathematical principle in one sentence (simplified/revised draft)",
     "bigIdeaDetailed": "Detailed Big Idea (first draft) — what students need to know/do/understand to get the exit ticket correct. Include bullet-point sub-items as a single string with newlines.",
-    "bigIdeaSupportingPatterns": ["structural pattern 1", "structural pattern 2"],
+    "bigIdeaSupportingPatterns": [
+      "structural pattern 1",
+      "structural pattern 2"
+    ],
     "designRationale": "Explicit thinking about why the WE is designed this way, how steps connect to exit ticket, and what the overall discovery arc is",
-    "discoveryQuestions": ["What do you notice about...?", "What pattern do you see...?"],
+    "discoveryQuestions": [
+      "What do you notice about...?",
+      "What pattern do you see...?"
+    ],
     "moves": [
-      { "verb": "VERB1", "description": "what this step does", "result": "what it accomplishes" }
+      {
+        "verb": "VERB1",
+        "description": "what this step does",
+        "result": "what it accomplishes"
+      }
     ],
     "slideHeaders": ["STEP 1: VERB1", "STEP 2: VERB2"],
-    "cfuQuestionTemplates": ["Why did I [VERB] first?", "How does [VERB]ing help?"]
+    "cfuQuestionTemplates": [
+      "Why did I [VERB] first?",
+      "How does [VERB]ing help?"
+    ]
   },
   "scenarios": [
     {
@@ -113,37 +140,39 @@ Return ONLY valid JSON matching this exact structure (no markdown, no explanatio
 
 ### ⚠️ ALWAYS REQUIRED (no exceptions):
 
-| Field | Description |
-|-------|-------------|
-| `strategyDefinition.moves` | 2-5 moves (determined by misconception count; 3 is typical) |
-| `strategyDefinition.bigIdeaDetailed` | Detailed Big Idea (first draft with know/do/understand) |
-| `strategyDefinition.bigIdeaSupportingPatterns` | 2-4 supporting structural patterns |
-| `strategyDefinition.designRationale` | Why the WE is structured this way |
-| `strategyDefinition.discoveryQuestions` | One per step, guiding toward Big Idea |
-| `problemAnalysis.anticipatedMisconceptions` | Structured misconception objects driving step design |
-| `scenarios` | Exactly 3 scenarios with different contexts |
-| `scenarios[0].diagramEvolution` | Scenario 1 (worked example) needs its own diagramEvolution with its specific numbers in the ASCII art |
+| Field                                          | Description                                                                                           |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `strategyDefinition.moves`                     | 2-5 moves (determined by misconception count; 3 is typical)                                           |
+| `strategyDefinition.bigIdeaDetailed`           | Detailed Big Idea (first draft with know/do/understand)                                               |
+| `strategyDefinition.bigIdeaSupportingPatterns` | 2-4 supporting structural patterns                                                                    |
+| `strategyDefinition.designRationale`           | Why the WE is structured this way                                                                     |
+| `strategyDefinition.discoveryQuestions`        | One per step, guiding toward Big Idea                                                                 |
+| `problemAnalysis.anticipatedMisconceptions`    | Structured misconception objects driving step design                                                  |
+| `scenarios`                                    | Exactly 3 scenarios with different contexts                                                           |
+| `scenarios[0].diagramEvolution`                | Scenario 1 (worked example) needs its own diagramEvolution with its specific numbers in the ASCII art |
 
 ### Conditional Fields:
 
-| Field | When Required |
-|-------|---------------|
-| `problemAnalysis.svgSubtype` | When `visualType` is `"svg-visual"` |
-| `problemAnalysis.graphPlan` | When `svgSubtype` is `"coordinate-graph"` |
-| `scenario[].graphPlan` | When `svgSubtype` is `"coordinate-graph"` |
-| `scenario[].visualPlan` | When `svgSubtype` is NOT `"coordinate-graph"` |
+| Field                        | When Required                                 |
+| ---------------------------- | --------------------------------------------- |
+| `problemAnalysis.svgSubtype` | When `visualType` is `"svg-visual"`           |
+| `problemAnalysis.graphPlan`  | When `svgSubtype` is `"coordinate-graph"`     |
+| `scenario[].graphPlan`       | When `svgSubtype` is `"coordinate-graph"`     |
+| `scenario[].visualPlan`      | When `svgSubtype` is NOT `"coordinate-graph"` |
 
 ## anticipatedMisconceptions Structure
 
 The `anticipatedMisconceptions` array is **CRITICAL** for backward planning. Each misconception drives a worked example step.
 
 **Rules:**
+
 - Each object must have: `misconception`, `studentWorkExample`, `rootCause`, `addressedInStep`
 - `addressedInStep` is 1-indexed and must reference a valid strategy move
 - The number of unique `addressedInStep` values should match `strategyDefinition.moves.length`
 - Multiple misconceptions CAN map to the same step if they're addressed together
 
 **Example:**
+
 ```json
 "anticipatedMisconceptions": [
   {
@@ -172,6 +201,7 @@ The `anticipatedMisconceptions` array is **CRITICAL** for backward planning. Eac
 The `diagramEvolution` field is **CRITICAL** for teacher preview. It shows exactly how the diagram will evolve across slides.
 
 **Rules:**
+
 - `initialState`: Shows Problem Setup slide (empty axes, blank diagram, etc.)
 - `steps.length` MUST equal `strategyDefinition.moves.length`
 - Each step builds cumulatively on the previous
@@ -179,6 +209,7 @@ The `diagramEvolution` field is **CRITICAL** for teacher preview. It shows exact
 - `changes` lists what was added/modified in that step
 
 **Example for tape diagram:**
+
 ```json
 "diagramEvolution": {
   "initialState": "┌────────────────────┐\n│        24          │\n└────────────────────┘\nTotal: 24, Groups: 4, Find: ?",

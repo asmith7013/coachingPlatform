@@ -1,4 +1,4 @@
-import { BaseResponse } from '@core-types/response';
+import { BaseResponse } from "@core-types/response";
 
 /**
  * Validation result for Monday.com data
@@ -13,7 +13,7 @@ export interface ValidationResult {
 /**
  * Transform result from Monday.com item to Visit
  */
-export interface TransformResult extends Pick<BaseResponse, 'success'> {
+export interface TransformResult extends Pick<BaseResponse, "success"> {
   transformed: Record<string, unknown>;
   valid: boolean;
   success: boolean;

@@ -1,129 +1,407 @@
 <!-- Slide 3: Step 1 MODEL - Ask -->
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+<div
+  class="slide-container"
+  style="
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #121212 0%, #14141e 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 40px 60px 120px 60px;
+    color: #ffffff;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+    position: relative;
+  "
+>
+  <h2
+    style="
+      font-size: 36px;
+      font-weight: 700;
+      color: #60a5fa;
+      margin: 0 0 20px 0;
+      text-transform: uppercase;
+    "
+  >
+    Step 1: Model
+  </h2>
 
-    <h2 style="font-size: 36px; font-weight: 700; color: #60a5fa; margin: 0 0 20px 0; text-transform: uppercase;">Step 1: Model</h2>
-
-    <div style="display: flex; gap: 40px; flex: 1;">
-        <!-- Left: Kai's Info with highlighting -->
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
-            <!-- Kai's Info - highlighted -->
-            <div style="background: rgba(96, 165, 250, 0.25); border: 3px solid #60a5fa; border-radius: 16px; padding: 25px; box-shadow: 0 0 30px rgba(96, 165, 250, 0.3);">
-                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                    <span style="font-size: 36px;">🎮</span>
-                    <h3 style="font-size: 28px; color: #60a5fa; margin: 0; font-weight: 700;">Kai</h3>
-                </div>
-                <p style="font-size: 22px; color: #e2e8f0; margin: 0; line-height: 1.8;">
-                    Starts with <span style="background: #60a5fa; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold;">20 XP</span>
-                </p>
-                <p style="font-size: 22px; color: #e2e8f0; margin: 10px 0 0 0; line-height: 1.8;">
-                    Earns <span style="background: #60a5fa; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold;">10 XP per hour</span>
-                </p>
-            </div>
-
-            <!-- Slope-Intercept Form Reference -->
-            <div style="background: rgba(148, 163, 184, 0.1); border: 2px solid #475569; border-radius: 12px; padding: 20px;">
-                <p style="font-size: 18px; color: #94a3b8; margin: 0 0 10px 0;">Slope-Intercept Form:</p>
-                <p style="font-size: 32px; color: #e2e8f0; margin: 0; text-align: center; font-weight: bold;">
-                    y = <span style="color: #4ade80;">m</span>x + <span style="color: #fbbf24;">b</span>
-                </p>
-                <div style="display: flex; justify-content: space-around; margin-top: 15px;">
-                    <div style="text-align: center;">
-                        <p style="font-size: 14px; color: #4ade80; margin: 0;">m = slope</p>
-                        <p style="font-size: 12px; color: #94a3b8; margin: 4px 0 0 0;">(rate of change)</p>
-                    </div>
-                    <div style="text-align: center;">
-                        <p style="font-size: 14px; color: #fbbf24; margin: 0;">b = y-intercept</p>
-                        <p style="font-size: 12px; color: #94a3b8; margin: 4px 0 0 0;">(starting value)</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Equation building area -->
-            <div style="background: rgba(96, 165, 250, 0.1); border: 2px dashed #60a5fa; border-radius: 12px; padding: 25px; text-align: center;">
-                <p style="font-size: 18px; color: #94a3b8; margin: 0 0 15px 0;">Kai's equation:</p>
-                <p style="font-size: 36px; color: #60a5fa; margin: 0; font-weight: bold;">
-                    y = <span style="color: #4ade80;">?</span>x + <span style="color: #fbbf24;">?</span>
-                </p>
-            </div>
+  <div style="display: flex; gap: 40px; flex: 1">
+    <!-- Left: Kai's Info with highlighting -->
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 20px">
+      <!-- Kai's Info - highlighted -->
+      <div
+        style="
+          background: rgba(96, 165, 250, 0.25);
+          border: 3px solid #60a5fa;
+          border-radius: 16px;
+          padding: 25px;
+          box-shadow: 0 0 30px rgba(96, 165, 250, 0.3);
+        "
+      >
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+          "
+        >
+          <span style="font-size: 36px">🎮</span>
+          <h3
+            style="font-size: 28px; color: #60a5fa; margin: 0; font-weight: 700"
+          >
+            Kai
+          </h3>
         </div>
+        <p style="font-size: 22px; color: #e2e8f0; margin: 0; line-height: 1.8">
+          Starts with
+          <span
+            style="
+              background: #60a5fa;
+              color: #000;
+              padding: 2px 8px;
+              border-radius: 4px;
+              font-weight: bold;
+            "
+            >20 XP</span
+          >
+        </p>
+        <p
+          style="
+            font-size: 22px;
+            color: #e2e8f0;
+            margin: 10px 0 0 0;
+            line-height: 1.8;
+          "
+        >
+          Earns
+          <span
+            style="
+              background: #60a5fa;
+              color: #000;
+              padding: 2px 8px;
+              border-radius: 4px;
+              font-weight: bold;
+            "
+            >10 XP per hour</span
+          >
+        </p>
+      </div>
 
-        <!-- Right: Graph -->
-        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <svg viewBox="0 0 280 220" style="width: 100%; max-height: 400px;">
-                <!-- Grid lines -->
-                <g stroke="#334155" stroke-width="0.5">
-                    <line x1="95" y1="10" x2="95" y2="185"/>
-                    <line x1="150" y1="10" x2="150" y2="185"/>
-                    <line x1="205" y1="10" x2="205" y2="185"/>
-                    <line x1="260" y1="10" x2="260" y2="185"/>
-                    <!-- Horizontal at 20, 40, 60, 80, 100, 120 -->
-                    <line x1="40" y1="156" x2="260" y2="156"/>
-                    <line x1="40" y1="127" x2="260" y2="127"/>
-                    <line x1="40" y1="98" x2="260" y2="98"/>
-                    <line x1="40" y1="69" x2="260" y2="69"/>
-                    <line x1="40" y1="40" x2="260" y2="40"/>
-                    <line x1="40" y1="10" x2="260" y2="10"/>
-                </g>
-
-                <!-- Axes -->
-                <line x1="40" y1="185" x2="265" y2="185" stroke="#94a3b8" stroke-width="2"/>
-                <line x1="40" y1="5" x2="40" y2="185" stroke="#94a3b8" stroke-width="2"/>
-                <polygon points="265,185 258,181 258,189" fill="#94a3b8"/>
-                <polygon points="40,5 36,12 44,12" fill="#94a3b8"/>
-
-                <!-- X-axis labels -->
-                <text x="40" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
-                <text x="95" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">2</text>
-                <text x="150" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">4</text>
-                <text x="205" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">6</text>
-                <text x="260" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">8</text>
-                <text x="150" y="215" fill="#94a3b8" font-size="10" text-anchor="middle">hours</text>
-
-                <!-- Y-axis labels -->
-                <text x="35" y="189" fill="#94a3b8" font-size="11" text-anchor="end">0</text>
-                <text x="35" y="160" fill="#94a3b8" font-size="11" text-anchor="end">20</text>
-                <text x="35" y="131" fill="#94a3b8" font-size="11" text-anchor="end">40</text>
-                <text x="35" y="102" fill="#94a3b8" font-size="11" text-anchor="end">60</text>
-                <text x="35" y="73" fill="#94a3b8" font-size="11" text-anchor="end">80</text>
-                <text x="35" y="44" fill="#94a3b8" font-size="11" text-anchor="end">100</text>
-                <text x="35" y="14" fill="#94a3b8" font-size="11" text-anchor="end">120</text>
-                <text x="15" y="98" fill="#94a3b8" font-size="10" text-anchor="middle" transform="rotate(-90, 15, 98)">XP</text>
-
-                <!-- Mia's line: y = 15x -->
-                <!-- (0, 0): x=40, y=185 -->
-                <!-- (8, 120): x=260, y=10 -->
-                <line x1="40" y1="185" x2="260" y2="10" stroke="#f472b6" stroke-width="3"/>
-                <text x="230" y="30" fill="#f472b6" font-size="11" font-weight="bold">Mia</text>
-            </svg>
+      <!-- Slope-Intercept Form Reference -->
+      <div
+        style="
+          background: rgba(148, 163, 184, 0.1);
+          border: 2px solid #475569;
+          border-radius: 12px;
+          padding: 20px;
+        "
+      >
+        <p style="font-size: 18px; color: #94a3b8; margin: 0 0 10px 0">
+          Slope-Intercept Form:
+        </p>
+        <p
+          style="
+            font-size: 32px;
+            color: #e2e8f0;
+            margin: 0;
+            text-align: center;
+            font-weight: bold;
+          "
+        >
+          y = <span style="color: #4ade80">m</span>x +
+          <span style="color: #fbbf24">b</span>
+        </p>
+        <div
+          style="display: flex; justify-content: space-around; margin-top: 15px"
+        >
+          <div style="text-align: center">
+            <p style="font-size: 14px; color: #4ade80; margin: 0">m = slope</p>
+            <p style="font-size: 12px; color: #94a3b8; margin: 4px 0 0 0">
+              (rate of change)
+            </p>
+          </div>
+          <div style="text-align: center">
+            <p style="font-size: 14px; color: #fbbf24; margin: 0">
+              b = y-intercept
+            </p>
+            <p style="font-size: 12px; color: #94a3b8; margin: 4px 0 0 0">
+              (starting value)
+            </p>
+          </div>
         </div>
+      </div>
+
+      <!-- Equation building area -->
+      <div
+        style="
+          background: rgba(96, 165, 250, 0.1);
+          border: 2px dashed #60a5fa;
+          border-radius: 12px;
+          padding: 25px;
+          text-align: center;
+        "
+      >
+        <p style="font-size: 18px; color: #94a3b8; margin: 0 0 15px 0">
+          Kai's equation:
+        </p>
+        <p
+          style="font-size: 36px; color: #60a5fa; margin: 0; font-weight: bold"
+        >
+          y = <span style="color: #4ade80">?</span>x +
+          <span style="color: #fbbf24">?</span>
+        </p>
+      </div>
     </div>
+
+    <!-- Right: Graph -->
+    <div
+      style="
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <svg viewBox="0 0 280 220" style="width: 100%; max-height: 400px">
+        <!-- Grid lines -->
+        <g stroke="#334155" stroke-width="0.5">
+          <line x1="95" y1="10" x2="95" y2="185" />
+          <line x1="150" y1="10" x2="150" y2="185" />
+          <line x1="205" y1="10" x2="205" y2="185" />
+          <line x1="260" y1="10" x2="260" y2="185" />
+          <!-- Horizontal at 20, 40, 60, 80, 100, 120 -->
+          <line x1="40" y1="156" x2="260" y2="156" />
+          <line x1="40" y1="127" x2="260" y2="127" />
+          <line x1="40" y1="98" x2="260" y2="98" />
+          <line x1="40" y1="69" x2="260" y2="69" />
+          <line x1="40" y1="40" x2="260" y2="40" />
+          <line x1="40" y1="10" x2="260" y2="10" />
+        </g>
+
+        <!-- Axes -->
+        <line
+          x1="40"
+          y1="185"
+          x2="265"
+          y2="185"
+          stroke="#94a3b8"
+          stroke-width="2"
+        />
+        <line
+          x1="40"
+          y1="5"
+          x2="40"
+          y2="185"
+          stroke="#94a3b8"
+          stroke-width="2"
+        />
+        <polygon points="265,185 258,181 258,189" fill="#94a3b8" />
+        <polygon points="40,5 36,12 44,12" fill="#94a3b8" />
+
+        <!-- X-axis labels -->
+        <text x="40" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">
+          0
+        </text>
+        <text x="95" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">
+          2
+        </text>
+        <text
+          x="150"
+          y="200"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          4
+        </text>
+        <text
+          x="205"
+          y="200"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          6
+        </text>
+        <text
+          x="260"
+          y="200"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          8
+        </text>
+        <text
+          x="150"
+          y="215"
+          fill="#94a3b8"
+          font-size="10"
+          text-anchor="middle"
+        >
+          hours
+        </text>
+
+        <!-- Y-axis labels -->
+        <text x="35" y="189" fill="#94a3b8" font-size="11" text-anchor="end">
+          0
+        </text>
+        <text x="35" y="160" fill="#94a3b8" font-size="11" text-anchor="end">
+          20
+        </text>
+        <text x="35" y="131" fill="#94a3b8" font-size="11" text-anchor="end">
+          40
+        </text>
+        <text x="35" y="102" fill="#94a3b8" font-size="11" text-anchor="end">
+          60
+        </text>
+        <text x="35" y="73" fill="#94a3b8" font-size="11" text-anchor="end">
+          80
+        </text>
+        <text x="35" y="44" fill="#94a3b8" font-size="11" text-anchor="end">
+          100
+        </text>
+        <text x="35" y="14" fill="#94a3b8" font-size="11" text-anchor="end">
+          120
+        </text>
+        <text
+          x="15"
+          y="98"
+          fill="#94a3b8"
+          font-size="10"
+          text-anchor="middle"
+          transform="rotate(-90, 15, 98)"
+        >
+          XP
+        </text>
+
+        <!-- Mia's line: y = 15x -->
+        <!-- (0, 0): x=40, y=185 -->
+        <!-- (8, 120): x=260, y=10 -->
+        <line
+          x1="40"
+          y1="185"
+          x2="260"
+          y2="10"
+          stroke="#f472b6"
+          stroke-width="3"
+        />
+        <text x="230" y="30" fill="#f472b6" font-size="11" font-weight="bold">
+          Mia
+        </text>
+      </svg>
+    </div>
+  </div>
 </div>
 
 <!-- Toggle button -->
-<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('cfu-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
-    ↓ Show Question
+<button
+  id="toggle-hint"
+  onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('cfu-box').style.transform='translateY(0)';"
+  style="
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #94a3b8;
+    font-size: 16px;
+    background: rgba(148, 163, 184, 0.1);
+    border: 2px solid #94a3b8;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    animation: pulse 2s ease-in-out infinite;
+    z-index: 200;
+    user-select: none;
+  "
+>
+  ↓ Show Question
 </button>
 
 <!-- CFU Box -->
-<div id="cfu-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
-    <div style="background: #f59e0b; border-top: 4px solid #fbbf24; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
-        <button onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
-            ×
-        </button>
-        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">❓ CHECK FOR UNDERSTANDING</div>
-        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
-            To MODEL Kai's XP, which number represents the slope (rate of change) and which represents the y-intercept (starting value)?
-        </span>
+<div
+  id="cfu-box"
+  style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+    z-index: 100;
+  "
+>
+  <div
+    style="
+      background: #f59e0b;
+      border-top: 4px solid #fbbf24;
+      padding: 1.25rem 2rem;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+    "
+  >
+    <button
+      onclick="document.getElementById('cfu-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';"
+      style="
+        position: absolute;
+        top: 0.75rem;
+        right: 1rem;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.2);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #000;
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 1;
+        transition: background 0.2s;
+      "
+    >
+      ×
+    </button>
+    <div
+      style="
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-right: 12px;
+      "
+    >
+      ❓ CHECK FOR UNDERSTANDING
     </div>
+    <span style="color: #000000; font-size: 1.1rem; font-weight: 600">
+      To MODEL Kai's XP, which number represents the slope (rate of change) and
+      which represents the y-intercept (starting value)?
+    </span>
+  </div>
 </div>
 
 <style>
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
-#toggle-hint:hover {
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+  #toggle-hint:hover {
     background: rgba(148, 163, 184, 0.2);
     transform: translateX(-50%) scale(1.05);
-}
+  }
 </style>

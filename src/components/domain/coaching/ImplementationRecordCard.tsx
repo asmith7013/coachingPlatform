@@ -1,12 +1,17 @@
-import React from 'react';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
-import { Textarea } from '@/components/core/fields/Textarea';
-import { Select } from '@/components/core/fields/Select';
-import { Trash2 } from 'lucide-react';
-import { ArrayFieldManager } from '@/components/domain/coaching/field-managers/ArrayFieldManager';
-import { VisitNumberZod, CoachingCycleNumberZod } from '@enums';
-import { CapImplementationRecord, VisitNumber, CoachingCycleNumber, CapWeeklyPlan } from '@zod-schema/cap';
+import React from "react";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/fields/Input";
+import { Textarea } from "@/components/core/fields/Textarea";
+import { Select } from "@/components/core/fields/Select";
+import { Trash2 } from "lucide-react";
+import { ArrayFieldManager } from "@/components/domain/coaching/field-managers/ArrayFieldManager";
+import { VisitNumberZod, CoachingCycleNumberZod } from "@enums";
+import {
+  CapImplementationRecord,
+  VisitNumber,
+  CoachingCycleNumber,
+  CapWeeklyPlan,
+} from "@zod-schema/cap";
 
 interface ImplementationRecordCardProps {
   record: CapImplementationRecord;
@@ -21,11 +26,11 @@ export function ImplementationRecordCard({
   index,
   goal,
   onUpdate,
-  onDelete
+  onDelete,
 }: ImplementationRecordCardProps) {
   const updateField = <K extends keyof CapImplementationRecord>(
-    field: K, 
-    value: CapImplementationRecord[K]
+    field: K,
+    value: CapImplementationRecord[K],
   ) => {
     onUpdate(index, { ...record, [field]: value });
   };
@@ -52,28 +57,30 @@ export function ImplementationRecordCard({
         <Input
           label="Date"
           type="date"
-          value={record.date || ''}
-          onChange={(e) => updateField('date', e.target.value)}
+          value={record.date || ""}
+          onChange={(e) => updateField("date", e.target.value)}
           required
         />
 
         <Select
           label="Cycle Number"
           value={record.cycleNumber}
-          onChange={(value) => updateField('cycleNumber', value as CoachingCycleNumber)}
-          options={CoachingCycleNumberZod.options.map(value => ({
+          onChange={(value) =>
+            updateField("cycleNumber", value as CoachingCycleNumber)
+          }
+          options={CoachingCycleNumberZod.options.map((value) => ({
             value,
-            label: `Cycle ${value}`
+            label: `Cycle ${value}`,
           }))}
         />
 
         <Select
           label="Visit Number"
           value={record.visitNumber}
-          onChange={(value) => updateField('visitNumber', value as VisitNumber)}
-          options={VisitNumberZod.options.map(value => ({
+          onChange={(value) => updateField("visitNumber", value as VisitNumber)}
+          options={VisitNumberZod.options.map((value) => ({
             value,
-            label: `Visit ${value}`
+            label: `Visit ${value}`,
           }))}
         />
       </div>
@@ -81,8 +88,8 @@ export function ImplementationRecordCard({
       {/* Visit ID */}
       <Input
         label="Visit ID (Optional)"
-        value={record.visitId || ''}
-        onChange={(e) => updateField('visitId', e.target.value || '')}
+        value={record.visitId || ""}
+        onChange={(e) => updateField("visitId", e.target.value || "")}
         placeholder="Reference to actual visit entity"
       />
 
@@ -90,7 +97,7 @@ export function ImplementationRecordCard({
       <Textarea
         label="What Was Actually Observed/Looked For"
         value={record.lookForImplemented}
-        onChange={(e) => updateField('lookForImplemented', e.target.value)}
+        onChange={(e) => updateField("lookForImplemented", e.target.value)}
         placeholder="Describe what was actually observed and looked for during this visit..."
         rows={3}
         required
@@ -100,7 +107,7 @@ export function ImplementationRecordCard({
       <ArrayFieldManager
         label="Glows (Areas of Strength)"
         items={record.glows}
-        onChange={(glows) => updateField('glows', glows)}
+        onChange={(glows) => updateField("glows", glows)}
         variant="success"
         fieldType="input"
         placeholder="What went well during this visit..."
@@ -113,7 +120,7 @@ export function ImplementationRecordCard({
       <ArrayFieldManager
         label="Grows (Areas for Improvement)"
         items={record.grows}
-        onChange={(grows) => updateField('grows', grows)}
+        onChange={(grows) => updateField("grows", grows)}
         variant="warning"
         fieldType="input"
         placeholder="What could be improved..."
@@ -126,7 +133,9 @@ export function ImplementationRecordCard({
       <ArrayFieldManager
         label="Success Metrics"
         items={record.successMetrics}
-        onChange={(successMetrics) => updateField('successMetrics', successMetrics)}
+        onChange={(successMetrics) =>
+          updateField("successMetrics", successMetrics)
+        }
         variant="info"
         fieldType="input"
         placeholder="Measurable indicators of success..."
@@ -139,7 +148,7 @@ export function ImplementationRecordCard({
       <ArrayFieldManager
         label="Next Steps"
         items={record.nextSteps}
-        onChange={(nextSteps) => updateField('nextSteps', nextSteps)}
+        onChange={(nextSteps) => updateField("nextSteps", nextSteps)}
         variant="default"
         fieldType="input"
         placeholder="Action items for next visit..."
@@ -153,16 +162,18 @@ export function ImplementationRecordCard({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Textarea
           label="Teacher Reflection"
-          value={record.teacherReflection || ''}
-          onChange={(e) => updateField('teacherReflection', e.target.value || '')}
+          value={record.teacherReflection || ""}
+          onChange={(e) =>
+            updateField("teacherReflection", e.target.value || "")
+          }
           placeholder="Teacher's reflection on the session..."
           rows={4}
         />
 
         <Textarea
           label="Coach Notes"
-          value={record.coachNotes || ''}
-          onChange={(e) => updateField('coachNotes', e.target.value || '')}
+          value={record.coachNotes || ""}
+          onChange={(e) => updateField("coachNotes", e.target.value || "")}
           placeholder="Additional coach observations..."
           rows={4}
         />
@@ -177,4 +188,4 @@ export function ImplementationRecordCard({
       )}
     </div>
   );
-} 
+}

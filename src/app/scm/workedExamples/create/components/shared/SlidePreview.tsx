@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 interface SlidePreviewProps {
   htmlContent: string;
@@ -15,7 +15,11 @@ interface SlidePreviewProps {
  * PPTX slides are 960×540px (16:9 aspect ratio).
  * This component scales them to fit the container while maintaining aspect ratio.
  */
-export function SlidePreview({ htmlContent, className = '', scaleToFit = true }: SlidePreviewProps) {
+export function SlidePreview({
+  htmlContent,
+  className = "",
+  scaleToFit = true,
+}: SlidePreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -61,7 +65,7 @@ export function SlidePreview({ htmlContent, className = '', scaleToFit = true }:
     if (!doc) return;
 
     // Detect if this is a printable slide (contains print-page class)
-    const isPrintable = htmlContent.includes('print-page');
+    const isPrintable = htmlContent.includes("print-page");
 
     // Build complete HTML document
     // PPTX slides are 960×540px with light theme
@@ -78,10 +82,10 @@ export function SlidePreview({ htmlContent, className = '', scaleToFit = true }:
               box-sizing: border-box;
             }
             html, body {
-              width: ${isPrintable ? '100%' : `${SLIDE_WIDTH}px`};
-              height: ${isPrintable ? '100%' : `${SLIDE_HEIGHT}px`};
-              overflow: ${isPrintable ? 'auto' : 'hidden'};
-              background: ${isPrintable ? '#f5f5f5' : '#ffffff'};
+              width: ${isPrintable ? "100%" : `${SLIDE_WIDTH}px`};
+              height: ${isPrintable ? "100%" : `${SLIDE_HEIGHT}px`};
+              overflow: ${isPrintable ? "auto" : "hidden"};
+              background: ${isPrintable ? "#f5f5f5" : "#ffffff"};
             }
             /* PPTX layout classes */
             .row { display: flex; flex-direction: row; }
@@ -107,7 +111,7 @@ export function SlidePreview({ htmlContent, className = '', scaleToFit = true }:
   }, [htmlContent]);
 
   // Detect if printable slide for different rendering
-  const isPrintable = htmlContent.includes('print-page');
+  const isPrintable = htmlContent.includes("print-page");
 
   if (isPrintable) {
     // Printable slides use 100% width/height and scroll
@@ -132,8 +136,8 @@ export function SlidePreview({ htmlContent, className = '', scaleToFit = true }:
           width: SLIDE_WIDTH,
           height: SLIDE_HEIGHT,
           transform: scaleToFit ? `scale(${scale})` : undefined,
-          transformOrigin: 'center center',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          transformOrigin: "center center",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
         }}
       >
         <iframe

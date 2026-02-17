@@ -1,5 +1,5 @@
-import React from 'react';
-import { FormSection } from '@/components/composed/forms/FormSection';
+import React from "react";
+import { FormSection } from "@/components/composed/forms/FormSection";
 
 interface GeneratedUrlDisplayProps {
   url: string;
@@ -7,7 +7,7 @@ interface GeneratedUrlDisplayProps {
 
 export function GeneratedUrlDisplay({ url }: GeneratedUrlDisplayProps) {
   if (!url) return null;
-  
+
   return (
     <FormSection title="Generated URL">
       <div className="bg-gray-100 p-3 rounded-md overflow-x-auto text-xs">
@@ -15,4 +15,4 @@ export function GeneratedUrlDisplay({ url }: GeneratedUrlDisplayProps) {
       </div>
     </FormSection>
   );
-} 
+}

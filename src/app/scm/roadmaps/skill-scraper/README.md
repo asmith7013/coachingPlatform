@@ -35,11 +35,13 @@ A web scraper for extracting educational skill content from the Teach to One Roa
 ## URL Format
 
 Skill URLs should follow this format:
+
 ```
 https://roadmaps.teachtoone.org/plan/skills/{skill_id}
 ```
 
 Example:
+
 ```
 https://roadmaps.teachtoone.org/plan/skills/660
 https://roadmaps.teachtoone.org/plan/skills/661
@@ -108,17 +110,20 @@ The scraper follows established patterns from the IM scraper:
 ## Troubleshooting
 
 ### Authentication Issues
+
 - Verify credentials are correct
 - Use "Test Credentials" button before scraping
 - Check if account has access to skill pages
 
 ### Scraping Issues
+
 - Use Debug Mode to see browser interactions
 - Check console logs for detailed error messages
 - Verify URLs are accessible and follow correct format
 - Ensure delay is sufficient (increase if getting rate limited)
 
 ### Content Issues
+
 - Some content may be in collapsed accordions (automatically expanded)
 - Images are collected as URLs, not downloaded
 - Vocabulary extraction depends on proper accordion expansion

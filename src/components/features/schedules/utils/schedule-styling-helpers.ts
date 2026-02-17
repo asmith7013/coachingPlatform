@@ -1,4 +1,4 @@
-import { scheduleColors } from '@/lib/tokens/colors';
+import { scheduleColors } from "@/lib/tokens/colors";
 
 /**
  * Styling helpers for schedule components
@@ -14,18 +14,28 @@ import { scheduleColors } from '@/lib/tokens/colors';
  */
 export const getEventStyling = (eventType: string) => {
   const eventMap = {
-    observation: { className: scheduleColors.observation, label: 'Observation' },
-    debrief: { className: scheduleColors.debrief, label: 'Debrief' },
-    'co-planning': { className: scheduleColors.coPlanning, label: 'Co-Planning' },
-    plc: { className: scheduleColors.plc, label: 'PLC' }
+    observation: {
+      className: scheduleColors.observation,
+      label: "Observation",
+    },
+    debrief: { className: scheduleColors.debrief, label: "Debrief" },
+    "co-planning": {
+      className: scheduleColors.coPlanning,
+      label: "Co-Planning",
+    },
+    plc: { className: scheduleColors.plc, label: "PLC" },
   } as const;
-  
-  return eventMap[eventType as keyof typeof eventMap] || 
-         { className: scheduleColors.observation, label: 'Visit' };
+
+  return (
+    eventMap[eventType as keyof typeof eventMap] || {
+      className: scheduleColors.observation,
+      label: "Visit",
+    }
+  );
 };
 
 // =====================================
-// PORTION STYLING HELPERS  
+// PORTION STYLING HELPERS
 // =====================================
 
 // =====================================
@@ -35,17 +45,20 @@ export const getEventStyling = (eventType: string) => {
 /**
  * Gets teacher cell styling - simple direct token lookup
  */
-export const getTeacherCellStyle = (isSelected: boolean, activityType?: string) => {
+export const getTeacherCellStyle = (
+  isSelected: boolean,
+  activityType?: string,
+) => {
   // Lunch period
-  if (activityType === 'lunch') {
+  if (activityType === "lunch") {
     return isSelected ? scheduleColors.selected : scheduleColors.lunch;
   }
-  
+
   // Prep period
-  if (activityType === 'prep') {
+  if (activityType === "prep") {
     return isSelected ? scheduleColors.selected : scheduleColors.prep;
   }
-  
+
   // Regular period
   return isSelected ? scheduleColors.selected : scheduleColors.available;
 };
@@ -57,10 +70,17 @@ export const getTeacherCellStyle = (isSelected: boolean, activityType?: string) 
 /**
  * Gets planning icon styling - simple direct token lookup
  */
-export const getPlanningIconStyle = (isPlanned: boolean, iconType: 'observation' | 'meeting') => {
-  if (iconType === 'observation') {
-    return isPlanned ? scheduleColors.planning.observation.planned : scheduleColors.planning.observation.unplanned;
+export const getPlanningIconStyle = (
+  isPlanned: boolean,
+  iconType: "observation" | "meeting",
+) => {
+  if (iconType === "observation") {
+    return isPlanned
+      ? scheduleColors.planning.observation.planned
+      : scheduleColors.planning.observation.unplanned;
   }
-  
-  return isPlanned ? scheduleColors.planning.meeting.planned : scheduleColors.planning.meeting.unplanned;
-}; 
+
+  return isPlanned
+    ? scheduleColors.planning.meeting.planned
+    : scheduleColors.planning.meeting.unplanned;
+};

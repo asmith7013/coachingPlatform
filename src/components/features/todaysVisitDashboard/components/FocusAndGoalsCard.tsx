@@ -1,10 +1,15 @@
-import React from 'react';
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Badge } from '@/components/core/feedback/Badge';
-import { FlagIcon, EyeIcon, HandRaisedIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
-import { useTodaysVisitData } from '../context/TodaysVisitContext';
+import React from "react";
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { Badge } from "@/components/core/feedback/Badge";
+import {
+  FlagIcon,
+  EyeIcon,
+  HandRaisedIcon,
+  AcademicCapIcon,
+} from "@heroicons/react/24/outline";
+import { useTodaysVisitData } from "../context/TodaysVisitContext";
 
 export function FocusAndGoalsCard() {
   const { todaysVisit, isLoading } = useTodaysVisitData();
@@ -52,12 +57,16 @@ export function FocusAndGoalsCard() {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <AcademicCapIcon className="h-5 w-5 text-green-600" />
-            <Text textSize="sm" color="muted" className="font-medium uppercase tracking-wide">
+            <Text
+              textSize="sm"
+              color="muted"
+              className="font-medium uppercase tracking-wide"
+            >
               Overall Action Plan Goal
             </Text>
           </div>
           <Text color="default" className="pl-7">
-            {focus.overallGoal || 'No overall goal defined'}
+            {focus.overallGoal || "No overall goal defined"}
           </Text>
         </div>
 
@@ -73,17 +82,13 @@ export function FocusAndGoalsCard() {
               <Text textSize="sm" color="muted" className="font-medium">
                 Core Action:
               </Text>
-              <Badge intent="primary">
-                {focus.ipgCoreAction}
-              </Badge>
+              <Badge intent="primary">{focus.ipgCoreAction}</Badge>
             </div>
             <div className="flex items-center gap-2">
               <Text textSize="sm" color="muted" className="font-medium">
                 Sub-Category:
               </Text>
-              <Badge intent="info">
-                {focus.ipgSubCategory}
-              </Badge>
+              <Badge intent="info">{focus.ipgSubCategory}</Badge>
             </div>
           </div>
         </div>
@@ -93,7 +98,11 @@ export function FocusAndGoalsCard() {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <EyeIcon className="h-5 w-5 text-orange-600" />
-              <Text textSize="sm" color="muted" className="font-medium uppercase tracking-wide">
+              <Text
+                textSize="sm"
+                color="muted"
+                className="font-medium uppercase tracking-wide"
+              >
                 This Visit Focus
               </Text>
             </div>
@@ -108,7 +117,11 @@ export function FocusAndGoalsCard() {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <EyeIcon className="h-5 w-5 text-purple-600" />
-              <Text textSize="sm" color="muted" className="font-medium uppercase tracking-wide">
+              <Text
+                textSize="sm"
+                color="muted"
+                className="font-medium uppercase tracking-wide"
+              >
                 What to Look For
               </Text>
             </div>
@@ -123,11 +136,15 @@ export function FocusAndGoalsCard() {
           <div className="space-y-4 border-t pt-4">
             <div className="flex items-center gap-2">
               <HandRaisedIcon className="h-5 w-5 text-blue-600" />
-              <Text textSize="sm" color="muted" className="font-medium uppercase tracking-wide">
+              <Text
+                textSize="sm"
+                color="muted"
+                className="font-medium uppercase tracking-wide"
+              >
                 Planned Actions
               </Text>
             </div>
-            
+
             <div className="space-y-3 pl-7">
               {weeklyPlan.coachAction && (
                 <div className="space-y-1">
@@ -139,7 +156,7 @@ export function FocusAndGoalsCard() {
                   </Text>
                 </div>
               )}
-              
+
               {weeklyPlan.teacherAction && (
                 <div className="space-y-1">
                   <Text textSize="sm" color="muted" className="font-medium">
@@ -156,4 +173,4 @@ export function FocusAndGoalsCard() {
       </div>
     </Card>
   );
-} 
+}

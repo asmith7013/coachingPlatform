@@ -1,0 +1,1809 @@
+{
+  "source": "Uncommon Schools \u2014 Get Better Faster: Top Action Steps Used by Instructional Leaders to Launch a Teacher's Development",
+  "trajectories": [
+    {
+      "id": "management",
+      "name": "Management Trajectory",
+      "description": "Focuses on classroom culture, behavior systems, and student engagement. Action steps are numbered 1\u201312 sequentially across phases. Each action step includes a Coaching Guide with diagnostic triggers, probing questions, practice scenarios, and real-time feedback cues for instructional leaders.",
+      "phases": [
+        {
+          "id": "management-phase-1",
+          "phase": 1,
+          "name": "Pre-Teaching (Summer PD)",
+          "subtitle": "Develop Essential Routines & Procedures",
+          "timing": "Summer PD",
+          "actionSteps": [
+            {
+              "id": "management-1",
+              "number": 1,
+              "title": "Routines & Procedures 101: Design and Roll Out",
+              "keyActions": [
+                {
+                  "header": "Plan & practice critical routines and procedures moment-by-moment",
+                  "details": [
+                    "Explain what each routine means and what it will look like.",
+                    "Write out what teacher and students do at each step, and what will happen with students who don't follow the routine."
+                  ]
+                },
+                {
+                  "header": "Plan & practice the roll out (how to introduce the routine for the first time)",
+                  "details": [
+                    "Plan the \u201cI Do\u201d: how you will model the routine.",
+                    "Plan what you will do when students don't get it right."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Plan & Practice Critical Routines & Procedures",
+                  "whenToUseIt": "Teacher does not have clear routines established for the classroom.",
+                  "probingQuestions": [
+                    "(Show a model video or do a live model): \u201cWhat is each step the teacher takes in this routine?\u201d \u201cWhat is the teacher doing and what are the students doing?\u201d",
+                    "\u201cDescribe what you want [certain routine] to look like. Ideally, what would students do during that transition/routine? What would you be doing?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Complete the template for the key routines in the teacher's classroom (most important: student entry and exit, transitions, materials distribution, and listening). Rehearse in the classroom setting.",
+                    "Round 1: basic mastery \u2014 focus on the specific words and actions the teacher will use, such as where to look and stand, and key ways to break the routine down into smaller steps for the students.",
+                    "Round 2: add minor student errors in following instructions (not too much: you want to build muscle memory!)"
+                  ],
+                  "cuesForRealTimeFeedback": []
+                },
+                {
+                  "name": "Plan & Practice the Roll-Out",
+                  "whenToUseIt": "Routine is new for the students (beginning of the year or when changing a routine).",
+                  "probingQuestions": [
+                    "(Show a model video or do a live model of an effective rollout): \u201cWhat did you notice about that rollout that made it effective?\u201d",
+                    "\u201cWhat will be the most difficult parts of the routine for you to deliver and for students to master?\u201d",
+                    "\u201cWhat are the key micro-actions for you to model to perfect this part of the routine?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Focus on scripting the I Do: break it down, pregnant pause, repeat step-by-step.",
+                    "Keep the language positive and enthusiastic, including a challenge.",
+                    "Memorize the roll-out speech, then stand up and practice.",
+                    "Leader or peers should play roles of students to make practice more authentic."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Model: If the teacher modeling is ineffective, prompt: \u201cMr. Smith, am I following your model effectively?\u201d [then model the correct actions and narrate what you're doing]"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "management-2",
+              "number": 2,
+              "title": "Strong Voice: Stand and Speak with Purpose",
+              "keyActions": [
+                {
+                  "header": "Square Up, Stand Still",
+                  "details": [
+                    "When giving instructions, stop moving and strike a formal pose."
+                  ]
+                },
+                {
+                  "header": "Formal Register",
+                  "details": [
+                    "When giving instructions, use formal register, including tone and word choice."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Square Up, Stand Still",
+                  "whenToUseIt": "Posture \u2014 teacher undermines his or her leadership presence by slouching, shifting foot to foot, or facing at an angle away from the students.",
+                  "probingQuestions": [
+                    "[Watch video]: \u201cHow does the teacher use her body language to communicate leadership in her classroom?\u201d",
+                    "[Model giving directions with a relaxed posture, then while squaring up and standing still]: \u201cWhat is the difference in the way I communicated the first way versus the second way?\u201d",
+                    "\u201cWhat is the value in communicating leadership with our body language?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Practice maintaining a formal posture while delivering a lesson on routines and procedures. Note when the teacher is squaring up and standing still, and when the teacher's body begins to become informal/weak.",
+                    "Film the practice \u2014 or use a mirror \u2014 so that the new teacher can see what he or she looks like while delivering instructions."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Non-verbal: Model exaggerated posture and stance \u2014 shift your body upward and arch shoulders to remind the teacher to square up and stand still."
+                  ]
+                },
+                {
+                  "name": "Formal Register",
+                  "whenToUseIt": "Tone \u2014 the teacher's vocal register is too casual or informal.",
+                  "probingQuestions": [
+                    "\u201cImagine you had to say 'it's time to leave' to three different audiences: your friend after dinner, a symphony concert audience at the end of a performance, or when a building is on fire. Speak out loud how you would deliver those words differently to each audience.\u201d [After doing so] \u201cWhat is the value and purpose of the middle one: your formal register?\u201d",
+                    "\u201cWhen is it important to use formal register? What message does it send to the students?\u201d",
+                    "For a teacher who knows formal register: \u201cWhat are the keys to formal register?\u201d",
+                    "(Watch video of their classroom): \u201cWhat conditions lead to you drop your formal register?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Videotape the teacher during practice, and review the footage so the teacher can hear when he/she is maintaining a formal register, and when his/her register begins to become casual/informal.",
+                    "Practice maintaining a formal tone while delivering a lesson on routines and procedures. Note when the teacher is maintaining a formal register, and when the teacher's register becomes too informal or casual."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Non-verbal: combine square up/stand still gesture with pointing to your mouth to remind the teacher to speak in a formal register."
+                  ]
+                }
+              ],
+              "additionalTopicsToIntroduce": [
+                "Least invasive intervention",
+                "Narrate the Positive",
+                "Create a Challenge / Build Momentum",
+                "Teacher Radar: know when students are off-task",
+                "Do It Again: practice routines to perfection \u2014 have students do it again if not done correctly (and know when to stop Do It Again)"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "management-phase-2",
+          "phase": 2,
+          "name": "Days 1\u201330",
+          "subtitle": "Roll Out & Monitor Routines",
+          "timing": "Days 1\u201330",
+          "actionSteps": [
+            {
+              "id": "management-3",
+              "number": 3,
+              "title": "What to Do",
+              "keyActions": [
+                {
+                  "header": "Economy of Language",
+                  "details": [
+                    "Give crisp instructions with as few words as possible (e.g., 3-word directions). Check for understanding on complex instructions."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Economy of Language",
+                  "whenToUseIt": "The teacher's directions are unclear or use too many words.",
+                  "probingQuestions": [
+                    "\u201cWhat happened yesterday when you asked your students to ___? What caused the confusion?\u201d",
+                    "\u201cWhat is the value in using fewer words to describe what students should do?\u201d",
+                    "[Play video of teacher's instructions] \u201cWhat is another way you could have restated these directions to make them clearer for students?\u201d OR \u201cWrite down all the directions you gave. Where did you use more words than needed?\u201d",
+                    "[If teacher struggles, model for them]: \u201cLet me deliver those same instructions [Model]. What do you notice about the difference between my delivery and your own?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Script clear, concise instructions together. Plan them out word-by-word: don't take shortcuts! Remove all extraneous words.",
+                    "Provide feedback on clarity before practice: most errors can be fixed before your practice.",
+                    "Rehearse key directions: if necessary, model for teacher what is most effective.",
+                    "Focus on the pregnant pause between each component of the instruction: students often become confused when given too many directions at once."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Non-verbal: hold up a red card for too many words.",
+                    "Non-verbal: hold up a sign that says \u201cWhat to Do.\u201d",
+                    "Whisper prompt: \u201cWhen you bring everyone back from this assignment, just say: 'Pencils down. Eyes on me!' No extra words.\u201d",
+                    "Model: Model giving concise directions using 3\u20135 words.",
+                    "Model: Ask a student to repeat the teacher's instructions."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "management-4",
+              "number": 4,
+              "title": "Routines & Procedures 201: Revise and Perfect Them",
+              "keyActions": [
+                {
+                  "header": "Revise routines",
+                  "details": [
+                    "Revise any routine that needs more attention to detail or is inefficient, with particular emphasis on what students and teachers are doing at each moment."
+                  ]
+                },
+                {
+                  "header": "Do It Again",
+                  "details": [
+                    "Have students do the routine again if not done correctly the first time."
+                  ]
+                },
+                {
+                  "header": "Cut It Short",
+                  "details": [
+                    "Know when to stop the Do It Again."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Revise Routines",
+                  "whenToUseIt": "Students are following the routine but it is inefficient or ineffective.",
+                  "probingQuestions": [
+                    "\u201cWhat has been the challenge in implementing this routine?\u201d",
+                    "\u201cWhere does the breakdown begin: when is the first moment of students not following the routine?\u201d",
+                    "[Watch video of a better routine] \u201cWhat can we draw from this routine to make your own more effective?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Focus practice at the point where the routine has been going wrong. Model any student errors you anticipate.",
+                    "Pay attention to teacher positioning: (stand in ideal location), and incorporate Strong Voice (posture, register), and What to Do.",
+                    "Rehearse the first words to say to noncompliant students."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Model: \u201cThis is my favorite routine. Can I show our students the new way to do it?\u201d"
+                  ]
+                },
+                {
+                  "name": "Do It Again",
+                  "whenToUseIt": "The routine is effective, but students aren't following it.",
+                  "probingQuestions": [
+                    "\u201cWhat are the keys to running a Do it Again effectively?\u201d",
+                    "\u201cWhy is it important to have students repeat this routine when they haven't done it correctly?\u201d",
+                    "[Watch video] \u201cWhere are the moments when students are incorrectly executing the routine? What would you like to see them do differently?\u201d",
+                    "\u201cWhat is challenging about noticing or stating what you want to see students change when they Do it Again?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan each step of the Do it Again sequence: Strong Voice (square up, stand still, use formal register); What to Do (name the error, name the correct action); Challenge the students to do better; Give the signal to restart the routine.",
+                    "Role play the revised routine: Make the same student errors from class and have the teacher practice implementing Do it Again until the routine looks flawless."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Non-verbal: Make a circle with your finger to cue teacher to have students re-do that part of routine.",
+                    "Verbal: \u201cMs. Smith, I know we can do that better. What would you like to see us do differently this time?\u201d",
+                    "Model: \u201cCan I show our students what we'd like them to do?\u201d (whisper to teacher what you are modeling)"
+                  ]
+                },
+                {
+                  "name": "Cut It Short",
+                  "whenToUseIt": "The teacher asks students to re-do routines they have already performed sufficiently well.",
+                  "probingQuestions": [
+                    "\u201cRemember when you had students do it again for the third time? Did they perform it even better after that?\u201d",
+                    "\u201cWhat is the purpose of having your students do it again? When is it no longer valuable to do it again?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Practice Cut it Short the same way as you would practice Do it Again, but with extra emphasis on the conclusion of the Do it Again. As you repeat the practice, try varying up how quickly you perform the routine correctly so the teacher learns to truly evaluate when it's time to stop the Do it Again."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: signal to the teacher that it's time to stop repeating the Do It Again.",
+                    "Model: cut short the Do It Again."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "management-5",
+              "number": 5,
+              "title": "Teacher Radar: Know When Students Are Off Task",
+              "keyActions": [
+                {
+                  "header": "Deliberately scan the room for on-task behavior",
+                  "details": [
+                    "Choose 3\u20134 \u201chot spots\u201d (places where students often get off task) to scan constantly.",
+                    "\u201cBe Seen Looking\u201d: Crane your neck to appear to be seeing all corners of the room."
+                  ]
+                },
+                {
+                  "header": "Circulate the room with purpose (break the plane)",
+                  "details": [
+                    "Move among the desks and around the perimeter.",
+                    "Stand at the corners: Identify 3 spots on the perimeter of the room to which you can circulate to stand and monitor student work.",
+                    "Move away from the student who's speaking to monitor the whole room."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Scan Hot Spots",
+                  "whenToUseIt": "Teacher is not noticing the earliest actions of off-task behavior.",
+                  "probingQuestions": [
+                    "[Watch video of class] \u201cAt what moment do the first students begin to go off track?\u201d",
+                    "\u201cWhich students are most often off-task?\u201d",
+                    "\u201cIf you know these students are most likely to veer off track, what are your 'hot spots' that you want to scan continuously throughout the lesson?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Identify hot spots and moments in the lesson plan to scan hot spots.",
+                    "Practice: role play student behavior you want the teacher to be able to catch and correct by scanning. Repeat until the teacher is consistently scanning the hot spots and identifying off-task behavior."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: Hold up sign that says \u201cscan.\u201d",
+                    "Hold your hand out over a hot spot at the moment you want the teacher to notice and correct off-task behavior."
+                  ]
+                },
+                {
+                  "name": "Be Seen Looking",
+                  "whenToUseIt": "The teacher is not scanning and watching the students; students veer off task as a result.",
+                  "probingQuestions": [
+                    "[Watch video of lesson and pick key moments] \u201cWhere are you looking right now? Where should you be looking?\u201d",
+                    "[Model Be Seen Looking] \u201cWhat did you notice about what I did when giving directions? What is the value of that body language?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Practice scanning every row (for students' hands and eyes) of the classroom while teaching.",
+                    "Sit in the classroom far from the teacher. Model off-task behavior for the teacher to identify when scanning."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Non-verbal: Crane your neck to indicate that teacher should do the same.",
+                    "Model: Take over the routine and crane neck/scan with finger while scanning students."
+                  ]
+                },
+                {
+                  "name": "Circulate with Purpose (Break the Plane)",
+                  "whenToUseIt": "Teacher is stationary \u2014 lack of movement makes students go off-task.",
+                  "probingQuestions": [
+                    "\u201cWhere did the off-task behavior start? Where were you standing at that time? What is the challenge of not moving around during the lesson?\u201d",
+                    "[Watch the video] \u201cHow much time do you spend away from the front of the room?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Identify the hot spots in the room (i.e., where off-task behaviors often occur).",
+                    "Create a pathway based on the hot spots.",
+                    "Practice moving along this pathway while teaching, stopping at hot spots to scan and giving students a non-verbal redirect."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: point to a corner of the room where they should stand."
+                  ]
+                },
+                {
+                  "name": "Move Away from the Student Who Is Speaking",
+                  "whenToUseIt": "When one student is speaking, other students become disengaged.",
+                  "probingQuestions": [
+                    "\u201cWhen did the off-task behavior start? Where were you in the classroom in relation to where the problem occurred?\u201d",
+                    "\u201cWhat is the value of moving away from the student who is speaking?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Have the teacher pretend to call on an imaginary student. Then, while the imaginary student is responding, you can be playing the part of another student in another part of the room who is off-task. The teacher can then practice moving around to remind the other student that he or she is still obligated to pay attention, and, if necessary, to give a silent re-direct."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: cue the teacher to move away from the student who is speaking."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "management-6",
+              "number": 6,
+              "title": "Whole-Class Reset",
+              "keyActions": [
+                {
+                  "header": "Planned whole-class reset",
+                  "details": [
+                    "Implement a planned whole-class reset to re-establish student behavioral expectations when a class routine has slowly weakened over previous classes."
+                  ]
+                },
+                {
+                  "header": "In-the-moment reset",
+                  "details": [
+                    "Implement an in-the-moment reset when a class veers off task during the class period.",
+                    "Example: Stop teaching. Square up. Give a clear What to Do: \u201cPencils down. Eyes on me. Hands folded in 3-2-1. Thank you: that's what Harvard looks like.\u201d Pick up tone & energy again."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Planned Reset",
+                  "whenToUseIt": "A class has slid into low engagement over a few days without the teacher realizing it.",
+                  "probingQuestions": [
+                    "\u201cHow did you establish that routine so effectively the first time?\u201d",
+                    "\u201cWhat are the challenges in implementing the routine right now? Where does this routine break down?\u201d",
+                    "\u201cWhat are the root causes of the deterioration of this routine?\u201d",
+                    "[Show a model: video or yourself modeling]: \u201cWhat did you notice: what were the key actions the teacher took to re-engage the classroom?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Script the reset word-by-word: use as minimal language as possible, e.g.: Pause. \u201cEyes on me.\u201d Narrate the problem & give a direction. Scan. Wait for 100%. If not there, give a second direction to off-task students. Continue the lesson.",
+                    "Practice: incorporate all previous action steps, particularly: Strong Voice (posture & register); What to Do; teacher radar (scan).",
+                    "Rd 1: all students \u201ccomply\u201d right away.",
+                    "Rd 2: a few students still don't comply and teacher has to get them on target."
+                  ],
+                  "cuesForRealTimeFeedback": []
+                },
+                {
+                  "name": "In-the-Moment Reset",
+                  "whenToUseIt": "A class has slid into low engagement within the same class period without the teacher realizing it.",
+                  "probingQuestions": [
+                    "\u201cWhen are typical moments when your students go off track?\u201d (If the teacher cannot answer, show him or her video footage of a part of the class when students frequently go off track, and use the video to guide the teacher in identifying the moment when a reset is needed.)",
+                    "\u201cWhat are the key indicators in the class that you can look for that will tell you it is time to reset the class?\u201d",
+                    "\u201cWhen have you been most successful in resetting the classroom? How could you apply those same skills to this other context?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "From video of the teacher's classroom, practice the moment when engagement drops.",
+                    "Script a generic in-the-moment reset that could be used in every situation: Pause, \u201cEyes on me,\u201d narrate the problem, give direction, scan, and wait for 100%. If not there, give a second direction to students not on task. Continue the lesson.",
+                    "Incorporate previous action steps.",
+                    "Rd 1: all students \u201ccomply\u201d right away.",
+                    "Rd 2: a few students still don't comply and teacher has to get them on target."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: create a cue for \u201creset\u201d or hold up a sign.",
+                    "Model: \u201cStudents, we need to reset ourselves right now.\u201d Model a reset for the teacher."
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "management-phase-3",
+          "phase": 3,
+          "name": "Days 31\u201360",
+          "subtitle": "Engage Every Student",
+          "timing": "Days 31\u201360",
+          "actionSteps": [
+            {
+              "id": "management-7",
+              "number": 7,
+              "title": "Build the Momentum",
+              "keyActions": [
+                {
+                  "header": "Create a challenge",
+                  "details": [
+                    "Give students a simple challenge to complete a task. Example: \u201cNow I know you're only 4th graders, but I have a 5th grade problem that I bet you could master!\u201d"
+                  ]
+                },
+                {
+                  "header": "Sparkle",
+                  "details": [
+                    "Speak faster, walk faster, vary your voice, and smile."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Create a Challenge",
+                  "whenToUseIt": "Teacher states or acknowledges the boring/hard nature of the content they are teaching.",
+                  "probingQuestions": [
+                    "[Watch model video] \u201cWhat does this teacher say to get her students so excited to complete the task?\u201d",
+                    "\u201cWhat is the value of providing a challenge to build momentum in the class?\u201d",
+                    "\u201cWhere in your lesson did you miss an opportunity to create a challenge? What could you do differently?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Have teacher script challenges into lesson plan and practice delivering them."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: Pump your hands in the air like a cheerleader.",
+                    "Model: model creating a challenge."
+                  ]
+                },
+                {
+                  "name": "Speak Faster, Vary Your Voice, and Smile",
+                  "whenToUseIt": "Teacher's tone doesn't convey the joy and excitement that should infuse the classroom.",
+                  "probingQuestions": [
+                    "[Show model video]: \u201cWhat do you notice about Ms. Smith's tone in this clip? What does she do to make her delivery sparkle?\u201d",
+                    "\u201cNow think about your own classroom. What's creating the gap between this teacher's tone and yours?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Teach part of upcoming lesson while speaking faster and smiling.",
+                    "Stop teacher and repeat what teacher has just said while smiling and speaking more quickly.",
+                    "Have the teacher vary their voice, dropping lower to create tension rather than always remaining at high or low volume."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: Point to corners of your mouth to remind teacher to smile, or gesture with your hand to remind him or her to speak more quickly.",
+                    "Whisper prompt: \u201cSparkle! Smile! Jump back into teaching!\u201d"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "management-8",
+              "number": 8,
+              "title": "Pacing: Create the Illusion of Speed",
+              "keyActions": [
+                {
+                  "header": "Use a hand-held timer",
+                  "details": [
+                    "Stick to the time stamps in the lesson and give students an audio cue that it's time to move on."
+                  ]
+                },
+                {
+                  "header": "Increase rate of questioning",
+                  "details": [
+                    "No more than 2 seconds between when a student responds and the teacher picks back up instruction."
+                  ]
+                },
+                {
+                  "header": "Use countdowns to work the clock",
+                  "details": [
+                    "\u201cDo that in 5\u2026 4\u2026 3\u2026 2\u2026 1\u201d."
+                  ]
+                },
+                {
+                  "header": "Use Call and Response for key words",
+                  "details": []
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Use a Timer",
+                  "whenToUseIt": "Teacher falls way behind the planned pacing of their lesson plan.",
+                  "probingQuestions": [
+                    "\u201cHow much time did you want to spend on the 'I Do' part of the lesson? What kept you from sticking to that amount of time?\u201d",
+                    "\u201cHow much time had you planned to have left for independent work at the end of the lesson? What kept you from having enough time?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan: review time stamps for each part of the lesson. Script how to move on when the timer goes off and the teacher hasn't finished that section. Plan where teacher can cut certain parts of the lesson when falling behind.",
+                    "Practice lesson with a timer. Rehearse what to do when timer goes off & teacher isn't finished with that section."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Non-verbal: point at watch/wrist when time to move on.",
+                    "Non-verbal: give a hand signal of how many more minutes to stay on this activity."
+                  ]
+                },
+                {
+                  "name": "Increase Rate of Questioning",
+                  "whenToUseIt": "Teacher pauses too long between questions, losing the students' engagement.",
+                  "probingQuestions": [
+                    "\u201cWhat is the key to pacing? Given that principle, what do you think is the ideal amount of time after each student answer before you ask another question?\u201d",
+                    "\u201cDo you recall what happened after you called on Max yesterday? What would you need in order to keep instruction moving more immediately after calling on a student?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Role play a questioning sequence from an upcoming lesson keeping track of the rate of questioning. Note specifically moments where the rate slows due to pauses in between questions and lack of teacher preparation. Key teacher actions to look for: knowing the questions cold, and knowing which student to call on."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Model: model the questioning pace for the teacher."
+                  ]
+                },
+                {
+                  "name": "Countdown to Work the Clock",
+                  "whenToUseIt": "Students are slow to move during lesson transitions: e.g., whole class to pairs to IP, etc.",
+                  "probingQuestions": [
+                    "\u201cHow much time did you want to take in this transition?\u201d",
+                    "[Watch model video]: \u201cWhat actions does the teacher take to go faster? How could you apply them to your lesson?\u201d",
+                    "\u201cHow could you challenge your students to work with greater purpose?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Script and practice Bright Lines \u2014 cues to signal switching between activities: claps, hand gestures, etc.",
+                    "Play part of students and have teacher transition from one activity to the next using a countdown to work the clock."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: signal \u201c5-4-3-2-1\u201d with your fingers when it's time for a countdown."
+                  ]
+                },
+                {
+                  "name": "Call & Response",
+                  "whenToUseIt": "Students lose focus/engagement while teacher is modeling or talking.",
+                  "probingQuestions": [
+                    "\u201cWhat is the purpose of a choral response? How does it add value to engagement both behaviorally and academically?\u201d",
+                    "\u201cHere's a video clip from your lesson yesterday. Where could you have used a choral response to increase engagement?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Identify moments when it would be most useful to implement a choral response.",
+                    "Role play: provide occasional lackluster responses so teacher can practice having students Do it Again for choral response."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: create a cue for choral response."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "management-9",
+              "number": 9,
+              "title": "Engage All Students: Make Sure All Students Participate",
+              "keyActions": [
+                {
+                  "header": "Call on all students",
+                  "details": [
+                    "Make sure to call on all students."
+                  ]
+                },
+                {
+                  "header": "Cold call students",
+                  "details": []
+                },
+                {
+                  "header": "Implement brief Turn & Talks",
+                  "details": [
+                    "15\u201330 second Turn & Talks."
+                  ]
+                },
+                {
+                  "header": "Intentionally alternate among multiple methods in class discussion",
+                  "details": [
+                    "Cold calling, choral response, all hands, and Turn & Talks."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Call on All Students",
+                  "whenToUseIt": "Teacher tends to call on the same few students over and over.",
+                  "probingQuestions": [
+                    "\u201cLet's look at this footage from some of your questioning sequences in the past week. Which students are you calling on and which aren't getting called?\u201d",
+                    "\u201cWhat could you do to make sure you call on all students? How will you remember to do so in-the-moment?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Option 1 \u2014 embed in lesson plan: write into plan which specific students to call on, ensuring that students at different levels of mastery are getting called on and that everyone gets to speak frequently.",
+                    "Option 2 \u2014 use attendance list: pull out teacher attendance list and have teacher check students off as they are called on."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Non-verbal: point to the student who would be ideal for him or her to call on."
+                  ]
+                },
+                {
+                  "name": "Cold Call",
+                  "whenToUseIt": "Some students disengage when the teacher asks a question.",
+                  "probingQuestions": [
+                    "\u201cWhat is the purpose of cold calling?\u201d",
+                    "\u201cWhere in your lesson today could a cold call have increased engagement?\u201d",
+                    "\u201cWho are the students who would benefit the most from a cold call?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Choose students to cold call in advance.",
+                    "Practice: run through a questioning sequence and strategically cold calling on various students."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Non-verbal: point at the ideal student for the teacher to cold call."
+                  ]
+                },
+                {
+                  "name": "Turn & Talk",
+                  "whenToUseIt": "Students become restless during lengthy I Do or class discussion.",
+                  "probingQuestions": [
+                    "\u201cWhat are the benefits of having students do a Turn & Talk?\u201d",
+                    "\u201cWhat are the keys to an effective Turn & Talk?\u201d",
+                    "\u201cHow will you know the Turn and Talk is effective?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Planning: ID moments in upcoming lesson to do a quick Turn & Talk.",
+                    "Create bright lines \u2014 make Turn & Talk entry and exit unmistakably crisp: pre-establish whom students turn towards, What to Do instructions, brisk signals, \u201cGo!\u201d",
+                    "Scan the room and redirect off-task students."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: forefingers turn toward each other.",
+                    "Model: lead a Turn and Talk and then explain rationale to teacher during the Turn and Talk."
+                  ]
+                },
+                {
+                  "name": "Use Multiple Methods to Call on Students",
+                  "whenToUseIt": "Teacher over-relies on just one technique for engaging all students.",
+                  "probingQuestions": [
+                    "\u201cWe've discussed multiple ways to call on students: cold call, taking hands, turn & talks, and choral response. Which ones do you use the most? Which ones could you use more frequently in your lesson?\u201d",
+                    "\u201cWhat are the times in which each technique would be best to use in your class?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan a whole group discussion: note which questions are best suited for cold call, hands, choral response or turn & talk.",
+                    "Role play the discussion following the script the teacher created."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Non-verbal: create/use cue for cold call, choral response and all hands.",
+                    "Whisper prompt: \u201cWhen you call the group back together, start with a choral response.\u201d",
+                    "Model (if needed)."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "management-10",
+              "number": 10,
+              "title": "Narrate the Positive",
+              "keyActions": [
+                {
+                  "header": "Narrate what students do well, not what they do wrong",
+                  "details": [
+                    "Examples: \u201cI like how Javon has gotten straight to work on his writing assignment.\u201d / \u201cThe second row is ready to go: their pencils are in the well and their eyes are on me.\u201d"
+                  ]
+                },
+                {
+                  "header": "While narrating the positive and/or while scanning during a redirect, look at the student(s) who are off-task",
+                  "details": []
+                },
+                {
+                  "header": "Use language that reinforces students getting smarter",
+                  "details": [
+                    "Praise answers that are above and beyond or reflect strong effort."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Narrate What Students Do Well",
+                  "whenToUseIt": "Teacher's tone when addressing management problems is overly negative.",
+                  "probingQuestions": [
+                    "[Watch model video] \u201cHow did the teacher get students to correct misbehaviors without being negative?\u201d",
+                    "[Watch video of teacher] \u201cWhat could you have done in this particular moment to increase the positivity of your tone?\u201d",
+                    "\u201cWhat negative phrases do you find yourself using most often?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Planning: re-write teacher's most frequent negative comments into positive statements.",
+                    "Practice: role play keeping students on track through positive narration.",
+                    "Focus on the positive tone: practice tone until it feels authentic \u2014 not overly positive nor too flat/negative."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: index card with a plus sign written on it.",
+                    "Whisper prompt: \u201cNarrate the positive.\u201d"
+                  ]
+                },
+                {
+                  "name": "While Narrating the Positive, Look at Off-Task Student",
+                  "whenToUseIt": "Students who are off-task don't respond to positive narration.",
+                  "probingQuestions": [
+                    "[Watch model video] \u201cWhere is the teacher looking while narrating the positive? How does that affect student responsiveness?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Practice: you play the role of a student and model off-task behavior while the teacher looks at you and narrates the positive actions of another (imaginary) student."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Whisper prompt: \u201cLook at off-task students while narrating positive.\u201d"
+                  ]
+                },
+                {
+                  "name": "Use Language that Reinforces Students Getting Smarter",
+                  "whenToUseIt": "Teacher tends to praise behavior rather than academic effort or achievement.",
+                  "probingQuestions": [
+                    "[Watch model video] \u201cWhat does this teacher say when her students are responding? What behavior is she reinforcing?\u201d",
+                    "\u201cWhen do you find yourself giving positive feedback to students?\u201d",
+                    "\u201cWhat are the classroom culture benefits of praising academics over behavior?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan: With an upcoming lesson plan, script moments when the teacher could give precise academic praise that would reinforce students' effort.",
+                    "Practice students giving a response and the teacher giving precise praise."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Model: praise student thinking if an opportunity is missed.",
+                    "Whisper to teacher to give precise praise after another positive academic behavior."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "management-11",
+              "number": 11,
+              "title": "Individual Student Corrections",
+              "keyActions": [
+                {
+                  "header": "Anticipate and rehearse responses to off-task behavior",
+                  "details": [
+                    "Anticipate student off-task behavior and rehearse the next two things you will do when that behavior occurs."
+                  ]
+                },
+                {
+                  "header": "Redirect students using the least invasive intervention necessary (in escalating order)",
+                  "details": [
+                    "1. Proximity",
+                    "2. Eye contact",
+                    "3. Use a non-verbal",
+                    "4. Say student's name quickly",
+                    "5. Small consequence"
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Least-Invasive Intervention",
+                  "whenToUseIt": "Teacher sees the problem, but What to Do and Narrate the Positive aren't working for a few students, or teacher does not consistently or effectively provide consequences for minor misbehaviors. Teacher uses corrections that draw unnecessary attention to the student who has been off-task.",
+                  "probingQuestions": [
+                    "\u201cWhen a student shows ___ [insert low-level nonresponsiveness, such as calling out, repeated head down, off-task, etc.], what is your ideal response?\u201d",
+                    "\u201cWhat is the challenge when you try to redirect an off-task student?\u201d",
+                    "\u201cLook at this list of interventions from least to most invasive. What is the advantage of starting with the least invasive intervention?\u201d",
+                    "\u201cWhen you are intervening with off-task students, which of these interventions are you using? Which ones could you add to your repertoire?\u201d [Watch video of teaching if needed.]",
+                    "\u201cWhich intervention is most appropriate given the behavior and the part of the lesson in which it occurs?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "You really cannot over-plan and over-practice this action step. The more at-bats the better!",
+                    "Script the precise language of administering the consequence.",
+                    "Practice the tone and timing until teacher has mastered a formal tone.",
+                    "Role play as a student with different types of off-task behavior. Have the teacher re-direct you with least-invasive interventions. Slowly progress up to persisting in the off-task behavior so that the teacher has a chance to escalate to every type of intervention."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: point to the student off-task and give a re-direct signal.",
+                    "Whisper prompt: \u201cThis student is off task. Use ___ intervention.\u201d",
+                    "Model: re-direct an off-task student and wait for the teacher to repeat the action with the next off-task student."
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "management-phase-4",
+          "phase": 4,
+          "name": "Days 61\u201390",
+          "subtitle": "Set Routines for Discourse",
+          "timing": "Days 61\u201390",
+          "actionSteps": [
+            {
+              "id": "management-12",
+              "number": 12,
+              "title": "Engaged Small Group Work: Maximize Learning During Group Work",
+              "keyActions": [
+                {
+                  "header": "Deliver explicit step-by-step instructions for group work",
+                  "details": [
+                    "Make group tasks visible/easily observable (e.g., a handout to fill in, notes to take, product to build).",
+                    "Create a role for every person (each group no larger than the number of roles needed).",
+                    "Give timed instructions, with benchmarks for where the group should be after each time window."
+                  ]
+                },
+                {
+                  "header": "Monitor the visual evidence of group progress",
+                  "details": [
+                    "Check in on each group every 5\u201310 minutes to monitor progress."
+                  ]
+                },
+                {
+                  "header": "Verbally enforce individual & group accountability",
+                  "details": [
+                    "\u201cYou are five minutes behind; get on track.\u201d",
+                    "\u201cBrandon: focus.\u201d"
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Explicit Instructions for Group Work",
+                  "whenToUseIt": "Groups are off task because they're confused about what to do, or because not every student has something to do.",
+                  "probingQuestions": [
+                    "\u201cWhat do you want students doing during group work? What will they have produced if they are successful?\u201d",
+                    "\u201cHow many student roles do you need in order for your students to complete their group work task? Based on that, what size should the groups be?\u201d",
+                    "\u201cWhat will be the hardest part to enforce? What visual evidence can you create to make it easier for you to make sure they're on track?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Planning: script out explicit directions for group work.",
+                    "Focus on visual evidence of on-task behavior: to make it easier to monitor (e.g., students chart their thoughts on the whiteboard).",
+                    "Practice delivery."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Model delivering explicit small group work instructions."
+                  ]
+                },
+                {
+                  "name": "Monitor & Verbally Enforce Group Accountability",
+                  "whenToUseIt": "Some groups are off-task despite clear instructions.",
+                  "probingQuestions": [
+                    "\u201cDespite your quality instructions, you had a few groups who weren't on task today. Did you notice when they started to get off track?\u201d",
+                    "\u201cLooking back on your previously learned action steps, what sort of small-group reset or individual correction could you deliver to get the group/individual back on track?\u201d",
+                    "\u201cIn which groups were some students shouldering more of the work? What steps can you take to remedy this?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan out what the teacher will want to see on chart paper/student notebooks during group work.",
+                    "For resetting, script out the language for an effective reset or individual correction. Incorporate all the keys from previous action steps.",
+                    "Practice: Monitor group work and practice individual student corrections and whole-class reset."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal or whisper prompt: ID the off-task groups."
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "management-stretch",
+          "phase": 5,
+          "name": "Stretch It (Next Steps)",
+          "subtitle": "",
+          "timing": "Beyond Day 90",
+          "actionSteps": [],
+          "note": "No additional management action steps. Once a teacher reaches this phase, they can focus entirely on rigor and deepening content knowledge."
+        }
+      ]
+    },
+    {
+      "id": "rigor",
+      "name": "Rigor Trajectory",
+      "description": "Focuses on instructional quality, student thinking, and academic discourse. Action steps are numbered 1\u201313 sequentially across phases. Each action step includes a Coaching Guide with diagnostic triggers, probing questions, practice scenarios, and real-time feedback cues for instructional leaders.",
+      "phases": [
+        {
+          "id": "rigor-phase-1",
+          "phase": 1,
+          "name": "Pre-Teaching (Summer PD)",
+          "subtitle": "Write Lesson Plans",
+          "timing": "Summer PD",
+          "actionSteps": [
+            {
+              "id": "rigor-1",
+              "number": 1,
+              "title": "Develop Effective Lesson Plans 101: Build the Foundation",
+              "keyActions": [
+                {
+                  "header": "Write precise learning objectives that are:",
+                  "details": [
+                    "Data-driven (rooted in what students need to learn based on analysis of assessment results)",
+                    "Curriculum plan-driven",
+                    "Able to be accomplished in one lesson"
+                  ]
+                },
+                {
+                  "header": "Additional planning steps",
+                  "details": [
+                    "Script a basic \u201cI Do\u201d as a core part of the lesson.",
+                    "Design an exit ticket (brief final mini-assessment) aligned to the objective."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Write Precise Learning Objectives",
+                  "whenToUseIt": "Lesson objectives are not data-driven, are not manageable and measurable, or have not been identified at all.",
+                  "probingQuestions": [
+                    "\u201cLet's look at the upcoming assessment and the questions related to this objective. What do students have to know and do to be able to answer one of these questions correctly?\u201d",
+                    "\u201cIf you asked them how they know their answer is correct, what key conceptual understanding do you want them to be able to articulate?\u201d",
+                    "(After breaking down all the skills/knowledge required to answer the assessment tasks): \u201cOf all the skills/knowledge, what are the most important parts for you to address in this lesson? Which do students already have some mastery of, and which are the key next skills to push them further?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Pull out upcoming assessments to identify the right end goal: break down too-broad objectives to make them manageable for individual lessons.",
+                    "Plan & Practice are identical: plan a full week of upcoming objectives together.",
+                    "Make sure you have all materials at hand during the meeting: upcoming lesson plans, curriculum scope and sequence, interim assessment, final exam/state test released items, etc."
+                  ],
+                  "cuesForRealTimeFeedback": []
+                },
+                {
+                  "name": "Script a Basic \u201cI Do\u201d",
+                  "whenToUseIt": "Teacher stumbles or doesn't know what to say during the \u201cI Do\u201d part of the lesson.",
+                  "probingQuestions": [
+                    "\u201cLet's look at your objective and the key understandings that students need to have in order to master it. How will you explain those key understandings?\u201d",
+                    "\u201cWhat will be the key points of confusion for many of the students? Given that answer, where should you emphasize your points most clearly to address that confusion?\u201d",
+                    "\u201cWhat are the key points you want to communicate during the 'I Do'?\u201d",
+                    "\u201cHow can you write out your 'I Do' to make it easy to remember and deliver in the moment?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan: Write out key understandings students must reach by the end of the lesson.",
+                    "Script \u201cI Do\u201d into the lesson plan word for word. Remove extraneous words. Don't begin practice until you have fully tightened the script.",
+                    "Practice delivering: look for the teacher adding extraneous words or sentences that you could cut to reduce the model to what is essential."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: Hold out your palm and point to it with the other hand to indicate to them to go back to their script and follow it."
+                  ]
+                },
+                {
+                  "name": "Design Exit Ticket Aligned to the Objective",
+                  "whenToUseIt": "Teacher's exit ticket doesn't align to the objective.",
+                  "probingQuestions": [
+                    "\u201cWhen you finish the class, what will students be able to do to show you that they have mastered the objective?\u201d",
+                    "\u201cWhat key question/task could you give them at the end of the lesson to assess that mastery?\u201d",
+                    "\u201cLook at the upcoming interim assessment/year-end test: how can we align your question to that level of difficulty and rigor?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan/revise a week's worth of exit tickets. Have the upcoming interim/year-end assessment questions in hand to help set the rigor of the Exit Ticket.",
+                    "Look at previous exit tickets to see where students are struggling and what skills need to continue to be assessed."
+                  ],
+                  "cuesForRealTimeFeedback": []
+                }
+              ]
+            },
+            {
+              "id": "rigor-2",
+              "number": 2,
+              "title": "Internalize Existing Lesson Plans: Make Existing Plans Your Own",
+              "keyActions": [
+                {
+                  "header": "Internalize & rehearse key parts of the lesson",
+                  "details": [
+                    "Including the \u201cI Do\u201d and all key instructions."
+                  ]
+                },
+                {
+                  "header": "Build time stamps into the lesson plan and follow them",
+                  "details": []
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Internalize Key Parts of the Lesson",
+                  "whenToUseIt": "Teacher hasn't internalized the lesson, and may stumble when delivering it.",
+                  "probingQuestions": [
+                    "\u201cWhat parts of the lesson plan are most important for you to know cold? What is the value of memorizing these parts of the lesson?\u201d",
+                    "\u201cHow do you normally prepare and internalize a lesson plan?\u201d",
+                    "\u201cWhat are the challenges to remembering these plans during delivery?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Give the teacher a set time to learn a specific chunk of the lesson cold, and then have him/her try delivering it to a partner without looking down at the lesson.",
+                    "Practice one chunk of the lesson at a time. Once a teacher has it cold, put those chunks together until s/he has it completely memorized.",
+                    "Build a lesson internalization routine: determine when s/he will spend time each day memorizing key parts of the lesson, how s/he will practice, and who will be their practice partner (even if the \u201cpartner\u201d is as basic as a mirror)."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Model: when teacher is struggling with the lesson plan, intervene and cue students to Turn & Talk. Give teacher 30\u201360 seconds to skim the plan before jumping back into the lesson."
+                  ]
+                },
+                {
+                  "name": "Build Time Stamps into Lesson",
+                  "whenToUseIt": "The teacher runs out of time, completing only part of the lesson plan and leaving large chunks untaught.",
+                  "probingQuestions": [
+                    "\u201cWhat is the ideal amount of time you want for independent practice at the end? What are the challenges to making sure that students have that amount of time?\u201d",
+                    "\u201cWhat are the key tasks students need to do to be able to work independently effectively? What are the parts of the lesson we could cut short if you are running out of time?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Write down specific time stamps in their lesson plan. Note which parts of the lesson could be trimmed or cut if teacher is running over.",
+                    "Rehearse the lesson with timer in hand. Cut unnecessary language that is slowing the teacher down."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: hold up fingers for how many more minutes to spend in that section of the lesson."
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rigor-phase-2",
+          "phase": 2,
+          "name": "Days 1\u201330",
+          "subtitle": "Independent Practice",
+          "timing": "Days 1\u201330",
+          "actionSteps": [
+            {
+              "id": "rigor-3",
+              "number": 3,
+              "title": "Write the Exemplar: Set the Bar for Excellence",
+              "keyActions": [
+                {
+                  "header": "Script the ideal written response",
+                  "details": [
+                    "Script out the ideal written responses you want students to produce during independent practice."
+                  ]
+                },
+                {
+                  "header": "Align independent practice to assessment rigor",
+                  "details": [
+                    "Align independent practice to the rigor of the upcoming interim assessment."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Script the Ideal Written Student Response",
+                  "whenToUseIt": "The teacher doesn't know what a rigorous student response to a question looks like.",
+                  "probingQuestions": [
+                    "\u201cLet's pull out independent practice task. What do you want students to write when you give them this task? [If not yet written] Take a few minutes to write your exemplar.\u201d",
+                    "\u201cWhat answers would be only partially correct?\u201d",
+                    "\u201cHow do you want students to show or organize their work in answering this question?\u201d",
+                    "\u201cWhat are the advantages of writing an exemplar response? How is it different from writing objectives?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Write or revise exemplars for a written-response question in upcoming lessons.",
+                    "\u201cSpar\u201d with another exemplar: either another teacher's exemplar or experts in the field (e.g., Shakespearean critics).",
+                    "Break down the exemplar: ID key things the student will need to do to produce a response of the same quality."
+                  ],
+                  "cuesForRealTimeFeedback": []
+                },
+                {
+                  "name": "Align Independent Practice to the Assessment",
+                  "whenToUseIt": "Independent practice activities are not as rigorous as the final assessment students are working towards.",
+                  "probingQuestions": [
+                    "\u201cLet's look at the upcoming assessment. What is the gap between the rigor of your independent practice and the assessment?\u201d",
+                    "\u201cWhat can we do to make the independent practice more aligned to the rigor of the end goal?\u201d",
+                    "[If teacher struggles to see the gap, use a model]: \u201cHere are two different independent practice activities. Why is activity #1 more aligned and more rigorous than activity #2?\u201d [Teacher responds] \u201cWhat are your key takeaways for designing quality independent practice tasks?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Pull up a lesson plan and upcoming assessment: write/revise independent practice to match the rigor of the upcoming assessment.",
+                    "Write scaffolded questions that ramp up to the rigor of the final assessment question."
+                  ],
+                  "cuesForRealTimeFeedback": []
+                }
+              ]
+            },
+            {
+              "id": "rigor-4",
+              "number": 4,
+              "title": "Independent Practice: Build Daily Routines for Student Practice",
+              "keyActions": [
+                {
+                  "header": "Write first, talk second",
+                  "details": [
+                    "Give students writing tasks to complete prior to class discussion, so that every student answers independently before hearing peers' contributions."
+                  ]
+                },
+                {
+                  "header": "Implement a daily entry prompt (Do Now)",
+                  "details": [
+                    "Either introduce the day's objective or review material from the previous day."
+                  ]
+                },
+                {
+                  "header": "Implement and review a longer independent practice and/or a daily Exit Ticket",
+                  "details": [
+                    "Brief final mini-assessment aligned to the objective to see how many students mastered the concept."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Write First, Talk Second",
+                  "whenToUseIt": "Class discussion begins without students having the opportunity to write first.",
+                  "probingQuestions": [
+                    "\u201cWhat is the value of having students write before beginning class discussion?\u201d",
+                    "\u201cWhat is the most important information you want students to grapple with/write about before beginning the conversation?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan lessons that consistently place writing time before discussion: annotate a week's worth of lesson plans with short moments to write before talking.",
+                    "Minimal role play: practice the launch of the writing task and bringing students back to discussion afterwards."
+                  ],
+                  "cuesForRealTimeFeedback": []
+                },
+                {
+                  "name": "Daily Entry Prompt (Do Now)",
+                  "whenToUseIt": "Teacher begins class before students have had a chance to write/work independently.",
+                  "probingQuestions": [
+                    "\u201cWhat is the purpose of a Do Now?\u201d",
+                    "Timing: \u201cHow long are students spending on the Do Now?\u201d [If too long] \u201cHow can we reduce the Do Now so that students finish earlier?\u201d",
+                    "Relevance: \u201cWhat should be the purpose of your Do Now in this lesson: tell you how well students learned the content from yesterday? Or prepare them to learn the content you're teaching today?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Write Do Now questions for upcoming lessons: short (3\u20135 minutes to complete), easy to monitor (can check student work) and aligned to objective.",
+                    "Rehearse a start-of-class greeting that will prompt the students to begin working on the Do Now."
+                  ],
+                  "cuesForRealTimeFeedback": []
+                },
+                {
+                  "name": "Exit Ticket or Longer Independent Practice",
+                  "whenToUseIt": "Lessons include less than 10 minutes worth of independent practice.",
+                  "probingQuestions": [
+                    "\u201cWhat is the purpose of daily independent practice/exit tickets?\u201d",
+                    "Timing: \u201cHow long are students spending on independent practice/exit tickets?\u201d",
+                    "Relevance: \u201cWhat do you need your Exit Ticket to tell about what students learned today?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "If challenge is quality of exit ticket: write exit tickets that confirm student mastery. Look at IP and exit tickets side-by-side to make sure they align in level of rigor.",
+                    "If challenge is delivery: spend time on the instructions they give to students during the times, integrating management action steps: Strong Voice, What to Do, Radar."
+                  ],
+                  "cuesForRealTimeFeedback": []
+                }
+              ]
+            },
+            {
+              "id": "rigor-5",
+              "number": 5,
+              "title": "Monitor Aggressively: Check Independent Work",
+              "keyActions": [
+                {
+                  "header": "Create & implement a monitoring pathway",
+                  "details": [
+                    "Create a seating chart to monitor students most effectively.",
+                    "Monitor the fastest writers first, then the students who need more support."
+                  ]
+                },
+                {
+                  "header": "Monitor the quality of student work",
+                  "details": [
+                    "Check answers against your exemplar.",
+                    "Track correct and incorrect answers to class questions."
+                  ]
+                },
+                {
+                  "header": "Pen in hand \u2014 mark up student work as you circulate",
+                  "details": [
+                    "Use a coding system to affirm correct answers.",
+                    "Cue students to revise answers using minimal verbal intervention (name the error, ask them to fix it, tell them you'll follow up)."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Monitoring Pathway",
+                  "whenToUseIt": "Teacher monitors only a handful of students \u2014 or none at all \u2014 during independent practice.",
+                  "probingQuestions": [
+                    "Watch a model video: \u201cWhat does the teacher do after launching independent practice?\u201d",
+                    "\u201cWhat do you notice about this seating chart from your peer \u2014 what about it would make it easier to monitor your students' work?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Pull out seating charts from other teachers to use as guides.",
+                    "Create a seating chart for this teacher's class with data in hand & plan the monitoring pathway: start with fastest writers and then move to the ones who need more time.",
+                    "Practice: test out the seating chart walking around. Revise for anticipated management/off-task behavior."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal or whisper prompt: Cue teacher to follow his/her planned pathway."
+                  ]
+                },
+                {
+                  "name": "Monitor the Quality of Student Work",
+                  "whenToUseIt": "Teacher does not see patterns in student answers.",
+                  "probingQuestions": [
+                    "\u201cWhat were the challenges for you as you monitored during independent practice? What made it difficult for you to remember all your students' answers?\u201d",
+                    "\u201cIf you cannot monitor everything a student writes, what are the key pieces based on today's focus?\u201d",
+                    "\u201cWhat trends did you notice as you aggressively monitored the independent work today? Who mastered it and who didn't?\u201d",
+                    "\u201cWhat is the purpose of aggressive monitoring during independent practice? How can that help inform the rest of your lesson?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Planning: take out the exemplar and annotate for the keys to look for: Humanities \u2014 the argument/thesis, evidence, or a writing technique; STEM \u2014 a certain formula or critical step in answering a problem.",
+                    "Set up a note-taking template for monitoring.",
+                    "Practice: set out papers with student writing on desks, and give the teacher a set amount of time to fill in note-taking template and note the patterns in student responses."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Whisper prompt: Cue teacher to monitor student work.",
+                    "Model: Walk alongside teacher and ask what trends s/he is noticing. Show teacher how to use exemplar to identify patterns and determine the trend."
+                  ]
+                },
+                {
+                  "name": "Mark Up Student Work (Pen in Hand)",
+                  "whenToUseIt": "Teacher is not giving explicit feedback to more than a handful of students if at all.",
+                  "probingQuestions": [
+                    "\u201cWhat is the student experiencing in the moment when you're monitoring? How many of them know if they are on the right track or not?\u201d",
+                    "[Present a coding technique/watch a video of a teacher marking up student work/look at a sample student work that has been marked up by a teacher] \u201cHow did the teacher give quick feedback to this student to help them get on track?\u201d",
+                    "\u201cWhat is the power of a coding system for allowing you to give feedback to more students?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Create a feedback code: simple cues to write on student work to spur self-correction.",
+                    "Practice: put out a class set of student work on all the desks. Have the teacher monitor the room and write feedback codes on as many papers as possible.",
+                    "Rd 2: ID ways to go faster.",
+                    "Integrate previous actions: monitoring pathway; collecting data."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Model: Walk alongside the teacher as they monitor and whisper, e.g., \u201cI think you should put an E on this one\u201d when you see him/her struggle to give the student feedback."
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rigor-phase-3",
+          "phase": 3,
+          "name": "Days 31\u201360",
+          "subtitle": "Respond to Student Learning Needs",
+          "timing": "Days 31\u201360",
+          "actionSteps": [
+            {
+              "id": "rigor-6",
+              "number": 6,
+              "title": "Habits of Evidence",
+              "keyActions": [
+                {
+                  "header": "Teach students to annotate with purpose",
+                  "details": [
+                    "Summarize, analyze, find the best evidence, etc."
+                  ]
+                },
+                {
+                  "header": "Teach and prompt students to cite key evidence in their responses",
+                  "details": []
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Teach Students to Annotate with Purpose",
+                  "whenToUseIt": "Students don't annotate texts when reading, making it difficult for them to go back and cite the best evidence.",
+                  "probingQuestions": [
+                    "\u201cWhat is the purpose of annotating a text? Based on your prompt/task, what would be the best focus for their annotation?\u201d",
+                    "\u201cHow many students are annotating the text while reading?\u201d",
+                    "\u201cFor the students that are annotating, what are the biggest gaps in their ability to annotate for the best evidence?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Review text the students will be reading in the upcoming week. Create an exemplar annotation: what are the key pieces of evidence you would like them to highlight.",
+                    "Practice: monitor student work with annotated exemplar on a clipboard.",
+                    "Set up a simple written feedback/cue to give to students while monitoring their annotation (e.g., circle = look for better evidence)."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Walk alongside the teacher when monitoring student annotation of their reading. Look for patterns of good and weak annotations. Whisper prompt: \u201cPrompt x student to improve their annotations.\u201d"
+                  ]
+                },
+                {
+                  "name": "Teach/Prompt Students to Cite Key Evidence",
+                  "whenToUseIt": "Students don't cite evidence from the text when answering questions.",
+                  "probingQuestions": [
+                    "\u201cWhat is the importance of citing evidence in answering a question?\u201d",
+                    "\u201cWhere in your last lesson could students have been asked to cite their evidence more clearly/effectively?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Name key evidence from exemplar, identify additional valid evidence, and predict wrong evidence.",
+                    "Practice: prompt students when they don't cite best evidence."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: Cue for evidence (e.g., card with an \u201cE\u201d printed on it).",
+                    "Whisper prompt: \u201cAsk for evidence.\u201d Model if needed."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "rigor-7",
+              "number": 7,
+              "title": "Check for Whole-Group Understanding",
+              "keyActions": [
+                {
+                  "header": "Poll the room to determine how students are answering a question",
+                  "details": [
+                    "\u201cHow many chose letter A? B? C? D?\u201d",
+                    "Students answer on whiteboards: \u201cHold up your whiteboards on the count of three\u2026\u201d"
+                  ]
+                },
+                {
+                  "header": "Target the error",
+                  "details": [
+                    "Focus class discussion on the questions where students most struggle to answer correctly."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Poll the Room",
+                  "whenToUseIt": "Teacher moves ahead without a clear vision of which (or how many) students comprehend.",
+                  "probingQuestions": [
+                    "[Debrief your own intervention] \u201cI intervened in your class and polled the room. What was the purpose of doing so? How did that help guide the rest of your lesson?\u201d",
+                    "\u201cWhat would be the best moments in your upcoming lesson to poll the room?\u201d",
+                    "\u201cWhat are the advantages these polling techniques versus self-report thumbs up/thumbs down?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Script into the lesson plan key moments to conduct a poll of the room.",
+                    "Plan the rollout of the polling routine: integrate Phase 1 & 2 actions for rollouts.",
+                    "Predict the outcome for the polling of upcoming classes to help a teacher start to anticipate student error."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: Hold up sign that says \u201cPoll.\u201d",
+                    "Model: Poll the room yourself."
+                  ]
+                },
+                {
+                  "name": "Target the Error",
+                  "whenToUseIt": "Class discussion does not focus on students' common misconceptions.",
+                  "probingQuestions": [
+                    "\u201cWhat challenges do you anticipate during independent practice? Where is the most important area to review?\u201d",
+                    "[Watch model video]: \u201cWhat actions does this teacher take to respond to students' written errors?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Planning: Anticipate the errors students will make in upcoming lesson.",
+                    "Practice: Review student work and name the error."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Whisper Prompt during IP: \u201cWhat patterns of error are you noticing? Plan to review only the areas of error.\u201d"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "rigor-8",
+              "number": 8,
+              "title": "Re-teaching 101 \u2014 Model: Show Students How to Think/Solve/Write",
+              "keyActions": [
+                {
+                  "header": "Give students a clear listening/note-taking task that fosters active listening, then debrief the model",
+                  "details": [
+                    "\u201cWhat did I do in my model?\u201d",
+                    "\u201cWhat are the key things to remember when you are doing the same in your own work?\u201d"
+                  ]
+                },
+                {
+                  "header": "Model the thinking, not just a procedure",
+                  "details": [
+                    "Narrow the focus to the thinking students are struggling with.",
+                    "Model replicable thinking steps that students can follow.",
+                    "Model how to activate one's own content knowledge and skills learned in previous lessons.",
+                    "Vary the think-aloud in tone and cadence from the normal \u201cteacher\u201d voice to highlight the thinking skills."
+                  ]
+                },
+                {
+                  "header": "We Do and You Do",
+                  "details": [
+                    "Give students opportunities to practice with your guidance."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Give Students a Clear Listening/Note-taking Task",
+                  "whenToUseIt": "The teacher gives a clear model, but the students don't have a task to do while listening to the model.",
+                  "probingQuestions": [
+                    "[Watch a model video]: \u201cWhat were the key actions the teacher took to make sure the students were listening?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Focus on planning: include a note-taking task and check for understanding."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Verbal Prompt: \u201cStudents, I want to see your notebooks out to take notes: This is too valuable not to write anything down!\u201d"
+                  ]
+                },
+                {
+                  "name": "Model the Thinking, Not Just a Procedure",
+                  "whenToUseIt": "The teacher's model is confusing or unclear, OR the teacher tells them a procedure but doesn't unpack the thinking behind it.",
+                  "probingQuestions": [
+                    "\u201cLet's look over your exemplar for the independent practice. Talk aloud how you would solve this problem/write this essay.\u201d [After teacher answer] \u201cWhat are students struggling to do to match the quality of your exemplar? Where is their thinking or understanding breaking down?\u201d",
+                    "\u201cGiven those gaps, what is the most important thing for you to model for them?\u201d",
+                    "[Watch a model video]: \u201cWhat were the key actions the teacher took to model the skill effectively? How do those differ from what you have been doing in class?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Pre-work: unpack the key errors that students are making (Phase 3 coaching tips: 1. Start with the exemplar. 2. Identify the gaps. 3. Plan the re-teach).",
+                    "Plan: design an effective Think Aloud (1. Target the error. 2. Model replicable thinking. 3. Check for understanding.)",
+                    "Practice: vary tone and cadence of think aloud/model to emphasize key points and be as clear as possible."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Verbal Prompt: \u201cMs. Smith, that was very interesting. Can you tell me again what you were thinking when you took that step? I want to make sure I understand.\u201d",
+                    "Model: do a Think Aloud yourself."
+                  ]
+                },
+                {
+                  "name": "We Do/You Do \u2014 Give At-Bats to Practice",
+                  "whenToUseIt": "The teacher gives a clear model, but the students don't have the opportunity to try to replicate it after the model is done.",
+                  "probingQuestions": [
+                    "\u201cWhat is the best way for students to practice after they have listened to your model?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan: create an At-bat where students genuinely practice what the teacher just modeled. Make sure they practice the thinking involved and not just the procedure."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: Give a cue that it's time for students to practice."
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rigor-phase-4",
+          "phase": 4,
+          "name": "Days 61\u201390",
+          "subtitle": "Lead Student Discourse 101",
+          "timing": "Days 61\u201390",
+          "actionSteps": [
+            {
+              "id": "rigor-9",
+              "number": 9,
+              "title": "Re-teaching 201 \u2014 Guided Discourse: Let Students Unpack Their Own Errors",
+              "keyActions": [
+                {
+                  "header": "Show-Call",
+                  "details": [
+                    "Post student work (either an exemplar or incorrect response) and ask students to identify why that answer is correct/incorrect."
+                  ]
+                },
+                {
+                  "header": "Stamp the understanding",
+                  "details": [
+                    "\u201cWhat are the keys to remember when solving problems like these?\u201d or \u201cCan someone give me a rule?\u201d (Students use their own words.)"
+                  ]
+                },
+                {
+                  "header": "Give them At-bats",
+                  "details": [
+                    "Give students opportunities to practice with your guidance."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Show-Call",
+                  "whenToUseIt": "Many students are struggling to identify the error in their understanding, or they struggle to generate an exemplar response. Teacher is trying to use student work but struggles to lead discussion around it.",
+                  "probingQuestions": [
+                    "[Watch video of Show-Call] \u201cWhat was the value of the teacher showing a piece of student work to jump-start the conversation? How did the teacher do this effectively?\u201d",
+                    "\u201cWhat common errors are your students making when solving these problems/completing these types of tasks?\u201d",
+                    "\u201cWhen looking at student work, what do they need to see more: an exemplar response from their peer, or the error that they are making?\u201d",
+                    "\u201cWhat would an ideal answer from a student look like?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Planning: Look at exit tickets and select a strong student exemplar and a representative incorrect/incomplete student response that is indicative of an error that many students are making.",
+                    "Script out the steps: 1. Post the work (either exemplar, incorrect answer, or both). 2. Turn & talk: ask students to evaluate. 3. Whole class: name the error and the best practice.",
+                    "Practice: rehearse the script. Focus on economy of language."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Whisper prompt: during independent practice, identify one or more student work samples that would be valuable for the teacher to use during Show Call. Ask the teacher which ones they would Show-Call; if they make a weak choice, show them the ones you selected and briefly explain why."
+                  ]
+                },
+                {
+                  "name": "Stamp the Understanding and At-Bats",
+                  "whenToUseIt": "Students can figure out their error, but they do not articulate clearly what they have to do to prevent those errors in the future and don't have time to practice.",
+                  "probingQuestions": [
+                    "\u201cOnce the students identify the error or strategies in the exemplar, what is the key understanding you want them to stamp? What would the ideal answer look like?\u201d",
+                    "\u201cWhat would be the best form of practice for the students to get a chance to master this new strategy/understanding?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Practice stamping the understanding: articulate exactly what the teacher will look for in student answers. Write down that key understanding on the board.",
+                    "Plan: Incorporate into lesson plan more \u201cat bats\u201d to practice the new skill."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Model: if teacher doesn't stamp the understanding, intervene to make sure students grasp the concept.",
+                    "Nonverbal: give cue that it's time for students to practice."
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "rigor-10",
+              "number": 10,
+              "title": "Universal Prompts: Push Thinking Back on Students",
+              "keyActions": [
+                {
+                  "header": "Wait time",
+                  "details": [
+                    "Provide wait time after posing challenging questions."
+                  ]
+                },
+                {
+                  "header": "Pre-call",
+                  "details": [
+                    "Let a student who needs more time know you're calling on them next."
+                  ]
+                },
+                {
+                  "header": "Roll back the answer",
+                  "details": [
+                    "Repeat the wrong answer back to the student (gives the student time to think and you time to build a plan)."
+                  ]
+                },
+                {
+                  "header": "Elaboration prompts",
+                  "details": [
+                    "\u201cTell me more.\u201d / \u201cWhat makes you think that?\u201d / \u201cHow do you know?\u201d / \u201cWhy is that important?\u201d"
+                  ]
+                },
+                {
+                  "header": "Close the loop",
+                  "details": [
+                    "After correcting an error, go back to students with wrong answers to have them revise their answers."
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Wait Time, Pre-Call, Roll Back",
+                  "whenToUseIt": "The teacher moves on too quickly after asking a challenging question.",
+                  "probingQuestions": [
+                    "\u201cWhat are the possible reasons a student might not be able to answer a question you ask on the spot \u2014 beyond just not knowing the answer?\u201d",
+                    "[Watch a video or model for the teacher] \u201cWhat actions did the teacher take? Why were these beneficial?\u201d",
+                    "\u201cWhat is the purpose of repeating the student's answer back to him/her? Why not just correct the error?\u201d",
+                    "\u201cWhich students need more time than others to formulate an answer? Which ones would benefit from a pre-call to give them enough thinking time?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Integrate the practice of all three skills:",
+                    "Wait time: ID higher-order questions that might require more think time. Script concise directions teacher will narrate during wait time (\u201cThis answer requires strong evidence. Everyone can be looking as we wait.\u201d)",
+                    "Roll back: role play a questioning sequence from an upcoming lesson, providing student answers that would benefit from rolling back. Continue the lesson after rolling back as well.",
+                    "Pre-Call: ID the students who would benefit from a pre call. Pick the questions in the lesson plan that would be ideal to ask those students."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: create a cue for wait time (e.g., hold up a hand as a stop sign).",
+                    "Model: roll back answer to original student, modeling for teacher."
+                  ]
+                },
+                {
+                  "name": "Universal Prompts (Elaboration)",
+                  "whenToUseIt": "The teacher doesn't know why a student got an answer wrong.",
+                  "probingQuestions": [
+                    "\u201cWhen the student delivered the incorrect answer, what happened next? How do you know if that student now understands at the end of the class?\u201d",
+                    "\u201cLet's look at this list of universal prompts. What is the value of using prompts like these?\u201d",
+                    "\u201cWhere in your lesson could you have used one or more of these prompts?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan next lesson: predict the types of student responses that will benefit from these prompts.",
+                    "Practice: play the roles of 3\u20134 different students: one with a wrong answer, two more with limited answers. Role play using each of the prompts."
+                  ],
+                  "cuesForRealTimeFeedback": []
+                },
+                {
+                  "name": "Close the Loop",
+                  "whenToUseIt": "After an incorrect answer, the teacher moves on without correcting the original error with that student.",
+                  "probingQuestions": [
+                    "\u201cWhen [student] delivered that incorrect answer yesterday, what did you do next? How did you know if [student] understood why she/he was wrong? What could you do next time?\u201d",
+                    "[Watch model video]: \u201cHow does this teacher guarantee that the student has learned after his original misconception?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Role-play a questioning sequence from an upcoming lesson, with you playing different students so that the teacher has a chance to play out the process of coming back to the first student he or she has called on."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Whisper prompt: \u201cCome back to x student to make sure he understands.\u201d",
+                    "Model: \u201cJared, why is that answer right?\u201d"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "rigor-11",
+              "number": 11,
+              "title": "Habits of Discussion: Strengthen Class Conversation",
+              "keyActions": [
+                {
+                  "header": "Keep neutral / manage your tell",
+                  "details": [
+                    "Don't reveal the right/wrong answer through your reaction to the student response."
+                  ]
+                },
+                {
+                  "header": "Agree / Build off of",
+                  "details": [
+                    "\u201cI agree with ____ and I'd like to add\u2026.\u201d"
+                  ]
+                },
+                {
+                  "header": "Disagree respectfully",
+                  "details": [
+                    "\u201cWhile I agree with [this part of your argument], I disagree with ____. I would argue\u2026.\u201d"
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Keep Neutral",
+                  "whenToUseIt": "The teacher's reaction reveals whether student responses are correct before the students can figure it out on their own.",
+                  "probingQuestions": [
+                    "\u201cRecall our recent PD on Habits of Discussion. What is the goal of getting students to use the habits?\u201d",
+                    "[Watch video of teacher] \u201cCompare your responses to correct and incorrect answers. What are the differences? How do your different responses limit the rigor of the discussion?\u201d",
+                    "\u201cWhat actions can you take to ensure your responses to correct and incorrect responses are the same?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Practice: role play correct and incorrect responses. Focus teacher on staying neutral: eyebrows neutral, consistent nodding or not, same number of words after each response.",
+                    "Incorporate in the use of habits of discussion and wait time."
+                  ],
+                  "cuesForRealTimeFeedback": []
+                },
+                {
+                  "name": "Agree/Build Off Each Other",
+                  "whenToUseIt": "Student answers are disconnected from each other even when they agree.",
+                  "probingQuestions": [
+                    "\u201cWhat do you ideally want students to do when they agree with what a peer is saying? How could you get them to do it in-the-moment?\u201d",
+                    "\u201cLet's think about that moment during your lesson when x student shared his answer and the next student just repeated it. What training do the students need in how to build off of another answer?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Script prompts to get students to build off of each other's arguments: \u201cI agree with ___, and I would like to add that\u2026\u201d",
+                    "Practice: Role-play a class discussion. Prompt the students to build off."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: Post the Habits of Discussion in the classroom; point to the posted habits when needed.",
+                    "Model: \u201cDavid [student], can you restate your answer using one of the habits?\u201d"
+                  ]
+                },
+                {
+                  "name": "Disagree Respectfully",
+                  "whenToUseIt": "Students either don't disagree with their peers, or don't do so in a respectful manner.",
+                  "probingQuestions": [
+                    "\u201cWhat do you ideally want students to do when they disagree with what a peer is saying?\u201d",
+                    "\u201cWhat is the gap between that ideal response and what they are doing in class?\u201d",
+                    "\u201cHow could you get them to do those ideal actions in-the-moment?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Script prompts to get students to respectfully disagree with each other's arguments.",
+                    "Practice: Role-play a class discussion. Prompt the students to express respectful disagreement."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: Point to prompts posted on the classroom walls.",
+                    "Model: \u201cLaura, can you disagree using one of the habits posted on the wall?\u201d"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rigor-stretch",
+          "phase": 5,
+          "name": "Stretch It (Next Steps)",
+          "subtitle": "Lead Student Discourse 201",
+          "timing": "Beyond Day 90",
+          "actionSteps": [
+            {
+              "id": "rigor-12",
+              "number": 12,
+              "title": "Strategic Prompts: Ask Strategic Questions in Response to Student Error",
+              "keyActions": [
+                {
+                  "header": "Prompt students to access previously learned knowledge",
+                  "details": [
+                    "Point students to resources (notes, posted concepts and content).",
+                    "\u201cWhat do we know about _____ [content students learned in previous classes]?\u201d",
+                    "Use a prompting guide (e.g., Great Habits, Great Readers Guided Reading Prompting Guide) to design questions."
+                  ]
+                },
+                {
+                  "header": "Call on students based on their learning needs (data-driven)",
+                  "details": [
+                    "Call on lower and middle-achieving students to unpack the question.",
+                    "If they struggle, try a higher-achieving student.",
+                    "If they are easily unpacking, try a lower-achieving student.",
+                    "Create a sequence of students to call on based on the rigor of each prompt (e.g., first ask middle student, then low, then high)."
+                  ]
+                },
+                {
+                  "header": "Students prompting students",
+                  "details": [
+                    "Push students to use habits of discussion to critique or push one another's answers.",
+                    "Probe deeper: \u201c[Peer], have you considered this point\u2026?\u201d"
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Access Previous Understanding",
+                  "whenToUseIt": "Despite the use of Discourse 101 techniques, students are still unable to grasp the concept.",
+                  "probingQuestions": [
+                    "\u201cLet's look at yesterday's lesson. What were the key understandings you wanted the students to reach by the end of the class?\u201d",
+                    "\u201cWhere was the gap in their ability to get there?\u201d",
+                    "\u201cThink about your previous learning. What are the key understandings that could have helped the students unpack this task/question?\u201d",
+                    "\u201cWhat are the resources you have available that have a set of prompts you can use with your kids?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan: Unpack the exemplar response in upcoming lesson, & name the key pieces of previous understanding that students will need to solve the problem.",
+                    "Prepare where students will access that knowledge (e.g.: Chart of key terms posted in the room, student handout, previous notes).",
+                    "Plan the script to ask students to access that knowledge."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: Point to the resources in the room.",
+                    "Whisper prompt: \u201cI think students are making ____ error. Ask them about _____ [previously learned knowledge or skill] to cue them to strategies that can help them solve the problem.\u201d"
+                  ]
+                },
+                {
+                  "name": "Call on Students Based on Data",
+                  "whenToUseIt": "The teacher calls primarily students who already know the answer and doesn't guarantee that the learning for the rest, OR teacher calls on consecutive struggling students and the discussion stalls.",
+                  "probingQuestions": [
+                    "\u201cRecall the moment when Javier, Claire and Marta all struggled to answer the question. Based on your monitoring of their independent practice prior to the discussion, were there any other students in the room who could have provided more help? What is the advantage of calling on one of them when other students are stuck?\u201d",
+                    "\u201cLet's look at your recent assessment data sorted from lowest to highest performing. Think back to whom you called on in class today \u2014 where did most of the called-on students fall within your data set? What is the limitation of calling only on students in that range?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Plan: anticipate the responses students of varying levels will give in class.",
+                    "Script out the order of students to call on during the discourse: 1. Start with a medium/lower student. 2. Call on a higher student when the previous student is struggling to answer. 3. Call on a lower student to \u201cstamp\u201d the understanding.",
+                    "Rd 1: First student called on gets it right (then call on lower/medium students to solidify understanding).",
+                    "Rd 2: First student gets it wrong; after calling on higher students, lower students get it right.",
+                    "Rd 3: First student gets it wrong, after calling on higher student, lower student still gets it wrong."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "The key to real-time feedback is monitoring student learning during independent practice. Without that, it's difficult to intervene."
+                  ]
+                },
+                {
+                  "name": "Students Prompting Students",
+                  "whenToUseIt": "Teacher is constantly prompting the students to use habits of discussion because students are not yet taking leadership.",
+                  "probingQuestions": [
+                    "[Watch video of class or remember it] \u201cWhere did the discussion go off track? What would have been the ideal student intervention to get back on point?\u201d",
+                    "[Use Guide for Habits of Discussion] \u201cWhich would be the appropriate next habits to develop in the students' ability to lead the discussion?\u201d",
+                    "\u201cRecall how you rolled out Routines and Procedures at the beginning of the year. What are the key actions that we can replicate in rolling out a habit of discussion?\u201d [Refer to actions in Phase 1]"
+                  ],
+                  "scenariosToPractice": [
+                    "Identify 1\u20132 common errors and the universal prompts you want students to use to address the error. Practice prompting students to use that universal prompt.",
+                    "Practice rolling out the habit [see Phase 1 for key actions]."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: point to teacher's chart for universal prompts.",
+                    "Model: \u201cDaniela [student], what could you say to your peers to prompt a deeper response?\u201d"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "rigor-13",
+              "number": 13,
+              "title": "Go Conceptual: Get Students to Do the Conceptual Thinking",
+              "keyActions": [
+                {
+                  "header": "Ask students to verbalize conceptual understanding, not just answers",
+                  "details": [
+                    "\u201cThat's the procedure. Now tell me why that works.\u201d",
+                    "\u201cCan you generalize that idea to apply to all problems like this one?\u201d",
+                    "\u201cUse the following terms [terms learned in previous classes] in restating your answer.\u201d"
+                  ]
+                },
+                {
+                  "header": "Upgrade vocabulary \u2014 ask students to use technical/academic language",
+                  "details": [
+                    "\u201cThat's the right idea generally. Now state it again using proper mathematical/historical/scientific language.\u201d",
+                    "\u201cCorrect. Now state it again using your Academic Word Wall as a resource.\u201d"
+                  ]
+                },
+                {
+                  "header": "Stretch it \u2014 ask students to answer more difficult extensions",
+                  "details": [
+                    "\u201cWhat would the answer be if I changed it to [more complex problem]?\u201d",
+                    "\u201cIs there an alternative way to solve this problem/do this task?\u201d",
+                    "\u201cWhat do you think is the strongest counter-argument to yours and how would you refute it?\u201d"
+                  ]
+                }
+              ],
+              "coachingGuides": [
+                {
+                  "name": "Verbalize a Conceptual Understanding of Content",
+                  "whenToUseIt": "The student gives a correct answer but teacher doesn't ask for him/her to explain why. Teacher focuses on the process but doesn't get students to name the conceptual understanding.",
+                  "probingQuestions": [
+                    "\u201cLet's look back at the standard aligned to this task: What are the key understandings required to master this objective?\u201d",
+                    "\u201cWhen you ask a student to explain why [the answer is correct], what is the ideal response you're looking for in this moment?\u201d",
+                    "\u201cWhat response did students give you and how did you respond?\u201d",
+                    "\u201cLooking at the potential prompts for conceptual understanding, which would be most relevant to use in this context?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Script ideal response and questioning sequence to get to that response."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Model: \u201cMr. Smith, I'm impressed with Jordan's answer. Jordan, can you generalize the _____ [rule/strategy/skill] you used that we could use in any problem?\u201d"
+                  ]
+                },
+                {
+                  "name": "Upgrade Vocabulary",
+                  "whenToUseIt": "Teacher does not ask students to use technical/academic language when giving answers.",
+                  "probingQuestions": [
+                    "\u201cWhat is the ideal academic or technical language that you wanted students to use in their response?\u201d",
+                    "\u201cWhat was the gap between that ideal response and what students said?\u201d",
+                    "\u201cHow can we create or leverage a resource that will push students to upgrade their vocabulary in their answers?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Create a word wall/chart with key academic terms you will want students to use in their answers.",
+                    "Script in moments when the teacher can punch key vocabulary terms when modeling. Script ideal student responses that include key vocabulary terms.",
+                    "Script the prompts to use when students don't use mathematical/scientific/academic language: \u201cThat's the right idea. Now state it again using your Academic Word Wall as a resource.\u201d"
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Nonverbal: point to the academic language resource (word wall, cheat sheet, etc.)"
+                  ]
+                },
+                {
+                  "name": "Stretch It",
+                  "whenToUseIt": "Students answer a question easily, and teacher moves on rather than pushing them to go further.",
+                  "probingQuestions": [
+                    "\u201cWhat happened after you called on Jermaine and he answered your question correctly? How does that affect his learning? What could you do to raise the rigor for him without making it unmanageable for the rest of the class?\u201d",
+                    "[Watch video of stretch it.] \u201cWhat did the teacher do to stretch the learning?\u201d"
+                  ],
+                  "scenariosToPractice": [
+                    "Identify moments in the lesson plan where students might get to correct answers easily. Script \u201cstretch it\u201d questions to increase the rigor of those moments: e.g., how/why, cite evidence, evaluate the answer."
+                  ],
+                  "cuesForRealTimeFeedback": [
+                    "Non-verbal: pull your fingers apart \u2014 as if stretching a piece of gum \u2014 to signal that it's a good time to raise the rigor with a stretch-it question."
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

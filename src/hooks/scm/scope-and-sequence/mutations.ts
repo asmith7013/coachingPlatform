@@ -28,7 +28,13 @@ export function useUpdateScopeSequence() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<ScopeAndSequenceInput> }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<ScopeAndSequenceInput>;
+    }) => {
       const result = await updateScopeAndSequence(id, data);
       if (!result.success) {
         throw new Error(result.error || "Failed to update entry");

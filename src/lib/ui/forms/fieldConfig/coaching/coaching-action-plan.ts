@@ -1,4 +1,4 @@
-import type { Field } from '@ui-types/form';
+import type { Field } from "@ui-types/form";
 import type { CoachingActionPlanInput } from "@zod-schema/cap";
 
 /**
@@ -58,9 +58,9 @@ export const CoachingActionPlanFieldConfig: Field<CoachingActionPlanInput>[] = [
       { value: "draft", label: "Draft" },
       { value: "active", label: "Active" },
       { value: "completed", label: "Completed" },
-      { value: "archived", label: "Archived" }
-    ]
-  }
+      { value: "archived", label: "Archived" },
+    ],
+  },
 ];
 
 /**
@@ -85,9 +85,9 @@ export const QuickCreateFieldConfig: Field<CoachingActionPlanInput>[] = [
     label: "Start Date",
     type: "date",
     placeholder: "When the coaching plan begins",
-  }
+  },
 ];
 
 // Alias for backward compatibility
 export const CoachingActionPlanFields = CoachingActionPlanFieldConfig;
-export const QuickCreateFields = QuickCreateFieldConfig; 
+export const QuickCreateFields = QuickCreateFieldConfig;

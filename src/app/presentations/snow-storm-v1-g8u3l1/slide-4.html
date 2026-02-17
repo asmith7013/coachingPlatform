@@ -1,133 +1,570 @@
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
-    <h2 style="font-size: 32px; font-weight: 700; color: #22c55e; margin: 0 0 15px 0; text-transform: uppercase;">Step 1: Plot the Points</h2>
-    <p style="font-size: 18px; color: #94a3b8; margin-bottom: 15px;">Each row in the table gives us an ordered pair (x, y) to plot on the graph.</p>
+<div
+  class="slide-container"
+  style="
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #121212 0%, #14141e 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 40px 60px 120px 60px;
+    color: #ffffff;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+    position: relative;
+  "
+>
+  <h2
+    style="
+      font-size: 32px;
+      font-weight: 700;
+      color: #22c55e;
+      margin: 0 0 15px 0;
+      text-transform: uppercase;
+    "
+  >
+    Step 1: Plot the Points
+  </h2>
+  <p style="font-size: 18px; color: #94a3b8; margin-bottom: 15px">
+    Each row in the table gives us an ordered pair (x, y) to plot on the graph.
+  </p>
 
-    <div style="display: flex; gap: 40px; flex: 1; align-items: center; justify-content: center;">
-        <!-- Table with highlighting -->
-        <div style="background: rgba(30, 41, 59, 0.8); border-radius: 12px; padding: 15px; border: 2px solid #334155;">
-            <table style="border-collapse: collapse; font-size: 16px;">
-                <thead>
-                    <tr>
-                        <th style="background: #475569; padding: 10px 25px; border: 1px solid #64748b; color: #e2e8f0;">x</th>
-                        <th style="background: #475569; padding: 10px 25px; border: 1px solid #64748b; color: #e2e8f0;">y</th>
-                        <th style="background: #475569; padding: 10px 25px; border: 1px solid #64748b; color: #e2e8f0;">Point</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="background: rgba(251, 191, 36, 0.15);">
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #fbbf24;">0</td>
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #fbbf24;">0</td>
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #fbbf24;">(0, 0)</td>
-                    </tr>
-                    <tr style="background: rgba(96, 165, 250, 0.15);">
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #60a5fa;">3</td>
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #60a5fa;">6</td>
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #60a5fa;">(3, 6)</td>
-                    </tr>
-                    <tr style="background: rgba(34, 197, 94, 0.15);">
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #22c55e;">5</td>
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #22c55e;">10</td>
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #22c55e;">(5, 10)</td>
-                    </tr>
-                    <tr style="background: rgba(168, 85, 247, 0.15);">
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #a855f7;">6</td>
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #a855f7;">12</td>
-                        <td style="padding: 10px 25px; border: 1px solid #64748b; text-align: center; color: #a855f7;">(6, 12)</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Graph with points plotted -->
-        <div style="background: rgba(30, 41, 59, 0.5); border-radius: 12px; padding: 15px; border: 2px solid #334155;">
-            <svg viewBox="0 0 380 340" style="width: 320px; height: 280px;">
-                <!-- Grid -->
-                <g stroke="#334155" stroke-width="0.5">
-                    <line x1="50" y1="30" x2="350" y2="30"/><line x1="50" y1="60" x2="350" y2="60"/>
-                    <line x1="50" y1="90" x2="350" y2="90"/><line x1="50" y1="120" x2="350" y2="120"/>
-                    <line x1="50" y1="150" x2="350" y2="150"/><line x1="50" y1="180" x2="350" y2="180"/>
-                    <line x1="50" y1="210" x2="350" y2="210"/><line x1="50" y1="240" x2="350" y2="240"/>
-                    <line x1="50" y1="270" x2="350" y2="270"/><line x1="50" y1="300" x2="350" y2="300"/>
-                    <line x1="50" y1="30" x2="50" y2="300"/><line x1="80" y1="30" x2="80" y2="300"/>
-                    <line x1="110" y1="30" x2="110" y2="300"/><line x1="140" y1="30" x2="140" y2="300"/>
-                    <line x1="170" y1="30" x2="170" y2="300"/><line x1="200" y1="30" x2="200" y2="300"/>
-                    <line x1="230" y1="30" x2="230" y2="300"/><line x1="260" y1="30" x2="260" y2="300"/>
-                    <line x1="290" y1="30" x2="290" y2="300"/><line x1="320" y1="30" x2="320" y2="300"/>
-                    <line x1="350" y1="30" x2="350" y2="300"/>
-                </g>
-                <!-- Axes -->
-                <line x1="50" y1="300" x2="350" y2="300" stroke="#94a3b8" stroke-width="2"/>
-                <line x1="50" y1="30" x2="50" y2="300" stroke="#94a3b8" stroke-width="2"/>
-                <polygon points="50,25 45,35 55,35" fill="#94a3b8"/>
-                <polygon points="355,300 345,295 345,305" fill="#94a3b8"/>
-                <!-- Y-axis labels -->
-                <text x="40" y="304" fill="#94a3b8" font-size="11" text-anchor="end">0</text>
-                <text x="40" y="274" fill="#94a3b8" font-size="11" text-anchor="end">2</text>
-                <text x="40" y="244" fill="#94a3b8" font-size="11" text-anchor="end">4</text>
-                <text x="40" y="214" fill="#94a3b8" font-size="11" text-anchor="end">6</text>
-                <text x="40" y="184" fill="#94a3b8" font-size="11" text-anchor="end">8</text>
-                <text x="40" y="154" fill="#94a3b8" font-size="11" text-anchor="end">10</text>
-                <text x="40" y="124" fill="#94a3b8" font-size="11" text-anchor="end">12</text>
-                <text x="40" y="94" fill="#94a3b8" font-size="11" text-anchor="end">14</text>
-                <text x="40" y="64" fill="#94a3b8" font-size="11" text-anchor="end">16</text>
-                <text x="40" y="34" fill="#94a3b8" font-size="11" text-anchor="end">18</text>
-                <!-- X-axis labels -->
-                <text x="50" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">0</text>
-                <text x="80" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">1</text>
-                <text x="110" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">2</text>
-                <text x="140" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">3</text>
-                <text x="170" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">4</text>
-                <text x="200" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">5</text>
-                <text x="230" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">6</text>
-                <text x="260" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">7</text>
-                <text x="290" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">8</text>
-                <text x="320" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">9</text>
-                <text x="350" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">10</text>
-                <!-- Axis titles -->
-                <text x="15" y="165" fill="#cbd5e1" font-size="11" text-anchor="middle" transform="rotate(-90, 15, 165)">Snow (inches)</text>
-                <text x="200" y="335" fill="#cbd5e1" font-size="11" text-anchor="middle">Time (hours)</text>
-
-                <!-- Plotted points -->
-                <circle cx="50" cy="300" r="8" fill="#fbbf24" stroke="#fff" stroke-width="2"/>
-                <circle cx="140" cy="210" r="8" fill="#60a5fa" stroke="#fff" stroke-width="2"/>
-                <circle cx="200" cy="150" r="8" fill="#22c55e" stroke="#fff" stroke-width="2"/>
-                <circle cx="230" cy="120" r="8" fill="#a855f7" stroke="#fff" stroke-width="2"/>
-            </svg>
-        </div>
+  <div
+    style="
+      display: flex;
+      gap: 40px;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+    "
+  >
+    <!-- Table with highlighting -->
+    <div
+      style="
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 12px;
+        padding: 15px;
+        border: 2px solid #334155;
+      "
+    >
+      <table style="border-collapse: collapse; font-size: 16px">
+        <thead>
+          <tr>
+            <th
+              style="
+                background: #475569;
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                color: #e2e8f0;
+              "
+            >
+              x
+            </th>
+            <th
+              style="
+                background: #475569;
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                color: #e2e8f0;
+              "
+            >
+              y
+            </th>
+            <th
+              style="
+                background: #475569;
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                color: #e2e8f0;
+              "
+            >
+              Point
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: rgba(251, 191, 36, 0.15)">
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #fbbf24;
+              "
+            >
+              0
+            </td>
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #fbbf24;
+              "
+            >
+              0
+            </td>
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #fbbf24;
+              "
+            >
+              (0, 0)
+            </td>
+          </tr>
+          <tr style="background: rgba(96, 165, 250, 0.15)">
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #60a5fa;
+              "
+            >
+              3
+            </td>
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #60a5fa;
+              "
+            >
+              6
+            </td>
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #60a5fa;
+              "
+            >
+              (3, 6)
+            </td>
+          </tr>
+          <tr style="background: rgba(34, 197, 94, 0.15)">
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #22c55e;
+              "
+            >
+              5
+            </td>
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #22c55e;
+              "
+            >
+              10
+            </td>
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #22c55e;
+              "
+            >
+              (5, 10)
+            </td>
+          </tr>
+          <tr style="background: rgba(168, 85, 247, 0.15)">
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #a855f7;
+              "
+            >
+              6
+            </td>
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #a855f7;
+              "
+            >
+              12
+            </td>
+            <td
+              style="
+                padding: 10px 25px;
+                border: 1px solid #64748b;
+                text-align: center;
+                color: #a855f7;
+              "
+            >
+              (6, 12)
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div style="background: rgba(34, 197, 94, 0.15); border-radius: 12px; padding: 10px 15px; margin-top: 10px;">
-        <p style="font-size: 16px; color: #e2e8f0; margin: 0;">
-            <strong style="color: #4ade80;">Notice:</strong> All four points line up! This confirms it's a proportional (linear) relationship.
-        </p>
+    <!-- Graph with points plotted -->
+    <div
+      style="
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 12px;
+        padding: 15px;
+        border: 2px solid #334155;
+      "
+    >
+      <svg viewBox="0 0 380 340" style="width: 320px; height: 280px">
+        <!-- Grid -->
+        <g stroke="#334155" stroke-width="0.5">
+          <line x1="50" y1="30" x2="350" y2="30" />
+          <line x1="50" y1="60" x2="350" y2="60" />
+          <line x1="50" y1="90" x2="350" y2="90" />
+          <line x1="50" y1="120" x2="350" y2="120" />
+          <line x1="50" y1="150" x2="350" y2="150" />
+          <line x1="50" y1="180" x2="350" y2="180" />
+          <line x1="50" y1="210" x2="350" y2="210" />
+          <line x1="50" y1="240" x2="350" y2="240" />
+          <line x1="50" y1="270" x2="350" y2="270" />
+          <line x1="50" y1="300" x2="350" y2="300" />
+          <line x1="50" y1="30" x2="50" y2="300" />
+          <line x1="80" y1="30" x2="80" y2="300" />
+          <line x1="110" y1="30" x2="110" y2="300" />
+          <line x1="140" y1="30" x2="140" y2="300" />
+          <line x1="170" y1="30" x2="170" y2="300" />
+          <line x1="200" y1="30" x2="200" y2="300" />
+          <line x1="230" y1="30" x2="230" y2="300" />
+          <line x1="260" y1="30" x2="260" y2="300" />
+          <line x1="290" y1="30" x2="290" y2="300" />
+          <line x1="320" y1="30" x2="320" y2="300" />
+          <line x1="350" y1="30" x2="350" y2="300" />
+        </g>
+        <!-- Axes -->
+        <line
+          x1="50"
+          y1="300"
+          x2="350"
+          y2="300"
+          stroke="#94a3b8"
+          stroke-width="2"
+        />
+        <line
+          x1="50"
+          y1="30"
+          x2="50"
+          y2="300"
+          stroke="#94a3b8"
+          stroke-width="2"
+        />
+        <polygon points="50,25 45,35 55,35" fill="#94a3b8" />
+        <polygon points="355,300 345,295 345,305" fill="#94a3b8" />
+        <!-- Y-axis labels -->
+        <text x="40" y="304" fill="#94a3b8" font-size="11" text-anchor="end">
+          0
+        </text>
+        <text x="40" y="274" fill="#94a3b8" font-size="11" text-anchor="end">
+          2
+        </text>
+        <text x="40" y="244" fill="#94a3b8" font-size="11" text-anchor="end">
+          4
+        </text>
+        <text x="40" y="214" fill="#94a3b8" font-size="11" text-anchor="end">
+          6
+        </text>
+        <text x="40" y="184" fill="#94a3b8" font-size="11" text-anchor="end">
+          8
+        </text>
+        <text x="40" y="154" fill="#94a3b8" font-size="11" text-anchor="end">
+          10
+        </text>
+        <text x="40" y="124" fill="#94a3b8" font-size="11" text-anchor="end">
+          12
+        </text>
+        <text x="40" y="94" fill="#94a3b8" font-size="11" text-anchor="end">
+          14
+        </text>
+        <text x="40" y="64" fill="#94a3b8" font-size="11" text-anchor="end">
+          16
+        </text>
+        <text x="40" y="34" fill="#94a3b8" font-size="11" text-anchor="end">
+          18
+        </text>
+        <!-- X-axis labels -->
+        <text x="50" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">
+          0
+        </text>
+        <text x="80" y="318" fill="#94a3b8" font-size="11" text-anchor="middle">
+          1
+        </text>
+        <text
+          x="110"
+          y="318"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          2
+        </text>
+        <text
+          x="140"
+          y="318"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          3
+        </text>
+        <text
+          x="170"
+          y="318"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          4
+        </text>
+        <text
+          x="200"
+          y="318"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          5
+        </text>
+        <text
+          x="230"
+          y="318"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          6
+        </text>
+        <text
+          x="260"
+          y="318"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          7
+        </text>
+        <text
+          x="290"
+          y="318"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          8
+        </text>
+        <text
+          x="320"
+          y="318"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          9
+        </text>
+        <text
+          x="350"
+          y="318"
+          fill="#94a3b8"
+          font-size="11"
+          text-anchor="middle"
+        >
+          10
+        </text>
+        <!-- Axis titles -->
+        <text
+          x="15"
+          y="165"
+          fill="#cbd5e1"
+          font-size="11"
+          text-anchor="middle"
+          transform="rotate(-90, 15, 165)"
+        >
+          Snow (inches)
+        </text>
+        <text
+          x="200"
+          y="335"
+          fill="#cbd5e1"
+          font-size="11"
+          text-anchor="middle"
+        >
+          Time (hours)
+        </text>
+
+        <!-- Plotted points -->
+        <circle
+          cx="50"
+          cy="300"
+          r="8"
+          fill="#fbbf24"
+          stroke="#fff"
+          stroke-width="2"
+        />
+        <circle
+          cx="140"
+          cy="210"
+          r="8"
+          fill="#60a5fa"
+          stroke="#fff"
+          stroke-width="2"
+        />
+        <circle
+          cx="200"
+          cy="150"
+          r="8"
+          fill="#22c55e"
+          stroke="#fff"
+          stroke-width="2"
+        />
+        <circle
+          cx="230"
+          cy="120"
+          r="8"
+          fill="#a855f7"
+          stroke="#fff"
+          stroke-width="2"
+        />
+      </svg>
     </div>
+  </div>
+
+  <div
+    style="
+      background: rgba(34, 197, 94, 0.15);
+      border-radius: 12px;
+      padding: 10px 15px;
+      margin-top: 10px;
+    "
+  >
+    <p style="font-size: 16px; color: #e2e8f0; margin: 0">
+      <strong style="color: #4ade80">Notice:</strong> All four points line up!
+      This confirms it's a proportional (linear) relationship.
+    </p>
+  </div>
 </div>
 
 <!-- Toggle button -->
-<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('answer-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
-    Show Answer
+<button
+  id="toggle-hint"
+  onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('answer-box').style.transform='translateY(0)';"
+  style="
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #94a3b8;
+    font-size: 16px;
+    background: rgba(148, 163, 184, 0.1);
+    border: 2px solid #94a3b8;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    animation: pulse 2s ease-in-out infinite;
+    z-index: 200;
+    user-select: none;
+  "
+>
+  Show Answer
 </button>
 
 <!-- Answer Box at bottom -->
-<div id="answer-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
-    <div style="background: #4ade80; border-top: 4px solid #22c55e; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
-        <button onclick="document.getElementById('answer-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
-            x
-        </button>
-        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px; color: #fff;">ANSWER</div>
-        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
-            Plotting points first lets us visually verify the relationship is linear (points form a straight line) before we try to find the equation!
-        </span>
+<div
+  id="answer-box"
+  style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+    z-index: 100;
+  "
+>
+  <div
+    style="
+      background: #4ade80;
+      border-top: 4px solid #22c55e;
+      padding: 1.25rem 2rem;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+    "
+  >
+    <button
+      onclick="document.getElementById('answer-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';"
+      style="
+        position: absolute;
+        top: 0.75rem;
+        right: 1rem;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.2);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #000;
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 1;
+        transition: background 0.2s;
+      "
+    >
+      x
+    </button>
+    <div
+      style="
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-right: 12px;
+        color: #fff;
+      "
+    >
+      ANSWER
     </div>
+    <span style="color: #000000; font-size: 1.1rem; font-weight: 600">
+      Plotting points first lets us visually verify the relationship is linear
+      (points form a straight line) before we try to find the equation!
+    </span>
+  </div>
 </div>
 
 <style>
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
-#toggle-hint:hover {
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+  #toggle-hint:hover {
     background: rgba(148, 163, 184, 0.2);
     transform: translateX(-50%) scale(1.05);
-}
+  }
 </style>

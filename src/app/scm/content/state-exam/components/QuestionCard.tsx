@@ -7,7 +7,13 @@ import { extractDomain, normalizeStandard } from "../hooks";
 import type { StateTestQuestion } from "../types";
 
 // Domain-colored badge component
-function StandardBadge({ standard, isPrimary = true }: { standard: string; isPrimary?: boolean }) {
+function StandardBadge({
+  standard,
+  isPrimary = true,
+}: {
+  standard: string;
+  isPrimary?: boolean;
+}) {
   const normalizedStd = normalizeStandard(standard);
   const domain = extractDomain(normalizedStd);
   const colors = DOMAIN_COLORS[domain] || DOMAIN_COLORS.Other;
@@ -15,7 +21,9 @@ function StandardBadge({ standard, isPrimary = true }: { standard: string; isPri
   return (
     <span
       className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-        isPrimary ? `${colors.badge} text-white` : `${colors.bg} ${colors.text} border ${colors.border}`
+        isPrimary
+          ? `${colors.badge} text-white`
+          : `${colors.bg} ${colors.text} border ${colors.border}`
       }`}
     >
       {standard}
@@ -47,7 +55,6 @@ export function QuestionCard({
   const domain = extractDomain(normalizedStd);
   const colors = DOMAIN_COLORS[domain] || DOMAIN_COLORS.Other;
 
-
   // Use domain colors for card styling, with lighter styling for secondary-only matches
   const cardClasses = isSecondaryOnlyMatch
     ? "bg-gray-50 rounded-lg border border-gray-300 shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
@@ -59,10 +66,7 @@ export function QuestionCard({
 
   return (
     <>
-      <div
-        className={cardClasses}
-        onClick={() => setIsModalOpen(true)}
-      >
+      <div className={cardClasses} onClick={() => setIsModalOpen(true)}>
         {/* Summary Header - Always visible */}
         <div className={headerClasses}>
           <div className="flex items-center justify-between">
@@ -71,7 +75,11 @@ export function QuestionCard({
                 {/* Left side: response type and points */}
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-gray-600">
-                    {question.responseType === "multipleChoice" ? "Multiple Choice" : question.responseType === "constructedResponse" ? "Constructed Response" : question.questionType || "-"}
+                    {question.responseType === "multipleChoice"
+                      ? "Multiple Choice"
+                      : question.responseType === "constructedResponse"
+                        ? "Constructed Response"
+                        : question.questionType || "-"}
                   </span>
                   {question.points !== undefined && (
                     <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-medium">
@@ -81,19 +89,29 @@ export function QuestionCard({
                 </div>
                 {/* Right side: question number and year */}
                 <span className="text-xs text-gray-600">
-                  {question.questionNumber && `#${question.questionNumber} `}{question.examYear}
+                  {question.questionNumber && `#${question.questionNumber} `}
+                  {question.examYear}
                 </span>
               </>
             ) : (
               <>
                 <div className="flex items-center gap-1">
-                  <StandardBadge standard={question.standard} isPrimary={true} />
+                  <StandardBadge
+                    standard={question.standard}
+                    isPrimary={true}
+                  />
                   {question.secondaryStandard && (
-                    <StandardBadge standard={question.secondaryStandard} isPrimary={false} />
+                    <StandardBadge
+                      standard={question.secondaryStandard}
+                      isPrimary={false}
+                    />
                   )}
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-600">
-                  <span>{question.questionNumber && `#${question.questionNumber} `}{question.examYear}</span>
+                  <span>
+                    {question.questionNumber && `#${question.questionNumber} `}
+                    {question.examYear}
+                  </span>
                   {question.points !== undefined && (
                     <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
                       {question.points}pt
@@ -115,7 +133,9 @@ export function QuestionCard({
               <input
                 type="checkbox"
                 checked={isSelected}
-                onChange={(e) => onSelectionChange?.(question.questionId, e.target.checked)}
+                onChange={(e) =>
+                  onSelectionChange?.(question.questionId, e.target.checked)
+                }
                 className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
             </div>
@@ -158,13 +178,22 @@ export function QuestionCard({
               <div className="flex items-center gap-2">
                 <StandardBadge standard={question.standard} isPrimary={true} />
                 {question.secondaryStandard && (
-                  <StandardBadge standard={question.secondaryStandard} isPrimary={false} />
+                  <StandardBadge
+                    standard={question.secondaryStandard}
+                    isPrimary={false}
+                  />
                 )}
               </div>
               <div className="flex items-center gap-3 text-sm text-gray-600">
                 {/* <span>{question.examYear}</span> */}
                 {/* <span>•</span> */}
-                <span>{question.responseType === "multipleChoice" ? "Multiple Choice" : question.responseType === "constructedResponse" ? "Constructed Response" : question.questionType || "-"}</span>
+                <span>
+                  {question.responseType === "multipleChoice"
+                    ? "Multiple Choice"
+                    : question.responseType === "constructedResponse"
+                      ? "Constructed Response"
+                      : question.questionType || "-"}
+                </span>
                 {question.points !== undefined && (
                   <>
                     <span>•</span>
@@ -188,7 +217,9 @@ export function QuestionCard({
             <div className="flex items-center justify-between text-xs text-gray-500">
               <div className="flex items-center gap-4">
                 <span>Grade {question.grade}</span>
-                {question.questionNumber && <span>Q#{question.questionNumber}</span>}
+                {question.questionNumber && (
+                  <span>Q#{question.questionNumber}</span>
+                )}
                 <span>{question.examTitle}</span>
               </div>
               <div className="flex items-center gap-3">

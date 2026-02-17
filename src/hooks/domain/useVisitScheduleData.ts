@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
-import { fetchVisitScheduleData, VisitScheduleData } from '@actions/visits/visit-schedule-data';
-import { handleClientError } from '@error/handlers/client';
+import { useState, useEffect } from "react";
+import {
+  fetchVisitScheduleData,
+  VisitScheduleData,
+} from "@actions/visits/visit-schedule-data";
+import { handleClientError } from "@error/handlers/client";
 
 export function useVisitScheduleData(visitId: string | null) {
   const [data, setData] = useState<VisitScheduleData | null>(null);
@@ -17,21 +20,21 @@ export function useVisitScheduleData(visitId: string | null) {
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const result = await fetchVisitScheduleData(visitId);
-        
+
         if (result.success) {
           setData(result.data || null);
         } else {
           const errorMessage = handleClientError(
-            new Error(result.error || 'Failed to fetch data'),
-            'useVisitScheduleData'
+            new Error(result.error || "Failed to fetch data"),
+            "useVisitScheduleData",
           );
           setError(errorMessage);
         }
       } catch (err) {
-        const errorMessage = handleClientError(err, 'useVisitScheduleData');
+        const errorMessage = handleClientError(err, "useVisitScheduleData");
         setError(errorMessage);
       } finally {
         setIsLoading(false);
@@ -42,4 +45,4 @@ export function useVisitScheduleData(visitId: string | null) {
   }, [visitId]);
 
   return { data, isLoading, error };
-} 
+}

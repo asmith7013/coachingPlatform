@@ -1,22 +1,24 @@
-'use client'
+"use client";
 
-import { DashboardAuthGuard } from '@components/features/dashboard/DashboardAuthGuard'
-import { SummerProgramAppShell } from './SummerProgramAppShell'
+import { DashboardAuthGuard } from "@components/features/dashboard/DashboardAuthGuard";
+import { SummerProgramAppShell } from "./SummerProgramAppShell";
 
-export function SummerProgramShell({ children }: { children: React.ReactNode }) {
+export function SummerProgramShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <DashboardAuthGuard>
-      <SummerProgramAppShell>
-        {children}
-      </SummerProgramAppShell>
+      <SummerProgramAppShell>{children}</SummerProgramAppShell>
     </DashboardAuthGuard>
-  )
-} 
+  );
+}
 
-
-
-{/* <DashboardAuthGuard>
+{
+  /* <DashboardAuthGuard>
 <SummerProgramAppShell>
   {children}
 </SummerProgramAppShell>
-</DashboardAuthGuard> */}
+</DashboardAuthGuard> */
+}

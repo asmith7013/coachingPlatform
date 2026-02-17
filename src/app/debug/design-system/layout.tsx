@@ -1,18 +1,18 @@
-import { cn } from '@ui/utils/formatters';
-import Link from 'next/link'
+import { cn } from "@ui/utils/formatters";
+import Link from "next/link";
 
 const navItems = [
-  { href: '/tools/design-system/tokens', label: 'Tokens' },
-  { href: '/tools/design-system/text', label: 'Typography' },
-  { href: '/tools/design-system/spacing', label: 'Spacing' },
-  { href: '/tools/design-system/buttons', label: 'Buttons' },
-  { href: '/tools/design-system/cards', label: 'Cards' },
-]
+  { href: "/tools/design-system/tokens", label: "Tokens" },
+  { href: "/tools/design-system/text", label: "Typography" },
+  { href: "/tools/design-system/spacing", label: "Spacing" },
+  { href: "/tools/design-system/buttons", label: "Buttons" },
+  { href: "/tools/design-system/cards", label: "Cards" },
+];
 
 export default function DesignSystemLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <div className="min-h-screen bg-background">
@@ -26,8 +26,8 @@ export default function DesignSystemLayout({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'text-sm font-medium text-muted transition-colors',
-                  'hover:text-primary'
+                  "text-sm font-medium text-muted transition-colors",
+                  "hover:text-primary",
                 )}
               >
                 {item.label}
@@ -38,9 +38,7 @@ export default function DesignSystemLayout({
       </nav>
 
       {/* Content */}
-      <main className="mx-auto max-w-7xl p-8">
-        {children}
-      </main>
+      <main className="mx-auto max-w-7xl p-8">{children}</main>
     </div>
-  )
-} 
+  );
+}

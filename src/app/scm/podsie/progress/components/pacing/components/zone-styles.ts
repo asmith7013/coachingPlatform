@@ -1,12 +1,18 @@
 // Zone styling configuration for pacing progress bar
 
-export const ZONE_ORDER = ["far-behind", "behind", "on-track", "ahead", "far-ahead"] as const;
+export const ZONE_ORDER = [
+  "far-behind",
+  "behind",
+  "on-track",
+  "ahead",
+  "far-ahead",
+] as const;
 
 export const ZONE_LABELS: Record<string, string> = {
   "far-behind": "Far Behind",
-  "behind": "Behind",
+  behind: "Behind",
   "on-track": "On Pace",
-  "ahead": "Ahead",
+  ahead: "Ahead",
   "far-ahead": "Far Ahead",
 };
 
@@ -34,12 +40,13 @@ const ZONE_STYLES: Record<string, ZoneStyles> = {
     headerBg: "bg-red-100",
     dotColor: "bg-red-500",
   },
-  "behind": {
+  behind: {
     bg: "bg-yellow-50",
     border: "border-yellow-200",
     text: "text-yellow-900 font-semibold",
     badge: "bg-yellow-100 text-yellow-700",
-    partBadge: "bg-white text-yellow-900 font-semibold border border-yellow-900",
+    partBadge:
+      "bg-white text-yellow-900 font-semibold border border-yellow-900",
     studentBadge: "bg-yellow-500 text-white",
     lessonIcon: "text-yellow-600",
     headerBg: "bg-yellow-100",
@@ -56,7 +63,7 @@ const ZONE_STYLES: Record<string, ZoneStyles> = {
     headerBg: "bg-green-100",
     dotColor: "bg-green-500",
   },
-  "ahead": {
+  ahead: {
     bg: "bg-sky-50",
     border: "border-sky-200",
     text: "text-sky-900 font-semibold",
@@ -78,12 +85,13 @@ const ZONE_STYLES: Record<string, ZoneStyles> = {
     headerBg: "bg-blue-200",
     dotColor: "bg-blue-600",
   },
-  "complete": {
+  complete: {
     bg: "bg-purple-100",
     border: "border-purple-300",
     text: "text-purple-900 font-semibold",
     badge: "bg-purple-200 text-purple-800",
-    partBadge: "bg-white text-purple-900 font-semibold border border-purple-900",
+    partBadge:
+      "bg-white text-purple-900 font-semibold border border-purple-900",
     studentBadge: "bg-purple-600 text-white",
     lessonIcon: "text-purple-600",
     headerBg: "bg-purple-200",

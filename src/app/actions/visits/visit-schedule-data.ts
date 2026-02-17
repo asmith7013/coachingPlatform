@@ -15,33 +15,33 @@ import type { VisitScheduleBlock } from "@zod-schema/schedules/schedule-events";
 export interface VisitScheduleData {
   visit?: Visit;
   visitSchedule?: VisitSchedule;
-  nycpsStaff: NYCPSStaff[];  // CHANGED: Use array instead of Map for consistency with existing utilities
-  school?: School;  // ADD: Include school data
-  teacherCount: number;  // ADD: Pre-calculated teacher count
+  nycpsStaff: NYCPSStaff[]; // CHANGED: Use array instead of Map for consistency with existing utilities
+  school?: School; // ADD: Include school data
+  teacherCount: number; // ADD: Pre-calculated teacher count
 }
 
 export async function fetchVisitScheduleData(visitId: string) {
   return withDbConnection(async () => {
     try {
-      console.log('🔍 Fetching visit schedule data for visitId:', visitId);
+      console.log("🔍 Fetching visit schedule data for visitId:", visitId);
 
       // 1. Fetch visit by ID
       const visit = await VisitModel.findById(visitId);
       if (!visit) {
-        console.log('⚠️ Visit not found, returning empty data structure');
-        return { 
-          success: true, 
-          data: { 
+        console.log("⚠️ Visit not found, returning empty data structure");
+        return {
+          success: true,
+          data: {
             nycpsStaff: [],
-            teacherCount: 1  // ADD: Default teacher count
-          } as VisitScheduleData 
+            teacherCount: 1, // ADD: Default teacher count
+          } as VisitScheduleData,
         };
       }
 
-      console.log('✅ Visit fetched:', { 
-        id: visit._id, 
-        date: visit.date, 
-        visitScheduleId: visit.visitScheduleId 
+      console.log("✅ Visit fetched:", {
+        id: visit._id,
+        date: visit.date,
+        visitScheduleId: visit.visitScheduleId,
       });
 
       // 2. Fetch school data if visit has schoolId (NEW - but follows existing pattern)
@@ -53,7 +53,7 @@ export async function fetchVisitScheduleData(visitId: string) {
             school = schoolDoc;
           }
         } catch (error) {
-          console.warn('⚠️ Could not fetch school data:', error);
+          console.warn("⚠️ Could not fetch school data:", error);
         }
       }
 
@@ -62,8 +62,10 @@ export async function fetchVisitScheduleData(visitId: string) {
 
       // 2. Fetch VisitSchedule if visitScheduleId exists
       if (visit.visitScheduleId) {
-        const scheduleDoc = await VisitScheduleModel.findById(visit.visitScheduleId);
-        
+        const scheduleDoc = await VisitScheduleModel.findById(
+          visit.visitScheduleId,
+        );
+
         if (scheduleDoc) {
           visitSchedule = scheduleDoc;
 
@@ -78,7 +80,10 @@ export async function fetchVisitScheduleData(visitId: string) {
             allStaffIds = [...new Set(staffIds)];
           }
         } else {
-          console.warn('⚠️ VisitSchedule not found for ID:', visit.visitScheduleId);
+          console.warn(
+            "⚠️ VisitSchedule not found for ID:",
+            visit.visitScheduleId,
+          );
         }
       }
 
@@ -87,26 +92,30 @@ export async function fetchVisitScheduleData(visitId: string) {
         allStaffIds.push(visit.teacherId);
       }
 
-      console.log('📋 Unique staff IDs to fetch:', allStaffIds);
+      console.log("📋 Unique staff IDs to fetch:", allStaffIds);
 
       // 4. Calculate teacher count (NEW - simple calculation)
       const teacherCount = Math.max(allStaffIds.length, 1);
-      console.log('📊 Calculated teacher count:', teacherCount);
+      console.log("📊 Calculated teacher count:", teacherCount);
 
       // 5. Fetch all staff in parallel using MongoDB $in query
       let nycpsStaff: NYCPSStaff[] = [];
-      
+
       if (allStaffIds.length > 0) {
         try {
-          const staffDocs = await NYCPSStaffModel.find({ 
-            _id: { $in: allStaffIds } 
+          const staffDocs = await NYCPSStaffModel.find({
+            _id: { $in: allStaffIds },
           });
-          
+
           nycpsStaff = staffDocs;
 
-          console.log('✅ Staff array created with', nycpsStaff.length, 'entries');
+          console.log(
+            "✅ Staff array created with",
+            nycpsStaff.length,
+            "entries",
+          );
         } catch (error) {
-          console.error('❌ Error fetching staff data:', error);
+          console.error("❌ Error fetching staff data:", error);
           // Continue with empty staff array rather than failing entirely
         }
       }
@@ -115,18 +124,17 @@ export async function fetchVisitScheduleData(visitId: string) {
         visit,
         visitSchedule,
         nycpsStaff,
-        school,  // ADD: Include school data
-        teacherCount,  // ADD: Include calculated count
+        school, // ADD: Include school data
+        teacherCount, // ADD: Include calculated count
       };
 
       return { success: true, data: result };
-
     } catch (error) {
-      console.error('❌ Error fetching visit schedule data:', error);
-      return { 
-        success: false, 
-        error: handleServerError(error, "Failed to fetch visit schedule data") 
+      console.error("❌ Error fetching visit schedule data:", error);
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch visit schedule data"),
       };
     }
   });
-} 
+}

@@ -1,8 +1,11 @@
-import type { WorkedExampleDeck, HtmlSlide } from '@zod-schema/scm/worked-example';
+import type {
+  WorkedExampleDeck,
+  HtmlSlide,
+} from "@zod-schema/scm/worked-example";
 
-export type ExportStatus = 'idle' | 'exporting' | 'success' | 'error';
+export type ExportStatus = "idle" | "exporting" | "success" | "error";
 
-export type AnimatableBox = 'cfu-box' | 'answer-box';
+export type AnimatableBox = "cfu-box" | "answer-box";
 
 export interface PresentationModalProps {
   slug: string;

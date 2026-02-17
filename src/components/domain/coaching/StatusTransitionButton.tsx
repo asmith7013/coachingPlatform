@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
-import { Button } from '@components/core/Button';
-import { Select } from '@components/core/fields/Select';
-import { Dialog } from '@components/composed/dialogs/Dialog';
-import { Text } from '@components/core/typography/Text';
-import { Badge } from '@components/core/feedback/Badge';
-import { ArrowRight as _ArrowRightIcon, AlertCircle } from 'lucide-react';
-import { statusWorkflow, getStatusColor, getStatusLabel, type PlanStatus } from '@data-processing/transformers/utils/coaching-action-plan-utils';
-import type { CoachingActionPlan } from '@zod-schema/core/cap';
-import { createCoachingActionPlanDefaults } from '@zod-schema/core/cap';
+import React, { useState } from "react";
+import { Button } from "@components/core/Button";
+import { Select } from "@components/core/fields/Select";
+import { Dialog } from "@components/composed/dialogs/Dialog";
+import { Text } from "@components/core/typography/Text";
+import { Badge } from "@components/core/feedback/Badge";
+import { ArrowRight as _ArrowRightIcon, AlertCircle } from "lucide-react";
+import {
+  statusWorkflow,
+  getStatusColor,
+  getStatusLabel,
+  type PlanStatus,
+} from "@data-processing/transformers/utils/coaching-action-plan-utils";
+import type { CoachingActionPlan } from "@zod-schema/core/cap";
+import { createCoachingActionPlanDefaults } from "@zod-schema/core/cap";
 
 interface StatusTransitionButtonProps {
   plan: CoachingActionPlan & { _id: string };
-  onStatusChange: (planId: string, newStatus: PlanStatus, reason?: string) => Promise<void>;
+  onStatusChange: (
+    planId: string,
+    newStatus: PlanStatus,
+    reason?: string,
+  ) => Promise<void>;
   disabled?: boolean;
   className?: string;
 }
@@ -23,13 +32,16 @@ export function StatusTransitionButton({
   // className
 }: StatusTransitionButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<PlanStatus | ''>('');
-  const [reason, setReason] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState<PlanStatus | "">("");
+  const [reason, setReason] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // Get available transitions for this plan
   const fullPlan = createCoachingActionPlanDefaults(plan);
-  const availableStatuses = statusWorkflow.getNextStatuses(plan.status as PlanStatus, fullPlan as unknown as CoachingActionPlan);
+  const availableStatuses = statusWorkflow.getNextStatuses(
+    plan.status as PlanStatus,
+    fullPlan as unknown as CoachingActionPlan,
+  );
 
   if (availableStatuses.length === 0) {
     return null; // No transitions available
@@ -42,23 +54,29 @@ export function StatusTransitionButton({
     try {
       await onStatusChange(plan._id, selectedStatus, reason);
       setIsModalOpen(false);
-      setSelectedStatus('');
-      setReason('');
+      setSelectedStatus("");
+      setReason("");
     } catch (error) {
-      console.error('Failed to update status:', error);
+      console.error("Failed to update status:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const getTransitionDescription = (toStatus: PlanStatus) => {
-    return statusWorkflow.transitions.find(t => 
-      t.from === plan.status && t.to === toStatus
-    )?.description || '';
+    return (
+      statusWorkflow.transitions.find(
+        (t) => t.from === plan.status && t.to === toStatus,
+      )?.description || ""
+    );
   };
 
   const validateTransition = (toStatus: PlanStatus) => {
-    return statusWorkflow.validateTransition(plan.status as PlanStatus, toStatus, fullPlan as unknown as CoachingActionPlan);
+    return statusWorkflow.validateTransition(
+      plan.status as PlanStatus,
+      toStatus,
+      fullPlan as unknown as CoachingActionPlan,
+    );
   };
 
   return (
@@ -86,7 +104,19 @@ export function StatusTransitionButton({
           <Text textSize="sm" color="muted" className="mb-2">
             Current Status
           </Text>
-          <Badge intent={getStatusColor(plan.status as PlanStatus) as "primary" | "secondary" | "danger" | "success" | "neutral" | "info" | "warning"} size="sm">
+          <Badge
+            intent={
+              getStatusColor(plan.status as PlanStatus) as
+                | "primary"
+                | "secondary"
+                | "danger"
+                | "success"
+                | "neutral"
+                | "info"
+                | "warning"
+            }
+            size="sm"
+          >
             {getStatusLabel(plan.status as PlanStatus)}
           </Badge>
         </div>
@@ -103,38 +133,41 @@ export function StatusTransitionButton({
             options={availableStatuses.map((status) => {
               const validation = validateTransition(status);
               const isDisabled = !validation.valid;
-              
+
               return {
                 value: status,
                 label: `${getStatusLabel(status)} - ${getTransitionDescription(status)}`,
-                disabled: isDisabled
+                disabled: isDisabled,
               };
             })}
           />
-          
-          {selectedStatus && (() => {
-            const validation = validateTransition(selectedStatus);
-            if (!validation.valid) {
-              return (
-                <div className="mt-2 p-3 bg-danger-50 border border-danger-200 rounded-md">
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-danger" />
-                    <Text textSize="sm" color="danger">
-                      Cannot transition to {getStatusLabel(selectedStatus)}
-                    </Text>
+
+          {selectedStatus &&
+            (() => {
+              const validation = validateTransition(selectedStatus);
+              if (!validation.valid) {
+                return (
+                  <div className="mt-2 p-3 bg-danger-50 border border-danger-200 rounded-md">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4 text-danger" />
+                      <Text textSize="sm" color="danger">
+                        Cannot transition to {getStatusLabel(selectedStatus)}
+                      </Text>
+                    </div>
+                    <ul className="mt-2 list-disc list-inside">
+                      {validation.errors.map((error, index) => (
+                        <li key={index}>
+                          <Text textSize="xs" color="danger">
+                            {error}
+                          </Text>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <ul className="mt-2 list-disc list-inside">
-                    {validation.errors.map((error, index) => (
-                      <li key={index}>
-                        <Text textSize="xs" color="danger">{error}</Text>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            }
-            return null;
-          })()}
+                );
+              }
+              return null;
+            })()}
         </div>
 
         {/* Reason (optional) */}
@@ -164,7 +197,11 @@ export function StatusTransitionButton({
           <Button
             intent="primary"
             onClick={handleStatusChange}
-            disabled={!selectedStatus || isLoading || (selectedStatus && !validateTransition(selectedStatus).valid)}
+            disabled={
+              !selectedStatus ||
+              isLoading ||
+              (selectedStatus && !validateTransition(selectedStatus).valid)
+            }
             loading={isLoading}
           >
             Update Status
@@ -173,4 +210,4 @@ export function StatusTransitionButton({
       </Dialog>
     </>
   );
-} 
+}

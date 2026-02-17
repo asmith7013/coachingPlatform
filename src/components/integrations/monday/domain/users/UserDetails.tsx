@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { MondayUser } from '@lib/integrations/monday/types/api';
-import { Badge } from '@components/core/feedback/Badge';
-import { Button } from '@components/core/Button';
-import { Spinner } from '@components/core/feedback/Spinner';
-import { Dialog } from '@components/composed/dialogs/Dialog';
-import { useStaffExistence } from '@hooks/integrations/monday/useStaffExistence';
-import { CreateTeachingLabStaffForm } from './CreateTeachingLabStaffForm';
-import Image from 'next/image';
+import { useState, useEffect, useRef } from "react";
+import { MondayUser } from "@lib/integrations/monday/types/api";
+import { Badge } from "@components/core/feedback/Badge";
+import { Button } from "@components/core/Button";
+import { Spinner } from "@components/core/feedback/Spinner";
+import { Dialog } from "@components/composed/dialogs/Dialog";
+import { useStaffExistence } from "@hooks/integrations/monday/useStaffExistence";
+import { CreateTeachingLabStaffForm } from "./CreateTeachingLabStaffForm";
+import Image from "next/image";
 
 // Extended MondayUser interface for additional properties
 interface ExtendedMondayUser extends MondayUser {
@@ -22,10 +22,14 @@ export interface UserDetailsProps {
   onStaffCreated?: () => void;
 }
 
-export function UserDetails({ user, className, onStaffCreated }: UserDetailsProps) {
+export function UserDetails({
+  user,
+  className,
+  onStaffCreated,
+}: UserDetailsProps) {
   const { exists, checking, error, checkExistence } = useStaffExistence();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   // Use a ref to track if we've already checked for this user
   const hasCheckedRef = useRef<boolean>(false);
 
@@ -33,8 +37,8 @@ export function UserDetails({ user, className, onStaffCreated }: UserDetailsProp
   useEffect(() => {
     if (user?.email && !hasCheckedRef.current) {
       hasCheckedRef.current = true;
-      checkExistence(user.email).catch(err => {
-        console.error('Error checking staff existence:', err);
+      checkExistence(user.email).catch((err) => {
+        console.error("Error checking staff existence:", err);
       });
     }
   }, [user?.email, checkExistence]);
@@ -57,14 +61,14 @@ export function UserDetails({ user, className, onStaffCreated }: UserDetailsProp
   };
 
   return (
-    <div className={`border rounded-md p-4 ${className || ''}`}>
+    <div className={`border rounded-md p-4 ${className || ""}`}>
       <div className="flex items-center gap-4">
         {/* User Avatar */}
         <div className="flex-shrink-0">
           {user.photo_thumb ? (
             <Image
               src={user.photo_thumb}
-              alt={user.name || 'User'}
+              alt={user.name || "User"}
               unoptimized
               width={48}
               height={48}
@@ -73,7 +77,7 @@ export function UserDetails({ user, className, onStaffCreated }: UserDetailsProp
           ) : (
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
               <span className="text-gray-500 text-lg">
-                {user.name?.charAt(0).toUpperCase() || '?'}
+                {user.name?.charAt(0).toUpperCase() || "?"}
               </span>
             </div>
           )}
@@ -81,28 +85,36 @@ export function UserDetails({ user, className, onStaffCreated }: UserDetailsProp
 
         {/* User Info */}
         <div className="flex-1">
-          <h3 className="font-medium text-lg">{user.name || 'Unnamed User'}</h3>
-          <p className="text-gray-600">{user.email || 'No email available'}</p>
+          <h3 className="font-medium text-lg">{user.name || "Unnamed User"}</h3>
+          <p className="text-gray-600">{user.email || "No email available"}</p>
           {user.title && <p className="text-gray-500 text-sm">{user.title}</p>}
         </div>
 
         {/* Monday ID and Staff Status */}
         <div className="flex-shrink-0 flex flex-col items-end gap-2">
-          <Badge intent="secondary" appearance="outline" size="xs">ID: {user.id}</Badge>
-          
+          <Badge intent="secondary" appearance="outline" size="xs">
+            ID: {user.id}
+          </Badge>
+
           {checking ? (
             <div className="flex items-center">
               <Spinner size="xs" className="mr-1" />
               <span className="text-xs">Checking...</span>
             </div>
           ) : error ? (
-            <Badge intent="danger" size="xs">Error checking</Badge>
+            <Badge intent="danger" size="xs">
+              Error checking
+            </Badge>
           ) : exists === true ? (
-            <Badge intent="success" appearance="outline" size="xs">Staff Exists</Badge>
+            <Badge intent="success" appearance="outline" size="xs">
+              Staff Exists
+            </Badge>
           ) : exists === false ? (
             <div className="flex items-center gap-2">
-              <Badge intent="warning" size="xs">Staff Not Found</Badge>
-              <Button 
+              <Badge intent="warning" size="xs">
+                Staff Not Found
+              </Badge>
+              <Button
                 intent="primary"
                 padding="sm"
                 textSize="sm"
@@ -112,7 +124,9 @@ export function UserDetails({ user, className, onStaffCreated }: UserDetailsProp
                 Create
               </Button>
             </div>
-          ) : <div>Hello</div>}
+          ) : (
+            <div>Hello</div>
+          )}
         </div>
       </div>
 
@@ -123,7 +137,7 @@ export function UserDetails({ user, className, onStaffCreated }: UserDetailsProp
           onClose={handleCloseModal}
           title="Create Teaching Lab Staff"
         >
-          <CreateTeachingLabStaffForm 
+          <CreateTeachingLabStaffForm
             user={user}
             onSuccess={handleStaffCreated}
             onCancel={handleCloseModal}
@@ -132,4 +146,4 @@ export function UserDetails({ user, className, onStaffCreated }: UserDetailsProp
       )}
     </div>
   );
-} 
+}

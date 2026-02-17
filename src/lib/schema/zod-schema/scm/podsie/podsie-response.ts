@@ -22,12 +22,16 @@ export const PodsieAiAnalysisSchema = z.object({
   thinking: z.string().optional(),
   isCorrect: z.boolean().optional(),
   answersCorrect: z.boolean().optional(),
-  explanationGrading: z.enum(['none', 'partial', 'full']).optional(),
+  explanationGrading: z.enum(["none", "partial", "full"]).optional(),
   overallAIFeedback: z.string().optional(),
-  additionalFeedback: z.array(z.object({
-    content: z.string(),
-    sectionTitle: z.string()
-  })).optional(),
+  additionalFeedback: z
+    .array(
+      z.object({
+        content: z.string(),
+        sectionTitle: z.string(),
+      }),
+    )
+    .optional(),
 });
 
 /**

@@ -9,10 +9,25 @@ import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
  * Individual question completion status
  */
 export const RampUpQuestionSchema = z.object({
-  questionNumber: z.number().int().positive().describe("Question number (1-based)"),
-  completed: z.boolean().default(false).describe("Whether the question was answered correctly"),
-  completedAt: z.string().optional().describe("When the question was completed (ISO format)"),
-  score: z.number().min(0).max(100).optional().describe("Score percentage for this question"),
+  questionNumber: z
+    .number()
+    .int()
+    .positive()
+    .describe("Question number (1-based)"),
+  completed: z
+    .boolean()
+    .default(false)
+    .describe("Whether the question was answered correctly"),
+  completedAt: z
+    .string()
+    .optional()
+    .describe("When the question was completed (ISO format)"),
+  score: z
+    .number()
+    .min(0)
+    .max(100)
+    .optional()
+    .describe("Score percentage for this question"),
 });
 
 // =====================================
@@ -32,29 +47,61 @@ export const RampUpProgressFieldsSchema = z.object({
   rampUpName: z.string().optional().describe("Human-readable ramp-up name"),
 
   // Question-level progress
-  questions: z.array(RampUpQuestionSchema).default([]).describe("Array of question completion statuses"),
-  totalQuestions: z.number().int().positive().describe("Total number of questions in this ramp-up"),
+  questions: z
+    .array(RampUpQuestionSchema)
+    .default([])
+    .describe("Array of question completion statuses"),
+  totalQuestions: z
+    .number()
+    .int()
+    .positive()
+    .describe("Total number of questions in this ramp-up"),
 
   // Summary fields
-  completedCount: z.number().int().default(0).describe("Number of questions completed correctly"),
-  percentComplete: z.number().min(0).max(100).default(0).describe("Percentage of questions completed"),
-  isFullyComplete: z.boolean().default(false).describe("Whether all questions are completed"),
+  completedCount: z
+    .number()
+    .int()
+    .default(0)
+    .describe("Number of questions completed correctly"),
+  percentComplete: z
+    .number()
+    .min(0)
+    .max(100)
+    .default(0)
+    .describe("Percentage of questions completed"),
+  isFullyComplete: z
+    .boolean()
+    .default(false)
+    .describe("Whether all questions are completed"),
 
   // Timestamps
-  lastUpdated: z.string().optional().describe("When progress was last synced from Podsie"),
-  firstAttemptDate: z.string().optional().describe("When student first attempted this ramp-up"),
-  completionDate: z.string().optional().describe("When student completed all questions"),
+  lastUpdated: z
+    .string()
+    .optional()
+    .describe("When progress was last synced from Podsie"),
+  firstAttemptDate: z
+    .string()
+    .optional()
+    .describe("When student first attempted this ramp-up"),
+  completionDate: z
+    .string()
+    .optional()
+    .describe("When student completed all questions"),
 });
 
 /**
  * Full ramp-up progress schema with base document fields
  */
-export const RampUpProgressZodSchema = BaseDocumentSchema.merge(RampUpProgressFieldsSchema);
+export const RampUpProgressZodSchema = BaseDocumentSchema.merge(
+  RampUpProgressFieldsSchema,
+);
 
 /**
  * Input schema for creating/updating ramp-up progress
  */
-export const RampUpProgressInputZodSchema = toInputSchema(RampUpProgressZodSchema);
+export const RampUpProgressInputZodSchema = toInputSchema(
+  RampUpProgressZodSchema,
+);
 
 // =====================================
 // API RESPONSE SCHEMAS
@@ -71,7 +118,7 @@ export const PodsieRampUpResponseSchema = z.object({
       questionNumber: z.number(),
       correct: z.boolean(),
       timestamp: z.string().optional(),
-    })
+    }),
   ),
 });
 
@@ -106,13 +153,16 @@ export function createRampUpProgressDefaults(
   studentName: string,
   unitCode: string,
   totalQuestions: number,
-  overrides: Partial<RampUpProgressInput> = {}
+  overrides: Partial<RampUpProgressInput> = {},
 ): RampUpProgressInput {
   // Initialize all questions as incomplete
-  const questions: RampUpQuestion[] = Array.from({ length: totalQuestions }, (_, i) => ({
-    questionNumber: i + 1,
-    completed: false,
-  }));
+  const questions: RampUpQuestion[] = Array.from(
+    { length: totalQuestions },
+    (_, i) => ({
+      questionNumber: i + 1,
+      completed: false,
+    }),
+  );
 
   return {
     studentId,
@@ -134,8 +184,12 @@ export function createRampUpProgressDefaults(
 export function calculateRampUpSummary(questions: RampUpQuestion[]) {
   const completedCount = questions.filter((q) => q.completed).length;
   const totalQuestions = questions.length;
-  const percentComplete = totalQuestions > 0 ? Math.round((completedCount / totalQuestions) * 100) : 0;
-  const isFullyComplete = completedCount === totalQuestions && totalQuestions > 0;
+  const percentComplete =
+    totalQuestions > 0
+      ? Math.round((completedCount / totalQuestions) * 100)
+      : 0;
+  const isFullyComplete =
+    completedCount === totalQuestions && totalQuestions > 0;
 
   return {
     completedCount,

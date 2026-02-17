@@ -1,17 +1,23 @@
 "use server";
 
-import PageView from '@/lib/schema/mongoose-schema/PageView';
-import Session from '@/lib/schema/mongoose-schema/Session';
-import { PageViewSchema, AnalyticsQuerySchema } from '@/lib/schema/zod-schema/analytics';
-import { connectToDB } from '@server/db/connection';
+import PageView from "@/lib/schema/mongoose-schema/PageView";
+import Session from "@/lib/schema/mongoose-schema/Session";
+import {
+  PageViewSchema,
+  AnalyticsQuerySchema,
+} from "@/lib/schema/zod-schema/analytics";
+import { connectToDB } from "@server/db/connection";
 import { handleServerError } from "@error/handlers/server";
-import type { PageView as PageViewType, AnalyticsQuery } from '@/lib/schema/zod-schema/analytics';
-import type { Types } from 'mongoose';
+import type {
+  PageView as PageViewType,
+  AnalyticsQuery,
+} from "@/lib/schema/zod-schema/analytics";
+import type { Types } from "mongoose";
 
 /**
  * Track a page view
  */
-export async function trackPageView(data: Omit<PageViewType, 'timestamp'>) {
+export async function trackPageView(data: Omit<PageViewType, "timestamp">) {
   try {
     await connectToDB();
 
@@ -37,27 +43,33 @@ export async function trackPageView(data: Omit<PageViewType, 'timestamp'>) {
           startTime: new Date(),
         },
       },
-      { upsert: true }
+      { upsert: true },
     );
 
     // Return only the _id as a plain string
     return { success: true, data: { _id: pageView._id.toString() } };
   } catch (error) {
-    return { success: false, error: handleServerError(error, "Failed to track page view") };
+    return {
+      success: false,
+      error: handleServerError(error, "Failed to track page view"),
+    };
   }
 }
 
 /**
  * Update page view duration (called when user leaves page)
  */
-export async function updatePageViewDuration(pageViewId: string, duration: number) {
+export async function updatePageViewDuration(
+  pageViewId: string,
+  duration: number,
+) {
   try {
     await connectToDB();
 
     const pageView = await PageView.findByIdAndUpdate(
       pageViewId,
       { $set: { duration } },
-      { new: true }
+      { new: true },
     );
 
     if (!pageView) {
@@ -67,13 +79,16 @@ export async function updatePageViewDuration(pageViewId: string, duration: numbe
     // Update session total duration
     await Session.findOneAndUpdate(
       { sessionId: pageView.sessionId },
-      { $inc: { totalDuration: duration } }
+      { $inc: { totalDuration: duration } },
     );
 
     // Return only the _id as a plain string
     return { success: true, data: { _id: pageView._id.toString() } };
   } catch (error) {
-    return { success: false, error: handleServerError(error, "Failed to update page view duration") };
+    return {
+      success: false,
+      error: handleServerError(error, "Failed to update page view duration"),
+    };
   }
 }
 
@@ -99,7 +114,8 @@ export async function getAnalytics(query: AnalyticsQuery) {
     if (validated.startDate || validated.endDate) {
       filter.timestamp = {};
       if (validated.startDate) {
-        (filter.timestamp as Record<string, unknown>).$gte = validated.startDate;
+        (filter.timestamp as Record<string, unknown>).$gte =
+          validated.startDate;
       }
       if (validated.endDate) {
         (filter.timestamp as Record<string, unknown>).$lte = validated.endDate;
@@ -117,7 +133,7 @@ export async function getAnalytics(query: AnalyticsQuery) {
     return {
       success: true,
       data: {
-        pageViews: pageViews.map(pv => ({
+        pageViews: pageViews.map((pv) => ({
           ...pv,
           _id: (pv._id as Types.ObjectId).toString(),
         })),
@@ -127,14 +143,21 @@ export async function getAnalytics(query: AnalyticsQuery) {
       },
     };
   } catch (error) {
-    return { success: false, error: handleServerError(error, "Failed to fetch analytics") };
+    return {
+      success: false,
+      error: handleServerError(error, "Failed to fetch analytics"),
+    };
   }
 }
 
 /**
  * Get aggregated analytics stats
  */
-export async function getAnalyticsStats(userId?: string, startDate?: Date, endDate?: Date) {
+export async function getAnalyticsStats(
+  userId?: string,
+  startDate?: Date,
+  endDate?: Date,
+) {
   try {
     await connectToDB();
 
@@ -159,18 +182,18 @@ export async function getAnalyticsStats(userId?: string, startDate?: Date, endDa
       ...(Object.keys(matchStage).length > 0 ? [{ $match: matchStage }] : []),
       {
         $group: {
-          _id: '$page',
+          _id: "$page",
           count: { $sum: 1 },
-          avgDuration: { $avg: '$duration' },
+          avgDuration: { $avg: "$duration" },
         },
       },
       { $sort: { count: -1 } },
       { $limit: 10 },
       {
         $project: {
-          page: '$_id',
-          views: '$count',
-          avgDuration: { $round: ['$avgDuration', 2] },
+          page: "$_id",
+          views: "$count",
+          avgDuration: { $round: ["$avgDuration", 2] },
           _id: 0,
         },
       },
@@ -182,18 +205,18 @@ export async function getAnalyticsStats(userId?: string, startDate?: Date, endDa
       {
         $group: {
           _id: {
-            $dateToString: { format: '%Y-%m-%d', date: '$timestamp' },
+            $dateToString: { format: "%Y-%m-%d", date: "$timestamp" },
           },
           count: { $sum: 1 },
-          uniqueUsers: { $addToSet: '$userId' },
+          uniqueUsers: { $addToSet: "$userId" },
         },
       },
       { $sort: { _id: 1 } },
       {
         $project: {
-          date: '$_id',
-          views: '$count',
-          uniqueUsers: { $size: '$uniqueUsers' },
+          date: "$_id",
+          views: "$count",
+          uniqueUsers: { $size: "$uniqueUsers" },
           _id: 0,
         },
       },
@@ -201,13 +224,13 @@ export async function getAnalyticsStats(userId?: string, startDate?: Date, endDa
 
     // Total stats
     const totalViews = await PageView.countDocuments(matchStage);
-    const uniqueUsers = await PageView.distinct('userId', matchStage);
+    const uniqueUsers = await PageView.distinct("userId", matchStage);
     const avgDuration = await PageView.aggregate([
       ...(Object.keys(matchStage).length > 0 ? [{ $match: matchStage }] : []),
       {
         $group: {
           _id: null,
-          avgDuration: { $avg: '$duration' },
+          avgDuration: { $avg: "$duration" },
         },
       },
     ]);
@@ -223,7 +246,10 @@ export async function getAnalyticsStats(userId?: string, startDate?: Date, endDa
       },
     };
   } catch (error) {
-    return { success: false, error: handleServerError(error, "Failed to fetch analytics stats") };
+    return {
+      success: false,
+      error: handleServerError(error, "Failed to fetch analytics stats"),
+    };
   }
 }
 
@@ -241,12 +267,15 @@ export async function getUserHistory(userId: string, limit = 50) {
 
     return {
       success: true,
-      data: pageViews.map(pv => ({
+      data: pageViews.map((pv) => ({
         ...pv,
         _id: (pv._id as Types.ObjectId).toString(),
       })),
     };
   } catch (error) {
-    return { success: false, error: handleServerError(error, "Failed to fetch user history") };
+    return {
+      success: false,
+      error: handleServerError(error, "Failed to fetch user history"),
+    };
   }
 }

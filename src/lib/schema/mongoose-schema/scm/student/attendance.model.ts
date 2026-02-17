@@ -1,5 +1,5 @@
-import mongoose, { Schema, Model } from 'mongoose';
-import type { AttendanceRecord } from '@zod-schema/scm/student/attendance';
+import mongoose, { Schema, Model } from "mongoose";
+import type { AttendanceRecord } from "@zod-schema/scm/student/attendance";
 
 /**
  * Mongoose schema for student attendance records
@@ -28,7 +28,7 @@ const AttendanceSchema = new Schema<AttendanceRecord>(
     },
     status: {
       type: String,
-      enum: ['present', 'absent', 'late', 'not-tracked'],
+      enum: ["present", "absent", "late", "not-tracked"],
       required: true,
     },
     section: {
@@ -38,7 +38,7 @@ const AttendanceSchema = new Schema<AttendanceRecord>(
     },
     blockType: {
       type: String,
-      enum: ['single', 'double'],
+      enum: ["single", "double"],
       required: false,
     },
     notes: {
@@ -47,21 +47,23 @@ const AttendanceSchema = new Schema<AttendanceRecord>(
     },
     syncedFrom: {
       type: String,
-      enum: ['podsie', 'manual', 'import'],
+      enum: ["podsie", "manual", "import"],
       required: false,
     },
     lastSyncedAt: {
       type: String,
       required: false,
     },
-    ownerIds: [{
-      type: String,
-      required: false,
-    }],
+    ownerIds: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
   },
   {
     timestamps: true,
-    collection: 'attendance-313',
+    collection: "attendance-313",
     toJSON: {
       virtuals: true,
       transform: function (_doc, ret) {
@@ -70,7 +72,7 @@ const AttendanceSchema = new Schema<AttendanceRecord>(
         return ret;
       },
     },
-  }
+  },
 );
 
 // =====================================
@@ -91,12 +93,12 @@ AttendanceSchema.index({ date: 1 });
 // =====================================
 
 // Clear existing model in development to avoid OverwriteModelError
-if (process.env.NODE_ENV === 'development') {
-  delete mongoose.models['Attendance313'];
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models["Attendance313"];
 }
 
 export const Attendance313: Model<AttendanceRecord> =
-  mongoose.models['Attendance313'] ||
-  mongoose.model<AttendanceRecord>('Attendance313', AttendanceSchema);
+  mongoose.models["Attendance313"] ||
+  mongoose.model<AttendanceRecord>("Attendance313", AttendanceSchema);
 
 export default Attendance313;

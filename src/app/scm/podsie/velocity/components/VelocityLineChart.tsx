@@ -9,7 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
 
@@ -23,19 +23,22 @@ ChartJS.register(
   Tooltip,
   Legend,
   Filler,
-  annotationPlugin
+  annotationPlugin,
 );
 
 interface VelocityLineChartProps {
-  chartData: Parameters<typeof Line>[0]['data'];
-  chartOptions: Parameters<typeof Line>[0]['options'];
+  chartData: Parameters<typeof Line>[0]["data"];
+  chartOptions: Parameters<typeof Line>[0]["options"];
 }
 
 /**
  * Lazy-loaded Line chart component for velocity graph
  * Separated to reduce initial bundle size
  */
-export function VelocityLineChart({ chartData, chartOptions }: VelocityLineChartProps) {
+export function VelocityLineChart({
+  chartData,
+  chartOptions,
+}: VelocityLineChartProps) {
   return (
     <div className="h-64">
       <Line data={chartData} options={chartOptions} />

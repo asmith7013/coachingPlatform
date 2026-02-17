@@ -88,9 +88,7 @@ export default function ScmGroupsPage() {
   }, [loadRecords]);
 
   const filteredRecords = filterGroupId
-    ? records.filter(
-        (r) => r.podsieGroupId === parseInt(filterGroupId, 10)
-      )
+    ? records.filter((r) => r.podsieGroupId === parseInt(filterGroupId, 10))
     : records;
 
   // Distinct group IDs for filter dropdown
@@ -121,8 +119,7 @@ export default function ScmGroupsPage() {
         pointsRewardGoal: newRecord.pointsRewardGoal
           ? parseInt(newRecord.pointsRewardGoal, 10)
           : undefined,
-        pointsRewardDescription:
-          newRecord.pointsRewardDescription || undefined,
+        pointsRewardDescription: newRecord.pointsRewardDescription || undefined,
         assignments: [],
       });
 
@@ -160,8 +157,7 @@ export default function ScmGroupsPage() {
         pointsRewardGoal: editValues.pointsRewardGoal
           ? parseInt(editValues.pointsRewardGoal, 10)
           : null,
-        pointsRewardDescription:
-          editValues.pointsRewardDescription || null,
+        pointsRewardDescription: editValues.pointsRewardDescription || null,
       });
 
       if (result.success) {
@@ -203,8 +199,7 @@ export default function ScmGroupsPage() {
             <div>
               <h1 className="text-2xl font-bold">Podsie SCM Groups</h1>
               <p className="text-gray-600 mt-1">
-                Manage pacing configurations for Podsie groups used in SCM.
-                {" "}
+                Manage pacing configurations for Podsie groups used in SCM.{" "}
                 <span className="text-gray-500">
                   {records.length} records, {distinctGroupIds.length} groups
                 </span>
@@ -248,7 +243,10 @@ export default function ScmGroupsPage() {
                   type="number"
                   value={newRecord.podsieGroupId}
                   onChange={(e) =>
-                    setNewRecord({ ...newRecord, podsieGroupId: e.target.value })
+                    setNewRecord({
+                      ...newRecord,
+                      podsieGroupId: e.target.value,
+                    })
                   }
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -262,7 +260,10 @@ export default function ScmGroupsPage() {
                   type="number"
                   value={newRecord.podsieModuleId}
                   onChange={(e) =>
-                    setNewRecord({ ...newRecord, podsieModuleId: e.target.value })
+                    setNewRecord({
+                      ...newRecord,
+                      podsieModuleId: e.target.value,
+                    })
                   }
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -442,7 +443,7 @@ export default function ScmGroupsPage() {
                           className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
                         />
                       ) : (
-                        record.pointsRewardGoal ?? "—"
+                        (record.pointsRewardGoal ?? "—")
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm">

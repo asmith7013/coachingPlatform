@@ -19,7 +19,9 @@ export default function GifConverterPage() {
   const [uploadedGifUrl, setUploadedGifUrl] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
   const [isCropping, setIsCropping] = useState(false);
-  const [cropStart, setCropStart] = useState<{ x: number; y: number } | null>(null);
+  const [cropStart, setCropStart] = useState<{ x: number; y: number } | null>(
+    null,
+  );
   const [gifData, setGifData] = useState<Uint8Array | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -179,11 +181,15 @@ export default function GifConverterPage() {
 
       setProgress("Converting to GIF...");
       await ffmpeg.exec([
-        "-i", "input.mp4",
-        "-ss", startTime.toString(),
-        "-t", duration.toString(),
-        "-filter_complex", filterComplex,
-        "output.gif"
+        "-i",
+        "input.mp4",
+        "-ss",
+        startTime.toString(),
+        "-t",
+        duration.toString(),
+        "-filter_complex",
+        filterComplex,
+        "output.gif",
       ]);
 
       setProgress("Reading output...");
@@ -199,8 +205,13 @@ export default function GifConverterPage() {
       setProgress("Conversion complete!");
     } catch (error) {
       console.error("Error converting to GIF:", error);
-      console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
-      setProgress(`Error: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(
+        "Error stack:",
+        error instanceof Error ? error.stack : "No stack trace",
+      );
+      setProgress(
+        `Error: ${error instanceof Error ? error.message : String(error)}`,
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -222,7 +233,9 @@ export default function GifConverterPage() {
       }
     } catch (error) {
       console.error("Error uploading GIF:", error);
-      setProgress(`Upload error: ${error instanceof Error ? error.message : String(error)}`);
+      setProgress(
+        `Upload error: ${error instanceof Error ? error.message : String(error)}`,
+      );
     } finally {
       setIsUploading(false);
     }
@@ -254,7 +267,9 @@ export default function GifConverterPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Video to GIF Converter</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          Video to GIF Converter
+        </h1>
 
         {/* File Upload */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
@@ -321,7 +336,8 @@ export default function GifConverterPage() {
               </button>
               {cropArea.width > 0 && cropArea.height > 0 && (
                 <span className="ml-4 text-sm text-gray-600">
-                  Crop area: {Math.round(cropArea.width)}×{Math.round(cropArea.height)}
+                  Crop area: {Math.round(cropArea.width)}×
+                  {Math.round(cropArea.height)}
                 </span>
               )}
             </div>
@@ -370,12 +386,16 @@ export default function GifConverterPage() {
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
-                <p className="mt-2 text-sm text-gray-600 text-center">{progress}</p>
+                <p className="mt-2 text-sm text-gray-600 text-center">
+                  {progress}
+                </p>
               </div>
             )}
 
             {!isProcessing && progress && (
-              <p className="mt-4 text-sm text-gray-600 text-center">{progress}</p>
+              <p className="mt-4 text-sm text-gray-600 text-center">
+                {progress}
+              </p>
             )}
           </div>
         )}
@@ -385,7 +405,11 @@ export default function GifConverterPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Generated GIF</h2>
             <div className="bg-gray-100 rounded-lg p-4 mb-4">
-              <img src={gifUrl} alt="Generated GIF" className="max-w-full mx-auto" />
+              <img
+                src={gifUrl}
+                alt="Generated GIF"
+                className="max-w-full mx-auto"
+              />
             </div>
 
             <div className="space-y-3">
@@ -401,7 +425,9 @@ export default function GifConverterPage() {
                 disabled={isUploading}
                 className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
               >
-                {isUploading ? "Uploading to Vercel Blob..." : "Upload to Vercel Blob"}
+                {isUploading
+                  ? "Uploading to Vercel Blob..."
+                  : "Upload to Vercel Blob"}
               </button>
 
               {uploadedGifUrl && (
@@ -429,7 +455,7 @@ export default function GifConverterPage() {
           </div>
         )}
       </div>
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <canvas ref={canvasRef} style={{ display: "none" }} />
     </div>
   );
 }

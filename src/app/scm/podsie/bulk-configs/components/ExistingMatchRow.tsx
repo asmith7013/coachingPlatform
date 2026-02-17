@@ -40,7 +40,7 @@ interface ExistingMatchRowProps {
   savedQuestionMaps: SavedQuestionMap[];
   onUpdateQuestionMap: (
     podsieAssignmentId: string,
-    questionMapId: string
+    questionMapId: string,
   ) => Promise<void>;
   isSaving: boolean;
 }
@@ -101,7 +101,7 @@ export function ExistingMatchRow({
       const bestMatch = findBestMatch(
         match.podsieAssignment.assignmentName,
         mapItems,
-        0.5
+        0.5,
       );
 
       if (bestMatch.match) {
@@ -115,12 +115,14 @@ export function ExistingMatchRow({
     if (selectedMapId) {
       onUpdateQuestionMap(
         String(match.podsieAssignment.assignmentId),
-        selectedMapId
+        selectedMapId,
       );
     }
   };
 
-  const selectedMap = savedQuestionMaps.find((m) => m.assignmentId === selectedMapId);
+  const selectedMap = savedQuestionMaps.find(
+    (m) => m.assignmentId === selectedMapId,
+  );
   const isPredicted = selectedMapId === predictedMapId && predictedMapId !== "";
 
   return (
@@ -143,7 +145,8 @@ export function ExistingMatchRow({
         {/* Existing Scope & Sequence Match Info - aligned right */}
         {match.existingLesson && (
           <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 whitespace-nowrap ml-2">
-            Scope &amp; Sequence: {match.existingLesson.unitLessonId} — {match.existingLesson.lessonName}
+            Scope &amp; Sequence: {match.existingLesson.unitLessonId} —{" "}
+            {match.existingLesson.lessonName}
           </span>
         )}
       </div>
@@ -158,7 +161,10 @@ export function ExistingMatchRow({
         >
           <option value="">Select question map...</option>
           {groupedMaps.map((group) => (
-            <optgroup key={`${group.course}-${group.unit}`} label={`${group.course} — ${group.unit}`}>
+            <optgroup
+              key={`${group.course}-${group.unit}`}
+              label={`${group.course} — ${group.unit}`}
+            >
               {group.maps.map((qMap) => (
                 <option key={qMap.assignmentId} value={qMap.assignmentId}>
                   {qMap.assignmentName} ({qMap.totalQuestions} Qs)

@@ -58,7 +58,10 @@ export function AssessmentSummaryTable({
 }: AssessmentSummaryTableProps) {
   // Get unique units sorted by unit number
   const units = useMemo(() => {
-    const unitMap = new Map<number, { unitNumber: number; unitName: string; totalQuestions: number }>();
+    const unitMap = new Map<
+      number,
+      { unitNumber: number; unitName: string; totalQuestions: number }
+    >();
     assessmentData.forEach((a) => {
       if (!unitMap.has(a.unitNumber)) {
         unitMap.set(a.unitNumber, {
@@ -68,12 +71,15 @@ export function AssessmentSummaryTable({
         });
       }
     });
-    return Array.from(unitMap.values()).sort((a, b) => a.unitNumber - b.unitNumber);
+    return Array.from(unitMap.values()).sort(
+      (a, b) => a.unitNumber - b.unitNumber,
+    );
   }, [assessmentData]);
 
   // Generate change column pairs (e.g., [3, 4], [4, 6] for units 3, 4, 6)
   const changePairs = useMemo(() => {
-    const pairs: Array<{ fromUnit: number; toUnit: number; label: string }> = [];
+    const pairs: Array<{ fromUnit: number; toUnit: number; label: string }> =
+      [];
     for (let i = 1; i < units.length; i++) {
       pairs.push({
         fromUnit: units[i - 1].unitNumber,
@@ -87,11 +93,17 @@ export function AssessmentSummaryTable({
   // Calculate student summaries
   const studentSummaries = useMemo(() => {
     // Collect all unique students
-    const studentMap = new Map<string, { studentId: string; studentName: string }>();
+    const studentMap = new Map<
+      string,
+      { studentId: string; studentName: string }
+    >();
     assessmentData.forEach((a) => {
       a.progressData.forEach((p) => {
         if (!studentMap.has(p.studentId)) {
-          studentMap.set(p.studentId, { studentId: p.studentId, studentName: p.studentName });
+          studentMap.set(p.studentId, {
+            studentId: p.studentId,
+            studentName: p.studentName,
+          });
         }
       });
     });
@@ -100,12 +112,17 @@ export function AssessmentSummaryTable({
     const summaries: StudentSummary[] = [];
 
     studentMap.forEach((student) => {
-      const scores = new Map<number, { points: number; maxPoints: number; percent: number }>();
+      const scores = new Map<
+        number,
+        { points: number; maxPoints: number; percent: number }
+      >();
       let totalPercent = 0;
       let assessmentCount = 0;
 
       assessmentData.forEach((a) => {
-        const studentProgress = a.progressData.find((p) => p.studentId === student.studentId);
+        const studentProgress = a.progressData.find(
+          (p) => p.studentId === student.studentId,
+        );
         if (studentProgress && studentProgress.totalQuestions > 0) {
           let points = 0;
           studentProgress.questions.forEach((q) => {
@@ -114,14 +131,16 @@ export function AssessmentSummaryTable({
             points += correctScore + explanationScore;
           });
           const maxPoints = a.totalQuestions * 4;
-          const percent = maxPoints > 0 ? Math.round((points / maxPoints) * 100) : 0;
+          const percent =
+            maxPoints > 0 ? Math.round((points / maxPoints) * 100) : 0;
           scores.set(a.unitNumber, { points, maxPoints, percent });
           totalPercent += percent;
           assessmentCount++;
         }
       });
 
-      const averagePercent = assessmentCount > 0 ? Math.round(totalPercent / assessmentCount) : 0;
+      const averagePercent =
+        assessmentCount > 0 ? Math.round(totalPercent / assessmentCount) : 0;
 
       summaries.push({
         studentId: student.studentId,
@@ -137,15 +156,26 @@ export function AssessmentSummaryTable({
 
   // Calculate class averages per unit
   const classAverages = useMemo(() => {
-    const averages = new Map<number, { avgPoints: number; maxPoints: number; percent: number }>();
+    const averages = new Map<
+      number,
+      { avgPoints: number; maxPoints: number; percent: number }
+    >();
 
     units.forEach((unit) => {
-      const assessment = assessmentData.find((a) => a.unitNumber === unit.unitNumber);
+      const assessment = assessmentData.find(
+        (a) => a.unitNumber === unit.unitNumber,
+      );
       if (!assessment) return;
 
-      const studentsWithData = assessment.progressData.filter((p) => p.totalQuestions > 0);
+      const studentsWithData = assessment.progressData.filter(
+        (p) => p.totalQuestions > 0,
+      );
       if (studentsWithData.length === 0) {
-        averages.set(unit.unitNumber, { avgPoints: 0, maxPoints: unit.totalQuestions * 4, percent: 0 });
+        averages.set(unit.unitNumber, {
+          avgPoints: 0,
+          maxPoints: unit.totalQuestions * 4,
+          percent: 0,
+        });
         return;
       }
 
@@ -158,7 +188,8 @@ export function AssessmentSummaryTable({
 
       const avgPoints = totalPoints / studentsWithData.length;
       const maxPoints = unit.totalQuestions * 4;
-      const percent = maxPoints > 0 ? Math.round((avgPoints / maxPoints) * 100) : 0;
+      const percent =
+        maxPoints > 0 ? Math.round((avgPoints / maxPoints) * 100) : 0;
 
       averages.set(unit.unitNumber, { avgPoints, maxPoints, percent });
     });
@@ -180,7 +211,11 @@ export function AssessmentSummaryTable({
   }, [classAverages]);
 
   // Helper to get change between two units for a student
-  const getStudentChange = (student: StudentSummary, fromUnit: number, toUnit: number): number | null => {
+  const getStudentChange = (
+    student: StudentSummary,
+    fromUnit: number,
+    toUnit: number,
+  ): number | null => {
     const fromScore = student.scores.get(fromUnit);
     const toScore = student.scores.get(toUnit);
     if (!fromScore || !toScore) return null;
@@ -221,7 +256,11 @@ export function AssessmentSummaryTable({
                     ? "bg-blue-100 text-blue-900"
                     : "text-gray-900 hover:bg-gray-200"
                 }`}
-                onClick={() => onSelectUnit(selectedUnit === unit.unitNumber ? null : unit.unitNumber)}
+                onClick={() =>
+                  onSelectUnit(
+                    selectedUnit === unit.unitNumber ? null : unit.unitNumber,
+                  )
+                }
               >
                 <div className="flex flex-col items-center">
                   <span>{unit.unitName}</span>
@@ -249,14 +288,18 @@ export function AssessmentSummaryTable({
               <React.Fragment key={unit.unitNumber}>
                 <th
                   className={`px-2 py-2 text-center text-xs font-medium min-w-[70px] ${
-                    selectedUnit === unit.unitNumber ? "bg-blue-50 text-blue-700" : "text-gray-500"
+                    selectedUnit === unit.unitNumber
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-gray-500"
                   }`}
                 >
                   Score
                 </th>
                 <th
                   className={`px-2 py-2 text-center text-xs font-medium min-w-[70px] ${
-                    selectedUnit === unit.unitNumber ? "bg-blue-50 text-blue-700" : "text-gray-500"
+                    selectedUnit === unit.unitNumber
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-gray-500"
                   }`}
                 >
                   %
@@ -265,7 +308,10 @@ export function AssessmentSummaryTable({
             ))}
             <th className="px-4 py-2 text-center text-xs font-medium text-gray-500 bg-gray-100"></th>
             {changePairs.map((pair) => (
-              <th key={`${pair.label}-sub`} className="px-3 py-2 text-center text-xs font-medium text-purple-600 bg-purple-50/50">
+              <th
+                key={`${pair.label}-sub`}
+                className="px-3 py-2 text-center text-xs font-medium text-purple-600 bg-purple-50/50"
+              >
                 Change
               </th>
             ))}
@@ -298,15 +344,22 @@ export function AssessmentSummaryTable({
               );
             })}
             <td className="px-4 py-2 text-center">
-              <span className={`inline-block px-2 py-1 rounded text-sm font-bold ${getAverageColor(overallClassAverage)}`}>
+              <span
+                className={`inline-block px-2 py-1 rounded text-sm font-bold ${getAverageColor(overallClassAverage)}`}
+              >
                 {overallClassAverage}%
               </span>
             </td>
             {changePairs.map((pair) => {
               const change = getClassChange(pair.fromUnit, pair.toUnit);
               return (
-                <td key={pair.label} className="px-3 py-2 text-center bg-purple-50/50">
-                  <span className={`text-sm font-semibold ${change !== null ? getChangeColor(change) : "text-gray-400"}`}>
+                <td
+                  key={pair.label}
+                  className="px-3 py-2 text-center bg-purple-50/50"
+                >
+                  <span
+                    className={`text-sm font-semibold ${change !== null ? getChangeColor(change) : "text-gray-400"}`}
+                  >
                     {formatChange(change)}
                   </span>
                 </td>
@@ -339,7 +392,9 @@ export function AssessmentSummaryTable({
                       className={`px-2 py-3 text-center ${selectedUnit === unit.unitNumber ? "bg-blue-50/50" : ""}`}
                     >
                       {score ? (
-                        <span className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${getPercentColor(score.percent)}`}>
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${getPercentColor(score.percent)}`}
+                        >
                           {score.percent}%
                         </span>
                       ) : (
@@ -350,15 +405,26 @@ export function AssessmentSummaryTable({
                 );
               })}
               <td className="px-4 py-3 text-center bg-gray-100/50">
-                <span className={`inline-block px-2 py-0.5 rounded text-sm font-bold ${getAverageColor(student.averagePercent)}`}>
+                <span
+                  className={`inline-block px-2 py-0.5 rounded text-sm font-bold ${getAverageColor(student.averagePercent)}`}
+                >
                   {student.averagePercent}%
                 </span>
               </td>
               {changePairs.map((pair) => {
-                const change = getStudentChange(student, pair.fromUnit, pair.toUnit);
+                const change = getStudentChange(
+                  student,
+                  pair.fromUnit,
+                  pair.toUnit,
+                );
                 return (
-                  <td key={pair.label} className="px-3 py-3 text-center bg-purple-50/30">
-                    <span className={`text-sm ${change !== null ? getChangeColor(change) : "text-gray-300"}`}>
+                  <td
+                    key={pair.label}
+                    className="px-3 py-3 text-center bg-purple-50/30"
+                  >
+                    <span
+                      className={`text-sm ${change !== null ? getChangeColor(change) : "text-gray-300"}`}
+                    >
                       {formatChange(change)}
                     </span>
                   </td>

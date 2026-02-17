@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Select } from '@/components/core/fields/Select';
+import { Select } from "@/components/core/fields/Select";
 // import { Typography } from '@/components/core/typography';
 
 type SelectorProps = {
@@ -27,8 +27,15 @@ export function GradeUnitLessonSelector({
   lessons,
 }: SelectorProps) {
   // Define the desired order for grades
-  const desiredOrder = ["Grade 6", "Grade 7", "Grade 8", "Algebra 1", "Geometry", "Algebra 2"];
-  
+  const desiredOrder = [
+    "Grade 6",
+    "Grade 7",
+    "Grade 8",
+    "Algebra 1",
+    "Geometry",
+    "Algebra 2",
+  ];
+
   // Sort the provided grades based on the desired order
   const sortedGrades = [...grades].sort((a, b) => {
     const indexA = desiredOrder.indexOf(a);
@@ -44,52 +51,52 @@ export function GradeUnitLessonSelector({
   });
 
   // Convert grades array to Select options format
-  const gradeOptions = sortedGrades.map(grade => ({
+  const gradeOptions = sortedGrades.map((grade) => ({
     value: grade,
-    label: grade
+    label: grade,
   }));
-  
+
   // Convert units array to Select options format
-  const unitOptions = units.map(unit => ({
+  const unitOptions = units.map((unit) => ({
     value: unit,
-    label: `Unit ${unit}`
+    label: `Unit ${unit}`,
   }));
-  
+
   // Convert lessons array to Select options format
-  const lessonOptions = lessons.map(lesson => ({
+  const lessonOptions = lessons.map((lesson) => ({
     value: lesson,
-    label: `Lesson ${lesson}`
+    label: `Lesson ${lesson}`,
   }));
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
       <Select
         value={selectedGrade}
-        onChange={value => {
+        onChange={(value) => {
           setSelectedGrade(value);
-          setSelectedUnit('');
-          setSelectedLesson('');
+          setSelectedUnit("");
+          setSelectedLesson("");
         }}
         options={gradeOptions}
         placeholder="Select Grade/Course"
         radius="md"
       />
-      
+
       <Select
         value={selectedUnit}
-        onChange={value => {
+        onChange={(value) => {
           setSelectedUnit(value);
-          setSelectedLesson('');
+          setSelectedLesson("");
         }}
         options={unitOptions}
         placeholder="Select Unit"
         disabled={!selectedGrade}
         radius="md"
       />
-      
+
       <Select
         value={selectedLesson}
-        onChange={value => setSelectedLesson(value)}
+        onChange={(value) => setSelectedLesson(value)}
         options={lessonOptions}
         placeholder="Select Lesson"
         disabled={!selectedUnit}

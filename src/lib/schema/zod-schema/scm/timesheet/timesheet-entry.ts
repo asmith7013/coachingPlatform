@@ -1,6 +1,6 @@
 // src/lib/schema/zod-schema/timesheet/timesheet-entry.ts
-import { z } from 'zod';
-import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
+import { z } from "zod";
+import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
 
 // === TIMESHEET ENTRY SCHEMA ===
 
@@ -25,21 +25,31 @@ export const TimesheetEntryFieldsSchema = z.object({
   rate: z.number().min(0).describe("Hourly rate in dollars"),
 
   // Calculated total pay (hours * rate)
-  totalPay: z.number().min(0).describe("Total pay for this entry (hours * rate)"),
+  totalPay: z
+    .number()
+    .min(0)
+    .describe("Total pay for this entry (hours * rate)"),
 
   // Metadata
-  submittedAt: z.string().optional().describe("When the entry was submitted to the external system"),
+  submittedAt: z
+    .string()
+    .optional()
+    .describe("When the entry was submitted to the external system"),
 });
 
 /**
  * Full timesheet entry schema with base document fields
  */
-export const TimesheetEntryZodSchema = BaseDocumentSchema.merge(TimesheetEntryFieldsSchema);
+export const TimesheetEntryZodSchema = BaseDocumentSchema.merge(
+  TimesheetEntryFieldsSchema,
+);
 
 /**
  * Input schema for creating new timesheet entries (excludes auto-generated fields)
  */
-export const TimesheetEntryInputZodSchema = toInputSchema(TimesheetEntryZodSchema);
+export const TimesheetEntryInputZodSchema = toInputSchema(
+  TimesheetEntryZodSchema,
+);
 
 /**
  * API input schema - what the Chrome extension will send
@@ -50,7 +60,12 @@ export const TimesheetEntryApiInputSchema = z.object({
   task: z.string().describe("The task/activity type from the form"),
   project: z.string().describe("The project name from the form"),
   hours: z.number().min(0).describe("Number of hours worked"),
-  rate: z.number().min(0).optional().default(75).describe("Hourly rate in dollars (default: 75)"),
+  rate: z
+    .number()
+    .min(0)
+    .optional()
+    .default(75)
+    .describe("Hourly rate in dollars (default: 75)"),
 });
 
 /**
@@ -58,12 +73,17 @@ export const TimesheetEntryApiInputSchema = z.object({
  * Allows submitting multiple entries at once
  */
 export const TimesheetBatchInputSchema = z.object({
-  entries: z.array(TimesheetEntryApiInputSchema).min(1).describe("Array of timesheet entries"),
+  entries: z
+    .array(TimesheetEntryApiInputSchema)
+    .min(1)
+    .describe("Array of timesheet entries"),
   apiKey: z.string().describe("API key for authentication"),
 });
 
 // === TYPE EXPORTS ===
 export type TimesheetEntry = z.infer<typeof TimesheetEntryZodSchema>;
 export type TimesheetEntryInput = z.infer<typeof TimesheetEntryInputZodSchema>;
-export type TimesheetEntryApiInput = z.infer<typeof TimesheetEntryApiInputSchema>;
+export type TimesheetEntryApiInput = z.infer<
+  typeof TimesheetEntryApiInputSchema
+>;
 export type TimesheetBatchInput = z.infer<typeof TimesheetBatchInputSchema>;

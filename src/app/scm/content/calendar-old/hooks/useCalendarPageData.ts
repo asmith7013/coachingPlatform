@@ -23,7 +23,12 @@ import {
   useClearSectionDatesMutation,
   useUpdateSubsectionsMutation,
 } from "./mutations";
-import type { SectionConfigOption, UnitScheduleLocal, SectionSchedule, LessonForSubsection } from "../components/types";
+import type {
+  SectionConfigOption,
+  UnitScheduleLocal,
+  SectionSchedule,
+  LessonForSubsection,
+} from "../components/types";
 
 // =====================================
 // TYPES
@@ -67,7 +72,7 @@ export interface UseCalendarPageDataResult {
 export function useCalendarPageData(
   schoolYear: string,
   selectedGrade: string,
-  selectedSection: SectionConfigOption | null
+  selectedSection: SectionConfigOption | null,
 ): UseCalendarPageDataResult {
   // ===== QUERIES =====
 
@@ -75,15 +80,19 @@ export function useCalendarPageData(
   const daysOffQuery = useDaysOffQuery(schoolYear);
   const lessonsQuery = useLessonsQuery(selectedGrade);
   const sectionConfigsQuery = useSectionConfigsQuery();
-  const schedulesQuery = useSchedulesQuery(schoolYear, selectedGrade, selectedSection);
+  const schedulesQuery = useSchedulesQuery(
+    schoolYear,
+    selectedGrade,
+    selectedSection,
+  );
   const sectionDaysOffQuery = useSectionDaysOffQuery(
     schoolYear,
     selectedSection?.school,
-    selectedSection?.classSection
+    selectedSection?.classSection,
   );
   const assignmentContentQuery = useAssignmentContentQuery(
     selectedSection?.school,
-    selectedSection?.classSection
+    selectedSection?.classSection,
   );
 
   // ===== MUTATIONS =====
@@ -91,39 +100,39 @@ export function useCalendarPageData(
   const updateSectionDates = useUpdateSectionDatesMutation(
     schoolYear,
     selectedGrade,
-    selectedSection
+    selectedSection,
   );
 
   const updateUnitDates = useUpdateUnitDatesMutation(
     schoolYear,
     selectedGrade,
-    selectedSection
+    selectedSection,
   );
 
   const addDayOff = useAddDayOffMutation(
     schoolYear,
     selectedGrade,
     selectedSection,
-    daysOffQuery.data ?? []
+    daysOffQuery.data ?? [],
   );
 
   const deleteDayOff = useDeleteDayOffMutation(
     schoolYear,
     selectedGrade,
     selectedSection,
-    daysOffQuery.data ?? []
+    daysOffQuery.data ?? [],
   );
 
   const copySchedules = useCopySchedulesMutation(
     schoolYear,
     selectedGrade,
-    selectedSection
+    selectedSection,
   );
 
   const clearSectionDates = useClearSectionDatesMutation(
     schoolYear,
     selectedGrade,
-    selectedSection
+    selectedSection,
   );
 
   const updateSubsections = useUpdateSubsectionsMutation(selectedSection);
@@ -132,8 +141,14 @@ export function useCalendarPageData(
 
   // Memoize to avoid creating new arrays on every render
   const lessons = useMemo(() => lessonsQuery.data ?? [], [lessonsQuery.data]);
-  const savedSchedules = useMemo(() => schedulesQuery.data ?? [], [schedulesQuery.data]);
-  const assignmentContent = useMemo(() => assignmentContentQuery.data ?? [], [assignmentContentQuery.data]);
+  const savedSchedules = useMemo(
+    () => schedulesQuery.data ?? [],
+    [schedulesQuery.data],
+  );
+  const assignmentContent = useMemo(
+    () => assignmentContentQuery.data ?? [],
+    [assignmentContentQuery.data],
+  );
 
   // Build a map from scopeAndSequenceId to subsection for quick lookup
   const subsectionMap = useMemo(() => {
@@ -144,9 +159,14 @@ export function useCalendarPageData(
       }
     }
     // Debug: log subsection assignments
-    const withSubsection = Array.from(map.entries()).filter(([, sub]) => sub !== undefined);
+    const withSubsection = Array.from(map.entries()).filter(
+      ([, sub]) => sub !== undefined,
+    );
     if (withSubsection.length > 0) {
-      console.log('[useCalendarPageData] Lessons with subsections:', withSubsection.length);
+      console.log(
+        "[useCalendarPageData] Lessons with subsections:",
+        withSubsection.length,
+      );
     }
     return map;
   }, [assignmentContent]);
@@ -164,7 +184,15 @@ export function useCalendarPageData(
         lessonNumber: number;
       }>;
     }
-    const groups = new Map<string, { grade: string; unitNumber: number; unitName: string; sections: Map<string, SectionData> }>();
+    const groups = new Map<
+      string,
+      {
+        grade: string;
+        unitNumber: number;
+        unitName: string;
+        sections: Map<string, SectionData>;
+      }
+    >();
 
     for (const lesson of lessons) {
       if (!lesson.unitNumber) continue;
@@ -207,7 +235,7 @@ export function useCalendarPageData(
       .map(([unitKey, data]) => {
         // Find saved schedule matching grade and unitNumber
         const saved = savedSchedules.find(
-          (s) => s.grade === data.grade && s.unitNumber === data.unitNumber
+          (s) => s.grade === data.grade && s.unitNumber === data.unitNumber,
         );
 
         // Get data from scope-and-sequence
@@ -215,7 +243,9 @@ export function useCalendarPageData(
         const unitAssessmentData = data.sections.get("Unit Assessment");
 
         // Helper to build lessons array with subsection data
-        const buildLessons = (sectionData: SectionData | undefined): LessonForSubsection[] => {
+        const buildLessons = (
+          sectionData: SectionData | undefined,
+        ): LessonForSubsection[] => {
           if (!sectionData) return [];
           return sectionData.lessons
             .sort((a, b) => a.lessonNumber - b.lessonNumber)
@@ -229,19 +259,21 @@ export function useCalendarPageData(
         const buildSectionRows = (
           sectionId: string,
           baseName: string,
-          sectionData: SectionData | undefined
+          sectionData: SectionData | undefined,
         ): SectionSchedule[] => {
           if (!sectionData) return [];
 
           const lessonsWithSubsection = buildLessons(sectionData);
 
           // Check if any lessons have subsections assigned
-          const hasSubsections = lessonsWithSubsection.some((l) => l.subsection !== undefined);
+          const hasSubsections = lessonsWithSubsection.some(
+            (l) => l.subsection !== undefined,
+          );
 
           if (!hasSubsections) {
             // No subsections - return single row as before
             const savedSection = saved?.sections?.find(
-              (s) => s.sectionId === sectionId && s.subsection === undefined
+              (s) => s.sectionId === sectionId && s.subsection === undefined,
             );
             return [
               {
@@ -278,7 +310,8 @@ export function useCalendarPageData(
           for (const subsectionKey of sortedKeys) {
             const groupLessons = groups.get(subsectionKey)!;
             const savedSection = saved?.sections?.find(
-              (s) => s.sectionId === sectionId && s.subsection === subsectionKey
+              (s) =>
+                s.sectionId === sectionId && s.subsection === subsectionKey,
             );
 
             // Build name: "Section A (Part 1)" or just "Section A" for unassigned
@@ -306,21 +339,30 @@ export function useCalendarPageData(
 
         // Add Ramp Up at the beginning only if it exists in scope-and-sequence
         if (rampUpData && rampUpData.count > 0) {
-          finalSections.push(...buildSectionRows("Ramp Up", "Ramp Up", rampUpData));
+          finalSections.push(
+            ...buildSectionRows("Ramp Up", "Ramp Up", rampUpData),
+          );
         }
 
         // Add curriculum sections (A, B, C, etc.) - now split by subsection if needed
         const curriculumSectionIds = Array.from(data.sections.entries())
-          .filter(([sectionId]) => sectionId !== "Ramp Ups" && sectionId !== "Unit Assessment")
+          .filter(
+            ([sectionId]) =>
+              sectionId !== "Ramp Ups" && sectionId !== "Unit Assessment",
+          )
           .sort(([a], [b]) => a.localeCompare(b));
 
         for (const [sectionId, sectionData] of curriculumSectionIds) {
-          finalSections.push(...buildSectionRows(sectionId, `Section ${sectionId}`, sectionData));
+          finalSections.push(
+            ...buildSectionRows(sectionId, `Section ${sectionId}`, sectionData),
+          );
         }
 
         // Add Unit Test at the end only if it exists in scope-and-sequence
         if (unitAssessmentData && unitAssessmentData.count > 0) {
-          finalSections.push(...buildSectionRows("Unit Test", "Unit Test", unitAssessmentData));
+          finalSections.push(
+            ...buildSectionRows("Unit Test", "Unit Test", unitAssessmentData),
+          );
         }
 
         return {

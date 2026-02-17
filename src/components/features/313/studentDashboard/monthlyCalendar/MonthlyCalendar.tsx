@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { MonthlyGrid } from './MonthlyGrid';
-import { DailyCompletion } from '@/hooks/domain/313/useStudentCalendarData';
+import { MonthlyGrid } from "./MonthlyGrid";
+import { DailyCompletion } from "@/hooks/domain/313/useStudentCalendarData";
 
 interface MonthlyCalendarProps {
   dailyCompletions: DailyCompletion[];
@@ -15,7 +15,7 @@ export function MonthlyCalendar({
   // Summer session dates - fixed, no navigation needed
   const startDate = "2025-06-30";
   const endDate = "2025-08-07";
-  
+
   return (
     <div className="flex h-full flex-col">
       {/* Simple header without navigation */}
@@ -24,9 +24,9 @@ export function MonthlyCalendar({
           Summer Session Progress (Mon-Thu)
         </h3>
       </header>
-      
+
       {/* Calendar grid */}
-      <MonthlyGrid 
+      <MonthlyGrid
         dailyCompletions={dailyCompletions}
         startDate={startDate}
         endDate={endDate}

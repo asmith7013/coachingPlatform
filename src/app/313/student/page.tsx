@@ -1,12 +1,12 @@
-import { Metadata } from 'next';
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
+import { Metadata } from "next";
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
 
 export const metadata: Metadata = {
-  title: 'Student Access - Summer Rising',
-  description: 'Access your Summer Rising dashboard',
-  robots: 'noindex, nofollow',
+  title: "Student Access - Summer Rising",
+  description: "Access your Summer Rising dashboard",
+  robots: "noindex, nofollow",
 };
 
 export default function StudentLandingPage() {
@@ -26,4 +26,4 @@ export default function StudentLandingPage() {
       </Card>
     </div>
   );
-} 
+}

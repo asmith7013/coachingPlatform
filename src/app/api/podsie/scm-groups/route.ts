@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in scm-groups GET:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     if (!podsieGroupId) {
       return NextResponse.json(
         { success: false, error: "podsieGroupId is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
           ...(gradeLevel !== undefined && { gradeLevel }),
           ...(school !== undefined && { school }),
         },
-        { upsert: true, new: true }
+        { upsert: true, new: true },
       ).lean();
     });
 
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     console.error("Error in scm-groups POST:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -104,7 +104,7 @@ export async function PUT(req: NextRequest) {
     if (!podsieGroupId) {
       return NextResponse.json(
         { success: false, error: "podsieGroupId is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -116,14 +116,14 @@ export async function PUT(req: NextRequest) {
           ...(gradeLevel !== undefined && { gradeLevel }),
           ...(school !== undefined && { school }),
         },
-        { new: true }
+        { new: true },
       ).lean();
     });
 
     if (!result) {
       return NextResponse.json(
         { success: false, error: "Group not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -135,7 +135,7 @@ export async function PUT(req: NextRequest) {
     console.error("Error in scm-groups PUT:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

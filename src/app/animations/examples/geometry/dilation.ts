@@ -3,7 +3,8 @@ import { ExampleSketch } from "../../types";
 export const DILATION_ANIMATION: ExampleSketch = {
   id: "dilation-scale-factor",
   name: "Dilation with Scale Factor",
-  description: "Interactive dilation centered at a point with adjustable scale factor",
+  description:
+    "Interactive dilation centered at a point with adjustable scale factor",
   code: `// Dilation Animation with Scale Factor Slider
 // Configurable polygon points and center of dilation
 

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { cn } from '@ui/utils/formatters';;
-import { getUnitURL } from '@/components/domain/imRoutine/utils/get-unit-URL';
+import React from "react";
+import { cn } from "@ui/utils/formatters";
+import { getUnitURL } from "@/components/domain/imRoutine/utils/get-unit-URL";
 
 type Props = {
   routine: string;
   grade: string;
   unit: string;
-  curriculum: 'ILC' | 'Kendall Hunt';
+  curriculum: "ILC" | "Kendall Hunt";
 };
 
 export function RoutineBadge({ routine, grade, unit, curriculum }: Props) {
@@ -18,8 +18,8 @@ export function RoutineBadge({ routine, grade, unit, curriculum }: Props) {
   const badge = (
     <span
       className={cn(
-        'text-[10px] font-medium px-2 py-0.5 rounded inline-block',
-        isMLR ? 'bg-primary text-white' : 'bg-secondary text-white'
+        "text-[10px] font-medium px-2 py-0.5 rounded inline-block",
+        isMLR ? "bg-primary text-white" : "bg-secondary text-white",
       )}
     >
       {routine}
@@ -38,4 +38,4 @@ export function RoutineBadge({ routine, grade, unit, curriculum }: Props) {
   ) : (
     badge
   );
-} 
+}

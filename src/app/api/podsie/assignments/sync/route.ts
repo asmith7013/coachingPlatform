@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     if (!Array.isArray(assignments)) {
       return NextResponse.json(
         { success: false, error: "assignments must be an array" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -54,27 +54,36 @@ export async function POST(req: NextRequest) {
 
     // Validate required fields
     for (const assignment of assignments) {
-      if (typeof assignment.podsieAssignmentId !== 'number') {
+      if (typeof assignment.podsieAssignmentId !== "number") {
         return NextResponse.json(
-          { success: false, error: "Each assignment must have a numeric podsieAssignmentId" },
-          { status: 400 }
+          {
+            success: false,
+            error: "Each assignment must have a numeric podsieAssignmentId",
+          },
+          { status: 400 },
         );
       }
-      if (typeof assignment.podsieGroupId !== 'number') {
+      if (typeof assignment.podsieGroupId !== "number") {
         return NextResponse.json(
-          { success: false, error: `Assignment ${assignment.podsieAssignmentId} must have a numeric podsieGroupId` },
-          { status: 400 }
+          {
+            success: false,
+            error: `Assignment ${assignment.podsieAssignmentId} must have a numeric podsieGroupId`,
+          },
+          { status: 400 },
         );
       }
     }
 
     const result = await withDbConnection(async () => {
       // Group assignments by (podsieGroupId, podsieModuleId)
-      const moduleMap = new Map<string, {
-        podsieGroupId: number;
-        podsieModuleId: number;
-        assignments: AssignmentInput[];
-      }>();
+      const moduleMap = new Map<
+        string,
+        {
+          podsieGroupId: number;
+          podsieModuleId: number;
+          assignments: AssignmentInput[];
+        }
+      >();
 
       for (const a of assignments) {
         const moduleId = a.podsieModuleId ?? 0; // 0 for unassigned module
@@ -91,9 +100,14 @@ export async function POST(req: NextRequest) {
 
       let modulesUpdated = 0;
 
-      for (const { podsieGroupId, podsieModuleId, assignments: moduleAssignments } of moduleMap.values()) {
+      for (const {
+        podsieGroupId,
+        podsieModuleId,
+        assignments: moduleAssignments,
+      } of moduleMap.values()) {
         // Extract moduleName from the first assignment that has one
-        const moduleName = moduleAssignments.find(a => a.moduleName)?.moduleName ?? null;
+        const moduleName =
+          moduleAssignments.find((a) => a.moduleName)?.moduleName ?? null;
 
         // Find existing module doc
         const existingDoc = await PodsieScmModuleModel.findOne({
@@ -104,16 +118,24 @@ export async function POST(req: NextRequest) {
         if (existingDoc) {
           // Update moduleName if available
           if (moduleName) {
-            (existingDoc as unknown as Record<string, unknown>).moduleName = moduleName;
+            (existingDoc as unknown as Record<string, unknown>).moduleName =
+              moduleName;
           }
 
           // Update existing assignments and add new ones
           const existingAssignments = Array.from(
-            (existingDoc as unknown as { assignments: Array<Record<string, unknown>> }).assignments || []
+            (
+              existingDoc as unknown as {
+                assignments: Array<Record<string, unknown>>;
+              }
+            ).assignments || [],
           );
 
           const existingById = new Map(
-            existingAssignments.map((a, i) => [a.podsieAssignmentId as number, i])
+            existingAssignments.map((a, i) => [
+              a.podsieAssignmentId as number,
+              i,
+            ]),
           );
 
           for (const incoming of moduleAssignments) {
@@ -136,7 +158,11 @@ export async function POST(req: NextRequest) {
             }
           }
 
-          (existingDoc as unknown as { assignments: Array<Record<string, unknown>> }).assignments = existingAssignments;
+          (
+            existingDoc as unknown as {
+              assignments: Array<Record<string, unknown>>;
+            }
+          ).assignments = existingAssignments;
           await existingDoc.save();
         } else {
           // Create new module doc with these assignments
@@ -144,7 +170,7 @@ export async function POST(req: NextRequest) {
             podsieGroupId,
             podsieModuleId,
             moduleName: moduleName ?? undefined,
-            assignments: moduleAssignments.map(a => ({
+            assignments: moduleAssignments.map((a) => ({
               podsieAssignmentId: a.podsieAssignmentId,
               assignmentTitle: a.title,
               state: a.state ?? undefined,
@@ -159,7 +185,9 @@ export async function POST(req: NextRequest) {
       return { modulesUpdated, assignmentsProcessed: assignments.length };
     });
 
-    console.log(`Synced ${result.assignmentsProcessed} assignments across ${result.modulesUpdated} modules`);
+    console.log(
+      `Synced ${result.assignmentsProcessed} assignments across ${result.modulesUpdated} modules`,
+    );
 
     return NextResponse.json({
       success: true,
@@ -169,7 +197,7 @@ export async function POST(req: NextRequest) {
     console.error("Error in assignments sync POST:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

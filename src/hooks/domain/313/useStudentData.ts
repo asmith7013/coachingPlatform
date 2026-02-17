@@ -1,7 +1,10 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { StudentData } from '@/lib/schema/zod-schema/scm/student/student-data';
-import { fetchStudentData, authenticateStudent } from '@/app/actions/scm/student/student-data';
-import { handleClientError } from '@/lib/error/handlers/client';
+import { useState, useCallback, useEffect, useRef } from "react";
+import { StudentData } from "@/lib/schema/zod-schema/scm/student/student-data";
+import {
+  fetchStudentData,
+  authenticateStudent,
+} from "@/app/actions/scm/student/student-data";
+import { handleClientError } from "@/lib/error/handlers/client";
 
 /**
  * Custom hook for managing student dashboard data
@@ -13,7 +16,7 @@ export function useStudentData(studentId: string) {
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(true); // TODO: Remove this
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-  
+
   // Use ref to track if we've already loaded data for this studentId
   const loadedStudentIdRef = useRef<string | null>(null);
 
@@ -23,21 +26,21 @@ export function useStudentData(studentId: string) {
   const loadData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       console.log(`📊 Hook: Loading student data for ID: ${studentId}`);
-      
+
       const result = await fetchStudentData(studentId);
-      
+
       if (result.success && result.data) {
         setData(result.data);
         loadedStudentIdRef.current = studentId; // Mark as loaded
       } else {
-        setError(result.error || 'Failed to load student data');
+        setError(result.error || "Failed to load student data");
         setData(null);
       }
     } catch (err) {
-      const errorMsg = handleClientError(err, 'Student Data Loading');
+      const errorMsg = handleClientError(err, "Student Data Loading");
       setError(errorMsg);
       setData(null);
     } finally {
@@ -52,7 +55,9 @@ export function useStudentData(studentId: string) {
   useEffect(() => {
     // Only load if authenticated and haven't loaded data for this studentId yet
     if (isAuthenticated && loadedStudentIdRef.current !== studentId) {
-      console.log(`🚀 Hook: Auto-loading data on mount for student: ${studentId}`);
+      console.log(
+        `🚀 Hook: Auto-loading data on mount for student: ${studentId}`,
+      );
       loadData();
     }
   }, [studentId, isAuthenticated, loadData]); // Keep loadData but remove isLoading
@@ -61,7 +66,10 @@ export function useStudentData(studentId: string) {
    * Reset state when studentId changes
    */
   useEffect(() => {
-    if (loadedStudentIdRef.current && loadedStudentIdRef.current !== studentId) {
+    if (
+      loadedStudentIdRef.current &&
+      loadedStudentIdRef.current !== studentId
+    ) {
       console.log(`🔄 Hook: StudentId changed, resetting state`);
       setData(null);
       setError(null);
@@ -72,38 +80,43 @@ export function useStudentData(studentId: string) {
   /**
    * Authenticate student with email
    */
-  const authenticate = useCallback(async (email: string) => {
-    if (!email.trim()) {
-      setError('Email address is required');
-      return;
-    }
-
-    setIsAuthenticating(true);
-    setError(null);
-    
-    try {
-      console.log(`🔐 Hook: Authenticating student ${studentId} with email: ${email}`);
-      
-      const authResult = await authenticateStudent(email.trim(), studentId);
-      
-      if (authResult.success) {
-        setIsAuthenticated(true);
-        // Reset loaded tracking to trigger data load
-        loadedStudentIdRef.current = null;
-        // Automatically load data after successful authentication
-        await loadData();
-      } else {
-        setError(authResult.error || "Authentication failed");
-        setIsAuthenticated(false);
+  const authenticate = useCallback(
+    async (email: string) => {
+      if (!email.trim()) {
+        setError("Email address is required");
+        return;
       }
-    } catch (err) {
-      const errorMsg = handleClientError(err, 'Student Authentication');
-      setError(errorMsg);
-      setIsAuthenticated(false);
-    } finally {
-      setIsAuthenticating(false);
-    }
-  }, [studentId, loadData]);
+
+      setIsAuthenticating(true);
+      setError(null);
+
+      try {
+        console.log(
+          `🔐 Hook: Authenticating student ${studentId} with email: ${email}`,
+        );
+
+        const authResult = await authenticateStudent(email.trim(), studentId);
+
+        if (authResult.success) {
+          setIsAuthenticated(true);
+          // Reset loaded tracking to trigger data load
+          loadedStudentIdRef.current = null;
+          // Automatically load data after successful authentication
+          await loadData();
+        } else {
+          setError(authResult.error || "Authentication failed");
+          setIsAuthenticated(false);
+        }
+      } catch (err) {
+        const errorMsg = handleClientError(err, "Student Authentication");
+        setError(errorMsg);
+        setIsAuthenticated(false);
+      } finally {
+        setIsAuthenticating(false);
+      }
+    },
+    [studentId, loadData],
+  );
 
   /**
    * Reset authentication state
@@ -130,19 +143,19 @@ export function useStudentData(studentId: string) {
     data,
     isLoading,
     error,
-    
+
     // Authentication state
     isAuthenticated,
     isAuthenticating: isAuthenticating || isLoading,
-    
+
     // Actions
     authenticate,
     logout,
     refreshData,
-    
+
     // Computed values
     hasError: !!error,
     hasData: !!data,
-    isReady: isAuthenticated && !isLoading && !!data
+    isReady: isAuthenticated && !isLoading && !!data,
   };
 }

@@ -1,20 +1,16 @@
-import { handleServerError } from '@error/handlers/server';
-import { 
-  updateSheetRange, 
-  clearSheetRange, 
-  fetchSheetData
-} from '../client';
-import { 
-  SheetResetRequest, 
-  ResetResult, 
-  BatchResetResult, 
-  ResetOperation 
-} from '../types/spreadsheet-types';
+import { handleServerError } from "@error/handlers/server";
+import { updateSheetRange, clearSheetRange, fetchSheetData } from "../client";
+import {
+  SheetResetRequest,
+  ResetResult,
+  BatchResetResult,
+  ResetOperation,
+} from "../types/spreadsheet-types";
 
 /**
  * Google Sheets Reset Service
  * Handles resetting daily sheets for next day operations
- * 
+ *
  * This service is API-safe and can be used by both server actions and API routes
  */
 export class GoogleSheetsResetService {
@@ -23,40 +19,55 @@ export class GoogleSheetsResetService {
   /**
    * Reset sheet for next day by updating formulas and clearing intervention data
    */
-  async resetSheetForNextDay(worksheetId: number, sheetName: string): Promise<ResetResult> {
+  async resetSheetForNextDay(
+    worksheetId: number,
+    sheetName: string,
+  ): Promise<ResetResult> {
     const operations: ResetOperation[] = [];
-    
+
     try {
       // Operation 1: Update date formula in K1
-      const dateOperation = await this.updateDateFormula(worksheetId, sheetName);
+      const dateOperation = await this.updateDateFormula(
+        worksheetId,
+        sheetName,
+      );
       operations.push(dateOperation);
 
       // Operation 2: Convert filter to static values and refresh
-      const filterOperation = await this.convertFilterToStaticValues(worksheetId, sheetName);
+      const filterOperation = await this.convertFilterToStaticValues(
+        worksheetId,
+        sheetName,
+      );
       operations.push(filterOperation);
 
       // Operation 3: Set reset formulas for specific ranges
-      const formulaOperation = await this.setResetFormulas(worksheetId, sheetName);
+      const formulaOperation = await this.setResetFormulas(
+        worksheetId,
+        sheetName,
+      );
       operations.push(formulaOperation);
 
       // Operation 4: Clear intervention columns
-      const clearOperation = await this.clearInterventionColumns(worksheetId, sheetName);
+      const clearOperation = await this.clearInterventionColumns(
+        worksheetId,
+        sheetName,
+      );
       operations.push(clearOperation);
 
-      const success = operations.every(op => op.success);
+      const success = operations.every((op) => op.success);
 
       return {
         success,
         sheetName,
         operations,
-        error: success ? undefined : 'Some reset operations failed'
+        error: success ? undefined : "Some reset operations failed",
       };
     } catch (error) {
       return {
         success: false,
         sheetName,
         operations,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   }
@@ -64,13 +75,18 @@ export class GoogleSheetsResetService {
   /**
    * Reset multiple sheets in batch
    */
-  async resetMultipleSheets(resetRequests: SheetResetRequest[]): Promise<BatchResetResult> {
+  async resetMultipleSheets(
+    resetRequests: SheetResetRequest[],
+  ): Promise<BatchResetResult> {
     const results: ResetResult[] = [];
     let successfulResets = 0;
 
     for (const request of resetRequests) {
       try {
-        const result = await this.resetSheetForNextDay(request.worksheetId, request.sheetName);
+        const result = await this.resetSheetForNextDay(
+          request.worksheetId,
+          request.sheetName,
+        );
         results.push(result);
         if (result.success) {
           successfulResets++;
@@ -80,7 +96,7 @@ export class GoogleSheetsResetService {
           success: false,
           sheetName: request.sheetName,
           operations: [],
-          error: handleServerError(error)
+          error: handleServerError(error),
         });
       }
     }
@@ -89,30 +105,35 @@ export class GoogleSheetsResetService {
       totalSheets: resetRequests.length,
       successfulResets,
       failedResets: resetRequests.length - successfulResets,
-      results
+      results,
     };
   }
 
   /**
    * Update K1 cell to =TODAY() formula
    */
-  private async updateDateFormula(worksheetId: number, sheetName: string): Promise<ResetOperation> {
+  private async updateDateFormula(
+    worksheetId: number,
+    sheetName: string,
+  ): Promise<ResetOperation> {
     try {
       const range = `${sheetName}!O1`;
-      const values = [['=TODAY()']];
-      
+      const values = [["=TODAY()"]];
+
       const result = await updateSheetRange(this.spreadsheetId, range, values);
-      
+
       return {
-        operation: 'updateDate',
+        operation: "updateDate",
         success: result.success,
-        details: result.success ? 'Date formula updated to =TODAY()' : result.error
+        details: result.success
+          ? "Date formula updated to =TODAY()"
+          : result.error,
       };
     } catch (error) {
       return {
-        operation: 'updateDate',
+        operation: "updateDate",
         success: false,
-        details: handleServerError(error)
+        details: handleServerError(error),
       };
     }
   }
@@ -125,51 +146,62 @@ export class GoogleSheetsResetService {
    * 3. Force recalculation to get updated results
    * 4. Convert to static values
    */
-  private async convertFilterToStaticValues(worksheetId: number, sheetName: string): Promise<ResetOperation> {
+  private async convertFilterToStaticValues(
+    worksheetId: number,
+    sheetName: string,
+  ): Promise<ResetOperation> {
     try {
       // Step 1: Set the filter formula to refresh roster data
       const filterRange = `${sheetName}!B3`;
-      const filterFormula = [['=filter(Roster!A2:E,Roster!A2:A=O1)']];
-      
-      const filterResult = await updateSheetRange(this.spreadsheetId, filterRange, filterFormula);
+      const filterFormula = [["=filter(Roster!A2:E,Roster!A2:A=O1)"]];
+
+      const filterResult = await updateSheetRange(
+        this.spreadsheetId,
+        filterRange,
+        filterFormula,
+      );
       if (!filterResult.success) {
         return {
-          operation: 'convertFilter',
+          operation: "convertFilter",
           success: false,
-          details: `Failed to set filter formula: ${filterResult.error}`
+          details: `Failed to set filter formula: ${filterResult.error}`,
         };
       }
 
       // Step 2: Wait a moment for the formula to calculate
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Step 3: Get the calculated results
       const dataRange = `${sheetName}!B3:F50`;
       const dataResult = await fetchSheetData(this.spreadsheetId, dataRange);
-      
+
       if (!dataResult.success) {
         return {
-          operation: 'convertFilter',
+          operation: "convertFilter",
           success: false,
-          details: `Failed to fetch filter results: ${dataResult.error}`
+          details: `Failed to fetch filter results: ${dataResult.error}`,
         };
       }
 
       // Step 4: Convert to static values (paste values only)
-      const staticResult = await updateSheetRange(this.spreadsheetId, dataRange, dataResult.data);
-      
+      const staticResult = await updateSheetRange(
+        this.spreadsheetId,
+        dataRange,
+        dataResult.data,
+      );
+
       return {
-        operation: 'convertFilter',
+        operation: "convertFilter",
         success: staticResult.success,
-        details: staticResult.success 
+        details: staticResult.success
           ? `Filter converted to static values (${dataResult.data.length} rows)`
-          : staticResult.error
+          : staticResult.error,
       };
     } catch (error) {
       return {
-        operation: 'convertFilter',
+        operation: "convertFilter",
         success: false,
-        details: handleServerError(error)
+        details: handleServerError(error),
       };
     }
   }
@@ -180,40 +212,68 @@ export class GoogleSheetsResetService {
    * - G3:G50 = ✅ (attendance checkmark)
    * - O3:O50 = =$H$1 (teacher reference)
    */
-  private async setResetFormulas(worksheetId: number, sheetName: string): Promise<ResetOperation> {
+  private async setResetFormulas(
+    worksheetId: number,
+    sheetName: string,
+  ): Promise<ResetOperation> {
     try {
       const operations = [];
-      
+
       // Set date references A3:A50
       const dateRange = `${sheetName}!A3:A50`;
-      const dateFormulas = Array(48).fill(null).map(() => ['=$K$1']);
-      const dateResult = await updateSheetRange(this.spreadsheetId, dateRange, dateFormulas);
-      operations.push(`Date formulas: ${dateResult.success ? 'success' : 'failed'}`);
+      const dateFormulas = Array(48)
+        .fill(null)
+        .map(() => ["=$K$1"]);
+      const dateResult = await updateSheetRange(
+        this.spreadsheetId,
+        dateRange,
+        dateFormulas,
+      );
+      operations.push(
+        `Date formulas: ${dateResult.success ? "success" : "failed"}`,
+      );
 
       // Set attendance checkmarks G3:G50
       const attendanceRange = `${sheetName}!G3:G50`;
-      const attendanceValues = Array(48).fill(null).map(() => ['✅']);
-      const attendanceResult = await updateSheetRange(this.spreadsheetId, attendanceRange, attendanceValues);
-      operations.push(`Attendance checkmarks: ${attendanceResult.success ? 'success' : 'failed'}`);
+      const attendanceValues = Array(48)
+        .fill(null)
+        .map(() => ["✅"]);
+      const attendanceResult = await updateSheetRange(
+        this.spreadsheetId,
+        attendanceRange,
+        attendanceValues,
+      );
+      operations.push(
+        `Attendance checkmarks: ${attendanceResult.success ? "success" : "failed"}`,
+      );
 
       // Set teacher references O3:O50
       const teacherRange = `${sheetName}!O3:O50`;
-      const teacherFormulas = Array(48).fill(null).map(() => ['=$H$1']);
-      const teacherResult = await updateSheetRange(this.spreadsheetId, teacherRange, teacherFormulas);
-      operations.push(`Teacher references: ${teacherResult.success ? 'success' : 'failed'}`);
+      const teacherFormulas = Array(48)
+        .fill(null)
+        .map(() => ["=$H$1"]);
+      const teacherResult = await updateSheetRange(
+        this.spreadsheetId,
+        teacherRange,
+        teacherFormulas,
+      );
+      operations.push(
+        `Teacher references: ${teacherResult.success ? "success" : "failed"}`,
+      );
 
-      const success = dateResult.success && attendanceResult.success && teacherResult.success;
+      const success =
+        dateResult.success && attendanceResult.success && teacherResult.success;
 
       return {
-        operation: 'setFormulas',
+        operation: "setFormulas",
         success,
-        details: operations.join(', ')
+        details: operations.join(", "),
       };
     } catch (error) {
       return {
-        operation: 'setFormulas',
+        operation: "setFormulas",
         success: false,
-        details: handleServerError(error)
+        details: handleServerError(error),
       };
     }
   }
@@ -221,23 +281,26 @@ export class GoogleSheetsResetService {
   /**
    * Clear intervention columns (H3:K50)
    */
-  private async clearInterventionColumns(worksheetId: number, sheetName: string): Promise<ResetOperation> {
+  private async clearInterventionColumns(
+    worksheetId: number,
+    sheetName: string,
+  ): Promise<ResetOperation> {
     try {
       const range = `${sheetName}!H3:K50`;
       const result = await clearSheetRange(this.spreadsheetId, range);
-      
+
       return {
-        operation: 'clearInterventions',
+        operation: "clearInterventions",
         success: result.success,
-        details: result.success 
-          ? 'Intervention columns cleared (H3:K50)'
-          : result.error
+        details: result.success
+          ? "Intervention columns cleared (H3:K50)"
+          : result.error,
       };
     } catch (error) {
       return {
-        operation: 'clearInterventions',
+        operation: "clearInterventions",
         success: false,
-        details: handleServerError(error)
+        details: handleServerError(error),
       };
     }
   }
@@ -248,13 +311,13 @@ export class GoogleSheetsResetService {
   async getResetCapabilities() {
     return {
       supportedOperations: [
-        'updateDate',
-        'convertFilter', 
-        'setFormulas',
-        'clearInterventions'
+        "updateDate",
+        "convertFilter",
+        "setFormulas",
+        "clearInterventions",
       ],
       batchResetSupported: true,
-      maxBatchSize: 50
+      maxBatchSize: 50,
     };
   }
-} 
+}

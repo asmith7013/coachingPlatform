@@ -28,8 +28,12 @@ export default function RoadmapUnitsPage() {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [selectedSection, setSelectedSection] = useState<string>("");
-  const [selectedSkill, setSelectedSkill] = useState<RoadmapsSkill | null>(null);
-  const [selectedSkillColor, setSelectedSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('green');
+  const [selectedSkill, setSelectedSkill] = useState<RoadmapsSkill | null>(
+    null,
+  );
+  const [selectedSkillColor, setSelectedSkillColor] = useState<
+    "blue" | "green" | "orange" | "purple"
+  >("green");
 
   // Data fetching with React Query hooks
   const { units, loading, error } = useRoadmapUnits();
@@ -43,7 +47,8 @@ export default function RoadmapUnitsPage() {
       .filter((unit) => unit.grade === selectedGrade)
       .sort(
         (a, b) =>
-          new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
+          new Date(a.createdAt || 0).getTime() -
+          new Date(b.createdAt || 0).getTime(),
       );
   }, [selectedGrade, units]);
 
@@ -57,7 +62,10 @@ export default function RoadmapUnitsPage() {
     setSelectedSkill(null); // Clear skill selection when unit changes
   };
 
-  const handleSkillClick = async (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => {
+  const handleSkillClick = async (
+    skillNumber: string,
+    color: "blue" | "green" | "orange" | "purple",
+  ) => {
     setSelectedSkillColor(color);
     try {
       const result = await fetchRoadmapsSkillsByNumbers([skillNumber]);
@@ -71,7 +79,7 @@ export default function RoadmapUnitsPage() {
         } as unknown as RoadmapsSkill);
       }
     } catch (error) {
-      console.error('Error fetching skill:', error);
+      console.error("Error fetching skill:", error);
       setSelectedSkill({
         skillNumber,
         notFound: true,
@@ -81,7 +89,7 @@ export default function RoadmapUnitsPage() {
 
   // Get the selected unit object
   const selectedUnit = selectedUnitId
-    ? filteredUnits.find(u => u._id === selectedUnitId) || null
+    ? filteredUnits.find((u) => u._id === selectedUnitId) || null
     : null;
 
   if (loading) {
@@ -120,7 +128,8 @@ export default function RoadmapUnitsPage() {
             <div className="flex items-center">
               <div className="text-yellow-600 mr-2">ℹ️</div>
               <div className="text-yellow-800">
-                No units found in the database. Use the unit scraper to import units.
+                No units found in the database. Use the unit scraper to import
+                units.
               </div>
             </div>
           </div>
@@ -151,8 +160,8 @@ export default function RoadmapUnitsPage() {
                 onChange={(e) => setSelectedGrade(e.target.value)}
                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   !selectedGrade
-                    ? 'border-blue-500 ring-2 ring-blue-200'
-                    : 'border-gray-300'
+                    ? "border-blue-500 ring-2 ring-blue-200"
+                    : "border-gray-300"
                 }`}
               >
                 {GRADE_OPTIONS.map((option) => (
@@ -166,24 +175,35 @@ export default function RoadmapUnitsPage() {
             {/* Stats Summary */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{filteredUnits.length}</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {filteredUnits.length}
+                </div>
                 <div className="text-sm text-gray-500">Units</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-skill-target">
-                  {filteredUnits.reduce((sum, unit) => sum + unit.targetCount, 0)}
+                  {filteredUnits.reduce(
+                    (sum, unit) => sum + unit.targetCount,
+                    0,
+                  )}
                 </div>
                 <div className="text-sm text-gray-500">Target Skills</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-skill-essential">
-                  {filteredUnits.reduce((sum, unit) => sum + unit.supportCount, 0)}
+                  {filteredUnits.reduce(
+                    (sum, unit) => sum + unit.supportCount,
+                    0,
+                  )}
                 </div>
                 <div className="text-sm text-gray-500">Essential Skills</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-skill-helpful">
-                  {filteredUnits.reduce((sum, unit) => sum + unit.extensionCount, 0)}
+                  {filteredUnits.reduce(
+                    (sum, unit) => sum + unit.extensionCount,
+                    0,
+                  )}
                 </div>
                 <div className="text-sm text-gray-500">Helpful Skills</div>
               </div>
@@ -192,7 +212,11 @@ export default function RoadmapUnitsPage() {
 
           {/* Right Card: Section & Student Filter */}
           <div className="lg:col-span-1 bg-white rounded-lg shadow-sm p-6">
-            <div className={selectedGrade === "" ? "opacity-50 pointer-events-none" : ""}>
+            <div
+              className={
+                selectedGrade === "" ? "opacity-50 pointer-events-none" : ""
+              }
+            >
               <StudentFilter
                 onStudentSelect={setSelectedStudent}
                 selectedStudent={selectedStudent}
@@ -209,24 +233,38 @@ export default function RoadmapUnitsPage() {
         {/* Dynamic Layout: Unit List + Unit Detail (+ Skill Detail when skill selected) */}
         <div className="flex gap-6">
           {/* Left Column: Unit List (compact when skill selected, expanded when not) */}
-          <div className={`${selectedSkill ? 'w-20' : 'w-2/5'} bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all duration-300`}>
+          <div
+            className={`${selectedSkill ? "w-20" : "w-2/5"} bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all duration-300`}
+          >
             <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10">
-              <h3 className={`font-semibold text-gray-900 ${selectedSkill ? 'text-center text-xs' : ''}`}>
+              <h3
+                className={`font-semibold text-gray-900 ${selectedSkill ? "text-center text-xs" : ""}`}
+              >
                 Units
               </h3>
             </div>
             <div className="overflow-y-auto">
               {filteredUnits.length === 0 ? (
-                <div className={`p-8 text-center text-gray-500 ${selectedSkill ? 'p-4' : ''}`}>
+                <div
+                  className={`p-8 text-center text-gray-500 ${selectedSkill ? "p-4" : ""}`}
+                >
                   {selectedGrade === "" ? (
                     <>
                       <AcademicCapIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      {!selectedSkill && <div className="text-sm">Select a grade to view units</div>}
+                      {!selectedSkill && (
+                        <div className="text-sm">
+                          Select a grade to view units
+                        </div>
+                      )}
                     </>
                   ) : (
                     <>
                       <BookOpenIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      {!selectedSkill && <div className="text-sm">No units found for this grade</div>}
+                      {!selectedSkill && (
+                        <div className="text-sm">
+                          No units found for this grade
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
@@ -245,7 +283,9 @@ export default function RoadmapUnitsPage() {
           </div>
 
           {/* Middle Column: Unit Detail View */}
-          <div className={`${selectedSkill ? 'w-2/5' : 'w-3/5'} transition-all duration-300`}>
+          <div
+            className={`${selectedSkill ? "w-2/5" : "w-3/5"} transition-all duration-300`}
+          >
             <UnitDetailView
               unit={selectedUnit}
               selectedSection={selectedSection}

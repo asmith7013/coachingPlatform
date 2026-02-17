@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { ReactNode } from 'react';
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
+import { ReactNode } from "react";
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
 
 /**
  * Layout for Monday.com import pages
  * This layout provides a consistent container for all import-related pages
  */
 export default function MondayImportLayout({
-  children
+  children,
 }: {
   children: ReactNode;
 }) {
@@ -22,11 +22,9 @@ export default function MondayImportLayout({
           Import and sync data between Monday.com and your coaching platform
         </Text>
       </div>
-      
+
       <Card className="shadow-md">
-        <Card.Body>
-          {children}
-        </Card.Body>
+        <Card.Body>{children}</Card.Body>
       </Card>
     </div>
   );

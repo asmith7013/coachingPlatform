@@ -7,27 +7,27 @@ import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 
 // Import services
-import { 
-  findPotentialVisitsToImport, 
-  importSelectedVisits
+import {
+  findPotentialVisitsToImport,
+  importSelectedVisits,
 } from "@/lib/integrations/monday/services/import-service";
 
 import { syncVisitWithMondayService } from "@/lib/integrations/monday/services/sync-service";
 
 // Import repository functions
-import { 
+import {
   testConnection,
   fetchMondayBoard,
   fetchMondayBoards,
-  fetchMondayUserByEmail
+  fetchMondayUserByEmail,
 } from "@/lib/integrations/monday/client";
 
 // Types
-import type { 
+import type {
   ImportItem,
   ImportPreview,
   ImportResult,
-  MondayConnectionTestResult
+  MondayConnectionTestResult,
 } from "@/lib/integrations/monday/types";
 import { VisitInputZodSchema } from "@zod-schema/visits/visit";
 import { EntityResponse } from "@/lib/types/core/response";
@@ -38,14 +38,16 @@ export type { ImportItem, ImportPreview };
 /**
  * Test Monday.com API connection
  */
-export async function testMondayConnection(): Promise<EntityResponse<MondayConnectionTestResult>> {
+export async function testMondayConnection(): Promise<
+  EntityResponse<MondayConnectionTestResult>
+> {
   try {
     return await testConnection();
   } catch (error) {
     return {
       success: false,
       error: handleServerError(error),
-      data: null as unknown as MondayConnectionTestResult
+      data: null as unknown as MondayConnectionTestResult,
     };
   }
 }
@@ -53,14 +55,18 @@ export async function testMondayConnection(): Promise<EntityResponse<MondayConne
 /**
  * Find potential visits to import from a Monday.com board
  */
-export async function findVisitsToImport(boardId: string): Promise<ImportPreview[]> {
+export async function findVisitsToImport(
+  boardId: string,
+): Promise<ImportPreview[]> {
   return withDbConnection(async () => {
     try {
       // Validate input
-      const { boardId: validBoardId } = z.object({
-        boardId: z.string().min(1, "Board ID is required")
-      }).parse({ boardId });
-      
+      const { boardId: validBoardId } = z
+        .object({
+          boardId: z.string().min(1, "Board ID is required"),
+        })
+        .parse({ boardId });
+
       return await findPotentialVisitsToImport(validBoardId);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -75,7 +81,7 @@ export async function findVisitsToImport(boardId: string): Promise<ImportPreview
  * Import selected visits from Monday.com
  */
 export async function importSelectedVisitsFromMonday(
-  selectedItems: ImportItem[] | string[]
+  selectedItems: ImportItem[] | string[],
 ): Promise<ImportResult> {
   return withDbConnection(async () => {
     try {
@@ -85,22 +91,22 @@ export async function importSelectedVisitsFromMonday(
           success: false,
           imported: 0,
           errors: { general: "No items selected for import" },
-          message: "No items selected for import"
+          message: "No items selected for import",
         };
       }
-      
+
       const result = await importSelectedVisits(selectedItems);
-      
+
       // Revalidate paths
       revalidatePath("/dashboard/visits");
-      
+
       return result;
     } catch (error) {
       return {
         success: false,
         imported: 0,
         errors: { general: handleServerError(error) },
-        message: `Import failed: ${handleServerError(error)}`
+        message: `Import failed: ${handleServerError(error)}`,
       };
     }
   });
@@ -112,22 +118,24 @@ export async function importSelectedVisitsFromMonday(
 export async function getMondayBoard(boardId: string, itemLimit = 20) {
   try {
     // Validate input
-    const { boardId: validBoardId, itemLimit: validItemLimit } = z.object({
-      boardId: z.string().min(1, "Board ID is required"),
-      itemLimit: z.number().int().positive().default(20)
-    }).parse({ boardId, itemLimit });
-    
+    const { boardId: validBoardId, itemLimit: validItemLimit } = z
+      .object({
+        boardId: z.string().min(1, "Board ID is required"),
+        itemLimit: z.number().int().positive().default(20),
+      })
+      .parse({ boardId, itemLimit });
+
     return await fetchMondayBoard(validBoardId, validItemLimit);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: handleValidationError(error)
+        error: handleValidationError(error),
       };
     }
     return {
       success: false,
-      error: handleServerError(error)
+      error: handleServerError(error),
     };
   }
 }
@@ -141,7 +149,7 @@ export async function getMondayBoards() {
   } catch (error) {
     return {
       success: false,
-      error: handleServerError(error)
+      error: handleServerError(error),
     };
   }
 }
@@ -152,21 +160,23 @@ export async function getMondayBoards() {
 export async function getMondayUserByEmail(email: string) {
   try {
     // Validate input
-    const { email: validEmail } = z.object({
-      email: z.string().email("Valid email is required")
-    }).parse({ email });
-    
+    const { email: validEmail } = z
+      .object({
+        email: z.string().email("Valid email is required"),
+      })
+      .parse({ email });
+
     return await fetchMondayUserByEmail(validEmail);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: handleValidationError(error)
+        error: handleValidationError(error),
       };
     }
     return {
       success: false,
-      error: handleServerError(error)
+      error: handleServerError(error),
     };
   }
 }
@@ -178,28 +188,30 @@ export async function syncVisitWithMonday(visitId: string) {
   return withDbConnection(async () => {
     try {
       // Validate input
-      const { visitId: validVisitId } = z.object({
-        visitId: z.string().min(1, "Visit ID is required")
-      }).parse({ visitId });
-      
+      const { visitId: validVisitId } = z
+        .object({
+          visitId: z.string().min(1, "Visit ID is required"),
+        })
+        .parse({ visitId });
+
       const result = await syncVisitWithMondayService(validVisitId);
-      
+
       // Revalidate paths if successful
       if (result.success) {
         revalidatePath("/dashboard/visits");
       }
-      
+
       return result;
     } catch (error) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          error: handleValidationError(error)
+          error: handleValidationError(error),
         };
       }
       return {
         success: false,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });
@@ -214,31 +226,33 @@ export async function completeAndImportVisit(data: unknown): Promise<{
     try {
       // Validate the input data
       const validatedData = VisitInputZodSchema.parse(data);
-      
+
       // Import the visit
-      const result = await importSelectedVisits([{
-        id: validatedData.mondayItemId as string,
-        completeData: validatedData
-      }]);
-      
+      const result = await importSelectedVisits([
+        {
+          id: validatedData.mondayItemId as string,
+          completeData: validatedData,
+        },
+      ]);
+
       // Revalidate paths
       revalidatePath("/dashboard/visits");
-      
+
       return {
         success: result.success,
-        data: result
+        data: result,
       };
     } catch (error) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          error: handleValidationError(error)
+          error: handleValidationError(error),
         };
       }
-      
+
       return {
         success: false,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });

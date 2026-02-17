@@ -1,879 +1,2695 @@
 <form novalidate="" class="formBlock">
-    <h1>Coach Log Form</h1>
-    <div class="mb-4 col">
-       <label class="form-label" for="formBasicEmail"><strong>Please select the date:*</strong></label>
-       <div class="customDatePickerWidth">
-          <div class="react-datepicker-wrapper">
-             <div class="react-datepicker__input-container"><span role="alert" aria-live="polite" class="react-datepicker__aria-live"></span><input type="text" name="date" class="" value="06/23/2025"></div>
+  <h1>Coach Log Form</h1>
+  <div class="mb-4 col">
+    <label class="form-label" for="formBasicEmail"
+      ><strong>Please select the date:*</strong></label
+    >
+    <div class="customDatePickerWidth">
+      <div class="react-datepicker-wrapper">
+        <div class="react-datepicker__input-container">
+          <span
+            role="alert"
+            aria-live="polite"
+            class="react-datepicker__aria-live"
+          ></span
+          ><input type="text" name="date" class="" value="06/23/2025" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mb-5">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Please select your name from the drop-down menu*</strong></label
+    >
+    <select
+      name="coachName"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option></option>
+      <option value='{"name":"Aaron Colston","id":"36970267"}'>
+        Aaron Colston
+      </option>
+      <option value='{"name":"Adam Smith","id":"31357565"}'>Adam Smith</option>
+      <option value='{"name":"Aidin Carey","id":"67872350"}'>
+        Aidin Carey
+      </option>
+      <option value='{"name":"Alex Smith","id":"65632921"}'>Alex Smith</option>
+      <option value='{"name":"Alice Mitchell","id":"48731699"}'>
+        Alice Mitchell
+      </option>
+      <option value='{"name":"Alice Ng","id":"42789107"}'>Alice Ng</option>
+      <option value='{"name":"Alicia Faust","id":"29877360"}'>
+        Alicia Faust
+      </option>
+      <option value='{"name":"Alli Franken","id":"29305235"}'>
+        Alli Franken
+      </option>
+      <option value='{"name":"Amanda Beale","id":"31357551"}'>
+        Amanda Beale
+      </option>
+      <option value='{"name":"Amanda Mitchell","id":"64452028"}'>
+        Amanda Mitchell
+      </option>
+      <option value='{"name":"Amina Banks","id":"65176092"}'>
+        Amina Banks
+      </option>
+      <option value='{"name":"Amy Whitmer","id":"77068269"}'>
+        Amy Whitmer
+      </option>
+      <option value='{"name":"Amy Youngblood","id":"31357571"}'>
+        Amy Youngblood
+      </option>
+      <option value='{"name":"Anabel Encarnación","id":"65763192"}'>
+        Anabel Encarnación
+      </option>
+      <option value='{"name":"Andrea Heard","id":"54965972"}'>
+        Andrea Heard
+      </option>
+      <option value='{"name":"Andrea Johnson","id":"28302314"}'>
+        Andrea Johnson
+      </option>
+      <option value='{"name":"Angela Brumfield","id":"29189704"}'>
+        Angela Brumfield
+      </option>
+      <option value='{"name":"Anita Walls","id":"31357651"}'>
+        Anita Walls
+      </option>
+      <option value='{"name":"Antoinette Kane","id":"75586218"}'>
+        Antoinette Kane
+      </option>
+      <option value='{"name":"Antonio Garza-Zertuche","id":"37008431"}'>
+        Antonio Garza-Zertuche
+      </option>
+      <option value='{"name":"Areah Thompson","id":"57086095"}'>
+        Areah Thompson
+      </option>
+      <option value='{"name":"Ariel Juarez","id":"36632639"}'>
+        Ariel Juarez
+      </option>
+      <option value='{"name":"Asia Leeds","id":"50887440"}'>Asia Leeds</option>
+      <option value='{"name":"Asma Akhras","id":"63253089"}'>
+        Asma Akhras
+      </option>
+      <option value='{"name":"Aubreyna Archer","id":"33611983"}'>
+        Aubreyna Archer
+      </option>
+      <option value='{"name":"Ayesha Fahmin","id":"51399176"}'>
+        Ayesha Fahmin
+      </option>
+      <option value='{"name":"B.Simon","id":"41856229"}'>B.Simon</option>
+      <option value='{"name":"Ben Shand","id":"50193489"}'>Ben Shand</option>
+      <option value='{"name":"Beth Park","id":"47023957"}'>Beth Park</option>
+      <option value='{"name":"Bethany Brown","id":"30209454"}'>
+        Bethany Brown
+      </option>
+      <option value='{"name":"Betsy Lawson Blank","id":"34248499"}'>
+        Betsy Lawson Blank
+      </option>
+      <option value='{"name":"Betsy Silber","id":"51257979"}'>
+        Betsy Silber
+      </option>
+      <option value='{"name":"Bobby Dillard","id":"35607117"}'>
+        Bobby Dillard
+      </option>
+      <option value='{"name":"Brad Haggerty","id":"23018677"}'>
+        Brad Haggerty
+      </option>
+      <option value='{"name":"Brandi Phillips","id":"31357561"}'>
+        Brandi Phillips
+      </option>
+      <option value='{"name":"Brendan Scribner","id":"73965144"}'>
+        Brendan Scribner
+      </option>
+      <option value='{"name":"Brenna Prochnow","id":"37837128"}'>
+        Brenna Prochnow
+      </option>
+      <option value='{"name":"Brian Dunn","id":"35866002"}'>Brian Dunn</option>
+      <option value='{"name":"Brian Story","id":"46298767"}'>
+        Brian Story
+      </option>
+      <option value='{"name":"Briana Anderson","id":"35866519"}'>
+        Briana Anderson
+      </option>
+      <option value='{"name":"Britt Neuhaus","id":"63992142"}'>
+        Britt Neuhaus
+      </option>
+      <option value='{"name":"Brooke Halsey","id":"56850774"}'>
+        Brooke Halsey
+      </option>
+      <option value='{"name":"Callie Herring","id":"31357587"}'>
+        Callie Herring
+      </option>
+      <option value='{"name":"Candice Rodriguez Acevedo","id":"50595316"}'>
+        Candice Rodriguez Acevedo
+      </option>
+      <option value='{"name":"Cara Farber Rossen","id":"57753082"}'>
+        Cara Farber Rossen
+      </option>
+      <option value='{"name":"Carlie Bates","id":"63286905"}'>
+        Carlie Bates
+      </option>
+      <option value='{"name":"Carol Redfield","id":"28309590"}'>
+        Carol Redfield
+      </option>
+      <option value='{"name":"Casey Lawrence","id":"36019410"}'>
+        Casey Lawrence
+      </option>
+      <option value='{"name":"Castenzio Venegas","id":"34609496"}'>
+        Castenzio Venegas
+      </option>
+      <option value='{"name":"Cayla Repass","id":"38015762"}'>
+        Cayla Repass
+      </option>
+      <option value='{"name":"Chanita Coulter","id":"52555440"}'>
+        Chanita Coulter
+      </option>
+      <option value='{"name":"Charles Morris","id":"76800970"}'>
+        Charles Morris
+      </option>
+      <option value='{"name":"Chele Kong","id":"52875523"}'>Chele Kong</option>
+      <option value='{"name":"Chelsea Alkon","id":"64276149"}'>
+        Chelsea Alkon
+      </option>
+      <option value='{"name":"Cheryl Dobbertin","id":"31357624"}'>
+        Cheryl Dobbertin
+      </option>
+      <option value='{"name":"Ching Sullivan","id":"45569521"}'>
+        Ching Sullivan
+      </option>
+      <option value='{"name":"Christi Denning","id":"31357652"}'>
+        Christi Denning
+      </option>
+      <option value='{"name":"Christina Gellos","id":"65013942"}'>
+        Christina Gellos
+      </option>
+      <option value='{"name":"Christina Qualls","id":"59860056"}'>
+        Christina Qualls
+      </option>
+      <option value='{"name":"Christopher Guidarelli","id":"77021576"}'>
+        Christopher Guidarelli
+      </option>
+      <option value='{"name":"Clare Stolarski","id":"76942146"}'>
+        Clare Stolarski
+      </option>
+      <option value='{"name":"Colleen Hinkson","id":"47565861"}'>
+        Colleen Hinkson
+      </option>
+      <option value='{"name":"Colleen Volberg","id":"46478265"}'>
+        Colleen Volberg
+      </option>
+      <option value='{"name":"Corneisha Weir","id":"31357689"}'>
+        Corneisha Weir
+      </option>
+      <option value='{"name":"Cornelius Tan","id":"45935632"}'>
+        Cornelius Tan
+      </option>
+      <option value='{"name":"Crystal Carson","id":"75247139"}'>
+        Crystal Carson
+      </option>
+      <option value='{"name":"Crystal Stewart","id":"51837230"}'>
+        Crystal Stewart
+      </option>
+      <option value='{"name":"Cynite Ola","id":"51591798"}'>Cynite Ola</option>
+      <option value='{"name":"Daissan Colbert","id":"22840447"}'>
+        Daissan Colbert
+      </option>
+      <option value='{"name":"Dallas Hall","id":"68554601"}'>
+        Dallas Hall
+      </option>
+      <option value='{"name":"Danielle Schaefer","id":"47464885"}'>
+        Danielle Schaefer
+      </option>
+      <option value='{"name":"Danielle Watts-Redmond","id":"27940071"}'>
+        Danielle Watts-Redmond
+      </option>
+      <option value='{"name":"Daphne Jones","id":"31357682"}'>
+        Daphne Jones
+      </option>
+      <option value='{"name":"David Keech","id":"31357669"}'>
+        David Keech
+      </option>
+      <option value='{"name":"Dawn Lynn Kernahan","id":"51041692"}'>
+        Dawn Lynn Kernahan
+      </option>
+      <option value='{"name":"Debbie Ellis","id":"47447588"}'>
+        Debbie Ellis
+      </option>
+      <option value='{"name":"Deborah-Ann Gordon","id":"44892979"}'>
+        Deborah-Ann Gordon
+      </option>
+      <option value='{"name":"Deidra Lawson","id":"37192654"}'>
+        Deidra Lawson
+      </option>
+      <option value='{"name":"Delines Rodriguez","id":"74761012"}'>
+        Delines Rodriguez
+      </option>
+      <option value='{"name":"Demetra Brown","id":"31357637"}'>
+        Demetra Brown
+      </option>
+      <option value='{"name":"Dionne Lewis Williams","id":"53918654"}'>
+        Dionne Lewis Williams
+      </option>
+      <option value='{"name":"Donyell Beck","id":"53269877"}'>
+        Donyell Beck
+      </option>
+      <option value='{"name":"Dorca Casseus","id":"77154231"}'>
+        Dorca Casseus
+      </option>
+      <option value='{"name":"Drew Hodges","id":"63397283"}'>
+        Drew Hodges
+      </option>
+      <option value='{"name":"Duncan Gates","id":"22039575"}'>
+        Duncan Gates
+      </option>
+      <option value='{"name":"Dylan Petty","id":"72764957"}'>
+        Dylan Petty
+      </option>
+      <option value='{"name":"Eboni Jaggers","id":"52956301"}'>
+        Eboni Jaggers
+      </option>
+      <option value='{"name":"Eleni Papanikolau","id":"65680887"}'>
+        Eleni Papanikolau
+      </option>
+      <option value='{"name":"Eleonore Gibson","id":"51779276"}'>
+        Eleonore Gibson
+      </option>
+      <option value='{"name":"Elita Summers","id":"53076380"}'>
+        Elita Summers
+      </option>
+      <option value='{"name":"Elizabeth Van Hoesen","id":"31357572"}'>
+        Elizabeth Van Hoesen
+      </option>
+      <option value='{"name":"Ellen Greig","id":"29877350"}'>
+        Ellen Greig
+      </option>
+      <option value='{"name":"Emily Kenton","id":"39849506"}'>
+        Emily Kenton
+      </option>
+      <option value='{"name":"Emma Colonna","id":"64593334"}'>
+        Emma Colonna
+      </option>
+      <option value='{"name":"Emma Colwell","id":"50868586"}'>
+        Emma Colwell
+      </option>
+      <option value='{"name":"Eric Van Donge","id":"49348922"}'>
+        Eric Van Donge
+      </option>
+      <option value='{"name":"Erica WalkingStick","id":"51272958"}'>
+        Erica WalkingStick
+      </option>
+      <option value='{"name":"Ericka Batiste","id":"31357687"}'>
+        Ericka Batiste
+      </option>
+      <option value='{"name":"Erik Lepis","id":"66345105"}'>Erik Lepis</option>
+      <option value='{"name":"Erik Reitinger","id":"24063923"}'>
+        Erik Reitinger
+      </option>
+      <option value='{"name":"Erin Harden","id":"31357612"}'>
+        Erin Harden
+      </option>
+      <option value='{"name":"Erin Maguire","id":"31357670"}'>
+        Erin Maguire
+      </option>
+      <option value='{"name":"Erin Weiner","id":"46841740"}'>
+        Erin Weiner
+      </option>
+      <option value='{"name":"Evan Rushton","id":"31357655"}'>
+        Evan Rushton
+      </option>
+      <option value='{"name":"Fabienne Bennett","id":"31357574"}'>
+        Fabienne Bennett
+      </option>
+      <option value='{"name":"Ferron Morgan","id":"40346710"}'>
+        Ferron Morgan
+      </option>
+      <option value='{"name":"Grace Ashton","id":"75836519"}'>
+        Grace Ashton
+      </option>
+      <option value='{"name":"Grace Kingsbery","id":"56689429"}'>
+        Grace Kingsbery
+      </option>
+      <option value='{"name":"Gregory Michael Leap","id":"31357603"}'>
+        Gregory Michael Leap
+      </option>
+      <option value='{"name":"Haley Siegel","id":"31357626"}'>
+        Haley Siegel
+      </option>
+      <option value='{"name":"HaMy Vu","id":"22044512"}'>HaMy Vu</option>
+      <option value='{"name":"Heather Lengyel","id":"52157659"}'>
+        Heather Lengyel
+      </option>
+      <option value='{"name":"Holly Corwin","id":"38079532"}'>
+        Holly Corwin
+      </option>
+      <option value='{"name":"Holly Smith","id":"50701169"}'>
+        Holly Smith
+      </option>
+      <option value='{"name":"Hope Luebbert","id":"75042953"}'>
+        Hope Luebbert
+      </option>
+      <option value='{"name":"Hyatt Keller","id":"65623675"}'>
+        Hyatt Keller
+      </option>
+      <option value='{"name":"Ira Stillwell","id":"65623695"}'>
+        Ira Stillwell
+      </option>
+      <option value='{"name":"Jack Holdcroft","id":"76847578"}'>
+        Jack Holdcroft
+      </option>
+      <option value='{"name":"Jacob Kettlewell","id":"57343915"}'>
+        Jacob Kettlewell
+      </option>
+      <option value='{"name":"Jacob Michelman","id":"31357550"}'>
+        Jacob Michelman
+      </option>
+      <option value='{"name":"Jalinda Soto","id":"23259056"}'>
+        Jalinda Soto
+      </option>
+      <option value='{"name":"James Michael Steele","id":"51372611"}'>
+        James Michael Steele
+      </option>
+      <option value='{"name":"Jane Fung","id":"65623706"}'>Jane Fung</option>
+      <option value='{"name":"Janelle Payne","id":"51647733"}'>
+        Janelle Payne
+      </option>
+      <option value='{"name":"Janelle Sands","id":"75162116"}'>
+        Janelle Sands
+      </option>
+      <option value='{"name":"Janie Smith","id":"38028316"}'>
+        Janie Smith
+      </option>
+      <option value='{"name":"Janie Smith","id":"42175991"}'>
+        Janie Smith
+      </option>
+      <option value='{"name":"Jasmine Thomas-Bridges","id":"28102411"}'>
+        Jasmine Thomas-Bridges
+      </option>
+      <option value='{"name":"Jason Schweid","id":"63991576"}'>
+        Jason Schweid
+      </option>
+      <option value='{"name":"Jeanine Reeman","id":"57577868"}'>
+        Jeanine Reeman
+      </option>
+      <option value='{"name":"Jenee Robins","id":"31357632"}'>
+        Jenee Robins
+      </option>
+      <option value='{"name":"Jennie Toby","id":"51091379"}'>
+        Jennie Toby
+      </option>
+      <option value='{"name":"Jennifer Allen","id":"34433834"}'>
+        Jennifer Allen
+      </option>
+      <option value='{"name":"Jennifer Harris","id":"24059067"}'>
+        Jennifer Harris
+      </option>
+      <option value='{"name":"Jess Stechmann","id":"31357636"}'>
+        Jess Stechmann
+      </option>
+      <option value='{"name":"Jessica Azani","id":"31500708"}'>
+        Jessica Azani
+      </option>
+      <option value='{"name":"Jessica Cardoza","id":"55979632"}'>
+        Jessica Cardoza
+      </option>
+      <option value='{"name":"Jessica Martin","id":"31357562"}'>
+        Jessica Martin
+      </option>
+      <option value='{"name":"Jessika Davidson","id":"33926046"}'>
+        Jessika Davidson
+      </option>
+      <option value='{"name":"Jetpack","id":"40557815"}'>Jetpack</option>
+      <option value='{"name":"Jill Richmond","id":"65170182"}'>
+        Jill Richmond
+      </option>
+      <option value='{"name":"Joanna Lalas","id":"74967046"}'>
+        Joanna Lalas
+      </option>
+      <option value='{"name":"Jocelyn Blair","id":"43035706"}'>
+        Jocelyn Blair
+      </option>
+      <option value='{"name":"Joe Kapustka","id":"54069313"}'>
+        Joe Kapustka
+      </option>
+      <option value='{"name":"John Silverthorne","id":"25402612"}'>
+        John Silverthorne
+      </option>
+      <option value='{"name":"Jonathan Ben-Isvy","id":"60420191"}'>
+        Jonathan Ben-Isvy
+      </option>
+      <option value='{"name":"Jordan Davis","id":"46480286"}'>
+        Jordan Davis
+      </option>
+      <option value='{"name":"Josephine Skaer","id":"50079436"}'>
+        Josephine Skaer
+      </option>
+      <option value='{"name":"Joshua Kim","id":"50078107"}'>Joshua Kim</option>
+      <option value='{"name":"Joshua Ling","id":"42315439"}'>
+        Joshua Ling
+      </option>
+      <option value='{"name":"Joy Brown","id":"53076378"}'>Joy Brown</option>
+      <option value='{"name":"Julia Sean","id":"76119665"}'>Julia Sean</option>
+      <option value='{"name":"Julianne Scherker","id":"31357643"}'>
+        Julianne Scherker
+      </option>
+      <option value='{"name":"Julie Geagan-Chevez","id":"52555442"}'>
+        Julie Geagan-Chevez
+      </option>
+      <option value='{"name":"Justin Hassan","id":"43407535"}'>
+        Justin Hassan
+      </option>
+      <option value='{"name":"Kadisha Harris","id":"44750622"}'>
+        Kadisha Harris
+      </option>
+      <option
+        value='{"name":"kajal.ravani@teachinglabstudio.com","id":"74212222"}'
+      >
+        kajal.ravani@teachinglabstudio.com
+      </option>
+      <option value='{"name":"Karen Alerhand","id":"46188540"}'>
+        Karen Alerhand
+      </option>
+      <option value='{"name":"Karen Evans","id":"74666504"}'>
+        Karen Evans
+      </option>
+      <option value='{"name":"Karla McPherson Bester","id":"31997373"}'>
+        Karla McPherson Bester
+      </option>
+      <option value='{"name":"Kassy Neiman-Marx","id":"62578726"}'>
+        Kassy Neiman-Marx
+      </option>
+      <option value='{"name":"Kathleen Janik","id":"31357631"}'>
+        Kathleen Janik
+      </option>
+      <option value='{"name":"Katie Kramer","id":"27899536"}'>
+        Katie Kramer
+      </option>
+      <option value='{"name":"Kelly Sanders","id":"21843245"}'>
+        Kelly Sanders
+      </option>
+      <option value='{"name":"Kelsey Wasser","id":"31357627"}'>
+        Kelsey Wasser
+      </option>
+      <option value='{"name":"Kennietha Jones","id":"31357672"}'>
+        Kennietha Jones
+      </option>
+      <option value='{"name":"Kerinn Tillman","id":"31357686"}'>
+        Kerinn Tillman
+      </option>
+      <option value='{"name":"Kevin McCarthy","id":"72942772"}'>
+        Kevin McCarthy
+      </option>
+      <option value='{"name":"Kim Burgas","id":"28378889"}'>Kim Burgas</option>
+      <option value='{"name":"Kimberley Ednie","id":"46413053"}'>
+        Kimberley Ednie
+      </option>
+      <option value='{"name":"Kimberly Norman","id":"73250006"}'>
+        Kimberly Norman
+      </option>
+      <option value='{"name":"Kimberly Robertson","id":"31357605"}'>
+        Kimberly Robertson
+      </option>
+      <option value='{"name":"Kirstin Greig","id":"72957766"}'>
+        Kirstin Greig
+      </option>
+      <option value='{"name":"Kristen Taylor","id":"31357577"}'>
+        Kristen Taylor
+      </option>
+      <option value='{"name":"Kristin Alfonzo","id":"64294965"}'>
+        Kristin Alfonzo
+      </option>
+      <option value='{"name":"Kristy Reale","id":"50203425"}'>
+        Kristy Reale
+      </option>
+      <option value='{"name":"Kyle Williams","id":"49022007"}'>
+        Kyle Williams
+      </option>
+      <option value='{"name":"Kyra Pickard","id":"31357553"}'>
+        Kyra Pickard
+      </option>
+      <option value='{"name":"LaKenna Booker","id":"48449506"}'>
+        LaKenna Booker
+      </option>
+      <option value='{"name":"Larry Minor","id":"27322070"}'>
+        Larry Minor
+      </option>
+      <option value='{"name":"LaShae Tietsort","id":"26242060"}'>
+        LaShae Tietsort
+      </option>
+      <option value='{"name":"Lashana Pollard Murphy","id":"31357614"}'>
+        Lashana Pollard Murphy
+      </option>
+      <option value='{"name":"Laura Bradley","id":"52605699"}'>
+        Laura Bradley
+      </option>
+      <option value='{"name":"Laura Dombrowski","id":"53070210"}'>
+        Laura Dombrowski
+      </option>
+      <option value='{"name":"Laura Mayer","id":"31357589"}'>
+        Laura Mayer
+      </option>
+      <option value='{"name":"Lauren Hartmann","id":"41301419"}'>
+        Lauren Hartmann
+      </option>
+      <option value='{"name":"LeAnne Zafar","id":"49084524"}'>
+        LeAnne Zafar
+      </option>
+      <option value='{"name":"Learning &amp; Research","id":"35747574"}'>
+        Learning &amp; Research
+      </option>
+      <option value='{"name":"Learning Development","id":"54966572"}'>
+        Learning Development
+      </option>
+      <option value='{"name":"Leyla Haznedar","id":"55333241"}'>
+        Leyla Haznedar
+      </option>
+      <option value='{"name":"Liliana Rodriguez","id":"52972600"}'>
+        Liliana Rodriguez
+      </option>
+      <option value='{"name":"Liliana Vazquez","id":"43458354"}'>
+        Liliana Vazquez
+      </option>
+      <option value='{"name":"Linda Gutierrez","id":"50759695"}'>
+        Linda Gutierrez
+      </option>
+      <option value='{"name":"Lindsay Jewell","id":"65169713"}'>
+        Lindsay Jewell
+      </option>
+      <option value='{"name":"Lindsay Romano","id":"23017810"}'>
+        Lindsay Romano
+      </option>
+      <option value='{"name":"Lizeth Martinez-Chavez","id":"56553948"}'>
+        Lizeth Martinez-Chavez
+      </option>
+      <option value='{"name":"Madison Mojica","id":"55777772"}'>
+        Madison Mojica
+      </option>
+      <option value='{"name":"Maja Almquist","id":"51372612"}'>
+        Maja Almquist
+      </option>
+      <option value='{"name":"Mandi Van Dellen","id":"23173326"}'>
+        Mandi Van Dellen
+      </option>
+      <option value='{"name":"Mandy Buehler","id":"52621682"}'>
+        Mandy Buehler
+      </option>
+      <option value='{"name":"Maren Handorf","id":"34248502"}'>
+        Maren Handorf
+      </option>
+      <option value='{"name":"Mariama Kurbally","id":"31357635"}'>
+        Mariama Kurbally
+      </option>
+      <option value='{"name":"Mariela Magro-Malo","id":"72837136"}'>
+        Mariela Magro-Malo
+      </option>
+      <option value='{"name":"Marika Allen","id":"27940063"}'>
+        Marika Allen
+      </option>
+      <option value='{"name":"Marina Lopez","id":"77475764"}'>
+        Marina Lopez
+      </option>
+      <option value='{"name":"Martavious Johnson","id":"31357639"}'>
+        Martavious Johnson
+      </option>
+      <option value='{"name":"Martyn Ecob","id":"49084519"}'>
+        Martyn Ecob
+      </option>
+      <option value='{"name":"Mary Kate Dykes","id":"33926042"}'>
+        Mary Kate Dykes
+      </option>
+      <option value='{"name":"Marya Firdausi Kazmi Hay","id":"31357560"}'>
+        Marya Firdausi Kazmi Hay
+      </option>
+      <option value='{"name":"Matt Veltkamp","id":"58131986"}'>
+        Matt Veltkamp
+      </option>
+      <option value='{"name":"Maulana Drew","id":"64709638"}'>
+        Maulana Drew
+      </option>
+      <option value='{"name":"Maureen Ferry","id":"72140151"}'>
+        Maureen Ferry
+      </option>
+      <option value='{"name":"Maurissa Roberts","id":"31357597"}'>
+        Maurissa Roberts
+      </option>
+      <option value='{"name":"Max Endieveri","id":"76840417"}'>
+        Max Endieveri
+      </option>
+      <option value='{"name":"Maxibell Jimenez","id":"65287965"}'>
+        Maxibell Jimenez
+      </option>
+      <option value='{"name":"Meg Fischer","id":"54540933"}'>
+        Meg Fischer
+      </option>
+      <option value='{"name":"Megan Lewis","id":"31357582"}'>
+        Megan Lewis
+      </option>
+      <option value='{"name":"Meka Bridges","id":"57507789"}'>
+        Meka Bridges
+      </option>
+      <option value='{"name":"Melanie Peralta","id":"64294968"}'>
+        Melanie Peralta
+      </option>
+      <option value='{"name":"Melissa Ramos","id":"23098644"}'>
+        Melissa Ramos
+      </option>
+      <option value='{"name":"Melissa Ramos","id":"55535014"}'>
+        Melissa Ramos
+      </option>
+      <option value='{"name":"Meredith Rosenthal","id":"75703934"}'>
+        Meredith Rosenthal
+      </option>
+      <option value='{"name":"Michael Harbaugh","id":"76329686"}'>
+        Michael Harbaugh
+      </option>
+      <option value='{"name":"Michael ONeill","id":"56221790"}'>
+        Michael ONeill
+      </option>
+      <option value='{"name":"Michele Caracappa","id":"63251424"}'>
+        Michele Caracappa
+      </option>
+      <option value='{"name":"Michele Morenz","id":"30154062"}'>
+        Michele Morenz
+      </option>
+      <option value='{"name":"Michelle Allen","id":"71487854"}'>
+        Michelle Allen
+      </option>
+      <option value='{"name":"Miguel El Lakkis","id":"60830273"}'>
+        Miguel El Lakkis
+      </option>
+      <option value='{"name":"Milagros Mendoza","id":"50875182"}'>
+        Milagros Mendoza
+      </option>
+      <option value='{"name":"Miraha Smith","id":"31357599"}'>
+        Miraha Smith
+      </option>
+      <option value='{"name":"Molly Branson Thayer","id":"25924100"}'>
+        Molly Branson Thayer
+      </option>
+      <option value='{"name":"Monique Djoum","id":"61156875"}'>
+        Monique Djoum
+      </option>
+      <option value='{"name":"Morgan Stanich","id":"58289267"}'>
+        Morgan Stanich
+      </option>
+      <option value='{"name":"Naquana Haynes","id":"49813927"}'>
+        Naquana Haynes
+      </option>
+      <option value='{"name":"Natalie Rodriguez","id":"48166026"}'>
+        Natalie Rodriguez
+      </option>
+      <option value='{"name":"Nicole Williams","id":"44750623"}'>
+        Nicole Williams
+      </option>
+      <option value='{"name":"Nicolle Beneventano","id":"73152617"}'>
+        Nicolle Beneventano
+      </option>
+      <option
+        value='{"name":"nicolle.beneventano@teaching.lab.org","id":"74212220"}'
+      >
+        nicolle.beneventano@teaching.lab.org
+      </option>
+      <option value='{"name":"Nikki Khosla","id":"35330813"}'>
+        Nikki Khosla
+      </option>
+      <option value='{"name":"Ninamarie Ochoa","id":"54422357"}'>
+        Ninamarie Ochoa
+      </option>
+      <option value='{"name":"Noah M. Wager","id":"75801425"}'>
+        Noah M. Wager
+      </option>
+      <option value='{"name":"Omar Headen","id":"48343684"}'>
+        Omar Headen
+      </option>
+      <option value='{"name":"Orionna Brisbois","id":"55697096"}'>
+        Orionna Brisbois
+      </option>
+      <option value='{"name":"Pamela Aquino","id":"34248500"}'>
+        Pamela Aquino
+      </option>
+      <option value='{"name":"Patricia Thibodeaux","id":"31357600"}'>
+        Patricia Thibodeaux
+      </option>
+      <option value='{"name":"Pattie Parker","id":"43457247"}'>
+        Pattie Parker
+      </option>
+      <option value='{"name":"Peter Edmonds","id":"46914923"}'>
+        Peter Edmonds
+      </option>
+      <option value='{"name":"Phil Chew","id":"61009613"}'>Phil Chew</option>
+      <option value='{"name":"Phil Weinberg","id":"31508634"}'>
+        Phil Weinberg
+      </option>
+      <option value='{"name":"Polished Geek","id":"63507796"}'>
+        Polished Geek
+      </option>
+      <option value='{"name":"Rachel Shurick","id":"75252539"}'>
+        Rachel Shurick
+      </option>
+      <option value='{"name":"Rachelle Andrade-Nelson","id":"71932740"}'>
+        Rachelle Andrade-Nelson
+      </option>
+      <option value='{"name":"Radesha Piles-Holman","id":"36633483"}'>
+        Radesha Piles-Holman
+      </option>
+      <option value='{"name":"Ralpheal Brown","id":"63358694"}'>
+        Ralpheal Brown
+      </option>
+      <option value='{"name":"Raven Hawes","id":"27886699"}'>
+        Raven Hawes
+      </option>
+      <option value='{"name":"Rayne O&apos;Brien","id":"66688870"}'>
+        Rayne O'Brien
+      </option>
+      <option value='{"name":"Rebecca Hendrickson","id":"34248503"}'>
+        Rebecca Hendrickson
+      </option>
+      <option value='{"name":"Renee George","id":"37322883"}'>
+        Renee George
+      </option>
+      <option value='{"name":"Renee Warner-Gervais","id":"31357618"}'>
+        Renee Warner-Gervais
+      </option>
+      <option value='{"name":"Rhea May","id":"48852657"}'>Rhea May</option>
+      <option value='{"name":"Rhonda Idris","id":"28002802"}'>
+        Rhonda Idris
+      </option>
+      <option value='{"name":"Richard Chou","id":"50210287"}'>
+        Richard Chou
+      </option>
+      <option value='{"name":"Rio Djiwandana","id":"48852655"}'>
+        Rio Djiwandana
+      </option>
+      <option value='{"name":"Riz Malik","id":"63251421"}'>Riz Malik</option>
+      <option value='{"name":"Robert Mullen","id":"64447720"}'>
+        Robert Mullen
+      </option>
+      <option value='{"name":"Rod Naquin","id":"27601356"}'>Rod Naquin</option>
+      <option value='{"name":"Roel Concepcion","id":"23413400"}'>
+        Roel Concepcion
+      </option>
+      <option value='{"name":"Ruben Abrahams Brosbe","id":"31357648"}'>
+        Ruben Abrahams Brosbe
+      </option>
+      <option value='{"name":"Ryan Reardon","id":"45521947"}'>
+        Ryan Reardon
+      </option>
+      <option value='{"name":"Ryan Spass","id":"67872480"}'>Ryan Spass</option>
+      <option value='{"name":"Sabrina Tellez","id":"51266685"}'>
+        Sabrina Tellez
+      </option>
+      <option value='{"name":"Samantha Wilner","id":"37156962"}'>
+        Samantha Wilner
+      </option>
+      <option value='{"name":"Sara Alsup","id":"36131954"}'>Sara Alsup</option>
+      <option value='{"name":"Sarah Burton","id":"39390296"}'>
+        Sarah Burton
+      </option>
+      <option value='{"name":"Sarah Johnson","id":"22420149"}'>
+        Sarah Johnson
+      </option>
+      <option value='{"name":"Sarah Kaufmann","id":"74786434"}'>
+        Sarah Kaufmann
+      </option>
+      <option value='{"name":"Sarah Medve","id":"46480284"}'>
+        Sarah Medve
+      </option>
+      <option value='{"name":"Sarah Tierney","id":"23595430"}'>
+        Sarah Tierney
+      </option>
+      <option value='{"name":"Sarah Vafaie","id":"39092126"}'>
+        Sarah Vafaie
+      </option>
+      <option value='{"name":"Savanna Worthington","id":"31366527"}'>
+        Savanna Worthington
+      </option>
+      <option value='{"name":"Shanice Core","id":"52445233"}'>
+        Shanice Core
+      </option>
+      <option value='{"name":"Shanique Coombs","id":"51633755"}'>
+        Shanique Coombs
+      </option>
+      <option value='{"name":"Sharmaé Franklin","id":"56633747"}'>
+        Sharmaé Franklin
+      </option>
+      <option value='{"name":"Sharon Moss","id":"52605698"}'>
+        Sharon Moss
+      </option>
+      <option value='{"name":"Shaunte&apos; Robinson","id":"75530859"}'>
+        Shaunte' Robinson
+      </option>
+      <option value='{"name":"Shawn Durrett","id":"51029113"}'>
+        Shawn Durrett
+      </option>
+      <option value='{"name":"Shaye Worthman","id":"22044513"}'>
+        Shaye Worthman
+      </option>
+      <option value='{"name":"Sherry Lewkowicz","id":"51218307"}'>
+        Sherry Lewkowicz
+      </option>
+      <option value='{"name":"Simon Chervenak","id":"68731562"}'>
+        Simon Chervenak
+      </option>
+      <option value='{"name":"Sofia Ikram","id":"67875114"}'>
+        Sofia Ikram
+      </option>
+      <option value='{"name":"Sophia Zinicola","id":"65886052"}'>
+        Sophia Zinicola
+      </option>
+      <option value='{"name":"Sriba Kwadjovie Quintana","id":"76808522"}'>
+        Sriba Kwadjovie Quintana
+      </option>
+      <option value='{"name":"Stacy Weldon","id":"31357665"}'>
+        Stacy Weldon
+      </option>
+      <option value='{"name":"Stephanie Hampton","id":"76789367"}'>
+        Stephanie Hampton
+      </option>
+      <option value='{"name":"Sue Myers","id":"75283966"}'>Sue Myers</option>
+      <option value='{"name":"Susan Marschner","id":"31357633"}'>
+        Susan Marschner
+      </option>
+      <option value='{"name":"Taheti Watson","id":"75247137"}'>
+        Taheti Watson
+      </option>
+      <option value='{"name":"Tania Perez","id":"65811224"}'>
+        Tania Perez
+      </option>
+      <option value='{"name":"Tara Penn","id":"23017817"}'>Tara Penn</option>
+      <option value='{"name":"Tech Team","id":"45722899"}'>Tech Team</option>
+      <option value='{"name":"Ted Quinn","id":"69302702"}'>Ted Quinn</option>
+      <option value='{"name":"Teresa Leahey","id":"65620248"}'>
+        Teresa Leahey
+      </option>
+      <option value='{"name":"Teresa Rita","id":"54867610"}'>
+        Teresa Rita
+      </option>
+      <option value='{"name":"Tiara Toney","id":"64280465"}'>
+        Tiara Toney
+      </option>
+      <option value='{"name":"Tiayana Marks","id":"23309855"}'>
+        Tiayana Marks
+      </option>
+      <option value='{"name":"Tinishia Washington","id":"34448495"}'>
+        Tinishia Washington
+      </option>
+      <option value='{"name":"TL Finance","id":"35809385"}'>TL Finance</option>
+      <option value='{"name":"TL Partnerships","id":"64706276"}'>
+        TL Partnerships
+      </option>
+      <option value='{"name":"Tommy Micah","id":"27752819"}'>
+        Tommy Micah
+      </option>
+      <option value='{"name":"Tonia Lonie","id":"42055480"}'>
+        Tonia Lonie
+      </option>
+      <option value='{"name":"Toyree Jones","id":"31357650"}'>
+        Toyree Jones
+      </option>
+      <option value='{"name":"Travis Jack","id":"55885333"}'>
+        Travis Jack
+      </option>
+      <option value='{"name":"Tyler Schoen","id":"56636110"}'>
+        Tyler Schoen
+      </option>
+      <option value='{"name":"Vee Johnson","id":"40961170"}'>
+        Vee Johnson
+      </option>
+      <option value='{"name":"Vivian Nguyen","id":"33867216"}'>
+        Vivian Nguyen
+      </option>
+      <option value='{"name":"Wesley Kline","id":"51953192"}'>
+        Wesley Kline
+      </option>
+      <option value='{"name":"William Silva","id":"48617351"}'>
+        William Silva
+      </option>
+      <option value='{"name":"Yancheng Pan","id":"31288444"}'>
+        Yancheng Pan
+      </option>
+      <option value='{"name":"Yefei Jin","id":"50136253"}'>Yefei Jin</option>
+      <option value='{"name":"Zachariah Stoutimore","id":"46622879"}'>
+        Zachariah Stoutimore
+      </option>
+      <option value='{"name":"Zakia Kelly","id":"45933617"}'>
+        Zakia Kelly
+      </option>
+      <option value='{"name":"Zanayia Legrand","id":"49607087"}'>
+        Zanayia Legrand
+      </option>
+    </select>
+    <div class="invalid-feedback">Please choose a name.</div>
+  </div>
+  <div class="mb-5">
+    <label class="form-label" for="formBasicSite"
+      ><strong>What district did you coach today?</strong></label
+    >
+    <select
+      name="districtName"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option></option>
+      <option value="AR_Osceola School District">
+        AR_Osceola School District
+      </option>
+      <option value="CA_Santa Ana Unified School District">
+        CA_Santa Ana Unified School District
+      </option>
+      <option value="CO_AUL Denver High School">
+        CO_AUL Denver High School
+      </option>
+      <option value="DE_Delaware">DE_Delaware</option>
+      <option value="IL_CPS">IL_CPS</option>
+      <option value="MA_ Boston Prep">MA_ Boston Prep</option>
+      <option value="MA_Dennis Yarmouth">MA_Dennis Yarmouth</option>
+      <option value="MA_Greenfield">MA_Greenfield</option>
+      <option value="MA_Milford">MA_Milford</option>
+      <option value="MA_Salem">MA_Salem</option>
+      <option value="MA_Plymouth">MA_Plymouth</option>
+      <option value="MA_Uxbridge">MA_Uxbridge</option>
+      <option value="MA_West Springfield">MA_West Springfield</option>
+      <option value="MS_Kemper County School District">
+        MS_Kemper County School District
+      </option>
+      <option value="NJ_Great Oaks Legacy Charter Schools">
+        NJ_Great Oaks Legacy Charter Schools
+      </option>
+      <option value="NJ_Gateway Academy (BRICK Education Network)">
+        NJ_Gateway Academy (BRICK Education Network)
+      </option>
+      <option value="NY_Ascend Charter Schools">
+        NY_Ascend Charter Schools
+      </option>
+      <option value="NY_CUNY/UA">NY_CUNY/UA</option>
+      <option value="NY_D6">NY_D6</option>
+      <option value="NY_D9">NY_D9</option>
+      <option value="NY_D11">NY_D11</option>
+      <option value="NY_D12">NY_D12</option>
+      <option value="NY_D13">NY_D13</option>
+      <option value="NY_D16">NY_D16</option>
+      <option value="NY_D17">NY_D17</option>
+      <option value="NY_D25">NY_D25</option>
+      <option value="NY_D75">NY_D75</option>
+      <option value="NY_East Harlem Scholar Academies (EHTP)">
+        NY_East Harlem Scholar Academies (EHTP)
+      </option>
+      <option value="NY_LION Charter School">NY_LION Charter School</option>
+      <option value="NY_Transfer High Schools">NY_Transfer High Schools</option>
+      <option value="OH_Cleveland Metro School District">
+        OH_Cleveland Metro School District
+      </option>
+      <option value="TN_McNairy County Schools">
+        TN_McNairy County Schools
+      </option>
+      <option value="TX_El Paso Leadership Academy">
+        TX_El Paso Leadership Academy
+      </option>
+      <option value="WI_Milwaukee Public Schools">
+        WI_Milwaukee Public Schools
+      </option>
+      <option value="TN_Acceleration for All">TN_Acceleration for All</option>
+      <option value="WI_Victory Christian Academy">
+        WI_Victory Christian Academy
+      </option>
+    </select>
+    <div class="invalid-feedback">Please choose a district.</div>
+  </div>
+  <div class="mb-5">
+    <label class="form-label" for="formBasicSite"
+      ><strong>What school did you coach today?</strong></label
+    >
+    <select
+      name="schoolName"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option></option>
+      <option value='{"label":"019","value":["019"]}'>019</option>
+      <option value='{"label":"083","value":["083"]}'>083</option>
+      <option value='{"label":"089","value":["089"]}'>089</option>
+      <option value='{"label":"108","value":["108"]}'>108</option>
+      <option value='{"label":"127","value":["127"]}'>127</option>
+      <option value='{"label":"144","value":["144"]}'>144</option>
+      <option value='{"label":"175","value":["175"]}'>175</option>
+      <option value='{"label":"180","value":["180"]}'>180</option>
+      <option value='{"label":"181","value":["181"]}'>181</option>
+      <option value='{"label":"194","value":["194"]}'>194</option>
+      <option value='{"label":"287","value":["287"]}'>287</option>
+      <option value='{"label":"326","value":["326"]}'>326</option>
+      <option value='{"label":"355","value":["355"]}'>355</option>
+      <option value='{"label":"370","value":["370"]}'>370</option>
+      <option value='{"label":"462","value":["462"]}'>462</option>
+      <option value='{"label":"468","value":["468"]}'>468</option>
+      <option value='{"label":"498","value":["498"]}'>498</option>
+      <option value='{"label":"529","value":["529"]}'>529</option>
+      <option value='{"label":"532","value":["532"]}'>532</option>
+      <option value='{"label":"556","value":["556"]}'>556</option>
+      <option value='{"label":"566","value":["566"]}'>566</option>
+    </select>
+    <div class="invalid-feedback">Please choose a district.</div>
+  </div>
+  <div class="mb-5">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Did you complete 1:1 coaching today?</strong></label
+    >
+    <select
+      name="CoachingDone"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <div class="row">
+      <div class="my-1 col">
+        <label class="form-label" for="formBasicCourse"
+          ><strong>Coachee</strong></label
+        >
+      </div>
+      <div class="my-1 col">
+        <label class="form-label" for="formBasicCourse"
+          ><strong>Role</strong></label
+        >
+      </div>
+      <div class="my-1 col">
+        <label class="form-label" for="formBasicCourse"
+          ><strong>Activities</strong></label
+        >
+      </div>
+      <div class="my-1 col">
+        <label class="form-label" for="formBasicCourse"
+          ><strong>Duration (mins)</strong></label
+        >
+      </div>
+    </div>
+    <div class="row">
+      <div class="row">
+        <div class="my-1 col">
+          <label class="form-label visually-hidden" for="formBasicCourse"
+            >Coachee Name</label
+          >
+          <select
+            name="coacheeName"
+            aria-label="Default select example"
+            required=""
+            id="formBasicCourse"
+            class="form-control"
+          >
+            <option></option>
+            <option value="Julie Porras">Julie Porras</option>
+            <option value="Kathleen Wiehler">Kathleen Wiehler</option>
+            <option value="Shannon Montenare">Shannon Montenare</option>
+            <option value="Toni Moricone">Toni Moricone</option>
+            <option value="Alex Mazza">Alex Mazza</option>
+            <option value="Chris Gaffney">Chris Gaffney</option>
+            <option value="Danielle Ramos">Danielle Ramos</option>
+            <option value="Anthony Esposito">Anthony Esposito</option>
+          </select>
+        </div>
+        <div class="my-1 col">
+          <label class="form-label visually-hidden" for="formBasicCourse"
+            >Coachee Role</label
+          >
+          <select
+            name="coacheeRole"
+            aria-label="Default select example"
+            required=""
+            id="formBasicCourse"
+            class="form-control"
+          >
+            <option></option>
+            <option value="Teacher">Teacher</option>
+            <option value="School-based coach">School-based coach</option>
+            <option value="School-based admin">School-based admin</option>
+            <option value="District/Network admin">
+              District/Network admin
+            </option>
+            <option value="CPS only - Teacher Team Lead">
+              CPS only - Teacher Team Lead
+            </option>
+          </select>
+        </div>
+        <div class="my-1 col">
+          <label class="form-label visually-hidden" for="formBasicCourse"
+            >Activity</label
+          >
+          <select
+            aria-label="Default select example"
+            name="coachingActivity"
+            required=""
+            id="formBasicCourse"
+            class="form-control"
+          >
+            <option></option>
+            <option value="Observed instruction">Observed instruction</option>
+            <option value="Modeled lesson">Modeled lesson</option>
+            <option value="Co-taught lesson">Co-taught lesson</option>
+            <option value="Provided feedback on instruction">
+              Provided feedback on instruction
+            </option>
+            <option value="Planned for instruction">
+              Planned for instruction
+            </option>
+            <option value="Analyzed student work">Analyzed student work</option>
+            <option value="Held debrief">Held debrief</option>
+            <option
+              value="Observed recording of instruction and provided feedback"
+            >
+              Observed recording of instruction and provided feedback
+            </option>
+            <option value="Leader: Observation, feedback and coaching cycles">
+              Leader: Observation, feedback and coaching cycles
+            </option>
+            <option
+              value="Leader: Use of data &amp; continuous improvement processes"
+            >
+              Leader: Use of data &amp; continuous improvement processes
+            </option>
+            <option
+              value="Leader: Instructional vision/professional learning plan"
+            >
+              Leader: Instructional vision/professional learning plan
+            </option>
+            <option
+              value="Leader: Equitable supports for students and teachers"
+            >
+              Leader: Equitable supports for students and teachers
+            </option>
+            <option
+              value="Leader: Resources are allocated to support instructional vision"
+            >
+              Leader: Resources are allocated to support instructional vision
+            </option>
+            <option value="Leader: Teachers as leaders">
+              Leader: Teachers as leaders
+            </option>
+          </select>
+        </div>
+        <div class="my-1 col">
+          <label class="form-label visually-hidden" for="formBasicCourse"
+            >Coaching Duration</label
+          >
+          <select
+            aria-label="Default select example"
+            name="coachingDuration"
+            required=""
+            id="formBasicCourse"
+            class="form-control"
+          >
+            <option></option>
+            <option value="15">15</option>
+            <option value="30">30</option>
+            <option value="45">45</option>
+            <option value="60">60</option>
+            <option value="76">76</option>
+            <option value="90">90</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mb-4" id="formGridCheckbox">
+    <button type="button" class="btn btn-secondary">+ Add Row</button>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Did you deliver a micro PL at this school today?</strong></label
+    >
+    <select
+      name="CoachingDone"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-1">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Names of participants: </strong></label
+    >
+    <div class="dropdown">
+      <button
+        class="btn dropdown-toggle btn-light"
+        type="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        style="width: 100%; overflow: hidden"
+      >
+        <span
+          style="
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            float: left;
+            text-align: left;
+            padding-right: 6px;
+            margin-right: -6px;
+          "
+          >Nothing selected</span
+        >
+      </button>
+      <div class="dropdown-menu" style="padding: 0px; width: 100%">
+        <div class="btn-group btn-group-sm btn-block">
+          <button class="actions-btn btn btn-light">Select/Deselect All</button>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipants-0"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipants[]"
+              value="Julie Porras"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipants-0"
+              style="user-select: none; width: 100%"
+              >Julie Porras</label
+            >
           </div>
-       </div>
-    </div>
-    <div class="mb-5">
-       <label class="form-label" for="formBasicSite"><strong>Please select your name from the drop-down menu*</strong></label>
-       <select name="coachName" required="" id="formBasicSite" class="form-control">
-          <option></option>
-          <option value="{&quot;name&quot;:&quot;Aaron Colston&quot;,&quot;id&quot;:&quot;36970267&quot;}">Aaron Colston</option>
-          <option value="{&quot;name&quot;:&quot;Adam Smith&quot;,&quot;id&quot;:&quot;31357565&quot;}">Adam Smith</option>
-          <option value="{&quot;name&quot;:&quot;Aidin Carey&quot;,&quot;id&quot;:&quot;67872350&quot;}">Aidin Carey</option>
-          <option value="{&quot;name&quot;:&quot;Alex Smith&quot;,&quot;id&quot;:&quot;65632921&quot;}">Alex Smith</option>
-          <option value="{&quot;name&quot;:&quot;Alice Mitchell&quot;,&quot;id&quot;:&quot;48731699&quot;}">Alice Mitchell</option>
-          <option value="{&quot;name&quot;:&quot;Alice Ng&quot;,&quot;id&quot;:&quot;42789107&quot;}">Alice Ng</option>
-          <option value="{&quot;name&quot;:&quot;Alicia Faust&quot;,&quot;id&quot;:&quot;29877360&quot;}">Alicia Faust</option>
-          <option value="{&quot;name&quot;:&quot;Alli Franken&quot;,&quot;id&quot;:&quot;29305235&quot;}">Alli Franken</option>
-          <option value="{&quot;name&quot;:&quot;Amanda Beale&quot;,&quot;id&quot;:&quot;31357551&quot;}">Amanda Beale</option>
-          <option value="{&quot;name&quot;:&quot;Amanda Mitchell&quot;,&quot;id&quot;:&quot;64452028&quot;}">Amanda Mitchell</option>
-          <option value="{&quot;name&quot;:&quot;Amina Banks&quot;,&quot;id&quot;:&quot;65176092&quot;}">Amina Banks</option>
-          <option value="{&quot;name&quot;:&quot;Amy Whitmer&quot;,&quot;id&quot;:&quot;77068269&quot;}">Amy Whitmer</option>
-          <option value="{&quot;name&quot;:&quot;Amy Youngblood&quot;,&quot;id&quot;:&quot;31357571&quot;}">Amy Youngblood</option>
-          <option value="{&quot;name&quot;:&quot;Anabel Encarnación&quot;,&quot;id&quot;:&quot;65763192&quot;}">Anabel Encarnación</option>
-          <option value="{&quot;name&quot;:&quot;Andrea Heard&quot;,&quot;id&quot;:&quot;54965972&quot;}">Andrea Heard</option>
-          <option value="{&quot;name&quot;:&quot;Andrea Johnson&quot;,&quot;id&quot;:&quot;28302314&quot;}">Andrea Johnson</option>
-          <option value="{&quot;name&quot;:&quot;Angela Brumfield&quot;,&quot;id&quot;:&quot;29189704&quot;}">Angela Brumfield</option>
-          <option value="{&quot;name&quot;:&quot;Anita Walls&quot;,&quot;id&quot;:&quot;31357651&quot;}">Anita Walls</option>
-          <option value="{&quot;name&quot;:&quot;Antoinette Kane&quot;,&quot;id&quot;:&quot;75586218&quot;}">Antoinette Kane</option>
-          <option value="{&quot;name&quot;:&quot;Antonio Garza-Zertuche&quot;,&quot;id&quot;:&quot;37008431&quot;}">Antonio Garza-Zertuche</option>
-          <option value="{&quot;name&quot;:&quot;Areah Thompson&quot;,&quot;id&quot;:&quot;57086095&quot;}">Areah Thompson</option>
-          <option value="{&quot;name&quot;:&quot;Ariel Juarez&quot;,&quot;id&quot;:&quot;36632639&quot;}">Ariel Juarez</option>
-          <option value="{&quot;name&quot;:&quot;Asia Leeds&quot;,&quot;id&quot;:&quot;50887440&quot;}">Asia Leeds</option>
-          <option value="{&quot;name&quot;:&quot;Asma Akhras&quot;,&quot;id&quot;:&quot;63253089&quot;}">Asma Akhras</option>
-          <option value="{&quot;name&quot;:&quot;Aubreyna Archer&quot;,&quot;id&quot;:&quot;33611983&quot;}">Aubreyna Archer</option>
-          <option value="{&quot;name&quot;:&quot;Ayesha Fahmin&quot;,&quot;id&quot;:&quot;51399176&quot;}">Ayesha Fahmin</option>
-          <option value="{&quot;name&quot;:&quot;B.Simon&quot;,&quot;id&quot;:&quot;41856229&quot;}">B.Simon</option>
-          <option value="{&quot;name&quot;:&quot;Ben Shand&quot;,&quot;id&quot;:&quot;50193489&quot;}">Ben Shand</option>
-          <option value="{&quot;name&quot;:&quot;Beth Park&quot;,&quot;id&quot;:&quot;47023957&quot;}">Beth Park</option>
-          <option value="{&quot;name&quot;:&quot;Bethany Brown&quot;,&quot;id&quot;:&quot;30209454&quot;}">Bethany Brown</option>
-          <option value="{&quot;name&quot;:&quot;Betsy Lawson Blank&quot;,&quot;id&quot;:&quot;34248499&quot;}">Betsy Lawson Blank</option>
-          <option value="{&quot;name&quot;:&quot;Betsy Silber&quot;,&quot;id&quot;:&quot;51257979&quot;}">Betsy Silber</option>
-          <option value="{&quot;name&quot;:&quot;Bobby Dillard&quot;,&quot;id&quot;:&quot;35607117&quot;}">Bobby Dillard</option>
-          <option value="{&quot;name&quot;:&quot;Brad Haggerty&quot;,&quot;id&quot;:&quot;23018677&quot;}">Brad Haggerty</option>
-          <option value="{&quot;name&quot;:&quot;Brandi Phillips&quot;,&quot;id&quot;:&quot;31357561&quot;}">Brandi Phillips</option>
-          <option value="{&quot;name&quot;:&quot;Brendan Scribner&quot;,&quot;id&quot;:&quot;73965144&quot;}">Brendan Scribner</option>
-          <option value="{&quot;name&quot;:&quot;Brenna Prochnow&quot;,&quot;id&quot;:&quot;37837128&quot;}">Brenna Prochnow</option>
-          <option value="{&quot;name&quot;:&quot;Brian Dunn&quot;,&quot;id&quot;:&quot;35866002&quot;}">Brian Dunn</option>
-          <option value="{&quot;name&quot;:&quot;Brian Story&quot;,&quot;id&quot;:&quot;46298767&quot;}">Brian Story</option>
-          <option value="{&quot;name&quot;:&quot;Briana Anderson&quot;,&quot;id&quot;:&quot;35866519&quot;}">Briana Anderson</option>
-          <option value="{&quot;name&quot;:&quot;Britt Neuhaus&quot;,&quot;id&quot;:&quot;63992142&quot;}">Britt Neuhaus</option>
-          <option value="{&quot;name&quot;:&quot;Brooke Halsey&quot;,&quot;id&quot;:&quot;56850774&quot;}">Brooke Halsey</option>
-          <option value="{&quot;name&quot;:&quot;Callie Herring&quot;,&quot;id&quot;:&quot;31357587&quot;}">Callie Herring</option>
-          <option value="{&quot;name&quot;:&quot;Candice Rodriguez Acevedo&quot;,&quot;id&quot;:&quot;50595316&quot;}">Candice Rodriguez Acevedo</option>
-          <option value="{&quot;name&quot;:&quot;Cara Farber Rossen&quot;,&quot;id&quot;:&quot;57753082&quot;}">Cara Farber Rossen</option>
-          <option value="{&quot;name&quot;:&quot;Carlie Bates&quot;,&quot;id&quot;:&quot;63286905&quot;}">Carlie Bates</option>
-          <option value="{&quot;name&quot;:&quot;Carol Redfield&quot;,&quot;id&quot;:&quot;28309590&quot;}">Carol Redfield</option>
-          <option value="{&quot;name&quot;:&quot;Casey Lawrence&quot;,&quot;id&quot;:&quot;36019410&quot;}">Casey Lawrence</option>
-          <option value="{&quot;name&quot;:&quot;Castenzio Venegas&quot;,&quot;id&quot;:&quot;34609496&quot;}">Castenzio Venegas</option>
-          <option value="{&quot;name&quot;:&quot;Cayla Repass&quot;,&quot;id&quot;:&quot;38015762&quot;}">Cayla Repass</option>
-          <option value="{&quot;name&quot;:&quot;Chanita Coulter&quot;,&quot;id&quot;:&quot;52555440&quot;}">Chanita Coulter</option>
-          <option value="{&quot;name&quot;:&quot;Charles Morris&quot;,&quot;id&quot;:&quot;76800970&quot;}">Charles Morris</option>
-          <option value="{&quot;name&quot;:&quot;Chele Kong&quot;,&quot;id&quot;:&quot;52875523&quot;}">Chele Kong</option>
-          <option value="{&quot;name&quot;:&quot;Chelsea Alkon&quot;,&quot;id&quot;:&quot;64276149&quot;}">Chelsea Alkon</option>
-          <option value="{&quot;name&quot;:&quot;Cheryl Dobbertin&quot;,&quot;id&quot;:&quot;31357624&quot;}">Cheryl Dobbertin</option>
-          <option value="{&quot;name&quot;:&quot;Ching Sullivan&quot;,&quot;id&quot;:&quot;45569521&quot;}">Ching Sullivan</option>
-          <option value="{&quot;name&quot;:&quot;Christi Denning&quot;,&quot;id&quot;:&quot;31357652&quot;}">Christi Denning</option>
-          <option value="{&quot;name&quot;:&quot;Christina Gellos&quot;,&quot;id&quot;:&quot;65013942&quot;}">Christina Gellos</option>
-          <option value="{&quot;name&quot;:&quot;Christina Qualls&quot;,&quot;id&quot;:&quot;59860056&quot;}">Christina Qualls</option>
-          <option value="{&quot;name&quot;:&quot;Christopher Guidarelli&quot;,&quot;id&quot;:&quot;77021576&quot;}">Christopher Guidarelli</option>
-          <option value="{&quot;name&quot;:&quot;Clare Stolarski&quot;,&quot;id&quot;:&quot;76942146&quot;}">Clare Stolarski</option>
-          <option value="{&quot;name&quot;:&quot;Colleen Hinkson&quot;,&quot;id&quot;:&quot;47565861&quot;}">Colleen Hinkson</option>
-          <option value="{&quot;name&quot;:&quot;Colleen Volberg&quot;,&quot;id&quot;:&quot;46478265&quot;}">Colleen Volberg</option>
-          <option value="{&quot;name&quot;:&quot;Corneisha Weir&quot;,&quot;id&quot;:&quot;31357689&quot;}">Corneisha Weir</option>
-          <option value="{&quot;name&quot;:&quot;Cornelius Tan&quot;,&quot;id&quot;:&quot;45935632&quot;}">Cornelius Tan</option>
-          <option value="{&quot;name&quot;:&quot;Crystal Carson&quot;,&quot;id&quot;:&quot;75247139&quot;}">Crystal Carson</option>
-          <option value="{&quot;name&quot;:&quot;Crystal Stewart&quot;,&quot;id&quot;:&quot;51837230&quot;}">Crystal Stewart</option>
-          <option value="{&quot;name&quot;:&quot;Cynite Ola&quot;,&quot;id&quot;:&quot;51591798&quot;}">Cynite Ola</option>
-          <option value="{&quot;name&quot;:&quot;Daissan Colbert&quot;,&quot;id&quot;:&quot;22840447&quot;}">Daissan Colbert</option>
-          <option value="{&quot;name&quot;:&quot;Dallas Hall&quot;,&quot;id&quot;:&quot;68554601&quot;}">Dallas Hall</option>
-          <option value="{&quot;name&quot;:&quot;Danielle Schaefer&quot;,&quot;id&quot;:&quot;47464885&quot;}">Danielle Schaefer</option>
-          <option value="{&quot;name&quot;:&quot;Danielle Watts-Redmond&quot;,&quot;id&quot;:&quot;27940071&quot;}">Danielle Watts-Redmond</option>
-          <option value="{&quot;name&quot;:&quot;Daphne Jones&quot;,&quot;id&quot;:&quot;31357682&quot;}">Daphne Jones</option>
-          <option value="{&quot;name&quot;:&quot;David Keech&quot;,&quot;id&quot;:&quot;31357669&quot;}">David Keech</option>
-          <option value="{&quot;name&quot;:&quot;Dawn Lynn Kernahan&quot;,&quot;id&quot;:&quot;51041692&quot;}">Dawn Lynn Kernahan</option>
-          <option value="{&quot;name&quot;:&quot;Debbie Ellis&quot;,&quot;id&quot;:&quot;47447588&quot;}">Debbie Ellis</option>
-          <option value="{&quot;name&quot;:&quot;Deborah-Ann Gordon&quot;,&quot;id&quot;:&quot;44892979&quot;}">Deborah-Ann Gordon</option>
-          <option value="{&quot;name&quot;:&quot;Deidra Lawson&quot;,&quot;id&quot;:&quot;37192654&quot;}">Deidra Lawson</option>
-          <option value="{&quot;name&quot;:&quot;Delines Rodriguez&quot;,&quot;id&quot;:&quot;74761012&quot;}">Delines Rodriguez</option>
-          <option value="{&quot;name&quot;:&quot;Demetra Brown&quot;,&quot;id&quot;:&quot;31357637&quot;}">Demetra Brown</option>
-          <option value="{&quot;name&quot;:&quot;Dionne Lewis Williams&quot;,&quot;id&quot;:&quot;53918654&quot;}">Dionne Lewis Williams</option>
-          <option value="{&quot;name&quot;:&quot;Donyell Beck&quot;,&quot;id&quot;:&quot;53269877&quot;}">Donyell Beck</option>
-          <option value="{&quot;name&quot;:&quot;Dorca Casseus&quot;,&quot;id&quot;:&quot;77154231&quot;}">Dorca Casseus</option>
-          <option value="{&quot;name&quot;:&quot;Drew Hodges&quot;,&quot;id&quot;:&quot;63397283&quot;}">Drew Hodges</option>
-          <option value="{&quot;name&quot;:&quot;Duncan Gates&quot;,&quot;id&quot;:&quot;22039575&quot;}">Duncan Gates</option>
-          <option value="{&quot;name&quot;:&quot;Dylan Petty&quot;,&quot;id&quot;:&quot;72764957&quot;}">Dylan Petty</option>
-          <option value="{&quot;name&quot;:&quot;Eboni Jaggers&quot;,&quot;id&quot;:&quot;52956301&quot;}">Eboni Jaggers</option>
-          <option value="{&quot;name&quot;:&quot;Eleni Papanikolau&quot;,&quot;id&quot;:&quot;65680887&quot;}">Eleni Papanikolau</option>
-          <option value="{&quot;name&quot;:&quot;Eleonore Gibson&quot;,&quot;id&quot;:&quot;51779276&quot;}">Eleonore Gibson</option>
-          <option value="{&quot;name&quot;:&quot;Elita Summers&quot;,&quot;id&quot;:&quot;53076380&quot;}">Elita Summers</option>
-          <option value="{&quot;name&quot;:&quot;Elizabeth Van Hoesen&quot;,&quot;id&quot;:&quot;31357572&quot;}">Elizabeth Van Hoesen</option>
-          <option value="{&quot;name&quot;:&quot;Ellen Greig&quot;,&quot;id&quot;:&quot;29877350&quot;}">Ellen Greig</option>
-          <option value="{&quot;name&quot;:&quot;Emily Kenton&quot;,&quot;id&quot;:&quot;39849506&quot;}">Emily Kenton</option>
-          <option value="{&quot;name&quot;:&quot;Emma Colonna&quot;,&quot;id&quot;:&quot;64593334&quot;}">Emma Colonna</option>
-          <option value="{&quot;name&quot;:&quot;Emma Colwell&quot;,&quot;id&quot;:&quot;50868586&quot;}">Emma Colwell</option>
-          <option value="{&quot;name&quot;:&quot;Eric Van Donge&quot;,&quot;id&quot;:&quot;49348922&quot;}">Eric Van Donge</option>
-          <option value="{&quot;name&quot;:&quot;Erica WalkingStick&quot;,&quot;id&quot;:&quot;51272958&quot;}">Erica WalkingStick</option>
-          <option value="{&quot;name&quot;:&quot;Ericka Batiste&quot;,&quot;id&quot;:&quot;31357687&quot;}">Ericka Batiste</option>
-          <option value="{&quot;name&quot;:&quot;Erik Lepis&quot;,&quot;id&quot;:&quot;66345105&quot;}">Erik Lepis</option>
-          <option value="{&quot;name&quot;:&quot;Erik Reitinger&quot;,&quot;id&quot;:&quot;24063923&quot;}">Erik Reitinger</option>
-          <option value="{&quot;name&quot;:&quot;Erin Harden&quot;,&quot;id&quot;:&quot;31357612&quot;}">Erin Harden</option>
-          <option value="{&quot;name&quot;:&quot;Erin Maguire&quot;,&quot;id&quot;:&quot;31357670&quot;}">Erin Maguire</option>
-          <option value="{&quot;name&quot;:&quot;Erin Weiner&quot;,&quot;id&quot;:&quot;46841740&quot;}">Erin Weiner</option>
-          <option value="{&quot;name&quot;:&quot;Evan Rushton&quot;,&quot;id&quot;:&quot;31357655&quot;}">Evan Rushton</option>
-          <option value="{&quot;name&quot;:&quot;Fabienne Bennett&quot;,&quot;id&quot;:&quot;31357574&quot;}">Fabienne Bennett</option>
-          <option value="{&quot;name&quot;:&quot;Ferron Morgan&quot;,&quot;id&quot;:&quot;40346710&quot;}">Ferron Morgan</option>
-          <option value="{&quot;name&quot;:&quot;Grace Ashton&quot;,&quot;id&quot;:&quot;75836519&quot;}">Grace Ashton</option>
-          <option value="{&quot;name&quot;:&quot;Grace Kingsbery&quot;,&quot;id&quot;:&quot;56689429&quot;}">Grace Kingsbery</option>
-          <option value="{&quot;name&quot;:&quot;Gregory Michael Leap&quot;,&quot;id&quot;:&quot;31357603&quot;}">Gregory Michael Leap</option>
-          <option value="{&quot;name&quot;:&quot;Haley Siegel&quot;,&quot;id&quot;:&quot;31357626&quot;}">Haley Siegel</option>
-          <option value="{&quot;name&quot;:&quot;HaMy Vu&quot;,&quot;id&quot;:&quot;22044512&quot;}">HaMy Vu</option>
-          <option value="{&quot;name&quot;:&quot;Heather Lengyel&quot;,&quot;id&quot;:&quot;52157659&quot;}">Heather Lengyel</option>
-          <option value="{&quot;name&quot;:&quot;Holly Corwin&quot;,&quot;id&quot;:&quot;38079532&quot;}">Holly Corwin</option>
-          <option value="{&quot;name&quot;:&quot;Holly Smith&quot;,&quot;id&quot;:&quot;50701169&quot;}">Holly Smith</option>
-          <option value="{&quot;name&quot;:&quot;Hope Luebbert&quot;,&quot;id&quot;:&quot;75042953&quot;}">Hope Luebbert</option>
-          <option value="{&quot;name&quot;:&quot;Hyatt Keller&quot;,&quot;id&quot;:&quot;65623675&quot;}">Hyatt Keller</option>
-          <option value="{&quot;name&quot;:&quot;Ira Stillwell&quot;,&quot;id&quot;:&quot;65623695&quot;}">Ira Stillwell</option>
-          <option value="{&quot;name&quot;:&quot;Jack Holdcroft&quot;,&quot;id&quot;:&quot;76847578&quot;}">Jack Holdcroft</option>
-          <option value="{&quot;name&quot;:&quot;Jacob Kettlewell&quot;,&quot;id&quot;:&quot;57343915&quot;}">Jacob Kettlewell</option>
-          <option value="{&quot;name&quot;:&quot;Jacob Michelman&quot;,&quot;id&quot;:&quot;31357550&quot;}">Jacob Michelman</option>
-          <option value="{&quot;name&quot;:&quot;Jalinda Soto&quot;,&quot;id&quot;:&quot;23259056&quot;}">Jalinda Soto</option>
-          <option value="{&quot;name&quot;:&quot;James Michael Steele&quot;,&quot;id&quot;:&quot;51372611&quot;}">James Michael Steele</option>
-          <option value="{&quot;name&quot;:&quot;Jane Fung&quot;,&quot;id&quot;:&quot;65623706&quot;}">Jane Fung</option>
-          <option value="{&quot;name&quot;:&quot;Janelle Payne&quot;,&quot;id&quot;:&quot;51647733&quot;}">Janelle Payne</option>
-          <option value="{&quot;name&quot;:&quot;Janelle Sands&quot;,&quot;id&quot;:&quot;75162116&quot;}">Janelle Sands</option>
-          <option value="{&quot;name&quot;:&quot;Janie Smith&quot;,&quot;id&quot;:&quot;38028316&quot;}">Janie Smith</option>
-          <option value="{&quot;name&quot;:&quot;Janie Smith&quot;,&quot;id&quot;:&quot;42175991&quot;}">Janie Smith</option>
-          <option value="{&quot;name&quot;:&quot;Jasmine Thomas-Bridges&quot;,&quot;id&quot;:&quot;28102411&quot;}">Jasmine Thomas-Bridges</option>
-          <option value="{&quot;name&quot;:&quot;Jason Schweid&quot;,&quot;id&quot;:&quot;63991576&quot;}">Jason Schweid</option>
-          <option value="{&quot;name&quot;:&quot;Jeanine Reeman&quot;,&quot;id&quot;:&quot;57577868&quot;}">Jeanine Reeman</option>
-          <option value="{&quot;name&quot;:&quot;Jenee Robins&quot;,&quot;id&quot;:&quot;31357632&quot;}">Jenee Robins</option>
-          <option value="{&quot;name&quot;:&quot;Jennie Toby&quot;,&quot;id&quot;:&quot;51091379&quot;}">Jennie Toby</option>
-          <option value="{&quot;name&quot;:&quot;Jennifer Allen&quot;,&quot;id&quot;:&quot;34433834&quot;}">Jennifer Allen</option>
-          <option value="{&quot;name&quot;:&quot;Jennifer Harris&quot;,&quot;id&quot;:&quot;24059067&quot;}">Jennifer Harris</option>
-          <option value="{&quot;name&quot;:&quot;Jess Stechmann&quot;,&quot;id&quot;:&quot;31357636&quot;}">Jess Stechmann</option>
-          <option value="{&quot;name&quot;:&quot;Jessica Azani&quot;,&quot;id&quot;:&quot;31500708&quot;}">Jessica Azani</option>
-          <option value="{&quot;name&quot;:&quot;Jessica Cardoza&quot;,&quot;id&quot;:&quot;55979632&quot;}">Jessica Cardoza</option>
-          <option value="{&quot;name&quot;:&quot;Jessica Martin&quot;,&quot;id&quot;:&quot;31357562&quot;}">Jessica Martin</option>
-          <option value="{&quot;name&quot;:&quot;Jessika Davidson&quot;,&quot;id&quot;:&quot;33926046&quot;}">Jessika Davidson</option>
-          <option value="{&quot;name&quot;:&quot;Jetpack&quot;,&quot;id&quot;:&quot;40557815&quot;}">Jetpack</option>
-          <option value="{&quot;name&quot;:&quot;Jill Richmond&quot;,&quot;id&quot;:&quot;65170182&quot;}">Jill Richmond</option>
-          <option value="{&quot;name&quot;:&quot;Joanna Lalas&quot;,&quot;id&quot;:&quot;74967046&quot;}">Joanna Lalas</option>
-          <option value="{&quot;name&quot;:&quot;Jocelyn Blair&quot;,&quot;id&quot;:&quot;43035706&quot;}">Jocelyn Blair</option>
-          <option value="{&quot;name&quot;:&quot;Joe Kapustka&quot;,&quot;id&quot;:&quot;54069313&quot;}">Joe Kapustka</option>
-          <option value="{&quot;name&quot;:&quot;John Silverthorne&quot;,&quot;id&quot;:&quot;25402612&quot;}">John Silverthorne</option>
-          <option value="{&quot;name&quot;:&quot;Jonathan Ben-Isvy&quot;,&quot;id&quot;:&quot;60420191&quot;}">Jonathan Ben-Isvy</option>
-          <option value="{&quot;name&quot;:&quot;Jordan Davis&quot;,&quot;id&quot;:&quot;46480286&quot;}">Jordan Davis</option>
-          <option value="{&quot;name&quot;:&quot;Josephine Skaer&quot;,&quot;id&quot;:&quot;50079436&quot;}">Josephine Skaer</option>
-          <option value="{&quot;name&quot;:&quot;Joshua Kim&quot;,&quot;id&quot;:&quot;50078107&quot;}">Joshua Kim</option>
-          <option value="{&quot;name&quot;:&quot;Joshua Ling&quot;,&quot;id&quot;:&quot;42315439&quot;}">Joshua Ling</option>
-          <option value="{&quot;name&quot;:&quot;Joy Brown&quot;,&quot;id&quot;:&quot;53076378&quot;}">Joy Brown</option>
-          <option value="{&quot;name&quot;:&quot;Julia Sean&quot;,&quot;id&quot;:&quot;76119665&quot;}">Julia Sean</option>
-          <option value="{&quot;name&quot;:&quot;Julianne Scherker&quot;,&quot;id&quot;:&quot;31357643&quot;}">Julianne Scherker</option>
-          <option value="{&quot;name&quot;:&quot;Julie Geagan-Chevez&quot;,&quot;id&quot;:&quot;52555442&quot;}">Julie Geagan-Chevez</option>
-          <option value="{&quot;name&quot;:&quot;Justin Hassan&quot;,&quot;id&quot;:&quot;43407535&quot;}">Justin Hassan</option>
-          <option value="{&quot;name&quot;:&quot;Kadisha Harris&quot;,&quot;id&quot;:&quot;44750622&quot;}">Kadisha Harris</option>
-          <option value="{&quot;name&quot;:&quot;kajal.ravani@teachinglabstudio.com&quot;,&quot;id&quot;:&quot;74212222&quot;}">kajal.ravani@teachinglabstudio.com</option>
-          <option value="{&quot;name&quot;:&quot;Karen Alerhand&quot;,&quot;id&quot;:&quot;46188540&quot;}">Karen Alerhand</option>
-          <option value="{&quot;name&quot;:&quot;Karen Evans&quot;,&quot;id&quot;:&quot;74666504&quot;}">Karen Evans</option>
-          <option value="{&quot;name&quot;:&quot;Karla McPherson Bester&quot;,&quot;id&quot;:&quot;31997373&quot;}">Karla McPherson Bester</option>
-          <option value="{&quot;name&quot;:&quot;Kassy Neiman-Marx&quot;,&quot;id&quot;:&quot;62578726&quot;}">Kassy Neiman-Marx</option>
-          <option value="{&quot;name&quot;:&quot;Kathleen Janik&quot;,&quot;id&quot;:&quot;31357631&quot;}">Kathleen Janik</option>
-          <option value="{&quot;name&quot;:&quot;Katie Kramer&quot;,&quot;id&quot;:&quot;27899536&quot;}">Katie Kramer</option>
-          <option value="{&quot;name&quot;:&quot;Kelly Sanders&quot;,&quot;id&quot;:&quot;21843245&quot;}">Kelly Sanders</option>
-          <option value="{&quot;name&quot;:&quot;Kelsey Wasser&quot;,&quot;id&quot;:&quot;31357627&quot;}">Kelsey Wasser</option>
-          <option value="{&quot;name&quot;:&quot;Kennietha Jones&quot;,&quot;id&quot;:&quot;31357672&quot;}">Kennietha Jones</option>
-          <option value="{&quot;name&quot;:&quot;Kerinn Tillman&quot;,&quot;id&quot;:&quot;31357686&quot;}">Kerinn Tillman</option>
-          <option value="{&quot;name&quot;:&quot;Kevin McCarthy&quot;,&quot;id&quot;:&quot;72942772&quot;}">Kevin McCarthy</option>
-          <option value="{&quot;name&quot;:&quot;Kim Burgas&quot;,&quot;id&quot;:&quot;28378889&quot;}">Kim Burgas</option>
-          <option value="{&quot;name&quot;:&quot;Kimberley Ednie&quot;,&quot;id&quot;:&quot;46413053&quot;}">Kimberley Ednie</option>
-          <option value="{&quot;name&quot;:&quot;Kimberly Norman&quot;,&quot;id&quot;:&quot;73250006&quot;}">Kimberly Norman</option>
-          <option value="{&quot;name&quot;:&quot;Kimberly Robertson&quot;,&quot;id&quot;:&quot;31357605&quot;}">Kimberly Robertson</option>
-          <option value="{&quot;name&quot;:&quot;Kirstin Greig&quot;,&quot;id&quot;:&quot;72957766&quot;}">Kirstin Greig</option>
-          <option value="{&quot;name&quot;:&quot;Kristen Taylor&quot;,&quot;id&quot;:&quot;31357577&quot;}">Kristen Taylor</option>
-          <option value="{&quot;name&quot;:&quot;Kristin Alfonzo&quot;,&quot;id&quot;:&quot;64294965&quot;}">Kristin Alfonzo</option>
-          <option value="{&quot;name&quot;:&quot;Kristy Reale&quot;,&quot;id&quot;:&quot;50203425&quot;}">Kristy Reale</option>
-          <option value="{&quot;name&quot;:&quot;Kyle Williams&quot;,&quot;id&quot;:&quot;49022007&quot;}">Kyle Williams</option>
-          <option value="{&quot;name&quot;:&quot;Kyra Pickard&quot;,&quot;id&quot;:&quot;31357553&quot;}">Kyra Pickard</option>
-          <option value="{&quot;name&quot;:&quot;LaKenna Booker&quot;,&quot;id&quot;:&quot;48449506&quot;}">LaKenna Booker</option>
-          <option value="{&quot;name&quot;:&quot;Larry Minor&quot;,&quot;id&quot;:&quot;27322070&quot;}">Larry Minor</option>
-          <option value="{&quot;name&quot;:&quot;LaShae Tietsort&quot;,&quot;id&quot;:&quot;26242060&quot;}">LaShae Tietsort</option>
-          <option value="{&quot;name&quot;:&quot;Lashana Pollard Murphy&quot;,&quot;id&quot;:&quot;31357614&quot;}">Lashana Pollard Murphy</option>
-          <option value="{&quot;name&quot;:&quot;Laura Bradley&quot;,&quot;id&quot;:&quot;52605699&quot;}">Laura Bradley</option>
-          <option value="{&quot;name&quot;:&quot;Laura Dombrowski&quot;,&quot;id&quot;:&quot;53070210&quot;}">Laura Dombrowski</option>
-          <option value="{&quot;name&quot;:&quot;Laura Mayer&quot;,&quot;id&quot;:&quot;31357589&quot;}">Laura Mayer</option>
-          <option value="{&quot;name&quot;:&quot;Lauren Hartmann&quot;,&quot;id&quot;:&quot;41301419&quot;}">Lauren Hartmann</option>
-          <option value="{&quot;name&quot;:&quot;LeAnne Zafar&quot;,&quot;id&quot;:&quot;49084524&quot;}">LeAnne Zafar</option>
-          <option value="{&quot;name&quot;:&quot;Learning &amp; Research&quot;,&quot;id&quot;:&quot;35747574&quot;}">Learning &amp; Research</option>
-          <option value="{&quot;name&quot;:&quot;Learning Development&quot;,&quot;id&quot;:&quot;54966572&quot;}">Learning Development</option>
-          <option value="{&quot;name&quot;:&quot;Leyla Haznedar&quot;,&quot;id&quot;:&quot;55333241&quot;}">Leyla Haznedar</option>
-          <option value="{&quot;name&quot;:&quot;Liliana Rodriguez&quot;,&quot;id&quot;:&quot;52972600&quot;}">Liliana Rodriguez</option>
-          <option value="{&quot;name&quot;:&quot;Liliana Vazquez&quot;,&quot;id&quot;:&quot;43458354&quot;}">Liliana Vazquez</option>
-          <option value="{&quot;name&quot;:&quot;Linda Gutierrez&quot;,&quot;id&quot;:&quot;50759695&quot;}">Linda Gutierrez</option>
-          <option value="{&quot;name&quot;:&quot;Lindsay Jewell&quot;,&quot;id&quot;:&quot;65169713&quot;}">Lindsay Jewell</option>
-          <option value="{&quot;name&quot;:&quot;Lindsay Romano&quot;,&quot;id&quot;:&quot;23017810&quot;}">Lindsay Romano</option>
-          <option value="{&quot;name&quot;:&quot;Lizeth Martinez-Chavez&quot;,&quot;id&quot;:&quot;56553948&quot;}">Lizeth Martinez-Chavez</option>
-          <option value="{&quot;name&quot;:&quot;Madison Mojica&quot;,&quot;id&quot;:&quot;55777772&quot;}">Madison Mojica</option>
-          <option value="{&quot;name&quot;:&quot;Maja Almquist&quot;,&quot;id&quot;:&quot;51372612&quot;}">Maja Almquist</option>
-          <option value="{&quot;name&quot;:&quot;Mandi Van Dellen&quot;,&quot;id&quot;:&quot;23173326&quot;}">Mandi Van Dellen</option>
-          <option value="{&quot;name&quot;:&quot;Mandy Buehler&quot;,&quot;id&quot;:&quot;52621682&quot;}">Mandy Buehler</option>
-          <option value="{&quot;name&quot;:&quot;Maren Handorf&quot;,&quot;id&quot;:&quot;34248502&quot;}">Maren Handorf</option>
-          <option value="{&quot;name&quot;:&quot;Mariama Kurbally&quot;,&quot;id&quot;:&quot;31357635&quot;}">Mariama Kurbally</option>
-          <option value="{&quot;name&quot;:&quot;Mariela Magro-Malo&quot;,&quot;id&quot;:&quot;72837136&quot;}">Mariela Magro-Malo</option>
-          <option value="{&quot;name&quot;:&quot;Marika Allen&quot;,&quot;id&quot;:&quot;27940063&quot;}">Marika Allen</option>
-          <option value="{&quot;name&quot;:&quot;Marina Lopez&quot;,&quot;id&quot;:&quot;77475764&quot;}">Marina Lopez</option>
-          <option value="{&quot;name&quot;:&quot;Martavious Johnson&quot;,&quot;id&quot;:&quot;31357639&quot;}">Martavious Johnson</option>
-          <option value="{&quot;name&quot;:&quot;Martyn Ecob&quot;,&quot;id&quot;:&quot;49084519&quot;}">Martyn Ecob</option>
-          <option value="{&quot;name&quot;:&quot;Mary Kate Dykes&quot;,&quot;id&quot;:&quot;33926042&quot;}">Mary Kate Dykes</option>
-          <option value="{&quot;name&quot;:&quot;Marya Firdausi Kazmi Hay&quot;,&quot;id&quot;:&quot;31357560&quot;}">Marya Firdausi Kazmi Hay</option>
-          <option value="{&quot;name&quot;:&quot;Matt Veltkamp&quot;,&quot;id&quot;:&quot;58131986&quot;}">Matt Veltkamp</option>
-          <option value="{&quot;name&quot;:&quot;Maulana Drew&quot;,&quot;id&quot;:&quot;64709638&quot;}">Maulana Drew</option>
-          <option value="{&quot;name&quot;:&quot;Maureen Ferry&quot;,&quot;id&quot;:&quot;72140151&quot;}">Maureen Ferry</option>
-          <option value="{&quot;name&quot;:&quot;Maurissa Roberts&quot;,&quot;id&quot;:&quot;31357597&quot;}">Maurissa Roberts</option>
-          <option value="{&quot;name&quot;:&quot;Max Endieveri&quot;,&quot;id&quot;:&quot;76840417&quot;}">Max Endieveri</option>
-          <option value="{&quot;name&quot;:&quot;Maxibell Jimenez&quot;,&quot;id&quot;:&quot;65287965&quot;}">Maxibell Jimenez</option>
-          <option value="{&quot;name&quot;:&quot;Meg Fischer&quot;,&quot;id&quot;:&quot;54540933&quot;}">Meg Fischer</option>
-          <option value="{&quot;name&quot;:&quot;Megan Lewis&quot;,&quot;id&quot;:&quot;31357582&quot;}">Megan Lewis</option>
-          <option value="{&quot;name&quot;:&quot;Meka Bridges&quot;,&quot;id&quot;:&quot;57507789&quot;}">Meka Bridges</option>
-          <option value="{&quot;name&quot;:&quot;Melanie Peralta&quot;,&quot;id&quot;:&quot;64294968&quot;}">Melanie Peralta</option>
-          <option value="{&quot;name&quot;:&quot;Melissa Ramos&quot;,&quot;id&quot;:&quot;23098644&quot;}">Melissa Ramos</option>
-          <option value="{&quot;name&quot;:&quot;Melissa Ramos&quot;,&quot;id&quot;:&quot;55535014&quot;}">Melissa Ramos</option>
-          <option value="{&quot;name&quot;:&quot;Meredith Rosenthal&quot;,&quot;id&quot;:&quot;75703934&quot;}">Meredith Rosenthal</option>
-          <option value="{&quot;name&quot;:&quot;Michael Harbaugh&quot;,&quot;id&quot;:&quot;76329686&quot;}">Michael Harbaugh</option>
-          <option value="{&quot;name&quot;:&quot;Michael ONeill&quot;,&quot;id&quot;:&quot;56221790&quot;}">Michael ONeill</option>
-          <option value="{&quot;name&quot;:&quot;Michele Caracappa&quot;,&quot;id&quot;:&quot;63251424&quot;}">Michele Caracappa</option>
-          <option value="{&quot;name&quot;:&quot;Michele Morenz&quot;,&quot;id&quot;:&quot;30154062&quot;}">Michele Morenz</option>
-          <option value="{&quot;name&quot;:&quot;Michelle Allen&quot;,&quot;id&quot;:&quot;71487854&quot;}">Michelle Allen</option>
-          <option value="{&quot;name&quot;:&quot;Miguel El Lakkis&quot;,&quot;id&quot;:&quot;60830273&quot;}">Miguel El Lakkis</option>
-          <option value="{&quot;name&quot;:&quot;Milagros Mendoza&quot;,&quot;id&quot;:&quot;50875182&quot;}">Milagros Mendoza</option>
-          <option value="{&quot;name&quot;:&quot;Miraha Smith&quot;,&quot;id&quot;:&quot;31357599&quot;}">Miraha Smith</option>
-          <option value="{&quot;name&quot;:&quot;Molly Branson Thayer&quot;,&quot;id&quot;:&quot;25924100&quot;}">Molly Branson Thayer</option>
-          <option value="{&quot;name&quot;:&quot;Monique Djoum&quot;,&quot;id&quot;:&quot;61156875&quot;}">Monique Djoum</option>
-          <option value="{&quot;name&quot;:&quot;Morgan Stanich&quot;,&quot;id&quot;:&quot;58289267&quot;}">Morgan Stanich</option>
-          <option value="{&quot;name&quot;:&quot;Naquana Haynes&quot;,&quot;id&quot;:&quot;49813927&quot;}">Naquana Haynes</option>
-          <option value="{&quot;name&quot;:&quot;Natalie Rodriguez&quot;,&quot;id&quot;:&quot;48166026&quot;}">Natalie Rodriguez</option>
-          <option value="{&quot;name&quot;:&quot;Nicole Williams&quot;,&quot;id&quot;:&quot;44750623&quot;}">Nicole Williams</option>
-          <option value="{&quot;name&quot;:&quot;Nicolle Beneventano&quot;,&quot;id&quot;:&quot;73152617&quot;}">Nicolle Beneventano</option>
-          <option value="{&quot;name&quot;:&quot;nicolle.beneventano@teaching.lab.org&quot;,&quot;id&quot;:&quot;74212220&quot;}">nicolle.beneventano@teaching.lab.org</option>
-          <option value="{&quot;name&quot;:&quot;Nikki Khosla&quot;,&quot;id&quot;:&quot;35330813&quot;}">Nikki Khosla</option>
-          <option value="{&quot;name&quot;:&quot;Ninamarie Ochoa&quot;,&quot;id&quot;:&quot;54422357&quot;}">Ninamarie Ochoa</option>
-          <option value="{&quot;name&quot;:&quot;Noah M. Wager&quot;,&quot;id&quot;:&quot;75801425&quot;}">Noah M. Wager</option>
-          <option value="{&quot;name&quot;:&quot;Omar Headen&quot;,&quot;id&quot;:&quot;48343684&quot;}">Omar Headen</option>
-          <option value="{&quot;name&quot;:&quot;Orionna Brisbois&quot;,&quot;id&quot;:&quot;55697096&quot;}">Orionna Brisbois</option>
-          <option value="{&quot;name&quot;:&quot;Pamela Aquino&quot;,&quot;id&quot;:&quot;34248500&quot;}">Pamela Aquino</option>
-          <option value="{&quot;name&quot;:&quot;Patricia Thibodeaux&quot;,&quot;id&quot;:&quot;31357600&quot;}">Patricia Thibodeaux</option>
-          <option value="{&quot;name&quot;:&quot;Pattie Parker&quot;,&quot;id&quot;:&quot;43457247&quot;}">Pattie Parker</option>
-          <option value="{&quot;name&quot;:&quot;Peter Edmonds&quot;,&quot;id&quot;:&quot;46914923&quot;}">Peter Edmonds</option>
-          <option value="{&quot;name&quot;:&quot;Phil Chew&quot;,&quot;id&quot;:&quot;61009613&quot;}">Phil Chew</option>
-          <option value="{&quot;name&quot;:&quot;Phil Weinberg&quot;,&quot;id&quot;:&quot;31508634&quot;}">Phil Weinberg</option>
-          <option value="{&quot;name&quot;:&quot;Polished Geek&quot;,&quot;id&quot;:&quot;63507796&quot;}">Polished Geek</option>
-          <option value="{&quot;name&quot;:&quot;Rachel Shurick&quot;,&quot;id&quot;:&quot;75252539&quot;}">Rachel Shurick</option>
-          <option value="{&quot;name&quot;:&quot;Rachelle Andrade-Nelson&quot;,&quot;id&quot;:&quot;71932740&quot;}">Rachelle Andrade-Nelson</option>
-          <option value="{&quot;name&quot;:&quot;Radesha Piles-Holman&quot;,&quot;id&quot;:&quot;36633483&quot;}">Radesha Piles-Holman</option>
-          <option value="{&quot;name&quot;:&quot;Ralpheal Brown&quot;,&quot;id&quot;:&quot;63358694&quot;}">Ralpheal Brown</option>
-          <option value="{&quot;name&quot;:&quot;Raven Hawes&quot;,&quot;id&quot;:&quot;27886699&quot;}">Raven Hawes</option>
-          <option value="{&quot;name&quot;:&quot;Rayne O'Brien&quot;,&quot;id&quot;:&quot;66688870&quot;}">Rayne O'Brien</option>
-          <option value="{&quot;name&quot;:&quot;Rebecca Hendrickson&quot;,&quot;id&quot;:&quot;34248503&quot;}">Rebecca Hendrickson</option>
-          <option value="{&quot;name&quot;:&quot;Renee George&quot;,&quot;id&quot;:&quot;37322883&quot;}">Renee George</option>
-          <option value="{&quot;name&quot;:&quot;Renee Warner-Gervais&quot;,&quot;id&quot;:&quot;31357618&quot;}">Renee Warner-Gervais</option>
-          <option value="{&quot;name&quot;:&quot;Rhea May&quot;,&quot;id&quot;:&quot;48852657&quot;}">Rhea May</option>
-          <option value="{&quot;name&quot;:&quot;Rhonda Idris&quot;,&quot;id&quot;:&quot;28002802&quot;}">Rhonda Idris</option>
-          <option value="{&quot;name&quot;:&quot;Richard Chou&quot;,&quot;id&quot;:&quot;50210287&quot;}">Richard Chou</option>
-          <option value="{&quot;name&quot;:&quot;Rio Djiwandana&quot;,&quot;id&quot;:&quot;48852655&quot;}">Rio Djiwandana</option>
-          <option value="{&quot;name&quot;:&quot;Riz Malik&quot;,&quot;id&quot;:&quot;63251421&quot;}">Riz Malik</option>
-          <option value="{&quot;name&quot;:&quot;Robert Mullen&quot;,&quot;id&quot;:&quot;64447720&quot;}">Robert Mullen</option>
-          <option value="{&quot;name&quot;:&quot;Rod Naquin&quot;,&quot;id&quot;:&quot;27601356&quot;}">Rod Naquin</option>
-          <option value="{&quot;name&quot;:&quot;Roel Concepcion&quot;,&quot;id&quot;:&quot;23413400&quot;}">Roel Concepcion</option>
-          <option value="{&quot;name&quot;:&quot;Ruben Abrahams Brosbe&quot;,&quot;id&quot;:&quot;31357648&quot;}">Ruben Abrahams Brosbe</option>
-          <option value="{&quot;name&quot;:&quot;Ryan Reardon&quot;,&quot;id&quot;:&quot;45521947&quot;}">Ryan Reardon</option>
-          <option value="{&quot;name&quot;:&quot;Ryan Spass&quot;,&quot;id&quot;:&quot;67872480&quot;}">Ryan Spass</option>
-          <option value="{&quot;name&quot;:&quot;Sabrina Tellez&quot;,&quot;id&quot;:&quot;51266685&quot;}">Sabrina Tellez</option>
-          <option value="{&quot;name&quot;:&quot;Samantha Wilner&quot;,&quot;id&quot;:&quot;37156962&quot;}">Samantha Wilner</option>
-          <option value="{&quot;name&quot;:&quot;Sara Alsup&quot;,&quot;id&quot;:&quot;36131954&quot;}">Sara Alsup</option>
-          <option value="{&quot;name&quot;:&quot;Sarah Burton&quot;,&quot;id&quot;:&quot;39390296&quot;}">Sarah Burton</option>
-          <option value="{&quot;name&quot;:&quot;Sarah Johnson&quot;,&quot;id&quot;:&quot;22420149&quot;}">Sarah Johnson</option>
-          <option value="{&quot;name&quot;:&quot;Sarah Kaufmann&quot;,&quot;id&quot;:&quot;74786434&quot;}">Sarah Kaufmann</option>
-          <option value="{&quot;name&quot;:&quot;Sarah Medve&quot;,&quot;id&quot;:&quot;46480284&quot;}">Sarah Medve</option>
-          <option value="{&quot;name&quot;:&quot;Sarah Tierney&quot;,&quot;id&quot;:&quot;23595430&quot;}">Sarah Tierney</option>
-          <option value="{&quot;name&quot;:&quot;Sarah Vafaie&quot;,&quot;id&quot;:&quot;39092126&quot;}">Sarah Vafaie</option>
-          <option value="{&quot;name&quot;:&quot;Savanna Worthington&quot;,&quot;id&quot;:&quot;31366527&quot;}">Savanna Worthington</option>
-          <option value="{&quot;name&quot;:&quot;Shanice Core&quot;,&quot;id&quot;:&quot;52445233&quot;}">Shanice Core</option>
-          <option value="{&quot;name&quot;:&quot;Shanique Coombs&quot;,&quot;id&quot;:&quot;51633755&quot;}">Shanique Coombs</option>
-          <option value="{&quot;name&quot;:&quot;Sharmaé Franklin&quot;,&quot;id&quot;:&quot;56633747&quot;}">Sharmaé Franklin</option>
-          <option value="{&quot;name&quot;:&quot;Sharon Moss&quot;,&quot;id&quot;:&quot;52605698&quot;}">Sharon Moss</option>
-          <option value="{&quot;name&quot;:&quot;Shaunte' Robinson&quot;,&quot;id&quot;:&quot;75530859&quot;}">Shaunte' Robinson</option>
-          <option value="{&quot;name&quot;:&quot;Shawn Durrett&quot;,&quot;id&quot;:&quot;51029113&quot;}">Shawn Durrett</option>
-          <option value="{&quot;name&quot;:&quot;Shaye Worthman&quot;,&quot;id&quot;:&quot;22044513&quot;}">Shaye Worthman</option>
-          <option value="{&quot;name&quot;:&quot;Sherry Lewkowicz&quot;,&quot;id&quot;:&quot;51218307&quot;}">Sherry Lewkowicz</option>
-          <option value="{&quot;name&quot;:&quot;Simon Chervenak&quot;,&quot;id&quot;:&quot;68731562&quot;}">Simon Chervenak</option>
-          <option value="{&quot;name&quot;:&quot;Sofia Ikram&quot;,&quot;id&quot;:&quot;67875114&quot;}">Sofia Ikram</option>
-          <option value="{&quot;name&quot;:&quot;Sophia Zinicola&quot;,&quot;id&quot;:&quot;65886052&quot;}">Sophia Zinicola</option>
-          <option value="{&quot;name&quot;:&quot;Sriba Kwadjovie Quintana&quot;,&quot;id&quot;:&quot;76808522&quot;}">Sriba Kwadjovie Quintana</option>
-          <option value="{&quot;name&quot;:&quot;Stacy Weldon&quot;,&quot;id&quot;:&quot;31357665&quot;}">Stacy Weldon</option>
-          <option value="{&quot;name&quot;:&quot;Stephanie Hampton&quot;,&quot;id&quot;:&quot;76789367&quot;}">Stephanie Hampton</option>
-          <option value="{&quot;name&quot;:&quot;Sue Myers&quot;,&quot;id&quot;:&quot;75283966&quot;}">Sue Myers</option>
-          <option value="{&quot;name&quot;:&quot;Susan Marschner&quot;,&quot;id&quot;:&quot;31357633&quot;}">Susan Marschner</option>
-          <option value="{&quot;name&quot;:&quot;Taheti Watson&quot;,&quot;id&quot;:&quot;75247137&quot;}">Taheti Watson</option>
-          <option value="{&quot;name&quot;:&quot;Tania Perez&quot;,&quot;id&quot;:&quot;65811224&quot;}">Tania Perez</option>
-          <option value="{&quot;name&quot;:&quot;Tara Penn&quot;,&quot;id&quot;:&quot;23017817&quot;}">Tara Penn</option>
-          <option value="{&quot;name&quot;:&quot;Tech Team&quot;,&quot;id&quot;:&quot;45722899&quot;}">Tech Team</option>
-          <option value="{&quot;name&quot;:&quot;Ted Quinn&quot;,&quot;id&quot;:&quot;69302702&quot;}">Ted Quinn</option>
-          <option value="{&quot;name&quot;:&quot;Teresa Leahey&quot;,&quot;id&quot;:&quot;65620248&quot;}">Teresa Leahey</option>
-          <option value="{&quot;name&quot;:&quot;Teresa Rita&quot;,&quot;id&quot;:&quot;54867610&quot;}">Teresa Rita</option>
-          <option value="{&quot;name&quot;:&quot;Tiara Toney&quot;,&quot;id&quot;:&quot;64280465&quot;}">Tiara Toney</option>
-          <option value="{&quot;name&quot;:&quot;Tiayana Marks&quot;,&quot;id&quot;:&quot;23309855&quot;}">Tiayana Marks</option>
-          <option value="{&quot;name&quot;:&quot;Tinishia Washington&quot;,&quot;id&quot;:&quot;34448495&quot;}">Tinishia Washington</option>
-          <option value="{&quot;name&quot;:&quot;TL Finance&quot;,&quot;id&quot;:&quot;35809385&quot;}">TL Finance</option>
-          <option value="{&quot;name&quot;:&quot;TL Partnerships&quot;,&quot;id&quot;:&quot;64706276&quot;}">TL Partnerships</option>
-          <option value="{&quot;name&quot;:&quot;Tommy Micah&quot;,&quot;id&quot;:&quot;27752819&quot;}">Tommy Micah</option>
-          <option value="{&quot;name&quot;:&quot;Tonia Lonie&quot;,&quot;id&quot;:&quot;42055480&quot;}">Tonia Lonie</option>
-          <option value="{&quot;name&quot;:&quot;Toyree Jones&quot;,&quot;id&quot;:&quot;31357650&quot;}">Toyree Jones</option>
-          <option value="{&quot;name&quot;:&quot;Travis Jack&quot;,&quot;id&quot;:&quot;55885333&quot;}">Travis Jack</option>
-          <option value="{&quot;name&quot;:&quot;Tyler Schoen&quot;,&quot;id&quot;:&quot;56636110&quot;}">Tyler Schoen</option>
-          <option value="{&quot;name&quot;:&quot;Vee Johnson&quot;,&quot;id&quot;:&quot;40961170&quot;}">Vee Johnson</option>
-          <option value="{&quot;name&quot;:&quot;Vivian Nguyen&quot;,&quot;id&quot;:&quot;33867216&quot;}">Vivian Nguyen</option>
-          <option value="{&quot;name&quot;:&quot;Wesley Kline&quot;,&quot;id&quot;:&quot;51953192&quot;}">Wesley Kline</option>
-          <option value="{&quot;name&quot;:&quot;William Silva&quot;,&quot;id&quot;:&quot;48617351&quot;}">William Silva</option>
-          <option value="{&quot;name&quot;:&quot;Yancheng Pan&quot;,&quot;id&quot;:&quot;31288444&quot;}">Yancheng Pan</option>
-          <option value="{&quot;name&quot;:&quot;Yefei Jin&quot;,&quot;id&quot;:&quot;50136253&quot;}">Yefei Jin</option>
-          <option value="{&quot;name&quot;:&quot;Zachariah Stoutimore&quot;,&quot;id&quot;:&quot;46622879&quot;}">Zachariah Stoutimore</option>
-          <option value="{&quot;name&quot;:&quot;Zakia Kelly&quot;,&quot;id&quot;:&quot;45933617&quot;}">Zakia Kelly</option>
-          <option value="{&quot;name&quot;:&quot;Zanayia Legrand&quot;,&quot;id&quot;:&quot;49607087&quot;}">Zanayia Legrand</option>
-       </select>
-       <div class="invalid-feedback">Please choose a name.</div>
-    </div>
-    <div class="mb-5">
-       <label class="form-label" for="formBasicSite"><strong>What district did you coach today?</strong></label>
-       <select name="districtName" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option></option>
-          <option value="AR_Osceola School District">AR_Osceola School District</option>
-          <option value="CA_Santa Ana Unified School District">CA_Santa Ana Unified School District</option>
-          <option value="CO_AUL Denver High School">CO_AUL Denver High School</option>
-          <option value="DE_Delaware">DE_Delaware</option>
-          <option value="IL_CPS">IL_CPS</option>
-          <option value="MA_ Boston Prep">MA_ Boston Prep</option>
-          <option value="MA_Dennis Yarmouth">MA_Dennis Yarmouth</option>
-          <option value="MA_Greenfield">MA_Greenfield</option>
-          <option value="MA_Milford">MA_Milford</option>
-          <option value="MA_Salem">MA_Salem</option>
-          <option value="MA_Plymouth">MA_Plymouth</option>
-          <option value="MA_Uxbridge">MA_Uxbridge</option>
-          <option value="MA_West Springfield">MA_West Springfield</option>
-          <option value="MS_Kemper County School District">MS_Kemper County School District</option>
-          <option value="NJ_Great Oaks Legacy Charter Schools">NJ_Great Oaks Legacy Charter Schools</option>
-          <option value="NJ_Gateway Academy (BRICK Education Network)">NJ_Gateway Academy (BRICK Education Network)</option>
-          <option value="NY_Ascend Charter Schools">NY_Ascend Charter Schools</option>
-          <option value="NY_CUNY/UA">NY_CUNY/UA</option>
-          <option value="NY_D6">NY_D6</option>
-          <option value="NY_D9">NY_D9</option>
-          <option value="NY_D11">NY_D11</option>
-          <option value="NY_D12">NY_D12</option>
-          <option value="NY_D13">NY_D13</option>
-          <option value="NY_D16">NY_D16</option>
-          <option value="NY_D17">NY_D17</option>
-          <option value="NY_D25">NY_D25</option>
-          <option value="NY_D75">NY_D75</option>
-          <option value="NY_East Harlem Scholar Academies (EHTP)">NY_East Harlem Scholar Academies (EHTP)</option>
-          <option value="NY_LION Charter School">NY_LION Charter School</option>
-          <option value="NY_Transfer High Schools">NY_Transfer High Schools</option>
-          <option value="OH_Cleveland Metro School District">OH_Cleveland Metro School District</option>
-          <option value="TN_McNairy County Schools">TN_McNairy County Schools</option>
-          <option value="TX_El Paso Leadership Academy">TX_El Paso Leadership Academy</option>
-          <option value="WI_Milwaukee Public Schools">WI_Milwaukee Public Schools</option>
-          <option value="TN_Acceleration for All">TN_Acceleration for All</option>
-          <option value="WI_Victory Christian Academy">WI_Victory Christian Academy</option>
-       </select>
-       <div class="invalid-feedback">Please choose a district.</div>
-    </div>
-    <div class="mb-5">
-       <label class="form-label" for="formBasicSite"><strong>What school did you coach today?</strong></label>
-       <select name="schoolName" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option></option>
-          <option value="{&quot;label&quot;:&quot;019&quot;,&quot;value&quot;:[&quot;019&quot;]}">019</option>
-          <option value="{&quot;label&quot;:&quot;083&quot;,&quot;value&quot;:[&quot;083&quot;]}">083</option>
-          <option value="{&quot;label&quot;:&quot;089&quot;,&quot;value&quot;:[&quot;089&quot;]}">089</option>
-          <option value="{&quot;label&quot;:&quot;108&quot;,&quot;value&quot;:[&quot;108&quot;]}">108</option>
-          <option value="{&quot;label&quot;:&quot;127&quot;,&quot;value&quot;:[&quot;127&quot;]}">127</option>
-          <option value="{&quot;label&quot;:&quot;144&quot;,&quot;value&quot;:[&quot;144&quot;]}">144</option>
-          <option value="{&quot;label&quot;:&quot;175&quot;,&quot;value&quot;:[&quot;175&quot;]}">175</option>
-          <option value="{&quot;label&quot;:&quot;180&quot;,&quot;value&quot;:[&quot;180&quot;]}">180</option>
-          <option value="{&quot;label&quot;:&quot;181&quot;,&quot;value&quot;:[&quot;181&quot;]}">181</option>
-          <option value="{&quot;label&quot;:&quot;194&quot;,&quot;value&quot;:[&quot;194&quot;]}">194</option>
-          <option value="{&quot;label&quot;:&quot;287&quot;,&quot;value&quot;:[&quot;287&quot;]}">287</option>
-          <option value="{&quot;label&quot;:&quot;326&quot;,&quot;value&quot;:[&quot;326&quot;]}">326</option>
-          <option value="{&quot;label&quot;:&quot;355&quot;,&quot;value&quot;:[&quot;355&quot;]}">355</option>
-          <option value="{&quot;label&quot;:&quot;370&quot;,&quot;value&quot;:[&quot;370&quot;]}">370</option>
-          <option value="{&quot;label&quot;:&quot;462&quot;,&quot;value&quot;:[&quot;462&quot;]}">462</option>
-          <option value="{&quot;label&quot;:&quot;468&quot;,&quot;value&quot;:[&quot;468&quot;]}">468</option>
-          <option value="{&quot;label&quot;:&quot;498&quot;,&quot;value&quot;:[&quot;498&quot;]}">498</option>
-          <option value="{&quot;label&quot;:&quot;529&quot;,&quot;value&quot;:[&quot;529&quot;]}">529</option>
-          <option value="{&quot;label&quot;:&quot;532&quot;,&quot;value&quot;:[&quot;532&quot;]}">532</option>
-          <option value="{&quot;label&quot;:&quot;556&quot;,&quot;value&quot;:[&quot;556&quot;]}">556</option>
-          <option value="{&quot;label&quot;:&quot;566&quot;,&quot;value&quot;:[&quot;566&quot;]}">566</option>
-       </select>
-       <div class="invalid-feedback">Please choose a district.</div>
-    </div>
-    <div class="mb-5">
-       <label class="form-label" for="formBasicSite"><strong>Did you complete 1:1 coaching today?</strong></label>
-       <select name="CoachingDone" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-3">
-       <div class="row">
-          <div class="my-1 col"><label class="form-label" for="formBasicCourse"><strong>Coachee</strong></label></div>
-          <div class="my-1 col"><label class="form-label" for="formBasicCourse"><strong>Role</strong></label></div>
-          <div class="my-1 col"><label class="form-label" for="formBasicCourse"><strong>Activities</strong></label></div>
-          <div class="my-1 col"><label class="form-label" for="formBasicCourse"><strong>Duration (mins)</strong></label></div>
-       </div>
-       <div class="row">
-          <div class="row">
-             <div class="my-1 col">
-                <label class="form-label visually-hidden" for="formBasicCourse">Coachee Name</label>
-                <select name="coacheeName" aria-label="Default select example" required="" id="formBasicCourse" class="form-control">
-                   <option></option>
-                   <option value="Julie Porras">Julie Porras</option>
-                   <option value="Kathleen Wiehler">Kathleen Wiehler</option>
-                   <option value="Shannon Montenare">Shannon Montenare</option>
-                   <option value="Toni Moricone">Toni Moricone</option>
-                   <option value="Alex Mazza">Alex Mazza</option>
-                   <option value="Chris Gaffney">Chris Gaffney</option>
-                   <option value="Danielle Ramos">Danielle Ramos</option>
-                   <option value="Anthony Esposito">Anthony Esposito</option>
-                </select>
-             </div>
-             <div class="my-1 col">
-                <label class="form-label visually-hidden" for="formBasicCourse">Coachee Role</label>
-                <select name="coacheeRole" aria-label="Default select example" required="" id="formBasicCourse" class="form-control">
-                   <option></option>
-                   <option value="Teacher">Teacher</option>
-                   <option value="School-based coach">School-based coach</option>
-                   <option value="School-based admin">School-based admin</option>
-                   <option value="District/Network admin">District/Network admin</option>
-                   <option value="CPS only - Teacher Team Lead">CPS only - Teacher Team Lead</option>
-                </select>
-             </div>
-             <div class="my-1 col">
-                <label class="form-label visually-hidden" for="formBasicCourse">Activity</label>
-                <select aria-label="Default select example" name="coachingActivity" required="" id="formBasicCourse" class="form-control">
-                   <option></option>
-                   <option value="Observed instruction">Observed instruction</option>
-                   <option value="Modeled lesson">Modeled lesson</option>
-                   <option value="Co-taught lesson">Co-taught lesson</option>
-                   <option value="Provided feedback on instruction">Provided feedback on instruction</option>
-                   <option value="Planned for instruction">Planned for instruction</option>
-                   <option value="Analyzed student work">Analyzed student work</option>
-                   <option value="Held debrief">Held debrief</option>
-                   <option value="Observed recording of instruction and provided feedback">Observed recording of instruction and provided feedback</option>
-                   <option value="Leader: Observation, feedback and coaching cycles">Leader: Observation, feedback and coaching cycles</option>
-                   <option value="Leader: Use of data &amp; continuous improvement processes">Leader: Use of data &amp; continuous improvement processes</option>
-                   <option value="Leader: Instructional vision/professional learning plan">Leader: Instructional vision/professional learning plan</option>
-                   <option value="Leader: Equitable supports for students and teachers">Leader: Equitable supports for students and teachers</option>
-                   <option value="Leader: Resources are allocated to support instructional vision">Leader: Resources are allocated to support instructional vision</option>
-                   <option value="Leader: Teachers as leaders">Leader: Teachers as leaders</option>
-                </select>
-             </div>
-             <div class="my-1 col">
-                <label class="form-label visually-hidden" for="formBasicCourse">Coaching Duration</label>
-                <select aria-label="Default select example" name="coachingDuration" required="" id="formBasicCourse" class="form-control">
-                   <option></option>
-                   <option value="15">15</option>
-                   <option value="30">30</option>
-                   <option value="45">45</option>
-                   <option value="60">60</option>
-                   <option value="76">76</option>
-                   <option value="90">90</option>
-                </select>
-             </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipants-1"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipants[]"
+              value="Kathleen Wiehler"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipants-1"
+              style="user-select: none; width: 100%"
+              >Kathleen Wiehler</label
+            >
           </div>
-       </div>
-    </div>
-    <div class="mb-4" id="formGridCheckbox"><button type="button" class="btn btn-secondary">+ Add Row</button></div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>Did you deliver a micro PL at this school today?</strong></label>
-       <select name="CoachingDone" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-1">
-       <label class="form-label" for="formBasicSite"><strong>Names of participants: </strong></label>
-       <div class="dropdown">
-          <button class="btn dropdown-toggle btn-light" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%; overflow: hidden;"><span style="overflow: hidden; text-overflow: ellipsis; width: 100%; float: left; text-align: left; padding-right: 6px; margin-right: -6px;">Nothing selected</span></button>
-          <div class="dropdown-menu" style="padding: 0px; width: 100%;">
-             <div class="btn-group btn-group-sm btn-block"><button class="actions-btn btn btn-light">Select/Deselect All</button></div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipants-0" class="form-check-input" type="checkbox" name="microPLParticipants[]" value="Julie Porras"><label class="form-check-label" for="multiselect-microPLParticipants-0" style="user-select: none; width: 100%;">Julie Porras</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipants-1" class="form-check-input" type="checkbox" name="microPLParticipants[]" value="Kathleen Wiehler"><label class="form-check-label" for="multiselect-microPLParticipants-1" style="user-select: none; width: 100%;">Kathleen Wiehler</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipants-2" class="form-check-input" type="checkbox" name="microPLParticipants[]" value="Shannon Montenare"><label class="form-check-label" for="multiselect-microPLParticipants-2" style="user-select: none; width: 100%;">Shannon Montenare</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipants-3" class="form-check-input" type="checkbox" name="microPLParticipants[]" value="Toni Moricone"><label class="form-check-label" for="multiselect-microPLParticipants-3" style="user-select: none; width: 100%;">Toni Moricone</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipants-4" class="form-check-input" type="checkbox" name="microPLParticipants[]" value="Alex Mazza"><label class="form-check-label" for="multiselect-microPLParticipants-4" style="user-select: none; width: 100%;">Alex Mazza</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipants-5" class="form-check-input" type="checkbox" name="microPLParticipants[]" value="Chris Gaffney"><label class="form-check-label" for="multiselect-microPLParticipants-5" style="user-select: none; width: 100%;">Chris Gaffney</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipants-6" class="form-check-input" type="checkbox" name="microPLParticipants[]" value="Danielle Ramos"><label class="form-check-label" for="multiselect-microPLParticipants-6" style="user-select: none; width: 100%;">Danielle Ramos</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipants-7" class="form-check-input" type="checkbox" name="microPLParticipants[]" value="Anthony Esposito"><label class="form-check-label" for="multiselect-microPLParticipants-7" style="user-select: none; width: 100%;">Anthony Esposito</label></div>
-             </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipants-2"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipants[]"
+              value="Shannon Montenare"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipants-2"
+              style="user-select: none; width: 100%"
+              >Shannon Montenare</label
+            >
           </div>
-       </div>
-    </div>
-    <div class="mb-1">
-       <label class="form-label" for="formBasicSite"><strong>Participants were:</strong></label>
-       <div class="dropdown">
-          <button class="btn dropdown-toggle btn-light" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%; overflow: hidden;"><span style="overflow: hidden; text-overflow: ellipsis; width: 100%; float: left; text-align: left; padding-right: 6px; margin-right: -6px;">Nothing selected</span></button>
-          <div class="dropdown-menu" style="padding: 0px; width: 100%;">
-             <div class="btn-group btn-group-sm btn-block"><button class="actions-btn btn btn-light">Select/Deselect All</button></div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipantRoles-0" class="form-check-input" type="checkbox" name="microPLParticipantRoles[]" value="Teacher"><label class="form-check-label" for="multiselect-microPLParticipantRoles-0" style="user-select: none; width: 100%;">Teacher</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipantRoles-1" class="form-check-input" type="checkbox" name="microPLParticipantRoles[]" value="School-based coach"><label class="form-check-label" for="multiselect-microPLParticipantRoles-1" style="user-select: none; width: 100%;">School-based coach</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipantRoles-2" class="form-check-input" type="checkbox" name="microPLParticipantRoles[]" value="School-based admin"><label class="form-check-label" for="multiselect-microPLParticipantRoles-2" style="user-select: none; width: 100%;">School-based admin</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipantRoles-3" class="form-check-input" type="checkbox" name="microPLParticipantRoles[]" value="District/Network admin"><label class="form-check-label" for="multiselect-microPLParticipantRoles-3" style="user-select: none; width: 100%;">District/Network admin</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-microPLParticipantRoles-4" class="form-check-input" type="checkbox" name="microPLParticipantRoles[]" value="CPS only - Teacher Team Lead"><label class="form-check-label" for="multiselect-microPLParticipantRoles-4" style="user-select: none; width: 100%;">CPS only - Teacher Team Lead</label></div>
-             </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipants-3"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipants[]"
+              value="Toni Moricone"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipants-3"
+              style="user-select: none; width: 100%"
+              >Toni Moricone</label
+            >
           </div>
-       </div>
-    </div>
-    <div class="mb-1"><label class="form-label" for="formBasicSite"><strong>Topic of micro PL </strong></label><textarea name="microPLTopic" rows="1" aria-label="Default select example" id="formBasicSite" class="form-control"></textarea></div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicCourse"><strong>How many minutes was this micro PL?</strong></label>
-       <select aria-label="Default select example" name="microPLDuration" required="" id="formBasicCourse" class="form-control">
-          <option></option>
-          <option value="15">15</option>
-          <option value="30">30</option>
-          <option value="45">45</option>
-          <option value="60">60</option>
-          <option value="76">76</option>
-          <option value="90">90</option>
-       </select>
-    </div>
-    <div class="mb-3"><label class="form-label" for="formFile"><strong>Upload participant attendance sheet, if there are more than 15 participants</strong></label><input name="microPLFile" type="file" id="formFile" class="form-control"></div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>Did you provide coaching, modeling, or planning with a group of teachers at this school today? </strong></label>
-       <select name="CoachingDone" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-1">
-       <label class="form-label" for="formBasicSite"><strong>Names of participants: </strong></label>
-       <div class="dropdown">
-          <button class="btn dropdown-toggle btn-light" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%; overflow: hidden;"><span style="overflow: hidden; text-overflow: ellipsis; width: 100%; float: left; text-align: left; padding-right: 6px; margin-right: -6px;">Nothing selected</span></button>
-          <div class="dropdown-menu" style="padding: 0px; width: 100%;">
-             <div class="btn-group btn-group-sm btn-block"><button class="actions-btn btn btn-light">Select/Deselect All</button></div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipants-0" class="form-check-input" type="checkbox" name="modelParticipants[]" value="Julie Porras"><label class="form-check-label" for="multiselect-modelParticipants-0" style="user-select: none; width: 100%;">Julie Porras</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipants-1" class="form-check-input" type="checkbox" name="modelParticipants[]" value="Kathleen Wiehler"><label class="form-check-label" for="multiselect-modelParticipants-1" style="user-select: none; width: 100%;">Kathleen Wiehler</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipants-2" class="form-check-input" type="checkbox" name="modelParticipants[]" value="Shannon Montenare"><label class="form-check-label" for="multiselect-modelParticipants-2" style="user-select: none; width: 100%;">Shannon Montenare</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipants-3" class="form-check-input" type="checkbox" name="modelParticipants[]" value="Toni Moricone"><label class="form-check-label" for="multiselect-modelParticipants-3" style="user-select: none; width: 100%;">Toni Moricone</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipants-4" class="form-check-input" type="checkbox" name="modelParticipants[]" value="Alex Mazza"><label class="form-check-label" for="multiselect-modelParticipants-4" style="user-select: none; width: 100%;">Alex Mazza</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipants-5" class="form-check-input" type="checkbox" name="modelParticipants[]" value="Chris Gaffney"><label class="form-check-label" for="multiselect-modelParticipants-5" style="user-select: none; width: 100%;">Chris Gaffney</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipants-6" class="form-check-input" type="checkbox" name="modelParticipants[]" value="Danielle Ramos"><label class="form-check-label" for="multiselect-modelParticipants-6" style="user-select: none; width: 100%;">Danielle Ramos</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipants-7" class="form-check-input" type="checkbox" name="modelParticipants[]" value="Anthony Esposito"><label class="form-check-label" for="multiselect-modelParticipants-7" style="user-select: none; width: 100%;">Anthony Esposito</label></div>
-             </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipants-4"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipants[]"
+              value="Alex Mazza"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipants-4"
+              style="user-select: none; width: 100%"
+              >Alex Mazza</label
+            >
           </div>
-       </div>
-    </div>
-    <div class="mb-1">
-       <label class="form-label" for="formBasicSite"><strong>Participants were:</strong></label>
-       <div class="dropdown">
-          <button class="btn dropdown-toggle btn-light" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%; overflow: hidden;"><span style="overflow: hidden; text-overflow: ellipsis; width: 100%; float: left; text-align: left; padding-right: 6px; margin-right: -6px;">Nothing selected</span></button>
-          <div class="dropdown-menu" style="padding: 0px; width: 100%;">
-             <div class="btn-group btn-group-sm btn-block"><button class="actions-btn btn btn-light">Select/Deselect All</button></div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipantRoles-0" class="form-check-input" type="checkbox" name="modelParticipantRoles[]" value="Teacher"><label class="form-check-label" for="multiselect-modelParticipantRoles-0" style="user-select: none; width: 100%;">Teacher</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipantRoles-1" class="form-check-input" type="checkbox" name="modelParticipantRoles[]" value="School-based coach"><label class="form-check-label" for="multiselect-modelParticipantRoles-1" style="user-select: none; width: 100%;">School-based coach</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipantRoles-2" class="form-check-input" type="checkbox" name="modelParticipantRoles[]" value="School-based admin"><label class="form-check-label" for="multiselect-modelParticipantRoles-2" style="user-select: none; width: 100%;">School-based admin</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipantRoles-3" class="form-check-input" type="checkbox" name="modelParticipantRoles[]" value="District/Network admin"><label class="form-check-label" for="multiselect-modelParticipantRoles-3" style="user-select: none; width: 100%;">District/Network admin</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-modelParticipantRoles-4" class="form-check-input" type="checkbox" name="modelParticipantRoles[]" value="CPS only - Teacher Team Lead"><label class="form-check-label" for="multiselect-modelParticipantRoles-4" style="user-select: none; width: 100%;">CPS only - Teacher Team Lead</label></div>
-             </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipants-5"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipants[]"
+              value="Chris Gaffney"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipants-5"
+              style="user-select: none; width: 100%"
+              >Chris Gaffney</label
+            >
           </div>
-       </div>
-    </div>
-    <div class="mb-1"><label class="form-label" for="formBasicSite"><strong>Topic of session </strong></label><textarea name="modelTopic" rows="1" aria-label="Default select example" id="formBasicSite" class="form-control"></textarea></div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicCourse"><strong>How many minutes was this session? </strong></label>
-       <select aria-label="Default select example" name="modelDuration" required="" id="formBasicCourse" class="form-control">
-          <option></option>
-          <option value="15">15</option>
-          <option value="30">30</option>
-          <option value="45">45</option>
-          <option value="60">60</option>
-          <option value="76">76</option>
-          <option value="90">90</option>
-       </select>
-    </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>Did you meet with the school administrators and/or school-based coach about coaching progress at this school today? </strong></label>
-       <select name="adminDone" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-1">
-       <label class="form-label" for="formBasicSite"><strong>Names of admins: </strong></label>
-       <div class="dropdown">
-          <button class="btn dropdown-toggle btn-light" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%; overflow: hidden;"><span style="overflow: hidden; text-overflow: ellipsis; width: 100%; float: left; text-align: left; padding-right: 6px; margin-right: -6px;">Nothing selected</span></button>
-          <div class="dropdown-menu" style="padding: 0px; width: 100%;">
-             <div class="btn-group btn-group-sm btn-block"><button class="actions-btn btn btn-light">Select/Deselect All</button></div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-adminNames-0" class="form-check-input" type="checkbox" name="adminNames[]" value="Julie Porras"><label class="form-check-label" for="multiselect-adminNames-0" style="user-select: none; width: 100%;">Julie Porras</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-adminNames-1" class="form-check-input" type="checkbox" name="adminNames[]" value="Kathleen Wiehler"><label class="form-check-label" for="multiselect-adminNames-1" style="user-select: none; width: 100%;">Kathleen Wiehler</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-adminNames-2" class="form-check-input" type="checkbox" name="adminNames[]" value="Shannon Montenare"><label class="form-check-label" for="multiselect-adminNames-2" style="user-select: none; width: 100%;">Shannon Montenare</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-adminNames-3" class="form-check-input" type="checkbox" name="adminNames[]" value="Toni Moricone"><label class="form-check-label" for="multiselect-adminNames-3" style="user-select: none; width: 100%;">Toni Moricone</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-adminNames-4" class="form-check-input" type="checkbox" name="adminNames[]" value="Alex Mazza"><label class="form-check-label" for="multiselect-adminNames-4" style="user-select: none; width: 100%;">Alex Mazza</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-adminNames-5" class="form-check-input" type="checkbox" name="adminNames[]" value="Chris Gaffney"><label class="form-check-label" for="multiselect-adminNames-5" style="user-select: none; width: 100%;">Chris Gaffney</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-adminNames-6" class="form-check-input" type="checkbox" name="adminNames[]" value="Danielle Ramos"><label class="form-check-label" for="multiselect-adminNames-6" style="user-select: none; width: 100%;">Danielle Ramos</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-adminNames-7" class="form-check-input" type="checkbox" name="adminNames[]" value="Anthony Esposito"><label class="form-check-label" for="multiselect-adminNames-7" style="user-select: none; width: 100%;">Anthony Esposito</label></div>
-             </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipants-6"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipants[]"
+              value="Danielle Ramos"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipants-6"
+              style="user-select: none; width: 100%"
+              >Danielle Ramos</label
+            >
           </div>
-       </div>
-    </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicCourse"><strong>How many minutes was this meeting?</strong></label>
-       <select aria-label="Default select example" name="adminDuration" required="" id="formBasicCourse" class="form-control">
-          <option></option>
-          <option value="15">15</option>
-          <option value="30">30</option>
-          <option value="45">45</option>
-          <option value="60">60</option>
-          <option value="76">76</option>
-          <option value="90">90</option>
-       </select>
-    </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>Did you complete a walkthrough with the admin at this school today? </strong></label>
-       <select name="walkthroughDone" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>Were there coaching activities that were scheduled but did not take place at this school today? </strong></label>
-       <select name="reasonDone" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>Are you a NYC Reads or NYC Solves Coach?</strong></label>
-       <select name="NYCDone" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="NYC Reads">Yes, NYC Reads</option>
-          <option value="NYC Solves">Yes, NYC Solves</option>
-          <option value="no">No</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-1"><label class="form-label" for="formBasicSite"><strong>Approximately how many total teachers did you support this visit?</strong></label><input name="teachersSupportedNumber" min="0" step="any" placeholder="Enter a number" required="" type="number" id="formBasicSite" class="form-control"></div>
-    <div class="mb-1">
-       <label class="form-label" for="formBasicSite"><strong>Did you support any of the following teachers during this visit? (Required)*</strong></label>
-       <div class="dropdown">
-          <button class="btn dropdown-toggle btn-light" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%; overflow: hidden;"><span style="overflow: hidden; text-overflow: ellipsis; width: 100%; float: left; text-align: left; padding-right: 6px; margin-right: -6px;">Nothing selected</span></button>
-          <div class="dropdown-menu" style="padding: 0px; width: 100%;">
-             <div class="btn-group btn-group-sm btn-block"><button class="actions-btn btn btn-light">Select/Deselect All</button></div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-teachersSupportedType-0" class="form-check-input" type="checkbox" name="teachersSupportedType[]" value="Special Education Teachers"><label class="form-check-label" for="multiselect-teachersSupportedType-0" style="user-select: none; width: 100%;">Special Education Teachers</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-teachersSupportedType-1" class="form-check-input" type="checkbox" name="teachersSupportedType[]" value="English as New Language or English Language Learner Teachers"><label class="form-check-label" for="multiselect-teachersSupportedType-1" style="user-select: none; width: 100%;">English as New Language or English Language Learner Teachers</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-teachersSupportedType-2" class="form-check-input" type="checkbox" name="teachersSupportedType[]" value="Bilingual/Dual Language Teachers"><label class="form-check-label" for="multiselect-teachersSupportedType-2" style="user-select: none; width: 100%;">Bilingual/Dual Language Teachers</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-teachersSupportedType-3" class="form-check-input" type="checkbox" name="teachersSupportedType[]" value="None of the above"><label class="form-check-label" for="multiselect-teachersSupportedType-3" style="user-select: none; width: 100%;">None of the above</label></div>
-             </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipants-7"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipants[]"
+              value="Anthony Esposito"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipants-7"
+              style="user-select: none; width: 100%"
+              >Anthony Esposito</label
+            >
           </div>
-       </div>
-       <div class="invalid-feedback" style="display: block;">Please choose an option.</div>
+        </div>
+      </div>
     </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>What type of touchpoint are you recording?</strong></label>
-       <select name="Solvestouchpoint" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="Teacher OR teacher &amp; leader support">Teacher OR teacher &amp; leader support</option>
-          <option value="Leader support only">Leader support only</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>What was the duration of this visit?</strong></label>
-       <select name="totalDuration" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="Half day - 3 hours">Half day - 3 hours</option>
-          <option value="Full day - 6 hours">Full day - 6 hours</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>Please select the School Implementation Experience:</strong></label>
-       <select name="implementationIndicator" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="First year of Implementation">First year of Implementation</option>
-          <option value="Experienced with Implementation">Experienced with Implementation</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>Please select the Support Cycle: </strong></label>
-       <select name="supportCycle" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="Doing the Math: Lesson Planning">Doing the Math: Lesson Planning</option>
-          <option value="Understanding the Mathematical Progression: Unit Planning">Understanding the Mathematical Progression: Unit Planning</option>
-          <option value="Making the Math Accessible Part 1: Instructional Routines">Making the Math Accessible Part 1: Instructional Routines</option>
-          <option value="Synthesizing the Math: Synthesis">Synthesizing the Math: Synthesis</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
-    </div>
-    <div class="mb-1">
-       <label class="form-label" for="formBasicSite"><strong>Select all the grade-levels you supported today (Required)*</strong></label>
-       <div class="dropdown">
-          <button class="btn dropdown-toggle btn-light" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%; overflow: hidden;"><span style="overflow: hidden; text-overflow: ellipsis; width: 100%; float: left; text-align: left; padding-right: 6px; margin-right: -6px;">7th Grade</span></button>
-          <div class="dropdown-menu" style="padding: 0px; width: 100%;">
-             <div class="btn-group btn-group-sm btn-block"><button class="actions-btn btn btn-light">Select/Deselect All</button></div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-0" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="Kindergarten"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-0" style="user-select: none; width: 100%;">Kindergarten</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-1" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="1st Grade"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-1" style="user-select: none; width: 100%;">1st Grade</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-2" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="2nd Grade"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-2" style="user-select: none; width: 100%;">2nd Grade</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-3" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="3rd Grade"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-3" style="user-select: none; width: 100%;">3rd Grade</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-4" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="4th Grade"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-4" style="user-select: none; width: 100%;">4th Grade</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-5" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="5th Grade"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-5" style="user-select: none; width: 100%;">5th Grade</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-6" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="6th Grade"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-6" style="user-select: none; width: 100%;">6th Grade</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-7" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="7th Grade"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-7" style="user-select: none; width: 100%;">7th Grade</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-8" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="8th Grade"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-8" style="user-select: none; width: 100%;">8th Grade</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-9" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="Algebra I"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-9" style="user-select: none; width: 100%;">Algebra I</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-10" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="Geometry"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-10" style="user-select: none; width: 100%;">Geometry</label></div>
-             </div>
-             <div class="dropdown-item">
-                <div class="form-check"><input id="multiselect-NYCSolvesGradeLevels-11" class="form-check-input" type="checkbox" name="NYCSolvesGradeLevels[]" value="Algebra II"><label class="form-check-label" for="multiselect-NYCSolvesGradeLevels-11" style="user-select: none; width: 100%;">Algebra II</label></div>
-             </div>
+  </div>
+  <div class="mb-1">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Participants were:</strong></label
+    >
+    <div class="dropdown">
+      <button
+        class="btn dropdown-toggle btn-light"
+        type="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        style="width: 100%; overflow: hidden"
+      >
+        <span
+          style="
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            float: left;
+            text-align: left;
+            padding-right: 6px;
+            margin-right: -6px;
+          "
+          >Nothing selected</span
+        >
+      </button>
+      <div class="dropdown-menu" style="padding: 0px; width: 100%">
+        <div class="btn-group btn-group-sm btn-block">
+          <button class="actions-btn btn btn-light">Select/Deselect All</button>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipantRoles-0"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipantRoles[]"
+              value="Teacher"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipantRoles-0"
+              style="user-select: none; width: 100%"
+              >Teacher</label
+            >
           </div>
-       </div>
-       <div class="invalid-feedback" style="display: none;">Please choose an option.</div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipantRoles-1"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipantRoles[]"
+              value="School-based coach"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipantRoles-1"
+              style="user-select: none; width: 100%"
+              >School-based coach</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipantRoles-2"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipantRoles[]"
+              value="School-based admin"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipantRoles-2"
+              style="user-select: none; width: 100%"
+              >School-based admin</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipantRoles-3"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipantRoles[]"
+              value="District/Network admin"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipantRoles-3"
+              style="user-select: none; width: 100%"
+              >District/Network admin</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-microPLParticipantRoles-4"
+              class="form-check-input"
+              type="checkbox"
+              name="microPLParticipantRoles[]"
+              value="CPS only - Teacher Team Lead"
+            /><label
+              class="form-check-label"
+              for="multiselect-microPLParticipantRoles-4"
+              style="user-select: none; width: 100%"
+              >CPS only - Teacher Team Lead</label
+            >
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>[7th Grade] Select the Primary Strategy used to support teachers in this grade in this visit: </strong></label>
-       <select name="PrimaryStrategy" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="Preparing to Teach">Preparing to Teach</option>
-          <option value="In-class support">In-class support</option>
-          <option value="Professional Learning">Professional Learning</option>
-          <option value="Sustaining Teacher-Led Collaboration">Sustaining Teacher-Led Collaboration</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-1">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Topic of micro PL </strong></label
+    ><textarea
+      name="microPLTopic"
+      rows="1"
+      aria-label="Default select example"
+      id="formBasicSite"
+      class="form-control"
+    ></textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicCourse"
+      ><strong>How many minutes was this micro PL?</strong></label
+    >
+    <select
+      aria-label="Default select example"
+      name="microPLDuration"
+      required=""
+      id="formBasicCourse"
+      class="form-control"
+    >
+      <option></option>
+      <option value="15">15</option>
+      <option value="30">30</option>
+      <option value="45">45</option>
+      <option value="60">60</option>
+      <option value="76">76</option>
+      <option value="90">90</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formFile"
+      ><strong
+        >Upload participant attendance sheet, if there are more than 15
+        participants</strong
+      ></label
+    ><input name="microPLFile" type="file" id="formFile" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >Did you provide coaching, modeling, or planning with a group of
+        teachers at this school today?
+      </strong></label
+    >
+    <select
+      name="CoachingDone"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-1">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Names of participants: </strong></label
+    >
+    <div class="dropdown">
+      <button
+        class="btn dropdown-toggle btn-light"
+        type="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        style="width: 100%; overflow: hidden"
+      >
+        <span
+          style="
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            float: left;
+            text-align: left;
+            padding-right: 6px;
+            margin-right: -6px;
+          "
+          >Nothing selected</span
+        >
+      </button>
+      <div class="dropdown-menu" style="padding: 0px; width: 100%">
+        <div class="btn-group btn-group-sm btn-block">
+          <button class="actions-btn btn btn-light">Select/Deselect All</button>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipants-0"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipants[]"
+              value="Julie Porras"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipants-0"
+              style="user-select: none; width: 100%"
+              >Julie Porras</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipants-1"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipants[]"
+              value="Kathleen Wiehler"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipants-1"
+              style="user-select: none; width: 100%"
+              >Kathleen Wiehler</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipants-2"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipants[]"
+              value="Shannon Montenare"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipants-2"
+              style="user-select: none; width: 100%"
+              >Shannon Montenare</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipants-3"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipants[]"
+              value="Toni Moricone"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipants-3"
+              style="user-select: none; width: 100%"
+              >Toni Moricone</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipants-4"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipants[]"
+              value="Alex Mazza"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipants-4"
+              style="user-select: none; width: 100%"
+              >Alex Mazza</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipants-5"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipants[]"
+              value="Chris Gaffney"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipants-5"
+              style="user-select: none; width: 100%"
+              >Chris Gaffney</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipants-6"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipants[]"
+              value="Danielle Ramos"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipants-6"
+              style="user-select: none; width: 100%"
+              >Danielle Ramos</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipants-7"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipants[]"
+              value="Anthony Esposito"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipants-7"
+              style="user-select: none; width: 100%"
+              >Anthony Esposito</label
+            >
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>[7th Grade] Please select the Specific Strategy used to support teachers in this grade in this visit: </strong></label>
-       <select name="solvesSpecificStrategy" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-1">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Participants were:</strong></label
+    >
+    <div class="dropdown">
+      <button
+        class="btn dropdown-toggle btn-light"
+        type="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        style="width: 100%; overflow: hidden"
+      >
+        <span
+          style="
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            float: left;
+            text-align: left;
+            padding-right: 6px;
+            margin-right: -6px;
+          "
+          >Nothing selected</span
+        >
+      </button>
+      <div class="dropdown-menu" style="padding: 0px; width: 100%">
+        <div class="btn-group btn-group-sm btn-block">
+          <button class="actions-btn btn btn-light">Select/Deselect All</button>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipantRoles-0"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipantRoles[]"
+              value="Teacher"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipantRoles-0"
+              style="user-select: none; width: 100%"
+              >Teacher</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipantRoles-1"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipantRoles[]"
+              value="School-based coach"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipantRoles-1"
+              style="user-select: none; width: 100%"
+              >School-based coach</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipantRoles-2"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipantRoles[]"
+              value="School-based admin"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipantRoles-2"
+              style="user-select: none; width: 100%"
+              >School-based admin</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipantRoles-3"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipantRoles[]"
+              value="District/Network admin"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipantRoles-3"
+              style="user-select: none; width: 100%"
+              >District/Network admin</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-modelParticipantRoles-4"
+              class="form-check-input"
+              type="checkbox"
+              name="modelParticipantRoles[]"
+              value="CPS only - Teacher Team Lead"
+            /><label
+              class="form-check-label"
+              for="multiselect-modelParticipantRoles-4"
+              style="user-select: none; width: 100%"
+              >CPS only - Teacher Team Lead</label
+            >
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>Did you meet with the school administrators and/or school-based coach today?</strong></label>
-       <select name="NYCSolvesAdmin" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="Yes - debriefed teacher support only">Yes - debriefed teacher support only</option>
-          <option value="Yes - provided leader specific support">Yes - provided leader specific support</option>
-          <option value="no">No</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-1">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Topic of session </strong></label
+    ><textarea
+      name="modelTopic"
+      rows="1"
+      aria-label="Default select example"
+      id="formBasicSite"
+      class="form-control"
+    ></textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicCourse"
+      ><strong>How many minutes was this session? </strong></label
+    >
+    <select
+      aria-label="Default select example"
+      name="modelDuration"
+      required=""
+      id="formBasicCourse"
+      class="form-control"
+    >
+      <option></option>
+      <option value="15">15</option>
+      <option value="30">30</option>
+      <option value="45">45</option>
+      <option value="60">60</option>
+      <option value="76">76</option>
+      <option value="90">90</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >Did you meet with the school administrators and/or school-based coach
+        about coaching progress at this school today?
+      </strong></label
+    >
+    <select
+      name="adminDone"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-1">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Names of admins: </strong></label
+    >
+    <div class="dropdown">
+      <button
+        class="btn dropdown-toggle btn-light"
+        type="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        style="width: 100%; overflow: hidden"
+      >
+        <span
+          style="
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            float: left;
+            text-align: left;
+            padding-right: 6px;
+            margin-right: -6px;
+          "
+          >Nothing selected</span
+        >
+      </button>
+      <div class="dropdown-menu" style="padding: 0px; width: 100%">
+        <div class="btn-group btn-group-sm btn-block">
+          <button class="actions-btn btn btn-light">Select/Deselect All</button>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-adminNames-0"
+              class="form-check-input"
+              type="checkbox"
+              name="adminNames[]"
+              value="Julie Porras"
+            /><label
+              class="form-check-label"
+              for="multiselect-adminNames-0"
+              style="user-select: none; width: 100%"
+              >Julie Porras</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-adminNames-1"
+              class="form-check-input"
+              type="checkbox"
+              name="adminNames[]"
+              value="Kathleen Wiehler"
+            /><label
+              class="form-check-label"
+              for="multiselect-adminNames-1"
+              style="user-select: none; width: 100%"
+              >Kathleen Wiehler</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-adminNames-2"
+              class="form-check-input"
+              type="checkbox"
+              name="adminNames[]"
+              value="Shannon Montenare"
+            /><label
+              class="form-check-label"
+              for="multiselect-adminNames-2"
+              style="user-select: none; width: 100%"
+              >Shannon Montenare</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-adminNames-3"
+              class="form-check-input"
+              type="checkbox"
+              name="adminNames[]"
+              value="Toni Moricone"
+            /><label
+              class="form-check-label"
+              for="multiselect-adminNames-3"
+              style="user-select: none; width: 100%"
+              >Toni Moricone</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-adminNames-4"
+              class="form-check-input"
+              type="checkbox"
+              name="adminNames[]"
+              value="Alex Mazza"
+            /><label
+              class="form-check-label"
+              for="multiselect-adminNames-4"
+              style="user-select: none; width: 100%"
+              >Alex Mazza</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-adminNames-5"
+              class="form-check-input"
+              type="checkbox"
+              name="adminNames[]"
+              value="Chris Gaffney"
+            /><label
+              class="form-check-label"
+              for="multiselect-adminNames-5"
+              style="user-select: none; width: 100%"
+              >Chris Gaffney</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-adminNames-6"
+              class="form-check-input"
+              type="checkbox"
+              name="adminNames[]"
+              value="Danielle Ramos"
+            /><label
+              class="form-check-label"
+              for="multiselect-adminNames-6"
+              style="user-select: none; width: 100%"
+              >Danielle Ramos</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-adminNames-7"
+              class="form-check-input"
+              type="checkbox"
+              name="adminNames[]"
+              value="Anthony Esposito"
+            /><label
+              class="form-check-label"
+              for="multiselect-adminNames-7"
+              style="user-select: none; width: 100%"
+              >Anthony Esposito</label
+            >
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="mb-3"><label class="form-label" for="formBasicCourse"><strong>Optional: You may use this space to capture any additional notes regarding this coaching visit for your own reference.</strong></label><textarea name="coachingAdditionalWriteIn" rows="2" aria-label="Default select example" id="formBasicCourse" class="form-control"></textarea></div>
-    <div class="mb-3">
-       <label class="form-label" for="formBasicSite"><strong>Were coaching activities at this school in-person or virtual today? </strong></label>
-       <select name="modeDone" aria-label="Default select example" required="" id="formBasicSite" class="form-control">
-          <option value=""></option>
-          <option value="In-person">In-person</option>
-          <option value="Hybrid">Hybrid</option>
-          <option value="Virtual">Virtual</option>
-       </select>
-       <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicCourse"
+      ><strong>How many minutes was this meeting?</strong></label
+    >
+    <select
+      aria-label="Default select example"
+      name="adminDuration"
+      required=""
+      id="formBasicCourse"
+      class="form-control"
+    >
+      <option></option>
+      <option value="15">15</option>
+      <option value="30">30</option>
+      <option value="45">45</option>
+      <option value="60">60</option>
+      <option value="76">76</option>
+      <option value="90">90</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >Did you complete a walkthrough with the admin at this school today?
+      </strong></label
+    >
+    <select
+      name="walkthroughDone"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >Were there coaching activities that were scheduled but did not take
+        place at this school today?
+      </strong></label
+    >
+    <select
+      name="reasonDone"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Are you a NYC Reads or NYC Solves Coach?</strong></label
+    >
+    <select
+      name="NYCDone"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="NYC Reads">Yes, NYC Reads</option>
+      <option value="NYC Solves">Yes, NYC Solves</option>
+      <option value="no">No</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-1">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >Approximately how many total teachers did you support this
+        visit?</strong
+      ></label
+    ><input
+      name="teachersSupportedNumber"
+      min="0"
+      step="any"
+      placeholder="Enter a number"
+      required=""
+      type="number"
+      id="formBasicSite"
+      class="form-control"
+    />
+  </div>
+  <div class="mb-1">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >Did you support any of the following teachers during this visit?
+        (Required)*</strong
+      ></label
+    >
+    <div class="dropdown">
+      <button
+        class="btn dropdown-toggle btn-light"
+        type="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        style="width: 100%; overflow: hidden"
+      >
+        <span
+          style="
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            float: left;
+            text-align: left;
+            padding-right: 6px;
+            margin-right: -6px;
+          "
+          >Nothing selected</span
+        >
+      </button>
+      <div class="dropdown-menu" style="padding: 0px; width: 100%">
+        <div class="btn-group btn-group-sm btn-block">
+          <button class="actions-btn btn btn-light">Select/Deselect All</button>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-teachersSupportedType-0"
+              class="form-check-input"
+              type="checkbox"
+              name="teachersSupportedType[]"
+              value="Special Education Teachers"
+            /><label
+              class="form-check-label"
+              for="multiselect-teachersSupportedType-0"
+              style="user-select: none; width: 100%"
+              >Special Education Teachers</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-teachersSupportedType-1"
+              class="form-check-input"
+              type="checkbox"
+              name="teachersSupportedType[]"
+              value="English as New Language or English Language Learner Teachers"
+            /><label
+              class="form-check-label"
+              for="multiselect-teachersSupportedType-1"
+              style="user-select: none; width: 100%"
+              >English as New Language or English Language Learner
+              Teachers</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-teachersSupportedType-2"
+              class="form-check-input"
+              type="checkbox"
+              name="teachersSupportedType[]"
+              value="Bilingual/Dual Language Teachers"
+            /><label
+              class="form-check-label"
+              for="multiselect-teachersSupportedType-2"
+              style="user-select: none; width: 100%"
+              >Bilingual/Dual Language Teachers</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-teachersSupportedType-3"
+              class="form-check-input"
+              type="checkbox"
+              name="teachersSupportedType[]"
+              value="None of the above"
+            /><label
+              class="form-check-label"
+              for="multiselect-teachersSupportedType-3"
+              style="user-select: none; width: 100%"
+              >None of the above</label
+            >
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="mb-3"><label class="form-label" for="formBasicCourse"><strong>Please provide any clarification on the coaching session</strong></label><textarea name="additionalClarification" rows="2" aria-label="Default select example" id="formBasicCourse" class="form-control"></textarea></div>
-    <div class="submitButton"><button type="submit" class="submitButton mb-3 btn btn-primary">Submit</button></div>
- </form>
+    <div class="invalid-feedback" style="display: block">
+      Please choose an option.
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong>What type of touchpoint are you recording?</strong></label
+    >
+    <select
+      name="Solvestouchpoint"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="Teacher OR teacher &amp; leader support">
+        Teacher OR teacher &amp; leader support
+      </option>
+      <option value="Leader support only">Leader support only</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong>What was the duration of this visit?</strong></label
+    >
+    <select
+      name="totalDuration"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="Half day - 3 hours">Half day - 3 hours</option>
+      <option value="Full day - 6 hours">Full day - 6 hours</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >Please select the School Implementation Experience:</strong
+      ></label
+    >
+    <select
+      name="implementationIndicator"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="First year of Implementation">
+        First year of Implementation
+      </option>
+      <option value="Experienced with Implementation">
+        Experienced with Implementation
+      </option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong>Please select the Support Cycle: </strong></label
+    >
+    <select
+      name="supportCycle"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="Doing the Math: Lesson Planning">
+        Doing the Math: Lesson Planning
+      </option>
+      <option value="Understanding the Mathematical Progression: Unit Planning">
+        Understanding the Mathematical Progression: Unit Planning
+      </option>
+      <option value="Making the Math Accessible Part 1: Instructional Routines">
+        Making the Math Accessible Part 1: Instructional Routines
+      </option>
+      <option value="Synthesizing the Math: Synthesis">
+        Synthesizing the Math: Synthesis
+      </option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-1">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >Select all the grade-levels you supported today (Required)*</strong
+      ></label
+    >
+    <div class="dropdown">
+      <button
+        class="btn dropdown-toggle btn-light"
+        type="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        style="width: 100%; overflow: hidden"
+      >
+        <span
+          style="
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            float: left;
+            text-align: left;
+            padding-right: 6px;
+            margin-right: -6px;
+          "
+          >7th Grade</span
+        >
+      </button>
+      <div class="dropdown-menu" style="padding: 0px; width: 100%">
+        <div class="btn-group btn-group-sm btn-block">
+          <button class="actions-btn btn btn-light">Select/Deselect All</button>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-0"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="Kindergarten"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-0"
+              style="user-select: none; width: 100%"
+              >Kindergarten</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-1"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="1st Grade"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-1"
+              style="user-select: none; width: 100%"
+              >1st Grade</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-2"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="2nd Grade"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-2"
+              style="user-select: none; width: 100%"
+              >2nd Grade</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-3"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="3rd Grade"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-3"
+              style="user-select: none; width: 100%"
+              >3rd Grade</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-4"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="4th Grade"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-4"
+              style="user-select: none; width: 100%"
+              >4th Grade</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-5"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="5th Grade"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-5"
+              style="user-select: none; width: 100%"
+              >5th Grade</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-6"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="6th Grade"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-6"
+              style="user-select: none; width: 100%"
+              >6th Grade</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-7"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="7th Grade"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-7"
+              style="user-select: none; width: 100%"
+              >7th Grade</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-8"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="8th Grade"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-8"
+              style="user-select: none; width: 100%"
+              >8th Grade</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-9"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="Algebra I"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-9"
+              style="user-select: none; width: 100%"
+              >Algebra I</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-10"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="Geometry"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-10"
+              style="user-select: none; width: 100%"
+              >Geometry</label
+            >
+          </div>
+        </div>
+        <div class="dropdown-item">
+          <div class="form-check">
+            <input
+              id="multiselect-NYCSolvesGradeLevels-11"
+              class="form-check-input"
+              type="checkbox"
+              name="NYCSolvesGradeLevels[]"
+              value="Algebra II"
+            /><label
+              class="form-check-label"
+              for="multiselect-NYCSolvesGradeLevels-11"
+              style="user-select: none; width: 100%"
+              >Algebra II</label
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="invalid-feedback" style="display: none">
+      Please choose an option.
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >[7th Grade] Select the Primary Strategy used to support teachers in
+        this grade in this visit:
+      </strong></label
+    >
+    <select
+      name="PrimaryStrategy"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="Preparing to Teach">Preparing to Teach</option>
+      <option value="In-class support">In-class support</option>
+      <option value="Professional Learning">Professional Learning</option>
+      <option value="Sustaining Teacher-Led Collaboration">
+        Sustaining Teacher-Led Collaboration
+      </option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >[7th Grade] Please select the Specific Strategy used to support
+        teachers in this grade in this visit:
+      </strong></label
+    >
+    <select
+      name="solvesSpecificStrategy"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >Did you meet with the school administrators and/or school-based coach
+        today?</strong
+      ></label
+    >
+    <select
+      name="NYCSolvesAdmin"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="Yes - debriefed teacher support only">
+        Yes - debriefed teacher support only
+      </option>
+      <option value="Yes - provided leader specific support">
+        Yes - provided leader specific support
+      </option>
+      <option value="no">No</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicCourse"
+      ><strong
+        >Optional: You may use this space to capture any additional notes
+        regarding this coaching visit for your own reference.</strong
+      ></label
+    ><textarea
+      name="coachingAdditionalWriteIn"
+      rows="2"
+      aria-label="Default select example"
+      id="formBasicCourse"
+      class="form-control"
+    ></textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicSite"
+      ><strong
+        >Were coaching activities at this school in-person or virtual today?
+      </strong></label
+    >
+    <select
+      name="modeDone"
+      aria-label="Default select example"
+      required=""
+      id="formBasicSite"
+      class="form-control"
+    >
+      <option value=""></option>
+      <option value="In-person">In-person</option>
+      <option value="Hybrid">Hybrid</option>
+      <option value="Virtual">Virtual</option>
+    </select>
+    <div class="invalid-feedback">Please choose an option.</div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="formBasicCourse"
+      ><strong
+        >Please provide any clarification on the coaching session</strong
+      ></label
+    ><textarea
+      name="additionalClarification"
+      rows="2"
+      aria-label="Default select example"
+      id="formBasicCourse"
+      class="form-control"
+    ></textarea>
+  </div>
+  <div class="submitButton">
+    <button type="submit" class="submitButton mb-3 btn btn-primary">
+      Submit
+    </button>
+  </div>
+</form>

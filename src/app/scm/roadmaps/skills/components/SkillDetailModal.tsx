@@ -9,7 +9,11 @@ interface SkillDetailModalProps {
   onClose: () => void;
 }
 
-export function SkillDetailModal({ skill, isOpen, onClose }: SkillDetailModalProps) {
+export function SkillDetailModal({
+  skill,
+  isOpen,
+  onClose,
+}: SkillDetailModalProps) {
   if (!isOpen || !skill) return null;
 
   return (
@@ -63,7 +67,10 @@ export function SkillDetailModal({ skill, isOpen, onClose }: SkillDetailModalPro
                 </h3>
                 <div className="space-y-2">
                   {skill.units.map((unit, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 text-sm"
+                    >
                       <span className="bg-slate-100 text-slate-800 px-2 py-1 rounded font-medium">
                         Unit {unit.unitNumber}
                       </span>
@@ -185,94 +192,118 @@ export function SkillDetailModal({ skill, isOpen, onClose }: SkillDetailModalPro
             )}
 
             {/* Standards */}
-            {skill.standards && (() => {
-              // Parse standards text to extract standard codes and descriptions
-              const parser = new DOMParser();
-              const doc = parser.parseFromString(skill.standards, 'text/html');
-              const text = doc.body.textContent || '';
+            {skill.standards &&
+              (() => {
+                // Parse standards text to extract standard codes and descriptions
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(
+                  skill.standards,
+                  "text/html",
+                );
+                const text = doc.body.textContent || "";
 
-              // Split by "NY." to find standard boundaries
-              const segments = text.split(/\b(NY\.[A-Z0-9.a-z]+)/g).filter(s => s.trim());
+                // Split by "NY." to find standard boundaries
+                const segments = text
+                  .split(/\b(NY\.[A-Z0-9.a-z]+)/g)
+                  .filter((s) => s.trim());
 
-              const parsed: Array<{ type: 'code' | 'text', content: string }> = [];
+                const parsed: Array<{
+                  type: "code" | "text";
+                  content: string;
+                }> = [];
 
-              segments.forEach((segment) => {
-                if (segment.match(/^NY\.[A-Z0-9.a-z]+/)) {
-                  // This is a standard code - extract up to first space or colon, then remove trailing colon
-                  const match = segment.match(/^(NY\.[A-Z0-9.a-z]+):?/);
-                  if (match) {
-                    const code = match[1]; // Get code without colon
-                    parsed.push({ type: 'code', content: code });
+                segments.forEach((segment) => {
+                  if (segment.match(/^NY\.[A-Z0-9.a-z]+/)) {
+                    // This is a standard code - extract up to first space or colon, then remove trailing colon
+                    const match = segment.match(/^(NY\.[A-Z0-9.a-z]+):?/);
+                    if (match) {
+                      const code = match[1]; // Get code without colon
+                      parsed.push({ type: "code", content: code });
 
-                    // Get remaining text after the code (and optional colon)
-                    const remaining = segment.substring(match[0].length).trim();
-                    if (remaining) {
-                      parsed.push({ type: 'text', content: remaining });
+                      // Get remaining text after the code (and optional colon)
+                      const remaining = segment
+                        .substring(match[0].length)
+                        .trim();
+                      if (remaining) {
+                        parsed.push({ type: "text", content: remaining });
+                      }
+                    }
+                  } else {
+                    // Regular text - remove leading colon if present
+                    const trimmed = segment.trim().replace(/^:\s*/, "");
+                    if (trimmed) {
+                      parsed.push({ type: "text", content: trimmed });
                     }
                   }
-                } else {
-                  // Regular text - remove leading colon if present
-                  const trimmed = segment.trim().replace(/^:\s*/, '');
-                  if (trimmed) {
-                    parsed.push({ type: 'text', content: trimmed });
-                  }
-                }
-              });
+                });
 
-              // If no standards found, fall back to original rendering
-              if (parsed.filter(p => p.type === 'code').length === 0) {
+                // If no standards found, fall back to original rendering
+                if (parsed.filter((p) => p.type === "code").length === 0) {
+                  return (
+                    <Section title="Standards" color="gray">
+                      {skill.standards}
+                    </Section>
+                  );
+                }
+
+                // Group by standard code
+                const groups: Array<
+                  Array<{ type: "code" | "text"; content: string }>
+                > = [];
+                let currentGroup: Array<{
+                  type: "code" | "text";
+                  content: string;
+                }> = [];
+
+                parsed.forEach((item) => {
+                  if (item.type === "code") {
+                    if (currentGroup.length > 0) {
+                      groups.push(currentGroup);
+                    }
+                    currentGroup = [item];
+                  } else {
+                    currentGroup.push(item);
+                  }
+                });
+
+                if (currentGroup.length > 0) {
+                  groups.push(currentGroup);
+                }
+
                 return (
-                  <Section title="Standards" color="gray">
-                    {skill.standards}
-                  </Section>
-                );
-              }
-
-              // Group by standard code
-              const groups: Array<Array<{ type: 'code' | 'text', content: string }>> = [];
-              let currentGroup: Array<{ type: 'code' | 'text', content: string }> = [];
-
-              parsed.forEach((item) => {
-                if (item.type === 'code') {
-                  if (currentGroup.length > 0) {
-                    groups.push(currentGroup);
-                  }
-                  currentGroup = [item];
-                } else {
-                  currentGroup.push(item);
-                }
-              });
-
-              if (currentGroup.length > 0) {
-                groups.push(currentGroup);
-              }
-
-              return (
-                <div className="border-l-4 border-gray-500 bg-gray-50 p-4 rounded">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Standards</h3>
-                  <div className="space-y-3">
-                    {groups.map((group, groupIndex) => (
-                      <div key={groupIndex} className="flex flex-wrap items-start gap-2">
-                        {group.map((part, partIndex) =>
-                          part.type === 'code' ? (
-                            <span
-                              key={partIndex}
-                              className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300 flex-shrink-0"
-                            >
-                              {part.content}
-                            </span>
-                          ) : (
-                            <span key={partIndex} className="text-sm text-gray-900">
-                              {part.content}
-                            </span>
-                          )
-                        )}
-                      </div>
-                    ))}
+                  <div className="border-l-4 border-gray-500 bg-gray-50 p-4 rounded">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                      Standards
+                    </h3>
+                    <div className="space-y-3">
+                      {groups.map((group, groupIndex) => (
+                        <div
+                          key={groupIndex}
+                          className="flex flex-wrap items-start gap-2"
+                        >
+                          {group.map((part, partIndex) =>
+                            part.type === "code" ? (
+                              <span
+                                key={partIndex}
+                                className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-300 flex-shrink-0"
+                              >
+                                {part.content}
+                              </span>
+                            ) : (
+                              <span
+                                key={partIndex}
+                                className="text-sm text-gray-900"
+                              >
+                                {part.content}
+                              </span>
+                            ),
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            })()}
+                );
+              })()}
 
             {/* Vocabulary */}
             {skill.vocabulary && skill.vocabulary.length > 0 && (
@@ -282,7 +313,10 @@ export function SkillDetailModal({ skill, isOpen, onClose }: SkillDetailModalPro
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {skill.vocabulary.map((vocabItem, index) => {
-                    const term = typeof vocabItem === 'string' ? vocabItem : vocabItem.term;
+                    const term =
+                      typeof vocabItem === "string"
+                        ? vocabItem
+                        : vocabItem.term;
                     return (
                       <span
                         key={index}
@@ -336,7 +370,8 @@ export function SkillDetailModal({ skill, isOpen, onClose }: SkillDetailModalPro
             <div className="border-t pt-4 text-sm text-gray-500">
               <div className="flex gap-4">
                 <span>
-                  <strong>Scraped:</strong> {new Date(skill.scrapedAt).toLocaleString()}
+                  <strong>Scraped:</strong>{" "}
+                  {new Date(skill.scrapedAt).toLocaleString()}
                 </span>
                 {skill.tags && skill.tags.length > 0 && (
                   <span>
@@ -354,7 +389,18 @@ export function SkillDetailModal({ skill, isOpen, onClose }: SkillDetailModalPro
 
 interface SectionProps {
   title: string;
-  color: "blue" | "purple" | "green" | "orange" | "indigo" | "teal" | "pink" | "cyan" | "red" | "amber" | "gray";
+  color:
+    | "blue"
+    | "purple"
+    | "green"
+    | "orange"
+    | "indigo"
+    | "teal"
+    | "pink"
+    | "cyan"
+    | "red"
+    | "amber"
+    | "gray";
   children: React.ReactNode;
 }
 

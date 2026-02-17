@@ -56,7 +56,11 @@ export function SmartboardControls({
         }`}
       >
         <PencilIcon className="w-4 h-4" />
-        {isEditMode ? (hasUnsavedChanges ? "Save & Close" : "Done Editing") : "Edit Display"}
+        {isEditMode
+          ? hasUnsavedChanges
+            ? "Save & Close"
+            : "Done Editing"
+          : "Edit Display"}
       </button>
     </div>
   );

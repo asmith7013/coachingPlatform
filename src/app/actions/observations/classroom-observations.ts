@@ -17,7 +17,7 @@ import {
   CustomTranscriptSectionModel,
   ContextualNoteModel,
   ObservationTagModel,
-  ObservationMetadataModel
+  ObservationMetadataModel,
 } from "@mongoose-schema/visits/classroom-observation.model";
 
 import {
@@ -43,7 +43,7 @@ import {
   ContextualNoteInput,
   ObservationTagZodSchema,
   ObservationTagInput,
-  ObservationMetadataZodSchema
+  ObservationMetadataZodSchema,
 } from "@zod-schema/visits/classroom-observation";
 
 import { QueryParams, DEFAULT_QUERY_PARAMS } from "@core-types/query";
@@ -53,21 +53,32 @@ import { Model } from "mongoose";
 const classroomObservationActions = createCrudActions({
   model: ClassroomObservationModel,
   schema: ClassroomObservationZodSchema as ZodType<ClassroomObservation>,
-  inputSchema: ClassroomObservationInputZodSchema as ZodType<ClassroomObservationInput>,
+  inputSchema:
+    ClassroomObservationInputZodSchema as ZodType<ClassroomObservationInput>,
   name: "ClassroomObservation",
-  revalidationPaths: ["/dashboard/observations", "/dashboard/classroom-observations"],
-  sortFields: ['date', 'teacherId', 'status', 'createdAt', 'updatedAt'],
-  defaultSortField: 'date',
-  defaultSortOrder: 'desc'
+  revalidationPaths: [
+    "/dashboard/observations",
+    "/dashboard/classroom-observations",
+  ],
+  sortFields: ["date", "teacherId", "status", "createdAt", "updatedAt"],
+  defaultSortField: "date",
+  defaultSortOrder: "desc",
 });
 
-export async function fetchClassroomObservations(params: QueryParams = DEFAULT_QUERY_PARAMS) {
+export async function fetchClassroomObservations(
+  params: QueryParams = DEFAULT_QUERY_PARAMS,
+) {
   return withDbConnection(() => classroomObservationActions.fetch(params));
 }
-export async function createClassroomObservation(data: ClassroomObservationInput) {
+export async function createClassroomObservation(
+  data: ClassroomObservationInput,
+) {
   return withDbConnection(() => classroomObservationActions.create(data));
 }
-export async function updateClassroomObservation(id: string, data: Partial<ClassroomObservationInput>) {
+export async function updateClassroomObservation(
+  id: string,
+  data: Partial<ClassroomObservationInput>,
+) {
   return withDbConnection(() => classroomObservationActions.update(id, data));
 }
 export async function deleteClassroomObservation(id: string) {
@@ -84,17 +95,22 @@ const contextualNoteActions = createCrudActions({
   inputSchema: ContextualNoteZodSchema as ZodType<ContextualNoteInput>,
   name: "ContextualNote",
   revalidationPaths: ["/dashboard/observations"],
-  sortFields: ['noteType', 'priority', 'sortOrder', 'createdAt'],
-  defaultSortField: 'sortOrder',
-  defaultSortOrder: 'asc'
+  sortFields: ["noteType", "priority", "sortOrder", "createdAt"],
+  defaultSortField: "sortOrder",
+  defaultSortOrder: "asc",
 });
-export async function fetchContextualNotes(params: QueryParams = DEFAULT_QUERY_PARAMS) {
+export async function fetchContextualNotes(
+  params: QueryParams = DEFAULT_QUERY_PARAMS,
+) {
   return withDbConnection(() => contextualNoteActions.fetch(params));
 }
 export async function createContextualNote(data: ContextualNoteInput) {
   return withDbConnection(() => contextualNoteActions.create(data));
 }
-export async function updateContextualNote(id: string, data: Partial<ContextualNoteInput>) {
+export async function updateContextualNote(
+  id: string,
+  data: Partial<ContextualNoteInput>,
+) {
   return withDbConnection(() => contextualNoteActions.update(id, data));
 }
 export async function deleteContextualNote(id: string) {
@@ -115,23 +131,24 @@ async function fetchRelatedByObservation<T>(
   model: Model<T>,
   schema: ZodType<T>,
   observationId: string,
-  sortOptions: MongoSortOptions = { sortOrder: 1 }
+  sortOptions: MongoSortOptions = { sortOrder: 1 },
 ): Promise<CollectionResponse<T>> {
   try {
-    const results = await model.find({ observationId })
+    const results = await model
+      .find({ observationId })
       .sort(sortOptions)
       .exec();
     return {
       success: true,
       items: (results as unknown[]).map((item: unknown) => schema.parse(item)),
-      total: (results as unknown[]).length
+      total: (results as unknown[]).length,
     };
   } catch (error) {
     return {
       success: false,
       items: [],
       total: 0,
-      error: handleServerError(error)
+      error: handleServerError(error),
     };
   }
 }
@@ -143,8 +160,8 @@ export async function fetchCriteriaByObservation(observationId: string) {
       ObservationCriterionModel,
       ObservationCriterionZodSchema,
       observationId,
-      { sortOrder: 1, category: 1 } as MongoSortOptions
-    )
+      { sortOrder: 1, category: 1 } as MongoSortOptions,
+    ),
   );
 }
 export async function fetchFeedbackByObservation(observationId: string) {
@@ -153,8 +170,8 @@ export async function fetchFeedbackByObservation(observationId: string) {
       FeedbackItemModel,
       FeedbackItemZodSchema,
       observationId,
-      { type: 1, sortOrder: 1 } as MongoSortOptions
-    )
+      { type: 1, sortOrder: 1 } as MongoSortOptions,
+    ),
   );
 }
 export async function fetchLessonFlowByObservation(observationId: string) {
@@ -163,8 +180,8 @@ export async function fetchLessonFlowByObservation(observationId: string) {
       LessonFlowStepModel,
       LessonFlowStepZodSchema,
       observationId,
-      { activity: 1, stepType: 1, sortOrder: 1 } as MongoSortOptions
-    )
+      { activity: 1, stepType: 1, sortOrder: 1 } as MongoSortOptions,
+    ),
   );
 }
 export async function fetchLessonFlowNotesByObservation(observationId: string) {
@@ -173,8 +190,8 @@ export async function fetchLessonFlowNotesByObservation(observationId: string) {
       LessonFlowNoteModel,
       LessonFlowNoteZodSchema,
       observationId,
-      { activity: 1, sortOrder: 1 } as MongoSortOptions
-    )
+      { activity: 1, sortOrder: 1 } as MongoSortOptions,
+    ),
   );
 }
 export async function fetchLearningTargetsByObservation(observationId: string) {
@@ -183,8 +200,8 @@ export async function fetchLearningTargetsByObservation(observationId: string) {
       LearningTargetModel,
       LearningTargetZodSchema,
       observationId,
-      { sortOrder: 1 } as MongoSortOptions
-    )
+      { sortOrder: 1 } as MongoSortOptions,
+    ),
   );
 }
 export async function fetchTagsByObservation(observationId: string) {
@@ -193,26 +210,30 @@ export async function fetchTagsByObservation(observationId: string) {
       ObservationTagModel,
       ObservationTagZodSchema,
       observationId,
-      { type: 1, value: 1 } as MongoSortOptions
-    )
+      { type: 1, value: 1 } as MongoSortOptions,
+    ),
   );
 }
-export async function fetchTranscriptSectionsByObservation(observationId: string) {
+export async function fetchTranscriptSectionsByObservation(
+  observationId: string,
+) {
   return withDbConnection(() =>
     fetchRelatedByObservation(
       TranscriptSectionModel,
       TranscriptSectionZodSchema,
-      observationId
-    )
+      observationId,
+    ),
   );
 }
-export async function fetchCustomTranscriptSectionsByObservation(observationId: string) {
+export async function fetchCustomTranscriptSectionsByObservation(
+  observationId: string,
+) {
   return withDbConnection(() =>
     fetchRelatedByObservation(
       CustomTranscriptSectionModel,
       CustomTranscriptSectionZodSchema,
-      observationId
-    )
+      observationId,
+    ),
   );
 }
 
@@ -220,33 +241,37 @@ export async function fetchCustomTranscriptSectionsByObservation(observationId: 
 export async function fetchTimeTrackingByObservation(observationId: string) {
   return withDbConnection(async () => {
     try {
-      const result = await ObservationTimeTrackingModel.findOne({ observationId });
+      const result = await ObservationTimeTrackingModel.findOne({
+        observationId,
+      });
       return {
         success: true,
-        data: result ? ObservationTimeTrackingZodSchema.parse(result) : null
+        data: result ? ObservationTimeTrackingZodSchema.parse(result) : null,
       };
     } catch (error) {
       return {
         success: false,
         data: null,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });
 }
-export async function fetchObservationMetadataByObservation(observationId: string) {
+export async function fetchObservationMetadataByObservation(
+  observationId: string,
+) {
   return withDbConnection(async () => {
     try {
       const result = await ObservationMetadataModel.findOne({ observationId });
       return {
         success: true,
-        data: result ? ObservationMetadataZodSchema.parse(result) : null
+        data: result ? ObservationMetadataZodSchema.parse(result) : null,
       };
     } catch (error) {
       return {
         success: false,
         data: null,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });
@@ -256,11 +281,12 @@ export async function fetchObservationMetadataByObservation(observationId: strin
 export async function fetchCompleteObservation(observationId: string) {
   return withDbConnection(async () => {
     try {
-      const observation = await ClassroomObservationModel.findById(observationId);
+      const observation =
+        await ClassroomObservationModel.findById(observationId);
       if (!observation) {
         return {
           success: false,
-          error: "Observation not found"
+          error: "Observation not found",
         };
       }
       const [
@@ -274,98 +300,144 @@ export async function fetchCompleteObservation(observationId: string) {
         customTranscripts,
         contextualNotes,
         tags,
-        metadata
+        metadata,
       ] = await Promise.all([
-        ObservationCriterionModel.find({ observationId }).sort({ sortOrder: 1 }),
-        FeedbackItemModel.find({ observationId }).sort({ type: 1, sortOrder: 1 }),
-        LessonFlowStepModel.find({ observationId }).sort({ activity: 1, stepType: 1, sortOrder: 1 }),
-        LessonFlowNoteModel.find({ observationId }).sort({ activity: 1, sortOrder: 1 }),
+        ObservationCriterionModel.find({ observationId }).sort({
+          sortOrder: 1,
+        }),
+        FeedbackItemModel.find({ observationId }).sort({
+          type: 1,
+          sortOrder: 1,
+        }),
+        LessonFlowStepModel.find({ observationId }).sort({
+          activity: 1,
+          stepType: 1,
+          sortOrder: 1,
+        }),
+        LessonFlowNoteModel.find({ observationId }).sort({
+          activity: 1,
+          sortOrder: 1,
+        }),
         LearningTargetModel.find({ observationId }).sort({ sortOrder: 1 }),
         ObservationTimeTrackingModel.findOne({ observationId }),
         TranscriptSectionModel.find({ observationId }),
         CustomTranscriptSectionModel.find({ observationId }),
         ContextualNoteModel.find({ observationId }).sort({ sortOrder: 1 }),
         ObservationTagModel.find({ observationId }),
-        ObservationMetadataModel.findOne({ observationId })
+        ObservationMetadataModel.findOne({ observationId }),
       ]);
       return {
         success: true,
         data: {
           observation: ClassroomObservationZodSchema.parse(observation),
-          criteria: criteria.map(item => ObservationCriterionZodSchema.parse(item)),
-          feedback: feedback.map(item => FeedbackItemZodSchema.parse(item)),
-          lessonFlowSteps: lessonFlowSteps.map(item => LessonFlowStepZodSchema.parse(item)),
-          lessonFlowNotes: lessonFlowNotes.map(item => LessonFlowNoteZodSchema.parse(item)),
-          learningTargets: learningTargets.map(item => LearningTargetZodSchema.parse(item)),
-          timeTracking: timeTracking ? ObservationTimeTrackingZodSchema.parse(timeTracking) : null,
-          transcripts: transcripts.map(item => TranscriptSectionZodSchema.parse(item)),
-          customTranscripts: customTranscripts.map(item => CustomTranscriptSectionZodSchema.parse(item)),
-          contextualNotes: contextualNotes.map(item => ContextualNoteZodSchema.parse(item)),
-          tags: tags.map(item => ObservationTagZodSchema.parse(item)),
-          metadata: metadata ? ObservationMetadataZodSchema.parse(metadata) : null
-        }
+          criteria: criteria.map((item) =>
+            ObservationCriterionZodSchema.parse(item),
+          ),
+          feedback: feedback.map((item) => FeedbackItemZodSchema.parse(item)),
+          lessonFlowSteps: lessonFlowSteps.map((item) =>
+            LessonFlowStepZodSchema.parse(item),
+          ),
+          lessonFlowNotes: lessonFlowNotes.map((item) =>
+            LessonFlowNoteZodSchema.parse(item),
+          ),
+          learningTargets: learningTargets.map((item) =>
+            LearningTargetZodSchema.parse(item),
+          ),
+          timeTracking: timeTracking
+            ? ObservationTimeTrackingZodSchema.parse(timeTracking)
+            : null,
+          transcripts: transcripts.map((item) =>
+            TranscriptSectionZodSchema.parse(item),
+          ),
+          customTranscripts: customTranscripts.map((item) =>
+            CustomTranscriptSectionZodSchema.parse(item),
+          ),
+          contextualNotes: contextualNotes.map((item) =>
+            ContextualNoteZodSchema.parse(item),
+          ),
+          tags: tags.map((item) => ObservationTagZodSchema.parse(item)),
+          metadata: metadata
+            ? ObservationMetadataZodSchema.parse(metadata)
+            : null,
+        },
       };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });
 }
 
-export async function autoSaveObservationData(observationId: string, updates: {
-  observation?: Partial<ClassroomObservationInput>;
-  criteria?: ObservationCriterionInput[];
-  feedback?: FeedbackItemInput[];
-  lessonFlowSteps?: LessonFlowStepInput[];
-  learningTargets?: LearningTargetInput[];
-  timeTracking?: ObservationTimeTrackingInput;
-  contextualNotes?: ContextualNoteInput[];
-  tags?: ObservationTagInput[];
-}) {
+export async function autoSaveObservationData(
+  observationId: string,
+  updates: {
+    observation?: Partial<ClassroomObservationInput>;
+    criteria?: ObservationCriterionInput[];
+    feedback?: FeedbackItemInput[];
+    lessonFlowSteps?: LessonFlowStepInput[];
+    learningTargets?: LearningTargetInput[];
+    timeTracking?: ObservationTimeTrackingInput;
+    contextualNotes?: ContextualNoteInput[];
+    tags?: ObservationTagInput[];
+  },
+) {
   return withDbConnection(async () => {
     try {
       const updatePromises: Promise<unknown>[] = [];
       if (updates.observation) {
         updatePromises.push(
-          ClassroomObservationModel.findByIdAndUpdate(observationId, updates.observation, { new: true })
+          ClassroomObservationModel.findByIdAndUpdate(
+            observationId,
+            updates.observation,
+            { new: true },
+          ),
         );
       }
       if (updates.criteria) {
         updatePromises.push(
           ObservationCriterionModel.deleteMany({ observationId }).then(() =>
             ObservationCriterionModel.insertMany(
-              updates.criteria!.map(criterion => ({ ...criterion, observationId }))
-            )
-          )
+              updates.criteria!.map((criterion) => ({
+                ...criterion,
+                observationId,
+              })),
+            ),
+          ),
         );
       }
       if (updates.feedback) {
         updatePromises.push(
           FeedbackItemModel.deleteMany({ observationId }).then(() =>
             FeedbackItemModel.insertMany(
-              updates.feedback!.map(item => ({ ...item, observationId }))
-            )
-          )
+              updates.feedback!.map((item) => ({ ...item, observationId })),
+            ),
+          ),
         );
       }
       if (updates.lessonFlowSteps) {
         updatePromises.push(
           LessonFlowStepModel.deleteMany({ observationId }).then(() =>
             LessonFlowStepModel.insertMany(
-              updates.lessonFlowSteps!.map(step => ({ ...step, observationId }))
-            )
-          )
+              updates.lessonFlowSteps!.map((step) => ({
+                ...step,
+                observationId,
+              })),
+            ),
+          ),
         );
       }
       if (updates.learningTargets) {
         updatePromises.push(
           LearningTargetModel.deleteMany({ observationId }).then(() =>
             LearningTargetModel.insertMany(
-              updates.learningTargets!.map(target => ({ ...target, observationId }))
-            )
-          )
+              updates.learningTargets!.map((target) => ({
+                ...target,
+                observationId,
+              })),
+            ),
+          ),
         );
       }
       if (updates.timeTracking) {
@@ -373,37 +445,40 @@ export async function autoSaveObservationData(observationId: string, updates: {
           ObservationTimeTrackingModel.findOneAndUpdate(
             { observationId },
             { ...updates.timeTracking, observationId },
-            { upsert: true, new: true }
-          )
+            { upsert: true, new: true },
+          ),
         );
       }
       if (updates.contextualNotes) {
         updatePromises.push(
           ContextualNoteModel.deleteMany({ observationId }).then(() =>
             ContextualNoteModel.insertMany(
-              updates.contextualNotes!.map(note => ({ ...note, observationId }))
-            )
-          )
+              updates.contextualNotes!.map((note) => ({
+                ...note,
+                observationId,
+              })),
+            ),
+          ),
         );
       }
       if (updates.tags) {
         updatePromises.push(
           ObservationTagModel.deleteMany({ observationId }).then(() =>
             ObservationTagModel.insertMany(
-              updates.tags!.map(tag => ({ ...tag, observationId }))
-            )
-          )
+              updates.tags!.map((tag) => ({ ...tag, observationId })),
+            ),
+          ),
         );
       }
       await Promise.all(updatePromises);
       return {
         success: true,
-        message: "Auto-save completed successfully"
+        message: "Auto-save completed successfully",
       };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });
@@ -424,16 +499,16 @@ export async function deleteCompleteObservation(observationId: string) {
         CustomTranscriptSectionModel.deleteMany({ observationId }),
         ContextualNoteModel.deleteMany({ observationId }),
         ObservationTagModel.deleteMany({ observationId }),
-        ObservationMetadataModel.deleteMany({ observationId })
+        ObservationMetadataModel.deleteMany({ observationId }),
       ]);
       return {
         success: true,
-        message: "Observation and all related data deleted successfully"
+        message: "Observation and all related data deleted successfully",
       };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });

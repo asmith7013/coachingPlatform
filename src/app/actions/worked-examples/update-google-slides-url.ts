@@ -1,11 +1,14 @@
 "use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
-import { auth } from '@clerk/nextjs/server';
-import { handleServerError } from '@error/handlers/server';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { WorkedExampleDeck } from "@mongoose-schema/worked-example-deck.model";
+import { auth } from "@clerk/nextjs/server";
+import { handleServerError } from "@error/handlers/server";
 
-export async function updateGoogleSlidesUrl(deckId: string, googleSlidesUrl: string) {
+export async function updateGoogleSlidesUrl(
+  deckId: string,
+  googleSlidesUrl: string,
+) {
   return withDbConnection(async () => {
     try {
       const { userId } = await auth();
@@ -13,7 +16,7 @@ export async function updateGoogleSlidesUrl(deckId: string, googleSlidesUrl: str
       if (!userId) {
         return {
           success: false,
-          error: 'Unauthorized. Please sign in to update the deck.',
+          error: "Unauthorized. Please sign in to update the deck.",
         };
       }
 
@@ -24,13 +27,13 @@ export async function updateGoogleSlidesUrl(deckId: string, googleSlidesUrl: str
           googleSlidesUrl,
           updatedAt: new Date(),
         },
-        { new: true }
+        { new: true },
       );
 
       if (!updatedDeck) {
         return {
           success: false,
-          error: 'Deck not found.',
+          error: "Deck not found.",
         };
       }
 
@@ -41,7 +44,7 @@ export async function updateGoogleSlidesUrl(deckId: string, googleSlidesUrl: str
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to update Google Slides URL'),
+        error: handleServerError(error, "Failed to update Google Slides URL"),
       };
     }
   });

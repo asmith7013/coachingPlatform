@@ -1,18 +1,21 @@
-import { NYCPSStaffModel, TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
-import { NYCPSStaff, TeachingLabStaff } from '@zod-schema/core/staff';
-import { createApiSafeFetcher } from '@/lib/server/fetchers/fetcher-factory';
-import { fetchById } from '@/lib/server/fetchers/fetch-by-id';
-import type { QueryParams } from '@core-types/query';
-import type { CollectionResponse } from '@core-types/response';
+import {
+  NYCPSStaffModel,
+  TeachingLabStaffModel,
+} from "@mongoose-schema/core/staff.model";
+import { NYCPSStaff, TeachingLabStaff } from "@zod-schema/core/staff";
+import { createApiSafeFetcher } from "@/lib/server/fetchers/fetcher-factory";
+import { fetchById } from "@/lib/server/fetchers/fetch-by-id";
+import type { QueryParams } from "@core-types/query";
+import type { CollectionResponse } from "@core-types/response";
 
 export const fetchNYCPSStaffForApi = createApiSafeFetcher(
   NYCPSStaffModel,
-  "staffName"
+  "staffName",
 ) as (params: QueryParams) => Promise<CollectionResponse<NYCPSStaff>>;
 
 export const fetchTeachingLabStaffForApi = createApiSafeFetcher(
   TeachingLabStaffModel,
-  "staffName"
+  "staffName",
 ) as (params: QueryParams) => Promise<CollectionResponse<TeachingLabStaff>>;
 
 /**
@@ -39,20 +42,20 @@ export async function checkStaffExistenceByEmailForApi(email: string) {
         success: false,
         items: [],
         exists: false,
-        error: "Email is required"
+        error: "Email is required",
       };
     }
-    
+
     const nycpsStaff = await NYCPSStaffModel.findOne({ email });
     const tlStaff = await TeachingLabStaffModel.findOne({ email });
-    
+
     const exists = !!nycpsStaff || !!tlStaff;
-    
+
     return {
       success: true,
       items: [],
       exists,
-      total: exists ? 1 : 0
+      total: exists ? 1 : 0,
     };
   } catch (error) {
     console.error(`Error checking staff existence:`, error);
@@ -60,7 +63,7 @@ export async function checkStaffExistenceByEmailForApi(email: string) {
       success: false,
       items: [],
       exists: false,
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }
@@ -68,27 +71,29 @@ export async function checkStaffExistenceByEmailForApi(email: string) {
 /**
  * Unified staff fetcher that handles type parameter
  */
-export async function fetchStaffForApi(params: QueryParams): Promise<CollectionResponse<NYCPSStaff | TeachingLabStaff>> {
+export async function fetchStaffForApi(
+  params: QueryParams,
+): Promise<CollectionResponse<NYCPSStaff | TeachingLabStaff>> {
   const { type, ...otherParams } = params;
-  
+
   switch (type) {
-    case 'nycps':
+    case "nycps":
       return fetchNYCPSStaffForApi(otherParams);
-      
-    case 'teachingLab':
+
+    case "teachingLab":
       return fetchTeachingLabStaffForApi(otherParams);
-      
+
     default: {
       // Fetch both and combine
       const [nycpsResult, tlResult] = await Promise.all([
         fetchNYCPSStaffForApi(otherParams),
-        fetchTeachingLabStaffForApi(otherParams)
+        fetchTeachingLabStaffForApi(otherParams),
       ]);
-      
+
       return {
         success: true,
         items: [...nycpsResult.items, ...tlResult.items],
-        total: (nycpsResult.total || 0) + (tlResult.total || 0)
+        total: (nycpsResult.total || 0) + (tlResult.total || 0),
       };
     }
   }

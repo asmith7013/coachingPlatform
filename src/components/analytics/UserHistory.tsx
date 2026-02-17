@@ -1,55 +1,55 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { getUserHistory } from '@/app/actions/analytics'
-import { Card } from '@/components/ui/card'
+import { useEffect, useState } from "react";
+import { getUserHistory } from "@/app/actions/analytics";
+import { Card } from "@/components/ui/card";
 
 interface PageView {
-  _id: string
-  page: string
-  fullUrl: string
-  timestamp: string
-  duration?: number
+  _id: string;
+  page: string;
+  fullUrl: string;
+  timestamp: string;
+  duration?: number;
 }
 
 interface UserHistoryProps {
-  userId: string
-  limit?: number
+  userId: string;
+  limit?: number;
 }
 
 export function UserHistory({ userId, limit = 50 }: UserHistoryProps) {
-  const [history, setHistory] = useState<PageView[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [history, setHistory] = useState<PageView[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        setLoading(true)
-        const result = await getUserHistory(userId, limit)
+        setLoading(true);
+        const result = await getUserHistory(userId, limit);
 
         if (result.success && result.data) {
-          setHistory(result.data as unknown as PageView[])
+          setHistory(result.data as unknown as PageView[]);
         } else {
-          setError(result.error || 'Failed to load history')
+          setError(result.error || "Failed to load history");
         }
       } catch (err) {
-        setError('Failed to load history')
-        console.error(err)
+        setError("Failed to load history");
+        console.error(err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchHistory()
-  }, [userId, limit])
+    fetchHistory();
+  }, [userId, limit]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-gray-500">Loading history...</div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -57,7 +57,7 @@ export function UserHistory({ userId, limit = 50 }: UserHistoryProps) {
       <div className="flex items-center justify-center p-8">
         <div className="text-red-500">{error}</div>
       </div>
-    )
+    );
   }
 
   if (history.length === 0) {
@@ -65,7 +65,7 @@ export function UserHistory({ userId, limit = 50 }: UserHistoryProps) {
       <Card className="p-8 text-center text-gray-500">
         No browsing history found
       </Card>
-    )
+    );
   }
 
   return (
@@ -91,5 +91,5 @@ export function UserHistory({ userId, limit = 50 }: UserHistoryProps) {
         ))}
       </div>
     </Card>
-  )
+  );
 }

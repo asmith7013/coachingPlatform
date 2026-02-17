@@ -1,13 +1,16 @@
-import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { ZodSchema } from 'zod';
-import { BellScheduleZodSchema, type BellSchedule } from '@/lib/schema/zod-schema/schedules/schedule';
-import { 
-  fetchBellSchedules, 
-  fetchBellScheduleById, 
-  createBellSchedule, 
-  updateBellSchedule, 
-  deleteBellSchedule
-} from '@/app/actions/schedulesOld/schedule';
+import { createCrudHooks } from "@query/client/factories/crud-factory";
+import { ZodSchema } from "zod";
+import {
+  BellScheduleZodSchema,
+  type BellSchedule,
+} from "@/lib/schema/zod-schema/schedules/schedule";
+import {
+  fetchBellSchedules,
+  fetchBellScheduleById,
+  createBellSchedule,
+  updateBellSchedule,
+  deleteBellSchedule,
+} from "@/app/actions/schedulesOld/schedule";
 // import { DocumentInput, WithDateObjects } from '@core-types/document';
 
 /**
@@ -15,17 +18,17 @@ import {
  * SIMPLIFIED: Direct CRUD factory usage, no unnecessary transformation
  */
 const bellScheduleHooks = createCrudHooks({
-  entityType: 'bellSchedules',
+  entityType: "bellSchedules",
   schema: BellScheduleZodSchema as ZodSchema<BellSchedule>,
   serverActions: {
     fetch: fetchBellSchedules,
     fetchById: fetchBellScheduleById,
     create: createBellSchedule,
     update: updateBellSchedule,
-    delete: deleteBellSchedule
+    delete: deleteBellSchedule,
   },
-  validSortFields: ['school', 'bellScheduleType', 'createdAt', 'updatedAt'],
-  relatedEntityTypes: ['schools']
+  validSortFields: ["school", "bellScheduleType", "createdAt", "updatedAt"],
+  relatedEntityTypes: ["schools"],
 });
 
 // Export with domain-specific names
@@ -41,15 +44,15 @@ export const useBellSchedules = {
   list: useBellSchedulesList,
   byId: useBellScheduleById,
   mutations: useBellSchedulesMutations,
-  manager: useBellScheduleManager
+  manager: useBellScheduleManager,
 };
 
 // Export individual hooks for backward compatibility
-export { 
-  useBellSchedulesList, 
-  useBellScheduleById, 
-  useBellSchedulesMutations, 
-  useBellScheduleManager
+export {
+  useBellSchedulesList,
+  useBellScheduleById,
+  useBellSchedulesMutations,
+  useBellScheduleManager,
 };
 
-export default useBellSchedules; 
+export default useBellSchedules;

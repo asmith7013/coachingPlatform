@@ -1,14 +1,19 @@
-'use client';
+"use client";
 
 /**
  * Monday Integration Context
- * 
+ *
  * Provides connection management and authentication for Monday.com integration
  * while leveraging React Query for data fetching.
  */
-import React, { createContext, useContext, useCallback, ReactNode } from 'react';
-import { useMondayConnection } from './useMondayQueries';
-import { handleClientError } from '@error';
+import React, {
+  createContext,
+  useContext,
+  useCallback,
+  ReactNode,
+} from "react";
+import { useMondayConnection } from "./useMondayQueries";
+import { handleClientError } from "@error";
 
 // Define the connection action result type
 interface ConnectionActionResult {
@@ -31,62 +36,68 @@ interface MondayIntegrationContextType {
 // Create the context with default values
 const MondayIntegrationContext = createContext<MondayIntegrationContextType>({
   connectToMonday: () => Promise.resolve({ success: false }),
-  disconnectFromMonday: () => Promise.resolve({ success: false })
+  disconnectFromMonday: () => Promise.resolve({ success: false }),
 });
 
 /**
  * Provider component for Monday.com integration context
  */
-export function MondayIntegrationProvider({ children }: { children: ReactNode }) {
+export function MondayIntegrationProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   // Connection action handlers
-  const connectToMonday = useCallback(async (): Promise<ConnectionActionResult> => {
-    try {
-      const response = await fetch('/api/integrations/monday/connect', {
-        method: 'POST'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Connection failed: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      return { 
-        success: true, 
-        data: {
-          connected: data.success,
-          name: data.name || data.accountName,
-          email: data.email
+  const connectToMonday =
+    useCallback(async (): Promise<ConnectionActionResult> => {
+      try {
+        const response = await fetch("/api/integrations/monday/connect", {
+          method: "POST",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Connection failed: ${response.statusText}`);
         }
-      };
-    } catch (error) {
-      const errorMessage = handleClientError(error, 'Monday Connection');
-      return { success: false, error: errorMessage };
-    }
-  }, []);
-  
-  const disconnectFromMonday = useCallback(async (): Promise<ConnectionActionResult> => {
-    try {
-      const response = await fetch('/api/integrations/monday/disconnect', {
-        method: 'POST'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Disconnection failed: ${response.statusText}`);
+
+        const data = await response.json();
+        return {
+          success: true,
+          data: {
+            connected: data.success,
+            name: data.name || data.accountName,
+            email: data.email,
+          },
+        };
+      } catch (error) {
+        const errorMessage = handleClientError(error, "Monday Connection");
+        return { success: false, error: errorMessage };
       }
-      
-      return { success: true, data: { connected: false } };
-    } catch (error) {
-      const errorMessage = handleClientError(error, 'Monday Disconnection');
-      return { success: false, error: errorMessage };
-    }
-  }, []);
-  
+    }, []);
+
+  const disconnectFromMonday =
+    useCallback(async (): Promise<ConnectionActionResult> => {
+      try {
+        const response = await fetch("/api/integrations/monday/disconnect", {
+          method: "POST",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Disconnection failed: ${response.statusText}`);
+        }
+
+        return { success: true, data: { connected: false } };
+      } catch (error) {
+        const errorMessage = handleClientError(error, "Monday Disconnection");
+        return { success: false, error: errorMessage };
+      }
+    }, []);
+
   // Create the context value
   const contextValue: MondayIntegrationContextType = {
     connectToMonday,
-    disconnectFromMonday
+    disconnectFromMonday,
   };
-  
+
   return (
     <MondayIntegrationContext.Provider value={contextValue}>
       {children}
@@ -99,31 +110,33 @@ export function MondayIntegrationProvider({ children }: { children: ReactNode })
  */
 export function useMondayIntegration() {
   const context = useContext(MondayIntegrationContext);
-  
+
   if (!context) {
-    throw new Error('useMondayIntegration must be used within a MondayIntegrationProvider');
+    throw new Error(
+      "useMondayIntegration must be used within a MondayIntegrationProvider",
+    );
   }
-  
+
   // Get connection data and status from React Query
   const connectionQuery = useMondayConnection();
-  
+
   // Make sure these properties exist on the returned object
   const isConnected = connectionQuery.data?.success === true;
-  const accountName = connectionQuery.data?.data?.name || '';
-  
+  const accountName = connectionQuery.data?.data?.name || "";
+
   return {
     // Connection actions
     connectToMonday: context.connectToMonday,
     disconnectFromMonday: context.disconnectFromMonday,
-    
+
     // Connection data from React Query
     connectionData: connectionQuery.data || null,
     connectionLoading: connectionQuery.isLoading,
     connectionError: connectionQuery.error?.message || null,
     refetchConnection: connectionQuery.refetch,
-    
+
     // Connection status helpers with fixed property access
     isConnected,
-    accountName
+    accountName,
   };
-} 
+}

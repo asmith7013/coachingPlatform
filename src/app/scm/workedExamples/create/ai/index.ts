@@ -11,73 +11,72 @@
 // ============================================================================
 
 // Simple patterns (fill placeholders)
-import TITLE_ZONE from './card-patterns/simple-patterns/title-zone.html';
-import CONTENT_BOX from './card-patterns/simple-patterns/content-box.html';
-import CFU_ANSWER_CARD from './card-patterns/simple-patterns/cfu-answer-card.html';
-import PROBLEM_REMINDER from './card-patterns/simple-patterns/problem-reminder.html';
+import TITLE_ZONE from "./card-patterns/simple-patterns/title-zone.html";
+import CONTENT_BOX from "./card-patterns/simple-patterns/content-box.html";
+import CFU_ANSWER_CARD from "./card-patterns/simple-patterns/cfu-answer-card.html";
+import PROBLEM_REMINDER from "./card-patterns/simple-patterns/problem-reminder.html";
 
 // SVG card
-import SVG_CARD from './card-patterns/svg-card.html';
+import SVG_CARD from "./card-patterns/svg-card.html";
 
 // Complex patterns (copy & modify)
-import GRAPH_SNIPPET from './card-patterns/complex-patterns/graph-snippet.html';
-import ANNOTATION_SNIPPET from './card-patterns/complex-patterns/annotation-snippet.html';
-import PRINTABLE_TEMPLATE from './card-patterns/complex-patterns/printable-slide-snippet.html';
-import LESSON_SUMMARY_TEMPLATE from './card-patterns/complex-patterns/lesson-summary-snippet.html';
-import VISUAL_CARD_LAYERS from './card-patterns/complex-patterns/visual-card-layers.html';
-import D3_DIAGRAM_TEMPLATE from './card-patterns/complex-patterns/d3-diagram-template.html';
-import SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE from './card-patterns/complex-patterns/slide-teacher-instructions.html';
-import SLIDE_BIG_IDEA_TEMPLATE from './card-patterns/complex-patterns/slide-big-idea.html';
-
+import GRAPH_SNIPPET from "./card-patterns/complex-patterns/graph-snippet.html";
+import ANNOTATION_SNIPPET from "./card-patterns/complex-patterns/annotation-snippet.html";
+import PRINTABLE_TEMPLATE from "./card-patterns/complex-patterns/printable-slide-snippet.html";
+import LESSON_SUMMARY_TEMPLATE from "./card-patterns/complex-patterns/lesson-summary-snippet.html";
+import VISUAL_CARD_LAYERS from "./card-patterns/complex-patterns/visual-card-layers.html";
+import D3_DIAGRAM_TEMPLATE from "./card-patterns/complex-patterns/d3-diagram-template.html";
+import SLIDE_TEACHER_INSTRUCTIONS_TEMPLATE from "./card-patterns/complex-patterns/slide-teacher-instructions.html";
+import SLIDE_BIG_IDEA_TEMPLATE from "./card-patterns/complex-patterns/slide-big-idea.html";
 
 // ============================================================================
 // PHASE 1 & 3 INSTRUCTIONS (Prompts)
 // ============================================================================
 
 // Phase 1: Problem analysis
-import ANALYZE_PROBLEM_INSTRUCTIONS from './phases/01-collect-and-analyze/analyze-problem.md';
-import ANALYZE_OUTPUT_SCHEMA from './phases/01-collect-and-analyze/output-schema.md';
+import ANALYZE_PROBLEM_INSTRUCTIONS from "./phases/01-collect-and-analyze/analyze-problem.md";
+import ANALYZE_OUTPUT_SCHEMA from "./phases/01-collect-and-analyze/output-schema.md";
 
 // Phase 2: Confirmation
-import PHASE2_CONFIRM_PLAN from './phases/02-confirm-and-plan/index.md';
+import PHASE2_CONFIRM_PLAN from "./phases/02-confirm-and-plan/index.md";
 
 // Phase 3: Slide generation
-import PHASE3_OVERVIEW from './phases/03-generate-slides/00-overview.md';
-import GENERATE_SLIDES_INSTRUCTIONS from './phases/03-generate-slides/01-slide-by-slide.md';
-import TECHNICAL_RULES from './phases/03-generate-slides/02-technical-rules.md';
-import SLIDE_PEDAGOGY_RULES from './phases/03-generate-slides/03-pedagogy.md';
+import PHASE3_OVERVIEW from "./phases/03-generate-slides/00-overview.md";
+import GENERATE_SLIDES_INSTRUCTIONS from "./phases/03-generate-slides/01-slide-by-slide.md";
+import TECHNICAL_RULES from "./phases/03-generate-slides/02-technical-rules.md";
+import SLIDE_PEDAGOGY_RULES from "./phases/03-generate-slides/03-pedagogy.md";
 
 // Checklists
-import PRE_FLIGHT_CHECKLIST from './phases/03-generate-slides/checklists/pre-flight.md';
-import COMPLETION_CHECKLIST from './phases/03-generate-slides/checklists/completion.md';
+import PRE_FLIGHT_CHECKLIST from "./phases/03-generate-slides/checklists/pre-flight.md";
+import COMPLETION_CHECKLIST from "./phases/03-generate-slides/checklists/completion.md";
 
 // Phase 4: Save & export
-import PHASE4_SAVE_EXPORT from './phases/04-save-to-database/index.md';
-import OPTIMIZE_FOR_EXPORT from './phases/04-save-to-database/optimize-for-export.md';
+import PHASE4_SAVE_EXPORT from "./phases/04-save-to-database/index.md";
+import OPTIMIZE_FOR_EXPORT from "./phases/04-save-to-database/optimize-for-export.md";
 
 // ============================================================================
 // VISUAL/STYLING RULES
 // ============================================================================
 
-import STYLING_GUIDE from './reference/styling.md';
-import LAYOUT_PRESETS from './reference/layout-presets.md';
-import PPTX_REQUIREMENTS from './reference/pptx-requirements.md';
-import DIAGRAM_PATTERNS from './reference/diagram-patterns.md';
-import SVG_COORDINATE_PLANES from './phases/03-generate-slides/04-svg-workflow.md';
-import ANNOTATION_ZONES from './phases/03-generate-slides/visuals/annotation-zones.md';
-import GRAPH_PLANNING from './phases/01-collect-and-analyze/graph-planning.md';
+import STYLING_GUIDE from "./reference/styling.md";
+import LAYOUT_PRESETS from "./reference/layout-presets.md";
+import PPTX_REQUIREMENTS from "./reference/pptx-requirements.md";
+import DIAGRAM_PATTERNS from "./reference/diagram-patterns.md";
+import SVG_COORDINATE_PLANES from "./phases/03-generate-slides/04-svg-workflow.md";
+import ANNOTATION_ZONES from "./phases/03-generate-slides/visuals/annotation-zones.md";
+import GRAPH_PLANNING from "./phases/01-collect-and-analyze/graph-planning.md";
 
 // ============================================================================
 // PEDAGOGY
 // ============================================================================
 
-import PEDAGOGY_RULES from './reference/pedagogy.md';
+import PEDAGOGY_RULES from "./reference/pedagogy.md";
 
 // ============================================================================
 // REGION POSITIONS (for PPTX export)
 // ============================================================================
 
-import REGION_DEFAULTS from './reference/region-defaults.md';
+import REGION_DEFAULTS from "./reference/region-defaults.md";
 
 // ============================================================================
 // RE-EXPORTS
@@ -243,4 +242,4 @@ export const SLIDE_STRUCTURE = `
 // ============================================================================
 
 // Alias for FOUR_RULES (was empty in original)
-export const FOUR_RULES = '';
+export const FOUR_RULES = "";

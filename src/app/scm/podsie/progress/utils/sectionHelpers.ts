@@ -41,25 +41,33 @@ export function getGradeForSection(section: string): string {
 }
 
 // Get school for a section
-export function getSchoolForSection(section: string): "IS313" | "PS19" | "X644" | "Unknown" {
-  if (Sections313.includes(section as typeof Sections313[number])) {
+export function getSchoolForSection(
+  section: string,
+): "IS313" | "PS19" | "X644" | "Unknown" {
+  if (Sections313.includes(section as (typeof Sections313)[number])) {
     return "IS313";
   }
-  if (SectionsPS19.includes(section as typeof SectionsPS19[number])) {
+  if (SectionsPS19.includes(section as (typeof SectionsPS19)[number])) {
     return "PS19";
   }
-  if (SectionsX644.includes(section as typeof SectionsX644[number])) {
+  if (SectionsX644.includes(section as (typeof SectionsX644)[number])) {
     return "X644";
   }
   return "Unknown";
 }
 
 // Group sections by school
-export function groupSectionsBySchool(sections: string[]): Array<{ school: string; sections: string[] }> {
-  const is313 = sections.filter(s => getSchoolForSection(s) === "IS313").sort();
-  const ps19 = sections.filter(s => getSchoolForSection(s) === "PS19").sort();
-  const x644 = sections.filter(s => getSchoolForSection(s) === "X644").sort();
-  const unknown = sections.filter(s => getSchoolForSection(s) === "Unknown").sort();
+export function groupSectionsBySchool(
+  sections: string[],
+): Array<{ school: string; sections: string[] }> {
+  const is313 = sections
+    .filter((s) => getSchoolForSection(s) === "IS313")
+    .sort();
+  const ps19 = sections.filter((s) => getSchoolForSection(s) === "PS19").sort();
+  const x644 = sections.filter((s) => getSchoolForSection(s) === "X644").sort();
+  const unknown = sections
+    .filter((s) => getSchoolForSection(s) === "Unknown")
+    .sort();
 
   const groups = [];
   if (is313.length > 0) groups.push({ school: "IS313", sections: is313 });

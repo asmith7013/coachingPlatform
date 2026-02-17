@@ -1,15 +1,15 @@
-import type { Visit } from '@zod-schema/visits/visit';
-import type { CoachingActionPlan } from '@zod-schema/core/cap';
+import type { Visit } from "@zod-schema/visits/visit";
+import type { CoachingActionPlan } from "@zod-schema/core/cap";
 
 export interface TodaysVisitData {
   // Core visit information
   visit: Visit;
   daysFromToday: number;
-  
+
   // Related coaching context (single fetch)
   actionPlan: CoachingActionPlan;
-  
-  // Derived data from embedded documents  
+
+  // Derived data from embedded documents
   weeklyPlan: {
     cycleNumber: string;
     visitNumber: string;
@@ -20,7 +20,7 @@ export interface TodaysVisitData {
     progressMonitoring: string;
     expectedMetrics: string[];
   } | null;
-  
+
   // Schedule information
   schedule: {
     date: string;
@@ -34,15 +34,15 @@ export interface TodaysVisitData {
       }>;
     }>;
   };
-  
+
   // Focus and goals (derived from action plan)
   focus: {
-    overallGoal: string;           // From actionPlan.goalDescription
-    weeklyFocus: string | null;    // From actionPlan.weeklyPlans[weeklyPlanIndex].focus
-    ipgCoreAction: string;         // From actionPlan.ipgCoreAction
-    ipgSubCategory: string;        // From actionPlan.ipgSubCategory
+    overallGoal: string; // From actionPlan.goalDescription
+    weeklyFocus: string | null; // From actionPlan.weeklyPlans[weeklyPlanIndex].focus
+    ipgCoreAction: string; // From actionPlan.ipgCoreAction
+    ipgSubCategory: string; // From actionPlan.ipgSubCategory
   };
-  
+
   // Metrics to measure (derived from embedded outcomes)
   metrics: Array<{
     id: string;
@@ -64,4 +64,4 @@ export interface TodaysVisitDashboardContextType {
   isVisitInPast: boolean;
   isVisitInFuture: boolean;
   refreshData: () => Promise<void>;
-} 
+}

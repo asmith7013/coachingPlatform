@@ -26,7 +26,7 @@ export function printSelectedQuestions(questions: StateTestQuestion[]): void {
         <img src="${q.screenshotUrl}" alt="Question ${index + 1}" />
       </div>
     </div>
-  `
+  `,
     )
     .join("");
 

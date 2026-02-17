@@ -5,8 +5,8 @@
  * Format a Monday.com user's display name
  */
 export function formatMondayUserName(name: string, email?: string): string {
-  if (!name && !email) return 'Unknown User';
+  if (!name && !email) return "Unknown User";
   if (!name && email) return email;
   if (name && !email) return name;
   return `${name} (${email})`;
-} 
+}

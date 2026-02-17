@@ -21,7 +21,9 @@ import { getSectionColors } from "@/app/scm/podsie/velocity/utils/colors";
 
 // In your component:
 const [selectedSections, setSelectedSections] = useState<string[]>([]);
-const [sectionColors, setSectionColors] = useState<Map<string, string>>(new Map());
+const [sectionColors, setSectionColors] = useState<Map<string, string>>(
+  new Map(),
+);
 
 // Load section options and compute colors
 const colors = getSectionColors(sectionOptions);
@@ -32,14 +34,14 @@ setSectionColors(colors);
   sections={sectionOptions}
   selectedSections={selectedSections}
   onToggle={(sectionId) => {
-    setSelectedSections(prev =>
+    setSelectedSections((prev) =>
       prev.includes(sectionId)
-        ? prev.filter(id => id !== sectionId)
-        : [...prev, sectionId]
+        ? prev.filter((id) => id !== sectionId)
+        : [...prev, sectionId],
     );
   }}
   sectionColors={sectionColors}
-/>
+/>;
 ```
 
 ### Props

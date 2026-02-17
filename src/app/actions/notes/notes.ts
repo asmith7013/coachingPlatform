@@ -1,7 +1,12 @@
 "use server";
 
 import { NoteModel } from "@mongoose-schema/shared/notes.model";
-import { Note, NoteZodSchema, NoteInputZodSchema, NoteInput } from "@zod-schema/shared/notes";
+import {
+  Note,
+  NoteZodSchema,
+  NoteInputZodSchema,
+  NoteInput,
+} from "@zod-schema/shared/notes";
 import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
 import type { QueryParams } from "@core-types/query";
@@ -15,9 +20,9 @@ const noteActions = createCrudActions({
   inputSchema: NoteInputZodSchema,
   name: "Note",
   revalidationPaths: ["/dashboard/notes"],
-  sortFields: ['noteText', 'createdAt', 'updatedAt'],
-  defaultSortField: 'createdAt',
-  defaultSortOrder: 'desc'
+  sortFields: ["noteText", "createdAt", "updatedAt"],
+  defaultSortField: "createdAt",
+  defaultSortOrder: "desc",
 });
 
 // Export the generated actions with connection handling
@@ -45,50 +50,51 @@ export async function fetchNoteById(id: string) {
 export async function fetchNotesByType(type: string) {
   return withDbConnection(async () => {
     try {
-      const results = await NoteModel.find({ type })
-        .sort({ date: -1 })
-        .exec();
-      
+      const results = await NoteModel.find({ type }).sort({ date: -1 }).exec();
+
       return {
         success: true,
-        items: results.map(item => NoteZodSchema.parse(item)),
-        total: results.length
+        items: results.map((item) => NoteZodSchema.parse(item)),
+        total: results.length,
       };
     } catch (error) {
       return {
         success: false,
         items: [],
         total: 0,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });
 }
 
-export async function fetchNotesByDateRange(startDate: string, endDate: string) {
+export async function fetchNotesByDateRange(
+  startDate: string,
+  endDate: string,
+) {
   return withDbConnection(async () => {
     try {
       const results = await NoteModel.find({
-        date: { 
+        date: {
           $gte: startDate,
-          $lte: endDate 
-        }
+          $lte: endDate,
+        },
       })
         .sort({ date: -1 })
         .exec();
-      
+
       return {
         success: true,
-        items: results.map(item => NoteZodSchema.parse(item)),
-        total: results.length
+        items: results.map((item) => NoteZodSchema.parse(item)),
+        total: results.length,
       };
     } catch (error) {
       return {
         success: false,
         items: [],
         total: 0,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });
-} 
+}

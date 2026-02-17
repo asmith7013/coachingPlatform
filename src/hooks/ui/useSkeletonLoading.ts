@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 /**
  * Hook for managing skeleton loading states with smart timing
@@ -13,11 +13,11 @@ interface UseSkeletonLoadingProps {
 export function useSkeletonLoading({
   isLoading,
   minimumLoadingTime = 0,
-  showSkeletonAfter = 200
+  showSkeletonAfter = 200,
 }: UseSkeletonLoadingProps) {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [hasFinishedMinimumTime, setHasFinishedMinimumTime] = useState(
-    minimumLoadingTime === 0
+    minimumLoadingTime === 0,
   );
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export function useSkeletonLoading({
   return {
     showSkeleton: shouldShowSkeleton,
     canHideLoading,
-    isLoading
+    isLoading,
   };
 }
 
@@ -77,4 +77,4 @@ export function useSimpleSkeletonLoading(isLoading: boolean, delay = 150) {
   }, [isLoading, delay]);
 
   return showSkeleton;
-} 
+}

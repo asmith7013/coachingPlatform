@@ -1,10 +1,14 @@
-import React from 'react';
-import { useForm } from '@tanstack/react-form';
-import { FormLayout } from '@components/composed/forms/FormLayout';
-import { Input } from '@components/core/fields/Input';
-import { Select } from '@components/core/fields/Select';
-import { SchoolInputZodSchema, type SchoolInput, createSchoolDefaults } from '@zod-schema/core/school';
-import { GradeLevelsSupportedZod } from '@schema/enum';
+import React from "react";
+import { useForm } from "@tanstack/react-form";
+import { FormLayout } from "@components/composed/forms/FormLayout";
+import { Input } from "@components/core/fields/Input";
+import { Select } from "@components/core/fields/Select";
+import {
+  SchoolInputZodSchema,
+  type SchoolInput,
+  createSchoolDefaults,
+} from "@zod-schema/core/school";
+import { GradeLevelsSupportedZod } from "@schema/enum";
 
 interface SchoolFormProps {
   initialValues?: Partial<SchoolInput>;
@@ -14,7 +18,7 @@ interface SchoolFormProps {
   submitLabel?: string;
 }
 
-const gradeOptions = GradeLevelsSupportedZod.options.map(value => ({
+const gradeOptions = GradeLevelsSupportedZod.options.map((value) => ({
   value,
   label: value,
 }));
@@ -27,8 +31,8 @@ export function SchoolForm({
   initialValues = {},
   onSubmit,
   onCancel,
-  title = 'School Form',
-  submitLabel = 'Save School'
+  title = "School Form",
+  submitLabel = "Save School",
 }: SchoolFormProps) {
   const form = useForm({
     defaultValues: createSchoolDefaults(initialValues),
@@ -121,4 +125,4 @@ export function SchoolForm({
       </form>
     </FormLayout>
   );
-} 
+}

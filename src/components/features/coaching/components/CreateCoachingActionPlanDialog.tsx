@@ -1,15 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback, useMemo } from 'react';
-import { Dialog } from '@composed-components/dialogs/Dialog';
-import { Button } from '@/components/core/Button';
-import { Alert } from '@core-components/feedback';
-import { 
-  ClipboardDocumentListIcon, 
-  CheckIcon 
-} from '@heroicons/react/24/outline';
-import { createCoachingActionPlan } from '@actions/coaching/coaching-action-plans';
-import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/cap';
+import React, { useState, useCallback, useMemo } from "react";
+import { Dialog } from "@composed-components/dialogs/Dialog";
+import { Button } from "@/components/core/Button";
+import { Alert } from "@core-components/feedback";
+import {
+  ClipboardDocumentListIcon,
+  CheckIcon,
+} from "@heroicons/react/24/outline";
+import { createCoachingActionPlan } from "@actions/coaching/coaching-action-plans";
+import type {
+  CoachingActionPlan,
+  CoachingActionPlanInput,
+} from "@zod-schema/cap";
 
 interface CreateCoachingActionPlanDialogProps {
   open: boolean;
@@ -17,18 +20,18 @@ interface CreateCoachingActionPlanDialogProps {
   onSuccess?: (plan: CoachingActionPlan) => void;
 }
 
-export function CreateCoachingActionPlanDialog({ 
-  open, 
-  onClose, 
-  onSuccess 
+export function CreateCoachingActionPlanDialog({
+  open,
+  onClose,
+  onSuccess,
 }: CreateCoachingActionPlanDialogProps) {
   const [formData, setFormData] = useState({
-    title: '',
-    academicYear: '2024-2025',
+    title: "",
+    academicYear: "2024-2025",
     startDate: new Date(),
   });
-  
-  const [error, setError] = useState('');
+
+  const [error, setError] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -40,100 +43,109 @@ export function CreateCoachingActionPlanDialog({
   // Reset state when dialog closes
   const handleClose = useCallback(() => {
     setFormData({
-      title: '',
-      academicYear: '2024-2025',
+      title: "",
+      academicYear: "2024-2025",
       startDate: new Date(),
     });
-    setError('');
+    setError("");
     setIsSubmitted(false);
     onClose();
   }, [onClose]);
 
   // Handle form field changes
-  const handleFieldChange = useCallback((field: string, value: string | Date | undefined) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  }, []);
+  const handleFieldChange = useCallback(
+    (field: string, value: string | Date | undefined) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    },
+    [],
+  );
 
   // Handle form submission using server action directly
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!isFormValid) return;
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    setError('');
-    setIsCreating(true);
+      if (!isFormValid) return;
 
-    try {
-      // Create complete CoachingActionPlanInput object with sensible defaults
-      const coachingActionPlanData: CoachingActionPlanInput = {
-        // User provided fields
-        title: formData.title?.trim() || 'New Coaching Action Plan',
-        academicYear: formData.academicYear?.trim() || '2024-2025',
-        startDate: formData.startDate || new Date(),
-        
-        // Required fields with valid placeholder values
-        teachers: [],
-        coaches: [],
-        school: 'PS 175',
-        ownerIds: [],
-        status: 'draft',
-        cycleLength: 3,
-        
-        // Required nested objects with valid placeholder values
-        needsAndFocus: {
-          ipgCoreAction: 'CA1',
-          ipgSubCategory: 'CA1A',
-          rationale: 'Initial focus area - to be completed during planning phase',
-          pdfAttachment: ''
-        },
-        
-        goal: {
-          description: 'Primary coaching goal - to be defined during planning phase',
-          teacherOutcomes: [],
-          studentOutcomes: [],
-        },
-        
-        // Required arrays that can start empty
-        weeklyPlans: [],
-        implementationRecords: [],
-        
-        // Optional end of cycle analysis
-        endOfCycleAnalysis: {
-          goalMet: false,
-          teacherOutcomeAnalysis: [],
-          studentOutcomeAnalysis: [],
-          impactOnLearning: '',
-          overallEvidence: [],
-          lessonsLearned: '',
-          recommendationsForNext: ''
+      setError("");
+      setIsCreating(true);
+
+      try {
+        // Create complete CoachingActionPlanInput object with sensible defaults
+        const coachingActionPlanData: CoachingActionPlanInput = {
+          // User provided fields
+          title: formData.title?.trim() || "New Coaching Action Plan",
+          academicYear: formData.academicYear?.trim() || "2024-2025",
+          startDate: formData.startDate || new Date(),
+
+          // Required fields with valid placeholder values
+          teachers: [],
+          coaches: [],
+          school: "PS 175",
+          ownerIds: [],
+          status: "draft",
+          cycleLength: 3,
+
+          // Required nested objects with valid placeholder values
+          needsAndFocus: {
+            ipgCoreAction: "CA1",
+            ipgSubCategory: "CA1A",
+            rationale:
+              "Initial focus area - to be completed during planning phase",
+            pdfAttachment: "",
+          },
+
+          goal: {
+            description:
+              "Primary coaching goal - to be defined during planning phase",
+            teacherOutcomes: [],
+            studentOutcomes: [],
+          },
+
+          // Required arrays that can start empty
+          weeklyPlans: [],
+          implementationRecords: [],
+
+          // Optional end of cycle analysis
+          endOfCycleAnalysis: {
+            goalMet: false,
+            teacherOutcomeAnalysis: [],
+            studentOutcomeAnalysis: [],
+            impactOnLearning: "",
+            overallEvidence: [],
+            lessonsLearned: "",
+            recommendationsForNext: "",
+          },
+        };
+
+        const result = await createCoachingActionPlan(coachingActionPlanData);
+
+        if (result.success && result.data) {
+          setIsSubmitted(true);
+          if (onSuccess) {
+            onSuccess(result.data);
+          }
+          // Close dialog after a brief moment
+          setTimeout(() => {
+            handleClose();
+          }, 1500);
+        } else {
+          setError(result.error || "Failed to create plan");
         }
-      };
-
-      const result = await createCoachingActionPlan(coachingActionPlanData);
-      
-      if (result.success && result.data) {
-        setIsSubmitted(true);
-        if (onSuccess) {
-          onSuccess(result.data);
-        }
-        // Close dialog after a brief moment
-        setTimeout(() => {
-          handleClose();
-        }, 1500);
-      } else {
-        setError(result.error || 'Failed to create plan');
+      } catch (error) {
+        console.error("Create plan error:", error);
+        setError(
+          error instanceof Error ? error.message : "Failed to create plan",
+        );
+      } finally {
+        setIsCreating(false);
       }
-      
-    } catch (error) {
-      console.error('Create plan error:', error);
-      setError(error instanceof Error ? error.message : 'Failed to create plan');
-    } finally {
-      setIsCreating(false);
-    }
-  }, [formData, isFormValid, onSuccess, handleClose]);
+    },
+    [formData, isFormValid, onSuccess, handleClose],
+  );
 
   if (isSubmitted) {
     return (
@@ -142,8 +154,12 @@ export function CreateCoachingActionPlanDialog({
           <div className="flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mx-auto mb-4">
             <CheckIcon className="h-6 w-6 text-green-600" />
           </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Plan Created Successfully!</h2>
-          <p className="text-sm text-gray-600">Your coaching action plan has been created and is ready for editing.</p>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">
+            Plan Created Successfully!
+          </h2>
+          <p className="text-sm text-gray-600">
+            Your coaching action plan has been created and is ready for editing.
+          </p>
         </div>
       </Dialog>
     );
@@ -157,15 +173,22 @@ export function CreateCoachingActionPlanDialog({
             <ClipboardDocumentListIcon className="h-5 w-5 text-blue-600" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Create Coaching Action Plan</h2>
-            <p className="text-sm text-gray-600">Start with basic information - you can add details later</p>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Create Coaching Action Plan
+            </h2>
+            <p className="text-sm text-gray-600">
+              Start with basic information - you can add details later
+            </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Plan Title */}
           <div>
-            <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-900">
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
               Plan Title *
             </label>
             <div className="mt-2">
@@ -175,15 +198,18 @@ export function CreateCoachingActionPlanDialog({
                 required
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="Enter a descriptive title for this coaching action plan"
-                value={formData.title || ''}
-                onChange={(e) => handleFieldChange('title', e.target.value)}
+                value={formData.title || ""}
+                onChange={(e) => handleFieldChange("title", e.target.value)}
               />
             </div>
           </div>
 
           {/* Academic Year */}
           <div>
-            <label htmlFor="academicYear" className="block text-sm font-medium leading-6 text-gray-900">
+            <label
+              htmlFor="academicYear"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
               Academic Year *
             </label>
             <div className="mt-2">
@@ -193,15 +219,20 @@ export function CreateCoachingActionPlanDialog({
                 required
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="e.g., 2024-2025"
-                value={formData.academicYear || ''}
-                onChange={(e) => handleFieldChange('academicYear', e.target.value)}
+                value={formData.academicYear || ""}
+                onChange={(e) =>
+                  handleFieldChange("academicYear", e.target.value)
+                }
               />
             </div>
           </div>
 
           {/* Start Date */}
           <div>
-            <label htmlFor="startDate" className="block text-sm font-medium leading-6 text-gray-900">
+            <label
+              htmlFor="startDate"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
               Start Date
             </label>
             <div className="mt-2">
@@ -209,8 +240,17 @@ export function CreateCoachingActionPlanDialog({
                 id="startDate"
                 type="date"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                value={formData.startDate ? new Date(formData.startDate).toISOString().split('T')[0] : ''}
-                onChange={(e) => handleFieldChange('startDate', e.target.value ? new Date(e.target.value) : undefined)}
+                value={
+                  formData.startDate
+                    ? new Date(formData.startDate).toISOString().split("T")[0]
+                    : ""
+                }
+                onChange={(e) =>
+                  handleFieldChange(
+                    "startDate",
+                    e.target.value ? new Date(e.target.value) : undefined,
+                  )
+                }
               />
             </div>
           </div>
@@ -223,11 +263,7 @@ export function CreateCoachingActionPlanDialog({
 
           {/* Dialog Actions */}
           <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
-            <Button
-              appearance="outline"
-              onClick={handleClose}
-              type="button"
-            >
+            <Button appearance="outline" onClick={handleClose} type="button">
               Cancel
             </Button>
             <Button
@@ -243,4 +279,4 @@ export function CreateCoachingActionPlanDialog({
       </div>
     </Dialog>
   );
-} 
+}

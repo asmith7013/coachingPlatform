@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback } from 'react';
-import { Dialog } from './Dialog';
-import { Button } from '@/components/core';
-import { Alert } from '@/components/core/feedback';
-import { 
-  ClipboardDocumentIcon, 
-  CheckIcon, 
-  BuildingLibraryIcon 
-} from '@heroicons/react/24/outline';
-import { useSchoolsMutations } from '@hooks/domain/useSchools';
-import { AI_PROMPTS } from '@ui/data-import/schema-templates';
-import { validateJsonString } from '@data-processing/validation/validation-helpers';
-import { SchoolInputZodSchema } from '@zod-schema/core/school';
-import { createDataPreview } from '@data-processing/transformers/ui/data-preview';
-import type { SchoolInput } from '@domain-types/school';
+import React, { useState, useCallback } from "react";
+import { Dialog } from "./Dialog";
+import { Button } from "@/components/core";
+import { Alert } from "@/components/core/feedback";
+import {
+  ClipboardDocumentIcon,
+  CheckIcon,
+  BuildingLibraryIcon,
+} from "@heroicons/react/24/outline";
+import { useSchoolsMutations } from "@hooks/domain/useSchools";
+import { AI_PROMPTS } from "@ui/data-import/schema-templates";
+import { validateJsonString } from "@data-processing/validation/validation-helpers";
+import { SchoolInputZodSchema } from "@zod-schema/core/school";
+import { createDataPreview } from "@data-processing/transformers/ui/data-preview";
+import type { SchoolInput } from "@domain-types/school";
 
 interface CreateSchoolDialogProps {
   open: boolean;
@@ -23,8 +23,8 @@ interface CreateSchoolDialogProps {
 
 export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
   const [schoolData, setSchoolData] = useState<SchoolInput | null>(null);
-  const [jsonInput, setJsonInput] = useState('');
-  const [validationError, setValidationError] = useState('');
+  const [jsonInput, setJsonInput] = useState("");
+  const [validationError, setValidationError] = useState("");
   const [showPrompt, setShowPrompt] = useState(false);
 
   const { create: createSchool, isCreating } = useSchoolsMutations();
@@ -37,24 +37,24 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
   // Reset state when dialog closes
   const handleClose = useCallback(() => {
     setSchoolData(null);
-    setJsonInput('');
-    setValidationError('');
+    setJsonInput("");
+    setValidationError("");
     setShowPrompt(false);
     onClose();
   }, [onClose]);
 
   // Validation and parsing handler
   const handleValidateAndParse = useCallback((jsonString: string) => {
-    setValidationError('');
-    
+    setValidationError("");
+
     const result = validateJsonString(jsonString, SchoolInputZodSchema);
     if (!result.success) {
       setValidationError(result.error);
       return false;
     }
-    
+
     setSchoolData(result.data);
-    setJsonInput('');
+    setJsonInput("");
     setShowPrompt(false);
     return true;
   }, []);
@@ -72,19 +72,21 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
         gradeLevelsSupported: [],
         yearsOfIMImplementation: 0, // Default to 0 if not provided
         ...schoolData,
-        schoolNumber: (schoolData.schoolNumber as string | undefined) || '',
-        district: (schoolData.district as string | undefined) || '',
-        schoolName: (schoolData.schoolName as string | undefined) || '',
-        emoji: (schoolData.emoji as string | undefined) || '',
-        address: (schoolData.address as string | undefined) || '',
+        schoolNumber: (schoolData.schoolNumber as string | undefined) || "",
+        district: (schoolData.district as string | undefined) || "",
+        schoolName: (schoolData.schoolName as string | undefined) || "",
+        emoji: (schoolData.emoji as string | undefined) || "",
+        address: (schoolData.address as string | undefined) || "",
       };
 
       createSchool(schoolDataWithRequiredFields);
-      alert('School created successfully!');
+      alert("School created successfully!");
       handleClose();
     } catch (error) {
-      console.error('Error creating school:', error);
-      alert(`Failed to create school: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Error creating school:", error);
+      alert(
+        `Failed to create school: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }, [schoolData, createSchool, handleClose]);
 
@@ -96,8 +98,12 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
             <BuildingLibraryIcon className="h-5 w-5 text-blue-600" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Create New School</h2>
-            <p className="text-sm text-gray-600">Use AI to populate your school data from any format</p>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Create New School
+            </h2>
+            <p className="text-sm text-gray-600">
+              Use AI to populate your school data from any format
+            </p>
           </div>
         </div>
 
@@ -107,9 +113,12 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
               <div className="text-center">
                 <ClipboardDocumentIcon className="mx-auto h-12 w-12 text-gray-400" />
                 <div className="mt-4">
-                  <h3 className="text-sm font-semibold text-gray-900">Import School Data</h3>
+                  <h3 className="text-sm font-semibold text-gray-900">
+                    Import School Data
+                  </h3>
                   <p className="mt-2 text-sm text-gray-600">
-                    Copy the prompt, use it with AI, then paste the result back here
+                    Copy the prompt, use it with AI, then paste the result back
+                    here
                   </p>
                 </div>
                 <div className="mt-6">
@@ -117,7 +126,7 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
                     intent="primary"
                     onClick={() => setShowPrompt(!showPrompt)}
                   >
-                    {showPrompt ? 'Hide' : 'Show'} AI Prompt
+                    {showPrompt ? "Hide" : "Show"} AI Prompt
                   </Button>
                 </div>
               </div>
@@ -127,7 +136,9 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
               <div className="space-y-4">
                 <div className="rounded-lg bg-gray-50 p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-medium text-gray-900">Copy this to AI:</h4>
+                    <h4 className="text-sm font-medium text-gray-900">
+                      Copy this to AI:
+                    </h4>
                     <Button
                       appearance="outline"
                       textSize="sm"
@@ -142,7 +153,10 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
                 </div>
 
                 <div>
-                  <label htmlFor="school-json" className="block text-sm font-medium leading-6 text-gray-900">
+                  <label
+                    htmlFor="school-json"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
                     Paste AI response here:
                   </label>
                   <div className="mt-2">
@@ -177,27 +191,40 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
           <div className="space-y-4">
             <Alert intent="success">
               <CheckIcon className="h-5 w-5" />
-              <Alert.Description>School data imported successfully!</Alert.Description>
+              <Alert.Description>
+                School data imported successfully!
+              </Alert.Description>
             </Alert>
-            
+
             <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">{String(schoolData.schoolName)}</h3>
-              <p className="text-sm text-gray-600">District: {String(schoolData.district)}</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {String(schoolData.schoolName)}
+              </h3>
+              <p className="text-sm text-gray-600">
+                District: {String(schoolData.district)}
+              </p>
               {(schoolData.address as string | undefined) && (
-                <p className="text-sm text-gray-600">Address: {String(schoolData.address as string)}</p>
-              )}
-              {(schoolData.gradeLevelsSupported as string[] | undefined) && Array.isArray(schoolData.gradeLevelsSupported) && schoolData.gradeLevelsSupported.length > 0 && (
                 <p className="text-sm text-gray-600">
-                  Grades: {(schoolData.gradeLevelsSupported as string[]).join(', ')}
+                  Address: {String(schoolData.address as string)}
                 </p>
               )}
+              {(schoolData.gradeLevelsSupported as string[] | undefined) &&
+                Array.isArray(schoolData.gradeLevelsSupported) &&
+                schoolData.gradeLevelsSupported.length > 0 && (
+                  <p className="text-sm text-gray-600">
+                    Grades:{" "}
+                    {(schoolData.gradeLevelsSupported as string[]).join(", ")}
+                  </p>
+                )}
             </div>
 
             {/* Data preview */}
             <div className="bg-white border rounded-lg p-4">
-              <h4 className="text-sm font-medium text-gray-900 mb-2">Data Preview</h4>
+              <h4 className="text-sm font-medium text-gray-900 mb-2">
+                Data Preview
+              </h4>
               <pre className="text-xs text-gray-700 bg-gray-50 p-3 rounded overflow-x-auto max-h-40">
-                {createDataPreview(schoolData, 'school')}
+                {createDataPreview(schoolData, "school")}
               </pre>
             </div>
           </div>
@@ -205,10 +232,7 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
 
         {/* Dialog Actions */}
         <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
-          <Button
-            appearance="outline"
-            onClick={handleClose}
-          >
+          <Button appearance="outline" onClick={handleClose}>
             Cancel
           </Button>
           {schoolData ? (
@@ -232,4 +256,4 @@ export function CreateSchoolDialog({ open, onClose }: CreateSchoolDialogProps) {
       </div>
     </Dialog>
   );
-} 
+}

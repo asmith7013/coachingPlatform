@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  FolderOpenIcon,
-  DocumentArrowUpIcon,
-} from "@heroicons/react/24/solid";
+import { FolderOpenIcon, DocumentArrowUpIcon } from "@heroicons/react/24/solid";
 import { useToast } from "@/components/core/feedback/Toast";
 import { CurriculumScanTab, ApiImportTab, JsonImportTab } from "./components";
 import type { ImportMode } from "./components";

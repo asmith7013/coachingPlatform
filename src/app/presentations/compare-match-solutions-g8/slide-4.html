@@ -1,78 +1,304 @@
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 40px 60px 120px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; position: relative;">
+<div
+  class="slide-container"
+  style="
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #121212 0%, #14141e 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 40px 60px 120px 60px;
+    color: #ffffff;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+    position: relative;
+  "
+>
+  <h2
+    style="
+      font-size: 38px;
+      font-weight: 700;
+      color: #fbbf24;
+      margin: 0 0 25px 0;
+      text-transform: uppercase;
+    "
+  >
+    Step 1: Model
+  </h2>
 
-    <h2 style="font-size: 38px; font-weight: 700; color: #fbbf24; margin: 0 0 25px 0; text-transform: uppercase;">Step 1: Model</h2>
+  <p style="font-size: 22px; color: #94a3b8; margin: 0 0 25px 0">
+    Let <strong style="color: #a855f7">m</strong> = number of movies rented
+  </p>
 
-    <p style="font-size: 22px; color: #94a3b8; margin: 0 0 25px 0;">Let <strong style="color: #a855f7;">m</strong> = number of movies rented</p>
-
-    <div style="display: flex; gap: 40px; align-items: flex-start;">
-        <!-- Stream Plus -->
-        <div style="flex: 1; background: rgba(168, 85, 247, 0.1); border: 2px solid #a855f7; border-radius: 16px; padding: 25px;">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
-                <span style="font-size: 36px;">📺</span>
-                <h3 style="font-size: 26px; font-weight: 700; color: #a855f7; margin: 0;">Stream Plus</h3>
-            </div>
-            <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px;">
-                <p style="font-size: 18px; color: #cbd5e1; margin: 0 0 8px 0;"><strong style="color: #fbbf24;">$12</strong> subscription</p>
-                <p style="font-size: 18px; color: #cbd5e1; margin: 0;"><strong style="color: #fbbf24;">+ $1</strong> per movie</p>
-            </div>
-            <div style="margin-top: 15px; background: rgba(251, 191, 36, 0.2); border: 2px solid #fbbf24; border-radius: 10px; padding: 15px; text-align: center;">
-                <p style="font-size: 16px; color: #94a3b8; margin: 0 0 5px 0;">Total Cost Expression:</p>
-                <p style="font-size: 32px; font-family: 'Courier New', monospace; color: #fbbf24; margin: 0; font-weight: 700;">12 + 1m</p>
-            </div>
-        </div>
-
-        <!-- Movie Maverick -->
-        <div style="flex: 1; background: rgba(59, 130, 246, 0.1); border: 2px solid #3b82f6; border-radius: 16px; padding: 25px;">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
-                <span style="font-size: 36px;">🎬</span>
-                <h3 style="font-size: 26px; font-weight: 700; color: #3b82f6; margin: 0;">Movie Maverick</h3>
-            </div>
-            <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px;">
-                <p style="font-size: 18px; color: #cbd5e1; margin: 0 0 8px 0;"><strong style="color: #4ade80;">No subscription</strong></p>
-                <p style="font-size: 18px; color: #cbd5e1; margin: 0;"><strong style="color: #fbbf24;">$3</strong> per movie</p>
-            </div>
-            <div style="margin-top: 15px; background: rgba(251, 191, 36, 0.2); border: 2px solid #fbbf24; border-radius: 10px; padding: 15px; text-align: center;">
-                <p style="font-size: 16px; color: #94a3b8; margin: 0 0 5px 0;">Total Cost Expression:</p>
-                <p style="font-size: 32px; font-family: 'Courier New', monospace; color: #fbbf24; margin: 0; font-weight: 700;">3m</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Key Insight Box -->
-    <div style="background: rgba(74, 222, 128, 0.15); border: 2px solid #4ade80; border-radius: 16px; padding: 18px 30px; margin-top: 25px; max-width: 700px;">
-        <p style="font-size: 20px; color: #e2e8f0; margin: 0; line-height: 1.5; text-align: center;">
-            <strong style="color: #4ade80;">The $12 is a fixed cost</strong> - you pay it no matter how many movies you watch. The expression must include both parts!
+  <div style="display: flex; gap: 40px; align-items: flex-start">
+    <!-- Stream Plus -->
+    <div
+      style="
+        flex: 1;
+        background: rgba(168, 85, 247, 0.1);
+        border: 2px solid #a855f7;
+        border-radius: 16px;
+        padding: 25px;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 15px;
+        "
+      >
+        <span style="font-size: 36px">📺</span>
+        <h3
+          style="font-size: 26px; font-weight: 700; color: #a855f7; margin: 0"
+        >
+          Stream Plus
+        </h3>
+      </div>
+      <div
+        style="
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 12px;
+          padding: 15px;
+        "
+      >
+        <p style="font-size: 18px; color: #cbd5e1; margin: 0 0 8px 0">
+          <strong style="color: #fbbf24">$12</strong> subscription
         </p>
+        <p style="font-size: 18px; color: #cbd5e1; margin: 0">
+          <strong style="color: #fbbf24">+ $1</strong> per movie
+        </p>
+      </div>
+      <div
+        style="
+          margin-top: 15px;
+          background: rgba(251, 191, 36, 0.2);
+          border: 2px solid #fbbf24;
+          border-radius: 10px;
+          padding: 15px;
+          text-align: center;
+        "
+      >
+        <p style="font-size: 16px; color: #94a3b8; margin: 0 0 5px 0">
+          Total Cost Expression:
+        </p>
+        <p
+          style="
+            font-size: 32px;
+            font-family: &quot;Courier New&quot;, monospace;
+            color: #fbbf24;
+            margin: 0;
+            font-weight: 700;
+          "
+        >
+          12 + 1m
+        </p>
+      </div>
     </div>
 
+    <!-- Movie Maverick -->
+    <div
+      style="
+        flex: 1;
+        background: rgba(59, 130, 246, 0.1);
+        border: 2px solid #3b82f6;
+        border-radius: 16px;
+        padding: 25px;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 15px;
+        "
+      >
+        <span style="font-size: 36px">🎬</span>
+        <h3
+          style="font-size: 26px; font-weight: 700; color: #3b82f6; margin: 0"
+        >
+          Movie Maverick
+        </h3>
+      </div>
+      <div
+        style="
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 12px;
+          padding: 15px;
+        "
+      >
+        <p style="font-size: 18px; color: #cbd5e1; margin: 0 0 8px 0">
+          <strong style="color: #4ade80">No subscription</strong>
+        </p>
+        <p style="font-size: 18px; color: #cbd5e1; margin: 0">
+          <strong style="color: #fbbf24">$3</strong> per movie
+        </p>
+      </div>
+      <div
+        style="
+          margin-top: 15px;
+          background: rgba(251, 191, 36, 0.2);
+          border: 2px solid #fbbf24;
+          border-radius: 10px;
+          padding: 15px;
+          text-align: center;
+        "
+      >
+        <p style="font-size: 16px; color: #94a3b8; margin: 0 0 5px 0">
+          Total Cost Expression:
+        </p>
+        <p
+          style="
+            font-size: 32px;
+            font-family: &quot;Courier New&quot;, monospace;
+            color: #fbbf24;
+            margin: 0;
+            font-weight: 700;
+          "
+        >
+          3m
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Insight Box -->
+  <div
+    style="
+      background: rgba(74, 222, 128, 0.15);
+      border: 2px solid #4ade80;
+      border-radius: 16px;
+      padding: 18px 30px;
+      margin-top: 25px;
+      max-width: 700px;
+    "
+  >
+    <p
+      style="
+        font-size: 20px;
+        color: #e2e8f0;
+        margin: 0;
+        line-height: 1.5;
+        text-align: center;
+      "
+    >
+      <strong style="color: #4ade80">The $12 is a fixed cost</strong> - you pay
+      it no matter how many movies you watch. The expression must include both
+      parts!
+    </p>
+  </div>
 </div>
 
 <!-- Toggle button -->
-<button id="toggle-hint" onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('answer-box').style.transform='translateY(0)';" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 16px; background: rgba(148, 163, 184, 0.1); border: 2px solid #94a3b8; padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s; animation: pulse 2s ease-in-out infinite; z-index: 200; user-select: none;">
-    ↓ Show Answer
+<button
+  id="toggle-hint"
+  onclick="document.getElementById('toggle-hint').style.display='none'; document.getElementById('answer-box').style.transform='translateY(0)';"
+  style="
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #94a3b8;
+    font-size: 16px;
+    background: rgba(148, 163, 184, 0.1);
+    border: 2px solid #94a3b8;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    animation: pulse 2s ease-in-out infinite;
+    z-index: 200;
+    user-select: none;
+  "
+>
+  ↓ Show Answer
 </button>
 
 <!-- Answer Box at bottom -->
-<div id="answer-box" style="position: fixed; bottom: 0; left: 0; right: 0; transform: translateY(100%); transition: transform 0.3s ease-out; z-index: 100;">
-    <div style="background: #4ade80; border-top: 4px solid #22c55e; padding: 1.25rem 2rem; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5); position: relative;">
-        <button onclick="document.getElementById('answer-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';" style="position: absolute; top: 0.75rem; right: 1rem; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); border: none; border-radius: 4px; cursor: pointer; color: #000; font-size: 20px; font-weight: bold; line-height: 1; transition: background 0.2s;">
-            x
-        </button>
-        <div style="display: inline-block; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; margin-right: 12px;">✅ ANSWER</div>
-        <span style="color: #000000; font-size: 1.1rem; font-weight: 600;">
-            Because Stream Plus has a $12 subscription fee you pay even if you rent 0 movies. The expression must capture BOTH the fixed cost AND the per-movie cost.
-        </span>
+<div
+  id="answer-box"
+  style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+    z-index: 100;
+  "
+>
+  <div
+    style="
+      background: #4ade80;
+      border-top: 4px solid #22c55e;
+      padding: 1.25rem 2rem;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+    "
+  >
+    <button
+      onclick="document.getElementById('answer-box').style.transform='translateY(100%)'; document.getElementById('toggle-hint').style.display='block';"
+      style="
+        position: absolute;
+        top: 0.75rem;
+        right: 1rem;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.2);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #000;
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 1;
+        transition: background 0.2s;
+      "
+    >
+      x
+    </button>
+    <div
+      style="
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-right: 12px;
+      "
+    >
+      ✅ ANSWER
     </div>
+    <span style="color: #000000; font-size: 1.1rem; font-weight: 600">
+      Because Stream Plus has a $12 subscription fee you pay even if you rent 0
+      movies. The expression must capture BOTH the fixed cost AND the per-movie
+      cost.
+    </span>
+  </div>
 </div>
 
 <style>
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
 
-#toggle-hint:hover {
+  #toggle-hint:hover {
     background: rgba(148, 163, 184, 0.2);
     transform: translateX(-50%) scale(1.05);
-}
+  }
 </style>

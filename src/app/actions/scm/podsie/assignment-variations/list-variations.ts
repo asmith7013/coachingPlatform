@@ -1,8 +1,8 @@
 "use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { AssignmentVariationModel } from '@mongoose-schema/scm/podsie';
-import { handleServerError } from '@error/handlers/server';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { AssignmentVariationModel } from "@mongoose-schema/scm/podsie";
+import { handleServerError } from "@error/handlers/server";
 
 interface ListVariationsFilters {
   scopeSequenceTag?: string;
@@ -13,7 +13,9 @@ interface ListVariationsFilters {
   skip?: number;
 }
 
-export async function listAssignmentVariations(filters?: ListVariationsFilters) {
+export async function listAssignmentVariations(
+  filters?: ListVariationsFilters,
+) {
   return withDbConnection(async () => {
     try {
       const query: Record<string, unknown> = {};
@@ -38,24 +40,26 @@ export async function listAssignmentVariations(filters?: ListVariationsFilters) 
       // Only show public variations
       query.isPublic = true;
 
-      const variations = await AssignmentVariationModel
-        .find(query)
+      const variations = await AssignmentVariationModel.find(query)
         .sort({ unitNumber: 1, lessonNumber: 1, createdAt: -1 })
         .limit(filters?.limit || 50)
         .skip(filters?.skip || 0)
-        .select('title slug scopeSequenceTag grade unitNumber lessonNumber section originalAssignmentName questions generatedBy isPublic createdAt');
+        .select(
+          "title slug scopeSequenceTag grade unitNumber lessonNumber section originalAssignmentName questions generatedBy isPublic createdAt",
+        );
 
       const total = await AssignmentVariationModel.countDocuments(query);
 
       return {
         success: true,
-        data: variations.map(v => {
+        data: variations.map((v) => {
           const json = v.toJSON();
           return {
             ...json,
             _id: v._id.toString(),
             id: v._id.toString(),
-            questionCount: (json as { questions?: unknown[] }).questions?.length || 0,
+            questionCount:
+              (json as { questions?: unknown[] }).questions?.length || 0,
           };
         }),
         pagination: {
@@ -68,7 +72,7 @@ export async function listAssignmentVariations(filters?: ListVariationsFilters) 
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to list assignment variations'),
+        error: handleServerError(error, "Failed to list assignment variations"),
       };
     }
   });

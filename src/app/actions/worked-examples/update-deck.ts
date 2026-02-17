@@ -1,10 +1,10 @@
 "use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
-import { type HtmlSlide } from '@zod-schema/scm/worked-example';
-import { getAuthenticatedUser } from '@/lib/server/auth';
-import { handleServerError } from '@error/handlers/server';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { WorkedExampleDeck } from "@mongoose-schema/worked-example-deck.model";
+import { type HtmlSlide } from "@zod-schema/scm/worked-example";
+import { getAuthenticatedUser } from "@/lib/server/auth";
+import { handleServerError } from "@error/handlers/server";
 
 interface UpdateDeckSlidesInput {
   slug: string;
@@ -26,7 +26,7 @@ export async function updateDeckSlides(input: UpdateDeckSlidesInput) {
       if (!authResult.success) {
         return {
           success: false,
-          error: 'Unauthorized. Please sign in to update a deck.',
+          error: "Unauthorized. Please sign in to update a deck.",
         };
       }
 
@@ -34,7 +34,9 @@ export async function updateDeckSlides(input: UpdateDeckSlidesInput) {
       const userIdentifier = email || userId;
 
       // Find the existing deck
-      const existingDeck = await WorkedExampleDeck.findOne({ slug: input.slug });
+      const existingDeck = await WorkedExampleDeck.findOne({
+        slug: input.slug,
+      });
 
       if (!existingDeck) {
         return {
@@ -47,7 +49,7 @@ export async function updateDeckSlides(input: UpdateDeckSlidesInput) {
       if (existingDeck.createdBy !== userIdentifier) {
         return {
           success: false,
-          error: 'You do not have permission to update this deck.',
+          error: "You do not have permission to update this deck.",
         };
       }
 
@@ -56,7 +58,8 @@ export async function updateDeckSlides(input: UpdateDeckSlidesInput) {
         if (!slide.slideNumber || !slide.htmlContent) {
           return {
             success: false,
-            error: 'Invalid slide data: each slide must have slideNumber and htmlContent',
+            error:
+              "Invalid slide data: each slide must have slideNumber and htmlContent",
           };
         }
       }
@@ -76,13 +79,13 @@ export async function updateDeckSlides(input: UpdateDeckSlidesInput) {
       const updatedDeck = await WorkedExampleDeck.findByIdAndUpdate(
         existingDeck._id,
         updateFields,
-        { new: true }
+        { new: true },
       );
 
       if (!updatedDeck) {
         return {
           success: false,
-          error: 'Failed to update deck',
+          error: "Failed to update deck",
         };
       }
 
@@ -94,7 +97,7 @@ export async function updateDeckSlides(input: UpdateDeckSlidesInput) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to update deck slides'),
+        error: handleServerError(error, "Failed to update deck slides"),
       };
     }
   });

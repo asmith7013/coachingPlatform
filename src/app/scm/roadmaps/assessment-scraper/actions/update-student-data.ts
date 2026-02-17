@@ -1,9 +1,9 @@
 "use server";
 
 import { z } from "zod";
-import { StudentModel } from '@/lib/schema/mongoose-schema/scm/student/student.model';
-import { type AssessmentRow } from '@/lib/schema/zod-schema/scm/assessment-scraper';
-import { groupByStudent, groupBySkill } from '../lib/csv-parser';
+import { StudentModel } from "@/lib/schema/mongoose-schema/scm/student/student.model";
+import { type AssessmentRow } from "@/lib/schema/zod-schema/scm/assessment-scraper";
+import { groupByStudent, groupBySkill } from "../lib/csv-parser";
 import { handleServerError } from "@error/handlers/server";
 import { connectToDB } from "@server/db/connection";
 
@@ -11,16 +11,18 @@ import { connectToDB } from "@server/db/connection";
  * Request schema for updating student data
  */
 const UpdateStudentDataRequestZod = z.object({
-  assessmentData: z.array(z.object({
-    name: z.string(),
-    skillName: z.string(),
-    skillNumber: z.string(),
-    attempt: z.number(),
-    dateCompleted: z.string(),
-    result: z.string()
-  })),
+  assessmentData: z.array(
+    z.object({
+      name: z.string(),
+      skillName: z.string(),
+      skillNumber: z.string(),
+      attempt: z.number(),
+      dateCompleted: z.string(),
+      result: z.string(),
+    }),
+  ),
   schoolId: z.string(),
-  assessmentDate: z.string() // Date when this assessment data was collected
+  assessmentDate: z.string(), // Date when this assessment data was collected
 });
 
 /**
@@ -49,7 +51,9 @@ function getNumericScore(scoreString: string): number {
  * - 60% or lower: "Attempted But Not Mastered" ⏳
  * - Not attempted: "Not Started"
  */
-function getStatus(bestScore: number): "Mastered" | "Attempted But Not Mastered" | "Not Started" {
+function getStatus(
+  bestScore: number,
+): "Mastered" | "Attempted But Not Mastered" | "Not Started" {
   if (bestScore === 80 || bestScore === 100) return "Mastered";
   if (bestScore > 0) return "Attempted But Not Mastered";
   return "Not Started";
@@ -61,9 +65,10 @@ function getStatus(bestScore: number): "Mastered" | "Attempted But Not Mastered"
 export async function updateStudentData(request: unknown) {
   try {
     // Validate request
-    const { assessmentData, schoolId, assessmentDate } = UpdateStudentDataRequestZod.parse(request);
+    const { assessmentData, schoolId, assessmentDate } =
+      UpdateStudentDataRequestZod.parse(request);
 
-    console.log('🔄 Starting student data update...');
+    console.log("🔄 Starting student data update...");
     console.log(`   📊 Total rows: ${assessmentData.length}`);
     console.log(`   🏫 School ID: ${schoolId}`);
     console.log(`   📅 Assessment Date: ${assessmentDate}`);
@@ -83,7 +88,9 @@ export async function updateStudentData(request: unknown) {
     for (const [studentName, studentRows] of studentGroups) {
       try {
         // Parse student name (format: "LASTNAME, FIRSTNAME")
-        const [lastName, firstName] = studentName.split(',').map(s => s.trim());
+        const [lastName, firstName] = studentName
+          .split(",")
+          .map((s) => s.trim());
 
         if (!lastName || !firstName) {
           const errorMsg = `Invalid student name format: "${studentName}" (expected "LASTNAME, FIRSTNAME")`;
@@ -94,8 +101,8 @@ export async function updateStudentData(request: unknown) {
 
         // Look up student in database to get their actual studentID
         const student = await StudentModel.findOne({
-          firstName: new RegExp(`^${firstName}$`, 'i'),
-          lastName: new RegExp(`^${lastName}$`, 'i')
+          firstName: new RegExp(`^${firstName}$`, "i"),
+          lastName: new RegExp(`^${lastName}$`, "i"),
         }).lean();
 
         if (!student) {
@@ -114,33 +121,36 @@ export async function updateStudentData(request: unknown) {
 
         for (const [skillNumber, skillAttempts] of skillGroups) {
           // Sort attempts by attempt number
-          const sortedAttempts = skillAttempts.sort((a, b) => a.attempt - b.attempt);
+          const sortedAttempts = skillAttempts.sort(
+            (a, b) => a.attempt - b.attempt,
+          );
 
           // Build attempts array
-          const attempts = sortedAttempts.map(attempt => ({
+          const attempts = sortedAttempts.map((attempt) => ({
             attemptNumber: attempt.attempt,
             dateCompleted: attempt.dateCompleted,
             score: attempt.result,
-            passed: isPassed(attempt.result)
+            passed: isPassed(attempt.result),
           }));
 
           // Calculate best score
-          const scores = sortedAttempts.map(a => getNumericScore(a.result));
+          const scores = sortedAttempts.map((a) => getNumericScore(a.result));
           const bestScore = Math.max(...scores);
           const bestScoreString = `${bestScore}%`;
 
           // Find mastered date (first passing attempt)
-          const firstPassed = sortedAttempts.find(a => isPassed(a.result));
+          const firstPassed = sortedAttempts.find((a) => isPassed(a.result));
           const masteredDate = firstPassed?.dateCompleted || undefined;
 
           // Get last attempt date
-          const lastAttemptDate = sortedAttempts[sortedAttempts.length - 1].dateCompleted;
+          const lastAttemptDate =
+            sortedAttempts[sortedAttempts.length - 1].dateCompleted;
 
           // Determine status
           const status = getStatus(bestScore);
 
           // Add to mastered skills if mastered
-          if (status === 'Mastered') {
+          if (status === "Mastered") {
             masteredSkills.push(skillNumber);
           }
 
@@ -157,29 +167,38 @@ export async function updateStudentData(request: unknown) {
             bestScore: bestScoreString,
             attemptCount: attempts.length,
             masteredDate: masteredDate,
-            lastAttemptDate: lastAttemptDate
+            lastAttemptDate: lastAttemptDate,
           });
         }
 
         // Fetch existing student data to merge
-        const existingStudent = await StudentModel.findOne({ studentID: student.studentID }).lean();
+        const existingStudent = await StudentModel.findOne({
+          studentID: student.studentID,
+        }).lean();
 
         // Merge skill performances (keep existing skills not in current assessment)
-        const existingSkillPerformances = (existingStudent?.skillPerformances || []) as Array<{ skillCode: string; [key: string]: unknown }>;
-        const newSkillCodes = new Set(skillPerformances.map(sp => sp.skillCode));
+        const existingSkillPerformances = (existingStudent?.skillPerformances ||
+          []) as Array<{ skillCode: string; [key: string]: unknown }>;
+        const newSkillCodes = new Set(
+          skillPerformances.map((sp) => sp.skillCode),
+        );
 
         // Keep existing skills that aren't in the new data
         const keptSkillPerformances = existingSkillPerformances.filter(
-          (sp) => !newSkillCodes.has(sp.skillCode)
+          (sp) => !newSkillCodes.has(sp.skillCode),
         );
 
         // Combine existing (non-updated) skills with new/updated skills
-        const mergedSkillPerformances = [...keptSkillPerformances, ...skillPerformances];
+        const mergedSkillPerformances = [
+          ...keptSkillPerformances,
+          ...skillPerformances,
+        ];
 
         // Merge mastered skills (union of existing and new)
-        const existingMasteredSkills = (existingStudent?.masteredSkills || []) as string[];
+        const existingMasteredSkills = (existingStudent?.masteredSkills ||
+          []) as string[];
         const mergedMasteredSkills = Array.from(
-          new Set([...existingMasteredSkills, ...masteredSkills])
+          new Set([...existingMasteredSkills, ...masteredSkills]),
         );
 
         // Update student document with merged skill performances
@@ -189,13 +208,13 @@ export async function updateStudentData(request: unknown) {
             $set: {
               skillPerformances: mergedSkillPerformances,
               masteredSkills: mergedMasteredSkills,
-              lastAssessmentDate: assessmentDate
-            }
+              lastAssessmentDate: assessmentDate,
+            },
           },
           {
             new: true,
-            runValidators: true
-          }
+            runValidators: true,
+          },
         );
 
         if (!result) {
@@ -203,16 +222,17 @@ export async function updateStudentData(request: unknown) {
         }
 
         studentsUpdated++;
-        console.log(`  ✅ Updated: ${studentName} (${skillPerformances.length} skills, ${masteredSkills.length} mastered)`);
-
+        console.log(
+          `  ✅ Updated: ${studentName} (${skillPerformances.length} skills, ${masteredSkills.length} mastered)`,
+        );
       } catch (studentError) {
-        const errorMsg = `Failed to update ${studentName}: ${studentError instanceof Error ? studentError.message : 'Unknown error'}`;
+        const errorMsg = `Failed to update ${studentName}: ${studentError instanceof Error ? studentError.message : "Unknown error"}`;
         console.error(`  ❌ ${errorMsg}`);
         errors.push(errorMsg);
       }
     }
 
-    console.log('✅ Student data update complete');
+    console.log("✅ Student data update complete");
     console.log(`   📝 Students updated: ${studentsUpdated}`);
     console.log(`   ❌ Errors: ${errors.length}`);
 
@@ -222,23 +242,22 @@ export async function updateStudentData(request: unknown) {
         studentsUpdated,
         studentsCreated,
         totalStudents: studentGroups.size,
-        errors
-      }
+        errors,
+      },
     };
-
   } catch (error) {
-    console.error('💥 Error in updateStudentData:', error);
+    console.error("💥 Error in updateStudentData:", error);
 
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: `Validation error: ${error.issues.map((e: z.ZodIssue) => e.message).join(', ')}`
+        error: `Validation error: ${error.issues.map((e: z.ZodIssue) => e.message).join(", ")}`,
       };
     }
 
     return {
       success: false,
-      error: handleServerError(error, 'updateStudentData')
+      error: handleServerError(error, "updateStudentData"),
     };
   }
 }

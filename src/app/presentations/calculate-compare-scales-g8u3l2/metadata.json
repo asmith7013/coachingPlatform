@@ -13,9 +13,5 @@
     "Compare graphs that represent the same proportional relationship using differently scaled axes",
     "Create graphs representing the same proportional relationship using differently scaled axes, and identify which graph to use to answer specific questions"
   ],
-  "scenarios": [
-    "Streaming Stats",
-    "Coffee Shop Sales",
-    "Gaming XP Rates"
-  ]
+  "scenarios": ["Streaming Stats", "Coffee Shop Sales", "Gaming XP Rates"]
 }

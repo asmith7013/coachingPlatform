@@ -17,7 +17,7 @@ export function SchoolSectionSelector({
   onSchoolChange,
   onSectionChange,
   onFetchPodsie,
-  fetchingPodsie
+  fetchingPodsie,
 }: SchoolSectionSelectorProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -34,8 +34,10 @@ export function SchoolSectionSelector({
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Select School</option>
-            {Schools.map(school => (
-              <option key={school} value={school}>{school}</option>
+            {Schools.map((school) => (
+              <option key={school} value={school}>
+                {school}
+              </option>
             ))}
           </select>
         </div>
@@ -51,8 +53,10 @@ export function SchoolSectionSelector({
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
           >
             <option value="">Select Section</option>
-            {AllSections.map(section => (
-              <option key={section} value={section}>{section}</option>
+            {AllSections.map((section) => (
+              <option key={section} value={section}>
+                {section}
+              </option>
             ))}
           </select>
         </div>
@@ -63,8 +67,10 @@ export function SchoolSectionSelector({
         disabled={!selectedSection || fetchingPodsie}
         className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
       >
-        <ArrowPathIcon className={`w-5 h-5 ${fetchingPodsie ? 'animate-spin' : ''}`} />
-        {fetchingPodsie ? 'Fetching...' : 'Fetch from Podsie'}
+        <ArrowPathIcon
+          className={`w-5 h-5 ${fetchingPodsie ? "animate-spin" : ""}`}
+        />
+        {fetchingPodsie ? "Fetching..." : "Fetch from Podsie"}
       </button>
     </div>
   );

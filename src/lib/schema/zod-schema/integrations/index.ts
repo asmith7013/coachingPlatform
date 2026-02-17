@@ -1,1 +1,1 @@
-export * from './monday';
+export * from "./monday";

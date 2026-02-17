@@ -1,68 +1,54 @@
-import { cn } from '@ui/utils/formatters';
-import { Heading } from '@/components/core/typography/Heading'
-import { Text } from '@/components/core/typography/Text'
+import { cn } from "@ui/utils/formatters";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
 
 // Token Groups
 const colorTokens = {
-  primary: ['primary', 'primary-hover', 'primary-active'],
-  secondary: ['secondary', 'secondary-hover', 'secondary-active'],
-  success: ['success', 'success-hover', 'success-active'],
-  warning: ['warning', 'warning-hover', 'warning-active'],
-  danger: ['danger', 'danger-hover', 'danger-active'],
-  text: ['text', 'text-muted', 'text-disabled'],
-  surface: ['surface', 'surface-hover', 'surface-active'],
-  border: ['border', 'border-hover', 'border-active'],
-}
+  primary: ["primary", "primary-hover", "primary-active"],
+  secondary: ["secondary", "secondary-hover", "secondary-active"],
+  success: ["success", "success-hover", "success-active"],
+  warning: ["warning", "warning-hover", "warning-active"],
+  danger: ["danger", "danger-hover", "danger-active"],
+  text: ["text", "text-muted", "text-disabled"],
+  surface: ["surface", "surface-hover", "surface-active"],
+  border: ["border", "border-hover", "border-active"],
+};
 
-const radiusTokens = ['none', 'sm', 'md', 'lg', 'xl', 'full']
-const shadowTokens = ['none', 'sm', 'md', 'lg', 'xl']
+const radiusTokens = ["none", "sm", "md", "lg", "xl", "full"];
+const shadowTokens = ["none", "sm", "md", "lg", "xl"];
 
 function ColorSwatch({ name, group }: { name: string; group: string }) {
   return (
     <div className="flex flex-col gap-2">
-      <div 
-        className={cn(
-          'h-16 w-16 rounded-md',
-          `bg-${group}-${name}`
-        )}
-      />
+      <div className={cn("h-16 w-16 rounded-md", `bg-${group}-${name}`)} />
       <Text textSize="sm">
         {group}-{name}
       </Text>
     </div>
-  )
+  );
 }
 
 function RadiusSwatch({ value }: { value: string }) {
   return (
     <div className="flex flex-col gap-2">
-      <div 
+      <div
         className={cn(
-          'h-16 w-16 border-2 border-primary bg-surface',
-          `rounded-${value}`
+          "h-16 w-16 border-2 border-primary bg-surface",
+          `rounded-${value}`,
         )}
       />
-      <Text textSize="sm">
-        radius-{value}
-      </Text>
+      <Text textSize="sm">radius-{value}</Text>
     </div>
-  )
+  );
 }
 
 function ShadowSwatch({ value }: { value: string }) {
   return (
     <div className="flex flex-col gap-2">
-      <div 
-        className={cn(
-          'h-16 w-16 rounded-md bg-white',
-          `shadow-${value}`
-        )}
-      />
-      <Text textSize="sm">
-        shadow-{value}
-      </Text>
+      <div className={cn("h-16 w-16 rounded-md bg-white", `shadow-${value}`)} />
+      <Text textSize="sm">shadow-{value}</Text>
     </div>
-  )
+  );
 }
 
 export default function TokensPreview() {
@@ -105,5 +91,5 @@ export default function TokensPreview() {
         </div>
       </section>
     </div>
-  )
-} 
+  );
+}

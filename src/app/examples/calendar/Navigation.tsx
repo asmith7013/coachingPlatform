@@ -1,6 +1,6 @@
-import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { formatDate } from './utils';
+import React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { formatDate } from "./utils";
 
 type NavigationProps = {
   currentDate: Date;
@@ -9,16 +9,16 @@ type NavigationProps = {
   setCurrentDate: (date: Date) => void;
 };
 
-const Navigation: React.FC<NavigationProps> = ({ 
-  currentDate, 
-  prevMonth, 
-  nextMonth, 
-  setCurrentDate 
+const Navigation: React.FC<NavigationProps> = ({
+  currentDate,
+  prevMonth,
+  nextMonth,
+  setCurrentDate,
 }) => {
   return (
     <div className="flex items-center justify-between mb-4">
       <h2 className="text-2xl font-semibold">
-        {formatDate(currentDate, 'MMMM yyyy')}
+        {formatDate(currentDate, "MMMM yyyy")}
       </h2>
       <div className="flex space-x-2">
         <button
@@ -44,4 +44,4 @@ const Navigation: React.FC<NavigationProps> = ({
   );
 };
 
-export default Navigation; 
+export default Navigation;

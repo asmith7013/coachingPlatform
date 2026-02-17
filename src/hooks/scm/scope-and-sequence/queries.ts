@@ -7,10 +7,14 @@ import {
 
 export const scopeSequenceKeys = {
   all: ["scope-and-sequence"] as const,
-  list: (filters: { grade?: string; unitNumber?: number; scopeSequenceTag?: string }) =>
-    [...scopeSequenceKeys.all, "list", filters] as const,
+  list: (filters: {
+    grade?: string;
+    unitNumber?: number;
+    scopeSequenceTag?: string;
+  }) => [...scopeSequenceKeys.all, "list", filters] as const,
   detail: (id: string) => [...scopeSequenceKeys.all, "detail", id] as const,
-  units: (scopeTag: string) => [...scopeSequenceKeys.all, "units", scopeTag] as const,
+  units: (scopeTag: string) =>
+    [...scopeSequenceKeys.all, "units", scopeTag] as const,
 };
 
 export function useScopeSequenceList(filters: {
@@ -27,7 +31,9 @@ export function useScopeSequenceList(filters: {
         filters: {
           ...(filters.grade && { grade: filters.grade }),
           ...(filters.unitNumber && { unitNumber: filters.unitNumber }),
-          ...(filters.scopeSequenceTag && { scopeSequenceTag: filters.scopeSequenceTag }),
+          ...(filters.scopeSequenceTag && {
+            scopeSequenceTag: filters.scopeSequenceTag,
+          }),
         },
         sortBy: "unitNumber",
         sortOrder: "asc",

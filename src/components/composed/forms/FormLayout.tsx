@@ -1,6 +1,6 @@
-import React from 'react';
-import { Card } from '@components/composed/cards/Card';
-import { Button } from '@components/core/Button';
+import React from "react";
+import { Card } from "@components/composed/cards/Card";
+import { Button } from "@components/core/Button";
 
 interface FormLayoutProps {
   title: string;
@@ -23,8 +23,8 @@ export function FormLayout({
   description,
   children,
   onCancel,
-  submitLabel = 'Submit',
-  cancelLabel = 'Cancel',
+  submitLabel = "Submit",
+  cancelLabel = "Cancel",
   isSubmitting = false,
   canSubmit = true,
   className,
@@ -59,7 +59,7 @@ export function FormLayout({
               {cancelLabel}
             </Button>
           )}
-          
+
           <Button
             type="submit"
             intent="primary"
@@ -67,10 +67,10 @@ export function FormLayout({
             loading={isSubmitting}
             disabled={!canSubmit}
           >
-            {isSubmitting ? 'Submitting...' : submitLabel}
+            {isSubmitting ? "Submitting..." : submitLabel}
           </Button>
         </div>
       </Card.Footer>
     </Card>
   );
-} 
+}

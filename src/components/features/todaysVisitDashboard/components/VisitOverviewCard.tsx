@@ -1,15 +1,23 @@
-import React from 'react';
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Badge } from '@/components/core/feedback/Badge';
-import { CalendarIcon, MapPinIcon, UserIcon } from '@heroicons/react/24/outline';
-import { useTodaysVisitData, useTodaysVisitStatus } from '../context/TodaysVisitContext';
-import { formatMediumDate } from '@/lib/data-processing/transformers/utils/date-utils';
+import React from "react";
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { Badge } from "@/components/core/feedback/Badge";
+import {
+  CalendarIcon,
+  MapPinIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
+import {
+  useTodaysVisitData,
+  useTodaysVisitStatus,
+} from "../context/TodaysVisitContext";
+import { formatMediumDate } from "@/lib/data-processing/transformers/utils/date-utils";
 
 export function VisitOverviewCard() {
   const { todaysVisit, isLoading } = useTodaysVisitData();
-  const { hasVisitToday, isVisitInPast, isVisitInFuture } = useTodaysVisitStatus();
+  const { hasVisitToday, isVisitInPast, isVisitInFuture } =
+    useTodaysVisitStatus();
 
   if (isLoading) {
     return (
@@ -51,12 +59,12 @@ export function VisitOverviewCard() {
 
   const getStatusText = () => {
     if (isVisitInPast) {
-      return `${Math.abs(todaysVisit.daysFromToday)} day${Math.abs(todaysVisit.daysFromToday) === 1 ? '' : 's'} ago`;
+      return `${Math.abs(todaysVisit.daysFromToday)} day${Math.abs(todaysVisit.daysFromToday) === 1 ? "" : "s"} ago`;
     }
     if (isVisitInFuture) {
-      return `In ${todaysVisit.daysFromToday} day${todaysVisit.daysFromToday === 1 ? '' : 's'}`;
+      return `In ${todaysVisit.daysFromToday} day${todaysVisit.daysFromToday === 1 ? "" : "s"}`;
     }
-    return 'Today';
+    return "Today";
   };
 
   return (
@@ -81,35 +89,49 @@ export function VisitOverviewCard() {
         {/* Visit Details */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <Text textSize="sm" color="muted" className="font-medium uppercase tracking-wide">
+            <Text
+              textSize="sm"
+              color="muted"
+              className="font-medium uppercase tracking-wide"
+            >
               School
             </Text>
             <div className="flex items-center gap-2">
               <MapPinIcon className="h-4 w-4 text-gray-400" />
               <Text color="default">
-                {todaysVisit.visit.schoolId} {/* TODO: Replace with school name when available */}
+                {todaysVisit.visit.schoolId}{" "}
+                {/* TODO: Replace with school name when available */}
               </Text>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Text textSize="sm" color="muted" className="font-medium uppercase tracking-wide">
+            <Text
+              textSize="sm"
+              color="muted"
+              className="font-medium uppercase tracking-wide"
+            >
               Coach
             </Text>
             <div className="flex items-center gap-2">
               <UserIcon className="h-4 w-4 text-gray-400" />
               <Text color="default">
-                {todaysVisit.visit.coachId} {/* TODO: Replace with coach name when available */}
+                {todaysVisit.visit.coachId}{" "}
+                {/* TODO: Replace with coach name when available */}
               </Text>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Text textSize="sm" color="muted" className="font-medium uppercase tracking-wide">
+            <Text
+              textSize="sm"
+              color="muted"
+              className="font-medium uppercase tracking-wide"
+            >
               Visit Type
             </Text>
             <Text color="default">
-              {todaysVisit.visit.allowedPurpose || 'Regular Visit'}
+              {todaysVisit.visit.allowedPurpose || "Regular Visit"}
             </Text>
           </div>
         </div>
@@ -118,21 +140,26 @@ export function VisitOverviewCard() {
         {todaysVisit.weeklyPlan && (
           <div className="border-t pt-4">
             <div className="space-y-2">
-              <Text textSize="sm" color="muted" className="font-medium uppercase tracking-wide">
+              <Text
+                textSize="sm"
+                color="muted"
+                className="font-medium uppercase tracking-wide"
+              >
                 This Visit Plan
               </Text>
               <Text color="default">
-                Cycle {todaysVisit.weeklyPlan.cycleNumber}, Visit {todaysVisit.weeklyPlan.visitNumber}
+                Cycle {todaysVisit.weeklyPlan.cycleNumber}, Visit{" "}
+                {todaysVisit.weeklyPlan.visitNumber}
               </Text>
-                             {todaysVisit.weeklyPlan.focus && (
-                 <Text color="muted" className="italic">
-                   &ldquo;{todaysVisit.weeklyPlan.focus}&rdquo;
-                 </Text>
-               )}
+              {todaysVisit.weeklyPlan.focus && (
+                <Text color="muted" className="italic">
+                  &ldquo;{todaysVisit.weeklyPlan.focus}&rdquo;
+                </Text>
+              )}
             </div>
           </div>
         )}
       </div>
     </Card>
   );
-} 
+}

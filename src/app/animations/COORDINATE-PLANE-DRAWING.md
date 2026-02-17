@@ -197,13 +197,17 @@ function ConfigPanel({ config }: { config: CoordinatePlaneConfig }) {
 ```typescript
 // hooks/useCoordinateTransform.ts
 
-import { useMemo } from 'react';
-import type { Point, CoordinateTransform, CoordinatePlaneConfig } from '../types/coordinate-plane';
+import { useMemo } from "react";
+import type {
+  Point,
+  CoordinateTransform,
+  CoordinatePlaneConfig,
+} from "../types/coordinate-plane";
 
 export function useCoordinateTransform(
   config: CoordinatePlaneConfig,
   canvasWidth: number,
-  canvasHeight: number
+  canvasHeight: number,
 ): CoordinateTransform {
   return useMemo(() => {
     const { xMin, xMax, yMin, yMax, gridScale } = config;
@@ -239,9 +243,9 @@ export function useCoordinateTransform(
       snapToGrid: (coord: Point): Point => {
         return {
           x: Math.round(coord.x / gridScale) * gridScale,
-          y: Math.round(coord.y / gridScale) * gridScale
+          y: Math.round(coord.y / gridScale) * gridScale,
         };
-      }
+      },
     };
   }, [config, canvasWidth, canvasHeight]);
 }

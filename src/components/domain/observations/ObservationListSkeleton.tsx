@@ -1,7 +1,7 @@
-import React from 'react';
-import { Card } from '@/components/composed/cards';
-import { Skeleton, SkeletonGroup } from '@/components/core/feedback/Skeleton';
-import { ObservationSkeleton } from '@/components/composed/feedback/SkeletonCard';
+import React from "react";
+import { Card } from "@/components/composed/cards";
+import { Skeleton, SkeletonGroup } from "@/components/core/feedback/Skeleton";
+import { ObservationSkeleton } from "@/components/composed/feedback/SkeletonCard";
 
 /**
  * Simple skeleton for Observation List
@@ -12,9 +12,9 @@ interface ObservationListSkeletonProps {
   showHeader?: boolean;
 }
 
-export function ObservationListSkeleton({ 
-  count = 3, 
-  showHeader = true 
+export function ObservationListSkeleton({
+  count = 3,
+  showHeader = true,
 }: ObservationListSkeletonProps) {
   return (
     <Card>
@@ -24,7 +24,7 @@ export function ObservationListSkeleton({
           <Skeleton height="sm" width="1/4" />
         </Card.Header>
       )}
-      
+
       <Card.Body>
         <SkeletonGroup spacing="lg">
           {Array.from({ length: count }, (_, i) => (
@@ -34,4 +34,4 @@ export function ObservationListSkeleton({
       </Card.Body>
     </Card>
   );
-} 
+}

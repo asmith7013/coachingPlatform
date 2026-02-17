@@ -8,9 +8,14 @@ export default function AnimationsPlayground() {
   const [error, setError] = useState<string | null>(null);
   const [selectedExample, setSelectedExample] = useState("");
   const [isRecording, setIsRecording] = useState(false);
-  const [_recordingStatus, setRecordingStatus] = useState<"idle" | "capturing">("idle");
+  const [_recordingStatus, setRecordingStatus] = useState<"idle" | "capturing">(
+    "idle",
+  );
   const canvasContainerRef = useRef<HTMLDivElement>(null);
-  const currentSketchRef = useRef<{ iframe: HTMLIFrameElement; messageHandler: (event: MessageEvent) => void } | null>(null);
+  const currentSketchRef = useRef<{
+    iframe: HTMLIFrameElement;
+    messageHandler: (event: MessageEvent) => void;
+  } | null>(null);
   const [canvasSize, setCanvasSize] = useState({ width: 600, height: 600 });
 
   // Default starter code
@@ -26,11 +31,13 @@ function draw() {
 
   // Extract canvas size from code
   const extractCanvasSize = (codeToCheck: string) => {
-    const match = codeToCheck.match(/createCanvas\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/);
+    const match = codeToCheck.match(
+      /createCanvas\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/,
+    );
     if (match) {
       return {
         width: parseInt(match[1], 10),
-        height: parseInt(match[2], 10)
+        height: parseInt(match[2], 10),
       };
     }
     return { width: 600, height: 600 }; // Default
@@ -321,7 +328,6 @@ function draw() {
     }
   };
 
-
   // Load an example and run it automatically
   const loadExample = (exampleId: string) => {
     // Force fresh import by re-reading from EXAMPLE_SKETCHES each time
@@ -350,14 +356,19 @@ function draw() {
 
     // Get the filename from the selected example name
     const example = EXAMPLE_SKETCHES.find((ex) => ex.id === selectedExample);
-    const filename = example ? example.name.replace(/[^a-z0-9]/gi, '-').toLowerCase() : 'animation';
+    const filename = example
+      ? example.name.replace(/[^a-z0-9]/gi, "-").toLowerCase()
+      : "animation";
 
     // Send message to iframe to start recording
-    currentSketchRef.current.iframe.contentWindow?.postMessage({
-      type: 'startGifRecording',
-      duration: 5, // 5 seconds
-      filename: filename
-    }, '*');
+    currentSketchRef.current.iframe.contentWindow?.postMessage(
+      {
+        type: "startGifRecording",
+        duration: 5, // 5 seconds
+        filename: filename,
+      },
+      "*",
+    );
   };
 
   return (
@@ -426,7 +437,9 @@ function draw() {
           {/* Code Editor */}
           <div className="lg:col-span-1 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col order-2 lg:order-1 h-[300px] lg:h-auto">
             <div className="bg-gray-50 border-b border-gray-200 px-4 py-2">
-              <h2 className="text-sm font-semibold text-gray-700">Code Editor</h2>
+              <h2 className="text-sm font-semibold text-gray-700">
+                Code Editor
+              </h2>
             </div>
             <textarea
               value={code}
@@ -456,7 +469,9 @@ function draw() {
             {error && (
               <div className="border-t border-red-200 bg-red-50 p-4">
                 <div className="flex items-start gap-2">
-                  <span className="text-red-600 font-semibold text-sm">Error:</span>
+                  <span className="text-red-600 font-semibold text-sm">
+                    Error:
+                  </span>
                   <pre className="text-red-800 text-sm font-mono whitespace-pre-wrap flex-1">
                     {error}
                   </pre>
@@ -468,12 +483,16 @@ function draw() {
 
         {/* Instructions */}
         <div className="mt-4 md:mt-6 bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
-          <h3 className="text-xs md:text-sm font-semibold text-blue-900 mb-2">Quick Tips:</h3>
+          <h3 className="text-xs md:text-sm font-semibold text-blue-900 mb-2">
+            Quick Tips:
+          </h3>
           <ul className="text-xs md:text-sm text-blue-800 space-y-1 list-disc list-inside">
             <li>Select an example from the dropdown to see it instantly</li>
             <li>Edit the code in the editor to customize your animation</li>
             <li>Your code is automatically saved in your browser</li>
-            <li className="hidden sm:list-item">Use the Clear button to reset to the default template</li>
+            <li className="hidden sm:list-item">
+              Use the Clear button to reset to the default template
+            </li>
             <li>Click Export GIF to save your animation</li>
           </ul>
         </div>

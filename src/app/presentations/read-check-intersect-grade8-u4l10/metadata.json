@@ -13,9 +13,5 @@
     "Determine a point that satisfies two relationships simultaneously, using tables or graphs",
     "Interpret points that lie on one, both, or neither line on a graph of two simultaneous equations in context"
   ],
-  "scenarios": [
-    "Gaming Subscriptions",
-    "Coffee Shop Order",
-    "Concert Tickets"
-  ]
+  "scenarios": ["Gaming Subscriptions", "Coffee Shop Order", "Concert Tickets"]
 }

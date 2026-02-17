@@ -9,21 +9,24 @@
 export async function downloadPptxLocally(
   slides: { slideNumber: number; htmlContent: string }[],
   title: string,
-  mathConcept?: string
+  mathConcept?: string,
 ): Promise<void> {
   // Only download on localhost
-  if (typeof window === 'undefined' || window.location.hostname !== 'localhost') {
+  if (
+    typeof window === "undefined" ||
+    window.location.hostname !== "localhost"
+  ) {
     return;
   }
 
   try {
-    console.log('[downloadPptxLocally] Downloading PPTX locally...');
-    const pptxResponse = await fetch('/api/scm/worked-examples/export-pptx', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    console.log("[downloadPptxLocally] Downloading PPTX locally...");
+    const pptxResponse = await fetch("/api/scm/worked-examples/export-pptx", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         slides,
-        title: title || 'worked-example',
+        title: title || "worked-example",
         mathConcept,
       }),
     });
@@ -31,18 +34,21 @@ export async function downloadPptxLocally(
     if (pptxResponse.ok) {
       const blob = await pptxResponse.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = downloadUrl;
-      a.download = `${(title || 'worked-example').replace(/[^a-zA-Z0-9-]/g, '-')}.pptx`;
+      a.download = `${(title || "worked-example").replace(/[^a-zA-Z0-9-]/g, "-")}.pptx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
-      console.log('[downloadPptxLocally] PPTX download triggered');
+      console.log("[downloadPptxLocally] PPTX download triggered");
     } else {
-      console.error('[downloadPptxLocally] PPTX download failed:', pptxResponse.status);
+      console.error(
+        "[downloadPptxLocally] PPTX download failed:",
+        pptxResponse.status,
+      );
     }
   } catch (err) {
-    console.error('[downloadPptxLocally] PPTX download error:', err);
+    console.error("[downloadPptxLocally] PPTX download error:", err);
   }
 }

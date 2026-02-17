@@ -1,10 +1,14 @@
-import React from 'react';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
-import { Textarea } from '@/components/core/fields/Textarea';
-import { Select } from '@/components/core/fields/Select';
-import { Trash2 } from 'lucide-react';
-import type { ImplementationRecordType, MetricType, CoachingMoveType } from './types';
+import React from "react";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/fields/Input";
+import { Textarea } from "@/components/core/fields/Textarea";
+import { Select } from "@/components/core/fields/Select";
+import { Trash2 } from "lucide-react";
+import type {
+  ImplementationRecordType,
+  MetricType,
+  CoachingMoveType,
+} from "./types";
 
 interface ImplementationRecordCardProps {
   record: ImplementationRecordType;
@@ -21,9 +25,12 @@ export function ImplementationRecordCard({
   metrics,
   coachingMoves,
   onUpdate,
-  onDelete
+  onDelete,
 }: ImplementationRecordCardProps) {
-  const updateField = (field: keyof ImplementationRecordType, value: unknown) => {
+  const updateField = (
+    field: keyof ImplementationRecordType,
+    value: unknown,
+  ) => {
     onUpdate(index, { ...record, [field]: value });
   };
 
@@ -60,7 +67,7 @@ export function ImplementationRecordCard({
           label="Date"
           type="date"
           value={record.date}
-          onChange={(e) => updateField('date', e.target.value)}
+          onChange={(e) => updateField("date", e.target.value)}
         />
 
         <Select
@@ -68,9 +75,9 @@ export function ImplementationRecordCard({
           value={record.proposedArc}
           onChange={updateProposedArc}
           options={[
-            { value: 'Pre-Brief', label: 'Pre-Brief' },
-            { value: 'Observation', label: 'Observation' },
-            { value: 'Debrief', label: 'Debrief' }
+            { value: "Pre-Brief", label: "Pre-Brief" },
+            { value: "Observation", label: "Observation" },
+            { value: "Debrief", label: "Debrief" },
           ]}
           multiple
         />
@@ -79,9 +86,9 @@ export function ImplementationRecordCard({
           label="Moves Selected"
           value={record.movesSelected}
           onChange={updateMovesSelected}
-          options={coachingMoves.map(move => ({
+          options={coachingMoves.map((move) => ({
             value: move.specificMove,
-            label: `${move.category}: ${move.specificMove}`
+            label: `${move.category}: ${move.specificMove}`,
           }))}
           multiple
         />
@@ -89,7 +96,7 @@ export function ImplementationRecordCard({
         <Input
           label="Evidence Link"
           value={record.evidenceLink}
-          onChange={(e) => updateField('evidenceLink', e.target.value)}
+          onChange={(e) => updateField("evidenceLink", e.target.value)}
           placeholder="Drive Link"
         />
       </div>
@@ -97,15 +104,15 @@ export function ImplementationRecordCard({
       <div className="space-y-4">
         <h5 className="font-medium">Metrics</h5>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {metrics.map(metric => (
+          {metrics.map((metric) => (
             <Select
               key={metric.name}
               label={metric.name}
-              value={record.metrics[metric.name]?.toString() || ''}
+              value={record.metrics[metric.name]?.toString() || ""}
               onChange={(value) => updateMetric(metric.name, Number(value))}
-              options={metric.ratings.map(rating => ({
+              options={metric.ratings.map((rating) => ({
                 value: rating.score.toString(),
-                label: `${rating.score}: ${rating.description}`
+                label: `${rating.score}: ${rating.description}`,
               }))}
             />
           ))}
@@ -116,14 +123,14 @@ export function ImplementationRecordCard({
         <Textarea
           label="Teacher Notes"
           value={record.teacherNotes}
-          onChange={(e) => updateField('teacherNotes', e.target.value)}
+          onChange={(e) => updateField("teacherNotes", e.target.value)}
           rows={3}
         />
 
         <Textarea
           label="Student Notes"
           value={record.studentNotes}
-          onChange={(e) => updateField('studentNotes', e.target.value)}
+          onChange={(e) => updateField("studentNotes", e.target.value)}
           rows={3}
         />
 
@@ -131,13 +138,13 @@ export function ImplementationRecordCard({
           <Input
             label="Next Step"
             value={record.nextStep}
-            onChange={(e) => updateField('nextStep', e.target.value)}
+            onChange={(e) => updateField("nextStep", e.target.value)}
           />
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={record.nextStepDone}
-              onChange={(e) => updateField('nextStepDone', e.target.checked)}
+              onChange={(e) => updateField("nextStepDone", e.target.checked)}
             />
             <span>Next Step Done</span>
           </label>
@@ -146,10 +153,10 @@ export function ImplementationRecordCard({
         <Textarea
           label="Between Session Support"
           value={record.betweenSessionSupport}
-          onChange={(e) => updateField('betweenSessionSupport', e.target.value)}
+          onChange={(e) => updateField("betweenSessionSupport", e.target.value)}
           rows={3}
         />
       </div>
     </div>
   );
-} 
+}

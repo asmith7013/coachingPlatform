@@ -3,7 +3,10 @@ import type { CurriculumData, PodsieQuestionMap } from "./types";
 /**
  * Parse course and unit from curriculum path notes
  */
-export function parsePathInfo(notes?: string): { course: string; unit: string } {
+export function parsePathInfo(notes?: string): {
+  course: string;
+  unit: string;
+} {
   if (!notes) return { course: "-", unit: "-" };
   // e.g., "Exported from courses/IM-8th-Grade/modules/Unit-3/assignments/Ramp-Up-2"
   const match = notes.match(/courses\/([^/]+)\/modules\/([^/]+)/);
@@ -20,7 +23,7 @@ export function parsePathInfo(notes?: string): { course: string; unit: string } 
  * Transform curriculum format to internal question map format
  */
 export function transformCurriculumToQuestionMap(
-  curriculumData: CurriculumData
+  curriculumData: CurriculumData,
 ): PodsieQuestionMap[] {
   const questionMapArray: PodsieQuestionMap[] = [];
 

@@ -1,5 +1,8 @@
-import React from 'react';
-import { ClickableCards, ClickableCardColor } from '@/components/composed/cards/ClickableCards';
+import React from "react";
+import {
+  ClickableCards,
+  ClickableCardColor,
+} from "@/components/composed/cards/ClickableCards";
 
 interface IPGSubsection {
   section: string;
@@ -23,14 +26,14 @@ export const IPGSubsectionCards: React.FC<IPGSubsectionCardsProps> = ({
   const getColor = (_value: string): ClickableCardColor => {
     // Map the parentColor to a valid ClickableCardColor
     const colorMap: Record<string, ClickableCardColor> = {
-      primary: 'primary',
-      secondary: 'secondary',
-      success: 'success',
-      danger: 'danger',
-      muted: 'muted',
+      primary: "primary",
+      secondary: "secondary",
+      success: "success",
+      danger: "danger",
+      muted: "muted",
     };
 
-    return colorMap[parentColor || 'primary'] || 'muted';
+    return colorMap[parentColor || "primary"] || "muted";
   };
 
   return (
@@ -50,4 +53,4 @@ export const IPGSubsectionCards: React.FC<IPGSubsectionCardsProps> = ({
       ))}
     </ClickableCards>
   );
-}; 
+};

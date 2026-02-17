@@ -7,8 +7,13 @@ import { GoogleSheetsSyncService } from "@/lib/integrations/google-sheets/servic
  * Server action wrapper for sync functionality
  * Delegates to API-safe service
  */
-export async function syncSheetsData(spreadsheetId: string, range: string = 'Full Data!A:Z') {
-  return withDbConnection(() => GoogleSheetsSyncService.syncSheetsData(spreadsheetId, range));
+export async function syncSheetsData(
+  spreadsheetId: string,
+  range: string = "Full Data!A:Z",
+) {
+  return withDbConnection(() =>
+    GoogleSheetsSyncService.syncSheetsData(spreadsheetId, range),
+  );
 }
 
 /**
@@ -26,9 +31,11 @@ export async function triggerManualSync() {
   if (!spreadsheetId) {
     return {
       success: false,
-      error: 'GOOGLE_SHEETS_ID environment variable not set',
+      error: "GOOGLE_SHEETS_ID environment variable not set",
     };
   }
-  
-  return withDbConnection(() => GoogleSheetsSyncService.syncSheetsData(spreadsheetId));
+
+  return withDbConnection(() =>
+    GoogleSheetsSyncService.syncSheetsData(spreadsheetId),
+  );
 }

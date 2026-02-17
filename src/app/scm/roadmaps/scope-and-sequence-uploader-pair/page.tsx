@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { fetchScopeAndSequence, updateLessonSkills } from "@actions/scm/scope-and-sequence/scope-and-sequence";
+import {
+  fetchScopeAndSequence,
+  updateLessonSkills,
+} from "@actions/scm/scope-and-sequence/scope-and-sequence";
 import { useRouter } from "next/navigation";
 
 interface LessonSkillPair {
@@ -53,7 +56,9 @@ export default function ScopeAndSequenceUploaderPairPage() {
   const router = useRouter();
   const [jsonInput, setJsonInput] = useState("");
   const [jsonData, setJsonData] = useState<LessonSkillPair[]>([]);
-  const [validationResults, setValidationResults] = useState<ValidationResult[]>([]);
+  const [validationResults, setValidationResults] = useState<
+    ValidationResult[]
+  >([]);
   const [updateResults, setUpdateResults] = useState<UpdateResult[]>([]);
   const [isValidating, setIsValidating] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -71,8 +76,16 @@ export default function ScopeAndSequenceUploaderPairPage() {
 
       // Validate each item has required fields
       const validated = parsed.map((item, index) => {
-        if (!item.scopeSequenceTag || !item.unitLessonId || !item.unitNumber || !item.lessonNumber || !item.lessonName) {
-          throw new Error(`Item at index ${index} is missing required fields (must have scopeSequenceTag, unitLessonId, unitNumber, lessonNumber, lessonName)`);
+        if (
+          !item.scopeSequenceTag ||
+          !item.unitLessonId ||
+          !item.unitNumber ||
+          !item.lessonNumber ||
+          !item.lessonName
+        ) {
+          throw new Error(
+            `Item at index ${index} is missing required fields (must have scopeSequenceTag, unitLessonId, unitNumber, lessonNumber, lessonName)`,
+          );
         }
 
         return {
@@ -83,8 +96,12 @@ export default function ScopeAndSequenceUploaderPairPage() {
           lessonNumber: Number(item.lessonNumber),
           lessonName: String(item.lessonName),
           scopeSequenceTag: String(item.scopeSequenceTag),
-          roadmapSkills: Array.isArray(item.roadmapSkills) ? item.roadmapSkills : [],
-          targetSkills: Array.isArray(item.targetSkills) ? item.targetSkills : [],
+          roadmapSkills: Array.isArray(item.roadmapSkills)
+            ? item.roadmapSkills
+            : [],
+          targetSkills: Array.isArray(item.targetSkills)
+            ? item.targetSkills
+            : [],
         } as LessonSkillPair;
       });
 
@@ -126,7 +143,11 @@ export default function ScopeAndSequenceUploaderPairPage() {
           searchFields: [],
         });
 
-        if (!fetchResult.success || !fetchResult.items || fetchResult.items.length === 0) {
+        if (
+          !fetchResult.success ||
+          !fetchResult.items ||
+          fetchResult.items.length === 0
+        ) {
           results.push({
             jsonEntry: item,
             dbEntry: null,
@@ -145,18 +166,41 @@ export default function ScopeAndSequenceUploaderPairPage() {
 
         // Check each field for match
         // JSON "scopeSequenceTag" field should match DB "scopeSequenceTag" field
-        const scopeSequenceTagMatch = item.scopeSequenceTag === dbEntry.scopeSequenceTag;
+        const scopeSequenceTagMatch =
+          item.scopeSequenceTag === dbEntry.scopeSequenceTag;
         const unitNumberMatch = item.unitNumber === dbEntry.unitNumber;
         const lessonNumberMatch = item.lessonNumber === dbEntry.lessonNumber;
-        const lessonNameMatch = item.lessonName.trim().toLowerCase() === dbEntry.lessonName.trim().toLowerCase();
+        const lessonNameMatch =
+          item.lessonName.trim().toLowerCase() ===
+          dbEntry.lessonName.trim().toLowerCase();
 
-        const allMatch = scopeSequenceTagMatch && unitNumberMatch && lessonNumberMatch && lessonNameMatch;
+        const allMatch =
+          scopeSequenceTagMatch &&
+          unitNumberMatch &&
+          lessonNumberMatch &&
+          lessonNameMatch;
 
         const differences: ValidationResult["differences"] = {};
-        if (!scopeSequenceTagMatch) differences.grade = { json: item.scopeSequenceTag || '', db: dbEntry.scopeSequenceTag || '' };
-        if (!unitNumberMatch) differences.unitNumber = { json: item.unitNumber, db: dbEntry.unitNumber };
-        if (!lessonNumberMatch) differences.lessonNumber = { json: item.lessonNumber, db: dbEntry.lessonNumber };
-        if (!lessonNameMatch) differences.lessonName = { json: item.lessonName, db: dbEntry.lessonName };
+        if (!scopeSequenceTagMatch)
+          differences.grade = {
+            json: item.scopeSequenceTag || "",
+            db: dbEntry.scopeSequenceTag || "",
+          };
+        if (!unitNumberMatch)
+          differences.unitNumber = {
+            json: item.unitNumber,
+            db: dbEntry.unitNumber,
+          };
+        if (!lessonNumberMatch)
+          differences.lessonNumber = {
+            json: item.lessonNumber,
+            db: dbEntry.lessonNumber,
+          };
+        if (!lessonNameMatch)
+          differences.lessonName = {
+            json: item.lessonName,
+            db: dbEntry.lessonName,
+          };
 
         results.push({
           jsonEntry: item,
@@ -168,7 +212,8 @@ export default function ScopeAndSequenceUploaderPairPage() {
             lessonNumberMatch,
             lessonNameMatch,
           },
-          differences: Object.keys(differences).length > 0 ? differences : undefined,
+          differences:
+            Object.keys(differences).length > 0 ? differences : undefined,
         });
       } catch {
         results.push({
@@ -191,7 +236,7 @@ export default function ScopeAndSequenceUploaderPairPage() {
     const perfectMatchIndices = new Set(
       results
         .map((r, idx) => (r.matchType === "perfect" ? idx : -1))
-        .filter((idx) => idx !== -1)
+        .filter((idx) => idx !== -1),
     );
     setSelectedItems(perfectMatchIndices);
 
@@ -234,13 +279,10 @@ export default function ScopeAndSequenceUploaderPairPage() {
         }
 
         // Update the lesson with roadmap skills and target skills
-        const updateResult = await updateLessonSkills(
-          validation.dbEntry._id,
-          {
-            roadmapSkills: item.roadmapSkills || [],
-            targetSkills: item.targetSkills || [],
-          }
-        );
+        const updateResult = await updateLessonSkills(validation.dbEntry._id, {
+          roadmapSkills: item.roadmapSkills || [],
+          targetSkills: item.targetSkills || [],
+        });
 
         if (updateResult.success) {
           updatedResults[i] = {
@@ -283,7 +325,7 @@ export default function ScopeAndSequenceUploaderPairPage() {
     const perfectIndices = new Set(
       validationResults
         .map((r, idx) => (r.matchType === "perfect" ? idx : -1))
-        .filter((idx) => idx !== -1)
+        .filter((idx) => idx !== -1),
     );
     setSelectedItems(perfectIndices);
   };
@@ -361,7 +403,8 @@ export default function ScopeAndSequenceUploaderPairPage() {
     total: validationResults.length,
     perfect: validationResults.filter((r) => r.matchType === "perfect").length,
     partial: validationResults.filter((r) => r.matchType === "partial").length,
-    notFound: validationResults.filter((r) => r.matchType === "not-found").length,
+    notFound: validationResults.filter((r) => r.matchType === "not-found")
+      .length,
   };
 
   const updateSummary = {
@@ -398,7 +441,10 @@ export default function ScopeAndSequenceUploaderPairPage() {
             <h2 className="text-xl font-semibold mb-4">JSON Input</h2>
 
             <div className="mb-4">
-              <label htmlFor="json-input" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="json-input"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Paste your JSON array here
               </label>
               <textarea
@@ -425,7 +471,9 @@ export default function ScopeAndSequenceUploaderPairPage() {
 
             {error && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-700"><strong>Error:</strong> {error}</p>
+                <p className="text-sm text-red-700">
+                  <strong>Error:</strong> {error}
+                </p>
               </div>
             )}
 
@@ -448,9 +496,18 @@ export default function ScopeAndSequenceUploaderPairPage() {
 
             {jsonData.length > 0 && (
               <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-sm text-green-700 font-semibold mb-1">Parsed Successfully!</p>
-                <p className="text-sm text-green-700">Total lessons: <strong>{jsonData.length}</strong></p>
-                <p className="text-sm text-green-700">With skills: <strong>{jsonData.filter(d => d.roadmapSkills?.length > 0).length}</strong></p>
+                <p className="text-sm text-green-700 font-semibold mb-1">
+                  Parsed Successfully!
+                </p>
+                <p className="text-sm text-green-700">
+                  Total lessons: <strong>{jsonData.length}</strong>
+                </p>
+                <p className="text-sm text-green-700">
+                  With skills:{" "}
+                  <strong>
+                    {jsonData.filter((d) => d.roadmapSkills?.length > 0).length}
+                  </strong>
+                </p>
               </div>
             )}
           </div>
@@ -465,7 +522,9 @@ export default function ScopeAndSequenceUploaderPairPage() {
                 disabled={jsonData.length === 0 || isValidating || isProcessing}
                 className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium"
               >
-                {isValidating ? "Validating..." : "1. Validate Matches Against Database"}
+                {isValidating
+                  ? "Validating..."
+                  : "1. Validate Matches Against Database"}
               </button>
 
               <button
@@ -473,12 +532,16 @@ export default function ScopeAndSequenceUploaderPairPage() {
                 disabled={selectedItems.size === 0 || isProcessing}
                 className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium"
               >
-                {isProcessing ? "Updating..." : `2. Update All Perfect Matches (${selectedItems.size})`}
+                {isProcessing
+                  ? "Updating..."
+                  : `2. Update All Perfect Matches (${selectedItems.size})`}
               </button>
 
               {validationResults.length > 0 && (
                 <div className="mt-4 p-3 bg-gray-50 border border-gray-300 rounded-lg">
-                  <p className="text-sm font-semibold text-gray-700 mb-2">Quick Actions:</p>
+                  <p className="text-sm font-semibold text-gray-700 mb-2">
+                    Quick Actions:
+                  </p>
                   <div className="flex flex-col gap-2">
                     <button
                       onClick={selectAllPerfect}
@@ -504,14 +567,22 @@ export default function ScopeAndSequenceUploaderPairPage() {
             </div>
 
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-xs text-blue-800 font-semibold mb-2">How to use:</p>
+              <p className="text-xs text-blue-800 font-semibold mb-2">
+                How to use:
+              </p>
               <ol className="text-xs text-blue-700 space-y-1 list-decimal list-inside">
                 <li>Paste JSON array with lesson skill data</li>
                 <li>Click &quot;Parse JSON&quot; to validate the format</li>
-                <li>Click &quot;Validate Matches&quot; to check against database</li>
+                <li>
+                  Click &quot;Validate Matches&quot; to check against database
+                </li>
                 <li>Review matches (perfect/partial/not-found)</li>
-                <li>Select which lessons to update (perfect matches auto-selected)</li>
-                <li>Click &quot;Update Selected&quot; to save skills to database</li>
+                <li>
+                  Select which lessons to update (perfect matches auto-selected)
+                </li>
+                <li>
+                  Click &quot;Update Selected&quot; to save skills to database
+                </li>
               </ol>
             </div>
           </div>
@@ -524,19 +595,27 @@ export default function ScopeAndSequenceUploaderPairPage() {
 
             <div className="grid grid-cols-4 gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{validationSummary.total}</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {validationSummary.total}
+                </div>
                 <div className="text-xs text-gray-600">Total</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{validationSummary.perfect}</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {validationSummary.perfect}
+                </div>
                 <div className="text-xs text-gray-600">Perfect</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-600">{validationSummary.partial}</div>
+                <div className="text-2xl font-bold text-yellow-600">
+                  {validationSummary.partial}
+                </div>
                 <div className="text-xs text-gray-600">Partial</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-red-600">{validationSummary.notFound}</div>
+                <div className="text-2xl font-bold text-red-600">
+                  {validationSummary.notFound}
+                </div>
                 <div className="text-xs text-gray-600">Not Found</div>
               </div>
             </div>
@@ -558,15 +637,21 @@ export default function ScopeAndSequenceUploaderPairPage() {
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-lg">{getMatchTypeIcon(result.matchType)}</span>
-                        <span className="font-semibold">{result.jsonEntry.unitLessonId}</span>
+                        <span className="text-lg">
+                          {getMatchTypeIcon(result.matchType)}
+                        </span>
+                        <span className="font-semibold">
+                          {result.jsonEntry.unitLessonId}
+                        </span>
                         <span className="text-xs font-medium px-2 py-0.5 rounded bg-purple-100 text-purple-700">
                           {result.jsonEntry.scopeSequenceTag}
                         </span>
                         <span className="text-xs font-medium px-2 py-0.5 rounded bg-blue-100 text-blue-700">
                           Grade: {result.jsonEntry.grade}
                         </span>
-                        <span className={`text-xs font-medium px-2 py-0.5 rounded ${getMatchTypeColor(result.matchType)}`}>
+                        <span
+                          className={`text-xs font-medium px-2 py-0.5 rounded ${getMatchTypeColor(result.matchType)}`}
+                        >
                           {result.matchType}
                         </span>
                       </div>
@@ -574,43 +659,82 @@ export default function ScopeAndSequenceUploaderPairPage() {
                       <div className="text-sm space-y-1">
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <p className="font-medium text-gray-700">JSON Data:</p>
-                            <p className="text-xs text-gray-600">Unit: {result.jsonEntry.unitNumber}, Lesson: {result.jsonEntry.lessonNumber}</p>
-                            <p className="text-xs text-gray-600">{result.jsonEntry.lessonName}</p>
+                            <p className="font-medium text-gray-700">
+                              JSON Data:
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              Unit: {result.jsonEntry.unitNumber}, Lesson:{" "}
+                              {result.jsonEntry.lessonNumber}
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              {result.jsonEntry.lessonName}
+                            </p>
                             {result.jsonEntry.roadmapSkills?.length > 0 && (
-                              <p className="text-xs text-blue-600 mt-1">Skills: {result.jsonEntry.roadmapSkills.join(", ")}</p>
+                              <p className="text-xs text-blue-600 mt-1">
+                                Skills:{" "}
+                                {result.jsonEntry.roadmapSkills.join(", ")}
+                              </p>
                             )}
                           </div>
                           <div>
-                            <p className="font-medium text-gray-700">Database:</p>
+                            <p className="font-medium text-gray-700">
+                              Database:
+                            </p>
                             {result.dbEntry ? (
                               <>
-                                <p className="text-xs text-gray-600">Unit: {result.dbEntry.unitNumber}, Lesson: {result.dbEntry.lessonNumber}</p>
-                                <p className="text-xs text-gray-600">{result.dbEntry.lessonName}</p>
+                                <p className="text-xs text-gray-600">
+                                  Unit: {result.dbEntry.unitNumber}, Lesson:{" "}
+                                  {result.dbEntry.lessonNumber}
+                                </p>
+                                <p className="text-xs text-gray-600">
+                                  {result.dbEntry.lessonName}
+                                </p>
                               </>
                             ) : (
-                              <p className="text-xs text-red-600">Not found in database</p>
+                              <p className="text-xs text-red-600">
+                                Not found in database
+                              </p>
                             )}
                           </div>
                         </div>
 
-                        {result.differences && Object.keys(result.differences).length > 0 && (
-                          <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
-                            <p className="text-xs font-semibold text-yellow-800 mb-1">Differences:</p>
-                            {result.differences.grade && (
-                              <p className="text-xs text-yellow-700">Curriculum: JSON=&quot;{result.differences.grade.json}&quot; vs DB=&quot;{result.differences.grade.db}&quot;</p>
-                            )}
-                            {result.differences.unitNumber && (
-                              <p className="text-xs text-yellow-700">Unit #: JSON={result.differences.unitNumber.json} vs DB={result.differences.unitNumber.db}</p>
-                            )}
-                            {result.differences.lessonNumber && (
-                              <p className="text-xs text-yellow-700">Lesson #: JSON={result.differences.lessonNumber.json} vs DB={result.differences.lessonNumber.db}</p>
-                            )}
-                            {result.differences.lessonName && (
-                              <p className="text-xs text-yellow-700">Name: JSON=&quot;{result.differences.lessonName.json}&quot; vs DB=&quot;{result.differences.lessonName.db}&quot;</p>
-                            )}
-                          </div>
-                        )}
+                        {result.differences &&
+                          Object.keys(result.differences).length > 0 && (
+                            <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                              <p className="text-xs font-semibold text-yellow-800 mb-1">
+                                Differences:
+                              </p>
+                              {result.differences.grade && (
+                                <p className="text-xs text-yellow-700">
+                                  Curriculum: JSON=&quot;
+                                  {result.differences.grade.json}&quot; vs
+                                  DB=&quot;{result.differences.grade.db}&quot;
+                                </p>
+                              )}
+                              {result.differences.unitNumber && (
+                                <p className="text-xs text-yellow-700">
+                                  Unit #: JSON=
+                                  {result.differences.unitNumber.json} vs DB=
+                                  {result.differences.unitNumber.db}
+                                </p>
+                              )}
+                              {result.differences.lessonNumber && (
+                                <p className="text-xs text-yellow-700">
+                                  Lesson #: JSON=
+                                  {result.differences.lessonNumber.json} vs DB=
+                                  {result.differences.lessonNumber.db}
+                                </p>
+                              )}
+                              {result.differences.lessonName && (
+                                <p className="text-xs text-yellow-700">
+                                  Name: JSON=&quot;
+                                  {result.differences.lessonName.json}&quot; vs
+                                  DB=&quot;{result.differences.lessonName.db}
+                                  &quot;
+                                </p>
+                              )}
+                            </div>
+                          )}
                       </div>
                     </div>
                   </div>
@@ -627,19 +751,27 @@ export default function ScopeAndSequenceUploaderPairPage() {
 
             <div className="grid grid-cols-4 gap-2 mb-4 p-3 bg-gray-50 rounded-lg">
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{updateSummary.total}</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {updateSummary.total}
+                </div>
                 <div className="text-xs text-gray-600">Total</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{updateSummary.success}</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {updateSummary.success}
+                </div>
                 <div className="text-xs text-gray-600">Success</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-red-600">{updateSummary.error}</div>
+                <div className="text-2xl font-bold text-red-600">
+                  {updateSummary.error}
+                </div>
                 <div className="text-xs text-gray-600">Error</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-400">{updateSummary.skipped}</div>
+                <div className="text-2xl font-bold text-gray-400">
+                  {updateSummary.skipped}
+                </div>
                 <div className="text-xs text-gray-600">Skipped</div>
               </div>
             </div>
@@ -660,18 +792,27 @@ export default function ScopeAndSequenceUploaderPairPage() {
 
             <div className="max-h-[400px] overflow-y-auto space-y-1">
               {updateResults.map((result, idx) => (
-                <div key={idx} className={`p-2 rounded border ${result.status === "processing" ? "border-blue-300 bg-blue-50" : "border-gray-200"}`}>
+                <div
+                  key={idx}
+                  className={`p-2 rounded border ${result.status === "processing" ? "border-blue-300 bg-blue-50" : "border-gray-200"}`}
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span>{getStatusIcon(result.status)}</span>
-                      <span className="text-sm font-medium">{result.unitLessonId}</span>
+                      <span className="text-sm font-medium">
+                        {result.unitLessonId}
+                      </span>
                       {result.message && (
-                        <span className={`text-xs ${result.status === "error" ? "text-red-600" : "text-gray-500"}`}>
+                        <span
+                          className={`text-xs ${result.status === "error" ? "text-red-600" : "text-gray-500"}`}
+                        >
                           {result.message}
                         </span>
                       )}
                     </div>
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(result.status)}`}>
+                    <span
+                      className={`px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(result.status)}`}
+                    >
                       {result.status}
                     </span>
                   </div>

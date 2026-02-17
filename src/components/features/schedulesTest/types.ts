@@ -1,6 +1,6 @@
 // src/components/features/schedulesUpdated/types.ts
 
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 // Only UI-specific state - no data structure types
 export interface ScheduleUIState {
@@ -13,7 +13,7 @@ export interface ScheduleContextType {
   // UI state
   selectedTeacher: string | null;
   selectedPeriod: number | null;
-  
+
   // UI actions
   selectTeacher: (teacherId: string) => void;
   selectPeriod: (period: number) => void;
@@ -29,6 +29,6 @@ export interface ScheduleProviderProps {
 export interface ScheduleBuilderProps {
   schoolId: string;
   date: string;
-  mode?: 'create' | 'edit';
+  mode?: "create" | "edit";
   visitId?: string;
 }

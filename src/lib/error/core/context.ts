@@ -6,7 +6,7 @@ import { ErrorContext } from "@error-types";
 export function createErrorContext(
   component: string,
   operation: string,
-  additionalContext: Partial<ErrorContext> = {}
+  additionalContext: Partial<ErrorContext> = {},
 ): ErrorContext {
   // Try to get user ID from session if available
   let userId: string | undefined;
@@ -20,12 +20,12 @@ export function createErrorContext(
   } catch {
     // Session not available or not on client
   }
-  
+
   return {
     component,
     operation,
     userId,
-    ...additionalContext
+    ...additionalContext,
   };
 }
 
@@ -34,18 +34,18 @@ export function createErrorContext(
  */
 export function enrichErrorContext(
   baseContext: ErrorContext,
-  additionalContext: Partial<ErrorContext>
+  additionalContext: Partial<ErrorContext>,
 ): ErrorContext {
   return {
     ...baseContext,
     ...additionalContext,
     metadata: {
       ...(baseContext.metadata || {}),
-      ...(additionalContext.metadata || {})
+      ...(additionalContext.metadata || {}),
     },
     tags: {
       ...(baseContext.tags || {}),
-      ...(additionalContext.tags || {})
-    }
+      ...(additionalContext.tags || {}),
+    },
   };
 }

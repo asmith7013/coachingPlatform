@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { CheckIcon, ArrowPathIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import {
+  CheckIcon,
+  ArrowPathIcon,
+  ArrowDownTrayIcon,
+} from "@heroicons/react/24/outline";
 import type { PodsieAssignmentInfo } from "@/app/actions/scm/podsie/podsie-sync";
 import type { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 import { SectionRadioGroup } from "@/components/core/inputs/SectionRadioGroup";
@@ -10,14 +14,14 @@ interface AssignmentMatchRowProps {
   index: number;
   podsieAssignment: PodsieAssignmentInfo;
   matchedLesson: ScopeAndSequence | null;
-  assignmentType: 'sidekick' | 'mastery-check' | 'assessment';
+  assignmentType: "sidekick" | "mastery-check" | "assessment";
   totalQuestions?: number;
   lessonsByUnit: Record<string, ScopeAndSequence[]>;
   alreadyExists: boolean;
   hasQuestionMapping: boolean;
   saving: boolean;
   onMatchChange: (lessonId: string) => void;
-  onTypeChange: (type: 'sidekick' | 'mastery-check' | 'assessment') => void;
+  onTypeChange: (type: "sidekick" | "mastery-check" | "assessment") => void;
   onTotalQuestionsChange: (total: number | undefined) => void;
   onSave: () => void;
   onQuestionMapImport?: (questionMap: PodsieQuestionMap[]) => void;
@@ -37,7 +41,7 @@ export function AssignmentMatchRow({
   onTypeChange,
   onTotalQuestionsChange,
   onSave,
-  onQuestionMapImport
+  onQuestionMapImport,
 }: AssignmentMatchRowProps) {
   const [importing, setImporting] = useState(false);
 
@@ -46,26 +50,34 @@ export function AssignmentMatchRow({
 
     setImporting(true);
     try {
-      const result = await getQuestionMap(podsieAssignment.assignmentId.toString());
+      const result = await getQuestionMap(
+        podsieAssignment.assignmentId.toString(),
+      );
 
       if (result.success && result.data) {
         onQuestionMapImport(result.data.questionMap);
-        alert(`Imported ${result.data.questionMap.length} questions for ${result.data.assignmentName}`);
+        alert(
+          `Imported ${result.data.questionMap.length} questions for ${result.data.assignmentName}`,
+        );
       } else {
-        alert(`No question map found for assignment ID ${podsieAssignment.assignmentId}.\n\nPlease create one in the Question Mapper page first.`);
+        alert(
+          `No question map found for assignment ID ${podsieAssignment.assignmentId}.\n\nPlease create one in the Question Mapper page first.`,
+        );
       }
     } catch (error) {
       console.error("Error importing question map:", error);
-      alert('Failed to import question map');
+      alert("Failed to import question map");
     } finally {
       setImporting(false);
     }
   };
 
   return (
-    <div className={`border rounded-lg p-4 ${
-      alreadyExists ? 'border-green-300 bg-green-50/30' : 'border-gray-200'
-    }`}>
+    <div
+      className={`border rounded-lg p-4 ${
+        alreadyExists ? "border-green-300 bg-green-50/30" : "border-gray-200"
+      }`}
+    >
       {/* Status Badges */}
       {alreadyExists && (
         <div className="mb-3 grid grid-cols-2 gap-2">
@@ -75,17 +87,21 @@ export function AssignmentMatchRow({
               Saved in section config
             </span>
           </div>
-          <div className={`flex items-center gap-2 px-3 py-2 border rounded-lg ${
-            hasQuestionMapping
-              ? 'bg-blue-100 border-blue-300'
-              : 'bg-gray-100 border-gray-300'
-          }`}>
-            <span className={`text-xs font-medium ${
-              hasQuestionMapping ? 'text-blue-800' : 'text-gray-600'
-            }`}>
+          <div
+            className={`flex items-center gap-2 px-3 py-2 border rounded-lg ${
+              hasQuestionMapping
+                ? "bg-blue-100 border-blue-300"
+                : "bg-gray-100 border-gray-300"
+            }`}
+          >
+            <span
+              className={`text-xs font-medium ${
+                hasQuestionMapping ? "text-blue-800" : "text-gray-600"
+              }`}
+            >
               {hasQuestionMapping
                 ? `✓ Question mapping`
-                : '✗ No question mapping'}
+                : "✗ No question mapping"}
             </span>
           </div>
         </div>
@@ -100,7 +116,8 @@ export function AssignmentMatchRow({
           {podsieAssignment.assignmentName}
         </div>
         <div className="text-sm text-gray-600">
-          ID: {podsieAssignment.assignmentId} • {podsieAssignment.totalQuestions} questions
+          ID: {podsieAssignment.assignmentId} •{" "}
+          {podsieAssignment.totalQuestions} questions
         </div>
       </div>
 
@@ -110,12 +127,14 @@ export function AssignmentMatchRow({
           <SectionRadioGroup
             label="Assignment Type"
             options={[
-              { id: 'assessment', name: 'Assessment' },
-              { id: 'mastery-check', name: 'Mastery Check' },
-              { id: 'sidekick', name: 'Sidekick' }
+              { id: "assessment", name: "Assessment" },
+              { id: "mastery-check", name: "Mastery Check" },
+              { id: "sidekick", name: "Sidekick" },
             ]}
             value={assignmentType}
-            onChange={(value) => onTypeChange(value as 'sidekick' | 'mastery-check' | 'assessment')}
+            onChange={(value) =>
+              onTypeChange(value as "sidekick" | "mastery-check" | "assessment")
+            }
           />
         </div>
         <div>
@@ -141,18 +160,16 @@ export function AssignmentMatchRow({
           Select Lesson from Scope & Sequence
         </label>
         <select
-          value={matchedLesson?.id || ''}
+          value={matchedLesson?.id || ""}
           onChange={(e) => onMatchChange(e.target.value)}
           className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            matchedLesson
-              ? 'border-green-500 bg-green-50'
-              : 'border-gray-300'
+            matchedLesson ? "border-green-500 bg-green-50" : "border-gray-300"
           }`}
         >
           <option value="">Select a lesson...</option>
           {Object.entries(lessonsByUnit).map(([unit, unitLessons]) => (
             <optgroup key={unit} label={unit}>
-              {unitLessons.map(lesson => (
+              {unitLessons.map((lesson) => (
                 <option key={lesson.id} value={lesson.id}>
                   {lesson.unitLessonId}: {lesson.lessonName}
                 </option>
@@ -206,7 +223,7 @@ export function AssignmentMatchRow({
             ) : (
               <>
                 <CheckIcon className="w-5 h-5" />
-                {alreadyExists ? 'Update Assignment' : 'Save Assignment'}
+                {alreadyExists ? "Update Assignment" : "Save Assignment"}
               </>
             )}
           </button>

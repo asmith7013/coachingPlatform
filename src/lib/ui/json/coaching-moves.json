@@ -36,7 +36,7 @@
   },
   {
     "id": "student-generated-models",
-    "category": "Representation", 
+    "category": "Representation",
     "specificMove": "Student-generated models",
     "description": "Encourage students to create their own mathematical models",
     "toolsResources": "Drawing tools, manipulatives"
@@ -51,7 +51,7 @@
   {
     "id": "extension-activities",
     "category": "Differentiation",
-    "specificMove": "Extension activities", 
+    "specificMove": "Extension activities",
     "description": "Offer additional challenges for advanced learners",
     "toolsResources": "Extension tasks, problem sets"
   },

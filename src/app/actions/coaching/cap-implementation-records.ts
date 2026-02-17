@@ -1,11 +1,11 @@
 "use server";
 
 import { CapImplementationRecordModel } from "@mongoose-schema/cap/cap-implementation-record.model";
-import { 
-  CapImplementationRecordZodSchema, 
+import {
+  CapImplementationRecordZodSchema,
   CapImplementationRecordInputZodSchema,
   type CapImplementationRecord,
-  type CapImplementationRecordInput
+  type CapImplementationRecordInput,
 } from "@zod-schema/cap/cap-implementation-record";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -19,35 +19,46 @@ const capImplementationRecordActions = createCrudActions({
   inputSchema: CapImplementationRecordInputZodSchema,
   name: "CAP Implementation Record",
   revalidationPaths: ["/dashboard/coaching-action-plans"],
-  sortFields: ['date', 'visitNumber', 'sortOrder', 'createdAt'],
-  defaultSortField: 'visitNumber',
-  defaultSortOrder: 'asc'
+  sortFields: ["date", "visitNumber", "sortOrder", "createdAt"],
+  defaultSortField: "visitNumber",
+  defaultSortOrder: "asc",
 });
 
 // Export only async functions
-export async function fetchCapImplementationRecords(params: QueryParams = DEFAULT_QUERY_PARAMS) {
+export async function fetchCapImplementationRecords(
+  params: QueryParams = DEFAULT_QUERY_PARAMS,
+) {
   return withDbConnection(() => capImplementationRecordActions.fetch(params));
 }
 
 export async function fetchCapImplementationRecordsByCapId(capId: string) {
-  return withDbConnection(() => capImplementationRecordActions.fetch({ 
-    ...DEFAULT_QUERY_PARAMS,
-    filters: { capId }
-  }));
+  return withDbConnection(() =>
+    capImplementationRecordActions.fetch({
+      ...DEFAULT_QUERY_PARAMS,
+      filters: { capId },
+    }),
+  );
 }
 
 export async function fetchCapImplementationRecordById(id: string) {
   return withDbConnection(() => capImplementationRecordActions.fetchById(id));
 }
 
-export async function createCapImplementationRecord(data: CapImplementationRecordInput) {
+export async function createCapImplementationRecord(
+  data: CapImplementationRecordInput,
+) {
   return withDbConnection(() => capImplementationRecordActions.create(data));
 }
 
-export async function updateCapImplementationRecord(id: string, data: Partial<CapImplementationRecordInput>) {
-  return withDbConnection(() => capImplementationRecordActions.update(id, data));
+export async function updateCapImplementationRecord(
+  id: string,
+  data: Partial<CapImplementationRecordInput>,
+) {
+  return withDbConnection(() =>
+    capImplementationRecordActions.update(id, data),
+  );
 }
 
 export async function deleteCapImplementationRecord(id: string) {
   return withDbConnection(() => capImplementationRecordActions.delete(id));
-} 
+}

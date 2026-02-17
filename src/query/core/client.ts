@@ -1,6 +1,6 @@
 // src/lib/query/core/client.ts
-import { QueryClient, QueryCache, MutationCache } from '@tanstack/react-query';
-import { handleQueryError } from '@error/handlers/query';
+import { QueryClient, QueryCache, MutationCache } from "@tanstack/react-query";
+import { handleQueryError } from "@error/handlers/query";
 
 /**
  * Creates a QueryClient with standardized error handling
@@ -10,43 +10,34 @@ export function createQueryClient(): QueryClient {
     queryCache: new QueryCache({
       onError: (error, query) => {
         // Get entity type from first part of query key if available
-        const entityType = Array.isArray(query.queryKey) && typeof query.queryKey[0] === 'string'
-          ? query.queryKey[0]
-          : undefined;
-          
-        handleQueryError(
-          error,
-          'query',
-          entityType,
-          { 
-            queryKey: JSON.stringify(query.queryKey),
-            queryHash: query.queryHash
-          }
-        );
+        const entityType =
+          Array.isArray(query.queryKey) && typeof query.queryKey[0] === "string"
+            ? query.queryKey[0]
+            : undefined;
+
+        handleQueryError(error, "query", entityType, {
+          queryKey: JSON.stringify(query.queryKey),
+          queryHash: query.queryHash,
+        });
       },
     }),
     mutationCache: new MutationCache({
       onError: (error, variables, context, mutation) => {
         // Get entity type from mutation key if available
-        const entityType = mutation.options.mutationKey && 
-          Array.isArray(mutation.options.mutationKey) && 
-          typeof mutation.options.mutationKey[0] === 'string'
+        const entityType =
+          mutation.options.mutationKey &&
+          Array.isArray(mutation.options.mutationKey) &&
+          typeof mutation.options.mutationKey[0] === "string"
             ? mutation.options.mutationKey[0]
             : undefined;
-            
-        handleQueryError(
-          error,
-          'mutation',
-          entityType,
-          { 
-            mutationKey: mutation.options.mutationKey 
-              ? JSON.stringify(mutation.options.mutationKey)
-              : undefined,
-            variables: typeof variables === 'object' 
-              ? '[Object]' 
-              : String(variables)
-          }
-        );
+
+        handleQueryError(error, "mutation", entityType, {
+          mutationKey: mutation.options.mutationKey
+            ? JSON.stringify(mutation.options.mutationKey)
+            : undefined,
+          variables:
+            typeof variables === "object" ? "[Object]" : String(variables),
+        });
       },
     }),
     defaultOptions: {

@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { UNIT_COLORS, getSectionShade, getSectionBadgeLabel, type UnitScheduleLocal, type SelectionMode } from "./types";
+import {
+  UNIT_COLORS,
+  getSectionShade,
+  getSectionBadgeLabel,
+  type UnitScheduleLocal,
+  type SelectionMode,
+} from "./types";
 import type { CalendarEvent } from "@zod-schema/calendar";
 import { Tooltip } from "@/components/core/feedback/Tooltip";
 
@@ -68,11 +74,17 @@ export function MonthCalendar({
   return (
     <div className="bg-white rounded-lg shadow p-3 mb-4">
       <h3 className="text-sm font-semibold text-gray-900 mb-2">
-        {monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+        {monthDate.toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        })}
       </h3>
       <div className="grid grid-cols-7 gap-0.5">
         {["S", "M", "T", "W", "T", "F", "S"].map((day, idx) => (
-          <div key={`${day}-${idx}`} className="text-center text-xs font-medium text-gray-400 py-0.5">
+          <div
+            key={`${day}-${idx}`}
+            className="text-center text-xs font-medium text-gray-400 py-0.5"
+          >
             {day}
           </div>
         ))}
@@ -164,7 +176,10 @@ function CalendarDay({
 
   const handleClick = () => {
     if (sectionDayOffInfo.isDayOff && sectionDayOffInfo.event) {
-      onSectionDayOffClick({ date: sectionDayOffInfo.event.date, name: sectionDayOffInfo.event.name });
+      onSectionDayOffClick({
+        date: sectionDayOffInfo.event.date,
+        name: sectionDayOffInfo.event.name,
+      });
     } else if (!weekend && !dayOff && isSelecting) {
       onDateClick(dateStr);
     }
@@ -173,12 +188,12 @@ function CalendarDay({
   const title = weekend
     ? "Weekend"
     : sectionDayOffInfo.isDayOff && sectionDayOffInfo.event
-    ? `${sectionDayOffInfo.event.name} (click to delete)`
-    : dayOff
-    ? events.map((e) => e.name).join(", ") || "Day Off"
-    : scheduleInfo
-    ? `${scheduleInfo.unit.unitName} - ${scheduleInfo.section.name}`
-    : "";
+      ? `${sectionDayOffInfo.event.name} (click to delete)`
+      : dayOff
+        ? events.map((e) => e.name).join(", ") || "Day Off"
+        : scheduleInfo
+          ? `${scheduleInfo.unit.unitName} - ${scheduleInfo.section.name}`
+          : "";
 
   // Show taller cell with event name for section day off events or schedule info
   const hasSectionEvent = sectionDayOffInfo.isDayOff && sectionDayOffInfo.event;
@@ -189,7 +204,9 @@ function CalendarDay({
     <div
       onClick={handleClick}
       className={`${cellHeight} rounded text-xs flex flex-col items-center justify-start pt-0.5 relative ${bgColor} ${textColor} ${cursor} ${
-        isSelecting && !weekend && !dayOff ? "hover:ring-2 hover:ring-blue-400" : ""
+        isSelecting && !weekend && !dayOff
+          ? "hover:ring-2 hover:ring-blue-400"
+          : ""
       } ${sectionDayOffInfo.isDayOff ? "hover:ring-2 hover:ring-gray-400" : ""}`}
       style={customBgStyle}
       title={title}
@@ -197,7 +214,10 @@ function CalendarDay({
       {hasScheduleBadge && (
         <div
           className="absolute top-0 left-0 right-0 h-0.5"
-          style={{ backgroundColor: UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base }}
+          style={{
+            backgroundColor:
+              UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base,
+          }}
         />
       )}
       <span>{date.getDate()}</span>
@@ -216,7 +236,9 @@ function CalendarDay({
                 ? `${getSectionBadgeLabel(scheduleInfo.section.sectionId)}.${scheduleInfo.section.subsection}`
                 : getSectionBadgeLabel(scheduleInfo.section.sectionId)
             }
-            color={UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base}
+            color={
+              UNIT_COLORS[scheduleInfo.unitIndex % UNIT_COLORS.length].base
+            }
           />
         </Tooltip>
       )}

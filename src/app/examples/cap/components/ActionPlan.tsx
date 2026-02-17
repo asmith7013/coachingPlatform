@@ -1,10 +1,10 @@
-import React from 'react';
-import { ActionPlanStage } from './ActionPlanStage';
-import { MetricsTable } from './MetricsTable';
-import { CoachingMovesTable } from './CoachingMovesTable';
-import { ImplementationRecord } from './ImplementationRecord';
-import { MonitoringProgress } from './MonitoringProgress';
-import { ReflectionSection } from './ReflectionSection';
+import React from "react";
+import { ActionPlanStage } from "./ActionPlanStage";
+import { MetricsTable } from "./MetricsTable";
+import { CoachingMovesTable } from "./CoachingMovesTable";
+import { ImplementationRecord } from "./ImplementationRecord";
+import { MonitoringProgress } from "./MonitoringProgress";
+import { ReflectionSection } from "./ReflectionSection";
 
 export interface ActionPlanProps {
   title: string;
@@ -68,7 +68,7 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
   coachingMoves,
   implementation,
   monitoring,
-  reflections
+  reflections,
 }) => {
   return (
     <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
@@ -89,17 +89,21 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
           </div>
           <div>
             <p className="text-sm text-gray-500">Timeline</p>
-            <p className="font-medium">{startDate} - {endDate}</p>
+            <p className="font-medium">
+              {startDate} - {endDate}
+            </p>
           </div>
         </div>
       </div>
 
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-2">Objective</h2>
-        <p className="p-3 bg-blue-50 rounded-md text-blue-800 border border-blue-100">{objective}</p>
+        <p className="p-3 bg-blue-50 rounded-md text-blue-800 border border-blue-100">
+          {objective}
+        </p>
       </div>
 
-      <ActionPlanStage 
+      <ActionPlanStage
         number={stageInfo.number}
         title={stageInfo.title}
         className=""
@@ -109,9 +113,9 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
 
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Success Metrics</h2>
-        <MetricsTable 
-          metrics={successMetrics.metrics} 
-          dates={successMetrics.dates} 
+        <MetricsTable
+          metrics={successMetrics.metrics}
+          dates={successMetrics.dates}
         />
       </div>
 
@@ -122,17 +126,17 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
 
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Implementation Record</h2>
-        <ImplementationRecord 
-          records={implementation.records} 
+        <ImplementationRecord
+          records={implementation.records}
           dates={implementation.dates}
         />
       </div>
 
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">Progress Monitoring</h2>
-        <MonitoringProgress 
-          metrics={monitoring.metrics} 
-          dates={monitoring.dates} 
+        <MonitoringProgress
+          metrics={monitoring.metrics}
+          dates={monitoring.dates}
           evidence={monitoring.evidence}
         />
       </div>
@@ -140,4 +144,4 @@ export const ActionPlan: React.FC<ActionPlanProps> = ({
       <ReflectionSection reflections={reflections} />
     </div>
   );
-}; 
+};

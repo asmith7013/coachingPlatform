@@ -1,6 +1,6 @@
-import React from 'react';
-import { tv } from 'tailwind-variants';
-import { Textarea } from '@/components/core/fields/Textarea';
+import React from "react";
+import { tv } from "tailwind-variants";
+import { Textarea } from "@/components/core/fields/Textarea";
 
 interface ActivitySectionProps {
   title: string;
@@ -10,26 +10,30 @@ interface ActivitySectionProps {
     workTime: string;
     synthesis: string;
   };
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  handleInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => void;
 }
 
 const subsectionTitle = tv({
-  base: "text-base font-medium mt-4 mb-2"
+  base: "text-base font-medium mt-4 mb-2",
 });
 
 const activitySection = tv({
-  base: "border rounded-md p-3 mt-3 bg-gray-50"
+  base: "border rounded-md p-3 mt-3 bg-gray-50",
 });
 
 const fieldLabel = tv({
-  base: "text-sm font-medium text-gray-700 mb-1"
+  base: "text-sm font-medium text-gray-700 mb-1",
 });
 
-const ActivitySection: React.FC<ActivitySectionProps> = ({ 
-  title, 
-  section, 
-  data, 
-  handleInputChange 
+const ActivitySection: React.FC<ActivitySectionProps> = ({
+  title,
+  section,
+  data,
+  handleInputChange,
 }) => {
   return (
     <div className={activitySection()}>
@@ -70,4 +74,4 @@ const ActivitySection: React.FC<ActivitySectionProps> = ({
   );
 };
 
-export default ActivitySection; 
+export default ActivitySection;

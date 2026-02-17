@@ -1,54 +1,60 @@
-import type { NavigationItem } from '@/components/composed/layouts/sidebar/NavigationSidebar'
+import type { NavigationItem } from "@/components/composed/layouts/sidebar/NavigationSidebar";
 
 /**
  * Updates navigation state to reflect current active path
  */
 export function updateNavigationState(
-  items: NavigationItem[], 
-  pathname: string
+  items: NavigationItem[],
+  pathname: string,
 ): NavigationItem[] {
-  return items.map(item => {
-    const isActive = pathname === item.href || 
-                   (pathname.startsWith(item.href) && item.href !== '/dashboard')
-    
-    const children = item.children 
+  return items.map((item) => {
+    const isActive =
+      pathname === item.href ||
+      (pathname.startsWith(item.href) && item.href !== "/dashboard");
+
+    const children = item.children
       ? updateNavigationState(item.children, pathname)
-      : undefined
-    
+      : undefined;
+
     return {
       ...item,
       current: isActive,
-      ...(children && { children })
-    }
-  })
+      ...(children && { children }),
+    };
+  });
 }
 
 /**
  * Finds the currently active navigation item
  */
-export function findCurrentPage(items: NavigationItem[]): NavigationItem | null {
+export function findCurrentPage(
+  items: NavigationItem[],
+): NavigationItem | null {
   for (const item of items) {
-    if (item.current) return item
+    if (item.current) return item;
     if (item.children) {
-      const child = findCurrentPage(item.children)
-      if (child) return child
+      const child = findCurrentPage(item.children);
+      if (child) return child;
     }
   }
-  return null
+  return null;
 }
 
 /**
  * Finds a navigation item by its path
  */
-export function findItemByPath(items: NavigationItem[], path: string): NavigationItem | null {
+export function findItemByPath(
+  items: NavigationItem[],
+  path: string,
+): NavigationItem | null {
   for (const item of items) {
-    if (item.href === path) return item
+    if (item.href === path) return item;
     if (item.children) {
-      const child = findItemByPath(item.children, path)
-      if (child) return child
+      const child = findItemByPath(item.children, path);
+      if (child) return child;
     }
   }
-  return null
+  return null;
 }
 
 /**
@@ -56,16 +62,17 @@ export function findItemByPath(items: NavigationItem[], path: string): Navigatio
  */
 export function formatSegmentName(segment: string): string {
   const specialCases: Record<string, string> = {
-    'schoolList': 'Schools',
-    'classroomNotes': 'Classroom Notes',
-    'lookForList': 'Look Fors',
-    'coaching-action-plans': 'Coaching Plans',
-    'teachingLab': 'Teaching Lab',
-    'nycps': 'NYCPS'
-  }
-  
-  return specialCases[segment] || 
-    segment.charAt(0).toUpperCase() + segment.slice(1)
+    schoolList: "Schools",
+    classroomNotes: "Classroom Notes",
+    lookForList: "Look Fors",
+    "coaching-action-plans": "Coaching Plans",
+    teachingLab: "Teaching Lab",
+    nycps: "NYCPS",
+  };
+
+  return (
+    specialCases[segment] || segment.charAt(0).toUpperCase() + segment.slice(1)
+  );
 }
 
 /**
@@ -74,25 +81,33 @@ export function formatSegmentName(segment: string): string {
 export function filterNavigationByAuth(
   items: NavigationItem[],
   userRoles: string[],
-  userPermissions: string[]
+  userPermissions: string[],
 ): NavigationItem[] {
   return items
-    .filter(item => {
-      if (item.requiredRoles && !item.requiredRoles.some(role => userRoles.includes(role))) {
-        return false
+    .filter((item) => {
+      if (
+        item.requiredRoles &&
+        !item.requiredRoles.some((role) => userRoles.includes(role))
+      ) {
+        return false;
       }
-      
-      if (item.requiredPermissions && !item.requiredPermissions.some(permission => userPermissions.includes(permission))) {
-        return false
+
+      if (
+        item.requiredPermissions &&
+        !item.requiredPermissions.some((permission) =>
+          userPermissions.includes(permission),
+        )
+      ) {
+        return false;
       }
-      
-      return true
+
+      return true;
     })
-    .map(item => ({
+    .map((item) => ({
       ...item,
-      children: item.children 
+      children: item.children
         ? filterNavigationByAuth(item.children, userRoles, userPermissions)
-        : undefined
+        : undefined,
     }))
-    .filter(item => !item.children || item.children.length > 0)
+    .filter((item) => !item.children || item.children.length > 0);
 }

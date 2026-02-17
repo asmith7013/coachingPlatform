@@ -1,4 +1,4 @@
-import { BaseResponse } from '@core-types/response';
+import { BaseResponse } from "@core-types/response";
 
 /**
  * Import item interface for providing additional data when importing
@@ -26,7 +26,8 @@ export interface ImportPreview {
 /**
  * Import result from Monday.com items
  */
-export interface ImportResult extends Pick<BaseResponse, 'success' | 'message'> {
+export interface ImportResult
+  extends Pick<BaseResponse, "success" | "message"> {
   success: boolean;
   imported: number;
   errors: Record<string, string>;

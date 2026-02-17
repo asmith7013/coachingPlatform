@@ -1,31 +1,40 @@
-import React from 'react';
-import { Eye, MessageCircle } from 'lucide-react';
-import { cn } from '@ui/utils/formatters';
-import type { ScheduleLegendProps } from './types';
+import React from "react";
+import { Eye, MessageCircle } from "lucide-react";
+import { cn } from "@ui/utils/formatters";
+import type { ScheduleLegendProps } from "./types";
 
 /**
  * Pure UI component for displaying schedule legend
  * Extracted from schedulesNew - all business logic removed
  */
-export function ScheduleLegend({
-  className
-}: ScheduleLegendProps) {
+export function ScheduleLegend({ className }: ScheduleLegendProps) {
   return (
-    <div className={cn("mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-4", className)}>
+    <div
+      className={cn(
+        "mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-4",
+        className,
+      )}
+    >
       <div className="flex-1">
         <h3 className="font-semibold text-gray-900 mb-3">How to Schedule</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-4">
           <div className="flex items-center space-x-3">
             <div className="w-4 h-4 bg-gray-400 rounded"></div>
-            <span>Hover to see <strong>First Half</strong> option</span>
+            <span>
+              Hover to see <strong>First Half</strong> option
+            </span>
           </div>
           <div className="flex items-center space-x-3">
             <div className="w-4 h-4 bg-gray-400 rounded"></div>
-            <span>Hover to see <strong>Second Half</strong> option</span>
+            <span>
+              Hover to see <strong>Second Half</strong> option
+            </span>
           </div>
           <div className="flex items-center space-x-3">
             <div className="w-4 h-4 bg-gray-400 rounded"></div>
-            <span>Hover to see <strong>Full Period</strong> option</span>
+            <span>
+              Hover to see <strong>Full Period</strong> option
+            </span>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
@@ -36,7 +45,9 @@ export function ScheduleLegend({
               </div>
               <Eye className="w-3 h-3 text-gray-600" />
             </div>
-            <span><strong>Observation</strong> planned</span>
+            <span>
+              <strong>Observation</strong> planned
+            </span>
           </div>
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-1">
@@ -45,15 +56,20 @@ export function ScheduleLegend({
               </div>
               <MessageCircle className="w-3 h-3 text-gray-600" />
             </div>
-            <span><strong>Meeting</strong> planned</span>
+            <span>
+              <strong>Meeting</strong> planned
+            </span>
           </div>
         </div>
         <div className="p-3 bg-blue-50 rounded-lg">
           <p className="text-blue-800 text-sm">
-            <strong>1.</strong> Click on any teacher&apos;s period → <strong>2.</strong> Planned Schedule shows time options → <strong>3.</strong> Click your preferred time zone → <strong>4.</strong> Hover over scheduled items to remove with ×
+            <strong>1.</strong> Click on any teacher&apos;s period →{" "}
+            <strong>2.</strong> Planned Schedule shows time options →{" "}
+            <strong>3.</strong> Click your preferred time zone →{" "}
+            <strong>4.</strong> Hover over scheduled items to remove with ×
           </p>
         </div>
       </div>
     </div>
   );
-} 
+}

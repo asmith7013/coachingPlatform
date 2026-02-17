@@ -1,5 +1,5 @@
-import { format } from 'date-fns';
-import { MondayItem } from '@lib/integrations/monday/types/board';
+import { format } from "date-fns";
+import { MondayItem } from "@lib/integrations/monday/types/board";
 
 /**
  * Format a date from Monday's format to our application format
@@ -9,7 +9,7 @@ export function formatDateFromMonday(dateStr: string): string {
     // Handle different Monday date formats
     // This is a simplification - adjust based on actual format
     const date = new Date(dateStr);
-    return format(date, 'yyyy-MM-dd');
+    return format(date, "yyyy-MM-dd");
   } catch (error) {
     console.error("Error formatting date from Monday:", error);
     return dateStr; // Return original if parsing fails
@@ -21,24 +21,26 @@ export function formatDateFromMonday(dateStr: string): string {
  * Monday often returns values in a JSON string format
  */
 export function extractTextFromMondayValue(value: string): string {
-  if (!value) return '';
-  
+  if (!value) return "";
+
   try {
     // For text columns, Monday often returns a JSON object
     const parsed = JSON.parse(value);
-    
+
     // Handle different Monday.com column types
     if (parsed.text) return parsed.text;
     if (parsed.name) return parsed.name;
     if (parsed.value) return parsed.value;
     if (parsed.date) return parsed.date;
     if (parsed.email) return parsed.email;
-    
+
     // For arrays (like multiple people in a person column)
     if (Array.isArray(parsed.personsAndTeams)) {
-      return parsed.personsAndTeams.map((p: { name: string }) => p.name).join(", ");
+      return parsed.personsAndTeams
+        .map((p: { name: string }) => p.name)
+        .join(", ");
     }
-    
+
     return String(parsed);
   } catch {
     // If it's not JSON, return as is
@@ -51,21 +53,21 @@ export function extractTextFromMondayValue(value: string): string {
  */
 export function shouldImportItemWithStatus(status?: string): boolean {
   if (!status) return true; // Default to true if no status
-  
+
   const importableStatuses = [
-    "Active", 
-    "Done", 
-    "Complete", 
-    "Completed", 
+    "Active",
+    "Done",
+    "Complete",
+    "Completed",
     "In Progress",
     "Scheduled",
     "Ready",
-    "To Do", 
-    "Working on it"
+    "To Do",
+    "Working on it",
   ];
-  
-  return importableStatuses.some(s => 
-    status.toLowerCase().includes(s.toLowerCase())
+
+  return importableStatuses.some((s) =>
+    status.toLowerCase().includes(s.toLowerCase()),
   );
 }
 
@@ -73,6 +75,8 @@ export function shouldImportItemWithStatus(status?: string): boolean {
  * Get column value by ID from a Monday item
  */
 export function getColumnValueById(item: MondayItem, columnId: string): string {
-  const column = item.column_values.find((col: { id: string }) => col.id === columnId);
+  const column = item.column_values.find(
+    (col: { id: string }) => col.id === columnId,
+  );
   return column?.text || "";
-} 
+}

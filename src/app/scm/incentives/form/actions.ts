@@ -7,11 +7,12 @@ import { RoadmapUnitModel } from "@mongoose-schema/scm/roadmaps/roadmap-unit.mod
 import { ScopeAndSequenceModel } from "@mongoose-schema/scm/scope-and-sequence/scope-and-sequence.model";
 import { RoadmapsSkillModel } from "@mongoose-schema/scm/roadmaps/roadmap-skill.model";
 import { SectionConfigModel } from "@mongoose-schema/scm/podsie/section-config.model";
-import {
-  ActivityTypeConfigInput,
-} from "@zod-schema/scm/incentives/activity-type-config";
+import { ActivityTypeConfigInput } from "@zod-schema/scm/incentives/activity-type-config";
 import { StudentActivity } from "@zod-schema/scm/student/student";
-import { StudentActivityEventInput, StudentActivityInputZodSchema } from "@zod-schema/scm/student/student-activity";
+import {
+  StudentActivityEventInput,
+  StudentActivityInputZodSchema,
+} from "@zod-schema/scm/student/student-activity";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { IncentiveEmailService } from "@/app/actions/scm/incentives/incentive-email";
@@ -28,7 +29,7 @@ export async function fetchActivityTypes() {
     try {
       const types = await ActivityTypeConfigModel.find({}).sort({ order: 1 });
       // Convert to JSON and map id to typeId for backward compatibility
-      const serializedTypes = types.map(t => {
+      const serializedTypes = types.map((t) => {
         const json = JSON.parse(JSON.stringify(t.toJSON()));
         // Map id to typeId if typeId doesn't exist
         if (!json.typeId && json.id) {
@@ -38,7 +39,10 @@ export async function fetchActivityTypes() {
       });
       return { success: true, data: serializedTypes };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch activity types") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch activity types"),
+      };
     }
   });
 }
@@ -51,7 +55,7 @@ export async function createActivityType(config: ActivityTypeConfigInput) {
     try {
       // Check for duplicate label
       const existing = await ActivityTypeConfigModel.findOne({
-        label: config.label
+        label: config.label,
       });
 
       if (existing) {
@@ -73,7 +77,10 @@ export async function createActivityType(config: ActivityTypeConfigInput) {
       const newType = await ActivityTypeConfigModel.create(config);
       return { success: true, data: newType.toJSON() };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to create activity type") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to create activity type"),
+      };
     }
   });
 }
@@ -83,7 +90,7 @@ export async function createActivityType(config: ActivityTypeConfigInput) {
  */
 export async function updateActivityType(
   id: string,
-  updates: Partial<ActivityTypeConfigInput>
+  updates: Partial<ActivityTypeConfigInput>,
 ) {
   return withDbConnection(async () => {
     try {
@@ -113,7 +120,10 @@ export async function updateActivityType(
 
       return { success: true, data: type.toJSON() };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to update activity type") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to update activity type"),
+      };
     }
   });
 }
@@ -140,7 +150,10 @@ export async function deleteActivityType(id: string) {
       await ActivityTypeConfigModel.deleteOne({ _id: id });
       return { success: true, data: { id } };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to delete activity type") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to delete activity type"),
+      };
     }
   });
 }
@@ -153,15 +166,20 @@ export async function reorderActivityTypes(orderedIds: string[]) {
     try {
       // Update order field for each type by _id
       const updates = orderedIds.map((id, index) =>
-        ActivityTypeConfigModel.updateOne({ _id: id }, { order: index + 1 })
+        ActivityTypeConfigModel.updateOne({ _id: id }, { order: index + 1 }),
       );
 
       await Promise.all(updates);
 
-      const types = await ActivityTypeConfigModel.find({}).sort({ order: 1 }).lean();
+      const types = await ActivityTypeConfigModel.find({})
+        .sort({ order: 1 })
+        .lean();
       return { success: true, data: types };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to reorder activity types") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to reorder activity types"),
+      };
     }
   });
 }
@@ -173,21 +191,28 @@ export async function reorderActivityTypes(orderedIds: string[]) {
 /**
  * Fetch students by grade and section
  */
-export async function fetchStudentsBySection(section: string, grade: string = "8") {
+export async function fetchStudentsBySection(
+  section: string,
+  grade: string = "8",
+) {
   return withDbConnection(async () => {
     try {
       const students = await StudentModel.find({
         gradeLevel: grade,
         section,
         active: true,
-      })
-        .sort({ firstName: 1, lastName: 1 });
+      }).sort({ firstName: 1, lastName: 1 });
 
       // Convert to JSON to ensure proper serialization
-      const serializedStudents = students.map(s => JSON.parse(JSON.stringify(s.toJSON())));
+      const serializedStudents = students.map((s) =>
+        JSON.parse(JSON.stringify(s.toJSON())),
+      );
       return { success: true, data: serializedStudents };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch students") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch students"),
+      };
     }
   });
 }
@@ -200,14 +225,18 @@ export async function fetchUnitsByGrade(grade: string = "8") {
     try {
       const units = await RoadmapUnitModel.find({
         grade: { $regex: `${grade}th Grade`, $options: "i" },
-      })
-        .sort({ unitNumber: 1 });
+      }).sort({ unitNumber: 1 });
 
       // Convert to JSON to ensure proper serialization
-      const serializedUnits = units.map(u => JSON.parse(JSON.stringify(u.toJSON())));
+      const serializedUnits = units.map((u) =>
+        JSON.parse(JSON.stringify(u.toJSON())),
+      );
       return { success: true, data: serializedUnits };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch units") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch units"),
+      };
     }
   });
 }
@@ -231,11 +260,14 @@ export async function fetchSectionConfig(classSection: string) {
         success: true,
         data: {
           scopeSequenceTag: configJson.scopeSequenceTag || "Grade 8",
-          gradeLevel: configJson.gradeLevel
-        }
+          gradeLevel: configJson.gradeLevel,
+        },
       };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch section config") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch section config"),
+      };
     }
   });
 }
@@ -244,7 +276,11 @@ export async function fetchSectionConfig(classSection: string) {
  * Fetch lessons for a unit from scope-and-sequence
  * Optionally filter by scopeSequenceTag
  */
-export async function fetchLessonsForUnit(grade: string, unitNumber: number, scopeSequenceTag?: string) {
+export async function fetchLessonsForUnit(
+  grade: string,
+  unitNumber: number,
+  scopeSequenceTag?: string,
+) {
   return withDbConnection(async () => {
     try {
       const query: Record<string, unknown> = {
@@ -257,14 +293,20 @@ export async function fetchLessonsForUnit(grade: string, unitNumber: number, sco
         query.scopeSequenceTag = scopeSequenceTag;
       }
 
-      const lessons = await ScopeAndSequenceModel.find(query)
-        .sort({ lessonNumber: 1 });
+      const lessons = await ScopeAndSequenceModel.find(query).sort({
+        lessonNumber: 1,
+      });
 
       // Convert to JSON to ensure proper serialization
-      const serializedLessons = lessons.map(l => JSON.parse(JSON.stringify(l.toJSON())));
+      const serializedLessons = lessons.map((l) =>
+        JSON.parse(JSON.stringify(l.toJSON())),
+      );
       return { success: true, data: serializedLessons };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch lessons") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch lessons"),
+      };
     }
   });
 }
@@ -275,17 +317,23 @@ export async function fetchLessonsForUnit(grade: string, unitNumber: number, sco
 export async function fetchSectionsForUnit(grade: string, unitNumber: number) {
   return withDbConnection(async () => {
     try {
-      const sections: string[] = await ScopeAndSequenceModel.distinct("section", {
-        grade,
-        unitNumber,
-      }) as unknown as string[];
+      const sections: string[] = (await ScopeAndSequenceModel.distinct(
+        "section",
+        {
+          grade,
+          unitNumber,
+        },
+      )) as unknown as string[];
 
       // Sort alphabetically
       sections.sort();
 
       return { success: true, data: sections };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch sections") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch sections"),
+      };
     }
   });
 }
@@ -298,14 +346,18 @@ export async function fetchSkillDetails(skillIds: string[]) {
     try {
       const skills = await RoadmapsSkillModel.find({
         skillNumber: { $in: skillIds },
-      })
-        .sort({ skillNumber: 1 });
+      }).sort({ skillNumber: 1 });
 
       // Convert to JSON to ensure proper serialization
-      const serializedSkills = skills.map((s) => JSON.parse(JSON.stringify(s.toJSON())));
+      const serializedSkills = skills.map((s) =>
+        JSON.parse(JSON.stringify(s.toJSON())),
+      );
       return { success: true, data: serializedSkills };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch skill details") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch skill details"),
+      };
     }
   });
 }
@@ -317,7 +369,7 @@ export interface CategorizedSkill {
   _id: string;
   skillNumber: string;
   title: string;
-  category: 'target' | 'essential' | 'helpful';
+  category: "target" | "essential" | "helpful";
 }
 
 export async function fetchUnitSkills(unitId: string) {
@@ -348,7 +400,7 @@ export async function fetchUnitSkills(unitId: string) {
               _id: skillData._id,
               skillNumber: skillData.skillNumber,
               title: skillData.title,
-              category: 'target',
+              category: "target",
             });
           }
 
@@ -360,7 +412,7 @@ export async function fetchUnitSkills(unitId: string) {
                 _id: essential._id || essential.skillNumber,
                 skillNumber: essential.skillNumber,
                 title: essential.title,
-                category: 'essential',
+                category: "essential",
               });
             }
           }
@@ -373,7 +425,7 @@ export async function fetchUnitSkills(unitId: string) {
                 _id: helpful._id || helpful.skillNumber,
                 skillNumber: helpful.skillNumber,
                 title: helpful.title,
-                category: 'helpful',
+                category: "helpful",
               });
             }
           }
@@ -391,7 +443,10 @@ export async function fetchUnitSkills(unitId: string) {
 
       return { success: true, data: categorizedSkills };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch unit skills") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch unit skills"),
+      };
     }
   });
 }
@@ -410,7 +465,7 @@ export interface StudentActivitySubmission {
 
 export async function submitActivities(
   submissions: StudentActivitySubmission[],
-  teacherName?: string
+  teacherName?: string,
 ) {
   return withDbConnection(async () => {
     console.log("🔵 [submitActivities] Starting submission...");
@@ -424,17 +479,27 @@ export async function submitActivities(
 
       for (let i = 0; i < submissions.length; i++) {
         const submission = submissions[i];
-        console.log(`\n🔵 [submitActivities] Processing submission ${i + 1}/${submissions.length}`);
+        console.log(
+          `\n🔵 [submitActivities] Processing submission ${i + 1}/${submissions.length}`,
+        );
         console.log("🔵 [submitActivities] Student ID:", submission.studentId);
-        console.log("🔵 [submitActivities] Activities count:", submission.activities.length);
+        console.log(
+          "🔵 [submitActivities] Activities count:",
+          submission.activities.length,
+        );
 
         try {
           // Fetch student info for enrichment
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const student: any = await StudentModel.findById(submission.studentId).lean();
+          const student: any = await StudentModel.findById(
+            submission.studentId,
+          ).lean();
 
           if (!student) {
-            console.error("❌ [submitActivities] Student not found:", submission.studentId);
+            console.error(
+              "❌ [submitActivities] Student not found:",
+              submission.studentId,
+            );
             errors.push({
               studentId: submission.studentId,
               error: "Student not found in database",
@@ -442,16 +507,23 @@ export async function submitActivities(
             continue;
           }
 
-          console.log("✅ [submitActivities] Student found:", student.firstName, student.lastName);
+          console.log(
+            "✅ [submitActivities] Student found:",
+            student.firstName,
+            student.lastName,
+          );
 
           // Convert each activity to a standalone event
           for (const activity of submission.activities) {
             // Normalize date to YYYY-MM-DD format
             let normalizedDate = activity.date;
-            if (activity.date && activity.date.match(/^\d{1,2}\/\d{1,2}\/\d{2,4}$/)) {
-              const parts = activity.date.split('/');
-              const month = parts[0].padStart(2, '0');
-              const day = parts[1].padStart(2, '0');
+            if (
+              activity.date &&
+              activity.date.match(/^\d{1,2}\/\d{1,2}\/\d{2,4}$/)
+            ) {
+              const parts = activity.date.split("/");
+              const month = parts[0].padStart(2, "0");
+              const day = parts[1].padStart(2, "0");
               let year = parts[2];
               // Convert 2-digit year to 4-digit year
               if (year.length === 2) {
@@ -480,14 +552,18 @@ export async function submitActivities(
             };
 
             // Validate with Zod schema
-            const validationResult = StudentActivityInputZodSchema.safeParse(eventData);
+            const validationResult =
+              StudentActivityInputZodSchema.safeParse(eventData);
 
             if (!validationResult.success) {
-              console.error("❌ [submitActivities] Validation error:", validationResult.error.format());
+              console.error(
+                "❌ [submitActivities] Validation error:",
+                validationResult.error.format(),
+              );
               const firstError = validationResult.error.issues[0];
               errors.push({
                 studentId: submission.studentId,
-                error: `Validation failed: ${firstError.path.join('.')}: ${firstError.message}`,
+                error: `Validation failed: ${firstError.path.join(".")}: ${firstError.message}`,
               });
               continue;
             }
@@ -500,9 +576,11 @@ export async function submitActivities(
             success: true,
             count: submission.activities.length,
           });
-
         } catch (err) {
-          console.error("❌ [submitActivities] Error for student:", submission.studentId);
+          console.error(
+            "❌ [submitActivities] Error for student:",
+            submission.studentId,
+          );
           console.error("❌ [submitActivities] Error details:", err);
           errors.push({
             studentId: submission.studentId,
@@ -513,11 +591,20 @@ export async function submitActivities(
 
       // Batch insert all events into standalone collection
       if (eventsToInsert.length > 0) {
-        console.log(`\n🔵 [submitActivities] Inserting ${eventsToInsert.length} events...`);
-        console.log("🔵 [submitActivities] Sample event:", JSON.stringify(eventsToInsert[0], null, 2));
+        console.log(
+          `\n🔵 [submitActivities] Inserting ${eventsToInsert.length} events...`,
+        );
+        console.log(
+          "🔵 [submitActivities] Sample event:",
+          JSON.stringify(eventsToInsert[0], null, 2),
+        );
 
-        const insertResult = await StudentActivityModel.insertMany(eventsToInsert);
-        console.log("✅ [submitActivities] Inserted events:", insertResult.length);
+        const insertResult =
+          await StudentActivityModel.insertMany(eventsToInsert);
+        console.log(
+          "✅ [submitActivities] Inserted events:",
+          insertResult.length,
+        );
 
         // Also update each student's classActivities array for denormalized access
         const eventsByStudent = new Map<string, StudentActivity[]>();
@@ -534,7 +621,10 @@ export async function submitActivities(
             unitId: event.unitId as string | undefined,
             lessonId: event.lessonId as string | undefined,
             skillId: event.skillId as string | undefined,
-            smallGroupType: event.smallGroupType as "mastery" | "prerequisite" | undefined,
+            smallGroupType: event.smallGroupType as
+              | "mastery"
+              | "prerequisite"
+              | undefined,
             inquiryQuestion: event.inquiryQuestion as string | undefined,
             customDetail: event.customDetail as string | undefined,
             loggedBy: event.loggedBy as string | undefined,
@@ -546,10 +636,14 @@ export async function submitActivities(
         for (const [studentId, activities] of eventsByStudent) {
           await StudentModel.updateOne(
             { _id: studentId },
-            { $push: { classActivities: { $each: activities } } }
+            { $push: { classActivities: { $each: activities } } },
           );
         }
-        console.log("✅ [submitActivities] Updated classActivities for", eventsByStudent.size, "students");
+        console.log(
+          "✅ [submitActivities] Updated classActivities for",
+          eventsByStudent.size,
+          "students",
+        );
       }
 
       console.log("\n🔵 [submitActivities] Final results:");
@@ -557,7 +651,10 @@ export async function submitActivities(
       console.log("🔵 [submitActivities] Failed:", errors.length);
 
       if (errors.length > 0) {
-        console.log("🔵 [submitActivities] Errors:", JSON.stringify(errors, null, 2));
+        console.log(
+          "🔵 [submitActivities] Errors:",
+          JSON.stringify(errors, null, 2),
+        );
       }
 
       // Send email notification on successful submission
@@ -570,37 +667,46 @@ export async function submitActivities(
           const firstEvent = eventsToInsert[0];
           if (firstEvent.unitId) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const unit: any = await RoadmapUnitModel.findById(firstEvent.unitId).lean();
+            const unit: any = await RoadmapUnitModel.findById(
+              firstEvent.unitId,
+            ).lean();
             unitTitle = unit?.unitTitle;
           }
 
           // Calculate activity breakdown
           const activityCounts = new Map<string, number>();
-          eventsToInsert.forEach(event => {
+          eventsToInsert.forEach((event) => {
             const label = event.activityLabel as string;
             activityCounts.set(label, (activityCounts.get(label) || 0) + 1);
           });
 
-          const activityBreakdown = Array.from(activityCounts.entries()).map(([label, count]) => ({
-            label,
-            count
-          }));
+          const activityBreakdown = Array.from(activityCounts.entries()).map(
+            ([label, count]) => ({
+              label,
+              count,
+            }),
+          );
 
           const emailService = new IncentiveEmailService();
           const emailSent = await emailService.sendSubmissionNotification({
-            teacherName: teacherName || 'Unknown',
+            teacherName: teacherName || "Unknown",
             section: eventsToInsert[0].section as string,
             unitTitle,
             date: eventsToInsert[0].date as string,
             studentCount: results.length,
-            activityBreakdown
+            activityBreakdown,
           });
           if (!emailSent) {
-            console.error("❌ [submitActivities] Email notification returned false - check EMAIL_USER/EMAIL_PASSWORD env vars");
+            console.error(
+              "❌ [submitActivities] Email notification returned false - check EMAIL_USER/EMAIL_PASSWORD env vars",
+            );
           }
         } catch (emailError) {
           // Log email error but don't fail the submission
-          console.error("❌ [submitActivities] Email notification failed:", emailError);
+          console.error(
+            "❌ [submitActivities] Email notification failed:",
+            emailError,
+          );
         }
       }
 
@@ -615,7 +721,10 @@ export async function submitActivities(
       };
     } catch (error) {
       console.error("❌ [submitActivities] Fatal error:", error);
-      return { success: false, error: handleServerError(error, "Failed to submit activities") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to submit activities"),
+      };
     }
   });
 }
@@ -629,14 +738,14 @@ export async function submitActivities(
  * Ramp Ups come first, then A-F, then Unit Assessment (excluded from suggestions)
  */
 const SECTION_ORDER: Record<string, number> = {
-  'Ramp Ups': 0,
-  'A': 1,
-  'B': 2,
-  'C': 3,
-  'D': 4,
-  'E': 5,
-  'F': 6,
-  'Unit Assessment': 99, // Excluded from suggestions
+  "Ramp Ups": 0,
+  A: 1,
+  B: 2,
+  C: 3,
+  D: 4,
+  E: 5,
+  F: 6,
+  "Unit Assessment": 99, // Excluded from suggestions
 };
 
 function getSectionOrder(section: string | undefined): number {
@@ -647,16 +756,18 @@ function getSectionOrder(section: string | undefined): number {
 /**
  * Sort lessons in the correct order: Ramp Ups → A → B → C → D → Unit Assessment
  */
-function sortLessons<T extends { section?: string; lessonNumber: number; unitLessonId: string }>(lessons: T[]): T[] {
+function sortLessons<
+  T extends { section?: string; lessonNumber: number; unitLessonId: string },
+>(lessons: T[]): T[] {
   return [...lessons].sort((a, b) => {
     const sectionA = getSectionOrder(a.section);
     const sectionB = getSectionOrder(b.section);
     if (sectionA !== sectionB) return sectionA - sectionB;
 
     // For ramp-ups, sort by the RU number in unitLessonId (e.g., "3.RU1" -> 1)
-    if (a.section === 'Ramp Ups' && b.section === 'Ramp Ups') {
-      const numA = parseInt(a.unitLessonId.replace(/.*RU/, '')) || 0;
-      const numB = parseInt(b.unitLessonId.replace(/.*RU/, '')) || 0;
+    if (a.section === "Ramp Ups" && b.section === "Ramp Ups") {
+      const numA = parseInt(a.unitLessonId.replace(/.*RU/, "")) || 0;
+      const numB = parseInt(b.unitLessonId.replace(/.*RU/, "")) || 0;
       return numA - numB;
     }
 
@@ -692,12 +803,12 @@ export async function getNextLessonForStudent(
   studentId: string,
   formDate: string, // YYYY-MM-DD format
   unitNumber: number,
-  scopeSequenceTag: string
+  scopeSequenceTag: string,
 ): Promise<GetNextLessonResult> {
   return withDbConnection(async () => {
     try {
       // Calculate yesterday based on form date
-      const formDateObj = new Date(formDate + 'T12:00:00');
+      const formDateObj = new Date(formDate + "T12:00:00");
       const yesterdayObj = new Date(formDateObj);
       yesterdayObj.setDate(yesterdayObj.getDate() - 1);
       const yesterdayStart = new Date(yesterdayObj);
@@ -718,27 +829,34 @@ export async function getNextLessonForStudent(
         }>;
       }
 
-      const student = await StudentModel.findById(studentId)
-        .select('podsieProgress')
-        .lean() as unknown as LeanStudent | null;
+      const student = (await StudentModel.findById(studentId)
+        .select("podsieProgress")
+        .lean()) as unknown as LeanStudent | null;
 
       if (!student) {
-        return { success: false, error: 'Student not found' };
+        return { success: false, error: "Student not found" };
       }
 
       const podsieProgress = student.podsieProgress || [];
 
       // Filter to completed mastery checks
       const completedMasteryChecks = podsieProgress.filter(
-        p => p.activityType === 'mastery-check' && p.isFullyComplete && p.fullyCompletedDate
+        (p) =>
+          p.activityType === "mastery-check" &&
+          p.isFullyComplete &&
+          p.fullyCompletedDate,
       );
 
       if (completedMasteryChecks.length === 0) {
-        return { success: true, data: null, message: 'No completed mastery checks found' };
+        return {
+          success: true,
+          data: null,
+          message: "No completed mastery checks found",
+        };
       }
 
       // Try to find completions from yesterday first
-      const yesterdayCompletions = completedMasteryChecks.filter(p => {
+      const yesterdayCompletions = completedMasteryChecks.filter((p) => {
         if (!p.fullyCompletedDate) return false;
         const completedDate = new Date(p.fullyCompletedDate);
         return completedDate >= yesterdayStart && completedDate <= yesterdayEnd;
@@ -765,7 +883,11 @@ export async function getNextLessonForStudent(
       }
 
       if (!targetMasteryCheck?.scopeAndSequenceId) {
-        return { success: true, data: null, message: 'No valid mastery check found' };
+        return {
+          success: true,
+          data: null,
+          message: "No valid mastery check found",
+        };
       }
 
       // Look up the mastered lesson
@@ -780,11 +902,16 @@ export async function getNextLessonForStudent(
         scopeSequenceTag?: string;
       }
 
-      const masteredLesson = await ScopeAndSequenceModel.findById(targetMasteryCheck.scopeAndSequenceId)
-        .lean() as unknown as LeanLesson | null;
+      const masteredLesson = (await ScopeAndSequenceModel.findById(
+        targetMasteryCheck.scopeAndSequenceId,
+      ).lean()) as unknown as LeanLesson | null;
 
       if (!masteredLesson) {
-        return { success: true, data: null, message: 'Could not find mastered lesson in scope and sequence' };
+        return {
+          success: true,
+          data: null,
+          message: "Could not find mastered lesson in scope and sequence",
+        };
       }
 
       // Check if the mastered lesson is in the same unit as the form's selected unit
@@ -792,19 +919,23 @@ export async function getNextLessonForStudent(
         return {
           success: true,
           data: null,
-          message: `Mastered lesson (Unit ${masteredLesson.unitNumber}) is not in selected unit (${unitNumber})`
+          message: `Mastered lesson (Unit ${masteredLesson.unitNumber}) is not in selected unit (${unitNumber})`,
         };
       }
 
       // Get all lessons in the same unit
-      const allLessonsInUnit = await ScopeAndSequenceModel.find({
+      const allLessonsInUnit = (await ScopeAndSequenceModel.find({
         scopeSequenceTag,
         unitNumber,
-        lessonType: { $ne: 'assessment' }, // Exclude unit assessments
-      }).lean() as unknown as LeanLesson[];
+        lessonType: { $ne: "assessment" }, // Exclude unit assessments
+      }).lean()) as unknown as LeanLesson[];
 
       if (allLessonsInUnit.length === 0) {
-        return { success: true, data: null, message: 'No lessons found in unit' };
+        return {
+          success: true,
+          data: null,
+          message: "No lessons found in unit",
+        };
       }
 
       // Sort lessons in correct order
@@ -812,16 +943,24 @@ export async function getNextLessonForStudent(
 
       // Find the index of the mastered lesson
       const masteredIndex = sortedLessons.findIndex(
-        l => l._id.toString() === masteredLesson._id.toString()
+        (l) => l._id.toString() === masteredLesson._id.toString(),
       );
 
       if (masteredIndex === -1) {
-        return { success: true, data: null, message: 'Mastered lesson not found in sorted list' };
+        return {
+          success: true,
+          data: null,
+          message: "Mastered lesson not found in sorted list",
+        };
       }
 
       // Check if it's the last lesson in the unit
       if (masteredIndex === sortedLessons.length - 1) {
-        return { success: true, data: null, message: 'Mastered lesson is the last in the unit' };
+        return {
+          success: true,
+          data: null,
+          message: "Mastered lesson is the last in the unit",
+        };
       }
 
       // Get the next lesson
@@ -838,8 +977,11 @@ export async function getNextLessonForStudent(
         message: `Suggesting next lesson after ${masteredLesson.unitLessonId}`,
       };
     } catch (error) {
-      console.error('❌ [getNextLessonForStudent] Error:', error);
-      return { success: false, error: handleServerError(error, 'Failed to get next lesson suggestion') };
+      console.error("❌ [getNextLessonForStudent] Error:", error);
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to get next lesson suggestion"),
+      };
     }
   });
 }

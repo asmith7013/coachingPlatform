@@ -190,13 +190,13 @@
 }
 
 .all-initial a {
-  color: #0000EE;
+  color: #0000ee;
   text-decoration: underline;
   cursor: pointer;
 }
 
 .all-initial a:visited {
-  color: #551A8B;
+  color: #551a8b;
 }
 
 .all-initial table {

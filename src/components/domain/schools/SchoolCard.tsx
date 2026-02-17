@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from 'next/link';
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Button } from '@/components/core/Button';
-import { DataImportDialog } from '@/components/composed/dialogs/DataImportDialog';
+import Link from "next/link";
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { Button } from "@/components/core/Button";
+import { DataImportDialog } from "@/components/composed/dialogs/DataImportDialog";
 import { School } from "@zod-schema/core/school";
-import { cn } from '@ui/utils/formatters';
-import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { schoolToSlug } from '@/lib/data-processing/transformers/utils/school-slug-utils';
+import { cn } from "@ui/utils/formatters";
+import { TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { schoolToSlug } from "@/lib/data-processing/transformers/utils/school-slug-utils";
 
 interface SchoolCardProps {
   school: School;
@@ -42,36 +42,24 @@ export function SchoolCard({ school, onDelete, isDeleting }: SchoolCardProps) {
 
   return (
     <>
-      <Card
-        padding="md"
-        radius="lg"
-        className="relative"
-      >
+      <Card padding="md" radius="lg" className="relative">
         {/* Clickable area for navigation */}
         <Link href={`/dashboard/schools/${schoolSlug}`} className="block">
           <div className="cursor-pointer hover:shadow-lg transition-shadow duration-200">
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1 min-w-0">
-                <Heading 
-                  level="h3" 
+                <Heading
+                  level="h3"
                   color="default"
                   className={cn("text-primary font-medium")}
                 >
-                  {school.emoji || '🏫'} {school.schoolName}
+                  {school.emoji || "🏫"} {school.schoolName}
                 </Heading>
-                <Text 
-                  textSize="base" 
-                  color="muted"
-                  className="mt-2"
-                >
+                <Text textSize="base" color="muted" className="mt-2">
                   District: {school.district}
                 </Text>
                 {school.address && (
-                  <Text 
-                    textSize="base" 
-                    color="muted"
-                    className="mt-2"
-                  >
+                  <Text textSize="base" color="muted" className="mt-2">
                     {school.address}
                   </Text>
                 )}
@@ -82,29 +70,32 @@ export function SchoolCard({ school, onDelete, isDeleting }: SchoolCardProps) {
                 )}
               </div>
             </div>
-            
+
             <div className="mb-4">
-              <Heading 
-                level="h4" 
+              <Heading
+                level="h4"
                 color="default"
                 className={cn("text-primary font-medium")}
               >
                 Grade Levels
               </Heading>
               <div className="flex flex-wrap gap-2 mt-2">
-                {school.gradeLevelsSupported && school.gradeLevelsSupported.map((grade: string, index: number) => (
-                  <span 
-                    key={index} 
-                    className={cn(
-                      'rounded-full px-3 py-1',
-                      'text-sm',
-                      'text-white',
-                      'bg-primary'
-                    )}
-                  >
-                    {grade}
-                  </span>
-                ))}
+                {school.gradeLevelsSupported &&
+                  school.gradeLevelsSupported.map(
+                    (grade: string, index: number) => (
+                      <span
+                        key={index}
+                        className={cn(
+                          "rounded-full px-3 py-1",
+                          "text-sm",
+                          "text-white",
+                          "bg-primary",
+                        )}
+                      >
+                        {grade}
+                      </span>
+                    ),
+                  )}
               </div>
             </div>
 
@@ -125,7 +116,7 @@ export function SchoolCard({ school, onDelete, isDeleting }: SchoolCardProps) {
             <PlusIcon className="h-4 w-4" />
             Add Data
           </Button>
-          
+
           <Button
             onClick={handleDelete}
             appearance="outline"
@@ -135,7 +126,7 @@ export function SchoolCard({ school, onDelete, isDeleting }: SchoolCardProps) {
             disabled={isDeleting}
           >
             <TrashIcon className="h-4 w-4" />
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? "Deleting..." : "Delete"}
           </Button>
         </div>
       </Card>
@@ -148,4 +139,4 @@ export function SchoolCard({ school, onDelete, isDeleting }: SchoolCardProps) {
       />
     </>
   );
-} 
+}

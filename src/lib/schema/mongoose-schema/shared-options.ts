@@ -1,23 +1,28 @@
-import { SchemaOptions } from 'mongoose';
-import mongoose from 'mongoose';
+import { SchemaOptions } from "mongoose";
+import mongoose from "mongoose";
 
 /**
  * SINGLE SOURCE transform function for ALL Mongoose documents
  * Converts ObjectIds to strings and handles dates consistently, recursively
  */
-export function standardTransform(_: unknown, ret: Record<string, unknown>): Record<string, unknown> {
+export function standardTransform(
+  _: unknown,
+  ret: Record<string, unknown>,
+): Record<string, unknown> {
   // Debug: Log when transform is called
   // console.log('🔄 Transform called for document with _id:', ret._id);
-  
+
   function transformValue(value: unknown): unknown {
     if (value === null || value === undefined) return value;
 
     // ObjectId detection - check for actual ObjectId instances
-    if (value && typeof value === 'object' && value.constructor) {
+    if (value && typeof value === "object" && value.constructor) {
       // More robust ObjectId detection
-      if (value.constructor.name === 'ObjectId' || 
-          value instanceof mongoose.Types.ObjectId ||
-          (value as { _bsontype?: string })._bsontype === 'ObjectId') {
+      if (
+        value.constructor.name === "ObjectId" ||
+        value instanceof mongoose.Types.ObjectId ||
+        (value as { _bsontype?: string })._bsontype === "ObjectId"
+      ) {
         // console.log('🔧 Converting ObjectId to string:', value);
         return value.toString();
       }
@@ -35,7 +40,11 @@ export function standardTransform(_: unknown, ret: Record<string, unknown>): Rec
     }
 
     // Plain object (recursive, but skip Buffer, Map, etc.)
-    if (typeof value === 'object' && value.constructor && value.constructor.name === 'Object') {
+    if (
+      typeof value === "object" &&
+      value.constructor &&
+      value.constructor.name === "Object"
+    ) {
       return standardTransform(null, value as Record<string, unknown>);
     }
 
@@ -56,16 +65,16 @@ export function standardTransform(_: unknown, ret: Record<string, unknown>): Rec
   }
 
   // Recursively transform all fields
-  Object.keys(result).forEach(key => {
-    if (key === '_id' || key === 'id') return;
+  Object.keys(result).forEach((key) => {
+    if (key === "_id" || key === "id") return;
     // const originalValue = result[key];
     const transformedValue = transformValue(result[key]);
-    
+
     // Log transformations for debugging
     // if (originalValue !== transformedValue) {
     //   console.log(`🔧 Transformed ${key}:`, originalValue, '→', transformedValue);
     // }
-    
+
     result[key] = transformedValue;
   });
 
@@ -73,7 +82,7 @@ export function standardTransform(_: unknown, ret: Record<string, unknown>): Rec
   delete result.__v;
 
   // console.log('✅ Transform completed. Final _id:', result._id, 'Type:', typeof result._id);
-  
+
   return result;
 }
 
@@ -85,12 +94,12 @@ export const standardSchemaOptions: SchemaOptions = {
   timestamps: true,
   toJSON: {
     virtuals: true,
-    transform: standardTransform
+    transform: standardTransform,
   },
   toObject: {
     virtuals: true,
-    transform: standardTransform
-  }
+    transform: standardTransform,
+  },
 };
 
 /**
@@ -101,8 +110,8 @@ export const standardDocumentFields = {
   ownerIds: {
     type: [String],
     default: [],
-    required: false
-  }
+    required: false,
+  },
 };
 
 /**
@@ -110,10 +119,10 @@ export const standardDocumentFields = {
  */
 export function createStandardSchema(
   fields: Record<string, unknown>,
-  collectionName?: string
+  collectionName?: string,
 ): SchemaOptions {
   return {
     ...standardSchemaOptions,
-    ...(collectionName && { collection: collectionName })
+    ...(collectionName && { collection: collectionName }),
   };
 }

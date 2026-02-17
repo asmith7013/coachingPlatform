@@ -1,27 +1,31 @@
 "use client";
 
-import React from 'react';
-import { tv } from 'tailwind-variants';
-import { Input } from '@components/core/fields/Input';
-import { Textarea } from '@components/core/fields/Textarea';
-import { ClassroomObservationInput } from '@zod-schema/visits/classroom-observation';
+import React from "react";
+import { tv } from "tailwind-variants";
+import { Input } from "@components/core/fields/Input";
+import { Textarea } from "@components/core/fields/Textarea";
+import { ClassroomObservationInput } from "@zod-schema/visits/classroom-observation";
 
 const sectionTitle = tv({
-  base: "text-lg font-semibold border-b pb-2 mb-3"
+  base: "text-lg font-semibold border-b pb-2 mb-3",
 });
 
 const fieldLabel = tv({
-  base: "text-sm font-medium text-gray-700 mb-1"
+  base: "text-sm font-medium text-gray-700 mb-1",
 });
 
 interface TimeAndTranscriptsTabProps {
   formData: ClassroomObservationInput;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  onInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => void;
 }
 
 export function TimeAndTranscriptsTab({
   formData,
-  onInputChange
+  onInputChange,
 }: TimeAndTranscriptsTabProps) {
   // Type assertions to ensure nested objects are properly typed
   const timeTracking = formData.timeTracking as {
@@ -44,24 +48,21 @@ export function TimeAndTranscriptsTab({
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div>
           <label className={fieldLabel()}>Stopwatch</label>
-          <Input 
-            value={timeTracking.stopwatchTime} 
-            readOnly 
-          />
+          <Input value={timeTracking.stopwatchTime} readOnly />
         </div>
         <div>
           <label className={fieldLabel()}>Started When (min into class)</label>
-          <Input 
+          <Input
             type="number"
             name="timeTracking.startedWhenMinutes"
-            value={timeTracking.startedWhenMinutes || ''}
+            value={timeTracking.startedWhenMinutes || ""}
             onChange={onInputChange}
             placeholder="Minutes"
           />
         </div>
         <div>
           <label className={fieldLabel()}>Class Start</label>
-          <Input 
+          <Input
             type="time"
             name="timeTracking.classStartTime"
             value={timeTracking.classStartTime}
@@ -70,7 +71,7 @@ export function TimeAndTranscriptsTab({
         </div>
         <div>
           <label className={fieldLabel()}>Class End</label>
-          <Input 
+          <Input
             type="time"
             name="timeTracking.classEndTime"
             value={timeTracking.classEndTime}
@@ -126,4 +127,4 @@ export function TimeAndTranscriptsTab({
       </div>
     </div>
   );
-} 
+}

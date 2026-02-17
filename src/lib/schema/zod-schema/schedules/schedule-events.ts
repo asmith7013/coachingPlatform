@@ -1,6 +1,6 @@
 // src/lib/zod-schema/schedules/schedule-events.ts
 import { z } from "zod";
-import { 
+import {
   SessionPurposeZod,
   ScheduleAssignmentTypeZod,
   PeriodTypeZod,
@@ -13,11 +13,20 @@ import {
 
 export const BaseTimeBlockSchema = z.object({
   periodNumber: z.number().describe("Sequential period number: 1, 2, 3, etc."),
-  periodName: z.string().optional().describe("Optional period name: 'Morning Block', 'Advisory', etc."),
+  periodName: z
+    .string()
+    .optional()
+    .describe("Optional period name: 'Morning Block', 'Advisory', etc."),
   startTime: z.string().describe("24-hour format: 'HH:MM' (e.g., '08:30')"),
   endTime: z.string().describe("24-hour format: 'HH:MM' (e.g., '09:15')"),
-  duration: z.number().optional().describe("Actual minutes if different from portion default"),
-  room: z.string().optional().describe("Override room if different from teacher's assigned room"),
+  duration: z
+    .number()
+    .optional()
+    .describe("Actual minutes if different from portion default"),
+  room: z
+    .string()
+    .optional()
+    .describe("Override room if different from teacher's assigned room"),
   notes: z.string().optional().describe("Event-specific notes and focus areas"),
 });
 
@@ -32,19 +41,31 @@ export const BellScheduleBlockSchema = BaseTimeBlockSchema.extend({
 export const TeacherScheduleBlockSchema = BaseTimeBlockSchema.extend({
   blockType: z.literal("teacherScheduleBlock"),
 
-  className: z.string().describe("'5th Grade Math', 'Planning Time', 'Lunch Break', etc."),
-  room: z.string().describe("'Room 205', 'Teachers Lounge', 'Main Playground', etc."),
-  activityType: PeriodTypeZod.describe("Type of activity: 'teaching', 'prep', 'duty', 'lunch', 'meeting'"),
+  className: z
+    .string()
+    .describe("'5th Grade Math', 'Planning Time', 'Lunch Break', etc."),
+  room: z
+    .string()
+    .describe("'Room 205', 'Teachers Lounge', 'Main Playground', etc."),
+  activityType: PeriodTypeZod.describe(
+    "Type of activity: 'teaching', 'prep', 'duty', 'lunch', 'meeting'",
+  ),
   subject: z.string().optional().describe("'Math', 'Science', 'Reading', etc."),
-  gradeLevel: GradeLevelsSupportedZod.optional().describe("'Grade 5', 'Kindergarten', etc."),
+  gradeLevel: GradeLevelsSupportedZod.optional().describe(
+    "'Grade 5', 'Kindergarten', etc.",
+  ),
 });
 
 export const VisitScheduleBlockSchema = BaseTimeBlockSchema.extend({
   blockType: z.literal("visitScheduleBlock"),
 
-  orderIndex: z.number().describe("Sequence within period: 1, 2, 3... for multiple events"),
+  orderIndex: z
+    .number()
+    .describe("Sequence within period: 1, 2, 3... for multiple events"),
   eventType: SessionPurposeZod.describe("Type of coaching session"),
-  staffIds: z.array(z.string()).describe("Array of staff IDs - supports multiple teachers per event"),
+  staffIds: z
+    .array(z.string())
+    .describe("Array of staff IDs - supports multiple teachers per event"),
   portion: ScheduleAssignmentTypeZod.describe("Time portion of the period"),
 });
 
@@ -71,14 +92,17 @@ export const EventFieldsSchema = z.object({
   room: z.string().optional().describe("Override room"),
   duration: z.number().optional().describe("Actual minutes"),
   notes: z.string().optional().describe("Event-specific notes"),
-  timeSlot: z.object({
-    periodNumber: z.number(),
-    startTime: z.string(),
-    endTime: z.string(),
-    periodName: z.string().optional()
-  }).optional().describe("More specific time window"),
+  timeSlot: z
+    .object({
+      periodNumber: z.number(),
+      startTime: z.string(),
+      endTime: z.string(),
+      periodName: z.string().optional(),
+    })
+    .optional()
+    .describe("More specific time window"),
   actualStartTime: z.string().optional().describe("Override start time"),
-  actualEndTime: z.string().optional().describe("Override end time")
+  actualEndTime: z.string().optional().describe("Override end time"),
 });
 
 /** @deprecated Use VisitScheduleBlock instead */
@@ -103,5 +127,5 @@ export type Event = z.infer<typeof EventFieldsSchema>;
 export const ConflictCheckDataSchema = z.object({
   teacherId: z.string().min(1, "Teacher ID is required"),
   periodNumber: z.number().int().min(1).max(10),
-  portion: z.string() // Changed to string to match existing usage
+  portion: z.string(), // Changed to string to match existing usage
 });

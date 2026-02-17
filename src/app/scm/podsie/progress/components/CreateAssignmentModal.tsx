@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { XMarkIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
-import {
-  createScopeAndSequence,
-} from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
+import { createScopeAndSequence } from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
 import {
   fetchAssignmentsForSection,
   PodsieAssignmentInfo,
@@ -31,8 +29,12 @@ export function CreateAssignmentModal({
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [loadingAssignments, setLoadingAssignments] = useState(false);
-  const [podsieAssignments, setPodsieAssignments] = useState<PodsieAssignmentInfo[]>([]);
-  const [podsieSection, setPodsieSection] = useState<string>(selectedSection || "");
+  const [podsieAssignments, setPodsieAssignments] = useState<
+    PodsieAssignmentInfo[]
+  >([]);
+  const [podsieSection, setPodsieSection] = useState<string>(
+    selectedSection || "",
+  );
 
   // Derive grade from scopeSequenceTag
   const getGradeFromTag = (tag: string): string => {
@@ -87,7 +89,9 @@ export function CreateAssignmentModal({
         setFormError(result.error || "Failed to fetch assignments");
       }
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : "Failed to fetch assignments");
+      setFormError(
+        err instanceof Error ? err.message : "Failed to fetch assignments",
+      );
     } finally {
       setLoadingAssignments(false);
     }
@@ -141,7 +145,9 @@ export function CreateAssignmentModal({
         <div className="relative bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Create New Assignment</h2>
+            <h2 className="text-xl font-bold text-gray-900">
+              Create New Assignment
+            </h2>
             <button
               onClick={onClose}
               className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 cursor-pointer"
@@ -209,7 +215,9 @@ export function CreateAssignmentModal({
                   type="number"
                   min={1}
                   value={formData.unitNumber}
-                  onChange={(e) => handleUnitNumberChange(parseInt(e.target.value) || 1)}
+                  onChange={(e) =>
+                    handleUnitNumberChange(parseInt(e.target.value) || 1)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
@@ -223,7 +231,10 @@ export function CreateAssignmentModal({
                   type="text"
                   value={formData.unitLessonId}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, unitLessonId: e.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      unitLessonId: e.target.value,
+                    }))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., 4.RU1"
@@ -240,7 +251,10 @@ export function CreateAssignmentModal({
                 type="text"
                 value={formData.lessonName}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, lessonName: e.target.value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    lessonName: e.target.value,
+                  }))
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="e.g., Ramp-Up 1: Equivalent Expressions"
@@ -256,7 +270,10 @@ export function CreateAssignmentModal({
                 <select
                   value={formData.section}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, section: e.target.value }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      section: e.target.value,
+                    }))
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -338,7 +355,7 @@ export function CreateAssignmentModal({
                   <select
                     onChange={(e) => {
                       const selected = podsieAssignments.find(
-                        (a) => String(a.assignmentId) === e.target.value
+                        (a) => String(a.assignmentId) === e.target.value,
                       );
                       if (selected) handleSelectAssignment(selected);
                     }}
@@ -347,7 +364,10 @@ export function CreateAssignmentModal({
                   >
                     <option value="">Select an assignment...</option>
                     {podsieAssignments.map((a) => (
-                      <option key={a.assignmentId} value={String(a.assignmentId)}>
+                      <option
+                        key={a.assignmentId}
+                        value={String(a.assignmentId)}
+                      >
                         {a.assignmentName} ({a.totalQuestions} questions)
                       </option>
                     ))}
@@ -406,7 +426,8 @@ export function CreateAssignmentModal({
                   <span className="font-medium">Unit:</span> {formData.unit}
                 </div>
                 <div>
-                  <span className="font-medium">Lesson Type:</span> {formData.lessonType}
+                  <span className="font-medium">Lesson Type:</span>{" "}
+                  {formData.lessonType}
                 </div>
               </div>
             </div>

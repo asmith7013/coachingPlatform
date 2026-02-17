@@ -31,7 +31,7 @@ export function AccordionItem({
   children,
   legend,
   isOpen,
-  onToggle
+  onToggle,
 }: AccordionItemProps) {
   return (
     <div className="border-b border-gray-200 last:border-b-0">
@@ -42,7 +42,7 @@ export function AccordionItem({
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {icon}
-          {typeof title === 'string' ? (
+          {typeof title === "string" ? (
             <span className="text-sm font-medium text-gray-700">{title}</span>
           ) : (
             <div className="flex-1 min-w-0">{title}</div>

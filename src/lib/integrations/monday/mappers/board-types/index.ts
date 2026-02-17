@@ -1,1 +1,1 @@
-export * from './visits-board';
+export * from "./visits-board";

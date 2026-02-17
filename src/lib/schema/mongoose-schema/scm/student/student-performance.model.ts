@@ -17,10 +17,10 @@ const skillPerformanceItemFields = {
   status: {
     type: String,
     enum: ["Mastered", "Attempted But Not Mastered", "Not Started"],
-    required: true
+    required: true,
   },
   score: { type: String, required: false },
-  lastUpdated: { type: String, required: false }
+  lastUpdated: { type: String, required: false },
 };
 
 // =====================================
@@ -35,16 +35,13 @@ const studentPerformanceFields = {
   studentName: { type: String, required: true },
   schoolId: { type: String, required: true, index: true },
   assessmentDate: { type: String, required: true },
-  skillPerformances: [skillPerformanceItemFields]
+  skillPerformances: [skillPerformanceItemFields],
 };
 
-const StudentPerformanceSchema = new mongoose.Schema(
-  studentPerformanceFields, 
-  {
-    ...standardSchemaOptions,
-    collection: 'studentperformances'
-  }
-);
+const StudentPerformanceSchema = new mongoose.Schema(studentPerformanceFields, {
+  ...standardSchemaOptions,
+  collection: "studentperformances",
+});
 
 // =====================================
 // INDEXES FOR QUERY OPTIMIZATION
@@ -61,4 +58,7 @@ if (mongoose.models.StudentPerformance) {
   delete mongoose.models.StudentPerformance;
 }
 
-export const StudentPerformanceModel = mongoose.model("StudentPerformance", StudentPerformanceSchema);
+export const StudentPerformanceModel = mongoose.model(
+  "StudentPerformance",
+  StudentPerformanceSchema,
+);

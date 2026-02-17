@@ -1,11 +1,14 @@
 "use server";
 
 import { z, ZodType } from "zod";
-import { RubricModel, RubricScoreModel } from "@mongoose-schema/look-fors/rubric.model";
-import { 
+import {
+  RubricModel,
+  RubricScoreModel,
+} from "@mongoose-schema/look-fors/rubric.model";
+import {
   Rubric,
   RubricZodSchema,
-  RubricScoreZodSchema,   
+  RubricScoreZodSchema,
   RubricInputZodSchema,
   RubricInput,
 } from "@zod-schema/look-fors/rubric";
@@ -21,9 +24,9 @@ const rubricActions = createCrudActions({
   inputSchema: RubricInputZodSchema as ZodType<RubricInput>,
   name: "Rubric",
   revalidationPaths: ["/dashboard/rubrics"],
-  sortFields: ['score', 'createdAt', 'updatedAt'],
-  defaultSortField: 'score',
-  defaultSortOrder: 'asc'
+  sortFields: ["score", "createdAt", "updatedAt"],
+  defaultSortField: "score",
+  defaultSortOrder: "asc",
 });
 
 // Export the generated actions with connection handling
@@ -55,20 +58,22 @@ export async function fetchRubricScoresByStaff(staffId: string) {
       const results = await RubricScoreModel.find({ staffId })
         .sort({ date: -1 })
         .exec();
-      
+
       // Type the response items properly
       return {
         success: true,
-        items: results.map(item => RubricScoreZodSchema.parse(item)) as z.infer<typeof RubricScoreZodSchema>[],
-        total: results.length
+        items: results.map((item) =>
+          RubricScoreZodSchema.parse(item),
+        ) as z.infer<typeof RubricScoreZodSchema>[],
+        total: results.length,
       };
     } catch (error) {
       return {
         success: false,
         items: [],
         total: 0,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });
-} 
+}

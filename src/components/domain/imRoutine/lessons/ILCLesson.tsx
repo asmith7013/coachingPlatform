@@ -1,7 +1,7 @@
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { cn } from '@ui/utils/formatters';;
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { cn } from "@ui/utils/formatters";
 
 type ILCLesson = {
   grade: string;
@@ -13,10 +13,16 @@ type ILCLesson = {
   }[];
 };
 
-export function ILCLesson({ lesson, selectedRoutines }: { lesson: ILCLesson, selectedRoutines: string[] }) {
+export function ILCLesson({
+  lesson,
+  selectedRoutines,
+}: {
+  lesson: ILCLesson;
+  selectedRoutines: string[];
+}) {
   // Get unique routines across all activities
   const routines = Array.from(
-    new Set(lesson.activities.flatMap((act) => act.routines))
+    new Set(lesson.activities.flatMap((act) => act.routines)),
   ).filter((r) => selectedRoutines.includes(r.trim()));
 
   const hasRoutines = routines.length > 0;
@@ -24,13 +30,15 @@ export function ILCLesson({ lesson, selectedRoutines }: { lesson: ILCLesson, sel
   return (
     <Card
       className={cn(
-        'transition-all duration-150 border-2',
-        hasRoutines ? 'bg-background border-muted' : 'bg-surface border-surface'
+        "transition-all duration-150 border-2",
+        hasRoutines
+          ? "bg-background border-muted"
+          : "bg-surface border-surface",
       )}
     >
       <Heading
         level="h3"
-        color={hasRoutines ? 'default' : 'muted'}
+        color={hasRoutines ? "default" : "muted"}
         className="mb-2"
       >
         Lesson {lesson.lessonNumber}
@@ -47,8 +55,8 @@ export function ILCLesson({ lesson, selectedRoutines }: { lesson: ILCLesson, sel
               >
                 <span
                   className={cn(
-                    'text-[10px] font-medium px-2 py-0.5 rounded',
-                    isMLR ? 'bg-primary text-white' : 'bg-secondary text-white'
+                    "text-[10px] font-medium px-2 py-0.5 rounded",
+                    isMLR ? "bg-primary text-white" : "bg-secondary text-white",
                   )}
                 >
                   {routine}
@@ -58,14 +66,10 @@ export function ILCLesson({ lesson, selectedRoutines }: { lesson: ILCLesson, sel
           })}
         </div>
       ) : (
-        <Text 
-          textSize="sm" 
-          color="muted"
-          className="italic"
-        >
+        <Text textSize="sm" color="muted" className="italic">
           No routines for this lesson.
         </Text>
       )}
     </Card>
   );
-} 
+}

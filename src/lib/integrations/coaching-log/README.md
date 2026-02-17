@@ -64,6 +64,7 @@ const data = await fetchVisitScheduleData(visitId);
 ```
 
 **Features**:
+
 - Parallel staff data fetching for performance
 - Graceful handling of missing data
 - Comprehensive error logging
@@ -77,10 +78,10 @@ Converts VisitSchedule data to form-compatible EventData:
 
 ```typescript
 interface EventData {
-  name: string[];      // Staff names
-  role: string;        // Primary staff role
-  activity: string;    // Form activity type
-  duration: string;    // Duration in minutes
+  name: string[]; // Staff names
+  role: string; // Primary staff role
+  activity: string; // Form activity type
+  duration: string; // Duration in minutes
 }
 
 // Usage
@@ -88,6 +89,7 @@ const events = visitScheduleToEventData(visitSchedule, staffLookup);
 ```
 
 **Mapping Logic**:
+
 - **Event Types**: `Observation` → `"Observed instruction"`
 - **Staff Roles**: `Teacher` → `"Teacher"`, `Coach` → `"School-based coach"`
 - **Durations**: Stored duration (if valid) → Default to "45" minutes
@@ -103,7 +105,7 @@ Three methods for different use cases:
 // NEW: Visit-based form filling
 await formFiller.fillFormFromVisit(visitId, coachingLogData, overrides);
 
-// EXISTING: Schema-based form filling  
+// EXISTING: Schema-based form filling
 await formFiller.fillFormFromSchema(coachingLogData, overrides);
 
 // LEGACY: JSON-based form filling
@@ -119,14 +121,14 @@ await formFiller.fillForm(jsonData);
 export async function automateCoachingLogFillFromVisit(
   visitId: string,
   coachingLogData: CoachingLogInput,
-  formOverrides?: FormOverrides
-): Promise<AutomationResult>
+  formOverrides?: FormOverrides,
+): Promise<AutomationResult>;
 
 // EXISTING: Schema-based automation
 export async function automateCoachingLogFillFromSchema(
   coachingLogData: CoachingLogInput,
-  formOverrides?: FormOverrides
-): Promise<AutomationResult>
+  formOverrides?: FormOverrides,
+): Promise<AutomationResult>;
 ```
 
 ## Usage Examples
@@ -134,36 +136,36 @@ export async function automateCoachingLogFillFromSchema(
 ### Basic Visit-Based Form Filling
 
 ```typescript
-import { automateCoachingLogFillFromVisit } from '@/app/actions/integrations/coaching-log-automation';
-import { createCoachingLogDefaults } from '@zod-schema/visits/coaching-log';
+import { automateCoachingLogFillFromVisit } from "@/app/actions/integrations/coaching-log-automation";
+import { createCoachingLogDefaults } from "@zod-schema/visits/coaching-log";
 
 // Prepare coaching log data
 const coachingLogData = createCoachingLogDefaults({
-  reasonDone: 'Yes',
-  totalDuration: 'Half day - 3 hours',
-  solvesTouchpoint: 'Teacher OR teacher & leader support'
+  reasonDone: "Yes",
+  totalDuration: "Half day - 3 hours",
+  solvesTouchpoint: "Teacher OR teacher & leader support",
 });
 
 // Optional form overrides
 const formOverrides = {
-  schoolName: 'PS 123',
-  districtName: 'District 15',
-  coachName: 'Jane Smith'
+  schoolName: "PS 123",
+  districtName: "District 15",
+  coachName: "Jane Smith",
 };
 
 // Fill form from visit
 const result = await automateCoachingLogFillFromVisit(
   visitId,
   coachingLogData,
-  formOverrides
+  formOverrides,
 );
 ```
 
 ### Manual Workflow
 
 ```typescript
-import { fetchVisitScheduleData } from '@/lib/integrations/coaching-log/services/visit-schedule-fetcher';
-import { visitScheduleToEventData } from '@/lib/integrations/coaching-log/mappers/visit-schedule-to-events';
+import { fetchVisitScheduleData } from "@/lib/integrations/coaching-log/services/visit-schedule-fetcher";
+import { visitScheduleToEventData } from "@/lib/integrations/coaching-log/mappers/visit-schedule-to-events";
 
 // Step 1: Fetch data
 const scheduleData = await fetchVisitScheduleData(visitId);
@@ -171,14 +173,14 @@ const scheduleData = await fetchVisitScheduleData(visitId);
 // Step 2: Transform to events
 const events = visitScheduleToEventData(
   scheduleData.visitSchedule,
-  scheduleData.staffLookup
+  scheduleData.staffLookup,
 );
 
 // Step 3: Use with existing form filler
 const formOverrides = {
   visitDate: scheduleData.visit?.date,
   modeDone: scheduleData.visit?.modeDone,
-  events
+  events,
 };
 
 await formFiller.fillFormFromSchema(coachingLogData, formOverrides);
@@ -189,33 +191,41 @@ await formFiller.fillFormFromSchema(coachingLogData, formOverrides);
 The system provides graceful degradation at every level:
 
 ### Missing Visit
+
 ```typescript
 // Returns empty data structure, allows form filling to continue
-{ staffLookup: new Map() }
+{
+  staffLookup: new Map();
+}
 ```
 
 ### Missing VisitSchedule
+
 ```typescript
 // Returns single fallback event
-[{
-  name: ["Teacher TBD"],
-  role: "Teacher",
-  activity: "Observed instruction",
-  duration: "45"
-}]
+[
+  {
+    name: ["Teacher TBD"],
+    role: "Teacher",
+    activity: "Observed instruction",
+    duration: "45",
+  },
+];
 ```
 
 ### Missing Staff Data
+
 ```typescript
 // Uses partial ID for debugging
-name: ["Staff f-id"]  // Last 4 chars of ID
-role: "Teacher"       // Default role
+name: ["Staff f-id"]; // Last 4 chars of ID
+role: "Teacher"; // Default role
 ```
 
 ### Invalid Duration Data
+
 ```typescript
 // Validates stored duration, defaults to 45-minute duration
-duration: "45"
+duration: "45";
 ```
 
 ## Migration Strategy
@@ -230,16 +240,21 @@ The implementation maintains full backward compatibility:
 ## Testing
 
 ### Integration Tests
+
 ```typescript
 // Run all demonstrations
-import { runAllDemonstrations } from './examples/visit-schedule-demo';
+import { runAllDemonstrations } from "./examples/visit-schedule-demo";
 const results = await runAllDemonstrations(visitId);
 ```
 
 ### Manual Testing
+
 ```typescript
 // Test individual components
-import { testMissingVisit, testValidVisit } from './services/__tests__/visit-schedule-integration.test';
+import {
+  testMissingVisit,
+  testValidVisit,
+} from "./services/__tests__/visit-schedule-integration.test";
 const result = await testMissingVisit();
 ```
 
@@ -279,7 +294,7 @@ const result = await testMissingVisit();
 The fetcher expects these endpoints to be available:
 
 - `GET /api/visits/{visitId}` - Fetch visit data
-- `GET /api/schedules/{scheduleId}` - Fetch visit schedule data  
+- `GET /api/schedules/{scheduleId}` - Fetch visit schedule data
 - `GET /api/staff/{staffId}` - Fetch staff data
 
-Ensure these endpoints return the expected schema types. 
+Ensure these endpoints return the expected schema types.

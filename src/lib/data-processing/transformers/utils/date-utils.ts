@@ -1,6 +1,6 @@
 /**
  * Consolidated Date Utilities
- * 
+ *
  * Single source of truth for all date operations across the application.
  * Handles timezone safety, consistent formatting, and common date operations.
  */
@@ -12,8 +12,8 @@
 export function getTodayString(): string {
   const today = new Date();
   const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -23,8 +23,8 @@ export function getTodayString(): string {
  */
 export function toDateString(date: Date): string {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -33,7 +33,7 @@ export function toDateString(date: Date): string {
  * Safe alternative to new Date(string) which can be timezone-dependent
  */
 export function fromDateString(dateString: string): Date {
-  const [year, month, day] = dateString.split('-').map(Number);
+  const [year, month, day] = dateString.split("-").map(Number);
   return new Date(year, month - 1, day);
 }
 
@@ -41,19 +41,22 @@ export function fromDateString(dateString: string): Date {
  * Navigate date by direction (prev/next/today)
  * Replaces complex date navigation logic
  */
-export function navigateDate(currentDate: string, direction: 'prev' | 'next' | 'today'): string {
-  if (direction === 'today') {
+export function navigateDate(
+  currentDate: string,
+  direction: "prev" | "next" | "today",
+): string {
+  if (direction === "today") {
     return getTodayString();
   }
-  
+
   const date = fromDateString(currentDate);
-  
-  if (direction === 'prev') {
+
+  if (direction === "prev") {
     date.setDate(date.getDate() - 1);
-  } else if (direction === 'next') {
+  } else if (direction === "next") {
     date.setDate(date.getDate() + 1);
   }
-  
+
   return toDateString(date);
 }
 
@@ -61,19 +64,22 @@ export function navigateDate(currentDate: string, direction: 'prev' | 'next' | '
  * Navigate week by direction
  * For weekly calendar navigation
  */
-export function navigateWeek(currentDate: string, direction: 'prev' | 'next' | 'today'): string {
-  if (direction === 'today') {
+export function navigateWeek(
+  currentDate: string,
+  direction: "prev" | "next" | "today",
+): string {
+  if (direction === "today") {
     return getTodayString();
   }
-  
+
   const date = fromDateString(currentDate);
-  
-  if (direction === 'prev') {
+
+  if (direction === "prev") {
     date.setDate(date.getDate() - 7);
-  } else if (direction === 'next') {
+  } else if (direction === "next") {
     date.setDate(date.getDate() + 7);
   }
-  
+
   return toDateString(date);
 }
 
@@ -81,19 +87,22 @@ export function navigateWeek(currentDate: string, direction: 'prev' | 'next' | '
  * Navigate month by direction
  * For monthly calendar navigation
  */
-export function navigateMonth(currentDate: string, direction: 'prev' | 'next' | 'today'): string {
-  if (direction === 'today') {
+export function navigateMonth(
+  currentDate: string,
+  direction: "prev" | "next" | "today",
+): string {
+  if (direction === "today") {
     return getTodayString();
   }
-  
+
   const date = fromDateString(currentDate);
-  
-  if (direction === 'prev') {
+
+  if (direction === "prev") {
     date.setMonth(date.getMonth() - 1);
-  } else if (direction === 'next') {
+  } else if (direction === "next") {
     date.setMonth(date.getMonth() + 1);
   }
-  
+
   return toDateString(date);
 }
 
@@ -103,9 +112,9 @@ export function navigateMonth(currentDate: string, direction: 'prev' | 'next' | 
  */
 export function formatShortDate(dateString: string): string {
   const date = fromDateString(dateString);
-  return date.toLocaleDateString('en-US', { 
-    weekday: 'short', 
-    day: 'numeric' 
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    day: "numeric",
   });
 }
 
@@ -116,14 +125,14 @@ export function formatShortDate(dateString: string): string {
  */
 export function formatMediumDate(input: string | Date): string {
   let date: Date;
-  
+
   if (input instanceof Date) {
     // Use the Date object directly
     date = input;
-  } else if (typeof input === 'string') {
-    if (input.includes('T') || input.includes('Z')) {
+  } else if (typeof input === "string") {
+    if (input.includes("T") || input.includes("Z")) {
       // For ISO strings, extract just the date part to avoid timezone issues
-      const datePart = input.split('T')[0]; // Extract YYYY-MM-DD
+      const datePart = input.split("T")[0]; // Extract YYYY-MM-DD
       date = fromDateString(datePart); // Use our timezone-safe parser
     } else if (input.match(/^\d{4}-\d{2}-\d{2}$/)) {
       // Already in YYYY-MM-DD format
@@ -133,14 +142,14 @@ export function formatMediumDate(input: string | Date): string {
       date = new Date(input);
     }
   } else {
-    throw new Error('Input must be a Date object or string');
+    throw new Error("Input must be a Date object or string");
   }
-  
-  return date.toLocaleDateString('en-US', { 
-    weekday: 'short', 
-    month: 'short', 
-    day: 'numeric', 
-    year: 'numeric' 
+
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 }
 
@@ -150,14 +159,14 @@ export function formatMediumDate(input: string | Date): string {
  */
 export function formatMediumDateFromISO(isoString: string): string {
   // Extract just the date part from ISO string to avoid timezone conversion
-  const datePart = isoString.split('T')[0]; // Gets "2025-04-03" from "2025-04-03T00:00:00.000Z"
+  const datePart = isoString.split("T")[0]; // Gets "2025-04-03" from "2025-04-03T00:00:00.000Z"
   const date = fromDateString(datePart); // Parse in local timezone
-  
-  return date.toLocaleDateString('en-US', { 
-    weekday: 'short', 
-    month: 'short', 
-    day: 'numeric', 
-    year: 'numeric' 
+
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 }
 
@@ -167,11 +176,11 @@ export function formatMediumDateFromISO(isoString: string): string {
  */
 export function formatLongDate(dateString: string): string {
   const date = fromDateString(dateString);
-  return date.toLocaleDateString('en-US', { 
-    weekday: 'long',
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 }
 
@@ -190,7 +199,15 @@ export function formatDateForAPI(dateString: string): string {
  */
 export function getDayNameFromDate(dateString: string): string {
   const date = fromDateString(dateString);
-  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const days = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
   return days[date.getDay()];
 }
 
@@ -200,7 +217,7 @@ export function getDayNameFromDate(dateString: string): string {
  */
 export function getDayTypeFromDate(dateString: string): string {
   const date = fromDateString(dateString);
-  const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+  const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
   return dayName.toLowerCase();
 }
 
@@ -247,13 +264,13 @@ export function getWeekEnd(dateString: string): string {
 export function getWeekDates(startDate: string): string[] {
   const dates: string[] = [];
   const start = fromDateString(startDate);
-  
+
   for (let i = 0; i < 7; i++) {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
     dates.push(toDateString(date));
   }
-  
+
   return dates;
 }
 
@@ -280,10 +297,10 @@ export function getRelativeDateDescription(dateString: string): string {
   const today = getTodayString();
   const yesterday = subtractDays(today, 1);
   const tomorrow = addDays(today, 1);
-  
-  if (dateString === today) return 'Today';
-  if (dateString === yesterday) return 'Yesterday';
-  if (dateString === tomorrow) return 'Tomorrow';
-  
+
+  if (dateString === today) return "Today";
+  if (dateString === yesterday) return "Yesterday";
+  if (dateString === tomorrow) return "Tomorrow";
+
   return formatMediumDate(dateString);
 }

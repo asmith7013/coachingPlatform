@@ -1,4 +1,7 @@
-import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
+} from "@heroicons/react/24/outline";
 
 interface SidebarControlsProps {
   isAtMinWidth: boolean;
@@ -6,10 +9,10 @@ interface SidebarControlsProps {
   onReset: () => void;
 }
 
-export function SidebarControls({ 
-  isAtMinWidth, 
-  isAtMaxWidth: _isAtMaxWidth, 
-  onReset 
+export function SidebarControls({
+  isAtMinWidth,
+  isAtMaxWidth: _isAtMaxWidth,
+  onReset,
 }: SidebarControlsProps) {
   return (
     <div className="flex items-center gap-1 px-2 py-1">
@@ -26,4 +29,4 @@ export function SidebarControls({
       </button>
     </div>
   );
-} 
+}

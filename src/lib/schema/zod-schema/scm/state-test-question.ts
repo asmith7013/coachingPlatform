@@ -1,9 +1,12 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Response type enum for state test questions
  */
-export const ResponseTypeEnum = z.enum(['multipleChoice', 'constructedResponse']);
+export const ResponseTypeEnum = z.enum([
+  "multipleChoice",
+  "constructedResponse",
+]);
 
 /**
  * State test question schema
@@ -52,6 +55,10 @@ export const StateTestQuestionBulkUpdateZod = z.object({
 
 // Export types
 export type StateTestQuestion = z.infer<typeof StateTestQuestionZod>;
-export type StateTestQuestionUpdate = z.infer<typeof StateTestQuestionUpdateZod>;
-export type StateTestQuestionBulkUpdate = z.infer<typeof StateTestQuestionBulkUpdateZod>;
+export type StateTestQuestionUpdate = z.infer<
+  typeof StateTestQuestionUpdateZod
+>;
+export type StateTestQuestionBulkUpdate = z.infer<
+  typeof StateTestQuestionBulkUpdateZod
+>;
 export type ResponseType = z.infer<typeof ResponseTypeEnum>;

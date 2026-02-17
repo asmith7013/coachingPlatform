@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { VisitScheduleTestPage } from '@/components/features/schedulesTest';
+import React from "react";
+import { VisitScheduleTestPage } from "@/components/features/schedulesTest";
 
 export default function VisitScheduleTestPageRoute() {
   // Test data from requirements
@@ -10,10 +10,7 @@ export default function VisitScheduleTestPageRoute() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <VisitScheduleTestPage 
-        schoolId={schoolId}
-        date={date}
-      />
+      <VisitScheduleTestPage schoolId={schoolId} date={date} />
     </div>
   );
 }

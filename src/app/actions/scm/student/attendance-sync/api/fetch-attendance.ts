@@ -12,7 +12,7 @@
  */
 export async function fetchPodsieAttendance(
   groupId: string,
-  startDate: string
+  startDate: string,
 ): Promise<unknown> {
   const token = process.env.PODSIE_API_TOKEN;
 
@@ -29,11 +29,13 @@ export async function fetchPodsieAttendance(
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   if (!response.ok) {
-    throw new Error(`Podsie API error: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Podsie API error: ${response.status} ${response.statusText}`,
+    );
   }
 
   const data = await response.json();

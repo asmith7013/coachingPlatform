@@ -1,39 +1,39 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card } from '@composed-components/cards/Card';
-import { SectionHeading } from '@composed-components/sectionHeadings';
-import { InfoCard } from '@composed-components/cards/InfoCard';
-import { Dialog } from '@composed-components/dialogs/Dialog';
-import { ScheduleGrid } from '@/components/features/schedules';
-import { useScheduleDisplayData, useScheduleComponentsActions } from '@/components/features/schedules/hooks';
-import { Text } from '@/components/core/typography/Text';
+import { Card } from "@composed-components/cards/Card";
+import { SectionHeading } from "@composed-components/sectionHeadings";
+import { InfoCard } from "@composed-components/cards/InfoCard";
+import { Dialog } from "@composed-components/dialogs/Dialog";
+import { ScheduleGrid } from "@/components/features/schedules";
+import {
+  useScheduleDisplayData,
+  useScheduleComponentsActions,
+} from "@/components/features/schedules/hooks";
+import { Text } from "@/components/core/typography/Text";
 import { useVisits } from "@hooks/domain/useVisits";
-import { ScheduleAssignmentType } from '@enums';
-import { cardGridVariant } from '@/lib/ui/variants';
-import { 
-  MapPinIcon, 
-  CalendarDaysIcon
-} from '@heroicons/react/24/outline';
-import type { Visit } from '@zod-schema/visits/visit';
+import { ScheduleAssignmentType } from "@enums";
+import { cardGridVariant } from "@/lib/ui/variants";
+import { MapPinIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
+import type { Visit } from "@zod-schema/visits/visit";
 
 interface VisitsCardProps {
   schoolId: string;
   onViewAllVisits?: () => void;
   onScheduleVisit?: () => void;
-  gridDensity?: 'compact' | 'comfortable' | 'spacious';
+  gridDensity?: "compact" | "comfortable" | "spacious";
 }
 
-export function VisitsCard({ 
-  schoolId, 
-  onViewAllVisits, 
+export function VisitsCard({
+  schoolId,
+  onViewAllVisits,
   onScheduleVisit,
-  gridDensity = 'comfortable'
+  gridDensity = "comfortable",
 }: VisitsCardProps) {
   const [selectedVisit, setSelectedVisit] = useState<Visit | null>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  
+
   // Add schedule state for edit dialog
   const [selectedTeacher, setSelectedTeacher] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<number | null>(null);
@@ -44,7 +44,7 @@ export function VisitsCard({
   };
 
   const handleEditVisit = (visit: Visit) => {
-    console.log('Opening edit dialog for visit:', visit._id);
+    console.log("Opening edit dialog for visit:", visit._id);
     setSelectedVisit(visit);
     setIsEditDialogOpen(true);
     // Reset schedule selection when opening edit dialog
@@ -53,92 +53,104 @@ export function VisitsCard({
   };
 
   // Fix the visits filter - schoolId is correct for visits
-  const { 
+  const {
     items: visits = [],
-    isLoading: visitsLoading, 
-    error: visitsError 
+    isLoading: visitsLoading,
+    error: visitsError,
   } = useVisits.list({
     filters: { schoolId: schoolId },
     limit: 5, // Show recent 5 visits
-    sortBy: 'date',
-    sortOrder: 'desc'
+    sortBy: "date",
+    sortOrder: "desc",
   });
 
   // Add this comprehensive debug block right after the hook call
   useEffect(() => {
-    console.log('🔍 VISITS CARD DEBUG - Hook Results:', {
+    console.log("🔍 VISITS CARD DEBUG - Hook Results:", {
       hookCall: {
         schoolId,
         schoolIdType: typeof schoolId,
         filters: { schoolId: schoolId },
         hookParams: {
           limit: 5,
-          sortBy: 'date',
-          sortOrder: 'desc'
-        }
+          sortBy: "date",
+          sortOrder: "desc",
+        },
       },
       hookResults: {
         visitsCount: visits.length,
         visitsLoading,
         visitsError: visitsError?.message || null,
         visitsErrorType: visitsError?.constructor.name || null,
-        firstVisitSample: visits[0] ? {
-          _id: visits[0]._id,
-          date: visits[0].date,
-          schoolId: visits[0].schoolId,
-          coachId: visits[0].coachId,
-          allowedPurpose: visits[0].allowedPurpose
-        } : null
+        firstVisitSample: visits[0]
+          ? {
+              _id: visits[0]._id,
+              date: visits[0].date,
+              schoolId: visits[0].schoolId,
+              coachId: visits[0].coachId,
+              allowedPurpose: visits[0].allowedPurpose,
+            }
+          : null,
       },
       componentState: {
         hasRenderingError: false,
-        componentMounted: true
-      }
+        componentMounted: true,
+      },
     });
   }, [visits, visitsLoading, visitsError, schoolId]);
 
   // Add this effect to track when schoolId changes
   useEffect(() => {
-    console.log('🔍 VISITS CARD DEBUG - SchoolId Changed:', {
+    console.log("🔍 VISITS CARD DEBUG - SchoolId Changed:", {
       newSchoolId: schoolId,
       schoolIdValid: !!schoolId && schoolId.length === 24, // MongoDB ObjectId length
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }, [schoolId]);
 
   // Use existing schedulesComponents hooks for edit dialog
   const scheduleData = useScheduleDisplayData(
-    schoolId, 
-    selectedVisit?.date ? new Date(selectedVisit.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+    schoolId,
+    selectedVisit?.date
+      ? new Date(selectedVisit.date).toISOString().split("T")[0]
+      : new Date().toISOString().split("T")[0],
   );
 
   const scheduleActions = useScheduleComponentsActions({
     schoolId,
-    date: selectedVisit?.date || new Date().toISOString().split('T')[0],
-    bellSchedule: scheduleData.bellSchedule || undefined
+    date: selectedVisit?.date || new Date().toISOString().split("T")[0],
+    bellSchedule: scheduleData.bellSchedule || undefined,
   });
 
   // Create visit info cards manually
   const visitInfoCards = visits.map((visit: Visit) => ({
-    title: visit.date ? new Date(visit.date).toLocaleDateString() : 'No Date',
-    subtitle: visit.allowedPurpose || 'No Purpose Set',
-    description: `Coach: ${visit.coachId || 'Unknown'}`,
+    title: visit.date ? new Date(visit.date).toLocaleDateString() : "No Date",
+    subtitle: visit.allowedPurpose || "No Purpose Set",
+    description: `Coach: ${visit.coachId || "Unknown"}`,
     details: [
-      { label: 'Events', value: visit.sessionLinks?.length ? `${visit.sessionLinks.length}` : '0' },
-      { label: 'Grade Levels', value: visit.gradeLevelsSupported?.join(', ') || 'None' }
+      {
+        label: "Events",
+        value: visit.sessionLinks?.length
+          ? `${visit.sessionLinks.length}`
+          : "0",
+      },
+      {
+        label: "Grade Levels",
+        value: visit.gradeLevelsSupported?.join(", ") || "None",
+      },
     ],
     actions: [
       {
-        label: 'View',
+        label: "View",
         icon: undefined,
-        onClick: () => handleViewVisit(visit)
+        onClick: () => handleViewVisit(visit),
       },
       {
-        label: 'Edit',
+        label: "Edit",
         icon: undefined,
-        onClick: () => handleEditVisit(visit)
-      }
-    ]
+        onClick: () => handleEditVisit(visit),
+      },
+    ],
   }));
 
   const handleCloseViewDialog = () => {
@@ -153,17 +165,25 @@ export function VisitsCard({
     setSelectedPeriod(null);
   };
 
-  const handlePortionSelect = async (teacherId: string, period: number, portion: ScheduleAssignmentType) => {
-    console.log('Scheduling visit portion:', { teacherId, period, portion });
+  const handlePortionSelect = async (
+    teacherId: string,
+    period: number,
+    portion: ScheduleAssignmentType,
+  ) => {
+    console.log("Scheduling visit portion:", { teacherId, period, portion });
     try {
-      const result = await scheduleActions.scheduleVisit(teacherId, period, portion);
+      const result = await scheduleActions.scheduleVisit(
+        teacherId,
+        period,
+        portion,
+      );
       if (result.success) {
-        console.log('Visit scheduled successfully');
+        console.log("Visit scheduled successfully");
       } else {
-        console.error('Failed to schedule visit:', result.error);
+        console.error("Failed to schedule visit:", result.error);
       }
     } catch (error) {
-      console.error('Error scheduling visit:', error);
+      console.error("Error scheduling visit:", error);
     }
   };
 
@@ -185,25 +205,29 @@ export function VisitsCard({
           iconVariant="colored"
           actions={[
             {
-              type: 'button',
-              variant: 'secondary',
-              children: 'View All',
-              onClick: onViewAllVisits || (() => console.log('View all visits'))
+              type: "button",
+              variant: "secondary",
+              children: "View All",
+              onClick:
+                onViewAllVisits || (() => console.log("View all visits")),
             },
             {
-              type: 'button',
-              variant: 'primary',
-              children: 'Schedule Visit',
-              onClick: onScheduleVisit || (() => console.log('Schedule new visit'))
-            }
+              type: "button",
+              variant: "primary",
+              children: "Schedule Visit",
+              onClick:
+                onScheduleVisit || (() => console.log("Schedule new visit")),
+            },
           ]}
         />
-        
+
         {visitsLoading ? (
           <div className="flex items-center justify-center py-8">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2"></div>
-              <Text textSize="sm" color="muted">Loading visits...</Text>
+              <Text textSize="sm" color="muted">
+                Loading visits...
+              </Text>
             </div>
           </div>
         ) : visitsError ? (
@@ -225,11 +249,7 @@ export function VisitsCard({
         ) : (
           <div className={cardGridVariant({ density: gridDensity })}>
             {visitInfoCards.map((cardProps, index) => (
-              <InfoCard
-                key={visits[index]._id}
-                size="md"
-                {...cardProps}
-              />
+              <InfoCard key={visits[index]._id} size="md" {...cardProps} />
             ))}
           </div>
         )}
@@ -245,8 +265,15 @@ export function VisitsCard({
         {selectedVisit && (
           <div className="h-full">
             <div className="p-6">
-              <Text textSize="lg">Visit Details for {selectedVisit.date ? new Date(selectedVisit.date).toLocaleDateString() : 'Unknown Date'}</Text>
-              <Text textSize="sm" color="muted">Read-only view - implementation pending</Text>
+              <Text textSize="lg">
+                Visit Details for{" "}
+                {selectedVisit.date
+                  ? new Date(selectedVisit.date).toLocaleDateString()
+                  : "Unknown Date"}
+              </Text>
+              <Text textSize="sm" color="muted">
+                Read-only view - implementation pending
+              </Text>
             </div>
           </div>
         )}
@@ -256,20 +283,23 @@ export function VisitsCard({
       <Dialog
         open={isEditDialogOpen}
         onClose={handleCloseEditDialog}
-        title={`Edit Visit Schedule - ${selectedVisit?.date ? new Date(selectedVisit.date).toLocaleDateString() : ''}`}
+        title={`Edit Visit Schedule - ${selectedVisit?.date ? new Date(selectedVisit.date).toLocaleDateString() : ""}`}
         size="full"
       >
         {selectedVisit && (
           <div className="h-full p-6">
             <div className="mb-4">
               <Text textSize="base" color="muted">
-                Use the schedule grid below to update the visit plan for this date.
+                Use the schedule grid below to update the visit plan for this
+                date.
               </Text>
             </div>
-            
+
             {scheduleData.isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <Text textSize="sm" color="muted">Loading schedule data...</Text>
+                <Text textSize="sm" color="muted">
+                  Loading schedule data...
+                </Text>
               </div>
             ) : scheduleData.error ? (
               <div className="flex items-center justify-center py-8">
@@ -289,11 +319,19 @@ export function VisitsCard({
                 onPortionSelect={handlePortionSelect}
                 selectedTeacher={selectedTeacher || undefined}
                 selectedPeriod={selectedPeriod || undefined}
-                scheduleStatus={scheduleActions.isLoading ? 'loading' : scheduleActions.error ? 'error' : 'ready'}
+                scheduleStatus={
+                  scheduleActions.isLoading
+                    ? "loading"
+                    : scheduleActions.error
+                      ? "error"
+                      : "ready"
+                }
                 scheduleStatusText={
-                  scheduleActions.isLoading ? 'Updating schedule...' :
-                  scheduleActions.error ? 'Schedule error' :
-                  'Schedule ready'
+                  scheduleActions.isLoading
+                    ? "Updating schedule..."
+                    : scheduleActions.error
+                      ? "Schedule error"
+                      : "Schedule ready"
                 }
               />
             )}
@@ -302,4 +340,4 @@ export function VisitsCard({
       </Dialog>
     </>
   );
-} 
+}

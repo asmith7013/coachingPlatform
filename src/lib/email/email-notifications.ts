@@ -1,7 +1,7 @@
-import { sendEmail } from './email-service';
+import { sendEmail } from "./email-service";
 
 export interface MissingStudentData {
-  source: 'zearn' | 'roadmaps';
+  source: "zearn" | "roadmaps";
   missingStudents: Array<{
     sisId: string;
     firstName?: string;
@@ -12,13 +12,13 @@ export interface MissingStudentData {
 }
 
 // Default recipient for scraper notifications
-const SCRAPER_RECIPIENT = 'asmith7013@gmail.com';
+const SCRAPER_RECIPIENT = "asmith7013@gmail.com";
 
 /**
  * Build email body for missing students notification
  */
 function buildMissingStudentsEmailBody(data: MissingStudentData): string {
-  const sourceName = data.source === 'zearn' ? 'Zearn' : 'Roadmaps';
+  const sourceName = data.source === "zearn" ? "Zearn" : "Roadmaps";
 
   let body = `Missing students were found during ${sourceName} data import:\n\n`;
 
@@ -28,9 +28,10 @@ function buildMissingStudentsEmailBody(data: MissingStudentData): string {
 
   body += `MISSING STUDENTS:\n`;
   data.missingStudents.forEach((student, index) => {
-    const name = student.firstName && student.lastName
-      ? `${student.lastName}, ${student.firstName}`
-      : 'Unknown name';
+    const name =
+      student.firstName && student.lastName
+        ? `${student.lastName}, ${student.firstName}`
+        : "Unknown name";
     body += `   ${index + 1}. SIS ID: ${student.sisId} - ${name}\n`;
   });
 
@@ -41,15 +42,17 @@ function buildMissingStudentsEmailBody(data: MissingStudentData): string {
 }
 
 export class ScraperEmailService {
-  async sendMissingStudentsNotification(data: MissingStudentData): Promise<boolean> {
-    const sourceName = data.source === 'zearn' ? 'Zearn' : 'Roadmaps';
+  async sendMissingStudentsNotification(
+    data: MissingStudentData,
+  ): Promise<boolean> {
+    const sourceName = data.source === "zearn" ? "Zearn" : "Roadmaps";
     const subject = `Missing Students Found During ${sourceName} Import`;
     const body = buildMissingStudentsEmailBody(data);
 
     const result = await sendEmail({
       to: SCRAPER_RECIPIENT,
       subject,
-      body
+      body,
     });
 
     return result.success;

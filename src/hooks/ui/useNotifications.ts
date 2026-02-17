@@ -1,5 +1,5 @@
-import { toast } from 'sonner';
-import { ToastConfig } from '@/lib/ui/notifications/types';
+import { toast } from "sonner";
+import { ToastConfig } from "@/lib/ui/notifications/types";
 
 /**
  * useNotifications - Hook for managing toast notifications
@@ -12,9 +12,9 @@ export function useNotifications() {
   async function withToast<T>(
     operation: () => Promise<T>,
     config: ToastConfig,
-    enabled: boolean = true
+    enabled: boolean = true,
   ): Promise<T> {
-    if (!enabled || typeof window === 'undefined') {
+    if (!enabled || typeof window === "undefined") {
       return operation();
     }
     let toastId: string | number | undefined;
@@ -41,6 +41,6 @@ export function useNotifications() {
 
   return {
     withToast,
-    toast // direct access to sonner's toast API if needed
+    toast, // direct access to sonner's toast API if needed
   };
-} 
+}

@@ -1,7 +1,12 @@
 "use server";
 
 import { ContextualNoteModel } from "@mongoose-schema/visits/classroom-observation.model";
-import { ContextualNote, ContextualNoteZodSchema, ContextualNoteInputZodSchema, ContextualNoteInput } from "@zod-schema/visits/classroom-observation";
+import {
+  ContextualNote,
+  ContextualNoteZodSchema,
+  ContextualNoteInputZodSchema,
+  ContextualNoteInput,
+} from "@zod-schema/visits/classroom-observation";
 import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
@@ -15,9 +20,9 @@ const contextualNoteActions = createCrudActions({
   inputSchema: ContextualNoteInputZodSchema as ZodType<ContextualNoteInput>,
   name: "ContextualNote",
   revalidationPaths: ["/dashboard/observations", "/dashboard/notes"],
-  sortFields: ['content', 'noteType', 'createdAt', 'updatedAt'],
-  defaultSortField: 'createdAt',
-  defaultSortOrder: 'desc'
+  sortFields: ["content", "noteType", "createdAt", "updatedAt"],
+  defaultSortField: "createdAt",
+  defaultSortOrder: "desc",
 });
 
 // Export the generated actions with connection handling
@@ -29,7 +34,10 @@ export async function createContextualNote(data: ContextualNoteInput) {
   return withDbConnection(() => contextualNoteActions.create(data));
 }
 
-export async function updateContextualNote(id: string, data: Partial<ContextualNoteInput>) {
+export async function updateContextualNote(
+  id: string,
+  data: Partial<ContextualNoteInput>,
+) {
   return withDbConnection(() => contextualNoteActions.update(id, data));
 }
 
@@ -49,18 +57,20 @@ export async function fetchContextualNotesByVisit(visitId: string) {
         .sort({ createdAt: -1 })
         .lean()
         .exec();
-      
+
       return {
         success: true,
-        items: results.map((item: ContextualNoteInput) => ContextualNoteInputZodSchema.parse(item)),
-        total: results.length
+        items: results.map((item: ContextualNoteInput) =>
+          ContextualNoteInputZodSchema.parse(item),
+        ),
+        total: results.length,
       };
     } catch (error) {
       return {
         success: false,
         items: [],
         total: 0,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });
@@ -73,19 +83,19 @@ export async function fetchContextualNotesByType(noteType: string) {
         .sort({ createdAt: -1 })
         .lean()
         .exec();
-      
+
       return {
         success: true,
-        items: results.map(item => ContextualNoteZodSchema.parse(item)),
-        total: results.length
+        items: results.map((item) => ContextualNoteZodSchema.parse(item)),
+        total: results.length,
       };
     } catch (error) {
       return {
         success: false,
         items: [],
         total: 0,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });
-} 
+}

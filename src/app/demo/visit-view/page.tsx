@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 // import { VisitView } from '@/components/features/visits'
 // import type { Visit } from '@zod-schema/visits/visit'
@@ -28,5 +28,5 @@ export default function VisitViewDemo() {
         /> */}
       </div>
     </div>
-  )
-} 
+  );
+}

@@ -1,15 +1,24 @@
 // import type { ZodSchema } from 'zod';
 // import type { ReactNode } from 'react';
-import type { AnyFieldApi } from '@tanstack/react-form';
+import type { AnyFieldApi } from "@tanstack/react-form";
 
 /**
  * Core field types supported by the form system
  */
 export type FieldApi = AnyFieldApi;
-export type FieldType = 
-  | 'text' | 'email' | 'password' | 'number' 
-  | 'select' | 'textarea' | 'checkbox' | 'switch' 
-  | 'reference' | 'date' | 'datetime' | 'file';
+export type FieldType =
+  | "text"
+  | "email"
+  | "password"
+  | "number"
+  | "select"
+  | "textarea"
+  | "checkbox"
+  | "switch"
+  | "reference"
+  | "date"
+  | "datetime"
+  | "file";
 
 export interface BaseFieldProps {
   field: FieldApi;
@@ -18,7 +27,9 @@ export interface BaseFieldProps {
 /**
  * Generic field configuration interface
  */
-export interface Field<T extends Record<string, unknown> = Record<string, unknown>> {
+export interface Field<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> {
   name: keyof T;
   label: string;
   type: FieldType;

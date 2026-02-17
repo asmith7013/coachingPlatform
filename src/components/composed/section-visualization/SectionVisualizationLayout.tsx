@@ -41,7 +41,10 @@ interface SectionVisualizationLayoutProps {
   /** Content for the shared visualization area (shown for all selected sections) */
   sharedVisualization?: React.ReactNode;
   /** Render function for individual section content (accordions) */
-  renderSectionContent: (sectionId: string, section: SectionOption) => React.ReactNode;
+  renderSectionContent: (
+    sectionId: string,
+    section: SectionOption,
+  ) => React.ReactNode;
   /** Optional header actions (e.g., export button) */
   headerActions?: React.ReactNode;
   /** Optional actions to display alongside the section selector */

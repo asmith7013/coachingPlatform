@@ -1,8 +1,9 @@
-import React from 'react';
-import { ClickableCards, ClickableCardColor } from '@components/composed/cards/ClickableCards';
-import { IPGFocusCardsProps } from '@domain-types/coaching-action-plan';
-
-
+import React from "react";
+import {
+  ClickableCards,
+  ClickableCardColor,
+} from "@components/composed/cards/ClickableCards";
+import { IPGFocusCardsProps } from "@domain-types/coaching-action-plan";
 
 export const IPGFocusCards: React.FC<IPGFocusCardsProps> = ({
   selectedValue,
@@ -12,12 +13,12 @@ export const IPGFocusCards: React.FC<IPGFocusCardsProps> = ({
   const getColor = (value: string): ClickableCardColor => {
     // Map the value to a valid ClickableCardColor
     const colorMap: Record<string, ClickableCardColor> = {
-      '1': 'primary',
-      '2': 'secondary', 
-      '3': 'success',
+      "1": "primary",
+      "2": "secondary",
+      "3": "success",
     };
 
-    return colorMap[value] || 'muted';
+    return colorMap[value] || "muted";
   };
 
   return (
@@ -37,4 +38,4 @@ export const IPGFocusCards: React.FC<IPGFocusCardsProps> = ({
       ))}
     </ClickableCards>
   );
-}; 
+};

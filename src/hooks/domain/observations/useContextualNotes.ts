@@ -1,30 +1,33 @@
-import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { ContextualNoteZodSchema, ContextualNote } from '@/lib/schema/zod-schema/visits/classroom-observation';
-import { ZodSchema } from 'zod';
-import { 
-  fetchContextualNotes, 
-  fetchContextualNoteById, 
-  createContextualNote, 
-  updateContextualNote, 
-  deleteContextualNote 
-} from '@actions/observations/contextual-notes';
+import { createCrudHooks } from "@query/client/factories/crud-factory";
+import {
+  ContextualNoteZodSchema,
+  ContextualNote,
+} from "@/lib/schema/zod-schema/visits/classroom-observation";
+import { ZodSchema } from "zod";
+import {
+  fetchContextualNotes,
+  fetchContextualNoteById,
+  createContextualNote,
+  updateContextualNote,
+  deleteContextualNote,
+} from "@actions/observations/contextual-notes";
 
 /**
  * Custom React Query hooks for ContextualNote entity
  * SIMPLIFIED: Direct CRUD factory usage, no unnecessary abstraction
  */
 const contextualNoteHooks = createCrudHooks({
-  entityType: 'contextual-notes',
+  entityType: "contextual-notes",
   schema: ContextualNoteZodSchema as ZodSchema<ContextualNote>,
   serverActions: {
     fetch: fetchContextualNotes,
     fetchById: fetchContextualNoteById,
     create: createContextualNote,
     update: updateContextualNote,
-    delete: deleteContextualNote
+    delete: deleteContextualNote,
   },
-  validSortFields: ['content', 'noteType', 'createdAt', 'updatedAt'],
-  relatedEntityTypes: ['visits', 'classroom-observations']
+  validSortFields: ["content", "noteType", "createdAt", "updatedAt"],
+  relatedEntityTypes: ["visits", "classroom-observations"],
 });
 
 // Export with domain-specific names
@@ -34,6 +37,11 @@ const useContextualNotesMutations = contextualNoteHooks.useMutations;
 const useContextualNotes = contextualNoteHooks.useManager;
 
 // Export individual hooks
-export { useContextualNotesList, useContextualNotesById, useContextualNotesMutations, useContextualNotes };
+export {
+  useContextualNotesList,
+  useContextualNotesById,
+  useContextualNotesMutations,
+  useContextualNotes,
+};
 
-export default useContextualNotes; 
+export default useContextualNotes;

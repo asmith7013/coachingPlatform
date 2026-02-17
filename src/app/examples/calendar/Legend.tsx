@@ -1,5 +1,5 @@
-import React from 'react';
-import { statusColors, deliveryColors } from './constants';
+import React from "react";
+import { statusColors, deliveryColors } from "./constants";
 
 const Legend: React.FC = () => {
   return (
@@ -46,4 +46,4 @@ const Legend: React.FC = () => {
   );
 };
 
-export default Legend; 
+export default Legend;

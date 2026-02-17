@@ -3,7 +3,8 @@ import { ExampleSketch } from "../../types";
 export const LINEAR_GRAPH_DRAWING: ExampleSketch = {
   id: "linear-graph-drawing",
   name: "Linear Graph Drawing",
-  description: "Interactive coordinate plane for drawing linear lines with snap-to-grid",
+  description:
+    "Interactive coordinate plane for drawing linear lines with snap-to-grid",
   code: `// ==========================================
 // CONFIGURATION - Easily modifiable by LLM
 // ==========================================

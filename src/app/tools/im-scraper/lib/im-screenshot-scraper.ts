@@ -1,5 +1,5 @@
-import { chromium, Browser, BrowserContext, Page } from 'playwright';
-import { IMCredentials, IM_CONSTANTS } from './types';
+import { chromium, Browser, BrowserContext, Page } from "playwright";
+import { IMCredentials, IM_CONSTANTS } from "./types";
 
 export interface ScreenshotResult {
   url: string;
@@ -19,15 +19,16 @@ export class IMScreenshotScraper {
     this.browser = await chromium.launch({
       headless: !debug,
       slowMo: debug ? 1000 : 0,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      ...(debug && { devtools: true })
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      ...(debug && { devtools: true }),
     });
 
     this.context = await this.browser.newContext({
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      userAgent:
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       viewport: { width: 1366, height: 768 },
       deviceScaleFactor: 2,
-      ignoreHTTPSErrors: true
+      ignoreHTTPSErrors: true,
     });
 
     this.page = await this.context.newPage();
@@ -35,14 +36,16 @@ export class IMScreenshotScraper {
     this.page.setDefaultNavigationTimeout(30000);
 
     if (debug) {
-      this.page.on('console', msg => console.log('PAGE LOG:', msg.text()));
-      this.page.on('pageerror', error => console.log('PAGE ERROR:', error.message));
+      this.page.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
+      this.page.on("pageerror", (error) =>
+        console.log("PAGE ERROR:", error.message),
+      );
     }
   }
 
   setCredentials(credentials: IMCredentials): void {
     this.credentials = credentials;
-    console.log('📝 Credentials stored for per-page authentication');
+    console.log("📝 Credentials stored for per-page authentication");
   }
 
   // Remove interfering elements before screenshot
@@ -50,27 +53,27 @@ export class IMScreenshotScraper {
     if (!this.page) return;
 
     try {
-      console.log('🗑️ Removing interfering elements...');
+      console.log("🗑️ Removing interfering elements...");
 
-      await this.page.waitForLoadState('domcontentloaded');
+      await this.page.waitForLoadState("domcontentloaded");
       await this.page.waitForTimeout(1000);
 
       const elementsToRemove = [
-        '.userway_buttons_wrapper',
-        '.userway_dark',
-        '#userwayLstIcon',
-        '#userwayAccessibilityIcon',
-        '.uwaw-dictionary-tooltip',
-        '.uw-sl',
-        '.uw-sl__item',
-        '#uw-skip-to-main',
-        '#uw-enable-visibility',
-        '#uw-open-accessibility',
+        ".userway_buttons_wrapper",
+        ".userway_dark",
+        "#userwayLstIcon",
+        "#userwayAccessibilityIcon",
+        ".uwaw-dictionary-tooltip",
+        ".uw-sl",
+        ".uw-sl__item",
+        "#uw-skip-to-main",
+        "#uw-enable-visibility",
+        "#uw-open-accessibility",
         '[role="region"][aria-label*="Quick Accessibility"]',
         '[role="region"][aria-label*="Accessibility"]',
-        '.im-c-header__bar',
-        '.im-c-header__content',
-        '.im-c-figure__modal-expand-button',
+        ".im-c-header__bar",
+        ".im-c-header__content",
+        ".im-c-figure__modal-expand-button",
         '.im-c-touch-target[aria-label*="Expand"]',
         '.im-c-touch-target[aria-label*="expand"]',
         'button[aria-label*="Expand"]',
@@ -78,7 +81,7 @@ export class IMScreenshotScraper {
         '[class*="userway"]',
         '[id*="userway"]',
         '[class*="uw-"]',
-        '[id*="uw-"]'
+        '[id*="uw-"]',
       ];
 
       let totalRemoved = 0;
@@ -89,8 +92,8 @@ export class IMScreenshotScraper {
           const count = await elements.count();
 
           if (count > 0) {
-            await elements.evaluateAll(elements => {
-              elements.forEach(element => {
+            await elements.evaluateAll((elements) => {
+              elements.forEach((element) => {
                 if (element && element.parentNode) {
                   element.remove();
                 }
@@ -105,9 +108,8 @@ export class IMScreenshotScraper {
 
       console.log(`🗑️ Removed ${totalRemoved} interfering elements`);
       await this.page.waitForTimeout(200);
-
     } catch (error) {
-      console.error('❌ Error removing interfering elements:', error);
+      console.error("❌ Error removing interfering elements:", error);
     }
   }
 
@@ -118,58 +120,79 @@ export class IMScreenshotScraper {
     }
 
     try {
-      if (debug) console.log('🔍 Looking for in-page login...');
+      if (debug) console.log("🔍 Looking for in-page login...");
 
       // Wait for the sign-in button in the problem-statement section
-      const signInButton = await this.page.waitForSelector(
-        'div[data-context="problem-statement"] a:has-text("Sign in")',
-        { timeout: 5000 }
-      ).catch(() => null);
+      const signInButton = await this.page
+        .waitForSelector(
+          'div[data-context="problem-statement"] a:has-text("Sign in")',
+          { timeout: 5000 },
+        )
+        .catch(() => null);
 
       if (!signInButton) {
-        if (debug) console.log('✅ No login required - content already accessible');
+        if (debug)
+          console.log("✅ No login required - content already accessible");
         return true;
       }
 
-      if (debug) console.log('🔐 Found sign-in button, clicking...');
+      if (debug) console.log("🔐 Found sign-in button, clicking...");
       await signInButton.click();
 
       // Wait for login modal/form to appear
-      await this.page.waitForSelector(IM_CONSTANTS.SELECTORS.EMAIL_FIELD, { timeout: 10000 });
-      if (debug) console.log('📋 Login form appeared');
+      await this.page.waitForSelector(IM_CONSTANTS.SELECTORS.EMAIL_FIELD, {
+        timeout: 10000,
+      });
+      if (debug) console.log("📋 Login form appeared");
 
       // Fill credentials
-      await this.page.fill(IM_CONSTANTS.SELECTORS.EMAIL_FIELD, this.credentials.email);
-      await this.page.fill(IM_CONSTANTS.SELECTORS.PASSWORD_FIELD, this.credentials.password);
-      if (debug) console.log('✍️ Credentials entered');
+      await this.page.fill(
+        IM_CONSTANTS.SELECTORS.EMAIL_FIELD,
+        this.credentials.email,
+      );
+      await this.page.fill(
+        IM_CONSTANTS.SELECTORS.PASSWORD_FIELD,
+        this.credentials.password,
+      );
+      if (debug) console.log("✍️ Credentials entered");
 
       // Submit form
       await this.page.click(IM_CONSTANTS.SELECTORS.SUBMIT_BUTTON);
-      if (debug) console.log('🚀 Form submitted');
+      if (debug) console.log("🚀 Form submitted");
 
       // Wait for the problem-statement content to load (no more sign-in message)
-      await this.page.waitForFunction(() => {
-        const problemStatement = document.querySelector('div[data-context="problem-statement"]');
-        return problemStatement && !problemStatement.textContent?.includes('Sign in to access');
-      }, { timeout: 15000 });
+      await this.page.waitForFunction(
+        () => {
+          const problemStatement = document.querySelector(
+            'div[data-context="problem-statement"]',
+          );
+          return (
+            problemStatement &&
+            !problemStatement.textContent?.includes("Sign in to access")
+          );
+        },
+        { timeout: 15000 },
+      );
 
-      if (debug) console.log('✅ Authentication successful - content loaded');
+      if (debug) console.log("✅ Authentication successful - content loaded");
       return true;
-
     } catch (error) {
-      console.error('❌ In-page authentication failed:', error);
+      console.error("❌ In-page authentication failed:", error);
       return false;
     }
   }
 
   // Screenshot the Student Task Statement div
-  private async screenshotStudentTaskStatement(url: string, debug = false): Promise<string> {
+  private async screenshotStudentTaskStatement(
+    url: string,
+    debug = false,
+  ): Promise<string> {
     if (!this.page) {
-      throw new Error('Page not initialized');
+      throw new Error("Page not initialized");
     }
 
     const timestamp = Date.now();
-    const screenshotDir = 'public/screenshots';
+    const screenshotDir = "public/screenshots";
     const urlParts = this.parseUrlParts(url);
     const lessonId = `${urlParts.grade}-${urlParts.unit}-${urlParts.section}-${urlParts.lesson}`;
     const screenshotName = `task-statement-${lessonId}-${timestamp}.png`;
@@ -177,13 +200,15 @@ export class IMScreenshotScraper {
 
     try {
       // Find the problem-statement div
-      const problemStatement = await this.page.locator('div[data-context="problem-statement"]').first();
+      const problemStatement = await this.page
+        .locator('div[data-context="problem-statement"]')
+        .first();
 
-      if (await problemStatement.count() === 0) {
-        throw new Error('Problem statement div not found');
+      if ((await problemStatement.count()) === 0) {
+        throw new Error("Problem statement div not found");
       }
 
-      if (debug) console.log('✅ Found problem-statement div');
+      if (debug) console.log("✅ Found problem-statement div");
 
       // Remove interfering elements
       await this.removeInterferingElements();
@@ -192,16 +217,18 @@ export class IMScreenshotScraper {
       await this.page.waitForTimeout(2000);
 
       // Add padding and take screenshot
-      const originalStyles = await problemStatement.evaluate((el: HTMLElement) => ({
-        padding: el.style.padding,
-        backgroundColor: el.style.backgroundColor,
-        boxSizing: el.style.boxSizing
-      }));
+      const originalStyles = await problemStatement.evaluate(
+        (el: HTMLElement) => ({
+          padding: el.style.padding,
+          backgroundColor: el.style.backgroundColor,
+          boxSizing: el.style.boxSizing,
+        }),
+      );
 
       await problemStatement.evaluate((el: HTMLElement) => {
-        el.style.padding = '20px';
-        el.style.backgroundColor = '#ffffff';
-        el.style.boxSizing = 'border-box';
+        el.style.padding = "20px";
+        el.style.backgroundColor = "#ffffff";
+        el.style.boxSizing = "border-box";
       });
 
       await this.page.waitForTimeout(200);
@@ -209,34 +236,46 @@ export class IMScreenshotScraper {
       // Take screenshot
       await problemStatement.screenshot({
         path: screenshotPath,
-        type: 'png'
+        type: "png",
       });
 
       // Restore original styles
-      await problemStatement.evaluate((el: HTMLElement, styles: {padding: string; backgroundColor: string; boxSizing: string}) => {
-        el.style.padding = styles.padding || '';
-        el.style.backgroundColor = styles.backgroundColor || '';
-        el.style.boxSizing = styles.boxSizing || '';
-      }, originalStyles);
+      await problemStatement.evaluate(
+        (
+          el: HTMLElement,
+          styles: {
+            padding: string;
+            backgroundColor: string;
+            boxSizing: string;
+          },
+        ) => {
+          el.style.padding = styles.padding || "";
+          el.style.backgroundColor = styles.backgroundColor || "";
+          el.style.boxSizing = styles.boxSizing || "";
+        },
+        originalStyles,
+      );
 
       console.log(`📸 Screenshot saved: ${screenshotName}`);
       return screenshotName;
-
     } catch (error) {
-      console.error('❌ Error capturing screenshot:', error);
+      console.error("❌ Error capturing screenshot:", error);
       throw error;
     }
   }
 
   // Screenshot a single page
-  private async screenshotSinglePage(url: string, debug = false): Promise<ScreenshotResult> {
+  private async screenshotSinglePage(
+    url: string,
+    debug = false,
+  ): Promise<ScreenshotResult> {
     if (!this.page) {
-      throw new Error('Page not initialized');
+      throw new Error("Page not initialized");
     }
 
     try {
-      if (debug) console.log('🌐 Navigating to:', url);
-      await this.page.goto(url, { waitUntil: 'networkidle' });
+      if (debug) console.log("🌐 Navigating to:", url);
+      await this.page.goto(url, { waitUntil: "networkidle" });
 
       // Authenticate on this specific page
       const authSuccess = await this.authenticateOnPage(debug);
@@ -244,8 +283,8 @@ export class IMScreenshotScraper {
         return {
           url,
           success: false,
-          error: 'Failed to authenticate on page',
-          scrapedAt: new Date().toISOString()
+          error: "Failed to authenticate on page",
+          scrapedAt: new Date().toISOString(),
         };
       }
 
@@ -253,22 +292,24 @@ export class IMScreenshotScraper {
       await this.page.waitForTimeout(2000);
 
       // Take screenshot
-      const screenshotPath = await this.screenshotStudentTaskStatement(url, debug);
+      const screenshotPath = await this.screenshotStudentTaskStatement(
+        url,
+        debug,
+      );
 
       return {
         url,
         success: true,
         screenshotPath,
-        scrapedAt: new Date().toISOString()
+        scrapedAt: new Date().toISOString(),
       };
-
     } catch (error) {
       console.error(`Failed to screenshot page at ${url}:`, error);
       return {
         url,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        scrapedAt: new Date().toISOString()
+        error: error instanceof Error ? error.message : "Unknown error",
+        scrapedAt: new Date().toISOString(),
       };
     }
   }
@@ -276,10 +317,10 @@ export class IMScreenshotScraper {
   // Screenshot multiple pages
   async screenshotPages(
     urls: string[],
-    delayBetweenRequests: number = 2000
+    delayBetweenRequests: number = 2000,
   ): Promise<ScreenshotResult[]> {
     if (!this.page || !this.credentials) {
-      throw new Error('Scraper not initialized or credentials not set');
+      throw new Error("Scraper not initialized or credentials not set");
     }
 
     const results: ScreenshotResult[] = [];
@@ -299,23 +340,35 @@ export class IMScreenshotScraper {
     return results;
   }
 
-  private parseUrlParts(url: string): { grade: string; unit: string; section: string; lesson: string } {
-    const urlMatch = url.match(/grade-(\d+)\/unit-(\d+)\/section-([a-z])\/lesson-(\d+)/);
+  private parseUrlParts(url: string): {
+    grade: string;
+    unit: string;
+    section: string;
+    lesson: string;
+  } {
+    const urlMatch = url.match(
+      /grade-(\d+)\/unit-(\d+)\/section-([a-z])\/lesson-(\d+)/,
+    );
 
     if (!urlMatch) {
-      return { grade: 'unknown', unit: 'unknown', section: 'unknown', lesson: 'unknown' };
+      return {
+        grade: "unknown",
+        unit: "unknown",
+        section: "unknown",
+        lesson: "unknown",
+      };
     }
 
     return {
       grade: urlMatch[1],
       unit: urlMatch[2],
       section: urlMatch[3],
-      lesson: urlMatch[4]
+      lesson: urlMatch[4],
     };
   }
 
   private async delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async close(): Promise<void> {

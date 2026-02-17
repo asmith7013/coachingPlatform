@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@ui/utils/formatters';;
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@ui/utils/formatters";
 // import { RoutineBadge } from './RoutineBadge';
 
 export type Lesson = {
@@ -12,22 +12,27 @@ export type Lesson = {
   activities: {
     routines: string[];
   }[];
-  curriculum: 'ILC' | 'Kendall Hunt';
+  curriculum: "ILC" | "Kendall Hunt";
 };
 
 type Props = {
   selectedRoutines: string[];
   lessonsData: Lesson[];
   onSelectLesson: (lessonNumber: string) => void;
-  curriculum: 'ILC' | 'Kendall Hunt';
+  curriculum: "ILC" | "Kendall Hunt";
 };
 
-export function MLRAppearsInCard({ selectedRoutines, lessonsData, onSelectLesson, curriculum: _curriculum }: Props) {
+export function MLRAppearsInCard({
+  selectedRoutines,
+  lessonsData,
+  onSelectLesson,
+  curriculum: _curriculum,
+}: Props) {
   const mlrRoutines = selectedRoutines
     .filter((r) => /^MLR\d+/.test(r))
     .sort((a, b) => {
-      const numA = parseInt(a.match(/\d+/)?.[0] || '0', 10);
-      const numB = parseInt(b.match(/\d+/)?.[0] || '0', 10);
+      const numA = parseInt(a.match(/\d+/)?.[0] || "0", 10);
+      const numB = parseInt(b.match(/\d+/)?.[0] || "0", 10);
       return numA - numB;
     });
 
@@ -40,8 +45,8 @@ export function MLRAppearsInCard({ selectedRoutines, lessonsData, onSelectLesson
           const matchingLessons = lessonsData
             .filter((lesson) =>
               lesson.activities.some((activity) =>
-                activity.routines.includes(routine)
-              )
+                activity.routines.includes(routine),
+              ),
             )
             .map((lesson) => lesson.lessonNumber);
 
@@ -56,16 +61,18 @@ export function MLRAppearsInCard({ selectedRoutines, lessonsData, onSelectLesson
               transition={{ duration: 0.2 }}
               className="p-4 border-2 border-white rounded-md bg-primary space-y-2"
             >
-                <span
+              <span
                 className={cn(
-                    'text-[12px] font-bold px-2 py-0.5 rounded inline-block',
-                    'bg-white text-primary'
+                  "text-[12px] font-bold px-2 py-0.5 rounded inline-block",
+                  "bg-white text-primary",
                 )}
-                >
-                    {routine}
-                </span>
+              >
+                {routine}
+              </span>
               <div className="flex items-center flex-wrap gap-2 mt-1">
-                <span className="text-sm text-white font-medium">Appears in:</span>
+                <span className="text-sm text-white font-medium">
+                  Appears in:
+                </span>
                 {matchingLessons.map((lessonNumber) => (
                   <motion.button
                     key={lessonNumber}
@@ -77,7 +84,7 @@ export function MLRAppearsInCard({ selectedRoutines, lessonsData, onSelectLesson
                       "bg-secondary text-white border-2 border-white",
                       "hover:bg-white hover:text-secondary transition-colors",
                       "focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary",
-                      "cursor-pointer"
+                      "cursor-pointer",
                     )}
                   >
                     Lesson {lessonNumber}
@@ -90,4 +97,4 @@ export function MLRAppearsInCard({ selectedRoutines, lessonsData, onSelectLesson
       </AnimatePresence>
     </div>
   );
-} 
+}

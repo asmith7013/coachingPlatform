@@ -1,1 +1,1 @@
-export * from './useStageEditor'; 
+export * from "./useStageEditor";

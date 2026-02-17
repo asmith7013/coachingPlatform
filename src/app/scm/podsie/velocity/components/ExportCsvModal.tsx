@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { XMarkIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
-import type { DailyVelocityStats, StudentDailyData } from "@/app/actions/scm/podsie/velocity/velocity";
+import type {
+  DailyVelocityStats,
+  StudentDailyData,
+} from "@/app/actions/scm/podsie/velocity/velocity";
 import {
   generateClassVelocityCsv,
   generateStudentVelocityCsv,
@@ -37,7 +40,7 @@ export function ExportCsvModal({
   endDate: initialEndDate,
 }: ExportCsvModalProps) {
   const [exportSections, setExportSections] = useState<Set<string>>(
-    () => new Set(selectedSections)
+    () => new Set(selectedSections),
   );
   const [exportingClass, setExportingClass] = useState(false);
   const [exportingStudent, setExportingStudent] = useState(false);
@@ -56,13 +59,16 @@ export function ExportCsvModal({
   if (!isOpen) return null;
 
   // Group sections by school
-  const sectionsBySchool = sections.reduce((acc, section) => {
-    if (!acc[section.school]) {
-      acc[section.school] = [];
-    }
-    acc[section.school].push(section);
-    return acc;
-  }, {} as Record<string, SectionOption[]>);
+  const sectionsBySchool = sections.reduce(
+    (acc, section) => {
+      if (!acc[section.school]) {
+        acc[section.school] = [];
+      }
+      acc[section.school].push(section);
+      return acc;
+    },
+    {} as Record<string, SectionOption[]>,
+  );
 
   const toggleSection = (sectionId: string) => {
     setExportSections((prev) => {
@@ -112,17 +118,17 @@ export function ExportCsvModal({
         sectionsToExport,
         velocityData,
         exportStartDate,
-        exportEndDate
+        exportEndDate,
       );
       const classFilename = generateVelocityCsvFilename(
-        'class',
+        "class",
         sectionsToExport.length,
         exportStartDate,
-        exportEndDate
+        exportEndDate,
       );
       downloadCsv(classCsv, classFilename);
     } catch (error) {
-      console.error('Error exporting class CSV:', error);
+      console.error("Error exporting class CSV:", error);
     } finally {
       setExportingClass(false);
     }
@@ -139,17 +145,17 @@ export function ExportCsvModal({
         sectionsToExport,
         detailData,
         exportStartDate,
-        exportEndDate
+        exportEndDate,
       );
       const studentFilename = generateVelocityCsvFilename(
-        'student',
+        "student",
         sectionsToExport.length,
         exportStartDate,
-        exportEndDate
+        exportEndDate,
       );
       downloadCsv(studentCsv, studentFilename);
     } catch (error) {
-      console.error('Error exporting student CSV:', error);
+      console.error("Error exporting student CSV:", error);
     } finally {
       setExportingStudent(false);
     }
@@ -168,7 +174,9 @@ export function ExportCsvModal({
         <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Export Velocity Data</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Export Velocity Data
+            </h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-500 cursor-pointer"
@@ -205,62 +213,64 @@ export function ExportCsvModal({
               </div>
 
               <div className="space-y-4">
-                {Object.entries(sectionsBySchool).map(([school, schoolSections]) => {
-                  const allSchoolSelected = schoolSections.every((s) =>
-                    exportSections.has(s.id)
-                  );
-                  const someSchoolSelected =
-                    schoolSections.some((s) => exportSections.has(s.id)) &&
-                    !allSchoolSelected;
+                {Object.entries(sectionsBySchool).map(
+                  ([school, schoolSections]) => {
+                    const allSchoolSelected = schoolSections.every((s) =>
+                      exportSections.has(s.id),
+                    );
+                    const someSchoolSelected =
+                      schoolSections.some((s) => exportSections.has(s.id)) &&
+                      !allSchoolSelected;
 
-                  return (
-                    <div
-                      key={school}
-                      className="border border-gray-200 rounded-lg p-3"
-                    >
-                      {/* School header with select all */}
-                      <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-100">
-                        <span className="text-sm font-medium text-gray-900">
-                          {school}
-                        </span>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={allSchoolSelected}
-                            ref={(input) => {
-                              if (input) {
-                                input.indeterminate = someSchoolSelected;
-                              }
-                            }}
-                            onChange={() => toggleSchool(schoolSections)}
-                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-                          />
-                          <span className="text-xs text-gray-600">All</span>
-                        </label>
-                      </div>
-
-                      {/* Section checkboxes */}
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {schoolSections.map((section) => (
-                          <label
-                            key={section.id}
-                            className="flex items-center gap-2 cursor-pointer"
-                          >
+                    return (
+                      <div
+                        key={school}
+                        className="border border-gray-200 rounded-lg p-3"
+                      >
+                        {/* School header with select all */}
+                        <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-100">
+                          <span className="text-sm font-medium text-gray-900">
+                            {school}
+                          </span>
+                          <label className="flex items-center gap-2 cursor-pointer">
                             <input
                               type="checkbox"
-                              checked={exportSections.has(section.id)}
-                              onChange={() => toggleSection(section.id)}
+                              checked={allSchoolSelected}
+                              ref={(input) => {
+                                if (input) {
+                                  input.indeterminate = someSchoolSelected;
+                                }
+                              }}
+                              onChange={() => toggleSchool(schoolSections)}
                               className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                             />
-                            <span className="text-sm text-gray-700 truncate">
-                              {section.classSection}
-                            </span>
+                            <span className="text-xs text-gray-600">All</span>
                           </label>
-                        ))}
+                        </div>
+
+                        {/* Section checkboxes */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {schoolSections.map((section) => (
+                            <label
+                              key={section.id}
+                              className="flex items-center gap-2 cursor-pointer"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={exportSections.has(section.id)}
+                                onChange={() => toggleSection(section.id)}
+                                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                              />
+                              <span className="text-sm text-gray-700 truncate">
+                                {section.classSection}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  },
+                )}
               </div>
             </div>
 
@@ -310,12 +320,12 @@ export function ExportCsvModal({
               disabled={exportingClass || exportSections.size === 0}
               className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                 exportingClass || exportSections.size === 0
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer'
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer"
               }`}
             >
               <ArrowDownTrayIcon className="h-4 w-4" />
-              {exportingClass ? 'Exporting...' : 'Class Data'}
+              {exportingClass ? "Exporting..." : "Class Data"}
             </button>
             <button
               type="button"
@@ -323,12 +333,12 @@ export function ExportCsvModal({
               disabled={exportingStudent || exportSections.size === 0}
               className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                 exportingStudent || exportSections.size === 0
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-green-600 text-white hover:bg-green-700 cursor-pointer'
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
               }`}
             >
               <ArrowDownTrayIcon className="h-4 w-4" />
-              {exportingStudent ? 'Exporting...' : 'Student Data'}
+              {exportingStudent ? "Exporting..." : "Student Data"}
             </button>
           </div>
         </div>

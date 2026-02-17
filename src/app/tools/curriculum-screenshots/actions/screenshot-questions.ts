@@ -79,9 +79,15 @@ const CurriculumScreenshotResponseSchema = z.object({
 
 export type AssessmentProblem = z.infer<typeof AssessmentProblemSchema>;
 export type CurriculumData = z.infer<typeof CurriculumDataSchema>;
-export type CurriculumScreenshotRequest = z.infer<typeof CurriculumScreenshotRequestSchema>;
-export type QuestionScreenshotResult = z.infer<typeof QuestionScreenshotResultSchema>;
-export type CurriculumScreenshotResponse = z.infer<typeof CurriculumScreenshotResponseSchema>;
+export type CurriculumScreenshotRequest = z.infer<
+  typeof CurriculumScreenshotRequestSchema
+>;
+export type QuestionScreenshotResult = z.infer<
+  typeof QuestionScreenshotResultSchema
+>;
+export type CurriculumScreenshotResponse = z.infer<
+  typeof CurriculumScreenshotResponseSchema
+>;
 
 /**
  * Server action to screenshot questions from curriculum API output
@@ -95,7 +101,7 @@ export async function screenshotCurriculumQuestions(request: unknown) {
     const { curriculumData, prefix } = validatedRequest;
     const problems = curriculumData.data.assessment_problems;
 
-    console.log('📸 Starting curriculum question screenshot generation...');
+    console.log("📸 Starting curriculum question screenshot generation...");
     console.log(`   Assessment: ${curriculumData.data.title}`);
     console.log(`   Problems: ${problems.length}`);
 
@@ -113,7 +119,9 @@ export async function screenshotCurriculumQuestions(request: unknown) {
       const questionTitle = problem.ordinal_title;
 
       try {
-        console.log(`📝 Processing ${questionTitle} (${i + 1}/${problems.length})...`);
+        console.log(
+          `📝 Processing ${questionTitle} (${i + 1}/${problems.length})...`,
+        );
 
         // Generate filename
         const filename = `${prefix}-${questionId}-${timestamp}.png`;
@@ -131,7 +139,6 @@ export async function screenshotCurriculumQuestions(request: unknown) {
           screenshotPath: filename,
           processedAt: new Date().toISOString(),
         });
-
       } catch (error) {
         console.error(`❌ Failed to screenshot ${questionTitle}:`, error);
 
@@ -149,10 +156,10 @@ export async function screenshotCurriculumQuestions(request: unknown) {
     const duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
 
     // Count successful and failed screenshots
-    const successful = results.filter(result => result.success);
-    const failed = results.filter(result => !result.success);
+    const successful = results.filter((result) => result.success);
+    const failed = results.filter((result) => !result.success);
 
-    console.log('📊 Screenshot Results:');
+    console.log("📊 Screenshot Results:");
     console.log(`   ✅ Successful: ${successful.length}`);
     console.log(`   ❌ Failed: ${failed.length}`);
 
@@ -162,7 +169,7 @@ export async function screenshotCurriculumQuestions(request: unknown) {
       totalSuccessful: successful.length,
       totalFailed: failed.length,
       results,
-      errors: failed.map(result => result.error).filter(Boolean) as string[],
+      errors: failed.map((result) => result.error).filter(Boolean) as string[],
       assessmentTitle: curriculumData.data.title,
       startTime,
       endTime,
@@ -170,18 +177,18 @@ export async function screenshotCurriculumQuestions(request: unknown) {
     };
 
     // Validate response structure
-    const validatedResponse = CurriculumScreenshotResponseSchema.parse(response);
+    const validatedResponse =
+      CurriculumScreenshotResponseSchema.parse(response);
 
     return {
       success: true,
       data: validatedResponse,
     };
-
   } catch (error) {
     const endTime = new Date().toISOString();
     const _duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
 
-    console.error('Error in screenshotCurriculumQuestions:', error);
+    console.error("Error in screenshotCurriculumQuestions:", error);
 
     if (error instanceof z.ZodError) {
       return {
@@ -192,7 +199,7 @@ export async function screenshotCurriculumQuestions(request: unknown) {
 
     return {
       success: false,
-      error: handleServerError(error, 'screenshotCurriculumQuestions'),
+      error: handleServerError(error, "screenshotCurriculumQuestions"),
     };
   }
 }

@@ -18,7 +18,7 @@ interface StudentGridViewProps {
 export function StudentGridView({
   unit,
   selectedStudents: _selectedStudents,
-  selectedSection
+  selectedSection,
 }: StudentGridViewProps) {
   const [skills, setSkills] = useState<RoadmapsSkill[]>([]);
   const [supportSkills, setSupportSkills] = useState<RoadmapsSkill[]>([]);
@@ -41,14 +41,14 @@ export function StudentGridView({
           sortOrder: "asc",
           filters: { active: true, section: selectedSection },
           search: "",
-          searchFields: []
+          searchFields: [],
         });
 
         if (result.success && result.items) {
           setSectionStudents(result.items as Student[]);
         }
       } catch (error) {
-        console.error('Error loading section students:', error);
+        console.error("Error loading section students:", error);
       }
     };
 
@@ -70,7 +70,7 @@ export function StudentGridView({
           setSkills(result.data as RoadmapsSkill[]);
         }
       } catch (error) {
-        console.error('Error loading skills:', error);
+        console.error("Error loading skills:", error);
       } finally {
         setLoading(false);
       }
@@ -81,19 +81,25 @@ export function StudentGridView({
 
   // Fetch support skills for this unit
   useEffect(() => {
-    if (!unit || !unit.additionalSupportSkills || unit.additionalSupportSkills.length === 0) {
+    if (
+      !unit ||
+      !unit.additionalSupportSkills ||
+      unit.additionalSupportSkills.length === 0
+    ) {
       setSupportSkills([]);
       return;
     }
 
     const loadSupportSkills = async () => {
       try {
-        const result = await fetchRoadmapsSkillsByNumbers(unit.additionalSupportSkills);
+        const result = await fetchRoadmapsSkillsByNumbers(
+          unit.additionalSupportSkills,
+        );
         if (result.success && result.data) {
           setSupportSkills(result.data as RoadmapsSkill[]);
         }
       } catch (error) {
-        console.error('Error loading support skills:', error);
+        console.error("Error loading support skills:", error);
       }
     };
 
@@ -132,7 +138,7 @@ export function StudentGridView({
             Unit {unit.unitNumber}
           </span>
           <h2 className="text-xl font-bold text-gray-900">
-            {unit.unitTitle.replace(/^\d+\s*-\s*/, '')}
+            {unit.unitTitle.replace(/^\d+\s*-\s*/, "")}
           </h2>
         </div>
         <p className="text-sm text-gray-600">
@@ -145,10 +151,17 @@ export function StudentGridView({
         <table className="w-full border-collapse text-sm">
           <thead className="sticky top-0 z-20 bg-gray-100">
             <tr className="bg-gray-100 border-b border-gray-300">
-              <th className="sticky top-0 bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300 w-24">Skill #</th>
-              <th className="sticky top-0 bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300">Skill Name</th>
-              {sectionStudents.map(student => (
-                <th key={student._id} className="sticky top-0 bg-gray-100 px-2 py-3 text-center font-semibold text-gray-700 border-r border-gray-300 text-xs min-w-[80px]">
+              <th className="sticky top-0 bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300 w-24">
+                Skill #
+              </th>
+              <th className="sticky top-0 bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300">
+                Skill Name
+              </th>
+              {sectionStudents.map((student) => (
+                <th
+                  key={student._id}
+                  className="sticky top-0 bg-gray-100 px-2 py-3 text-center font-semibold text-gray-700 border-r border-gray-300 text-xs min-w-[80px]"
+                >
                   <div className="break-words">
                     {student.firstName} {student.lastName}
                   </div>
@@ -158,34 +171,43 @@ export function StudentGridView({
             <tr className="bg-gray-100 border-b-2 border-gray-300">
               <th className="bg-gray-100 px-4 py-2 border-r border-gray-300"></th>
               <th className="bg-gray-100 px-4 py-2 border-r border-gray-300"></th>
-              {sectionStudents.map(student => {
+              {sectionStudents.map((student) => {
                 // Collect all skill numbers visible on this page
                 const allSkillNumbers: string[] = [];
 
                 // Add target skills
-                skills.forEach(skill => {
+                skills.forEach((skill) => {
                   allSkillNumbers.push(skill.skillNumber);
                   // Add essential skills
                   if (skill.essentialSkills) {
-                    skill.essentialSkills.forEach(es => allSkillNumbers.push(es.skillNumber));
+                    skill.essentialSkills.forEach((es) =>
+                      allSkillNumbers.push(es.skillNumber),
+                    );
                   }
                   // Add helpful skills
                   if (skill.helpfulSkills) {
-                    skill.helpfulSkills.forEach(hs => allSkillNumbers.push(hs.skillNumber));
+                    skill.helpfulSkills.forEach((hs) =>
+                      allSkillNumbers.push(hs.skillNumber),
+                    );
                   }
                 });
 
                 // Add support skills
-                supportSkills.forEach(ss => allSkillNumbers.push(ss.skillNumber));
+                supportSkills.forEach((ss) =>
+                  allSkillNumbers.push(ss.skillNumber),
+                );
 
                 // Count mastered skills
-                const masteredCount = allSkillNumbers.filter(skillNum =>
-                  hasMastered(student, skillNum)
+                const masteredCount = allSkillNumbers.filter((skillNum) =>
+                  hasMastered(student, skillNum),
                 ).length;
                 const totalCount = allSkillNumbers.length;
 
                 return (
-                  <th key={student._id} className="bg-gray-100 px-2 py-2 text-center text-xs font-semibold text-gray-700 border-r border-gray-300">
+                  <th
+                    key={student._id}
+                    className="bg-gray-100 px-2 py-2 text-center text-xs font-semibold text-gray-700 border-r border-gray-300"
+                  >
                     {masteredCount}/{totalCount}
                   </th>
                 );
@@ -195,8 +217,8 @@ export function StudentGridView({
           <tbody>
             {skills.map((skill) => {
               // Count how many students have mastered this target skill
-              const masteredCount = sectionStudents.filter(student =>
-                hasMastered(student, skill.skillNumber)
+              const masteredCount = sectionStudents.filter((student) =>
+                hasMastered(student, skill.skillNumber),
               ).length;
 
               return (
@@ -215,16 +237,36 @@ export function StudentGridView({
                     <td className="bg-purple-50 px-4 py-3 border-r border-gray-300 font-medium text-gray-900 text-base">
                       {skill.title}
                     </td>
-                    {sectionStudents.map(student => {
-                      const isMastered = hasMastered(student, skill.skillNumber);
+                    {sectionStudents.map((student) => {
+                      const isMastered = hasMastered(
+                        student,
+                        skill.skillNumber,
+                      );
                       return (
-                        <td key={student._id} className="px-2 py-3 border-r border-gray-300 text-center">
-                          <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
-                            isMastered ? 'bg-purple-600' : 'border-2 border-gray-300'
-                          }`}>
+                        <td
+                          key={student._id}
+                          className="px-2 py-3 border-r border-gray-300 text-center"
+                        >
+                          <div
+                            className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
+                              isMastered
+                                ? "bg-purple-600"
+                                : "border-2 border-gray-300"
+                            }`}
+                          >
                             {isMastered && (
-                              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              <svg
+                                className="w-3 h-3 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
                               </svg>
                             )}
                           </div>
@@ -236,10 +278,15 @@ export function StudentGridView({
                   {/* Target Skill Description Row */}
                   <tr className="bg-purple-50 border-b border-gray-200">
                     <td className="bg-purple-50 px-4 py-2 border-r border-gray-300"></td>
-                    <td colSpan={1 + sectionStudents.length} className="px-4 py-2">
+                    <td
+                      colSpan={1 + sectionStudents.length}
+                      className="px-4 py-2"
+                    >
                       {skill.description && (
                         <div className="text-sm text-gray-700">
-                          <span className="font-semibold">Skill Description: </span>
+                          <span className="font-semibold">
+                            Skill Description:{" "}
+                          </span>
                           {skill.description}
                         </div>
                       )}
@@ -247,58 +294,87 @@ export function StudentGridView({
                   </tr>
 
                   {/* Essential Skills Rows */}
-                  {skill.essentialSkills && skill.essentialSkills.length > 0 && (
-                    <>
-                      {skill.essentialSkills.map((essentialSkill) => {
-                        const essentialMasteredCount = sectionStudents.filter(student =>
-                          hasMastered(student, essentialSkill.skillNumber)
-                        ).length;
+                  {skill.essentialSkills &&
+                    skill.essentialSkills.length > 0 && (
+                      <>
+                        {skill.essentialSkills.map((essentialSkill) => {
+                          const essentialMasteredCount = sectionStudents.filter(
+                            (student) =>
+                              hasMastered(student, essentialSkill.skillNumber),
+                          ).length;
 
-                        return (
-                          <tr key={essentialSkill.skillNumber} className="border-b border-gray-200 hover:bg-gray-50">
-                            <td className="bg-white px-4 py-2 border-r border-gray-300">
-                              <SkillProgressBar
-                                skillNumber={essentialSkill.skillNumber}
-                                masteredCount={essentialMasteredCount}
-                                totalCount={sectionStudents.length}
-                                color="pink"
-                              />
-                            </td>
-                            <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700">
-                              {essentialSkill.title}
-                            </td>
-                            {sectionStudents.map(student => {
-                              const isMastered = hasMastered(student, essentialSkill.skillNumber);
-                              return (
-                                <td key={student._id} className="px-2 py-2 border-r border-gray-300 text-center">
-                                  <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
-                                    isMastered ? 'bg-pink-600' : 'border-2 border-gray-300'
-                                  }`}>
-                                    {isMastered && (
-                                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                      </svg>
-                                    )}
-                                  </div>
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        );
-                      })}
-                    </>
-                  )}
+                          return (
+                            <tr
+                              key={essentialSkill.skillNumber}
+                              className="border-b border-gray-200 hover:bg-gray-50"
+                            >
+                              <td className="bg-white px-4 py-2 border-r border-gray-300">
+                                <SkillProgressBar
+                                  skillNumber={essentialSkill.skillNumber}
+                                  masteredCount={essentialMasteredCount}
+                                  totalCount={sectionStudents.length}
+                                  color="pink"
+                                />
+                              </td>
+                              <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700">
+                                {essentialSkill.title}
+                              </td>
+                              {sectionStudents.map((student) => {
+                                const isMastered = hasMastered(
+                                  student,
+                                  essentialSkill.skillNumber,
+                                );
+                                return (
+                                  <td
+                                    key={student._id}
+                                    className="px-2 py-2 border-r border-gray-300 text-center"
+                                  >
+                                    <div
+                                      className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
+                                        isMastered
+                                          ? "bg-pink-600"
+                                          : "border-2 border-gray-300"
+                                      }`}
+                                    >
+                                      {isMastered && (
+                                        <svg
+                                          className="w-3 h-3 text-white"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M5 13l4 4L19 7"
+                                          />
+                                        </svg>
+                                      )}
+                                    </div>
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          );
+                        })}
+                      </>
+                    )}
 
                   {/* Helpful Skills Rows */}
                   {skill.helpfulSkills && skill.helpfulSkills.length > 0 && (
                     <>
                       {skill.helpfulSkills.map((helpfulSkill) => {
-                        const helpfulMasteredCount = sectionStudents.filter(student =>
-                          hasMastered(student, helpfulSkill.skillNumber)
+                        const helpfulMasteredCount = sectionStudents.filter(
+                          (student) =>
+                            hasMastered(student, helpfulSkill.skillNumber),
                         ).length;
 
                         return (
-                          <tr key={helpfulSkill.skillNumber} className="border-b border-gray-200 hover:bg-gray-50">
+                          <tr
+                            key={helpfulSkill.skillNumber}
+                            className="border-b border-gray-200 hover:bg-gray-50"
+                          >
                             <td className="bg-white px-4 py-2 border-r border-gray-300">
                               <SkillProgressBar
                                 skillNumber={helpfulSkill.skillNumber}
@@ -310,16 +386,36 @@ export function StudentGridView({
                             <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700">
                               {helpfulSkill.title}
                             </td>
-                            {sectionStudents.map(student => {
-                              const isMastered = hasMastered(student, helpfulSkill.skillNumber);
+                            {sectionStudents.map((student) => {
+                              const isMastered = hasMastered(
+                                student,
+                                helpfulSkill.skillNumber,
+                              );
                               return (
-                                <td key={student._id} className="px-2 py-2 border-r border-gray-300 text-center">
-                                  <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
-                                    isMastered ? 'bg-cyan-600' : 'border-2 border-gray-300'
-                                  }`}>
+                                <td
+                                  key={student._id}
+                                  className="px-2 py-2 border-r border-gray-300 text-center"
+                                >
+                                  <div
+                                    className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
+                                      isMastered
+                                        ? "bg-cyan-600"
+                                        : "border-2 border-gray-300"
+                                    }`}
+                                  >
                                     {isMastered && (
-                                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                      <svg
+                                        className="w-3 h-3 text-white"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M5 13l4 4L19 7"
+                                        />
                                       </svg>
                                     )}
                                   </div>
@@ -338,7 +434,10 @@ export function StudentGridView({
             {/* Support Skills Section Header */}
             {supportSkills.length > 0 && (
               <tr className="bg-gray-100 border-t-2 border-b border-gray-300">
-                <td colSpan={2 + sectionStudents.length} className="px-4 py-2 text-left font-semibold text-gray-700">
+                <td
+                  colSpan={2 + sectionStudents.length}
+                  className="px-4 py-2 text-left font-semibold text-gray-700"
+                >
                   Support Skills
                 </td>
               </tr>
@@ -346,12 +445,15 @@ export function StudentGridView({
 
             {/* Support Skills Rows */}
             {supportSkills.map((supportSkill) => {
-              const supportMasteredCount = sectionStudents.filter(student =>
-                hasMastered(student, supportSkill.skillNumber)
+              const supportMasteredCount = sectionStudents.filter((student) =>
+                hasMastered(student, supportSkill.skillNumber),
               ).length;
 
               return (
-                <tr key={supportSkill.skillNumber} className="border-b border-gray-200 hover:bg-gray-50">
+                <tr
+                  key={supportSkill.skillNumber}
+                  className="border-b border-gray-200 hover:bg-gray-50"
+                >
                   <td className="bg-white px-4 py-2 border-r border-gray-300">
                     <SkillProgressBar
                       skillNumber={supportSkill.skillNumber}
@@ -363,16 +465,36 @@ export function StudentGridView({
                   <td className="bg-white px-4 py-2 border-r border-gray-300 text-gray-700">
                     {supportSkill.title}
                   </td>
-                  {sectionStudents.map(student => {
-                    const isMastered = hasMastered(student, supportSkill.skillNumber);
+                  {sectionStudents.map((student) => {
+                    const isMastered = hasMastered(
+                      student,
+                      supportSkill.skillNumber,
+                    );
                     return (
-                      <td key={student._id} className="px-2 py-2 border-r border-gray-300 text-center">
-                        <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
-                          isMastered ? 'bg-skill-support' : 'border-2 border-gray-300'
-                        }`}>
+                      <td
+                        key={student._id}
+                        className="px-2 py-2 border-r border-gray-300 text-center"
+                      >
+                        <div
+                          className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
+                            isMastered
+                              ? "bg-skill-support"
+                              : "border-2 border-gray-300"
+                          }`}
+                        >
                           {isMastered && (
-                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            <svg
+                              className="w-3 h-3 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 13l4 4L19 7"
+                              />
                             </svg>
                           )}
                         </div>
@@ -390,4 +512,4 @@ export function StudentGridView({
 }
 
 // Import React for Fragment
-import React from 'react';
+import React from "react";

@@ -1,1 +1,1 @@
-export * from './prefetch';
+export * from "./prefetch";

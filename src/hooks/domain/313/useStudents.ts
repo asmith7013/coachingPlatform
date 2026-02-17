@@ -1,31 +1,41 @@
-import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { StudentZodSchema, Student } from '@/lib/schema/zod-schema/scm/student/student';
-import { ZodSchema } from 'zod';
-import { 
-  fetchStudents, 
-  fetchStudentById, 
-  createStudent, 
-  updateStudent, 
-  deleteStudent
-} from '@actions/scm/student/students';
-import { useInvalidation } from '@query/cache/invalidation';
-import { useCallback } from 'react';
-import { useNotifications } from '@/hooks/ui/useNotifications';
-import { createDefaultToastConfig } from '@/lib/ui/notifications/toast-configs';
-import { FEATURE_FLAGS } from '@/lib/ui/notifications/types';
+import { createCrudHooks } from "@query/client/factories/crud-factory";
+import {
+  StudentZodSchema,
+  Student,
+} from "@/lib/schema/zod-schema/scm/student/student";
+import { ZodSchema } from "zod";
+import {
+  fetchStudents,
+  fetchStudentById,
+  createStudent,
+  updateStudent,
+  deleteStudent,
+} from "@actions/scm/student/students";
+import { useInvalidation } from "@query/cache/invalidation";
+import { useCallback } from "react";
+import { useNotifications } from "@/hooks/ui/useNotifications";
+import { createDefaultToastConfig } from "@/lib/ui/notifications/toast-configs";
+import { FEATURE_FLAGS } from "@/lib/ui/notifications/types";
 
 const studentHooks = createCrudHooks({
-  entityType: 'students',
+  entityType: "students",
   schema: StudentZodSchema as ZodSchema<Student>,
   serverActions: {
     fetch: fetchStudents,
     fetchById: fetchStudentById,
     create: createStudent,
     update: updateStudent,
-    delete: deleteStudent
+    delete: deleteStudent,
   },
-  validSortFields: ['lastName', 'firstName', 'section', 'teacher', 'gradeLevel', 'createdAt'],
-  relatedEntityTypes: []
+  validSortFields: [
+    "lastName",
+    "firstName",
+    "section",
+    "teacher",
+    "gradeLevel",
+    "createdAt",
+  ],
+  relatedEntityTypes: [],
 });
 
 // Export with domain-specific names
@@ -38,44 +48,44 @@ const useStudentManager = studentHooks.useManager;
 function useStudentManagerWithSpecialization() {
   const manager = useStudentManager();
   const { invalidateList } = useInvalidation();
-  
+
   const refreshStudents = useCallback(async () => {
-    await invalidateList('students');
+    await invalidateList("students");
   }, [invalidateList]);
-  
+
   return {
     ...manager,
-    refreshStudents
+    refreshStudents,
   };
 }
 
 // Enhanced: Compose CRUD with notifications
 function useStudentsWithNotifications() {
   const notifications = useNotifications();
-  const toastConfig = createDefaultToastConfig('students');
+  const toastConfig = createDefaultToastConfig("students");
   const enableToasts = FEATURE_FLAGS?.ENABLE_TOASTS !== false;
   const mutations = useStudentsMutations();
 
   return {
     ...mutations,
     updateWithToast: (id: string, data: Partial<Student>) => {
-      if (!mutations.updateAsync) throw new Error('updateAsync is not defined');
+      if (!mutations.updateAsync) throw new Error("updateAsync is not defined");
       return notifications.withToast(
         () => mutations.updateAsync!(id, data),
         toastConfig.update!,
-        enableToasts
+        enableToasts,
       );
-    }
+    },
   };
 }
 
-export { 
-  useStudentsList, 
-  useStudentById, 
-  useStudentsMutations, 
+export {
+  useStudentsList,
+  useStudentById,
+  useStudentsMutations,
   useStudentManager,
   useStudentManagerWithSpecialization,
-  useStudentsWithNotifications
+  useStudentsWithNotifications,
 };
 
 export const useStudents = {
@@ -84,7 +94,7 @@ export const useStudents = {
   mutations: useStudentsMutations,
   manager: useStudentManager,
   withSpecialization: useStudentManagerWithSpecialization,
-  withNotifications: useStudentsWithNotifications
+  withNotifications: useStudentsWithNotifications,
 };
 
-export default useStudents; 
+export default useStudents;

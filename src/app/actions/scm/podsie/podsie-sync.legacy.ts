@@ -19,19 +19,25 @@ import { z } from "zod";
  */
 const PodsieAssignmentQuestionsSchema = z.object({
   success: z.boolean(),
-  data: z.array(z.object({
-    group_name: z.string(),
-    assignment_name: z.string(),
-    assignment_id: z.number(),
-    assignment_questions: z.array(z.object({
-      questions: z.object({
-        id: z.number(),
-        questionContent: z.object({
-          questionText: z.string(),
-        }).passthrough(),
-      }),
-    })),
-  })),
+  data: z.array(
+    z.object({
+      group_name: z.string(),
+      assignment_name: z.string(),
+      assignment_id: z.number(),
+      assignment_questions: z.array(
+        z.object({
+          questions: z.object({
+            id: z.number(),
+            questionContent: z
+              .object({
+                questionText: z.string(),
+              })
+              .passthrough(),
+          }),
+        }),
+      ),
+    }),
+  ),
 });
 
 /**
@@ -39,12 +45,16 @@ const PodsieAssignmentQuestionsSchema = z.object({
  * These are the "base" question IDs that can be used for mapping
  */
 export async function fetchPodsieAssignmentQuestions(
-  assignmentId: string
+  assignmentId: string,
 ): Promise<{ success: boolean; questionIds: number[]; error?: string }> {
   const token = process.env.PODSIE_API_TOKEN;
 
   if (!token) {
-    return { success: false, questionIds: [], error: "PODSIE_API_TOKEN not configured" };
+    return {
+      success: false,
+      questionIds: [],
+      error: "PODSIE_API_TOKEN not configured",
+    };
   }
 
   try {
@@ -56,7 +66,7 @@ export async function fetchPodsieAssignmentQuestions(
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -71,7 +81,10 @@ export async function fetchPodsieAssignmentQuestions(
     const parseResult = PodsieAssignmentQuestionsSchema.safeParse(rawData);
 
     if (!parseResult.success) {
-      console.error("Podsie questions response validation failed:", parseResult.error.issues);
+      console.error(
+        "Podsie questions response validation failed:",
+        parseResult.error.issues,
+      );
       return {
         success: false,
         questionIds: [],
@@ -82,10 +95,16 @@ export async function fetchPodsieAssignmentQuestions(
     // Extract question IDs in order
     const data = parseResult.data;
     if (data.data.length === 0) {
-      return { success: false, questionIds: [], error: "No assignment data found" };
+      return {
+        success: false,
+        questionIds: [],
+        error: "No assignment data found",
+      };
     }
 
-    const questionIds = data.data[0].assignment_questions.map(q => q.questions.id);
+    const questionIds = data.data[0].assignment_questions.map(
+      (q) => q.questions.id,
+    );
 
     return { success: true, questionIds };
   } catch (error) {
@@ -103,7 +122,7 @@ export async function fetchPodsieAssignmentQuestions(
  */
 async function fetchPodsieResponses(
   assignmentId: string,
-  studentEmail: string
+  studentEmail: string,
 ): Promise<PodsieResponse[]> {
   const token = process.env.PODSIE_API_TOKEN;
 
@@ -120,11 +139,13 @@ async function fetchPodsieResponses(
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ email: studentEmail }),
-    }
+    },
   );
 
   if (!response.ok) {
-    throw new Error(`Podsie API error: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Podsie API error: ${response.status} ${response.statusText}`,
+    );
   }
 
   const rawData = await response.json();
@@ -132,8 +153,13 @@ async function fetchPodsieResponses(
   // Validate response with Zod schema
   const parseResult = PodsieApiResponseSchema.safeParse(rawData);
   if (!parseResult.success) {
-    console.error("Podsie API response validation failed:", parseResult.error.issues);
-    throw new Error(`Invalid Podsie API response format: ${parseResult.error.message}`);
+    console.error(
+      "Podsie API response validation failed:",
+      parseResult.error.issues,
+    );
+    throw new Error(
+      `Invalid Podsie API response format: ${parseResult.error.message}`,
+    );
   }
 
   const data = parseResult.data;
@@ -154,21 +180,27 @@ async function fetchPodsieResponses(
  */
 const PodsieAssignedAssignmentsSchema = z.object({
   success: z.boolean(),
-  data: z.array(z.object({
-    group_name: z.string(),
-    assignment_name: z.string(),
-    assignment_id: z.number(),
-    module_name: z.string().optional(),
-    assignment_url: z.string().optional(),
-    assignment_questions: z.array(z.object({
-      questions: z.object({
-        id: z.number(),
-        questionContent: z.object({
-          questionText: z.string(),
-        }).passthrough(),
-      }),
-    })),
-  })),
+  data: z.array(
+    z.object({
+      group_name: z.string(),
+      assignment_name: z.string(),
+      assignment_id: z.number(),
+      module_name: z.string().optional(),
+      assignment_url: z.string().optional(),
+      assignment_questions: z.array(
+        z.object({
+          questions: z.object({
+            id: z.number(),
+            questionContent: z
+              .object({
+                questionText: z.string(),
+              })
+              .passthrough(),
+          }),
+        }),
+      ),
+    }),
+  ),
 });
 
 export interface PodsieAssignmentInfo {
@@ -186,12 +218,20 @@ export interface PodsieAssignmentInfo {
  */
 export async function fetchAssignedAssignments(
   studentEmail: string,
-  includeLessons?: boolean
-): Promise<{ success: boolean; assignments: PodsieAssignmentInfo[]; error?: string }> {
+  includeLessons?: boolean,
+): Promise<{
+  success: boolean;
+  assignments: PodsieAssignmentInfo[];
+  error?: string;
+}> {
   const token = process.env.PODSIE_API_TOKEN;
 
   if (!token) {
-    return { success: false, assignments: [], error: "PODSIE_API_TOKEN not configured" };
+    return {
+      success: false,
+      assignments: [],
+      error: "PODSIE_API_TOKEN not configured",
+    };
   }
 
   try {
@@ -205,9 +245,9 @@ export async function fetchAssignedAssignments(
         },
         body: JSON.stringify({
           email: studentEmail,
-          ...(includeLessons !== undefined && { includeLessons })
+          ...(includeLessons !== undefined && { includeLessons }),
         }),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -222,7 +262,10 @@ export async function fetchAssignedAssignments(
     const parseResult = PodsieAssignedAssignmentsSchema.safeParse(rawData);
 
     if (!parseResult.success) {
-      console.error("Podsie assigned-assignments validation failed:", parseResult.error.issues);
+      console.error(
+        "Podsie assigned-assignments validation failed:",
+        parseResult.error.issues,
+      );
       return {
         success: false,
         assignments: [],
@@ -232,17 +275,21 @@ export async function fetchAssignedAssignments(
 
     const data = parseResult.data;
     if (!data.success) {
-      return { success: false, assignments: [], error: "Podsie returned unsuccessful response" };
+      return {
+        success: false,
+        assignments: [],
+        error: "Podsie returned unsuccessful response",
+      };
     }
 
     // Transform to our format
-    const assignments: PodsieAssignmentInfo[] = data.data.map(a => ({
+    const assignments: PodsieAssignmentInfo[] = data.data.map((a) => ({
       assignmentId: a.assignment_id,
       assignmentName: a.assignment_name,
       groupName: a.group_name,
       moduleName: a.module_name,
       totalQuestions: a.assignment_questions.length,
-      questionIds: a.assignment_questions.map(q => q.questions.id),
+      questionIds: a.assignment_questions.map((q) => q.questions.id),
     }));
 
     return { success: true, assignments };
@@ -260,7 +307,7 @@ export async function fetchAssignedAssignments(
  * Get a sample student email from a section for fetching assignments
  */
 export async function getSampleStudentEmailForSection(
-  section: string
+  section: string,
 ): Promise<{ success: boolean; email?: string; error?: string }> {
   try {
     const student = await withDbConnection(async () => {
@@ -274,7 +321,10 @@ export async function getSampleStudentEmailForSection(
     });
 
     if (!student || !student.email) {
-      return { success: false, error: "No student with email found in section" };
+      return {
+        success: false,
+        error: "No student with email found in section",
+      };
     }
 
     return { success: true, email: student.email };
@@ -292,8 +342,12 @@ export async function getSampleStudentEmailForSection(
  */
 export async function fetchAssignmentsForSection(
   section: string,
-  includeLessons?: boolean
-): Promise<{ success: boolean; assignments: PodsieAssignmentInfo[]; error?: string }> {
+  includeLessons?: boolean,
+): Promise<{
+  success: boolean;
+  assignments: PodsieAssignmentInfo[];
+  error?: string;
+}> {
   // Get a sample student email
   const emailResult = await getSampleStudentEmailForSection(section);
   if (!emailResult.success || !emailResult.email) {
@@ -323,14 +377,17 @@ function processResponsesToQuestions(
   responses: PodsieResponse[],
   questionMapping?: number[][],
   totalQuestions?: number,
-  baseQuestionIds?: number[]
+  baseQuestionIds?: number[],
 ): {
-  questions: Map<number, {
-    completed: boolean;
-    completedAt?: string;
-    correctScore?: number;
-    explanationScore?: number;
-  }>;
+  questions: Map<
+    number,
+    {
+      completed: boolean;
+      completedAt?: string;
+      correctScore?: number;
+      explanationScore?: number;
+    }
+  >;
   assignmentName: string;
 } {
   let assignmentName = "";
@@ -349,7 +406,12 @@ function processResponsesToQuestions(
   }
 
   // Fallback: Use baseQuestionIds or totalQuestions
-  return processWithoutMapping(responses, assignmentName, totalQuestions, baseQuestionIds);
+  return processWithoutMapping(
+    responses,
+    assignmentName,
+    totalQuestions,
+    baseQuestionIds,
+  );
 }
 
 /**
@@ -358,14 +420,17 @@ function processResponsesToQuestions(
 function processWithMapping(
   responses: PodsieResponse[],
   questionMapping: number[][],
-  assignmentName: string
+  assignmentName: string,
 ): {
-  questions: Map<number, {
-    completed: boolean;
-    completedAt?: string;
-    correctScore?: number;
-    explanationScore?: number;
-  }>;
+  questions: Map<
+    number,
+    {
+      completed: boolean;
+      completedAt?: string;
+      correctScore?: number;
+      explanationScore?: number;
+    }
+  >;
   assignmentName: string;
 } {
   // Sort responses by timestamp (earliest first) to ensure we capture the earliest completion time
@@ -383,12 +448,15 @@ function processWithMapping(
   });
 
   // Track completion by logical question number
-  const questionMap = new Map<number, {
-    completed: boolean;
-    completedAt?: string;
-    correctScore?: number;
-    explanationScore?: number;
-  }>();
+  const questionMap = new Map<
+    number,
+    {
+      completed: boolean;
+      completedAt?: string;
+      correctScore?: number;
+      explanationScore?: number;
+    }
+  >();
 
   // Initialize all mapped questions as not completed
   for (let i = 1; i <= questionMapping.length; i++) {
@@ -413,13 +481,23 @@ function processWithMapping(
     }
 
     // Check both is_correct and aiEvaluation.isAccepted
-    const isAccepted = response.response_payload?.aiEvaluation?.isAccepted ?? true;
+    const isAccepted =
+      response.response_payload?.aiEvaluation?.isAccepted ?? true;
 
     // Extract AI analysis scores if available
     const aiAnalysis = response.response_payload?.aiAnalysis;
-    const correctScore = aiAnalysis?.answersCorrect !== undefined ? (aiAnalysis.answersCorrect ? 1 : 0) : undefined;
+    const correctScore =
+      aiAnalysis?.answersCorrect !== undefined
+        ? aiAnalysis.answersCorrect
+          ? 1
+          : 0
+        : undefined;
     const explanationScore = aiAnalysis?.explanationGrading
-      ? (aiAnalysis.explanationGrading === 'full' ? 3 : aiAnalysis.explanationGrading === 'partial' ? 2 : 1)
+      ? aiAnalysis.explanationGrading === "full"
+        ? 3
+        : aiAnalysis.explanationGrading === "partial"
+          ? 2
+          : 1
       : undefined;
 
     // If this response is correct AND accepted, mark as completed
@@ -452,14 +530,17 @@ function processWithoutMapping(
   responses: PodsieResponse[],
   assignmentName: string,
   totalQuestions?: number,
-  baseQuestionIds?: number[]
+  baseQuestionIds?: number[],
 ): {
-  questions: Map<number, {
-    completed: boolean;
-    completedAt?: string;
-    correctScore?: number;
-    explanationScore?: number;
-  }>;
+  questions: Map<
+    number,
+    {
+      completed: boolean;
+      completedAt?: string;
+      correctScore?: number;
+      explanationScore?: number;
+    }
+  >;
   assignmentName: string;
 } {
   // Sort responses by timestamp (earliest first) to ensure we capture the earliest completion time
@@ -470,12 +551,15 @@ function processWithoutMapping(
   // If we have base question IDs from the assignment, use them as the authoritative list
   if (baseQuestionIds && baseQuestionIds.length > 0) {
     // Track completion by logical question number (1-indexed)
-    const questionMap = new Map<number, {
-      completed: boolean;
-      completedAt?: string;
-      correctScore?: number;
-      explanationScore?: number;
-    }>();
+    const questionMap = new Map<
+      number,
+      {
+        completed: boolean;
+        completedAt?: string;
+        correctScore?: number;
+        explanationScore?: number;
+      }
+    >();
 
     // Initialize all base questions as not completed
     baseQuestionIds.forEach((_, index) => {
@@ -506,13 +590,23 @@ function processWithoutMapping(
       }
 
       // Check both is_correct and aiEvaluation.isAccepted
-      const isAccepted = response.response_payload?.aiEvaluation?.isAccepted ?? true;
+      const isAccepted =
+        response.response_payload?.aiEvaluation?.isAccepted ?? true;
 
       // Extract AI analysis scores if available
       const aiAnalysis = response.response_payload?.aiAnalysis;
-      const correctScore = aiAnalysis?.answersCorrect !== undefined ? (aiAnalysis.answersCorrect ? 1 : 0) : undefined;
+      const correctScore =
+        aiAnalysis?.answersCorrect !== undefined
+          ? aiAnalysis.answersCorrect
+            ? 1
+            : 0
+          : undefined;
       const explanationScore = aiAnalysis?.explanationGrading
-        ? (aiAnalysis.explanationGrading === 'full' ? 3 : aiAnalysis.explanationGrading === 'partial' ? 2 : 1)
+        ? aiAnalysis.explanationGrading === "full"
+          ? 3
+          : aiAnalysis.explanationGrading === "partial"
+            ? 2
+            : 1
         : undefined;
 
       // If this response is correct AND accepted, mark as completed
@@ -537,12 +631,15 @@ function processWithoutMapping(
   }
 
   // Legacy fallback: collect all unique question_ids from responses
-  const rawQuestionMap = new Map<number, {
-    completed: boolean;
-    completedAt?: string;
-    correctScore?: number;
-    explanationScore?: number;
-  }>();
+  const rawQuestionMap = new Map<
+    number,
+    {
+      completed: boolean;
+      completedAt?: string;
+      correctScore?: number;
+      explanationScore?: number;
+    }
+  >();
 
   // Process responses in chronological order
   for (const response of sortedResponses) {
@@ -555,13 +652,23 @@ function processWithoutMapping(
     }
 
     // Check both is_correct and aiEvaluation.isAccepted
-    const isAccepted = response.response_payload?.aiEvaluation?.isAccepted ?? true;
+    const isAccepted =
+      response.response_payload?.aiEvaluation?.isAccepted ?? true;
 
     // Extract AI analysis scores if available
     const aiAnalysis = response.response_payload?.aiAnalysis;
-    const correctScore = aiAnalysis?.answersCorrect !== undefined ? (aiAnalysis.answersCorrect ? 1 : 0) : undefined;
+    const correctScore =
+      aiAnalysis?.answersCorrect !== undefined
+        ? aiAnalysis.answersCorrect
+          ? 1
+          : 0
+        : undefined;
     const explanationScore = aiAnalysis?.explanationGrading
-      ? (aiAnalysis.explanationGrading === 'full' ? 3 : aiAnalysis.explanationGrading === 'partial' ? 2 : 1)
+      ? aiAnalysis.explanationGrading === "full"
+        ? 3
+        : aiAnalysis.explanationGrading === "partial"
+          ? 2
+          : 1
       : undefined;
 
     // If this response is correct AND accepted, mark as completed
@@ -588,12 +695,15 @@ function processWithoutMapping(
     const limitedIds = allIds.slice(0, totalQuestions);
 
     // Create new map with only the limited IDs, mapped to logical positions
-    const questionMap = new Map<number, {
-      completed: boolean;
-      completedAt?: string;
-      correctScore?: number;
-      explanationScore?: number;
-    }>();
+    const questionMap = new Map<
+      number,
+      {
+        completed: boolean;
+        completedAt?: string;
+        correctScore?: number;
+        explanationScore?: number;
+      }
+    >();
     limitedIds.forEach((questionId, index) => {
       const status = rawQuestionMap.get(questionId);
       questionMap.set(index + 1, {
@@ -644,19 +754,23 @@ export async function syncStudentRampUpProgress(
   totalQuestions: number,
   questionMapping?: number[][],
   baseQuestionIds?: number[],
-  activityType?: 'sidekick' | 'mastery-check' | 'ramp-up'
+  activityType?: "sidekick" | "mastery-check" | "ramp-up",
 ): Promise<SyncResult> {
   try {
     // Fetch from Podsie
-    const responses = await fetchPodsieResponses(podsieAssignmentId, studentEmail);
+    const responses = await fetchPodsieResponses(
+      podsieAssignmentId,
+      studentEmail,
+    );
 
     // Process responses - use mapping if provided, or baseQuestionIds, or totalQuestions
-    const { questions: questionMap, assignmentName } = processResponsesToQuestions(
-      responses,
-      questionMapping,
-      totalQuestions,
-      baseQuestionIds
-    );
+    const { questions: questionMap, assignmentName } =
+      processResponsesToQuestions(
+        responses,
+        questionMapping,
+        totalQuestions,
+        baseQuestionIds,
+      );
 
     // Convert map to array format
     const questions: RampUpQuestion[] = [];
@@ -721,15 +835,16 @@ export async function syncStudentRampUpProgress(
           podsieProgress: {
             $elemMatch: {
               scopeAndSequenceId: scopeAndSequenceId,
-              podsieAssignmentId: podsieAssignmentId
-            }
-          }
+              podsieAssignmentId: podsieAssignmentId,
+            },
+          },
         },
         {
           $set: {
             "podsieProgress.$.unitCode": unitCode,
             "podsieProgress.$.rampUpId": rampUpId,
-            "podsieProgress.$.rampUpName": assignmentName || `Unit ${unitCode} Ramp-Up`,
+            "podsieProgress.$.rampUpName":
+              assignmentName || `Unit ${unitCode} Ramp-Up`,
             "podsieProgress.$.activityType": activityType,
             "podsieProgress.$.questions": questions,
             "podsieProgress.$.totalQuestions": totalQuestions,
@@ -737,8 +852,8 @@ export async function syncStudentRampUpProgress(
             "podsieProgress.$.percentComplete": summary.percentComplete,
             "podsieProgress.$.isFullyComplete": summary.isFullyComplete,
             "podsieProgress.$.lastSyncedAt": new Date().toISOString(),
-          }
-        }
+          },
+        },
       );
 
       // If no existing entry, push a new one
@@ -760,9 +875,9 @@ export async function syncStudentRampUpProgress(
                 percentComplete: summary.percentComplete,
                 isFullyComplete: summary.isFullyComplete,
                 lastSyncedAt: new Date().toISOString(),
-              }
-            }
-          }
+              },
+            },
+          },
         );
       }
     });
@@ -799,11 +914,11 @@ export interface SyncSectionResult {
 }
 
 export interface SyncOptions {
-  testMode?: boolean;  // If true, only sync first student with email
-  testStudentId?: string;  // Specific student ID to test with
-  questionMapping?: number[][];  // Mapping of logical positions to question_ids
-  baseQuestionIds?: number[];  // Base question IDs from assignment (in order)
-  activityType?: 'sidekick' | 'mastery-check' | 'ramp-up';  // Type of Podsie activity
+  testMode?: boolean; // If true, only sync first student with email
+  testStudentId?: string; // Specific student ID to test with
+  questionMapping?: number[][]; // Mapping of logical positions to question_ids
+  baseQuestionIds?: number[]; // Base question IDs from assignment (in order)
+  activityType?: "sidekick" | "mastery-check" | "ramp-up"; // Type of Podsie activity
 }
 
 /**
@@ -816,7 +931,7 @@ export async function syncSectionRampUpProgress(
   unitCode: string,
   rampUpId: string,
   totalQuestions: number,
-  options: SyncOptions = {}
+  options: SyncOptions = {},
 ): Promise<SyncSectionResult> {
   try {
     // Fetch all active students in section
@@ -831,8 +946,15 @@ export async function syncSectionRampUpProgress(
         query._id = options.testStudentId;
       }
 
-      const docs = await StudentModel.find(query)
-        .lean<Array<{ _id: unknown; firstName: string; lastName: string; email?: string }>>();
+      const docs =
+        await StudentModel.find(query).lean<
+          Array<{
+            _id: unknown;
+            firstName: string;
+            lastName: string;
+            email?: string;
+          }>
+        >();
 
       return docs.map((doc) => ({
         _id: String(doc._id),
@@ -843,9 +965,10 @@ export async function syncSectionRampUpProgress(
     });
 
     // In test mode, only use first student with email
-    const students = options.testMode && !options.testStudentId
-      ? allStudents.filter(s => s.email).slice(0, 1)
-      : allStudents;
+    const students =
+      options.testMode && !options.testStudentId
+        ? allStudents.filter((s) => s.email).slice(0, 1)
+        : allStudents;
 
     if (students.length === 0) {
       return {
@@ -885,7 +1008,7 @@ export async function syncSectionRampUpProgress(
         totalQuestions,
         options.questionMapping,
         options.baseQuestionIds,
-        options.activityType
+        options.activityType,
       );
 
       results.push(result);
@@ -931,7 +1054,7 @@ export interface StudentRampUpProgressData {
   unitCode: string;
   rampUpId: string;
   rampUpName?: string;
-  activityType?: 'sidekick' | 'mastery-check' | 'ramp-up';
+  activityType?: "sidekick" | "mastery-check" | "ramp-up";
   questions: RampUpQuestion[];
   totalQuestions: number;
   completedCount: number;
@@ -949,7 +1072,7 @@ export async function fetchRampUpProgress(
   section: string,
   unitCode: string,
   rampUpId?: string,
-  podsieAssignmentId?: string
+  podsieAssignmentId?: string,
 ): Promise<{
   success: boolean;
   data: StudentRampUpProgressData[];
@@ -966,7 +1089,7 @@ export async function fetchRampUpProgress(
         unitCode: string;
         rampUpId: string;
         rampUpName?: string;
-        activityType?: 'sidekick' | 'mastery-check' | 'ramp-up';
+        activityType?: "sidekick" | "mastery-check" | "ramp-up";
         questions: RampUpQuestion[];
         totalQuestions: number;
         completedCount: number;
@@ -981,7 +1104,9 @@ export async function fetchRampUpProgress(
     }
 
     // Helper function to parse Zearn lesson code (e.g., "G8 M3 L10")
-    function parseZearnLessonCode(lessonCode: string): { grade: string; module: string; lesson: string } | null {
+    function parseZearnLessonCode(
+      lessonCode: string,
+    ): { grade: string; module: string; lesson: string } | null {
       const match = lessonCode.match(/G(\d+)\s+M(\d+)\s+L(\d+)/);
       if (!match) return null;
       return { grade: match[1], module: match[2], lesson: match[3] };
@@ -1013,10 +1138,11 @@ export async function fetchRampUpProgress(
       const studentName = `${student.lastName}, ${student.firstName}`;
 
       // Find matching progress entry(ies)
-      const progressEntries = (student.podsieProgress || []).filter(p => {
+      const progressEntries = (student.podsieProgress || []).filter((p) => {
         if (p.unitCode !== unitCode) return false;
         if (rampUpId && p.rampUpId !== rampUpId) return false;
-        if (podsieAssignmentId && p.podsieAssignmentId !== podsieAssignmentId) return false;
+        if (podsieAssignmentId && p.podsieAssignmentId !== podsieAssignmentId)
+          return false;
         return true;
       });
 
@@ -1028,7 +1154,7 @@ export async function fetchRampUpProgress(
           let zearnCompletionDate: string | undefined;
 
           if (student.zearnLessons && p.rampUpId) {
-            const matchingZearnLesson = student.zearnLessons.find(zl => {
+            const matchingZearnLesson = student.zearnLessons.find((zl) => {
               const convertedId = zearnToUnitLessonId(zl.lessonCode);
               return convertedId === p.rampUpId;
             });
@@ -1064,7 +1190,7 @@ export async function fetchRampUpProgress(
         let zearnCompletionDate: string | undefined;
 
         if (student.zearnLessons && rampUpId) {
-          const matchingZearnLesson = student.zearnLessons.find(zl => {
+          const matchingZearnLesson = student.zearnLessons.find((zl) => {
             const convertedId = zearnToUnitLessonId(zl.lessonCode);
             return convertedId === rampUpId;
           });

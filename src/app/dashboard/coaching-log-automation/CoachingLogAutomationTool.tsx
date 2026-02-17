@@ -1,30 +1,30 @@
 "use client";
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from "react";
 // import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/core/Button';
-import { Card } from '@/components/composed/cards/Card';
-import { Table } from '@/components/composed/tables/Table';
-import { ReferenceSelect } from '@/components/core/fields/ReferenceSelect';
-import { useVisits } from '@/hooks/domain/useVisits';
-import { useSchools } from '@/hooks/domain/useSchools';
-import { useTeachingLabStaff } from '@/hooks/domain/staff/useTeachingLabStaff';
-import { useNYCPSStaff } from '@/hooks/domain/staff/useNYCPSStaff';
-import { useVisitSchedules } from '@/hooks/domain/schedules/useVisitSchedules';
+import { Button } from "@/components/core/Button";
+import { Card } from "@/components/composed/cards/Card";
+import { Table } from "@/components/composed/tables/Table";
+import { ReferenceSelect } from "@/components/core/fields/ReferenceSelect";
+import { useVisits } from "@/hooks/domain/useVisits";
+import { useSchools } from "@/hooks/domain/useSchools";
+import { useTeachingLabStaff } from "@/hooks/domain/staff/useTeachingLabStaff";
+import { useNYCPSStaff } from "@/hooks/domain/staff/useNYCPSStaff";
+import { useVisitSchedules } from "@/hooks/domain/schedules/useVisitSchedules";
 
-import { 
+import {
   CoachingLogInput,
   createCoachingLogDefaults,
-  CoachingLogInputZodSchema 
-} from '@zod-schema/visits/coaching-log';
-import { NYCPSStaff } from '@zod-schema/core/staff';
-import { automateCoachingLogFillFromSchema } from '@actions/integrations/coaching-log-automation';
-import type { TableColumnSchema } from '@ui/table-schema';
-import { VisitScheduleBlock } from '@zod-schema/schedules/schedule-events';
-import { getEntityDisplayName } from '@/lib/utils/entity-helpers';
+  CoachingLogInputZodSchema,
+} from "@zod-schema/visits/coaching-log";
+import { NYCPSStaff } from "@zod-schema/core/staff";
+import { automateCoachingLogFillFromSchema } from "@actions/integrations/coaching-log-automation";
+import type { TableColumnSchema } from "@ui/table-schema";
+import { VisitScheduleBlock } from "@zod-schema/schedules/schedule-events";
+import { getEntityDisplayName } from "@/lib/utils/entity-helpers";
 
 interface FormData {
-  schoolName: string;  // Changed from schoolName
+  schoolName: string; // Changed from schoolName
   districtName: string;
   coachName: string;
   gradeLevelsSupported: string[];
@@ -38,155 +38,189 @@ interface EventData {
 }
 
 // Transform visit schedule time blocks to event data for form automation
-function transformTimeBlocksToEvents(timeBlocks: VisitScheduleBlock[], nycpsStaff: NYCPSStaff[]): EventData[] {
+function transformTimeBlocksToEvents(
+  timeBlocks: VisitScheduleBlock[],
+  nycpsStaff: NYCPSStaff[],
+): EventData[] {
   const events: EventData[] = [];
-  
-  timeBlocks.forEach(block => {
+
+  timeBlocks.forEach((block) => {
     if (block.staffIds && block.staffIds.length > 0) {
-      console.log('block 🟢🟢🟢🟢', block.staffIds, 'staffIds');
+      console.log("block 🟢🟢🟢🟢", block.staffIds, "staffIds");
       // Calculate duration in minutes
       const startTime = new Date(`2025-01-01T${block.startTime}:00`);
       const endTime = new Date(`2025-01-01T${block.endTime}:00`);
-      const durationMinutes = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
-      
+      const durationMinutes = Math.round(
+        (endTime.getTime() - startTime.getTime()) / (1000 * 60),
+      );
+
       // Map event type to activity
       const activityMap: Record<string, string> = {
-        'Observation': 'Observed instruction',
-        'Debrief': 'Debriefed lesson',
-        'Planning': 'Planned lesson',
-        'Coaching': 'Provided coaching'
+        Observation: "Observed instruction",
+        Debrief: "Debriefed lesson",
+        Planning: "Planned lesson",
+        Coaching: "Provided coaching",
       };
-      
+
       // Use existing utility to resolve staff names
-      const staffNames = block.staffIds.map(staffId => {
-        console.log('staffId 🟢🟢🟢🟢', staffId, nycpsStaff);
+      const staffNames = block.staffIds.map((staffId) => {
+        console.log("staffId 🟢🟢🟢🟢", staffId, nycpsStaff);
         // return nycpsStaff[0].staffName
-        return getEntityDisplayName(nycpsStaff, staffId, `Unknown Staff (${staffId.slice(-4)})`)
+        return getEntityDisplayName(
+          nycpsStaff,
+          staffId,
+          `Unknown Staff (${staffId.slice(-4)})`,
+        );
       });
-      
+
       events.push({
         name: staffNames,
-        role: 'Teacher',
+        role: "Teacher",
         activity: activityMap[block.eventType] || block.eventType,
-        duration: durationMinutes.toString()
+        duration: durationMinutes.toString(),
       });
     }
   });
-  
+
   return events;
 }
 
 export function CoachingLogAutomationTool() {
-  const [selectedVisitId, setSelectedVisitId] = useState<string>('');
-  const [selectedSchoolId, setSelectedSchoolId] = useState<string>('');
-  const [coachingLogData, setCoachingLogData] = useState<CoachingLogInput>(createCoachingLogDefaults());
+  const [selectedVisitId, setSelectedVisitId] = useState<string>("");
+  const [selectedSchoolId, setSelectedSchoolId] = useState<string>("");
+  const [coachingLogData, setCoachingLogData] = useState<CoachingLogInput>(
+    createCoachingLogDefaults(),
+  );
   const [formData, setFormData] = useState<FormData>({
-    schoolName: '',
-    districtName: '',
-    coachName: '',
+    schoolName: "",
+    districtName: "",
+    coachName: "",
     gradeLevelsSupported: [],
   });
   const [isAutomating, setIsAutomating] = useState(false);
-  const [result, setResult] = useState<{ success: boolean; message?: string; error?: string } | null>(null);
+  const [result, setResult] = useState<{
+    success: boolean;
+    message?: string;
+    error?: string;
+  } | null>(null);
 
   // Add URL parameter handling
   // ✅ FIXED: Follow established pattern - fetch all data with static parameters
-  const { items: allVisits = [], isLoading: visitsLoading } = useVisits.list({ limit: 1000 });
+  const { items: allVisits = [], isLoading: visitsLoading } = useVisits.list({
+    limit: 1000,
+  });
   const { items: schools, isLoading: schoolsLoading } = useSchools.list();
   const { items: coaches, isLoading: coachesLoading } = useTeachingLabStaff();
-  const { items: allNycpsStaff = [], isLoading: nycpsStaffLoading } = useNYCPSStaff();
+  const { items: allNycpsStaff = [], isLoading: nycpsStaffLoading } =
+    useNYCPSStaff();
 
   // ✅ FIXED: Client-side filtering following VisitsStatusGrid pattern
   const visits = useMemo(() => {
     if (!selectedSchoolId) {
       return allVisits.slice(0, 10); // Show first 10 when no school selected
     }
-    
+
     return allVisits
-      .filter(visit => visit.schoolId === selectedSchoolId)
+      .filter((visit) => visit.schoolId === selectedSchoolId)
       .slice(0, 30); // Show first 30 for selected school
   }, [allVisits, selectedSchoolId]);
 
   // ✅ FIXED: Client-side filtering for NYCPS staff using consistent field names
   const nycpsStaff = useMemo(() => {
     if (!selectedSchoolId || !allNycpsStaff.length) return allNycpsStaff;
-    
-    return allNycpsStaff.filter(staff => {
+
+    return allNycpsStaff.filter((staff) => {
       // Use the correct field name from schema: schoolIds
       return staff.schoolIds && staff.schoolIds.includes(selectedSchoolId);
     });
   }, [allNycpsStaff, selectedSchoolId]);
 
-
-  
   // VisitSchedule hook - fetch schedule for selected visit
-  const selectedVisit = visits?.find(v => v._id === selectedVisitId);
-  const { data: visitSchedule, isLoading: visitScheduleLoading } = useVisitSchedules.byId(
-    selectedVisit?.visitScheduleId || '',
-    {
-      enabled: !!(selectedVisit?.visitScheduleId)
-    }
+  const selectedVisit = visits?.find((v) => v._id === selectedVisitId);
+  const { data: visitSchedule, isLoading: visitScheduleLoading } =
+    useVisitSchedules.byId(selectedVisit?.visitScheduleId || "", {
+      enabled: !!selectedVisit?.visitScheduleId,
+    });
+
+  const handleSchoolSelection = useCallback(
+    (value: string | string[]) => {
+      const schoolId = Array.isArray(value) ? value[0] || "" : value;
+      setSelectedSchoolId(schoolId);
+
+      // Clear visit selection when school changes
+      if (selectedVisitId) {
+        setSelectedVisitId("");
+        setFormData({
+          schoolName: "",
+          districtName: "",
+          coachName: "",
+          gradeLevelsSupported: [],
+        });
+        setCoachingLogData(createCoachingLogDefaults());
+      }
+    },
+    [selectedVisitId],
   );
 
-  const handleSchoolSelection = useCallback((value: string | string[]) => {
-    const schoolId = Array.isArray(value) ? value[0] || '' : value;
-    setSelectedSchoolId(schoolId);
-    
-    // Clear visit selection when school changes
-    if (selectedVisitId) {
-      setSelectedVisitId('');
-      setFormData({ schoolName: '', districtName: '', coachName: '', gradeLevelsSupported: [] });
-      setCoachingLogData(createCoachingLogDefaults());
-    }
-  }, [selectedVisitId]);
+  const handleVisitSelection = useCallback(
+    async (visitId: string) => {
+      setSelectedVisitId(visitId);
+      setResult(null);
 
-  const handleVisitSelection = useCallback(async (visitId: string) => {
-    setSelectedVisitId(visitId);
-    setResult(null);
-    
-    if (!visitId) {
-      setFormData({ schoolName: '', districtName: '', coachName: '', gradeLevelsSupported: [] });
-      return;
-    }
+      if (!visitId) {
+        setFormData({
+          schoolName: "",
+          districtName: "",
+          coachName: "",
+          gradeLevelsSupported: [],
+        });
+        return;
+      }
 
-    // Find the selected visit
-    const selectedVisit = visits?.find(visit => visit._id === visitId);
-    if (!selectedVisit) return;
+      // Find the selected visit
+      const selectedVisit = visits?.find((visit) => visit._id === visitId);
+      if (!selectedVisit) return;
 
-    // Initialize coaching log with visit data
-    const defaults = createCoachingLogDefaults({
-      coachingActionPlanId: selectedVisit.coachingActionPlanId || '',
-      visitId: selectedVisit._id
-    });
-    setCoachingLogData(defaults);
+      // Initialize coaching log with visit data
+      const defaults = createCoachingLogDefaults({
+        coachingActionPlanId: selectedVisit.coachingActionPlanId || "",
+        visitId: selectedVisit._id,
+      });
+      setCoachingLogData(defaults);
 
-    // Find associated school
-    const school = schools?.find(school => school._id === selectedVisit.schoolId);
-    
-    // Find associated coach  
-    const coach = coaches?.find((c) => c._id === selectedVisit.coachId);
+      // Find associated school
+      const school = schools?.find(
+        (school) => school._id === selectedVisit.schoolId,
+      );
 
-    // Update form data with auto-populated values
-    setFormData({
-      schoolName: school?.schoolNumber || '',
-      gradeLevelsSupported: school?.gradeLevelsSupported || [],
-      districtName: school?.district || '',
-      coachName: coach?.staffName || ''
-    });
-  }, [visits, schools, coaches]);
-  
+      // Find associated coach
+      const coach = coaches?.find((c) => c._id === selectedVisit.coachId);
 
-  const handleFieldChange = (field: keyof CoachingLogInput, value: string | number | boolean) => {
-    setCoachingLogData(prev => ({
+      // Update form data with auto-populated values
+      setFormData({
+        schoolName: school?.schoolNumber || "",
+        gradeLevelsSupported: school?.gradeLevelsSupported || [],
+        districtName: school?.district || "",
+        coachName: coach?.staffName || "",
+      });
+    },
+    [visits, schools, coaches],
+  );
+
+  const handleFieldChange = (
+    field: keyof CoachingLogInput,
+    value: string | number | boolean,
+  ) => {
+    setCoachingLogData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleFormDataChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -194,46 +228,52 @@ export function CoachingLogAutomationTool() {
     if (!formData.coachName || !formData.schoolName || !formData.districtName) {
       setResult({
         success: false,
-        error: 'Please fill in all required form fields (school number, district name, coach name) before running automation.'
+        error:
+          "Please fill in all required form fields (school number, district name, coach name) before running automation.",
       });
       return;
     }
 
     setIsAutomating(true);
     setResult(null);
-    
+
     try {
       // Validate schema before sending
       const validatedData = CoachingLogInputZodSchema.parse(coachingLogData);
-      
+
       // Transform visit schedule time blocks to events for form automation
-      const events = visitSchedule?.timeBlocks ? transformTimeBlocksToEvents(visitSchedule.timeBlocks, nycpsStaff) : [];
-      
-      const automationResult = await automateCoachingLogFillFromSchema(validatedData, {
-        schoolName: formData.schoolName,
-        districtName: formData.districtName,
-        coachName: formData.coachName,
-        visitDate: selectedVisit?.date,
-        modeDone: selectedVisit?.modeDone,
-        events: events,                           // ← For form automation (transformed)
-        timeBlocks: visitSchedule?.timeBlocks || [], // ← For banner display (raw)
-        visitId: selectedVisitId,
-        // teacherCount: visitSchedule?.teacherCount,
-        // schoolGradeLevels: visitSchedule?.school?.gradeLevelsSupported,
-        // visitGradeLevels: visitSchedule?.visit?.gradeLevelsSupported,
-      });
-      
+      const events = visitSchedule?.timeBlocks
+        ? transformTimeBlocksToEvents(visitSchedule.timeBlocks, nycpsStaff)
+        : [];
+
+      const automationResult = await automateCoachingLogFillFromSchema(
+        validatedData,
+        {
+          schoolName: formData.schoolName,
+          districtName: formData.districtName,
+          coachName: formData.coachName,
+          visitDate: selectedVisit?.date,
+          modeDone: selectedVisit?.modeDone,
+          events: events, // ← For form automation (transformed)
+          timeBlocks: visitSchedule?.timeBlocks || [], // ← For banner display (raw)
+          visitId: selectedVisitId,
+          // teacherCount: visitSchedule?.teacherCount,
+          // schoolGradeLevels: visitSchedule?.school?.gradeLevelsSupported,
+          // visitGradeLevels: visitSchedule?.visit?.gradeLevelsSupported,
+        },
+      );
+
       setResult(automationResult);
     } catch (error) {
       if (error instanceof Error) {
         setResult({
           success: false,
-          error: `Validation error: ${error.message}`
+          error: `Validation error: ${error.message}`,
         });
       } else {
         setResult({
           success: false,
-          error: 'Unknown validation error'
+          error: "Unknown validation error",
         });
       }
     } finally {
@@ -244,22 +284,23 @@ export function CoachingLogAutomationTool() {
   // Table configuration for time blocks
   const timeBlockColumns: TableColumnSchema<VisitScheduleBlock>[] = [
     {
-      id: 'period',
-      label: 'Period',
-      accessor: (block) => `${block.periodNumber}${block.periodName ? ` (${block.periodName})` : ''}`,
-      width: '15%'
+      id: "period",
+      label: "Period",
+      accessor: (block) =>
+        `${block.periodNumber}${block.periodName ? ` (${block.periodName})` : ""}`,
+      width: "15%",
     },
     {
-      id: 'time',
-      label: 'Time',
+      id: "time",
+      label: "Time",
       accessor: (block) => `${block.startTime} - ${block.endTime}`,
-      width: '20%'
+      width: "20%",
     },
     {
-      id: 'eventType',
-      label: 'Event Type',
+      id: "eventType",
+      label: "Event Type",
       accessor: (block) => block.eventType,
-      width: '15%'
+      width: "15%",
     },
     // {
     //   id: 'portion',
@@ -268,22 +309,23 @@ export function CoachingLogAutomationTool() {
     //   width: '15%'
     // },
     {
-      id: 'staff',
-      label: 'Staff Count',
-      accessor: (block) => `${block.staffIds.length} teacher${block.staffIds.length !== 1 ? 's' : ''}`,
-      align: 'center' as const,
-      width: '25%'
+      id: "staff",
+      label: "Staff Count",
+      accessor: (block) =>
+        `${block.staffIds.length} teacher${block.staffIds.length !== 1 ? "s" : ""}`,
+      align: "center" as const,
+      width: "25%",
     },
     {
-      id: 'notes',
-      label: 'Notes',
+      id: "notes",
+      label: "Notes",
       accessor: (block) => (
         <span className="text-xs text-gray-600 truncate" title={block.notes}>
-          {block.notes || 'No notes'}
+          {block.notes || "No notes"}
         </span>
       ),
-      width: '20%'
-    }
+      width: "20%",
+    },
   ];
 
   // Loading state
@@ -291,7 +333,9 @@ export function CoachingLogAutomationTool() {
     return (
       <div className="container mx-auto py-8 max-w-4xl">
         <div className="flex items-center justify-center p-8">
-          <div className="text-lg text-gray-600">Loading schools and staff data...</div>
+          <div className="text-lg text-gray-600">
+            Loading schools and staff data...
+          </div>
         </div>
       </div>
     );
@@ -310,7 +354,9 @@ export function CoachingLogAutomationTool() {
       <Card className="mb-6">
         <Card.Header>
           <h2 className="text-lg font-semibold">1. Select School and Visit</h2>
-          <p className="text-sm text-gray-600 mt-1">First select a school, then choose a visit from that school</p>
+          <p className="text-sm text-gray-600 mt-1">
+            First select a school, then choose a visit from that school
+          </p>
         </Card.Header>
         <Card.Body>
           <div className="space-y-4">
@@ -325,7 +371,7 @@ export function CoachingLogAutomationTool() {
                 helpText="Choose a school to see visits for that location (max 30 visits)"
               />
             </div>
-            
+
             {/* Visit Selection - only show if school is selected */}
             {selectedSchoolId && (
               <div>
@@ -342,11 +388,15 @@ export function CoachingLogAutomationTool() {
                     onChange={(e) => handleVisitSelection(e.target.value)}
                     className="w-full p-3 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    <option value="">Select a visit to auto-populate form data...</option>
-                    {visits.map(visit => {
-                      const coach = coaches?.find(c => c._id === visit.coachId);
-                      const displayText = `${visit.coachingLogSubmitted ? '✅' : '❌'} ${visit.date ? new Date(visit.date).toLocaleDateString() : ''} - ${visit.allowedPurpose || 'Visit'} - ${coach?.staffName || 'Unknown Coach'}`;
-                      
+                    <option value="">
+                      Select a visit to auto-populate form data...
+                    </option>
+                    {visits.map((visit) => {
+                      const coach = coaches?.find(
+                        (c) => c._id === visit.coachId,
+                      );
+                      const displayText = `${visit.coachingLogSubmitted ? "✅" : "❌"} ${visit.date ? new Date(visit.date).toLocaleDateString() : ""} - ${visit.allowedPurpose || "Visit"} - ${coach?.staffName || "Unknown Coach"}`;
+
                       return (
                         <option key={visit._id} value={visit._id}>
                           {displayText}
@@ -356,10 +406,11 @@ export function CoachingLogAutomationTool() {
                   </select>
                 ) : (
                   <div className="w-full p-3 border border-gray-300 rounded-md bg-yellow-50 text-yellow-800 text-sm">
-                    No visits found for the selected school. Try selecting a different school.
+                    No visits found for the selected school. Try selecting a
+                    different school.
                   </div>
                 )}
-                
+
                 {selectedVisitId && (
                   <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-md">
                     <p className="text-sm text-green-800">
@@ -369,12 +420,13 @@ export function CoachingLogAutomationTool() {
                 )}
               </div>
             )}
-            
+
             {/* Helper text when no school selected */}
             {!selectedSchoolId && (
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                 <p className="text-sm text-blue-800">
-                  Select a school above to see available visits for coaching log automation.
+                  Select a school above to see available visits for coaching log
+                  automation.
                 </p>
               </div>
             )}
@@ -385,8 +437,12 @@ export function CoachingLogAutomationTool() {
       {/* Form-Specific Information */}
       <Card className="mb-6">
         <Card.Header>
-          <h2 className="text-lg font-semibold">2. Form-Specific Information</h2>
-          <p className="text-sm text-gray-600 mt-1">Required fields for form automation</p>
+          <h2 className="text-lg font-semibold">
+            2. Form-Specific Information
+          </h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Required fields for form automation
+          </p>
         </Card.Header>
         <Card.Body>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -397,7 +453,9 @@ export function CoachingLogAutomationTool() {
               <input
                 type="text"
                 value={formData.schoolName}
-                onChange={(e) => handleFormDataChange('schoolName', e.target.value)}
+                onChange={(e) =>
+                  handleFormDataChange("schoolName", e.target.value)
+                }
                 placeholder="Enter school name"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -409,7 +467,9 @@ export function CoachingLogAutomationTool() {
               <input
                 type="text"
                 value={formData.districtName}
-                onChange={(e) => handleFormDataChange('districtName', e.target.value)}
+                onChange={(e) =>
+                  handleFormDataChange("districtName", e.target.value)
+                }
                 placeholder="Enter district name"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -421,7 +481,9 @@ export function CoachingLogAutomationTool() {
               <input
                 type="text"
                 value={formData.coachName}
-                onChange={(e) => handleFormDataChange('coachName', e.target.value)}
+                onChange={(e) =>
+                  handleFormDataChange("coachName", e.target.value)
+                }
                 placeholder="Enter coach name"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -433,55 +495,77 @@ export function CoachingLogAutomationTool() {
       {/* Coaching Log Configuration */}
       <Card className="mb-6">
         <Card.Header>
-          <h2 className="text-lg font-semibold">3. Coaching Log Configuration</h2>
-          <p className="text-sm text-gray-600 mt-1">Configure coaching log data (optional - defaults will be used)</p>
+          <h2 className="text-lg font-semibold">
+            3. Coaching Log Configuration
+          </h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Configure coaching log data (optional - defaults will be used)
+          </p>
         </Card.Header>
         <Card.Body>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason Done</label>
-              <select 
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Reason Done
+              </label>
+              <select
                 className="w-full p-2 border border-gray-300 rounded-md"
                 value={coachingLogData.reasonDone as string}
-                onChange={(e) => handleFieldChange('reasonDone', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange("reasonDone", e.target.value)
+                }
               >
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
               </select>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Total Duration</label>
-              <select 
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Total Duration
+              </label>
+              <select
                 className="w-full p-2 border border-gray-300 rounded-md"
                 value={coachingLogData.totalDuration as string}
-                onChange={(e) => handleFieldChange('totalDuration', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange("totalDuration", e.target.value)
+                }
               >
                 <option value="Half day - 3 hours">Half day - 3 hours</option>
                 <option value="Full day - 6 hours">Full day - 6 hours</option>
               </select>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">SOLVES Touchpoint</label>
-              <select 
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                SOLVES Touchpoint
+              </label>
+              <select
                 className="w-full p-2 border border-gray-300 rounded-md"
                 value={coachingLogData.solvesTouchpoint as string}
-                onChange={(e) => handleFieldChange('solvesTouchpoint', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange("solvesTouchpoint", e.target.value)
+                }
               >
                 <option value="Teacher support">Teacher support</option>
                 <option value="Leader support">Leader support</option>
-                <option value="Teacher OR teacher & leader support">Teacher OR teacher & leader support</option>
+                <option value="Teacher OR teacher & leader support">
+                  Teacher OR teacher & leader support
+                </option>
               </select>
             </div>
-            
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Primary Strategy</label>
-              <input 
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Primary Strategy
+              </label>
+              <input
                 type="text"
                 className="w-full p-2 border border-gray-300 rounded-md"
                 value={coachingLogData.primaryStrategy as string}
-                onChange={(e) => handleFieldChange('primaryStrategy', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange("primaryStrategy", e.target.value)
+                }
                 placeholder="Enter primary strategy"
               />
             </div>
@@ -498,47 +582,75 @@ export function CoachingLogAutomationTool() {
           <div className="flex justify-center">
             <Button
               onClick={handleAutomate}
-              disabled={isAutomating || !formData.coachName || !formData.schoolName || !formData.districtName}
+              disabled={
+                isAutomating ||
+                !formData.coachName ||
+                !formData.schoolName ||
+                !formData.districtName
+              }
               className="px-8 py-3 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isAutomating ? 'Running Automation...' : 'Run Form Automation'}
+              {isAutomating ? "Running Automation..." : "Run Form Automation"}
             </Button>
           </div>
-          
+
           {result && (
-            <div className={`mt-4 p-4 rounded-md ${result.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-              <div className={`text-sm ${result.success ? 'text-green-800' : 'text-red-800'}`}>
-                {result.success ? '✅ ' : '❌ '}
+            <div
+              className={`mt-4 p-4 rounded-md ${result.success ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}
+            >
+              <div
+                className={`text-sm ${result.success ? "text-green-800" : "text-red-800"}`}
+              >
+                {result.success ? "✅ " : "❌ "}
                 {result.message || result.error}
               </div>
             </div>
           )}
 
           <div className="mt-6 p-4 bg-gray-50 rounded-md">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Instructions:</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              Instructions:
+            </h3>
             <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600">
               <li>Select a visit to auto-populate form data (optional)</li>
               <li>Verify required form fields are correct</li>
-              <li>Click &quot;Run Form Automation&quot; to fill the external form</li>
-              <li><strong>Review the filled form manually</strong></li>
-              <li><strong>Click Submit when ready</strong> - system will auto-close browser and update records</li> 
+              <li>
+                Click &quot;Run Form Automation&quot; to fill the external form
+              </li>
+              <li>
+                <strong>Review the filled form manually</strong>
+              </li>
+              <li>
+                <strong>Click Submit when ready</strong> - system will
+                auto-close browser and update records
+              </li>
             </ol>
             {selectedVisitId && (
               <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded">
                 <p className="text-sm text-blue-800">
-                  <strong>Auto-update enabled:</strong> When you submit, the visit will be marked as completed.
+                  <strong>Auto-update enabled:</strong> When you submit, the
+                  visit will be marked as completed.
                 </p>
               </div>
             )}
-            
+
             <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-              <h4 className="text-xs font-medium text-blue-800 mb-1">🚀 Enhanced Features:</h4>
+              <h4 className="text-xs font-medium text-blue-800 mb-1">
+                🚀 Enhanced Features:
+              </h4>
               <ul className="text-xs text-blue-700 space-y-1">
-                <li>• Multi-person events automatically split into separate form rows</li>
-                <li>• Smart fallback selection when exact option matches fail</li>
+                <li>
+                  • Multi-person events automatically split into separate form
+                  rows
+                </li>
+                <li>
+                  • Smart fallback selection when exact option matches fail
+                </li>
                 <li>• Improved error recovery with retry logic</li>
                 <li>• Enhanced duration calculation from time blocks</li>
-                <li>• Submit button monitoring with automatic visit record updates</li>
+                <li>
+                  • Submit button monitoring with automatic visit record updates
+                </li>
               </ul>
             </div>
           </div>
@@ -553,21 +665,27 @@ export function CoachingLogAutomationTool() {
         <Card.Body>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Form Data:</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Form Data:
+              </h3>
               <pre className="text-xs bg-gray-50 p-3 rounded border overflow-auto">
                 {JSON.stringify(formData, null, 2)}
               </pre>
             </div>
-            
+
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Coaching Log Schema:</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Coaching Log Schema:
+              </h3>
               <pre className="text-xs bg-gray-50 p-3 rounded border overflow-auto max-h-32">
                 {JSON.stringify(coachingLogData, null, 2)}
               </pre>
             </div>
-            
+
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Visit Schedule:</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Visit Schedule:
+              </h3>
               {selectedVisitId ? (
                 visitScheduleLoading ? (
                   <div className="text-xs text-gray-500 p-3 bg-gray-50 rounded border">
@@ -577,35 +695,58 @@ export function CoachingLogAutomationTool() {
                   <div className="space-y-3">
                     {/* Schedule Metadata */}
                     <div className="text-xs bg-blue-50 p-3 rounded border">
-                      <div><strong>Date:</strong> {visitSchedule.date || 'Not set'}</div>
-                      <div><strong>Coach ID:</strong> {visitSchedule.coachId}</div>
-                      <div><strong>School ID:</strong> {visitSchedule.schoolId}</div>
-                      <div><strong>Events:</strong> {visitSchedule.timeBlocks?.length || 0} time blocks</div>
-                      <div><strong>ID:</strong> {visitSchedule._id}</div>
-                    </div>
-                    
-                    {/* Time Blocks Table */}
-                    {visitSchedule.timeBlocks && visitSchedule.timeBlocks.length > 0 && (
                       <div>
-                        <h4 className="text-xs font-medium text-gray-700 mb-2">Time Blocks:</h4>
-                        <Table
-                          data={visitSchedule.timeBlocks}
-                          columns={timeBlockColumns}
-                          textSize="xs"
-                          padding="xs"
-                          className="border rounded"
-                          emptyMessage="No time blocks scheduled"
-                        />
-                        
-                        {/* Debug: Show transformed events */}
-                        <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
-                          <h5 className="text-xs font-medium text-yellow-800 mb-1">Events for Automation:</h5>
-                          <pre className="text-xs text-yellow-700 overflow-auto max-h-24">
-                            {JSON.stringify(transformTimeBlocksToEvents(visitSchedule.timeBlocks, nycpsStaff), null, 2)}
-                          </pre>
-                        </div>
+                        <strong>Date:</strong> {visitSchedule.date || "Not set"}
                       </div>
-                    )}
+                      <div>
+                        <strong>Coach ID:</strong> {visitSchedule.coachId}
+                      </div>
+                      <div>
+                        <strong>School ID:</strong> {visitSchedule.schoolId}
+                      </div>
+                      <div>
+                        <strong>Events:</strong>{" "}
+                        {visitSchedule.timeBlocks?.length || 0} time blocks
+                      </div>
+                      <div>
+                        <strong>ID:</strong> {visitSchedule._id}
+                      </div>
+                    </div>
+
+                    {/* Time Blocks Table */}
+                    {visitSchedule.timeBlocks &&
+                      visitSchedule.timeBlocks.length > 0 && (
+                        <div>
+                          <h4 className="text-xs font-medium text-gray-700 mb-2">
+                            Time Blocks:
+                          </h4>
+                          <Table
+                            data={visitSchedule.timeBlocks}
+                            columns={timeBlockColumns}
+                            textSize="xs"
+                            padding="xs"
+                            className="border rounded"
+                            emptyMessage="No time blocks scheduled"
+                          />
+
+                          {/* Debug: Show transformed events */}
+                          <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
+                            <h5 className="text-xs font-medium text-yellow-800 mb-1">
+                              Events for Automation:
+                            </h5>
+                            <pre className="text-xs text-yellow-700 overflow-auto max-h-24">
+                              {JSON.stringify(
+                                transformTimeBlocksToEvents(
+                                  visitSchedule.timeBlocks,
+                                  nycpsStaff,
+                                ),
+                                null,
+                                2,
+                              )}
+                            </pre>
+                          </div>
+                        </div>
+                      )}
                   </div>
                 ) : (
                   <div className="text-xs text-gray-500 p-3 bg-gray-50 rounded border">
@@ -623,4 +764,4 @@ export function CoachingLogAutomationTool() {
       </Card>
     </div>
   );
-} 
+}

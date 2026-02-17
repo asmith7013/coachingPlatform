@@ -1,10 +1,10 @@
-import { 
+import {
   StaffMemberModel,
   NYCPSStaffModel,
-  TeachingLabStaffModel
+  TeachingLabStaffModel,
 } from "@mongoose-schema/core/staff.model";
-import { 
-  StaffMemberZodSchema, 
+import {
+  StaffMemberZodSchema,
   StaffMemberInputZodSchema,
   NYCPSStaffZodSchema,
   NYCPSStaffInputZodSchema,
@@ -12,7 +12,7 @@ import {
   TeachingLabStaffInputZodSchema,
   StaffMember,
   NYCPSStaff,
-  TeachingLabStaff
+  TeachingLabStaff,
 } from "@zod-schema/core/staff";
 import { ZodType } from "zod";
 import { createCrudActions } from "@server/crud";
@@ -24,8 +24,8 @@ export const staffActions = createCrudActions({
   inputSchema: StaffMemberInputZodSchema,
   name: "Staff Member",
   revalidationPaths: ["/dashboard/staff"],
-  sortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
-  defaultSortField: 'staffName'
+  sortFields: ["staffName", "email", "createdAt", "updatedAt"],
+  defaultSortField: "staffName",
 });
 
 // Create CRUD actions for NYCPS Staff
@@ -35,8 +35,8 @@ export const nycpsStaffActions = createCrudActions({
   inputSchema: NYCPSStaffInputZodSchema,
   name: "NYCPS Staff",
   revalidationPaths: ["/dashboard/staff"],
-  sortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
-  defaultSortField: 'staffName'
+  sortFields: ["staffName", "email", "createdAt", "updatedAt"],
+  defaultSortField: "staffName",
 });
 
 // Create CRUD actions for Teaching Lab Staff
@@ -46,6 +46,6 @@ export const tlStaffActions = createCrudActions({
   inputSchema: TeachingLabStaffInputZodSchema,
   name: "Teaching Lab Staff",
   revalidationPaths: ["/dashboard/staff"],
-  sortFields: ['staffName', 'email', 'createdAt', 'updatedAt'],
-  defaultSortField: 'staffName'
-}); 
+  sortFields: ["staffName", "email", "createdAt", "updatedAt"],
+  defaultSortField: "staffName",
+});

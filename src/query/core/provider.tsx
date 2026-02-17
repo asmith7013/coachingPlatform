@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools as _ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { initializeQuerySystem } from '@query/core/initialization';
-import { captureError, createErrorContext } from '@error';
-import { createQueryClient } from '@/query/core/client';
+import { useState, useEffect } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools as _ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { initializeQuerySystem } from "@query/core/initialization";
+import { captureError, createErrorContext } from "@error";
+import { createQueryClient } from "@/query/core/client";
 
 interface QueryProviderProps {
   children: React.ReactNode;
@@ -18,17 +18,22 @@ interface QueryProviderProps {
 export function QueryProvider({ children }: QueryProviderProps) {
   // Create a memoized QueryClient instance using our unified creator
   const [queryClient] = useState(() => createQueryClient());
-  
+
   // Initialize query system once when provider mounts
   useEffect(() => {
     try {
       const success = initializeQuerySystem();
       if (!success) {
-        console.warn('Query system initialization encountered issues. Some features may not work correctly.');
+        console.warn(
+          "Query system initialization encountered issues. Some features may not work correctly.",
+        );
       }
     } catch (error) {
-      captureError(error, createErrorContext('QueryProvider', 'initialization'));
-      console.error('Failed to initialize query system:', error);
+      captureError(
+        error,
+        createErrorContext("QueryProvider", "initialization"),
+      );
+      console.error("Failed to initialize query system:", error);
     }
   }, []);
 

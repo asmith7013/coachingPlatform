@@ -1,10 +1,10 @@
-'use server';
+"use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { handleServerError } from '@error/handlers/server';
-import { StateTestScraper } from '../lib/scraper';
-import { StateTestQuestionModel } from '@mongoose-schema/scm/state-test-question.model';
-import type { StateTestQuestion } from '../lib/types';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { handleServerError } from "@error/handlers/server";
+import { StateTestScraper } from "../lib/scraper";
+import { StateTestQuestionModel } from "@mongoose-schema/scm/state-test-question.model";
+import type { StateTestQuestion } from "../lib/types";
 
 export interface ScrapeResult {
   success: boolean;
@@ -17,7 +17,7 @@ export async function scrapeStateTestPage(
   url: string,
   grade: string,
   examYear: string,
-  examTitle: string
+  examTitle: string,
 ): Promise<ScrapeResult> {
   const email = process.env.PROBLEM_ATTIC_EMAIL;
   const password = process.env.PROBLEM_ATTIC_PASSWORD;
@@ -25,14 +25,15 @@ export async function scrapeStateTestPage(
   if (!email || !password) {
     return {
       success: false,
-      error: 'Missing PROBLEM_ATTIC_EMAIL or PROBLEM_ATTIC_PASSWORD environment variables',
+      error:
+        "Missing PROBLEM_ATTIC_EMAIL or PROBLEM_ATTIC_PASSWORD environment variables",
     };
   }
 
-  if (!grade || !['6', '7', '8', 'alg1'].includes(grade)) {
+  if (!grade || !["6", "7", "8", "alg1"].includes(grade)) {
     return {
       success: false,
-      error: 'Grade must be 6, 7, 8, or alg1',
+      error: "Grade must be 6, 7, 8, or alg1",
     };
   }
 
@@ -53,7 +54,7 @@ export async function scrapeStateTestPage(
         await StateTestQuestionModel.findOneAndUpdate(
           { questionId: question.questionId },
           question,
-          { upsert: true, new: true }
+          { upsert: true, new: true },
         );
       }
     });
@@ -66,7 +67,7 @@ export async function scrapeStateTestPage(
   } catch (error) {
     return {
       success: false,
-      error: handleServerError(error, 'Failed to scrape state test questions'),
+      error: handleServerError(error, "Failed to scrape state test questions"),
     };
   } finally {
     await scraper.close();
@@ -77,7 +78,11 @@ export async function getStateTestQuestions(filters?: {
   grade?: string;
   examYear?: string;
   standard?: string;
-}): Promise<{ success: boolean; questions?: StateTestQuestion[]; error?: string }> {
+}): Promise<{
+  success: boolean;
+  questions?: StateTestQuestion[];
+  error?: string;
+}> {
   return withDbConnection(async () => {
     try {
       const query: Record<string, string> = {};
@@ -104,7 +109,10 @@ export async function getStateTestQuestions(filters?: {
         answer: q.answer || undefined,
         questionNumber: q.questionNumber || undefined,
         sourceUrl: q.sourceUrl,
-        scrapedAt: q.scrapedAt instanceof Date ? q.scrapedAt.toISOString() : String(q.scrapedAt),
+        scrapedAt:
+          q.scrapedAt instanceof Date
+            ? q.scrapedAt.toISOString()
+            : String(q.scrapedAt),
         pageIndex: q.pageIndex,
       }));
 
@@ -115,7 +123,7 @@ export async function getStateTestQuestions(filters?: {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to get state test questions'),
+        error: handleServerError(error, "Failed to get state test questions"),
       };
     }
   });
@@ -128,17 +136,17 @@ export async function updateStateTestQuestion(
   questionId: string,
   updates: {
     secondaryStandard?: string;
-    responseType?: 'multipleChoice' | 'constructedResponse';
+    responseType?: "multipleChoice" | "constructedResponse";
     points?: number;
     answer?: string;
-  }
+  },
 ): Promise<{ success: boolean; error?: string }> {
   return withDbConnection(async () => {
     try {
       const result = await StateTestQuestionModel.findOneAndUpdate(
         { questionId },
         { $set: updates },
-        { new: true }
+        { new: true },
       );
 
       if (!result) {
@@ -152,7 +160,7 @@ export async function updateStateTestQuestion(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to update state test question'),
+        error: handleServerError(error, "Failed to update state test question"),
       };
     }
   });
@@ -165,11 +173,11 @@ export async function bulkUpdateStateTestQuestions(
   updates: Array<{
     questionId: string;
     secondaryStandard?: string;
-    responseType?: 'multipleChoice' | 'constructedResponse';
+    responseType?: "multipleChoice" | "constructedResponse";
     points?: number;
     answer?: string;
     questionNumber?: number;
-  }>
+  }>,
 ): Promise<{ success: boolean; updatedCount: number; errors: string[] }> {
   return withDbConnection(async () => {
     const errors: string[] = [];
@@ -180,18 +188,21 @@ export async function bulkUpdateStateTestQuestions(
         const { questionId, ...fields } = update;
         // Only update if there are actual fields to update
         const updateFields: Record<string, unknown> = {};
-        if (fields.secondaryStandard !== undefined) updateFields.secondaryStandard = fields.secondaryStandard;
-        if (fields.responseType !== undefined) updateFields.responseType = fields.responseType;
+        if (fields.secondaryStandard !== undefined)
+          updateFields.secondaryStandard = fields.secondaryStandard;
+        if (fields.responseType !== undefined)
+          updateFields.responseType = fields.responseType;
         if (fields.points !== undefined) updateFields.points = fields.points;
         if (fields.answer !== undefined) updateFields.answer = fields.answer;
-        if (fields.questionNumber !== undefined) updateFields.questionNumber = fields.questionNumber;
+        if (fields.questionNumber !== undefined)
+          updateFields.questionNumber = fields.questionNumber;
 
         if (Object.keys(updateFields).length === 0) continue;
 
         const result = await StateTestQuestionModel.findOneAndUpdate(
           { questionId },
           { $set: updateFields },
-          { new: true }
+          { new: true },
         );
 
         if (result) {
@@ -200,7 +211,9 @@ export async function bulkUpdateStateTestQuestions(
           errors.push(`Question ${questionId} not found`);
         }
       } catch (error) {
-        errors.push(`Failed to update ${update.questionId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        errors.push(
+          `Failed to update ${update.questionId}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
       }
     }
 
@@ -226,10 +239,10 @@ export async function getStateTestStats(): Promise<{
       const [total, byGrade, byYear] = await Promise.all([
         StateTestQuestionModel.countDocuments(),
         StateTestQuestionModel.aggregate([
-          { $group: { _id: '$grade', count: { $sum: 1 } } },
+          { $group: { _id: "$grade", count: { $sum: 1 } } },
         ]),
         StateTestQuestionModel.aggregate([
-          { $group: { _id: '$examYear', count: { $sum: 1 } } },
+          { $group: { _id: "$examYear", count: { $sum: 1 } } },
         ]),
       ]);
 
@@ -247,7 +260,7 @@ export async function getStateTestStats(): Promise<{
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to get state test stats'),
+        error: handleServerError(error, "Failed to get state test stats"),
       };
     }
   });

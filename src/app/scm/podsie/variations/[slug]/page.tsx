@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState, use } from 'react';
-import { useRouter } from 'next/navigation';
-import { getVariationBySlug } from '@/app/actions/scm/podsie/assignment-variations';
-import type { AssignmentVariation, QuestionVariation } from '@/lib/schema/zod-schema/scm/podsie/assignment-variation';
-import { Spinner } from '@/components/core/feedback/Spinner';
+import { useEffect, useState, use } from "react";
+import { useRouter } from "next/navigation";
+import { getVariationBySlug } from "@/app/actions/scm/podsie/assignment-variations";
+import type {
+  AssignmentVariation,
+  QuestionVariation,
+} from "@/lib/schema/zod-schema/scm/podsie/assignment-variation";
+import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -15,7 +18,9 @@ export default function VariationDetailPage({ params }: PageProps) {
   const [variation, setVariation] = useState<AssignmentVariation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
+  const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(
+    new Set(),
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -26,10 +31,10 @@ export default function VariationDetailPage({ params }: PageProps) {
         if (result.success && result.data) {
           setVariation(result.data as AssignmentVariation);
         } else {
-          setError(result.error || 'Failed to load variation');
+          setError(result.error || "Failed to load variation");
         }
       } catch {
-        setError('An error occurred while loading the variation');
+        setError("An error occurred while loading the variation");
       } finally {
         setLoading(false);
       }
@@ -39,7 +44,7 @@ export default function VariationDetailPage({ params }: PageProps) {
   }, [slug]);
 
   const toggleQuestion = (questionNumber: number) => {
-    setExpandedQuestions(prev => {
+    setExpandedQuestions((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(questionNumber)) {
         newSet.delete(questionNumber);
@@ -65,9 +70,11 @@ export default function VariationDetailPage({ params }: PageProps) {
   if (error || !variation) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <p className="text-center text-red-600">{error || 'Variation not found'}</p>
+        <p className="text-center text-red-600">
+          {error || "Variation not found"}
+        </p>
         <button
-          onClick={() => router.push('/scm/podsie/variations')}
+          onClick={() => router.push("/scm/podsie/variations")}
           className="mt-4 mx-auto block px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded cursor-pointer"
         >
           ← Back to Variations
@@ -103,7 +110,7 @@ export default function VariationDetailPage({ params }: PageProps) {
         {/* Header - no print */}
         <div className="mb-8 no-print">
           <button
-            onClick={() => router.push('/scm/podsie/variations')}
+            onClick={() => router.push("/scm/podsie/variations")}
             className="text-gray-600 hover:text-gray-900 mb-4 inline-flex items-center cursor-pointer"
           >
             ← Back to Variations
@@ -138,8 +145,18 @@ export default function VariationDetailPage({ params }: PageProps) {
               onClick={handlePrint}
               className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors cursor-pointer flex items-center gap-2"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                />
               </svg>
               Print
             </button>
@@ -150,7 +167,8 @@ export default function VariationDetailPage({ params }: PageProps) {
         <div className="hidden print:block mb-6">
           <h1 className="text-2xl font-bold">{variation.title}</h1>
           <p className="text-sm">
-            {variation.scopeSequenceTag} • Unit {variation.unitNumber} • Lesson {variation.lessonNumber}
+            {variation.scopeSequenceTag} • Unit {variation.unitNumber} • Lesson{" "}
+            {variation.lessonNumber}
             {variation.section && ` • Section ${variation.section}`}
           </p>
           <div className="flex justify-between mt-2 text-sm border-b pb-2">
@@ -183,7 +201,7 @@ export default function VariationDetailPage({ params }: PageProps) {
                 )}
 
                 {/* Visual (table, graph, diagram) */}
-                {question.visualType !== 'none' && question.visualHtml && (
+                {question.visualType !== "none" && question.visualHtml && (
                   <div className="mb-4 flex justify-center">
                     <div
                       className="visual-container"
@@ -194,7 +212,9 @@ export default function VariationDetailPage({ params }: PageProps) {
 
                 {/* Question text */}
                 <div className="mb-4">
-                  <p className="text-gray-900 font-medium text-lg">{question.questionText}</p>
+                  <p className="text-gray-900 font-medium text-lg">
+                    {question.questionText}
+                  </p>
                 </div>
 
                 {/* Answer section - toggleable on screen, visible in print */}
@@ -204,60 +224,90 @@ export default function VariationDetailPage({ params }: PageProps) {
                     className="no-print w-full text-left px-4 py-2 bg-green-50 hover:bg-green-100 rounded-lg transition-colors flex items-center justify-between cursor-pointer"
                   >
                     <span className="font-medium text-green-800">
-                      {expandedQuestions.has(question.questionNumber) ? 'Hide' : 'Show'} Answer & Solution
+                      {expandedQuestions.has(question.questionNumber)
+                        ? "Hide"
+                        : "Show"}{" "}
+                      Answer & Solution
                     </span>
                     <svg
-                      className={`w-5 h-5 text-green-600 transition-transform ${expandedQuestions.has(question.questionNumber) ? 'rotate-180' : ''}`}
+                      className={`w-5 h-5 text-green-600 transition-transform ${expandedQuestions.has(question.questionNumber) ? "rotate-180" : ""}`}
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </button>
 
                   {/* Answer content - visible when expanded or in print */}
-                  <div className={`mt-4 space-y-4 ${expandedQuestions.has(question.questionNumber) ? 'block' : 'hidden print:block'}`}>
+                  <div
+                    className={`mt-4 space-y-4 ${expandedQuestions.has(question.questionNumber) ? "block" : "hidden print:block"}`}
+                  >
                     {/* Correct answer */}
                     <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-                      <h4 className="font-semibold text-green-800 mb-1">Correct Answer:</h4>
-                      <p className="text-green-900 text-lg font-medium">{question.correctAnswer}</p>
-                      {question.acceptableAnswerForms && question.acceptableAnswerForms.length > 0 && (
-                        <p className="text-sm text-green-700 mt-1">
-                          Also accepted: {question.acceptableAnswerForms.join(', ')}
-                        </p>
-                      )}
+                      <h4 className="font-semibold text-green-800 mb-1">
+                        Correct Answer:
+                      </h4>
+                      <p className="text-green-900 text-lg font-medium">
+                        {question.correctAnswer}
+                      </p>
+                      {question.acceptableAnswerForms &&
+                        question.acceptableAnswerForms.length > 0 && (
+                          <p className="text-sm text-green-700 mt-1">
+                            Also accepted:{" "}
+                            {question.acceptableAnswerForms.join(", ")}
+                          </p>
+                        )}
                     </div>
 
                     {/* Solution steps */}
-                    {question.solutionSteps && question.solutionSteps.length > 0 && (
-                      <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <h4 className="font-semibold text-gray-800 mb-2">Solution Steps:</h4>
-                        <ol className="list-decimal list-inside space-y-1">
-                          {question.solutionSteps.map((step, idx) => (
-                            <li key={idx} className="text-gray-700">{step}</li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
+                    {question.solutionSteps &&
+                      question.solutionSteps.length > 0 && (
+                        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                          <h4 className="font-semibold text-gray-800 mb-2">
+                            Solution Steps:
+                          </h4>
+                          <ol className="list-decimal list-inside space-y-1">
+                            {question.solutionSteps.map((step, idx) => (
+                              <li key={idx} className="text-gray-700">
+                                {step}
+                              </li>
+                            ))}
+                          </ol>
+                        </div>
+                      )}
 
                     {/* Explanation */}
                     <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                      <h4 className="font-semibold text-yellow-800 mb-1">Teaching Notes:</h4>
+                      <h4 className="font-semibold text-yellow-800 mb-1">
+                        Teaching Notes:
+                      </h4>
                       <p className="text-gray-700">{question.explanation}</p>
                     </div>
 
                     {/* Acceptance criteria */}
-                    {question.acceptanceCriteria && question.acceptanceCriteria.length > 0 && (
-                      <div className="p-4 bg-purple-50 rounded-lg border border-purple-200 no-print">
-                        <h4 className="font-semibold text-purple-800 mb-2">Acceptance Criteria:</h4>
-                        <ul className="list-disc list-inside space-y-1">
-                          {question.acceptanceCriteria.map((criteria, idx) => (
-                            <li key={idx} className="text-gray-700 text-sm">{criteria}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    {question.acceptanceCriteria &&
+                      question.acceptanceCriteria.length > 0 && (
+                        <div className="p-4 bg-purple-50 rounded-lg border border-purple-200 no-print">
+                          <h4 className="font-semibold text-purple-800 mb-2">
+                            Acceptance Criteria:
+                          </h4>
+                          <ul className="list-disc list-inside space-y-1">
+                            {question.acceptanceCriteria.map(
+                              (criteria, idx) => (
+                                <li key={idx} className="text-gray-700 text-sm">
+                                  {criteria}
+                                </li>
+                              ),
+                            )}
+                          </ul>
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>

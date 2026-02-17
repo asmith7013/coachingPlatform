@@ -15,7 +15,7 @@ export const SkillPerformanceItemZodSchema = z.object({
   standards: z.string(),
   status: z.enum(["Mastered", "Attempted But Not Mastered", "Not Started"]),
   score: z.string().optional(),
-  lastUpdated: z.string().optional()
+  lastUpdated: z.string().optional(),
 });
 
 // =====================================
@@ -36,16 +36,21 @@ export const StudentPerformanceInputZodSchema = z.object({
 /**
  * Complete schema including MongoDB fields
  */
-export const StudentPerformanceZodSchema = StudentPerformanceInputZodSchema.extend({
-  _id: z.string(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
+export const StudentPerformanceZodSchema =
+  StudentPerformanceInputZodSchema.extend({
+    _id: z.string(),
+    createdAt: z.string().optional(),
+    updatedAt: z.string().optional(),
+  });
 
 // =====================================
 // TYPE EXPORTS
 // =====================================
 
-export type SkillPerformanceItem = z.infer<typeof SkillPerformanceItemZodSchema>;
-export type StudentPerformanceInput = z.infer<typeof StudentPerformanceInputZodSchema>;
+export type SkillPerformanceItem = z.infer<
+  typeof SkillPerformanceItemZodSchema
+>;
+export type StudentPerformanceInput = z.infer<
+  typeof StudentPerformanceInputZodSchema
+>;
 export type StudentPerformance = z.infer<typeof StudentPerformanceZodSchema>;

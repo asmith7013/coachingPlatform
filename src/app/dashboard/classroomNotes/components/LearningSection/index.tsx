@@ -1,30 +1,39 @@
-import React from 'react';
-import { tv } from 'tailwind-variants';
-import { Textarea } from '@/components/core/fields/Textarea';
+import React from "react";
+import { tv } from "tailwind-variants";
+import { Textarea } from "@/components/core/fields/Textarea";
 
 interface LearningSectionProps {
   formData: {
     learningTargets: string;
     coolDown: string;
   };
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  handleInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => void;
 }
 
 const sectionTitle = tv({
-  base: "text-lg font-semibold border-b pb-2 mb-3"
+  base: "text-lg font-semibold border-b pb-2 mb-3",
 });
 
 const fieldLabel = tv({
-  base: "text-sm font-medium text-gray-700 mb-1"
+  base: "text-sm font-medium text-gray-700 mb-1",
 });
 
-const LearningSection: React.FC<LearningSectionProps> = ({ formData, handleInputChange }) => {
+const LearningSection: React.FC<LearningSectionProps> = ({
+  formData,
+  handleInputChange,
+}) => {
   return (
     <div>
       <h3 className={sectionTitle()}>Learning Targets & Cool Down</h3>
       <div className="space-y-4">
         <div>
-          <label className={fieldLabel()}>Learning Goals (Teacher-Facing)</label>
+          <label className={fieldLabel()}>
+            Learning Goals (Teacher-Facing)
+          </label>
           <Textarea
             name="learningTargets"
             value={formData.learningTargets}
@@ -48,4 +57,4 @@ const LearningSection: React.FC<LearningSectionProps> = ({ formData, handleInput
   );
 };
 
-export default LearningSection; 
+export default LearningSection;

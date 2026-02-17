@@ -1,4 +1,4 @@
-import { Schema, model, models } from 'mongoose';
+import { Schema, model, models } from "mongoose";
 
 const SessionSchema = new Schema(
   {
@@ -13,13 +13,16 @@ const SessionSchema = new Schema(
   },
   {
     timestamps: true,
-    collection: 'sessions',
-  }
+    collection: "sessions",
+  },
 );
 
 // Auto-expire old sessions after 90 days
-SessionSchema.index({ startTime: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
+SessionSchema.index(
+  { startTime: 1 },
+  { expireAfterSeconds: 60 * 60 * 24 * 90 },
+);
 
-const Session = models.Session || model('Session', SessionSchema);
+const Session = models.Session || model("Session", SessionSchema);
 
 export default Session;

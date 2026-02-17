@@ -1,5 +1,5 @@
-import React from 'react';
-import { HydrationBoundary } from '@components/core/query/HydrationBoundary';
+import React from "react";
+import { HydrationBoundary } from "@components/core/query/HydrationBoundary";
 
 interface DashboardPageProps {
   title?: string;
@@ -10,17 +10,19 @@ interface DashboardPageProps {
 
 export function DashboardPage({
   children,
-  dehydratedState // New prop for hydration state
+  dehydratedState, // New prop for hydration state
 }: DashboardPageProps) {
   // Wrap children with HydrationBoundary if dehydratedState is provided
   const content = dehydratedState ? (
-    <HydrationBoundary state={dehydratedState}>
-      {children}
-    </HydrationBoundary>
-  ) : children;
+    <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
+  ) : (
+    children
+  );
 
   return (
-    <div className="space-y-6"> {/* CHANGE: Remove container, use simple spacing */}
+    <div className="space-y-6">
+      {" "}
+      {/* CHANGE: Remove container, use simple spacing */}
       {content}
     </div>
   );

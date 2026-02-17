@@ -26,4 +26,4 @@ export type CalendarDay = {
 export type CalendarViewProps = {
   visits?: Visit[];
   cycles?: Record<string, { date: string; label: string }[]>;
-}; 
+};

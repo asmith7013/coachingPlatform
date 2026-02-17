@@ -33,8 +33,12 @@ export const SchoolCalendarFieldsSchema = z.object({
   notes: z.string().optional(),
 });
 
-export const SchoolCalendarZodSchema = BaseDocumentSchema.merge(SchoolCalendarFieldsSchema);
-export const SchoolCalendarInputZodSchema = toInputSchema(SchoolCalendarZodSchema);
+export const SchoolCalendarZodSchema = BaseDocumentSchema.merge(
+  SchoolCalendarFieldsSchema,
+);
+export const SchoolCalendarInputZodSchema = toInputSchema(
+  SchoolCalendarZodSchema,
+);
 
 export type SchoolCalendar = z.infer<typeof SchoolCalendarZodSchema>;
 export type SchoolCalendarInput = z.infer<typeof SchoolCalendarInputZodSchema>;

@@ -1,7 +1,7 @@
 // Forms components
-export * from './FormSection';
-export * from './BulkUploadForm';
-export * from './FormLayout';
+export * from "./FormSection";
+export * from "./BulkUploadForm";
+export * from "./FormLayout";
 
 // TanStack Form Migration Complete
 // - Universal TanStack form components have been replaced with domain-specific composition pattern

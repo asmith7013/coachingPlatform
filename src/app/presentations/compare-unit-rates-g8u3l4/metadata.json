@@ -13,9 +13,5 @@
     "Compare the rates of change for two proportional relationships, given multiple representations",
     "Interpret multiple representations of a proportional relationship in order to answer questions"
   ],
-  "scenarios": [
-    "Energy Drink Lab",
-    "Gaming XP Rates",
-    "Streaming Pricing"
-  ]
+  "scenarios": ["Energy Drink Lab", "Gaming XP Rates", "Streaming Pricing"]
 }

@@ -1,16 +1,27 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/core/Button';
-import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
-import { Input } from '@/components/core/fields/Input';
-import { Textarea } from '@/components/core/fields/Textarea';
-import { Select } from '@/components/core/fields/Select';
-import { Card } from '@/components/composed/cards/Card';
-import { PlusIcon, TrashIcon, CalendarIcon, ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import type { CapWeeklyPlan } from '@zod-schema/cap';
-import { CoachingCycleNumberZod, VisitNumberZod, type CoachingCycleNumber, type VisitNumber } from '@enums';
+import React, { useState } from "react";
+import { Button } from "@/components/core/Button";
+import { Text } from "@/components/core/typography/Text";
+import { Heading } from "@/components/core/typography/Heading";
+import { Input } from "@/components/core/fields/Input";
+import { Textarea } from "@/components/core/fields/Textarea";
+import { Select } from "@/components/core/fields/Select";
+import { Card } from "@/components/composed/cards/Card";
+import {
+  PlusIcon,
+  TrashIcon,
+  CalendarIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
+import type { CapWeeklyPlan } from "@zod-schema/cap";
+import {
+  CoachingCycleNumberZod,
+  VisitNumberZod,
+  type CoachingCycleNumber,
+  type VisitNumber,
+} from "@enums";
 
 interface WeeklyPlanManagerProps {
   weeklyPlans: CapWeeklyPlan[];
@@ -21,48 +32,54 @@ interface WeeklyPlanManagerProps {
 export function WeeklyPlanManager({
   weeklyPlans,
   onChange,
-  className = ''
+  className = "",
 }: WeeklyPlanManagerProps) {
   const [expandedPlans, setExpandedPlans] = useState<number[]>([]);
 
   const togglePlan = (index: number) => {
-    setExpandedPlans(prev =>
-      prev.includes(index)
-        ? prev.filter(i => i !== index)
-        : [...prev, index]
+    setExpandedPlans((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
 
   const addWeeklyPlan = () => {
     // Determine next cycle and visit numbers based on existing plans
-    const nextCycleNumber: CoachingCycleNumber = weeklyPlans.length < 3 ? "1" : 
-                                               weeklyPlans.length < 6 ? "2" : "3";
-    const nextVisitNumber: VisitNumber = weeklyPlans.length % 3 === 0 ? "1" :
-                                        weeklyPlans.length % 3 === 1 ? "2" : "3";
+    const nextCycleNumber: CoachingCycleNumber =
+      weeklyPlans.length < 3 ? "1" : weeklyPlans.length < 6 ? "2" : "3";
+    const nextVisitNumber: VisitNumber =
+      weeklyPlans.length % 3 === 0
+        ? "1"
+        : weeklyPlans.length % 3 === 1
+          ? "2"
+          : "3";
 
     const newPlan: CapWeeklyPlan = {
       cycleNumber: nextCycleNumber,
       visitNumber: nextVisitNumber,
-      focus: '',
-      lookFor: '',
-      coachAction: '',
-      teacherAction: '',
-      progressMonitoring: '',
-      visitId: '',
-      status: 'planned',
+      focus: "",
+      lookFor: "",
+      coachAction: "",
+      teacherAction: "",
+      progressMonitoring: "",
+      visitId: "",
+      status: "planned",
       expectedMetrics: [],
-      _id: '',
+      _id: "",
       ownerIds: [],
-      createdAt: '',
-      updatedAt: ''
+      createdAt: "",
+      updatedAt: "",
     };
-    
+
     onChange([...weeklyPlans, newPlan]);
     // Auto-expand the new plan
-    setExpandedPlans(prev => [...prev, weeklyPlans.length]);
+    setExpandedPlans((prev) => [...prev, weeklyPlans.length]);
   };
 
-  const updatePlan = (index: number, field: keyof CapWeeklyPlan, value: string | Date | CoachingCycleNumber | VisitNumber) => {
+  const updatePlan = (
+    index: number,
+    field: keyof CapWeeklyPlan,
+    value: string | Date | CoachingCycleNumber | VisitNumber,
+  ) => {
     const updated = [...weeklyPlans];
     updated[index] = { ...updated[index], [field]: value };
     onChange(updated);
@@ -70,7 +87,9 @@ export function WeeklyPlanManager({
 
   const removePlan = (index: number) => {
     onChange(weeklyPlans.filter((_, i) => i !== index));
-    setExpandedPlans(prev => prev.filter(i => i !== index).map(i => i > index ? i - 1 : i));
+    setExpandedPlans((prev) =>
+      prev.filter((i) => i !== index).map((i) => (i > index ? i - 1 : i)),
+    );
   };
 
   const getPlanTitle = (plan: CapWeeklyPlan, _index: number) => {
@@ -112,7 +131,7 @@ export function WeeklyPlanManager({
         <div className="space-y-3">
           {weeklyPlans.map((plan, planIndex) => {
             const isExpanded = expandedPlans.includes(planIndex);
-            
+
             return (
               <Card key={planIndex} padding="md" className="border">
                 {/* Plan Header */}
@@ -129,7 +148,11 @@ export function WeeklyPlanManager({
                     )}
                     <CalendarIcon className="h-4 w-4 flex-shrink-0 text-gray-400" />
                     <div className="flex-1">
-                      <Text textSize="sm" color="default" className="font-medium">
+                      <Text
+                        textSize="sm"
+                        color="default"
+                        className="font-medium"
+                      >
                         {getPlanTitle(plan, planIndex)}
                       </Text>
                       <Text textSize="xs" color="muted">
@@ -137,7 +160,7 @@ export function WeeklyPlanManager({
                       </Text>
                     </div>
                   </button>
-                  
+
                   <Button
                     intent="danger"
                     appearance="outline"
@@ -158,20 +181,34 @@ export function WeeklyPlanManager({
                       <Select
                         label="Cycle Number"
                         value={plan.cycleNumber}
-                        onChange={(value) => updatePlan(planIndex, 'cycleNumber', value as CoachingCycleNumber)}
-                        options={CoachingCycleNumberZod.options.map(value => ({
-                          value,
-                          label: `Cycle ${value}`
-                        }))}
+                        onChange={(value) =>
+                          updatePlan(
+                            planIndex,
+                            "cycleNumber",
+                            value as CoachingCycleNumber,
+                          )
+                        }
+                        options={CoachingCycleNumberZod.options.map(
+                          (value) => ({
+                            value,
+                            label: `Cycle ${value}`,
+                          }),
+                        )}
                       />
 
                       <Select
                         label="Visit Number"
                         value={plan.visitNumber}
-                        onChange={(value) => updatePlan(planIndex, 'visitNumber', value as VisitNumber)}
-                        options={VisitNumberZod.options.map(value => ({
+                        onChange={(value) =>
+                          updatePlan(
+                            planIndex,
+                            "visitNumber",
+                            value as VisitNumber,
+                          )
+                        }
+                        options={VisitNumberZod.options.map((value) => ({
                           value,
-                          label: `Visit ${value}`
+                          label: `Visit ${value}`,
                         }))}
                       />
                     </div>
@@ -180,7 +217,9 @@ export function WeeklyPlanManager({
                     <Textarea
                       label="Visit Focus"
                       value={plan.focus}
-                      onChange={(e) => updatePlan(planIndex, 'focus', e.target.value)}
+                      onChange={(e) =>
+                        updatePlan(planIndex, "focus", e.target.value)
+                      }
                       placeholder="What is the primary focus for this coaching visit?"
                       rows={2}
                       required
@@ -190,7 +229,9 @@ export function WeeklyPlanManager({
                     <Textarea
                       label="What to Look For"
                       value={plan.lookFor}
-                      onChange={(e) => updatePlan(planIndex, 'lookFor', e.target.value)}
+                      onChange={(e) =>
+                        updatePlan(planIndex, "lookFor", e.target.value)
+                      }
                       placeholder="Specific things to observe and look for during the visit..."
                       rows={3}
                       required
@@ -201,7 +242,9 @@ export function WeeklyPlanManager({
                       <Textarea
                         label="Coach Actions"
                         value={plan.coachAction}
-                        onChange={(e) => updatePlan(planIndex, 'coachAction', e.target.value)}
+                        onChange={(e) =>
+                          updatePlan(planIndex, "coachAction", e.target.value)
+                        }
                         placeholder="What actions will the coach take during this visit?"
                         rows={3}
                         required
@@ -210,7 +253,9 @@ export function WeeklyPlanManager({
                       <Textarea
                         label="Teacher Actions"
                         value={plan.teacherAction}
-                        onChange={(e) => updatePlan(planIndex, 'teacherAction', e.target.value)}
+                        onChange={(e) =>
+                          updatePlan(planIndex, "teacherAction", e.target.value)
+                        }
                         placeholder="What actions are expected from the teacher?"
                         rows={3}
                         required
@@ -221,7 +266,13 @@ export function WeeklyPlanManager({
                     <Textarea
                       label="Progress Monitoring"
                       value={plan.progressMonitoring}
-                      onChange={(e) => updatePlan(planIndex, 'progressMonitoring', e.target.value)}
+                      onChange={(e) =>
+                        updatePlan(
+                          planIndex,
+                          "progressMonitoring",
+                          e.target.value,
+                        )
+                      }
                       placeholder="How will progress be monitored and measured during this visit?"
                       rows={2}
                       required
@@ -230,8 +281,10 @@ export function WeeklyPlanManager({
                     {/* Optional Visit ID */}
                     <Input
                       label="Related Visit Record (Optional)"
-                      value={plan.visitId || ''}
-                      onChange={(e) => updatePlan(planIndex, 'visitId', e.target.value || '')}
+                      value={plan.visitId || ""}
+                      onChange={(e) =>
+                        updatePlan(planIndex, "visitId", e.target.value || "")
+                      }
                       placeholder="Link to actual visit record when visit is completed"
                     />
                   </div>
@@ -246,10 +299,11 @@ export function WeeklyPlanManager({
       {weeklyPlans.length > 0 && (
         <Card padding="sm" className="bg-blue-50 border-blue-200">
           <Text textSize="sm" color="default" className="font-medium">
-            Plan Summary: {weeklyPlans.length} visits planned across {Math.max(1, Math.ceil(weeklyPlans.length / 3))} cycles
+            Plan Summary: {weeklyPlans.length} visits planned across{" "}
+            {Math.max(1, Math.ceil(weeklyPlans.length / 3))} cycles
           </Text>
         </Card>
       )}
     </div>
   );
-} 
+}

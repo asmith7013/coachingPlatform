@@ -3,7 +3,8 @@ import { ExampleSketch } from "../../types";
 export const ALGEBRA_TILES_SIMPLE: ExampleSketch = {
   id: "algebra-tiles-simple",
   name: "Algebra Tiles - Simple Manipulative",
-  description: "Drag algebra tiles (x, -x, 1, -1) onto the canvas. When opposite tiles are close, they snap together and turn light grey to show cancellation.",
+  description:
+    "Drag algebra tiles (x, -x, 1, -1) onto the canvas. When opposite tiles are close, they snap together and turn light grey to show cancellation.",
   code: `// ==========================================
 // CONFIGURATION - Easily modifiable
 // ==========================================
@@ -493,5 +494,5 @@ function mouseMoved() {
   if (!isHoveringAnything && !draggedTile) {
     cursor(ARROW);
   }
-}`
+}`,
 };

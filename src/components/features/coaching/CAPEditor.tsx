@@ -1,27 +1,33 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
-import { Drawer } from '@components/composed/drawers/Drawer';
-import { TabbedStageNavigation, defaultStageConfiguration } from './TabbedStageNavigation';
-import { Text } from '@components/core/typography/Text';
-import { Heading } from '@components/core/typography/Heading';
-import { Button } from '@components/core/Button';
-import { XIcon } from 'lucide-react';
-import { useCoachingActionPlans } from '@/hooks/domain/useCoachingActionPlans';
-import { useToast } from '@components/core/feedback/Toast';
-import { handleClientError } from '@error/handlers/client';
-import { calculatePlanProgress } from '@data-processing/transformers/utils/coaching-action-plan-utils';
-import { CoachingActionPlanInputZodSchema } from '@zod-schema/core/cap';
-import type { CoachingActionPlan, CoachingActionPlanInput } from '@zod-schema/core/cap';
-import type { CapImplementationRecord } from '@zod-schema/cap/cap-implementation-record';
-import { CapOutcomeInput } from '@zod-schema/cap';
-import { createCoachingActionPlanDefaults } from '@zod-schema/core/cap';
+import React, { useState, useMemo } from "react";
+import { Drawer } from "@components/composed/drawers/Drawer";
+import {
+  TabbedStageNavigation,
+  defaultStageConfiguration,
+} from "./TabbedStageNavigation";
+import { Text } from "@components/core/typography/Text";
+import { Heading } from "@components/core/typography/Heading";
+import { Button } from "@components/core/Button";
+import { XIcon } from "lucide-react";
+import { useCoachingActionPlans } from "@/hooks/domain/useCoachingActionPlans";
+import { useToast } from "@components/core/feedback/Toast";
+import { handleClientError } from "@error/handlers/client";
+import { calculatePlanProgress } from "@data-processing/transformers/utils/coaching-action-plan-utils";
+import { CoachingActionPlanInputZodSchema } from "@zod-schema/core/cap";
+import type {
+  CoachingActionPlan,
+  CoachingActionPlanInput,
+} from "@zod-schema/core/cap";
+import type { CapImplementationRecord } from "@zod-schema/cap/cap-implementation-record";
+import { CapOutcomeInput } from "@zod-schema/cap";
+import { createCoachingActionPlanDefaults } from "@zod-schema/core/cap";
 
 // Import stage components
-import { CoachingActionPlanStage1 } from './stages/CAPStage1';
-import { CoachingActionPlanStage2 } from './stages/CAPStage2';
-import { CoachingActionPlanStage3 } from './stages/CAPStage3';
-import { CoachingActionPlanStage4 } from './stages/CAPStage4';
+import { CoachingActionPlanStage1 } from "./stages/CAPStage1";
+import { CoachingActionPlanStage2 } from "./stages/CAPStage2";
+import { CoachingActionPlanStage3 } from "./stages/CAPStage3";
+import { CoachingActionPlanStage4 } from "./stages/CAPStage4";
 
 interface CoachingActionPlanDetailedEditorProps {
   planId: string;
@@ -36,29 +42,29 @@ export function CoachingActionPlanDetailedEditor({
   open,
   onClose,
   onSave,
-  className
+  className,
 }: CoachingActionPlanDetailedEditorProps) {
   // Data fetching and mutations
   const { data: plan, isLoading, error } = useCoachingActionPlans.byId(planId);
   const mutations = useCoachingActionPlans.mutations();
-  
+
   // UI state
   const [currentStage, setCurrentStage] = useState(1);
-  
+
   // Toast notifications
   const { showToast } = useToast();
 
   // Handle stage updates with direct mutation and schema validation
   const handleStageUpdate = async (
     stage: keyof CoachingActionPlanInput,
-    updates: unknown
+    updates: unknown,
   ) => {
     if (!plan || !mutations?.updateAsync) return;
 
     try {
       // Validate updates with schema
       const validated = CoachingActionPlanInputZodSchema.partial().parse({
-        [stage]: updates
+        [stage]: updates,
       });
 
       // Direct mutation update
@@ -69,38 +75,43 @@ export function CoachingActionPlanDetailedEditor({
       }
 
       showToast({
-        title: 'Success',
-        description: 'Changes saved successfully',
-        variant: 'success'
+        title: "Success",
+        description: "Changes saved successfully",
+        variant: "success",
       });
     } catch (error) {
-      const errorMessage = handleClientError(error, 'updateCoachingActionPlan');
+      const errorMessage = handleClientError(error, "updateCoachingActionPlan");
       showToast({
-        title: 'Save Failed',
+        title: "Save Failed",
         description: errorMessage,
-        variant: 'error'
+        variant: "error",
       });
     }
   };
 
   // Calculate stage completion status
   const stageInfo = useMemo(() => {
-    if (!plan) return defaultStageConfiguration.map(stage => ({
-      ...stage,
-      isComplete: false,
-      isValid: false
-    }));
+    if (!plan)
+      return defaultStageConfiguration.map((stage) => ({
+        ...stage,
+        isComplete: false,
+        isValid: false,
+      }));
 
     const progress = calculatePlanProgress(plan);
-    
-    return defaultStageConfiguration.map(stage => {
-      const stageProgress = progress.stageDetails.find(s => s.stage === getStageKey(stage.number));
-      
+
+    return defaultStageConfiguration.map((stage) => {
+      const stageProgress = progress.stageDetails.find(
+        (s) => s.stage === getStageKey(stage.number),
+      );
+
       return {
         ...stage,
         isComplete: stageProgress?.isValid || false,
         isValid: stageProgress?.isValid || false,
-        hasWarnings: stageProgress ? !stageProgress.isValid && stageProgress.completionPercentage > 0 : false
+        hasWarnings: stageProgress
+          ? !stageProgress.isValid && stageProgress.completionPercentage > 0
+          : false,
       };
     });
   }, [plan]);
@@ -108,12 +119,12 @@ export function CoachingActionPlanDetailedEditor({
   // Helper function to get correct property key for each stage
   function getStageKey(stageNumber: number): keyof CoachingActionPlanInput {
     const stageMap = {
-      1: 'needsAndFocus',
-      2: 'goal', 
-      3: 'implementationRecords',
-      4: 'endOfCycleAnalysis'
+      1: "needsAndFocus",
+      2: "goal",
+      3: "implementationRecords",
+      4: "endOfCycleAnalysis",
     } as const;
-    return stageMap[stageNumber as keyof typeof stageMap] || 'needsAndFocus';
+    return stageMap[stageNumber as keyof typeof stageMap] || "needsAndFocus";
   }
 
   // Render stage content with direct mutation handlers
@@ -129,7 +140,7 @@ export function CoachingActionPlanDetailedEditor({
     const fullPlan = createCoachingActionPlanDefaults(plan);
     const commonProps = {
       planId,
-      className: "flex-1"
+      className: "flex-1",
     };
 
     switch (currentStage) {
@@ -138,51 +149,63 @@ export function CoachingActionPlanDetailedEditor({
           <CoachingActionPlanStage1
             className={commonProps.className}
             data={fullPlan.ipgCoreAction as CoachingActionPlan}
-            onChange={(updates) => handleStageUpdate('ipgCoreAction', updates)}
-          />  
+            onChange={(updates) => handleStageUpdate("ipgCoreAction", updates)}
+          />
         );
-        
+
       case 2:
         return (
           <CoachingActionPlanStage2
             {...commonProps}
-            data={(fullPlan.goal as CoachingActionPlanInput) || {
-              description: '',
-              teacherOutcomes: [],
-              studentOutcomes: []
-            }}
-            onChange={(goalData) => handleStageUpdate('goal', goalData)}
+            data={
+              (fullPlan.goal as CoachingActionPlanInput) || {
+                description: "",
+                teacherOutcomes: [],
+                studentOutcomes: [],
+              }
+            }
+            onChange={(goalData) => handleStageUpdate("goal", goalData)}
           />
         );
-        
+
       case 3:
         return (
           <CoachingActionPlanStage3
             {...commonProps}
-            data={(fullPlan.implementationRecords as CapImplementationRecord[]) || []}
-            onChange={(records) => handleStageUpdate('implementationRecords', records)}
+            data={
+              (fullPlan.implementationRecords as CapImplementationRecord[]) ||
+              []
+            }
+            onChange={(records) =>
+              handleStageUpdate("implementationRecords", records)
+            }
             goal={fullPlan.goal as CoachingActionPlan}
           />
         );
-        
+
       case 4:
         return (
           <CoachingActionPlanStage4
             {...commonProps}
-            data={(fullPlan.endOfCycleAnalysis as CoachingActionPlan) || ({
-              goalMet: false,
-              teacherOutcomeAnalysis: [],
-              studentOutcomeAnalysis: [],
-              impactOnLearning: '',
-              overallEvidence: [],
-              lessonsLearned: undefined,
-              recommendationsForNext: undefined
-            } as CoachingActionPlanInput)}
-            onChange={(analysisData: CapOutcomeInput) => handleStageUpdate('endOfCycleAnalysis', analysisData)}
+            data={
+              (fullPlan.endOfCycleAnalysis as CoachingActionPlan) ||
+              ({
+                goalMet: false,
+                teacherOutcomeAnalysis: [],
+                studentOutcomeAnalysis: [],
+                impactOnLearning: "",
+                overallEvidence: [],
+                lessonsLearned: undefined,
+                recommendationsForNext: undefined,
+              } as CoachingActionPlanInput)
+            }
+            onChange={(analysisData: CapOutcomeInput) =>
+              handleStageUpdate("endOfCycleAnalysis", analysisData)
+            }
             goal={fullPlan.goal as CoachingActionPlan}
           />
         );
-        
+
       default:
         return (
           <div className="flex items-center justify-center h-64">
@@ -194,8 +217,8 @@ export function CoachingActionPlanDetailedEditor({
 
   if (error) {
     return (
-      <Drawer 
-        open={open} 
+      <Drawer
+        open={open}
         onClose={onClose}
         size="lg"
         position="right"
@@ -215,8 +238,8 @@ export function CoachingActionPlanDetailedEditor({
   }
 
   return (
-    <Drawer 
-      open={open} 
+    <Drawer
+      open={open}
       onClose={onClose}
       size="lg"
       position="right"
@@ -228,11 +251,11 @@ export function CoachingActionPlanDetailedEditor({
           <div className="flex-1">
             <Drawer.Title>
               <Heading level="h2" className="text-xl font-semibold">
-                {plan ? `Spring Action Plan` : 'Loading...'}
+                {plan ? `Spring Action Plan` : "Loading..."}
               </Heading>
             </Drawer.Title>
           </div>
-          
+
           {/* Action buttons */}
           <div className="flex items-center gap-2 ml-4">
             <Button
@@ -246,7 +269,7 @@ export function CoachingActionPlanDetailedEditor({
             </Button>
           </div>
         </div>
-        
+
         {/* Stage Navigation */}
         <div className="mt-4">
           <TabbedStageNavigation
@@ -257,11 +280,11 @@ export function CoachingActionPlanDetailedEditor({
           />
         </div>
       </Drawer.Header>
-      
+
       <Drawer.Body>
         {/* Add padding top to account for sticky header */}
         <div className="pt-2">
-          <div 
+          <div
             id={`stage-panel-${currentStage}`}
             role="tabpanel"
             aria-labelledby={`stage-tab-${currentStage}`}
@@ -273,4 +296,4 @@ export function CoachingActionPlanDetailedEditor({
       </Drawer.Body>
     </Drawer>
   );
-} 
+}

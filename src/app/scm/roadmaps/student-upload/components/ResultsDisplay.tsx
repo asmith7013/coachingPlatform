@@ -1,10 +1,10 @@
 "use client";
 
-import React from 'react';
-import { Button } from '@/components/core/Button';
-import { Alert } from '@/components/core/feedback/Alert';
-import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import { ImportResponse } from '../lib/types';
+import React from "react";
+import { Button } from "@/components/core/Button";
+import { Alert } from "@/components/core/feedback/Alert";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { ImportResponse } from "../lib/types";
 
 interface ResultsDisplayProps {
   response: ImportResponse | null;
@@ -12,7 +12,11 @@ interface ResultsDisplayProps {
   onClear: () => void;
 }
 
-export function ResultsDisplay({ response, isLoading, onClear }: ResultsDisplayProps) {
+export function ResultsDisplay({
+  response,
+  isLoading,
+  onClear,
+}: ResultsDisplayProps) {
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow p-6">
@@ -33,13 +37,23 @@ export function ResultsDisplay({ response, isLoading, onClear }: ResultsDisplayP
       {/* Summary */}
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800">Import Results</h3>
+          <h3 className="text-lg font-semibold text-gray-800">
+            Import Results
+          </h3>
           {response.metadata && (
             <div className="mt-2 text-sm text-gray-600 space-y-1">
-              <p><strong>Section:</strong> {response.metadata.section}</p>
-              <p><strong>Teacher:</strong> {response.metadata.teacher}</p>
-              <p><strong>Roadmap:</strong> {response.metadata.roadmap}</p>
-              <p><strong>Date:</strong> {response.metadata.date}</p>
+              <p>
+                <strong>Section:</strong> {response.metadata.section}
+              </p>
+              <p>
+                <strong>Teacher:</strong> {response.metadata.teacher}
+              </p>
+              <p>
+                <strong>Roadmap:</strong> {response.metadata.roadmap}
+              </p>
+              <p>
+                <strong>Date:</strong> {response.metadata.date}
+              </p>
             </div>
           )}
         </div>
@@ -52,15 +66,21 @@ export function ResultsDisplay({ response, isLoading, onClear }: ResultsDisplayP
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-gray-50 rounded-lg p-4">
           <p className="text-sm text-gray-600">Total Students</p>
-          <p className="text-2xl font-bold text-gray-900">{response.totalStudentsProcessed}</p>
+          <p className="text-2xl font-bold text-gray-900">
+            {response.totalStudentsProcessed}
+          </p>
         </div>
         <div className="bg-green-50 rounded-lg p-4">
           <p className="text-sm text-green-700">Successful Updates</p>
-          <p className="text-2xl font-bold text-green-900">{response.successfulUpdates}</p>
+          <p className="text-2xl font-bold text-green-900">
+            {response.successfulUpdates}
+          </p>
         </div>
         <div className="bg-red-50 rounded-lg p-4">
           <p className="text-sm text-red-700">Failed Updates</p>
-          <p className="text-2xl font-bold text-red-900">{response.failedUpdates}</p>
+          <p className="text-2xl font-bold text-red-900">
+            {response.failedUpdates}
+          </p>
         </div>
       </div>
 
@@ -71,7 +91,9 @@ export function ResultsDisplay({ response, isLoading, onClear }: ResultsDisplayP
           <Alert.Description>
             <ul className="list-disc list-inside space-y-1 mt-2">
               {response.errors.slice(0, 10).map((error, index) => (
-                <li key={index} className="text-sm">{error}</li>
+                <li key={index} className="text-sm">
+                  {error}
+                </li>
               ))}
               {response.errors.length > 10 && (
                 <li className="text-sm font-medium">
@@ -85,7 +107,9 @@ export function ResultsDisplay({ response, isLoading, onClear }: ResultsDisplayP
 
       {/* Student Results */}
       <div>
-        <h4 className="font-medium text-gray-800 mb-3">Student Update Details</h4>
+        <h4 className="font-medium text-gray-800 mb-3">
+          Student Update Details
+        </h4>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -109,7 +133,7 @@ export function ResultsDisplay({ response, isLoading, onClear }: ResultsDisplayP
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {response.studentResults.map((result, index) => (
-                <tr key={index} className={result.success ? '' : 'bg-red-50'}>
+                <tr key={index} className={result.success ? "" : "bg-red-50"}>
                   <td className="px-4 py-3 whitespace-nowrap">
                     {result.success ? (
                       <CheckCircleIcon className="w-5 h-5 text-green-500" />
@@ -127,7 +151,7 @@ export function ResultsDisplay({ response, isLoading, onClear }: ResultsDisplayP
                     {result.totalMasteredSkills}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-600">
-                    {result.error || 'Success'}
+                    {result.error || "Success"}
                   </td>
                 </tr>
               ))}
@@ -140,9 +164,11 @@ export function ResultsDisplay({ response, isLoading, onClear }: ResultsDisplayP
       <div className="pt-4 border-t">
         <Button
           onClick={() => {
-            const blob = new Blob([JSON.stringify(response, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(response, null, 2)], {
+              type: "application/json",
+            });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
+            const a = document.createElement("a");
             a.href = url;
             a.download = `import-results-${new Date().toISOString()}.json`;
             a.click();

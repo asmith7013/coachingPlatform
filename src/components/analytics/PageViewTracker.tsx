@@ -1,34 +1,34 @@
-'use client'
+"use client";
 
-import { useEffect, useRef, useState } from 'react'
-import { usePathname } from 'next/navigation'
-import { useUser } from '@clerk/nextjs'
-import { trackPageView, updatePageViewDuration } from '@/app/actions/analytics'
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import { trackPageView, updatePageViewDuration } from "@/app/actions/analytics";
 
 // Generate a session ID that persists across page loads
 function getSessionId(): string {
-  if (typeof window === 'undefined') return ''
+  if (typeof window === "undefined") return "";
 
-  let sessionId = sessionStorage.getItem('analytics_session_id')
+  let sessionId = sessionStorage.getItem("analytics_session_id");
   if (!sessionId) {
-    sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
-    sessionStorage.setItem('analytics_session_id', sessionId)
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    sessionStorage.setItem("analytics_session_id", sessionId);
   }
-  return sessionId
+  return sessionId;
 }
 
 export function PageViewTracker() {
-  const pathname = usePathname()
-  const { user, isLoaded } = useUser()
-  const [pageViewId, setPageViewId] = useState<string | null>(null)
-  const startTimeRef = useRef<number>(Date.now())
-  const pageViewIdRef = useRef<string | null>(null)
+  const pathname = usePathname();
+  const { user, isLoaded } = useUser();
+  const [pageViewId, setPageViewId] = useState<string | null>(null);
+  const startTimeRef = useRef<number>(Date.now());
+  const pageViewIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!isLoaded) return
+    if (!isLoaded) return;
 
-    const sessionId = getSessionId()
-    startTimeRef.current = Date.now()
+    const sessionId = getSessionId();
+    startTimeRef.current = Date.now();
 
     // Track page view
     const trackView = async () => {
@@ -42,47 +42,49 @@ export function PageViewTracker() {
           fullUrl: window.location.href,
           referrer: document.referrer || undefined,
           userAgent: navigator.userAgent,
-        })
+        });
 
         if (result.success && result.data) {
-          const id = result.data._id as string
-          setPageViewId(id)
-          pageViewIdRef.current = id
+          const id = result.data._id as string;
+          setPageViewId(id);
+          pageViewIdRef.current = id;
         }
       } catch (error) {
-        console.error('Failed to track page view:', error)
+        console.error("Failed to track page view:", error);
       }
-    }
+    };
 
-    trackView()
+    trackView();
 
     // Update duration when user leaves
     return () => {
       if (pageViewIdRef.current) {
-        const duration = Math.round((Date.now() - startTimeRef.current) / 1000)
+        const duration = Math.round((Date.now() - startTimeRef.current) / 1000);
         // Call the action (may not fire reliably on page unload)
-        updatePageViewDuration(pageViewIdRef.current, duration).catch(console.error)
+        updatePageViewDuration(pageViewIdRef.current, duration).catch(
+          console.error,
+        );
       }
-    }
-  }, [pathname, user?.id, user?.primaryEmailAddress?.emailAddress, isLoaded])
+    };
+  }, [pathname, user?.id, user?.primaryEmailAddress?.emailAddress, isLoaded]);
 
   // Track page visibility changes
   useEffect(() => {
-    if (!pageViewId) return
+    if (!pageViewId) return;
 
     const handleVisibilityChange = () => {
       if (document.hidden && pageViewId) {
-        const duration = Math.round((Date.now() - startTimeRef.current) / 1000)
-        updatePageViewDuration(pageViewId, duration).catch(console.error)
+        const duration = Math.round((Date.now() - startTimeRef.current) / 1000);
+        updatePageViewDuration(pageViewId, duration).catch(console.error);
       }
-    }
+    };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange)
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-    }
-  }, [pageViewId])
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [pageViewId]);
 
-  return null
+  return null;
 }

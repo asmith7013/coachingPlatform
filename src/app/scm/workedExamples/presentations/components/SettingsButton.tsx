@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from "react";
 
 interface SettingsButtonProps {
   onOpenHtmlViewer: () => void;
@@ -27,10 +27,10 @@ export function SettingsButton({
     }
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -106,7 +106,7 @@ export function SettingsButton({
           {googleSlidesUrl && (
             <button
               onClick={() => {
-                window.open(googleSlidesUrl, '_blank');
+                window.open(googleSlidesUrl, "_blank");
                 setIsOpen(false);
               }}
               className="w-full flex items-center gap-3 px-4 py-3 text-left text-white hover:bg-gray-700 transition-colors cursor-pointer"

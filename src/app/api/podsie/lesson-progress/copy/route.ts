@@ -40,15 +40,18 @@ export async function POST(req: NextRequest) {
 
     if (!sourceGroupId || !sourceModuleId) {
       return NextResponse.json(
-        { success: false, error: "sourceGroupId and sourceModuleId are required" },
-        { status: 400 }
+        {
+          success: false,
+          error: "sourceGroupId and sourceModuleId are required",
+        },
+        { status: 400 },
       );
     }
 
     if (!Array.isArray(targetGroupIds) || targetGroupIds.length === 0) {
       return NextResponse.json(
         { success: false, error: "targetGroupIds must be a non-empty array" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -60,7 +63,7 @@ export async function POST(req: NextRequest) {
     ) {
       return NextResponse.json(
         { success: false, error: "All IDs must be valid numbers" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -81,7 +84,10 @@ export async function POST(req: NextRequest) {
         // Skip if trying to copy to self
         if (targetGroupId === sourceGroupId) continue;
 
-        const assignments = sourceConfig.assignments as unknown as Record<string, unknown>[];
+        const assignments = sourceConfig.assignments as unknown as Record<
+          string,
+          unknown
+        >[];
         const assignmentsToWrite = assignments.map((a) => ({
           ...a,
           ...(!copyDueDates && { dueDate: undefined }),
@@ -97,7 +103,9 @@ export async function POST(req: NextRequest) {
             podsieGroupId: targetGroupId,
             podsieModuleId: sourceModuleId,
             assignments: assignmentsToWrite,
-            ...(copyStartDate && { moduleStartDate: sourceConfig.moduleStartDate }),
+            ...(copyStartDate && {
+              moduleStartDate: sourceConfig.moduleStartDate,
+            }),
             ...(copyPointsReward && {
               pointsRewardGoal: sourceConfig.pointsRewardGoal,
               pointsRewardDescription: sourceConfig.pointsRewardDescription,
@@ -107,7 +115,7 @@ export async function POST(req: NextRequest) {
               completedSections: sourceConfig.completedSections,
             }),
           },
-          { upsert: true, new: true }
+          { upsert: true, new: true },
         );
         copiedCount++;
       }
@@ -118,7 +126,7 @@ export async function POST(req: NextRequest) {
     if (!result.found) {
       return NextResponse.json(
         { success: false, error: "Source pacing config not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -130,7 +138,7 @@ export async function POST(req: NextRequest) {
     console.error("Error in lesson-progress/copy POST:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

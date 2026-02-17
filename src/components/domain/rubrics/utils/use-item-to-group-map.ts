@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 export type ItemWithId = {
   id: string;
@@ -10,16 +10,19 @@ export type GroupWithId = {
   id: string;
 };
 
-export function useItemToGroupMap<TGroup extends GroupWithId, TItem extends ItemWithId>(
+export function useItemToGroupMap<
+  TGroup extends GroupWithId,
+  TItem extends ItemWithId,
+>(
   groups: TGroup[],
-  extractItems: (group: TGroup) => TItem[]
+  extractItems: (group: TGroup) => TItem[],
 ): Map<string, string[]> {
   return useMemo(() => {
     const itemToGroupMap = new Map<string, string[]>();
 
-    groups.forEach(group => {
+    groups.forEach((group) => {
       const items = extractItems(group);
-      items.forEach(item => {
+      items.forEach((item) => {
         const groupIds = itemToGroupMap.get(item.id) || [];
         if (!groupIds.includes(group.id)) {
           itemToGroupMap.set(item.id, [...groupIds, group.id]);
@@ -29,4 +32,4 @@ export function useItemToGroupMap<TGroup extends GroupWithId, TItem extends Item
 
     return itemToGroupMap;
   }, [groups, extractItems]);
-} 
+}

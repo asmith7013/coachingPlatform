@@ -2,11 +2,11 @@
 
 import { createCrudActions } from "@server/crud";
 import { VisitModel } from "@mongoose-schema/visits/visit.model";
-import { 
+import {
   Visit,
-  VisitZodSchema, 
+  VisitZodSchema,
   VisitInputZodSchema,
-  type VisitInput
+  type VisitInput,
 } from "@zod-schema/visits/visit";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { QueryParams } from "@core-types/query";
@@ -19,9 +19,9 @@ const visitActions = createCrudActions({
   inputSchema: VisitInputZodSchema,
   name: "Visit",
   revalidationPaths: ["/dashboard/visits"],
-  sortFields: ['date', 'school', 'coach', 'createdAt', 'updatedAt'],
-  defaultSortField: 'date',
-  defaultSortOrder: 'desc'
+  sortFields: ["date", "school", "coach", "createdAt", "updatedAt"],
+  defaultSortField: "date",
+  defaultSortOrder: "desc",
 });
 
 // Export individual functions with connection handling
@@ -46,4 +46,4 @@ export async function fetchVisitById(id: string) {
 }
 
 // ✅ ADD: Export the raw actions object for debugging
-// export { visitActions }; 
+// export { visitActions };

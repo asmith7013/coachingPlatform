@@ -1,14 +1,14 @@
-import { NextRequest } from 'next/server';
+import { NextRequest } from "next/server";
 
 // Extend Vercel function timeout for long Claude API streaming
 // Streaming keeps connection alive, but Vercel still has a max execution time
 export const maxDuration = 300; // 5 minutes
 
-import Anthropic from '@anthropic-ai/sdk';
-import { handleAnthropicError } from '@error/handlers/anthropic';
-import { currentUser } from '@clerk/nextjs/server';
-import { MODEL_FOR_TASK } from '@/lib/api/integrations/claude/models';
-import { sendEmail } from '@/lib/email/email-service';
+import Anthropic from "@anthropic-ai/sdk";
+import { handleAnthropicError } from "@error/handlers/anthropic";
+import { currentUser } from "@clerk/nextjs/server";
+import { MODEL_FOR_TASK } from "@/lib/api/integrations/claude/models";
+import { sendEmail } from "@/lib/email/email-service";
 import {
   GENERATE_SLIDES_SYSTEM_PROMPT,
   buildGenerateSlidesPrompt,
@@ -16,9 +16,13 @@ import {
   buildUpdatePrompt,
   type GenerationMode,
   type UpdateInstructions,
-} from '@/app/scm/workedExamples/create/lib/prompts';
-import type { ProblemAnalysis, StrategyDefinition, Scenario } from '@/app/scm/workedExamples/create/lib/types';
-import type { HtmlSlide } from '@zod-schema/scm/worked-example';
+} from "@/app/scm/workedExamples/create/lib/prompts";
+import type {
+  ProblemAnalysis,
+  StrategyDefinition,
+  Scenario,
+} from "@/app/scm/workedExamples/create/lib/types";
+import type { HtmlSlide } from "@zod-schema/scm/worked-example";
 
 interface GenerateSlidesInput {
   gradeLevel: string;
@@ -30,14 +34,14 @@ interface GenerateSlidesInput {
   scenarios: Scenario[];
   testMode?: boolean; // Generate only 1 slide for testing
   // Context-aware generation
-  mode?: GenerationMode;           // 'full' (default), 'continue', or 'update'
-  existingSlides?: HtmlSlide[];    // Slides already generated
+  mode?: GenerationMode; // 'full' (default), 'continue', or 'update'
+  existingSlides?: HtmlSlide[]; // Slides already generated
   updateInstructions?: UpdateInstructions; // For 'update' mode
   // For email notification
   slug?: string; // URL slug for the worked example
 }
 
-const SLIDE_SEPARATOR = '===SLIDE_SEPARATOR===';
+const SLIDE_SEPARATOR = "===SLIDE_SEPARATOR===";
 
 /**
  * Send email notification when slides are complete
@@ -49,7 +53,7 @@ async function sendSlideCompletionEmail(
   unitNumber: number | null,
   lessonNumber: number | null,
   problemType: string,
-  slug: string | undefined
+  slug: string | undefined,
 ): Promise<void> {
   try {
     const subject = `Your Worked Example Slides Are Ready! (${slideCount} slides)`;
@@ -73,28 +77,28 @@ async function sendSlideCompletionEmail(
 
     body += `Your slides are ready for review in the creation wizard.\n\n`;
 
-    body += `Completed at: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}\n`;
+    body += `Completed at: ${new Date().toLocaleString("en-US", { timeZone: "America/New_York" })}\n`;
 
     // Build URL with draft (using slug) and step params
-    const baseUrl = 'https://www.solvescoaching.com/scm/workedExamples/create';
+    const baseUrl = "https://www.solvescoaching.com/scm/workedExamples/create";
     const params = new URLSearchParams();
     if (slug) {
-      params.set('draft', slug);
+      params.set("draft", slug);
     }
-    params.set('step', '3'); // Go directly to slide review step
+    params.set("step", "3"); // Go directly to slide review step
     const viewUrl = `${baseUrl}?${params.toString()}`;
     body += `\nView your slides: ${viewUrl}`;
 
     await sendEmail({
       to: userEmail,
       subject,
-      body
+      body,
     });
 
-    console.log('[generate-slides] Completion email sent to:', userEmail);
+    console.log("[generate-slides] Completion email sent to:", userEmail);
   } catch (error) {
     // Don't fail the request if email fails - just log it
-    console.error('[generate-slides] Failed to send completion email:', error);
+    console.error("[generate-slides] Failed to send completion email:", error);
   }
 }
 
@@ -106,8 +110,14 @@ export async function POST(request: NextRequest) {
   const encoder = new TextEncoder();
 
   // Helper to send SSE events
-  const sendEvent = (controller: ReadableStreamDefaultController, event: string, data: unknown) => {
-    controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+  const sendEvent = (
+    controller: ReadableStreamDefaultController,
+    event: string,
+    data: unknown,
+  ) => {
+    controller.enqueue(
+      encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`),
+    );
   };
 
   try {
@@ -122,7 +132,7 @@ export async function POST(request: NextRequest) {
       strategyDefinition,
       scenarios,
       testMode = false,
-      mode = 'full',
+      mode = "full",
       existingSlides = [],
       updateInstructions,
       slug,
@@ -144,10 +154,10 @@ export async function POST(request: NextRequest) {
     let estimatedSlideCount: number;
     if (testMode) {
       estimatedSlideCount = 1;
-    } else if (mode === 'continue') {
+    } else if (mode === "continue") {
       // Only generating remaining slides
       estimatedSlideCount = Math.max(1, fullSlideCount - existingSlides.length);
-    } else if (mode === 'update') {
+    } else if (mode === "update") {
       // Only regenerating specified slides
       estimatedSlideCount = updateInstructions?.slideNumbers.length || 1;
     } else {
@@ -158,8 +168,8 @@ export async function POST(request: NextRequest) {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       return new Response(
-        JSON.stringify({ error: 'ANTHROPIC_API_KEY not configured' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: "ANTHROPIC_API_KEY not configured" }),
+        { status: 500, headers: { "Content-Type": "application/json" } },
       );
     }
 
@@ -182,7 +192,7 @@ Even for a single slide, end with the separator.`;
 
 Topic: ${problemAnalysis.problemType}
 Strategy: ${strategyDefinition.name}
-Scenario: ${scenarios[0]?.name || 'Example Problem'}
+Scenario: ${scenarios[0]?.name || "Example Problem"}
 
 The slide should:
 1. Have a title
@@ -190,20 +200,46 @@ The slide should:
 3. Include basic styling (centered, readable font)
 
 Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===`;
-    } else if (mode === 'continue' && existingSlides.length > 0) {
+    } else if (mode === "continue" && existingSlides.length > 0) {
       // Continue mode: Generate remaining slides after existing ones
       // Uses prompt builder from SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/prompts/generate-slides.md
       systemPrompt = GENERATE_SLIDES_SYSTEM_PROMPT;
-      const basePrompt = buildGenerateSlidesPrompt(gradeLevel, unitNumber, lessonNumber, learningGoals, problemAnalysis, strategyDefinition, scenarios);
-      userPrompt = buildContinuePrompt(existingSlides, fullSlideCount, basePrompt);
-
-    } else if (mode === 'update' && updateInstructions && existingSlides.length > 0) {
+      const basePrompt = buildGenerateSlidesPrompt(
+        gradeLevel,
+        unitNumber,
+        lessonNumber,
+        learningGoals,
+        problemAnalysis,
+        strategyDefinition,
+        scenarios,
+      );
+      userPrompt = buildContinuePrompt(
+        existingSlides,
+        fullSlideCount,
+        basePrompt,
+      );
+    } else if (
+      mode === "update" &&
+      updateInstructions &&
+      existingSlides.length > 0
+    ) {
       // Update mode: Regenerate specific slides with changes
       // Uses prompt builder from SOURCE OF TRUTH: .claude/skills/create-worked-example-sg/prompts/generate-slides.md
       systemPrompt = GENERATE_SLIDES_SYSTEM_PROMPT;
-      const basePrompt = buildGenerateSlidesPrompt(gradeLevel, unitNumber, lessonNumber, learningGoals, problemAnalysis, strategyDefinition, scenarios);
-      userPrompt = buildUpdatePrompt(existingSlides, updateInstructions, basePrompt);
-
+      const basePrompt = buildGenerateSlidesPrompt(
+        gradeLevel,
+        unitNumber,
+        lessonNumber,
+        learningGoals,
+        problemAnalysis,
+        strategyDefinition,
+        scenarios,
+      );
+      userPrompt = buildUpdatePrompt(
+        existingSlides,
+        updateInstructions,
+        basePrompt,
+      );
     } else {
       // Full mode: Generate all slides from scratch
       systemPrompt = GENERATE_SLIDES_SYSTEM_PROMPT;
@@ -214,7 +250,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
         learningGoals,
         problemAnalysis,
         strategyDefinition,
-        scenarios
+        scenarios,
       );
     }
 
@@ -223,9 +259,9 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
       async start(controller) {
         try {
           // Send initial event
-          sendEvent(controller, 'start', {
+          sendEvent(controller, "start", {
             estimatedSlideCount,
-            message: 'Starting slide generation...',
+            message: "Starting slide generation...",
           });
 
           // Start Claude streaming
@@ -239,15 +275,15 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
             system: systemPrompt,
             messages: [
               {
-                role: 'user',
+                role: "user",
                 content: userPrompt,
               },
             ],
           });
 
-          let fullText = '';
+          let fullText = "";
           let completedSlides: string[] = [];
-          let currentSlideBuffer = '';
+          let currentSlideBuffer = "";
 
           // Process the stream
           let stopReason: string | null = null;
@@ -256,27 +292,33 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
 
           for await (const event of claudeStream) {
             // Capture usage and stop reason from message events
-            if (event.type === 'message_delta') {
+            if (event.type === "message_delta") {
               stopReason = event.delta.stop_reason || null;
             }
-            if (event.type === 'message_start' && event.message.usage) {
+            if (event.type === "message_start" && event.message.usage) {
               inputTokens = event.message.usage.input_tokens;
             }
-            if (event.type === 'message_delta' && event.usage) {
+            if (event.type === "message_delta" && event.usage) {
               outputTokens = event.usage.output_tokens;
             }
 
-            if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+            if (
+              event.type === "content_block_delta" &&
+              event.delta.type === "text_delta"
+            ) {
               const chunk = event.delta.text;
               fullText += chunk;
               currentSlideBuffer += chunk;
 
               // Check for completed slides
               while (currentSlideBuffer.includes(SLIDE_SEPARATOR)) {
-                const separatorIndex = currentSlideBuffer.indexOf(SLIDE_SEPARATOR);
-                const completedSlide = currentSlideBuffer.substring(0, separatorIndex).trim();
+                const separatorIndex =
+                  currentSlideBuffer.indexOf(SLIDE_SEPARATOR);
+                const completedSlide = currentSlideBuffer
+                  .substring(0, separatorIndex)
+                  .trim();
 
-                if (completedSlide && completedSlide.includes('<')) {
+                if (completedSlide && completedSlide.includes("<")) {
                   completedSlides.push(completedSlide);
 
                   // Build slide object for incremental saving
@@ -289,7 +331,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
                   };
 
                   // Send progress event with slide content
-                  sendEvent(controller, 'slide', {
+                  sendEvent(controller, "slide", {
                     slideNumber: completedSlides.length,
                     estimatedTotal: estimatedSlideCount,
                     message: `Slide ${completedSlides.length} of ~${estimatedSlideCount} complete`,
@@ -298,14 +340,16 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
                 }
 
                 // Continue with remaining buffer
-                currentSlideBuffer = currentSlideBuffer.substring(separatorIndex + SLIDE_SEPARATOR.length);
+                currentSlideBuffer = currentSlideBuffer.substring(
+                  separatorIndex + SLIDE_SEPARATOR.length,
+                );
               }
             }
           }
 
           // Handle any remaining content as the last slide
           const remainingSlide = currentSlideBuffer.trim();
-          if (remainingSlide && remainingSlide.includes('<')) {
+          if (remainingSlide && remainingSlide.includes("<")) {
             completedSlides.push(remainingSlide);
 
             // Build slide object for incremental saving
@@ -317,7 +361,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
               scripts: extractScripts(remainingSlide),
             };
 
-            sendEvent(controller, 'slide', {
+            sendEvent(controller, "slide", {
               slideNumber: completedSlides.length,
               estimatedTotal: estimatedSlideCount,
               message: `Slide ${completedSlides.length} of ~${estimatedSlideCount} complete`,
@@ -331,7 +375,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
           }
 
           // Log generation stats for debugging
-          console.log('[generate-slides] Complete:', {
+          console.log("[generate-slides] Complete:", {
             stopReason,
             inputTokens,
             outputTokens,
@@ -341,8 +385,14 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
           });
 
           // Warn if we hit token limit
-          if (stopReason === 'max_tokens') {
-            console.warn('[generate-slides] Hit max_tokens limit! Only generated', completedSlides.length, 'of', estimatedSlideCount, 'slides');
+          if (stopReason === "max_tokens") {
+            console.warn(
+              "[generate-slides] Hit max_tokens limit! Only generated",
+              completedSlides.length,
+              "of",
+              estimatedSlideCount,
+              "slides",
+            );
           }
 
           // Convert to HtmlSlide format
@@ -355,7 +405,7 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
           }));
 
           // Send completion event with all slides
-          sendEvent(controller, 'complete', {
+          sendEvent(controller, "complete", {
             success: true,
             slideCount: slides.length,
             slides,
@@ -370,15 +420,15 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
               unitNumber,
               lessonNumber,
               problemAnalysis.problemType,
-              slug
+              slug,
             );
           }
 
           controller.close();
         } catch (error) {
-          console.error('[generate-slides] Stream error:', error);
-          sendEvent(controller, 'error', {
-            message: handleAnthropicError(error, 'Generate slides'),
+          console.error("[generate-slides] Stream error:", error);
+          sendEvent(controller, "error", {
+            message: handleAnthropicError(error, "Generate slides"),
           });
           controller.close();
         }
@@ -387,16 +437,16 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
 
     return new Response(stream, {
       headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
       },
     });
   } catch (error) {
-    console.error('[generate-slides] Request error:', error);
+    console.error("[generate-slides] Request error:", error);
     return new Response(
-      JSON.stringify({ error: handleAnthropicError(error, 'Generate slides') }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: handleAnthropicError(error, "Generate slides") }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 }
@@ -407,7 +457,8 @@ Keep it simple - this is just a test. Output the HTML then ===SLIDE_SEPARATOR===
 function parseSlidesFromText(text: string): string[] {
   // Try to split by HTML document patterns
   const htmlBlocks: string[] = [];
-  const regex = /<div[^>]*class="slide-container"[^>]*>[\s\S]*?(?=<div[^>]*class="slide-container"|$)/gi;
+  const regex =
+    /<div[^>]*class="slide-container"[^>]*>[\s\S]*?(?=<div[^>]*class="slide-container"|$)/gi;
   let match;
 
   while ((match = regex.exec(text)) !== null) {
@@ -419,7 +470,7 @@ function parseSlidesFromText(text: string): string[] {
   }
 
   // Last resort: return the whole text as one slide
-  if (text.includes('<')) {
+  if (text.includes("<")) {
     return [text.trim()];
   }
 
@@ -430,8 +481,13 @@ function parseSlidesFromText(text: string): string[] {
  * Detect visual type from HTML content
  */
 const VALID_SLIDE_TYPES = new Set([
-  'teacher-instructions', 'big-idea', 'problem-setup', 'step',
-  'practice-preview', 'printable-worksheet', 'lesson-summary',
+  "teacher-instructions",
+  "big-idea",
+  "problem-setup",
+  "step",
+  "practice-preview",
+  "printable-worksheet",
+  "lesson-summary",
 ]);
 
 /**
@@ -445,25 +501,35 @@ function extractSlideType(html: string): string | undefined {
   return undefined;
 }
 
-function detectVisualType(html: string): 'html' | 'p5' | 'd3' {
+function detectVisualType(html: string): "html" | "p5" | "d3" {
   const lower = html.toLowerCase();
 
-  if (lower.includes('p5.js') || lower.includes('createcanvas') || lower.includes('p5cdn')) {
-    return 'p5';
+  if (
+    lower.includes("p5.js") ||
+    lower.includes("createcanvas") ||
+    lower.includes("p5cdn")
+  ) {
+    return "p5";
   }
 
-  if (lower.includes('d3.js') || lower.includes('d3.select') || lower.includes('d3cdn')) {
-    return 'd3';
+  if (
+    lower.includes("d3.js") ||
+    lower.includes("d3.select") ||
+    lower.includes("d3cdn")
+  ) {
+    return "d3";
   }
 
-  return 'html';
+  return "html";
 }
 
 /**
  * Extract script references from HTML
  */
-function extractScripts(html: string): { type: 'cdn' | 'inline'; content: string }[] | undefined {
-  const scripts: { type: 'cdn' | 'inline'; content: string }[] = [];
+function extractScripts(
+  html: string,
+): { type: "cdn" | "inline"; content: string }[] | undefined {
+  const scripts: { type: "cdn" | "inline"; content: string }[] = [];
 
   const scriptRegex = /<script([^>]*)>([\s\S]*?)<\/script>/gi;
   let match;
@@ -474,9 +540,9 @@ function extractScripts(html: string): { type: 'cdn' | 'inline'; content: string
 
     const srcMatch = attrs.match(/src=["']([^"']+)["']/);
     if (srcMatch) {
-      scripts.push({ type: 'cdn', content: srcMatch[1] });
+      scripts.push({ type: "cdn", content: srcMatch[1] });
     } else if (content) {
-      scripts.push({ type: 'inline', content });
+      scripts.push({ type: "inline", content });
     }
   }
 

@@ -1,31 +1,33 @@
 // src/components/core/navigation/Pagination.tsx
-import { cn } from '@ui/utils/formatters';
-import { tv, type VariantProps } from 'tailwind-variants';
-import { 
-  textSize, 
-  paddingX, 
+import { cn } from "@ui/utils/formatters";
+import { tv, type VariantProps } from "tailwind-variants";
+import {
+  textSize,
+  paddingX,
   paddingY,
   typography,
   radii,
-  shadows
-} from '@/lib/tokens/tokens';
-import { 
-  textColors, 
+  shadows,
+} from "@/lib/tokens/tokens";
+import {
+  textColors,
   backgroundColors,
-  hoverBackgroundColors
-} from '@/lib/tokens/colors';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+  hoverBackgroundColors,
+} from "@/lib/tokens/colors";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 
 const pagination = tv({
   slots: {
-    container: 'flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6',
-    mobileSection: 'flex flex-1 justify-between sm:hidden',
-    desktopSection: 'hidden sm:flex sm:flex-1 sm:items-center sm:justify-between',
+    container:
+      "flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6",
+    mobileSection: "flex flex-1 justify-between sm:hidden",
+    desktopSection:
+      "hidden sm:flex sm:flex-1 sm:items-center sm:justify-between",
     resultsText: `${textSize.sm} ${textColors.muted}`,
     nav: `isolate inline-flex -space-x-px ${radii.md} ${shadows.sm}`,
     button: `relative inline-flex items-center ${textSize.sm} ${typography.weight.semibold} ring-1 ring-gray-300 ring-inset focus:z-20 focus:outline-offset-0`,
     mobileButton: `relative inline-flex items-center ${radii.md} border border-gray-300 ${backgroundColors.surface} ${paddingX.md} ${paddingY.sm} ${textSize.sm} ${typography.weight.medium} ${textColors.muted} ${hoverBackgroundColors.light.muted}`,
-    icon: 'size-5',
+    icon: "size-5",
   },
   variants: {
     buttonType: {
@@ -44,13 +46,13 @@ const pagination = tv({
     },
     position: {
       first: {
-        button: 'rounded-l-md',
+        button: "rounded-l-md",
       },
       last: {
-        button: 'rounded-r-md',
+        button: "rounded-r-md",
       },
       middle: {
-        button: '',
+        button: "",
       },
       only: {
         button: radii.md,
@@ -58,17 +60,17 @@ const pagination = tv({
     },
     responsive: {
       hidden: {
-        button: 'hidden md:inline-flex',
+        button: "hidden md:inline-flex",
       },
       visible: {
-        button: '',
+        button: "",
       },
     },
   },
   defaultVariants: {
-    buttonType: 'page',
-    position: 'middle',
-    responsive: 'visible',
+    buttonType: "page",
+    position: "middle",
+    responsive: "visible",
   },
 });
 
@@ -89,8 +91,8 @@ interface PaginationButtonProps {
   onClick?: () => void;
   children: React.ReactNode;
   current?: boolean;
-  position?: 'first' | 'last' | 'middle' | 'only';
-  responsive?: 'hidden' | 'visible';
+  position?: "first" | "last" | "middle" | "only";
+  responsive?: "hidden" | "visible";
   disabled?: boolean;
   className?: string;
 }
@@ -99,13 +101,13 @@ const PaginationButton = ({
   onClick,
   children,
   current = false,
-  position = 'middle',
-  responsive = 'visible',
+  position = "middle",
+  responsive = "visible",
   disabled = false,
   className,
 }: PaginationButtonProps) => {
   const { button } = pagination({
-    buttonType: current ? 'current' : 'page',
+    buttonType: current ? "current" : "page",
     position,
     responsive,
   });
@@ -114,11 +116,11 @@ const PaginationButton = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      aria-current={current ? 'page' : undefined}
+      aria-current={current ? "page" : undefined}
       className={cn(
         button(),
-        disabled && 'opacity-50 pointer-events-none',
-        className
+        disabled && "opacity-50 pointer-events-none",
+        className,
       )}
     >
       {children}
@@ -127,13 +129,9 @@ const PaginationButton = ({
 };
 
 const PaginationEllipsis = () => {
-  const { button } = pagination({ buttonType: 'ellipsis' });
-  
-  return (
-    <span className={button()}>
-      ...
-    </span>
-  );
+  const { button } = pagination({ buttonType: "ellipsis" });
+
+  return <span className={button()}>...</span>;
 };
 
 const PaginationNavButton = ({
@@ -142,13 +140,14 @@ const PaginationNavButton = ({
   disabled = false,
   mobile = false,
 }: {
-  direction: 'previous' | 'next';
+  direction: "previous" | "next";
   onClick: () => void;
   disabled?: boolean;
   mobile?: boolean;
 }) => {
-  const IconComponent = direction === 'previous' ? ChevronLeftIcon : ChevronRightIcon;
-  
+  const IconComponent =
+    direction === "previous" ? ChevronLeftIcon : ChevronRightIcon;
+
   if (mobile) {
     const { mobileButton } = pagination();
     return (
@@ -157,29 +156,28 @@ const PaginationNavButton = ({
         disabled={disabled}
         className={cn(
           mobileButton(),
-          disabled && 'opacity-50 pointer-events-none'
+          disabled && "opacity-50 pointer-events-none",
         )}
       >
-        {direction === 'previous' ? 'Previous' : 'Next'}
+        {direction === "previous" ? "Previous" : "Next"}
       </button>
     );
   }
 
   const { button, icon } = pagination({
-    buttonType: 'navigation',
-    position: direction === 'previous' ? 'first' : 'last',
+    buttonType: "navigation",
+    position: direction === "previous" ? "first" : "last",
   });
 
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={cn(
-        button(),
-        disabled && 'opacity-50 pointer-events-none'
-      )}
+      className={cn(button(), disabled && "opacity-50 pointer-events-none")}
     >
-      <span className="sr-only">{direction === 'previous' ? 'Previous' : 'Next'}</span>
+      <span className="sr-only">
+        {direction === "previous" ? "Previous" : "Next"}
+      </span>
       <IconComponent aria-hidden="true" className={icon()} />
     </button>
   );
@@ -195,7 +193,8 @@ export const Pagination = ({
   maxVisiblePages = 7,
   className,
 }: PaginationProps) => {
-  const { container, mobileSection, desktopSection, resultsText, nav } = pagination();
+  const { container, mobileSection, desktopSection, resultsText, nav } =
+    pagination();
 
   // Calculate visible page numbers
   const getVisiblePages = () => {
@@ -221,7 +220,8 @@ export const Pagination = ({
 
   const visiblePages = getVisiblePages();
   const showStartEllipsis = visiblePages[0] > 2;
-  const showEndEllipsis = visiblePages[visiblePages.length - 1] < totalPages - 1;
+  const showEndEllipsis =
+    visiblePages[visiblePages.length - 1] < totalPages - 1;
 
   // Calculate results range
   const startItem = (currentPage - 1) * itemsPerPage + 1;
@@ -251,9 +251,11 @@ export const Pagination = ({
         {showResults && totalItems && (
           <div>
             <p className={resultsText()}>
-              Showing <span className={typography.weight.medium}>{startItem}</span> to{' '}
-              <span className={typography.weight.medium}>{endItem}</span> of{' '}
-              <span className={typography.weight.medium}>{totalItems}</span> results
+              Showing{" "}
+              <span className={typography.weight.medium}>{startItem}</span> to{" "}
+              <span className={typography.weight.medium}>{endItem}</span> of{" "}
+              <span className={typography.weight.medium}>{totalItems}</span>{" "}
+              results
             </p>
           </div>
         )}
@@ -284,14 +286,19 @@ export const Pagination = ({
             {/* Visible pages */}
             {visiblePages.map((page, index) => {
               const _isFirst = index === 0 && !showStartEllipsis;
-              const _isLast = index === visiblePages.length - 1 && !showEndEllipsis;
-              
+              const _isLast =
+                index === visiblePages.length - 1 && !showEndEllipsis;
+
               return (
                 <PaginationButton
                   key={page}
                   onClick={() => onPageChange(page)}
                   current={currentPage === page}
-                  responsive={index > 1 && index < visiblePages.length - 2 ? 'hidden' : 'visible'}
+                  responsive={
+                    index > 1 && index < visiblePages.length - 2
+                      ? "hidden"
+                      : "visible"
+                  }
                 >
                   {page}
                 </PaginationButton>

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Suspense } from 'react';
-import { Spinner } from '@/components/core/feedback/Spinner';
-import MondayVisitImportClient from './MondayVisitImportClient';
+import { Suspense } from "react";
+import { Spinner } from "@/components/core/feedback/Spinner";
+import MondayVisitImportClient from "./MondayVisitImportClient";
 
 /**
  * Monday.com Visit Import Completion Page
@@ -10,14 +10,16 @@ import MondayVisitImportClient from './MondayVisitImportClient';
  */
 export default function ImportPage() {
   return (
-    <Suspense fallback={
-      <div className="container mx-auto py-6">
-        <div className="flex justify-center items-center py-12">
-          <Spinner size="lg" />
-          <div className="ml-4">Loading import data...</div>
+    <Suspense
+      fallback={
+        <div className="container mx-auto py-6">
+          <div className="flex justify-center items-center py-12">
+            <Spinner size="lg" />
+            <div className="ml-4">Loading import data...</div>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <MondayVisitImportClient />
     </Suspense>
   );

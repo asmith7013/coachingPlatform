@@ -1,11 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon, DocumentTextIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
-import type { SavedSession } from '../../hooks/useWizardState';
-import type { WizardStep } from '../../lib/types';
+import { useState, useEffect } from "react";
+import {
+  XMarkIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  PlusIcon,
+  DocumentTextIcon,
+  ArrowLeftIcon,
+} from "@heroicons/react/24/outline";
+import type { SavedSession } from "../../hooks/useWizardState";
+import type { WizardStep } from "../../lib/types";
 
-export type DraftViewState = 'initial' | 'drafts' | 'new';
+export type DraftViewState = "initial" | "drafts" | "new";
 
 interface SavedDraftsProps {
   sessions: SavedSession[];
@@ -18,9 +25,9 @@ interface SavedDraftsProps {
 }
 
 const STEP_LABELS: Record<WizardStep, string> = {
-  1: 'Step 1: Inputs',
-  2: 'Step 2: Analysis',
-  3: 'Step 3: Export',
+  1: "Step 1: Inputs",
+  2: "Step 2: Analysis",
+  3: "Step 3: Export",
 };
 
 const ITEMS_PER_PAGE = 10;
@@ -33,23 +40,31 @@ function formatTimeAgo(timestamp: number): string {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
-  if (minutes < 1) return 'Just now';
+  if (minutes < 1) return "Just now";
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
-  if (days === 1) return 'Yesterday';
+  if (days === 1) return "Yesterday";
   if (days < 7) return `${days}d ago`;
 
   return new Date(timestamp).toLocaleDateString();
 }
 
-export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, onDelete, onViewStateChange, isLoading }: SavedDraftsProps) {
+export function SavedDrafts({
+  sessions,
+  currentSessionId,
+  onSelectNew,
+  onLoad,
+  onDelete,
+  onViewStateChange,
+  isLoading,
+}: SavedDraftsProps) {
   const [currentPage, setCurrentPage] = useState(0);
-  const [viewState, setViewState] = useState<DraftViewState>('initial');
+  const [viewState, setViewState] = useState<DraftViewState>("initial");
 
   // When a session is loaded, reflect that in view state
   useEffect(() => {
     if (currentSessionId) {
-      setViewState('drafts');
+      setViewState("drafts");
     }
   }, [currentSessionId]);
 
@@ -61,13 +76,13 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
   const totalPages = Math.ceil(sessions.length / ITEMS_PER_PAGE);
   const paginatedSessions = sessions.slice(
     currentPage * ITEMS_PER_PAGE,
-    (currentPage + 1) * ITEMS_PER_PAGE
+    (currentPage + 1) * ITEMS_PER_PAGE,
   );
 
   const handleDelete = (e: React.MouseEvent, sessionId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    if (confirm('Delete this draft?')) {
+    if (confirm("Delete this draft?")) {
       onDelete(sessionId);
       // Reset to first page if current page becomes empty
       if (paginatedSessions.length === 1 && currentPage > 0) {
@@ -77,19 +92,19 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
   };
 
   const handleSelectNew = () => {
-    setViewState('new');
+    setViewState("new");
     onSelectNew();
   };
 
   const handleBack = () => {
-    setViewState('initial');
+    setViewState("initial");
     onSelectNew(); // Clear any selection
   };
 
   const hasDrafts = sessions.length > 0;
 
   // Initial choice view
-  if (viewState === 'initial') {
+  if (viewState === "initial") {
     // Show loading skeleton while drafts are being loaded
     if (isLoading) {
       return (
@@ -143,7 +158,7 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
         {/* Continue Draft Option - only show if there are drafts */}
         {hasDrafts && (
           <button
-            onClick={() => setViewState('drafts')}
+            onClick={() => setViewState("drafts")}
             className="w-full text-left p-4 rounded-lg border-2 border-gray-200 bg-white hover:border-amber-300 hover:bg-amber-50/50 transition-all cursor-pointer"
           >
             <div className="flex items-center gap-3">
@@ -155,7 +170,8 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
                   Continue Draft
                 </span>
                 <span className="text-xs text-gray-500">
-                  {sessions.length} saved {sessions.length === 1 ? 'draft' : 'drafts'} available
+                  {sessions.length} saved{" "}
+                  {sessions.length === 1 ? "draft" : "drafts"} available
                 </span>
               </div>
             </div>
@@ -166,7 +182,7 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
   }
 
   // Drafts list view
-  if (viewState === 'drafts') {
+  if (viewState === "drafts") {
     return (
       <div className="space-y-3">
         {/* Back button */}
@@ -186,7 +202,7 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
           {totalPages > 1 && (
             <div className="flex items-center gap-1">
               <button
-                onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
                 disabled={currentPage === 0}
                 className="p-0.5 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
               >
@@ -196,7 +212,9 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
                 {currentPage + 1}/{totalPages}
               </span>
               <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages - 1, p + 1))
+                }
                 disabled={currentPage === totalPages - 1}
                 className="p-0.5 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
               >
@@ -215,8 +233,8 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
                 key={session.id}
                 className={`group relative rounded-lg border-2 transition-all ${
                   isSelected
-                    ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
-                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                    ? "border-blue-500 bg-blue-50 ring-1 ring-blue-500"
+                    : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
                 }`}
               >
                 <button
@@ -224,7 +242,9 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
                   className="w-full text-left p-3 pr-8 cursor-pointer"
                 >
                   {/* Lesson name */}
-                  <div className={`text-sm font-medium truncate ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
+                  <div
+                    className={`text-sm font-medium truncate ${isSelected ? "text-blue-900" : "text-gray-900"}`}
+                  >
                     {session.lessonName}
                   </div>
 
@@ -233,17 +253,23 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
                     {/* Grade/Unit/Lesson badges */}
                     <div className="flex gap-1">
                       {session.gradeLevel && (
-                        <span className={`px-1.5 py-0.5 rounded ${isSelected ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                        <span
+                          className={`px-1.5 py-0.5 rounded ${isSelected ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}
+                        >
                           G{session.gradeLevel}
                         </span>
                       )}
                       {session.unitNumber && (
-                        <span className={`px-1.5 py-0.5 rounded ${isSelected ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                        <span
+                          className={`px-1.5 py-0.5 rounded ${isSelected ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}
+                        >
                           U{session.unitNumber}
                         </span>
                       )}
                       {session.lessonNumber && (
-                        <span className={`px-1.5 py-0.5 rounded ${isSelected ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                        <span
+                          className={`px-1.5 py-0.5 rounded ${isSelected ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}
+                        >
                           L{session.lessonNumber}
                         </span>
                       )}
@@ -252,7 +278,9 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
                     <span className="text-gray-300">•</span>
 
                     {/* Step indicator */}
-                    <span className={isSelected ? 'text-blue-600' : 'text-gray-500'}>
+                    <span
+                      className={isSelected ? "text-blue-600" : "text-gray-500"}
+                    >
                       {STEP_LABELS[session.currentStep]}
                     </span>
 
@@ -307,4 +335,3 @@ export function SavedDrafts({ sessions, currentSessionId, onSelectNew, onLoad, o
     </div>
   );
 }
-

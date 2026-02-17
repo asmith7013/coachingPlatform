@@ -1,6 +1,9 @@
 // src/lib/schema/mongoose-schema/scm/podsie/podsie-scm-group.model.ts
-import mongoose from 'mongoose';
-import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import mongoose from "mongoose";
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 // =====================================
 // PODSIE SCM GROUP MODEL
@@ -10,10 +13,13 @@ import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/
 // per-module pacing config (PodsieScmModuleModel).
 
 // YouTube link subdocument schema
-const youtubeLinkSchema = new mongoose.Schema({
-  url: { type: String, required: true },
-  title: { type: String, required: true }
-}, { _id: false });
+const youtubeLinkSchema = new mongoose.Schema(
+  {
+    url: { type: String, required: true },
+    title: { type: String, required: true },
+  },
+  { _id: false },
+);
 
 const podsieScmGroupFields = {
   // Unique identifier from Podsie
@@ -31,12 +37,12 @@ const podsieScmGroupFields = {
   // YouTube links for smartboard display
   youtubeLinks: { type: [youtubeLinkSchema], default: [] },
 
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
 const PodsieScmGroupSchema = new mongoose.Schema(podsieScmGroupFields, {
   ...standardSchemaOptions,
-  collection: 'podsie-scm-groups'
+  collection: "podsie-scm-groups",
 });
 
 // Delete existing model to force schema refresh during development
@@ -44,4 +50,7 @@ if (mongoose.models.PodsieScmGroup) {
   delete mongoose.models.PodsieScmGroup;
 }
 
-export const PodsieScmGroupModel = mongoose.model('PodsieScmGroup', PodsieScmGroupSchema);
+export const PodsieScmGroupModel = mongoose.model(
+  "PodsieScmGroup",
+  PodsieScmGroupSchema,
+);

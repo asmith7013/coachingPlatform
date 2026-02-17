@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
-import { Spinner } from '@/components/core/feedback/Spinner';
-import { Alert } from '@/components/core/feedback/Alert';
-import { useMondayUserByEmail } from '@/hooks/integrations/monday/useMondayQueries';
-import type { MondayUser } from '@/lib/integrations/monday/types/api';
+import { useState } from "react";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/fields/Input";
+import { Spinner } from "@/components/core/feedback/Spinner";
+import { Alert } from "@/components/core/feedback/Alert";
+import { useMondayUserByEmail } from "@/hooks/integrations/monday/useMondayQueries";
+import type { MondayUser } from "@/lib/integrations/monday/types/api";
 
 export interface UserFormProps {
   onUserFound?: (user: MondayUser) => void;
@@ -14,35 +14,36 @@ export interface UserFormProps {
 }
 
 export function UserForm({ onUserFound, className }: UserFormProps) {
-  const [email, setEmail] = useState('alex.smith@teachinglab.org');
+  const [email, setEmail] = useState("alex.smith@teachinglab.org");
   const [searchStatus, setSearchStatus] = useState<{
-    status: 'idle' | 'loading' | 'error' | 'not-found';
+    status: "idle" | "loading" | "error" | "not-found";
     message?: string;
-  }>({ status: 'idle' });
+  }>({ status: "idle" });
 
   // Use the hook with the current email
   const { data: user, isLoading, error } = useMondayUserByEmail(email);
 
   const handleSearch = async () => {
     if (!email) return;
-    
-    setSearchStatus({ status: 'loading' });
-    
+
+    setSearchStatus({ status: "loading" });
+
     try {
       if (user) {
-        setSearchStatus({ status: 'idle' });
+        setSearchStatus({ status: "idle" });
         onUserFound?.(user);
       } else {
-        setSearchStatus({ 
-          status: 'not-found', 
-          message: `No user found with email ${email}` 
+        setSearchStatus({
+          status: "not-found",
+          message: `No user found with email ${email}`,
         });
       }
     } catch (err) {
       console.error("Search error:", err);
-      setSearchStatus({ 
-        status: 'error', 
-        message: err instanceof Error ? err.message : "An unknown error occurred" 
+      setSearchStatus({
+        status: "error",
+        message:
+          err instanceof Error ? err.message : "An unknown error occurred",
       });
     }
   };
@@ -58,17 +59,19 @@ export function UserForm({ onUserFound, className }: UserFormProps) {
             type="email"
             className="flex-1"
           />
-          <Button 
+          <Button
             intent="primary"
             onClick={handleSearch}
-            disabled={!email || isLoading || searchStatus.status === 'loading'}
+            disabled={!email || isLoading || searchStatus.status === "loading"}
           >
-            {(isLoading || searchStatus.status === 'loading') ? (
+            {isLoading || searchStatus.status === "loading" ? (
               <>
                 <Spinner size="sm" className="mr-2" />
                 Searching...
               </>
-            ) : "Search"}
+            ) : (
+              "Search"
+            )}
           </Button>
         </div>
 
@@ -78,8 +81,8 @@ export function UserForm({ onUserFound, className }: UserFormProps) {
             <Alert.Description>{error.message}</Alert.Description>
           </Alert>
         )}
-        
-        {searchStatus.status === 'not-found' && (
+
+        {searchStatus.status === "not-found" && (
           <Alert intent="warning">
             <Alert.Title>Not Found</Alert.Title>
             <Alert.Description>{searchStatus.message}</Alert.Description>
@@ -88,4 +91,4 @@ export function UserForm({ onUserFound, className }: UserFormProps) {
       </div>
     </div>
   );
-} 
+}

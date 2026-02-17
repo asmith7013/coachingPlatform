@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-import { standardSchemaOptions, standardDocumentFields } from "@mongoose-schema/shared-options";
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 // =====================================
 // RAMP-UP PROGRESS MODEL
@@ -15,7 +18,7 @@ const rampUpQuestionSchema = new mongoose.Schema(
     completedAt: { type: String, required: false },
     score: { type: Number, required: false },
   },
-  { _id: false }
+  { _id: false },
 );
 
 /**
@@ -101,4 +104,7 @@ if (mongoose.models.RampUpProgress) {
   delete mongoose.models.RampUpProgress;
 }
 
-export const RampUpProgressModel = mongoose.model("RampUpProgress", RampUpProgressSchema);
+export const RampUpProgressModel = mongoose.model(
+  "RampUpProgress",
+  RampUpProgressSchema,
+);

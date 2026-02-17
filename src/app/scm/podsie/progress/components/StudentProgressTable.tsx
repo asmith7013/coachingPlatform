@@ -3,8 +3,15 @@
 import { useState, useMemo } from "react";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { CheckCircleIcon as CheckCircleOutlineIcon, CheckIcon } from "@heroicons/react/24/outline";
-import { Legend, LegendGroup, LegendItem } from "@/components/core/feedback/Legend";
+import {
+  CheckCircleIcon as CheckCircleOutlineIcon,
+  CheckIcon,
+} from "@heroicons/react/24/outline";
+import {
+  Legend,
+  LegendGroup,
+  LegendItem,
+} from "@/components/core/feedback/Legend";
 import { CompletionCheckmark } from "./CompletionCheckmark";
 import type { ProgressData, LessonConfig } from "../types";
 import type { GroupedAssignment } from "../utils/groupAssignments";
@@ -76,7 +83,10 @@ export function StudentProgressTable({
   // If Zearn is ahead, student hasn't done MC for completed Zearn lessons
   // If MC is ahead, student skipped Zearn
   const studentPacingStatus = useMemo(() => {
-    const statusMap = new Map<string, { type: 'zearn' | 'mastery' | 'onPace'; lessonsAhead: number }>();
+    const statusMap = new Map<
+      string,
+      { type: "zearn" | "mastery" | "onPace"; lessonsAhead: number }
+    >();
 
     for (const student of students) {
       let highestZearnLesson = 0;
@@ -89,17 +99,21 @@ export function StudentProgressTable({
         const lessonNum = parseInt(lessonPart) || 0;
 
         // Check Zearn completion
-        const lessonProgress = progressLookup.get(`${student.studentId}-${lesson.podsieAssignmentId}`);
+        const lessonProgress = progressLookup.get(
+          `${student.studentId}-${lesson.podsieAssignmentId}`,
+        );
         if (lesson.hasZearnActivity && lessonProgress?.zearnCompleted) {
           highestZearnLesson = Math.max(highestZearnLesson, lessonNum);
         }
 
         // Check Mastery Check completion
-        const isMasteryCheckLesson = lesson.activityType === 'mastery-check';
+        const isMasteryCheckLesson = lesson.activityType === "mastery-check";
         let masteryCompleted = false;
 
         if (masteryCheck) {
-          const masteryProgress = progressLookup.get(`${student.studentId}-${masteryCheck.podsieAssignmentId}`);
+          const masteryProgress = progressLookup.get(
+            `${student.studentId}-${masteryCheck.podsieAssignmentId}`,
+          );
           masteryCompleted = masteryProgress?.isFullyComplete ?? false;
         } else if (isMasteryCheckLesson) {
           masteryCompleted = lessonProgress?.isFullyComplete ?? false;
@@ -121,14 +135,20 @@ export function StudentProgressTable({
       if (diff > 2) {
         // Zearn is more than 2 lessons ahead - student needs to do MC
         // diff - 2 because 0-2 is on pace, so 3 means +1 ahead, 4 means +2, etc.
-        statusMap.set(student.studentId, { type: 'zearn', lessonsAhead: diff - 2 });
+        statusMap.set(student.studentId, {
+          type: "zearn",
+          lessonsAhead: diff - 2,
+        });
       } else if (diff < -1) {
         // MC is more than 1 lesson ahead of Zearn - student skipped Zearn
         // Math.abs(diff) - 1 because -1 is on pace, so -2 means +1 ahead, -3 means +2, etc.
-        statusMap.set(student.studentId, { type: 'mastery', lessonsAhead: Math.abs(diff) - 1 });
+        statusMap.set(student.studentId, {
+          type: "mastery",
+          lessonsAhead: Math.abs(diff) - 1,
+        });
       } else {
         // On pace (Zearn is 0, 1, or 2 ahead of MC, or MC is 0 or 1 ahead of Zearn)
-        statusMap.set(student.studentId, { type: 'onPace', lessonsAhead: 0 });
+        statusMap.set(student.studentId, { type: "onPace", lessonsAhead: 0 });
       }
     }
 
@@ -152,7 +172,7 @@ export function StudentProgressTable({
   // 1. It has a paired masteryCheck object, OR
   // 2. The lesson itself IS a mastery-check (activityType === 'mastery-check')
   const lessonsWithMasteryCheck = filteredAssignments.filter(
-    g => g.masteryCheck || g.lesson.activityType === 'mastery-check'
+    (g) => g.masteryCheck || g.lesson.activityType === "mastery-check",
   ).length;
 
   if (filteredAssignments.length === 0 || students.length === 0) {
@@ -163,7 +183,7 @@ export function StudentProgressTable({
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-6">
       {/* Accordion Header - matches AssignmentCard style */}
       <div
-        className={`${isOpen ? '' : 'cursor-pointer hover:bg-gray-100'} bg-gray-50 border-b border-gray-200 px-6 py-4 ${isOpen ? '' : 'rounded-lg'} transition-colors`}
+        className={`${isOpen ? "" : "cursor-pointer hover:bg-gray-100"} bg-gray-50 border-b border-gray-200 px-6 py-4 ${isOpen ? "" : "rounded-lg"} transition-colors`}
         onClick={() => !isOpen && setIsOpen(true)}
       >
         <button
@@ -183,7 +203,8 @@ export function StudentProgressTable({
               Student Progress Table
             </h3>
             <p className="text-sm text-gray-500">
-              {students.length} students • {filteredAssignments.length} lessons • {lessonsWithMasteryCheck} with mastery checks
+              {students.length} students • {filteredAssignments.length} lessons
+              • {lessonsWithMasteryCheck} with mastery checks
             </p>
           </div>
         </button>
@@ -194,136 +215,153 @@ export function StudentProgressTable({
         <div className="p-4">
           <div className="overflow-x-auto">
             <table className="border-separate border-spacing-0 rounded-lg overflow-hidden border border-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="sticky left-0 bg-gray-50 px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 z-10 w-0"
-                >
-                  Student
-                </th>
-                {filteredAssignments.map(({ lesson }) => (
+              <thead className="bg-gray-50">
+                <tr>
                   <th
-                    key={lesson.podsieAssignmentId}
                     scope="col"
-                    className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap border-r border-gray-200 w-0"
+                    className="sticky left-0 bg-gray-50 px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 z-10 w-0"
                   >
-                    {getLessonColumnName(lesson)}
+                    Student
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {students.map((student, index) => {
-                const isEvenRow = index % 2 === 0;
-                const rowBg = isEvenRow ? "bg-white" : "bg-gray-50";
-                const pacingStatus = studentPacingStatus.get(student.studentId);
-                return (
-                <tr key={student.studentId} className={`${rowBg} hover:bg-blue-50`}>
-                  <td className={`sticky left-0 ${rowBg} px-4 py-1 text-xs text-gray-900 font-medium whitespace-nowrap 
-                  -r border-b-4 border-gray-300 border-t-[1px] z-10`}>
-                    <div className="flex items-center gap-2">
-                      {student.studentName}
-                      {pacingStatus && pacingStatus.type === 'zearn' && pacingStatus.lessonsAhead > 0 && (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-800">
-                          +{pacingStatus.lessonsAhead} Zearn
-                        </span>
-                      )}
-                      {pacingStatus && pacingStatus.type === 'mastery' && pacingStatus.lessonsAhead > 0 && (
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
-                          +{pacingStatus.lessonsAhead} Mastery Check
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  {filteredAssignments.map(({ lesson, masteryCheck }) => {
-                    const lessonProgress = getProgress(
-                      student.studentId,
-                      lesson.podsieAssignmentId
-                    );
-                    const masteryProgress = masteryCheck
-                      ? getProgress(
-                          student.studentId,
-                          masteryCheck.podsieAssignmentId
-                        )
-                      : null;
-
-                    // Check Zearn completion (from lesson progress)
-                    const zearnCompleted = lessonProgress?.zearnCompleted;
-                    const zearnCompletionDate = lessonProgress?.zearnCompletionDate;
-
-                    // Check Mastery Check completion
-                    // If there's a paired mastery check, use its progress
-                    // If the lesson itself IS a mastery-check (standalone), use lesson progress
-                    const isMasteryCheckLesson = lesson.activityType === 'mastery-check';
-                    const hasMasteryCheck = masteryCheck || isMasteryCheckLesson;
-                    const masteryCompleted = masteryCheck
-                      ? masteryProgress?.isFullyComplete
-                      : isMasteryCheckLesson
-                        ? lessonProgress?.isFullyComplete
-                        : false;
-
-                    // Get mastery completion date from questions
-                    const masteryCompletionDate = masteryCompleted
-                      ? (masteryCheck ? masteryProgress : lessonProgress)?.questions
-                          ?.filter(q => q.completedAt)
-                          .map(q => q.completedAt!)
-                          .sort()
-                          .pop() // Get latest completion date
-                      : undefined;
-
-                    return (
+                  {filteredAssignments.map(({ lesson }) => (
+                    <th
+                      key={lesson.podsieAssignmentId}
+                      scope="col"
+                      className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap border-r border-gray-200 w-0"
+                    >
+                      {getLessonColumnName(lesson)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {students.map((student, index) => {
+                  const isEvenRow = index % 2 === 0;
+                  const rowBg = isEvenRow ? "bg-white" : "bg-gray-50";
+                  const pacingStatus = studentPacingStatus.get(
+                    student.studentId,
+                  );
+                  return (
+                    <tr
+                      key={student.studentId}
+                      className={`${rowBg} hover:bg-blue-50`}
+                    >
                       <td
-                        key={lesson.podsieAssignmentId}
-                        className="p-0 text-center border-r border-b-4 border-gray-300 border-t-[1px]"
+                        className={`sticky left-0 ${rowBg} px-4 py-1 text-xs text-gray-900 font-medium whitespace-nowrap 
+                  -r border-b-4 border-gray-300 border-t-[1px] z-10`}
                       >
-                        <div className="flex flex-col">
-                          {/* Zearn (top half) */}
-                          <div
-                            className={`h-6 flex items-center justify-center ${
-                              lesson.hasZearnActivity
-                                ? zearnCompleted
-                                  ? 'bg-purple-50'
-                                  : 'bg-gray-100'
-                                : ''
-                            }`}
-                          >
-                            {lesson.hasZearnActivity && (
-                              <CompletionCheckmark
-                                completed={Boolean(zearnCompleted)}
-                                completedAt={zearnCompletionDate}
-                                color="purple"
-                                size="small"
-                              />
+                        <div className="flex items-center gap-2">
+                          {student.studentName}
+                          {pacingStatus &&
+                            pacingStatus.type === "zearn" &&
+                            pacingStatus.lessonsAhead > 0 && (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-800">
+                                +{pacingStatus.lessonsAhead} Zearn
+                              </span>
                             )}
-                          </div>
-                          {/* Mastery Check (bottom half) */}
-                          <div
-                            className={`h-6 flex items-center justify-center ${
-                              hasMasteryCheck
-                                ? masteryCompleted
-                                  ? 'bg-green-50'
-                                  : 'bg-gray-100'
-                                : ''
-                            }`}
-                          >
-                            {hasMasteryCheck && (
-                              <CompletionCheckmark
-                                completed={Boolean(masteryCompleted)}
-                                completedAt={masteryCompletionDate}
-                                color="green"
-                                size="small"
-                              />
+                          {pacingStatus &&
+                            pacingStatus.type === "mastery" &&
+                            pacingStatus.lessonsAhead > 0 && (
+                              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
+                                +{pacingStatus.lessonsAhead} Mastery Check
+                              </span>
                             )}
-                          </div>
                         </div>
                       </td>
-                    );
-                  })}
-                </tr>
-              );
-              })}
-            </tbody>
+                      {filteredAssignments.map(({ lesson, masteryCheck }) => {
+                        const lessonProgress = getProgress(
+                          student.studentId,
+                          lesson.podsieAssignmentId,
+                        );
+                        const masteryProgress = masteryCheck
+                          ? getProgress(
+                              student.studentId,
+                              masteryCheck.podsieAssignmentId,
+                            )
+                          : null;
+
+                        // Check Zearn completion (from lesson progress)
+                        const zearnCompleted = lessonProgress?.zearnCompleted;
+                        const zearnCompletionDate =
+                          lessonProgress?.zearnCompletionDate;
+
+                        // Check Mastery Check completion
+                        // If there's a paired mastery check, use its progress
+                        // If the lesson itself IS a mastery-check (standalone), use lesson progress
+                        const isMasteryCheckLesson =
+                          lesson.activityType === "mastery-check";
+                        const hasMasteryCheck =
+                          masteryCheck || isMasteryCheckLesson;
+                        const masteryCompleted = masteryCheck
+                          ? masteryProgress?.isFullyComplete
+                          : isMasteryCheckLesson
+                            ? lessonProgress?.isFullyComplete
+                            : false;
+
+                        // Get mastery completion date from questions
+                        const masteryCompletionDate = masteryCompleted
+                          ? (masteryCheck
+                              ? masteryProgress
+                              : lessonProgress
+                            )?.questions
+                              ?.filter((q) => q.completedAt)
+                              .map((q) => q.completedAt!)
+                              .sort()
+                              .pop() // Get latest completion date
+                          : undefined;
+
+                        return (
+                          <td
+                            key={lesson.podsieAssignmentId}
+                            className="p-0 text-center border-r border-b-4 border-gray-300 border-t-[1px]"
+                          >
+                            <div className="flex flex-col">
+                              {/* Zearn (top half) */}
+                              <div
+                                className={`h-6 flex items-center justify-center ${
+                                  lesson.hasZearnActivity
+                                    ? zearnCompleted
+                                      ? "bg-purple-50"
+                                      : "bg-gray-100"
+                                    : ""
+                                }`}
+                              >
+                                {lesson.hasZearnActivity && (
+                                  <CompletionCheckmark
+                                    completed={Boolean(zearnCompleted)}
+                                    completedAt={zearnCompletionDate}
+                                    color="purple"
+                                    size="small"
+                                  />
+                                )}
+                              </div>
+                              {/* Mastery Check (bottom half) */}
+                              <div
+                                className={`h-6 flex items-center justify-center ${
+                                  hasMasteryCheck
+                                    ? masteryCompleted
+                                      ? "bg-green-50"
+                                      : "bg-gray-100"
+                                    : ""
+                                }`}
+                              >
+                                {hasMasteryCheck && (
+                                  <CompletionCheckmark
+                                    completed={Boolean(masteryCompleted)}
+                                    completedAt={masteryCompletionDate}
+                                    color="green"
+                                    size="small"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
             </table>
           </div>
           <Legend title="Key">
@@ -334,7 +372,9 @@ export function StudentProgressTable({
                 label="Today"
               />
               <LegendItem
-                icon={<CheckCircleOutlineIcon className="w-5 h-5 text-purple-600" />}
+                icon={
+                  <CheckCircleOutlineIcon className="w-5 h-5 text-purple-600" />
+                }
                 label="Yesterday"
               />
               <LegendItem
@@ -342,18 +382,26 @@ export function StudentProgressTable({
                 label="Earlier"
               />
               <LegendItem
-                icon={<span className="text-gray-400 text-xs w-5 h-5 flex items-center justify-center">—</span>}
+                icon={
+                  <span className="text-gray-400 text-xs w-5 h-5 flex items-center justify-center">
+                    —
+                  </span>
+                }
                 label="Not Complete"
               />
             </LegendGroup>
             <LegendGroup>
-              <span className="font-medium text-green-700 mr-1">Mastery Check:</span>
+              <span className="font-medium text-green-700 mr-1">
+                Mastery Check:
+              </span>
               <LegendItem
                 icon={<CheckCircleIcon className="w-5 h-5 text-green-700" />}
                 label="Today"
               />
               <LegendItem
-                icon={<CheckCircleOutlineIcon className="w-5 h-5 text-green-700" />}
+                icon={
+                  <CheckCircleOutlineIcon className="w-5 h-5 text-green-700" />
+                }
                 label="Yesterday"
               />
               <LegendItem
@@ -361,7 +409,11 @@ export function StudentProgressTable({
                 label="Earlier"
               />
               <LegendItem
-                icon={<span className="text-gray-400 text-xs w-5 h-5 flex items-center justify-center">—</span>}
+                icon={
+                  <span className="text-gray-400 text-xs w-5 h-5 flex items-center justify-center">
+                    —
+                  </span>
+                }
                 label="Not Complete"
               />
             </LegendGroup>

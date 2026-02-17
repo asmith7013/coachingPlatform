@@ -1,8 +1,8 @@
-import { StudentPreAssessment } from '@/lib/schema/zod-schema/scm/student/student-data';
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Badge } from '@/components/core/feedback/Badge';
+import { StudentPreAssessment } from "@/lib/schema/zod-schema/scm/student/student-data";
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { Badge } from "@/components/core/feedback/Badge";
 
 interface PreAssessmentDataProps {
   assessment: StudentPreAssessment;
@@ -13,18 +13,18 @@ export function PreAssessmentData({ assessment }: PreAssessmentDataProps) {
     {
       number: 1,
       score: assessment.question1,
-      label: "Question 1"
+      label: "Question 1",
     },
     {
       number: 2,
       score: assessment.question2,
-      label: "Question 2"
+      label: "Question 2",
     },
     {
       number: 3,
       score: assessment.question3,
-      label: "Question 3"
-    }
+      label: "Question 3",
+    },
   ];
 
   const getScoreIcon = (score: number) => {
@@ -35,7 +35,7 @@ export function PreAssessmentData({ assessment }: PreAssessmentDataProps) {
     return score === 1 ? "text-green-600" : "text-red-600";
   };
 
-  const totalCorrect = questions.filter(q => q.score === 1).length;
+  const totalCorrect = questions.filter((q) => q.score === 1).length;
   const totalQuestions = questions.length;
   const percentage = Math.round((totalCorrect / totalQuestions) * 100);
 
@@ -47,7 +47,7 @@ export function PreAssessmentData({ assessment }: PreAssessmentDataProps) {
           Your initial assessment scores
         </Text>
       </Card.Header>
-      
+
       <Card.Body className="space-y-6">
         {/* Overall Score */}
         <div className="text-center p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">
@@ -62,7 +62,9 @@ export function PreAssessmentData({ assessment }: PreAssessmentDataProps) {
 
         {/* Individual Questions */}
         <div>
-          <Heading level="h4" className="mb-4">Question Breakdown</Heading>
+          <Heading level="h4" className="mb-4">
+            Question Breakdown
+          </Heading>
           <div className="space-y-3">
             {questions.map((question) => (
               <div
@@ -75,12 +77,12 @@ export function PreAssessmentData({ assessment }: PreAssessmentDataProps) {
                   </div>
                   <Text className="font-medium">{question.label}</Text>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <span className={`text-xl ${getScoreColor(question.score)}`}>
                     {getScoreIcon(question.score)}
                   </span>
-                  <Badge 
+                  <Badge
                     intent={question.score === 1 ? "success" : "danger"}
                     className="text-xs"
                   >
@@ -95,35 +97,43 @@ export function PreAssessmentData({ assessment }: PreAssessmentDataProps) {
         {/* Performance Indicator */}
         <div className="pt-4 border-t">
           <div className="flex justify-between items-center mb-3">
-            <Text textSize="sm" className="font-medium">Performance Level</Text>
+            <Text textSize="sm" className="font-medium">
+              Performance Level
+            </Text>
             <Text textSize="sm" color="muted">
               {totalCorrect} of {totalQuestions} correct
             </Text>
           </div>
-          
+
           <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
-            <div 
+            <div
               className={`h-3 rounded-full transition-all duration-300 ${
-                percentage >= 80 ? 'bg-green-500' :
-                percentage >= 60 ? 'bg-yellow-500' :
-                'bg-red-500'
+                percentage >= 80
+                  ? "bg-green-500"
+                  : percentage >= 60
+                    ? "bg-yellow-500"
+                    : "bg-red-500"
               }`}
               style={{ width: `${percentage}%` }}
             ></div>
           </div>
-          
+
           <div className="flex justify-between items-center">
-            <Badge 
+            <Badge
               intent={
-                percentage >= 80 ? "success" :
-                percentage >= 60 ? "warning" :
-                "danger"
+                percentage >= 80
+                  ? "success"
+                  : percentage >= 60
+                    ? "warning"
+                    : "danger"
               }
               className="text-xs"
             >
-              {percentage >= 80 ? "Strong" :
-               percentage >= 60 ? "Developing" :
-               "Needs Support"}
+              {percentage >= 80
+                ? "Strong"
+                : percentage >= 60
+                  ? "Developing"
+                  : "Needs Support"}
             </Badge>
             <Text textSize="xs" color="muted">
               {percentage}% overall
@@ -133,4 +143,4 @@ export function PreAssessmentData({ assessment }: PreAssessmentDataProps) {
       </Card.Body>
     </Card>
   );
-} 
+}

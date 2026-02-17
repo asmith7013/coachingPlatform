@@ -1,5 +1,8 @@
-import React from 'react';
-import { ClickableCards, type ClickableCardColor } from '@/components/composed/cards/ClickableCards';
+import React from "react";
+import {
+  ClickableCards,
+  type ClickableCardColor,
+} from "@/components/composed/cards/ClickableCards";
 
 export interface IPGSubsectionCardsProps {
   selectedValue?: string;
@@ -9,7 +12,7 @@ export interface IPGSubsectionCardsProps {
     label: string;
     description: string;
   }>;
-  parentColor: 'primary' | 'secondary' | 'success';
+  parentColor: "primary" | "secondary" | "success";
   className?: string;
 }
 
@@ -18,19 +21,19 @@ export const IPGSubsectionCards: React.FC<IPGSubsectionCardsProps> = ({
   onSelect,
   options,
   parentColor,
-  className
+  className,
 }) => {
   // Color inheritance function that maps parentColor to ClickableCardColor
   const getColor = (): ClickableCardColor => {
     switch (parentColor) {
-      case 'primary':
-        return 'primary';
-      case 'secondary':
-        return 'secondary';
-      case 'success':
-        return 'success';
+      case "primary":
+        return "primary";
+      case "secondary":
+        return "secondary";
+      case "success":
+        return "success";
       default:
-        return 'muted';
+        return "muted";
     }
   };
 
@@ -52,4 +55,4 @@ export const IPGSubsectionCards: React.FC<IPGSubsectionCardsProps> = ({
       ))}
     </ClickableCards>
   );
-}; 
+};

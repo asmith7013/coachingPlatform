@@ -1,11 +1,11 @@
 "use server";
 
 import { CapEvidenceModel } from "@/lib/schema/mongoose-schema/cap/cap-evidence.model";
-import { 
-  CapEvidenceZodSchema, 
+import {
+  CapEvidenceZodSchema,
   CapEvidenceInputZodSchema,
   type CapEvidenceInput,
-  CapEvidence
+  CapEvidence,
 } from "@zod-schema/cap/cap-evidence";
 import { createCrudActions } from "@server/crud/crud-factory";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -19,21 +19,25 @@ const capEvidenceActions = createCrudActions({
   inputSchema: CapEvidenceInputZodSchema,
   name: "CAP Evidence",
   revalidationPaths: ["/dashboard/coaching-action-plans"],
-  sortFields: ['title', 'type', 'dateCollected', 'sortOrder', 'createdAt'],
-  defaultSortField: 'sortOrder',
-  defaultSortOrder: 'asc'
+  sortFields: ["title", "type", "dateCollected", "sortOrder", "createdAt"],
+  defaultSortField: "sortOrder",
+  defaultSortOrder: "asc",
 });
 
 // Export only async functions
-export async function fetchCapEvidence(params: QueryParams = DEFAULT_QUERY_PARAMS) {
+export async function fetchCapEvidence(
+  params: QueryParams = DEFAULT_QUERY_PARAMS,
+) {
   return withDbConnection(() => capEvidenceActions.fetch(params));
 }
 
 export async function fetchCapEvidenceByCapId(capId: string) {
-  return withDbConnection(() => capEvidenceActions.fetch({ 
-    ...DEFAULT_QUERY_PARAMS,
-    filters: { capId }
-  }));
+  return withDbConnection(() =>
+    capEvidenceActions.fetch({
+      ...DEFAULT_QUERY_PARAMS,
+      filters: { capId },
+    }),
+  );
 }
 
 export async function fetchCapEvidenceById(id: string) {
@@ -44,10 +48,13 @@ export async function createCapEvidence(data: CapEvidenceInput) {
   return withDbConnection(() => capEvidenceActions.create(data));
 }
 
-export async function updateCapEvidence(id: string, data: Partial<CapEvidenceInput>) {
+export async function updateCapEvidence(
+  id: string,
+  data: Partial<CapEvidenceInput>,
+) {
   return withDbConnection(() => capEvidenceActions.update(id, data));
 }
 
 export async function deleteCapEvidence(id: string) {
   return withDbConnection(() => capEvidenceActions.delete(id));
-} 
+}

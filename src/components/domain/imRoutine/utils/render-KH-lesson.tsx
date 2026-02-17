@@ -1,10 +1,10 @@
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { cn } from '@ui/utils/formatters';
-import type { Lesson } from '@/components/domain/imRoutine/lessons/LessonView';
-import { NoRoutineCard } from '@/components/domain/imRoutine/lessons/NoRoutineCard';
-import { RoutineBadge } from '@/components/domain/imRoutine/routines/RoutineBadge';
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { cn } from "@ui/utils/formatters";
+import type { Lesson } from "@/components/domain/imRoutine/lessons/LessonView";
+import { NoRoutineCard } from "@/components/domain/imRoutine/lessons/NoRoutineCard";
+import { RoutineBadge } from "@/components/domain/imRoutine/routines/RoutineBadge";
 
 // Define activity type to avoid implicit any
 interface Activity {
@@ -21,10 +21,10 @@ export function renderKHLesson(
   lesson: Lesson,
   selectedRoutines: string[],
   isSelected: boolean,
-  curriculum: 'ILC' | 'Kendall Hunt'
+  curriculum: "ILC" | "Kendall Hunt",
 ) {
   const hasSelected = lesson.activities.some((activity: Activity) =>
-    activity.routines.some((r: string) => selectedRoutines.includes(r.trim()))
+    activity.routines.some((r: string) => selectedRoutines.includes(r.trim())),
   );
 
   if (!hasSelected) {
@@ -32,23 +32,22 @@ export function renderKHLesson(
   }
 
   const cardClasses = cn(
-    'p-4 border rounded shadow-sm',
-    'transition-all duration-150',
-    isSelected ? 'border-4 border-primary' : 'border-2 border-muted'
+    "p-4 border rounded shadow-sm",
+    "transition-all duration-150",
+    isSelected ? "border-4 border-primary" : "border-2 border-muted",
   );
 
   return (
     <Card className={cardClasses}>
-      <Heading
-        level="h3"
-        className="text-lg font-semibold mb-2"
-      >
+      <Heading level="h3" className="text-lg font-semibold mb-2">
         Lesson {lesson.lessonNumber}
       </Heading>
 
       <div className="space-y-4">
         {lesson.activities.map((activity: Activity, i: number) => {
-          const hasSelectedRoutines = activity.routines.some((r: string) => selectedRoutines.includes(r));
+          const hasSelectedRoutines = activity.routines.some((r: string) =>
+            selectedRoutines.includes(r),
+          );
           if (!hasSelectedRoutines) return null;
 
           return (
@@ -56,8 +55,8 @@ export function renderKHLesson(
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <Text textSize="lg" weight="bold" color="default">
-                    {activity.activityNumber === 'Warm Up'
-                      ? 'Warm Up'
+                    {activity.activityNumber === "Warm Up"
+                      ? "Warm Up"
                       : `Activity ${activity.activityNumber}`}
                     {activity.isWarmUp && (
                       <></>
@@ -75,7 +74,9 @@ export function renderKHLesson(
               </div>
               <div className="flex flex-wrap gap-2">
                 {activity.routines
-                  .filter((routine: string) => selectedRoutines.includes(routine))
+                  .filter((routine: string) =>
+                    selectedRoutines.includes(routine),
+                  )
                   .map((routine: string, i: number) => (
                     <RoutineBadge
                       key={i}
@@ -92,4 +93,4 @@ export function renderKHLesson(
       </div>
     </Card>
   );
-} 
+}

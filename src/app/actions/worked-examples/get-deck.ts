@@ -1,9 +1,9 @@
 "use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
-import { auth } from '@clerk/nextjs/server';
-import { handleServerError } from '@error/handlers/server';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { WorkedExampleDeck } from "@mongoose-schema/worked-example-deck.model";
+import { auth } from "@clerk/nextjs/server";
+import { handleServerError } from "@error/handlers/server";
 
 export async function getDeckBySlug(slug: string) {
   return withDbConnection(async () => {
@@ -15,7 +15,7 @@ export async function getDeckBySlug(slug: string) {
       if (!deck) {
         return {
           success: false,
-          error: 'Deck not found',
+          error: "Deck not found",
         };
       }
 
@@ -23,7 +23,7 @@ export async function getDeckBySlug(slug: string) {
       if (!deck.isPublic && deck.createdBy !== userId) {
         return {
           success: false,
-          error: 'You do not have permission to view this deck',
+          error: "You do not have permission to view this deck",
         };
       }
 
@@ -37,7 +37,7 @@ export async function getDeckBySlug(slug: string) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to retrieve deck'),
+        error: handleServerError(error, "Failed to retrieve deck"),
       };
     }
   });
@@ -69,7 +69,7 @@ export async function getLessonSummaryBySlug(slug: string) {
       if (!deck) {
         return {
           success: false,
-          error: 'Deck not found',
+          error: "Deck not found",
         };
       }
 
@@ -77,14 +77,14 @@ export async function getLessonSummaryBySlug(slug: string) {
       if (!deck.isPublic && deck.createdBy !== userId) {
         return {
           success: false,
-          error: 'You do not have permission to view this deck',
+          error: "You do not have permission to view this deck",
         };
       }
 
       if (!deck.lessonSummaryHtml) {
         return {
           success: false,
-          error: 'No lesson summary available for this deck',
+          error: "No lesson summary available for this deck",
         };
       }
 
@@ -102,7 +102,7 @@ export async function getLessonSummaryBySlug(slug: string) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to retrieve lesson summary'),
+        error: handleServerError(error, "Failed to retrieve lesson summary"),
       };
     }
   });
@@ -118,7 +118,7 @@ export async function getDeckById(deckId: string) {
       if (!deck) {
         return {
           success: false,
-          error: 'Deck not found',
+          error: "Deck not found",
         };
       }
 
@@ -126,7 +126,7 @@ export async function getDeckById(deckId: string) {
       if (!deck.isPublic && deck.createdBy !== userId) {
         return {
           success: false,
-          error: 'You do not have permission to view this deck',
+          error: "You do not have permission to view this deck",
         };
       }
 
@@ -140,7 +140,7 @@ export async function getDeckById(deckId: string) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to retrieve deck'),
+        error: handleServerError(error, "Failed to retrieve deck"),
       };
     }
   });

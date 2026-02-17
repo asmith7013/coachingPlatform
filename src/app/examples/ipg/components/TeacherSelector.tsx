@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 interface TeacherSelectorProps {
   teachers: string[];
@@ -6,15 +6,22 @@ interface TeacherSelectorProps {
   onTeacherChange: (teacher: string) => void;
 }
 
-export function TeacherSelector({ teachers, selectedTeacher, onTeacherChange }: TeacherSelectorProps) {
+export function TeacherSelector({
+  teachers,
+  selectedTeacher,
+  onTeacherChange,
+}: TeacherSelectorProps) {
   // Sort teachers alphabetically (case-insensitive)
-  const sortedTeachers = [...teachers].sort((a, b) => 
-    a.toLowerCase().localeCompare(b.toLowerCase())
+  const sortedTeachers = [...teachers].sort((a, b) =>
+    a.toLowerCase().localeCompare(b.toLowerCase()),
   );
 
   return (
     <div className="mb-6">
-      <label htmlFor="teacher-select" className="block text-sm font-medium text-gray-700 mb-2">
+      <label
+        htmlFor="teacher-select"
+        className="block text-sm font-medium text-gray-700 mb-2"
+      >
         Select Teacher
       </label>
       <select
@@ -32,4 +39,4 @@ export function TeacherSelector({ teachers, selectedTeacher, onTeacherChange }: 
       </select>
     </div>
   );
-} 
+}

@@ -8,11 +8,11 @@ import { Spinner } from "@components/core/feedback";
 import { Select } from "@components/core/fields";
 import type { ImportPreview } from "@lib/integrations/monday/types/import";
 import type { MondayBoard } from "@lib/integrations/monday/types/board";
-import { 
+import {
   useMondayConnection,
   useMondayBoard,
-  useMondayUserByEmail
-} from '@hooks/integrations/monday/useMondayQueries';
+  useMondayUserByEmail,
+} from "@hooks/integrations/monday/useMondayQueries";
 import { useMondayMutations } from "@/hooks/integrations/monday/useMondayMutations";
 
 export default function MondayLiveExamplePage() {
@@ -23,48 +23,62 @@ export default function MondayLiveExamplePage() {
     findPotentialVisits,
     importVisits,
     loading,
-    error: apiError
+    error: apiError,
   } = useMondayMutations();
-  
+
   // State management
-  const [connectionState, setConnectionState] = useState<'unknown' | 'connected' | 'error'>('unknown');
-  const [connectionData, setConnectionData] = useState<{ name?: string; email?: string } | null>(null);
+  const [connectionState, setConnectionState] = useState<
+    "unknown" | "connected" | "error"
+  >("unknown");
+  const [connectionData, setConnectionData] = useState<{
+    name?: string;
+    email?: string;
+  } | null>(null);
   const [board, setBoard] = useState<MondayBoard | null>(null);
-  const [previewItems, setPreviewItems] = useState<ImportPreview[] | null>(null);
-  const [importResult, setImportResult] = useState<{ success: boolean; message?: string; errors?: Record<string, string> } | null>(null);
+  const [previewItems, setPreviewItems] = useState<ImportPreview[] | null>(
+    null,
+  );
+  const [importResult, setImportResult] = useState<{
+    success: boolean;
+    message?: string;
+    errors?: Record<string, string>;
+  } | null>(null);
   const [selectedBoardId, setSelectedBoardId] = useState<string>("");
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-  const [transformPreview, setTransformPreview] = useState<ImportPreview | null>(null);
+  const [transformPreview, setTransformPreview] =
+    useState<ImportPreview | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+
   // React Query hooks
   const connectionQuery = useMondayConnection();
   const boardMutation = useMondayBoard();
-  const userQuery = useMondayUserByEmail(connectionData?.email || '');
-  
+  const userQuery = useMondayUserByEmail(connectionData?.email || "");
+
   // Handle connection test
   const handleTestConnection = async () => {
     try {
       const result = await testConnection();
-      
+
       if (result.success) {
-        setConnectionState('connected');
+        setConnectionState("connected");
         setConnectionData({
-          name: result.message?.split(' ')[0] || 'Unknown',
-          email: result.message?.split(' ')[1]?.replace(/[()]/g, '') || 'unknown@example.com'
+          name: result.message?.split(" ")[0] || "Unknown",
+          email:
+            result.message?.split(" ")[1]?.replace(/[()]/g, "") ||
+            "unknown@example.com",
         });
       } else {
-        setConnectionState('error');
+        setConnectionState("error");
         setConnectionData(null);
-        setError(result.message || 'Connection failed');
+        setError(result.message || "Connection failed");
       }
     } catch (err) {
-      setConnectionState('error');
+      setConnectionState("error");
       setConnectionData(null);
-      setError(err instanceof Error ? err.message : 'Unknown error occurred');
+      setError(err instanceof Error ? err.message : "Unknown error occurred");
     }
   };
-  
+
   // Handle board selection
   const handleBoardChange = async (boardId: string) => {
     setSelectedBoardId(boardId);
@@ -73,12 +87,14 @@ export default function MondayLiveExamplePage() {
         // Load board data
         const boardData = await getBoard(boardId);
         setBoard(boardData as unknown as MondayBoard);
-        
+
         // Find potential items to import
         const potentialItems = await findPotentialVisits(boardId);
         setPreviewItems(potentialItems);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load board data');
+        setError(
+          err instanceof Error ? err.message : "Failed to load board data",
+        );
       }
     }
   };
@@ -87,58 +103,73 @@ export default function MondayLiveExamplePage() {
   const handleItemSelect = (itemId: string) => {
     setSelectedItemId(itemId);
     // Find the preview for this item
-    const preview = previewItems?.find(p => p.original.id === itemId) || null;
+    const preview = previewItems?.find((p) => p.original.id === itemId) || null;
     setTransformPreview(preview);
   };
 
   // Handle import of selected item
   const handleImport = async () => {
     if (!selectedItemId || !transformPreview?.valid) return;
-    
+
     try {
       const result = await importVisits([selectedItemId]);
       setImportResult(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Import failed');
+      setError(err instanceof Error ? err.message : "Import failed");
     }
   };
-  
+
   // Combine errors for display
-  const displayError = error || (apiError ? (apiError instanceof Error ? apiError.message : String(apiError)) : null);
+  const displayError =
+    error ||
+    (apiError
+      ? apiError instanceof Error
+        ? apiError.message
+        : String(apiError)
+      : null);
 
   // Handle board fetch
   const handleFetchBoard = async () => {
     if (!selectedBoardId) {
-      setError('Please enter a board ID');
+      setError("Please enter a board ID");
       return;
     }
-    
+
     setError(null);
-    
+
     try {
       boardMutation.mutate([selectedBoardId]);
     } catch (err) {
-      console.error('Error fetching board:', err);
+      console.error("Error fetching board:", err);
       setError(err instanceof Error ? err.message : String(err));
     }
   };
-  
+
   // Determine loading state
-  const isLoading = connectionQuery.isLoading || boardMutation.isPending || userQuery.isPending;
+  const isLoading =
+    connectionQuery.isLoading || boardMutation.isPending || userQuery.isPending;
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Monday.com Live Integration Example</h1>
-      
+      <h1 className="text-2xl font-bold mb-6">
+        Monday.com Live Integration Example
+      </h1>
+
       {/* Connection Status */}
       <Card className="mb-6">
         <Card.Header>Connection Status</Card.Header>
         <Card.Body>
-          {connectionState === 'unknown' ? (
+          {connectionState === "unknown" ? (
             <Button onClick={handleTestConnection} disabled={loading}>
-              {loading ? <><Spinner size="sm" className="mr-2" /> Testing...</> : "Test Connection"}
+              {loading ? (
+                <>
+                  <Spinner size="sm" className="mr-2" /> Testing...
+                </>
+              ) : (
+                "Test Connection"
+              )}
             </Button>
-          ) : connectionState === 'connected' ? (
+          ) : connectionState === "connected" ? (
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -161,16 +192,26 @@ export default function MondayLiveExamplePage() {
                   <Alert.Description>{displayError}</Alert.Description>
                 </Alert>
               )}
-              <Button onClick={handleTestConnection} className="mt-2" disabled={loading}>
-                {loading ? <><Spinner size="sm" className="mr-2" /> Retrying...</> : "Retry Connection"}
+              <Button
+                onClick={handleTestConnection}
+                className="mt-2"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Spinner size="sm" className="mr-2" /> Retrying...
+                  </>
+                ) : (
+                  "Retry Connection"
+                )}
               </Button>
             </div>
           )}
         </Card.Body>
       </Card>
-      
+
       {/* Board Selection */}
-      {connectionState === 'connected' && (
+      {connectionState === "connected" && (
         <Card className="mb-6">
           <Card.Header>Select a Monday.com Board</Card.Header>
           <Card.Body>
@@ -184,19 +225,24 @@ export default function MondayLiveExamplePage() {
                 <Select
                   value={selectedBoardId}
                   onChange={handleBoardChange}
-                  options={[...(board ? [{ value: board.id, label: board.name }] : [])]}
+                  options={[
+                    ...(board ? [{ value: board.id, label: board.name }] : []),
+                  ]}
                   placeholder="Select a board"
                 />
               </div>
             ) : (
-              <p>No boards found. Make sure your Monday.com account has access to boards.</p>
+              <p>
+                No boards found. Make sure your Monday.com account has access to
+                boards.
+              </p>
             )}
           </Card.Body>
         </Card>
       )}
-      
+
       {/* Potential Import Items */}
-      {connectionState === 'connected' && selectedBoardId && (
+      {connectionState === "connected" && selectedBoardId && (
         <Card className="mb-6">
           <Card.Header>Potential Import Items</Card.Header>
           <Card.Body>
@@ -208,14 +254,17 @@ export default function MondayLiveExamplePage() {
             ) : previewItems && previewItems.length > 0 ? (
               <div>
                 <p className="mb-2 text-sm text-gray-600">
-                  Found {previewItems.length} potential items. Click on an item to select it.
+                  Found {previewItems.length} potential items. Click on an item
+                  to select it.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                  {previewItems.map(item => (
+                  {previewItems.map((item) => (
                     <div
                       key={String(item.original.id)}
                       className={`p-3 border rounded cursor-pointer ${
-                        selectedItemId === String(item.original.id) ? 'bg-blue-50 border-blue-300' : ''
+                        selectedItemId === String(item.original.id)
+                          ? "bg-blue-50 border-blue-300"
+                          : ""
                       }`}
                       onClick={() => handleItemSelect(String(item.original.id))}
                     >
@@ -251,7 +300,7 @@ export default function MondayLiveExamplePage() {
           </Card.Body>
         </Card>
       )}
-      
+
       {/* Selected Item Preview */}
       {transformPreview && (
         <Card className="mb-6">
@@ -275,45 +324,54 @@ export default function MondayLiveExamplePage() {
                   {JSON.stringify(transformPreview.transformed, null, 2)}
                 </pre>
               </div>
-              
+
               <div>
                 <h3 className="font-medium mb-2">Validation Results</h3>
                 <div>
                   <p className="mb-1">
-                    <span className="font-medium">Valid:</span> {transformPreview.valid ? "Yes" : "No"}
+                    <span className="font-medium">Valid:</span>{" "}
+                    {transformPreview.valid ? "Yes" : "No"}
                   </p>
-                  
+
                   {transformPreview.missingRequired.length > 0 && (
                     <div className="mt-3">
-                      <h4 className="font-medium text-red-600">Missing Required Fields:</h4>
+                      <h4 className="font-medium text-red-600">
+                        Missing Required Fields:
+                      </h4>
                       <ul className="list-disc pl-5">
-                        {transformPreview.missingRequired.map(field => (
+                        {transformPreview.missingRequired.map((field) => (
                           <li key={field}>{field}</li>
                         ))}
                       </ul>
                     </div>
                   )}
-                  
+
                   {Object.keys(transformPreview.errors).length > 0 && (
                     <div className="mt-3">
                       <h4 className="font-medium text-red-600">Errors:</h4>
                       <ul className="list-disc pl-5">
-                        {Object.entries(transformPreview.errors).map(([field, error]) => (
-                          <li key={field}>
-                            <span className="font-medium">{field}:</span> {error}
-                          </li>
-                        ))}
+                        {Object.entries(transformPreview.errors).map(
+                          ([field, error]) => (
+                            <li key={field}>
+                              <span className="font-medium">{field}:</span>{" "}
+                              {error}
+                            </li>
+                          ),
+                        )}
                       </ul>
                     </div>
                   )}
-                  
+
                   {transformPreview.valid && (
                     <div className="mt-4">
-                      <Button 
-                        onClick={handleImport}
-                        disabled={loading}
-                      >
-                        {loading ? <><Spinner size="sm" className="mr-2" /> Importing...</> : "Import to Database"}
+                      <Button onClick={handleImport} disabled={loading}>
+                        {loading ? (
+                          <>
+                            <Spinner size="sm" className="mr-2" /> Importing...
+                          </>
+                        ) : (
+                          "Import to Database"
+                        )}
                       </Button>
                     </div>
                   )}
@@ -323,30 +381,34 @@ export default function MondayLiveExamplePage() {
           </Card.Body>
         </Card>
       )}
-      
+
       {/* Import Result */}
       {importResult && (
         <Card className="mb-6">
           <Card.Header>Import Result</Card.Header>
           <Card.Body>
-            <div className={`p-4 rounded ${importResult.success ? 'bg-green-50' : 'bg-red-50'}`}>
-              <p className={`font-medium ${importResult.success ? 'text-green-700' : 'text-red-700'}`}>
+            <div
+              className={`p-4 rounded ${importResult.success ? "bg-green-50" : "bg-red-50"}`}
+            >
+              <p
+                className={`font-medium ${importResult.success ? "text-green-700" : "text-red-700"}`}
+              >
                 {importResult.message}
               </p>
-              
+
               {importResult.success && (
-                <p className="mt-2">
-                  Successfully imported items.
-                </p>
+                <p className="mt-2">Successfully imported items.</p>
               )}
-              
+
               {Object.keys(importResult.errors || {}).length > 0 && (
                 <div className="mt-3">
                   <h4 className="font-medium text-red-600">Errors:</h4>
                   <ul className="list-disc pl-5">
-                    {Object.entries(importResult.errors || {}).map(([id, message]) => (
-                      <li key={id}>{message as string}</li>
-                    ))}
+                    {Object.entries(importResult.errors || {}).map(
+                      ([id, message]) => (
+                        <li key={id}>{message as string}</li>
+                      ),
+                    )}
                   </ul>
                 </div>
               )}
@@ -354,7 +416,7 @@ export default function MondayLiveExamplePage() {
           </Card.Body>
         </Card>
       )}
-      
+
       {/* Generic Error Display */}
       {displayError && !connectionData && (
         <Alert intent="error" className="mt-4">
@@ -362,7 +424,7 @@ export default function MondayLiveExamplePage() {
           <Alert.Description>{displayError}</Alert.Description>
         </Alert>
       )}
-      
+
       {/* Board fetch */}
       <Card className="mb-6">
         <Card.Body>
@@ -375,12 +437,12 @@ export default function MondayLiveExamplePage() {
                 type="text"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 value={selectedBoardId}
-                onChange={e => setSelectedBoardId(e.target.value)}
+                onChange={(e) => setSelectedBoardId(e.target.value)}
                 placeholder="Enter Monday.com board ID"
               />
             </div>
             <div>
-              <Button 
+              <Button
                 onClick={handleFetchBoard}
                 disabled={isLoading || !selectedBoardId}
               >
@@ -391,7 +453,7 @@ export default function MondayLiveExamplePage() {
           </div>
         </Card.Body>
       </Card>
-      
+
       {/* User lookup */}
       <Card className="mb-6">
         <Card.Body>
@@ -403,13 +465,18 @@ export default function MondayLiveExamplePage() {
               <input
                 type="email"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                value={connectionData?.email || ''}
-                onChange={e => setConnectionData(prev => ({ ...prev, email: e.target.value }))}
+                value={connectionData?.email || ""}
+                onChange={(e) =>
+                  setConnectionData((prev) => ({
+                    ...prev,
+                    email: e.target.value,
+                  }))
+                }
                 placeholder="Enter user email"
               />
             </div>
           </div>
-          
+
           {userQuery.data && (
             <div className="mt-4 p-4 bg-gray-50 rounded-md">
               {/* <Text className="font-medium">User Found</Text>
@@ -423,7 +490,7 @@ export default function MondayLiveExamplePage() {
           )}
         </Card.Body>
       </Card>
-      
+
       {/* Loading state */}
       {isLoading && (
         <div className="flex justify-center items-center py-12">

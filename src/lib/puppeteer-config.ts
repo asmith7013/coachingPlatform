@@ -12,22 +12,22 @@
 // PLAYWRIGHT CONFIGURATION (Currently Used)
 // ============================================================================
 
-import type { Browser as PlaywrightBrowser } from 'playwright';
+import type { Browser as PlaywrightBrowser } from "playwright";
 
 /**
  * Gets a configured Playwright browser instance.
  * Playwright works well on Vercel without special configuration.
  */
 export async function getPlaywrightBrowser(): Promise<PlaywrightBrowser> {
-  const playwright = await import('playwright');
+  const playwright = await import("playwright");
 
   return await playwright.chromium.launch({
     headless: true,
     args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
     ],
   });
 }

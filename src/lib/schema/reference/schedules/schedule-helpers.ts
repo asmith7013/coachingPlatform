@@ -1,15 +1,18 @@
-import type { TeacherSchedule, BellSchedule } from '@zod-schema/schedules/schedule-documents';
-import type { NYCPSStaff } from '@zod-schema/core/staff';
+import type {
+  TeacherSchedule,
+  BellSchedule,
+} from "@zod-schema/schedules/schedule-documents";
+import type { NYCPSStaff } from "@zod-schema/core/staff";
 
 /**
  * Get teacher schedule by teacher ID
  * Eliminates duplicate lookup logic across components
  */
 export function getTeacherSchedule(
-  teacherSchedules: TeacherSchedule[], 
-  teacherId: string
+  teacherSchedules: TeacherSchedule[],
+  teacherId: string,
 ): TeacherSchedule | undefined {
-  return teacherSchedules.find(schedule => schedule.teacherId === teacherId);
+  return teacherSchedules.find((schedule) => schedule.teacherId === teacherId);
 }
 
 /**
@@ -41,8 +44,8 @@ export function formatScheduleTime(startTime: string, endTime: string): string {
  * Helper to avoid repeated teacher lookup logic
  */
 export function getTeacherName(staff: NYCPSStaff[], teacherId: string): string {
-  const teacher = staff.find(t => t._id === teacherId);
-  return teacher ? teacher.staffName : 'Unknown Teacher';
+  const teacher = staff.find((t) => t._id === teacherId);
+  return teacher ? teacher.staffName : "Unknown Teacher";
 }
 
 /**
@@ -50,16 +53,16 @@ export function getTeacherName(staff: NYCPSStaff[], teacherId: string): string {
  * Combines name and schedule info for display
  */
 export function getTeacherDisplayInfo(
-  staff: NYCPSStaff[], 
-  teacherSchedules: TeacherSchedule[], 
-  teacherId: string
+  staff: NYCPSStaff[],
+  teacherSchedules: TeacherSchedule[],
+  teacherId: string,
 ) {
-  const teacher = staff.find(t => t._id === teacherId);
+  const teacher = staff.find((t) => t._id === teacherId);
   const schedule = getTeacherSchedule(teacherSchedules, teacherId);
-  
+
   return {
-    name: teacher ? teacher.staffName : 'Unknown Teacher',
+    name: teacher ? teacher.staffName : "Unknown Teacher",
     hasSchedule: !!schedule,
-    schedule: schedule || null
+    schedule: schedule || null,
   };
-} 
+}

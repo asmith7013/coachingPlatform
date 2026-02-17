@@ -1,20 +1,20 @@
 "use client";
 
 import React from "react";
-import Link from 'next/link';
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Button } from '@/components/core/Button';
-import { Badge } from '@/components/core/feedback/Badge';
-import type { CoachingActionPlan } from '@zod-schema/core/cap';
-import { 
+import Link from "next/link";
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { Button } from "@/components/core/Button";
+import { Badge } from "@/components/core/feedback/Badge";
+import type { CoachingActionPlan } from "@zod-schema/core/cap";
+import {
   PencilIcon,
   DocumentDuplicateIcon,
   TrashIcon,
-  DocumentArrowDownIcon
-} from '@heroicons/react/24/outline';
-import { formatMediumDate } from '@/lib/data-processing/transformers/utils/date-utils';
+  DocumentArrowDownIcon,
+} from "@heroicons/react/24/outline";
+import { formatMediumDate } from "@/lib/data-processing/transformers/utils/date-utils";
 
 interface ActionPlanCardProps {
   plan: CoachingActionPlan;
@@ -26,14 +26,14 @@ interface ActionPlanCardProps {
   isDeleting?: boolean;
 }
 
-export function ActionPlanCard({ 
-  plan, 
-  onEdit, 
-  onDuplicate, 
-  onArchive: _onArchive, 
-  onDelete, 
+export function ActionPlanCard({
+  plan,
+  onEdit,
+  onDuplicate,
+  onArchive: _onArchive,
+  onDelete,
   onExport,
-  isDeleting 
+  isDeleting,
 }: ActionPlanCardProps) {
   // Calculate stage progress
   const _stageProgress = formatStageProgress(plan);
@@ -43,7 +43,11 @@ export function ActionPlanCard({
     e.preventDefault();
     e.stopPropagation();
     if (plan._id && onDelete) {
-      if (window.confirm("Are you sure you want to delete this coaching action plan?")) {
+      if (
+        window.confirm(
+          "Are you sure you want to delete this coaching action plan?",
+        )
+      ) {
         onDelete(plan._id);
       }
     }
@@ -56,32 +60,28 @@ export function ActionPlanCard({
       className="relative hover:shadow-lg transition-shadow duration-200 bg-white border border-gray-200"
     >
       {/* Main content - clickable for navigation */}
-      <Link href={`/dashboard/coaching-action-plans/${plan._id}`} className="block">
+      <Link
+        href={`/dashboard/coaching-action-plans/${plan._id}`}
+        className="block"
+      >
         <div className="cursor-pointer">
           {/* Header */}
           <div className="flex justify-between items-start mb-4">
             <div className="flex-1 min-w-0">
-              <Heading 
-                level="h3" 
+              <Heading
+                level="h3"
                 color="default"
                 className="text-primary font-medium"
               >
                 {plan.title}
               </Heading>
-              <Text 
-                textSize="base" 
-                color="muted"
-                className="mt-1"
-              >
+              <Text textSize="base" color="muted" className="mt-1">
                 Academic Year: {plan.academicYear}
               </Text>
             </div>
-            
+
             {/* Status Badge */}
-            <Badge 
-              intent={getStatusIntent(plan.status)}
-              className="ml-2"
-            >
+            <Badge intent={getStatusIntent(plan.status)} className="ml-2">
               {plan.status.charAt(0).toUpperCase() + plan.status.slice(1)}
             </Badge>
           </div>
@@ -116,7 +116,9 @@ export function ActionPlanCard({
           {/* Dates */}
           <div className="flex justify-between items-center text-sm text-muted mb-4">
             <span>Started: {formatMediumDate(plan.startDate)}</span>
-            {plan.endDate && <span>Ends: {formatMediumDate(plan.endDate)}</span>}
+            {plan.endDate && (
+              <span>Ends: {formatMediumDate(plan.endDate)}</span>
+            )}
           </div>
 
           {/* Add padding bottom for absolute positioned buttons */}
@@ -142,7 +144,7 @@ export function ActionPlanCard({
             <PencilIcon className="h-4 w-4" />
             Edit
           </Button>
-          
+
           <Button
             onClick={(e) => {
               e.preventDefault();
@@ -159,7 +161,7 @@ export function ActionPlanCard({
             Duplicate
           </Button>
         </div>
-        
+
         <div className="flex gap-2">
           <Button
             onClick={(e) => {
@@ -176,7 +178,7 @@ export function ActionPlanCard({
             <DocumentArrowDownIcon className="h-4 w-4" />
             Export
           </Button>
-          
+
           <Button
             onClick={handleDelete}
             intent="danger"
@@ -187,7 +189,7 @@ export function ActionPlanCard({
             disabled={isDeleting}
           >
             <TrashIcon className="h-4 w-4" />
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? "Deleting..." : "Delete"}
           </Button>
         </div>
       </div>
@@ -198,7 +200,7 @@ export function ActionPlanCard({
 // Helper functions
 function formatStageProgress(plan: CoachingActionPlan): string {
   let completedStages = 0;
-  
+
   if (plan.ipgCoreAction) completedStages++;
   if (plan.ipgSubCategory) completedStages++;
   if (plan.rationale) completedStages++;
@@ -209,13 +211,13 @@ function formatStageProgress(plan: CoachingActionPlan): string {
   if (plan.ipgCoreAction) completedStages++;
   if (plan.ipgSubCategory) completedStages++;
   if (plan.rationale) completedStages++;
-  
+
   return `${completedStages}/4 stages completed`;
 }
 
 function calculateProgressPercentage(plan: CoachingActionPlan): number {
   let completedStages = 0;
-  
+
   if (plan.ipgCoreAction) completedStages++;
   if (plan.ipgSubCategory) completedStages++;
   if (plan.rationale) completedStages++;
@@ -226,21 +228,23 @@ function calculateProgressPercentage(plan: CoachingActionPlan): number {
   if (plan.ipgCoreAction) completedStages++;
   if (plan.ipgSubCategory) completedStages++;
   if (plan.rationale) completedStages++;
-  
+
   return Math.round((completedStages / 4) * 100);
 }
 
-function getStatusIntent(status: string): 'success' | 'warning' | 'danger' | 'info' {
+function getStatusIntent(
+  status: string,
+): "success" | "warning" | "danger" | "info" {
   switch (status) {
-    case 'completed':
-      return 'success';
-    case 'active':
-      return 'info';
-    case 'draft':
-      return 'warning';
-    case 'archived':
-      return 'danger';
+    case "completed":
+      return "success";
+    case "active":
+      return "info";
+    case "draft":
+      return "warning";
+    case "archived":
+      return "danger";
     default:
-      return 'info';
+      return "info";
   }
-} 
+}

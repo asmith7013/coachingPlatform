@@ -1,13 +1,13 @@
-import { useMemo } from 'react';
-import { 
-  getIPGCoreActionOptions, 
+import { useMemo } from "react";
+import {
+  getIPGCoreActionOptions,
   getIPGSubsectionOptions,
   searchIPGOptions,
   type IPGCoreActionReference,
   type IPGSubsectionReference,
-  type IPGCoreAction
-} from '@/lib/data-processing/transformers/domain/coaching-reference-transformers';
-import ipgData from '@/lib/ui/json/ipg.json';
+  type IPGCoreAction,
+} from "@/lib/data-processing/transformers/domain/coaching-reference-transformers";
+import ipgData from "@/lib/ui/json/ipg.json";
 
 /**
  * Hook for accessing and managing IPG reference data
@@ -19,7 +19,7 @@ export function useIPGData() {
     try {
       return getIPGCoreActionOptions();
     } catch (error) {
-      console.error('Error loading IPG core actions:', error);
+      console.error("Error loading IPG core actions:", error);
       return [];
     }
   }, []);
@@ -29,7 +29,7 @@ export function useIPGData() {
     try {
       return getIPGSubsectionOptions();
     } catch (error) {
-      console.error('Error loading IPG subsections:', error);
+      console.error("Error loading IPG subsections:", error);
       return [];
     }
   }, []);
@@ -40,7 +40,10 @@ export function useIPGData() {
       try {
         return getIPGSubsectionOptions(coreActionNumber);
       } catch (error) {
-        console.error(`Error loading subsections for core action ${coreActionNumber}:`, error);
+        console.error(
+          `Error loading subsections for core action ${coreActionNumber}:`,
+          error,
+        );
         return [];
       }
     };
@@ -52,7 +55,7 @@ export function useIPGData() {
       try {
         return searchIPGOptions(query);
       } catch (error) {
-        console.error('Error searching IPG data:', error);
+        console.error("Error searching IPG data:", error);
         return { coreActions: [], subsections: [] };
       }
     };
@@ -61,22 +64,23 @@ export function useIPGData() {
   // Data validation
   const isDataValid = useMemo(() => {
     const rawData = ipgData as IPGCoreAction[];
-    
+
     // Check basic structure
     if (!Array.isArray(rawData) || rawData.length === 0) {
       return false;
     }
 
     // Validate each core action
-    return rawData.every(ca => {
+    return rawData.every((ca) => {
       return (
-        typeof ca.coreAction === 'number' &&
-        typeof ca.title === 'string' &&
+        typeof ca.coreAction === "number" &&
+        typeof ca.title === "string" &&
         Array.isArray(ca.sections) &&
         ca.sections.length > 0 &&
-        ca.sections.every(section => 
-          typeof section.section === 'string' &&
-          typeof section.description === 'string'
+        ca.sections.every(
+          (section) =>
+            typeof section.section === "string" &&
+            typeof section.description === "string",
         )
       );
     });
@@ -87,40 +91,49 @@ export function useIPGData() {
     return {
       totalCoreActions: coreActions.length,
       totalSubsections: allSubsections.length,
-      subsectionsByCore: coreActions.reduce((acc, ca) => {
-        acc[ca.coreActionNumber] = getSubsectionsForCoreAction(ca.coreActionNumber).length;
-        return acc;
-      }, {} as Record<number, number>)
+      subsectionsByCore: coreActions.reduce(
+        (acc, ca) => {
+          acc[ca.coreActionNumber] = getSubsectionsForCoreAction(
+            ca.coreActionNumber,
+          ).length;
+          return acc;
+        },
+        {} as Record<number, number>,
+      ),
     };
   }, [coreActions, allSubsections, getSubsectionsForCoreAction]);
 
   // Helper functions
   const getCoreActionById = useMemo(() => {
     return (id: string): IPGCoreActionReference | undefined => {
-      return coreActions.find(ca => ca._id === id || ca.value === id);
+      return coreActions.find((ca) => ca._id === id || ca.value === id);
     };
   }, [coreActions]);
 
   const getSubsectionById = useMemo(() => {
     return (id: string): IPGSubsectionReference | undefined => {
-      return allSubsections.find(sub => sub._id === id || sub.value === id);
+      return allSubsections.find((sub) => sub._id === id || sub.value === id);
     };
   }, [allSubsections]);
 
   const getCoreActionByNumber = useMemo(() => {
     return (coreActionNumber: number): IPGCoreActionReference | undefined => {
-      return coreActions.find(ca => ca.coreActionNumber === coreActionNumber);
+      return coreActions.find((ca) => ca.coreActionNumber === coreActionNumber);
     };
   }, [coreActions]);
 
   // Color mapping helper
   const getColorForCoreAction = useMemo(() => {
-    return (coreActionNumber: number): 'primary' | 'secondary' | 'success' => {
+    return (coreActionNumber: number): "primary" | "secondary" | "success" => {
       switch (coreActionNumber) {
-        case 1: return 'primary';
-        case 2: return 'secondary';
-        case 3: return 'success';
-        default: return 'primary';
+        case 1:
+          return "primary";
+        case 2:
+          return "secondary";
+        case 3:
+          return "success";
+        default:
+          return "primary";
       }
     };
   }, []);
@@ -129,7 +142,7 @@ export function useIPGData() {
     // Data
     coreActions,
     allSubsections,
-    
+
     // Functions
     getSubsectionsForCoreAction,
     searchIPG,
@@ -137,14 +150,14 @@ export function useIPGData() {
     getSubsectionById,
     getCoreActionByNumber,
     getColorForCoreAction,
-    
+
     // Validation and stats
     isDataValid,
     stats,
-    
+
     // Loading state (always false since data is static)
     isLoading: false,
-    error: isDataValid ? null : new Error('IPG data validation failed')
+    error: isDataValid ? null : new Error("IPG data validation failed"),
   };
 }
 
@@ -155,37 +168,37 @@ export function useIPGSelectOptions() {
   const { coreActions, getSubsectionsForCoreAction } = useIPGData();
 
   const coreActionOptions = useMemo(() => {
-    return coreActions.map(ca => ({
+    return coreActions.map((ca) => ({
       value: ca.value,
-      label: ca.label
+      label: ca.label,
     }));
   }, [coreActions]);
 
   const getSubsectionOptions = useMemo(() => {
     return (coreActionNumber?: number) => {
-      const subsections = coreActionNumber 
+      const subsections = coreActionNumber
         ? getSubsectionsForCoreAction(coreActionNumber)
         : [];
-      
-      return subsections.map(sub => ({
+
+      return subsections.map((sub) => ({
         value: sub.value,
-        label: sub.label
+        label: sub.label,
       }));
     };
   }, [getSubsectionsForCoreAction]);
 
   return {
     coreActionOptions,
-    getSubsectionOptions
+    getSubsectionOptions,
   };
 }
 
 /**
  * Hook for IPG data with search capabilities
  */
-export function useIPGSearch(initialQuery = '') {
+export function useIPGSearch(initialQuery = "") {
   const { searchIPG } = useIPGData();
-  
+
   const searchResults = useMemo(() => {
     if (!initialQuery.trim()) {
       return { coreActions: [], subsections: [] };
@@ -195,6 +208,6 @@ export function useIPGSearch(initialQuery = '') {
 
   return {
     searchResults,
-    search: searchIPG
+    search: searchIPG,
   };
-} 
+}

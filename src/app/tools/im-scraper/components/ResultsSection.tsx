@@ -1,8 +1,8 @@
 "use client";
 
-import React from 'react';
-import { ResultsDisplay } from './ResultsDisplay';
-import { IMLesson, IMScrapingResponse } from '../lib/types';
+import React from "react";
+import { ResultsDisplay } from "./ResultsDisplay";
+import { IMLesson, IMScrapingResponse } from "../lib/types";
 
 interface ResultsSectionProps {
   results: IMLesson[];
@@ -17,7 +17,7 @@ export function ResultsSection({
   lastResponse,
   error,
   isLoading,
-  onClearResults
+  onClearResults,
 }: ResultsSectionProps) {
   if (results.length === 0 && !isLoading) return null;
 
@@ -25,11 +25,9 @@ export function ResultsSection({
     <div>
       <div className="mb-4">
         <h2 className="text-xl font-semibold text-gray-800">Step 2: Results</h2>
-        <p className="text-sm text-gray-600">
-          View and export scraped content
-        </p>
+        <p className="text-sm text-gray-600">View and export scraped content</p>
       </div>
-      
+
       <ResultsDisplay
         results={results}
         lastResponse={lastResponse as IMScrapingResponse}

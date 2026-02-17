@@ -108,7 +108,7 @@ export default function StateExamEditPage() {
         if (result.success && result.questions) {
           // Sort by pageIndex to maintain original order
           const sorted = [...result.questions].sort(
-            (a, b) => a.pageIndex - b.pageIndex
+            (a, b) => a.pageIndex - b.pageIndex,
           );
           setQuestions(sorted);
         } else {
@@ -116,7 +116,7 @@ export default function StateExamEditPage() {
         }
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to load questions"
+          err instanceof Error ? err.message : "Failed to load questions",
         );
       } finally {
         setLoading(false);
@@ -174,11 +174,15 @@ export default function StateExamEditPage() {
 
           // Check for missing entries on either side
           if (!entry) {
-            mismatches.push(`#${i + 1}: No JSON entry (question has standard ${question?.standard})`);
+            mismatches.push(
+              `#${i + 1}: No JSON entry (question has standard ${question?.standard})`,
+            );
             continue;
           }
           if (!question) {
-            mismatches.push(`#${i + 1}: No question (JSON has Q#${entry["Q#"]}, standard ${entry.Standards.primary})`);
+            mismatches.push(
+              `#${i + 1}: No question (JSON has Q#${entry["Q#"]}, standard ${entry.Standards.primary})`,
+            );
             continue;
           }
 
@@ -188,13 +192,15 @@ export default function StateExamEditPage() {
           const dbStandard = question.standard;
 
           // Extract just the standard code for comparison (e.g., "6.RP.3a")
-          const jsonCode = jsonStandard.replace(/^NY-/, "").replace(/^CC\s*/, "");
+          const jsonCode = jsonStandard
+            .replace(/^NY-/, "")
+            .replace(/^CC\s*/, "");
           const dbCode = dbStandard.replace(/^NY-/, "").replace(/^CC\s*/, "");
 
           // Track mismatches as warnings but still apply (position-based matching)
           if (jsonCode !== dbCode) {
             mismatches.push(
-              `#${i + 1}: JSON Q#${entry["Q#"]} "${jsonStandard}" ≠ DB "${dbStandard}"`
+              `#${i + 1}: JSON Q#${entry["Q#"]} "${jsonStandard}" ≠ DB "${dbStandard}"`,
             );
           }
 
@@ -216,7 +222,7 @@ export default function StateExamEditPage() {
 
         if (mismatches.length > 0) {
           setJsonError(
-            `Found ${mismatches.length} mismatch(es):\n${mismatches.slice(0, 10).join("\n")}${mismatches.length > 10 ? `\n... and ${mismatches.length - 10} more` : ""}`
+            `Found ${mismatches.length} mismatch(es):\n${mismatches.slice(0, 10).join("\n")}${mismatches.length > 10 ? `\n... and ${mismatches.length - 10} more` : ""}`,
           );
         }
 
@@ -231,7 +237,7 @@ export default function StateExamEditPage() {
 
         if (entries.length !== questions.length) {
           setJsonError(
-            `JSON array length (${entries.length}) doesn't match questions count (${questions.length})`
+            `JSON array length (${entries.length}) doesn't match questions count (${questions.length})`,
           );
           return;
         }
@@ -266,7 +272,7 @@ export default function StateExamEditPage() {
       setPendingUpdates(newPendingUpdates);
     } catch (e) {
       setJsonError(
-        `Invalid JSON: ${e instanceof Error ? e.message : "Parse error"}`
+        `Invalid JSON: ${e instanceof Error ? e.message : "Parse error"}`,
       );
     }
   };
@@ -309,7 +315,7 @@ export default function StateExamEditPage() {
               };
             }
             return q;
-          })
+          }),
         );
 
         // Clear pending updates
@@ -494,9 +500,7 @@ export default function StateExamEditPage() {
               {!selectedGrade ? "1" : "2"}
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {!selectedGrade
-                ? "Select a Grade"
-                : "Select a Year"}
+              {!selectedGrade ? "Select a Grade" : "Select a Year"}
             </h3>
             <p className="text-gray-500">
               {!selectedGrade
@@ -515,11 +519,12 @@ export default function StateExamEditPage() {
                 Bulk Update via JSON
               </h2>
               <p className="text-sm text-gray-600 mb-2">
-                <strong>NYSE Format</strong> (preferred): Paste JSON from docs/nyse/*.json files.
-                Entries are matched by Q# to pageIndex.
+                <strong>NYSE Format</strong> (preferred): Paste JSON from
+                docs/nyse/*.json files. Entries are matched by Q# to pageIndex.
               </p>
               <p className="text-sm text-gray-500 mb-4">
-                <strong>Simple Format</strong>: Array with {questions.length} entries matching question order.
+                <strong>Simple Format</strong>: Array with {questions.length}{" "}
+                entries matching question order.
               </p>
 
               <textarea
@@ -623,17 +628,21 @@ export default function StateExamEditPage() {
         )}
 
         {/* Empty State */}
-        {selectedGrade && selectedYear && !loading && questions.length === 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <div className="text-gray-400 text-4xl mb-4">0</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No Questions Found
-            </h3>
-            <p className="text-gray-500">
-              No questions found for Grade {selectedGrade}, Year {selectedYear}.
-            </p>
-          </div>
-        )}
+        {selectedGrade &&
+          selectedYear &&
+          !loading &&
+          questions.length === 0 && (
+            <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+              <div className="text-gray-400 text-4xl mb-4">0</div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No Questions Found
+              </h3>
+              <p className="text-gray-500">
+                No questions found for Grade {selectedGrade}, Year{" "}
+                {selectedYear}.
+              </p>
+            </div>
+          )}
       </div>
     </div>
   );
@@ -753,7 +762,9 @@ function QuestionEditCard({
                   : ""
               }
             >
-              {question.questionNumber !== undefined ? question.questionNumber : "-"}
+              {question.questionNumber !== undefined
+                ? question.questionNumber
+                : "-"}
             </span>
           </div>
         </div>

@@ -34,7 +34,11 @@ import {
   useUpdateScopeSequence,
   useDeleteScopeSequence,
 } from "@/hooks/scm";
-import { AddEntryModal, EditEntryModal, DeleteConfirmModal } from "./components";
+import {
+  AddEntryModal,
+  EditEntryModal,
+  DeleteConfirmModal,
+} from "./components";
 
 export default function ScopeAndSequencePage() {
   // Filter state
@@ -44,8 +48,12 @@ export default function ScopeAndSequencePage() {
 
   // Modal state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingEntry, setEditingEntry] = useState<ScopeAndSequence | null>(null);
-  const [deletingEntry, setDeletingEntry] = useState<ScopeAndSequence | null>(null);
+  const [editingEntry, setEditingEntry] = useState<ScopeAndSequence | null>(
+    null,
+  );
+  const [deletingEntry, setDeletingEntry] = useState<ScopeAndSequence | null>(
+    null,
+  );
 
   // Table state
   const [sorting, setSorting] = useState<SortingState>([
@@ -68,7 +76,9 @@ export default function ScopeAndSequencePage() {
   // Get unique unit numbers for dropdown
   const unitOptions = useMemo(() => {
     if (!data) return [];
-    const units = [...new Set(data.map((entry: ScopeAndSequence) => entry.unitNumber))];
+    const units = [
+      ...new Set(data.map((entry: ScopeAndSequence) => entry.unitNumber)),
+    ];
     return units.sort((a, b) => a - b);
   }, [data]);
 
@@ -76,7 +86,9 @@ export default function ScopeAndSequencePage() {
   const filteredData = useMemo(() => {
     if (!data) return [];
     if (!selectedTag) return data;
-    return data.filter((entry: ScopeAndSequence) => entry.scopeSequenceTag === selectedTag);
+    return data.filter(
+      (entry: ScopeAndSequence) => entry.scopeSequenceTag === selectedTag,
+    );
   }, [data, selectedTag]);
 
   // Table columns
@@ -99,7 +111,9 @@ export default function ScopeAndSequencePage() {
         ),
         cell: ({ row }) => (
           <span className="text-sm font-medium">
-            {row.original.grade === "Algebra 1" ? "Alg 1" : `G${row.original.grade}`}
+            {row.original.grade === "Algebra 1"
+              ? "Alg 1"
+              : `G${row.original.grade}`}
           </span>
         ),
       },
@@ -118,7 +132,9 @@ export default function ScopeAndSequencePage() {
             ) : null}
           </button>
         ),
-        cell: ({ row }) => <span className="text-sm">U{row.original.unitNumber}</span>,
+        cell: ({ row }) => (
+          <span className="text-sm">U{row.original.unitNumber}</span>
+        ),
       },
       {
         accessorKey: "unitLessonId",
@@ -145,7 +161,10 @@ export default function ScopeAndSequencePage() {
           </button>
         ),
         cell: ({ row }) => (
-          <span className="text-sm max-w-xs truncate block" title={row.original.lessonName}>
+          <span
+            className="text-sm max-w-xs truncate block"
+            title={row.original.lessonName}
+          >
             {row.original.lessonName}
           </span>
         ),
@@ -187,7 +206,9 @@ export default function ScopeAndSequencePage() {
         header: "Scope & Sequence Tag",
         cell: ({ row }) => (
           <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">
-            {row.original.scopeSequenceTag || <span className="text-gray-400">-</span>}
+            {row.original.scopeSequenceTag || (
+              <span className="text-gray-400">-</span>
+            )}
           </span>
         ),
       },
@@ -226,7 +247,7 @@ export default function ScopeAndSequencePage() {
         ),
       },
     ],
-    []
+    [],
   );
 
   const table = useReactTable({
@@ -273,7 +294,9 @@ export default function ScopeAndSequencePage() {
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Scope & Sequence</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Scope & Sequence
+            </h1>
             <p className="text-gray-600 text-sm">
               Manage curriculum scope and sequence entries
             </p>
@@ -291,7 +314,9 @@ export default function ScopeAndSequencePage() {
         <div className="flex flex-wrap items-center gap-4">
           {/* Grade Filter */}
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Grade</label>
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              Grade
+            </label>
             <select
               value={selectedGrade}
               onChange={(e) => setSelectedGrade(e.target.value)}
@@ -308,7 +333,9 @@ export default function ScopeAndSequencePage() {
 
           {/* Tag Filter */}
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Tag</label>
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              Tag
+            </label>
             <select
               value={selectedTag}
               onChange={(e) => setSelectedTag(e.target.value)}
@@ -325,10 +352,16 @@ export default function ScopeAndSequencePage() {
 
           {/* Unit Filter */}
           <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Unit</label>
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              Unit
+            </label>
             <select
               value={unitFilter ?? ""}
-              onChange={(e) => setUnitFilter(e.target.value ? parseInt(e.target.value) : undefined)}
+              onChange={(e) =>
+                setUnitFilter(
+                  e.target.value ? parseInt(e.target.value) : undefined,
+                )
+              }
               className="px-3 py-2 border rounded-lg text-sm cursor-pointer min-w-[100px]"
             >
               <option value="">All Units</option>
@@ -342,7 +375,9 @@ export default function ScopeAndSequencePage() {
 
           {/* Search */}
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-xs font-medium text-gray-500 mb-1">Search</label>
+            <label className="block text-xs font-medium text-gray-500 mb-1">
+              Search
+            </label>
             <input
               type="text"
               value={globalFilter}
@@ -360,7 +395,9 @@ export default function ScopeAndSequencePage() {
               className="px-3 py-2 border rounded-lg hover:bg-gray-50 cursor-pointer"
               title="Refresh"
             >
-              <ArrowPathIcon className={`h-5 w-5 ${isLoading ? "animate-spin" : ""}`} />
+              <ArrowPathIcon
+                className={`h-5 w-5 ${isLoading ? "animate-spin" : ""}`}
+              />
             </button>
           </div>
         </div>
@@ -376,7 +413,9 @@ export default function ScopeAndSequencePage() {
         ) : filteredData.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <p>No entries found.</p>
-            <p className="text-sm mt-1">Try adjusting your filters or add a new entry.</p>
+            <p className="text-sm mt-1">
+              Try adjusting your filters or add a new entry.
+            </p>
           </div>
         ) : (
           <>
@@ -392,7 +431,10 @@ export default function ScopeAndSequencePage() {
                         >
                           {header.isPlaceholder
                             ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
                         </th>
                       ))}
                     </tr>
@@ -402,8 +444,14 @@ export default function ScopeAndSequencePage() {
                   {table.getRowModel().rows.map((row) => (
                     <tr key={row.id} className="hover:bg-gray-50">
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-4 py-3 whitespace-nowrap">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        <td
+                          key={cell.id}
+                          className="px-4 py-3 whitespace-nowrap"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
                         </td>
                       ))}
                     </tr>
@@ -417,16 +465,20 @@ export default function ScopeAndSequencePage() {
               <div className="text-sm text-gray-700">
                 Showing{" "}
                 <span className="font-medium">
-                  {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}
+                  {table.getState().pagination.pageIndex *
+                    table.getState().pagination.pageSize +
+                    1}
                 </span>{" "}
                 to{" "}
                 <span className="font-medium">
                   {Math.min(
-                    (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-                    filteredData.length
+                    (table.getState().pagination.pageIndex + 1) *
+                      table.getState().pagination.pageSize,
+                    filteredData.length,
                   )}
                 </span>{" "}
-                of <span className="font-medium">{filteredData.length}</span> entries
+                of <span className="font-medium">{filteredData.length}</span>{" "}
+                entries
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -437,7 +489,8 @@ export default function ScopeAndSequencePage() {
                   <ChevronLeftIcon className="h-5 w-5" />
                 </button>
                 <span className="text-sm">
-                  Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                  Page {table.getState().pagination.pageIndex + 1} of{" "}
+                  {table.getPageCount()}
                 </span>
                 <button
                   onClick={() => table.nextPage()}

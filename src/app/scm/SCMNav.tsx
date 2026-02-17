@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from "@headlessui/react";
 import {
   MapIcon,
   GiftIcon,
@@ -13,7 +17,7 @@ import {
   Bars3Icon,
   XMarkIcon,
   ChevronDownIcon,
-} from '@heroicons/react/24/outline';
+} from "@heroicons/react/24/outline";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
 type NavItem = { href: string; label: string; description?: string };
@@ -33,17 +37,22 @@ export function SCMNav() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [mobileExpandedCategory, setMobileExpandedCategory] = useState<string | null>(null);
+  const [mobileExpandedCategory, setMobileExpandedCategory] = useState<
+    string | null
+  >(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { hasRole } = useAuthenticatedUser();
 
-  const isSuperAdmin = hasRole('super_admin');
-  const _isCoach = hasRole('coach');
+  const isSuperAdmin = hasRole("super_admin");
+  const _isCoach = hasRole("coach");
 
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setOpenDropdown(null);
       }
     }
@@ -126,41 +135,78 @@ export function SCMNav() {
         { href: "/scm/incentives/table", label: "Table" },
       ],
     },
-    ...(isSuperAdmin ? [{
-      label: "Admin",
-      Icon: Cog6ToothIcon,
-      items: [] as NavItem[],
-      sections: [
-        {
-          section: "Students",
-          items: [
-            { href: "/scm/admin/students", label: "Manage Students", description: "View, edit, and add students" },
-          ],
-        },
-        {
-          section: "Podsie Bulk",
-          items: [
-            { href: "/scm/podsie/import-attendance", label: "Import Attendance", description: "Import attendance data from Podsie" },
-            { href: "/scm/podsie/bulk-sync", label: "Bulk Sync", description: "Sync Podsie mastery data" },
-            { href: "/scm/podsie/bulk-configs", label: "Bulk Configs", description: "Add Podsie assignments to section configs" },
-          ],
-        },
-        {
-          section: "Podsie",
-          items: [
-            { href: "/scm/podsie/manage-configs", label: "Manage Configs", description: "Add section configs for a Podsie assignment" },
-            { href: "/scm/podsie/question-mapper", label: "Question Mapper", description: "Update question maps" },
-          ],
-        },
-        {
-          section: "Content",
-          items: [
-            { href: "/scm/content/calendar", label: "Unit Calendar", description: "Set unit schedule for each scope and sequence" },
-            { href: "/scm/content/edit-scope-and-sequence", label: "Edit Scope & Sequence", description: "Manage curriculum scope and sequence entries" },
-          ],
-        },
-      ],
-    }] : []),
+    ...(isSuperAdmin
+      ? [
+          {
+            label: "Admin",
+            Icon: Cog6ToothIcon,
+            items: [] as NavItem[],
+            sections: [
+              {
+                section: "Students",
+                items: [
+                  {
+                    href: "/scm/admin/students",
+                    label: "Manage Students",
+                    description: "View, edit, and add students",
+                  },
+                ],
+              },
+              {
+                section: "Podsie Bulk",
+                items: [
+                  {
+                    href: "/scm/podsie/import-attendance",
+                    label: "Import Attendance",
+                    description: "Import attendance data from Podsie",
+                  },
+                  {
+                    href: "/scm/podsie/bulk-sync",
+                    label: "Bulk Sync",
+                    description: "Sync Podsie mastery data",
+                  },
+                  {
+                    href: "/scm/podsie/bulk-configs",
+                    label: "Bulk Configs",
+                    description: "Add Podsie assignments to section configs",
+                  },
+                ],
+              },
+              {
+                section: "Podsie",
+                items: [
+                  {
+                    href: "/scm/podsie/manage-configs",
+                    label: "Manage Configs",
+                    description: "Add section configs for a Podsie assignment",
+                  },
+                  {
+                    href: "/scm/podsie/question-mapper",
+                    label: "Question Mapper",
+                    description: "Update question maps",
+                  },
+                ],
+              },
+              {
+                section: "Content",
+                items: [
+                  {
+                    href: "/scm/content/calendar",
+                    label: "Unit Calendar",
+                    description:
+                      "Set unit schedule for each scope and sequence",
+                  },
+                  {
+                    href: "/scm/content/edit-scope-and-sequence",
+                    label: "Edit Scope & Sequence",
+                    description: "Manage curriculum scope and sequence entries",
+                  },
+                ],
+              },
+            ],
+          },
+        ]
+      : []),
   ];
 
   const toggleDropdown = (label: string) => {
@@ -172,25 +218,27 @@ export function SCMNav() {
   };
 
   const isActiveCategory = (category: NavCategory) => {
-    const itemsActive = category.items.some((item) => pathname.startsWith(item.href));
+    const itemsActive = category.items.some((item) =>
+      pathname.startsWith(item.href),
+    );
     const sectionsActive = category.sections?.some((section) =>
-      section.items.some((item) => pathname.startsWith(item.href))
+      section.items.some((item) => pathname.startsWith(item.href)),
     );
     return itemsActive || sectionsActive;
   };
 
   const isItemActive = (item: NavItem) => {
     if (item.href === "---") return false;
-    const hasQueryParam = item.href.includes('?');
-    const basePath = item.href.split('?')[0];
+    const hasQueryParam = item.href.includes("?");
+    const basePath = item.href.split("?")[0];
     if (hasQueryParam) {
-      const itemParams = new URLSearchParams(item.href.split('?')[1]);
+      const itemParams = new URLSearchParams(item.href.split("?")[1]);
       const paramsMatch = Array.from(itemParams.entries()).every(
-        ([key, value]) => searchParams.get(key) === value
+        ([key, value]) => searchParams.get(key) === value,
       );
       return pathname === basePath && paramsMatch;
     }
-    return pathname === item.href || pathname.startsWith(item.href + '/');
+    return pathname === item.href || pathname.startsWith(item.href + "/");
   };
 
   return (
@@ -208,177 +256,213 @@ export function SCMNav() {
           <div className="flex lg:hidden">
             <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer">
               <span className="sr-only">Open main menu</span>
-              <Bars3Icon className="block h-6 w-6 group-data-[open]:hidden" aria-hidden="true" />
-              <XMarkIcon className="hidden h-6 w-6 group-data-[open]:block" aria-hidden="true" />
+              <Bars3Icon
+                className="block h-6 w-6 group-data-[open]:hidden"
+                aria-hidden="true"
+              />
+              <XMarkIcon
+                className="hidden h-6 w-6 group-data-[open]:block"
+                aria-hidden="true"
+              />
             </DisclosureButton>
           </div>
 
           {/* Desktop navigation */}
           <div className="hidden lg:flex gap-2 relative">
-            {categories.filter(c => c.label !== "Admin").map((category) => {
-              const isActive = isActiveCategory(category);
-              const isOpen = openDropdown === category.label;
+            {categories
+              .filter((c) => c.label !== "Admin")
+              .map((category) => {
+                const isActive = isActiveCategory(category);
+                const isOpen = openDropdown === category.label;
 
-              return (
-                <div key={category.label} className="relative">
-                  <button
-                    onClick={() => toggleDropdown(category.label)}
-                    className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
-                      isActive
-                        ? "bg-gray-700 text-white"
-                        : "text-gray-300 hover:text-white hover:bg-gray-800"
-                    }`}
-                  >
-                    {category.iconLetter ? (
-                      <div className="w-5 h-5 flex-shrink-0 rounded flex items-center justify-center text-sm font-bold">
-                        {category.iconLetter}
-                      </div>
-                    ) : category.Icon ? (
-                      <category.Icon className="w-5 h-5 flex-shrink-0" />
-                    ) : null}
-                    {category.label}
-                    <svg
-                      className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                return (
+                  <div key={category.label} className="relative">
+                    <button
+                      onClick={() => toggleDropdown(category.label)}
+                      className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
+                        isActive
+                          ? "bg-gray-700 text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-800"
+                      }`}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-
-                  {isOpen && (
-                    <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
-                      {category.items.map((item, idx) => {
-                        if (item.href === "---") {
-                          return <div key={`sep-${idx}`} className="border-t border-gray-200 my-1" />;
-                        }
-                        const active = isItemActive(item);
-                        return (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            onClick={() => setOpenDropdown(null)}
-                            className={`block px-4 py-2 text-sm transition-colors ${
-                              active
-                                ? "bg-blue-50 text-blue-700 font-medium"
-                                : "text-gray-700 hover:bg-gray-50"
-                            }`}
-                          >
-                            {item.label}
-                          </Link>
-                        );
-                      })}
-                      {category.sections?.map((section, sectionIndex) => (
-                        <div key={section.section}>
-                          {(category.items.length > 0 || sectionIndex > 0) && (
-                            <div className="border-t border-gray-200 my-1" />
-                          )}
-                          <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                            {section.section}
-                          </div>
-                          {section.items.map((item) => {
-                            const active = pathname === item.href;
-                            return (
-                              <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={() => setOpenDropdown(null)}
-                                className={`block px-4 py-2 transition-colors ${
-                                  active
-                                    ? "bg-blue-50 text-blue-700"
-                                    : "text-gray-700 hover:bg-gray-50"
-                                }`}
-                              >
-                                <div className={`text-sm ${active ? "font-medium" : ""}`}>
-                                  {item.label}
-                                </div>
-                                {item.description && (
-                                  <div className={`text-xs mt-0.5 ${active ? "text-blue-600" : "text-gray-500"}`}>
-                                    {item.description}
-                                  </div>
-                                )}
-                              </Link>
-                            );
-                          })}
+                      {category.iconLetter ? (
+                        <div className="w-5 h-5 flex-shrink-0 rounded flex items-center justify-center text-sm font-bold">
+                          {category.iconLetter}
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                      ) : category.Icon ? (
+                        <category.Icon className="w-5 h-5 flex-shrink-0" />
+                      ) : null}
+                      {category.label}
+                      <svg
+                        className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+
+                    {isOpen && (
+                      <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
+                        {category.items.map((item, idx) => {
+                          if (item.href === "---") {
+                            return (
+                              <div
+                                key={`sep-${idx}`}
+                                className="border-t border-gray-200 my-1"
+                              />
+                            );
+                          }
+                          const active = isItemActive(item);
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setOpenDropdown(null)}
+                              className={`block px-4 py-2 text-sm transition-colors ${
+                                active
+                                  ? "bg-blue-50 text-blue-700 font-medium"
+                                  : "text-gray-700 hover:bg-gray-50"
+                              }`}
+                            >
+                              {item.label}
+                            </Link>
+                          );
+                        })}
+                        {category.sections?.map((section, sectionIndex) => (
+                          <div key={section.section}>
+                            {(category.items.length > 0 ||
+                              sectionIndex > 0) && (
+                              <div className="border-t border-gray-200 my-1" />
+                            )}
+                            <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                              {section.section}
+                            </div>
+                            {section.items.map((item) => {
+                              const active = pathname === item.href;
+                              return (
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
+                                  onClick={() => setOpenDropdown(null)}
+                                  className={`block px-4 py-2 transition-colors ${
+                                    active
+                                      ? "bg-blue-50 text-blue-700"
+                                      : "text-gray-700 hover:bg-gray-50"
+                                  }`}
+                                >
+                                  <div
+                                    className={`text-sm ${active ? "font-medium" : ""}`}
+                                  >
+                                    {item.label}
+                                  </div>
+                                  {item.description && (
+                                    <div
+                                      className={`text-xs mt-0.5 ${active ? "text-blue-600" : "text-gray-500"}`}
+                                    >
+                                      {item.description}
+                                    </div>
+                                  )}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
           </div>
 
           {/* Right side - Admin dropdown + Sign Out (desktop) */}
           <div className="hidden lg:flex gap-2 items-center">
-            {categories.filter(c => c.label === "Admin").map((category) => {
-              const isActive = isActiveCategory(category);
-              const isOpen = openDropdown === category.label;
+            {categories
+              .filter((c) => c.label === "Admin")
+              .map((category) => {
+                const isActive = isActiveCategory(category);
+                const isOpen = openDropdown === category.label;
 
-              return (
-                <div key={category.label} className="relative">
-                  <button
-                    onClick={() => toggleDropdown(category.label)}
-                    className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
-                      isActive
-                        ? "bg-gray-700 text-white"
-                        : "text-gray-300 hover:text-white hover:bg-gray-800"
-                    }`}
-                  >
-                    {category.Icon && <category.Icon className="w-5 h-5 flex-shrink-0" />}
-                    {category.label}
-                    <svg
-                      className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                return (
+                  <div key={category.label} className="relative">
+                    <button
+                      onClick={() => toggleDropdown(category.label)}
+                      className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
+                        isActive
+                          ? "bg-gray-700 text-white"
+                          : "text-gray-300 hover:text-white hover:bg-gray-800"
+                      }`}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+                      {category.Icon && (
+                        <category.Icon className="w-5 h-5 flex-shrink-0" />
+                      )}
+                      {category.label}
+                      <svg
+                        className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
 
-                  {isOpen && (
-                    <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[280px] z-50">
-                      {category.sections?.map((section, sectionIndex) => (
-                        <div key={section.section}>
-                          {sectionIndex > 0 && (
-                            <div className="border-t border-gray-200 my-1" />
-                          )}
-                          <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                            {section.section}
-                          </div>
-                          {section.items.map((item) => {
-                            const active = pathname === item.href;
-                            return (
-                              <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={() => setOpenDropdown(null)}
-                                className={`block px-4 py-2 transition-colors ${
-                                  active
-                                    ? "bg-blue-50 text-blue-700"
-                                    : "text-gray-700 hover:bg-gray-50"
-                                }`}
-                              >
-                                <div className={`text-sm ${active ? "font-medium" : ""}`}>
-                                  {item.label}
-                                </div>
-                                {item.description && (
-                                  <div className={`text-xs mt-0.5 ${active ? "text-blue-600" : "text-gray-500"}`}>
-                                    {item.description}
+                    {isOpen && (
+                      <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[280px] z-50">
+                        {category.sections?.map((section, sectionIndex) => (
+                          <div key={section.section}>
+                            {sectionIndex > 0 && (
+                              <div className="border-t border-gray-200 my-1" />
+                            )}
+                            <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                              {section.section}
+                            </div>
+                            {section.items.map((item) => {
+                              const active = pathname === item.href;
+                              return (
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
+                                  onClick={() => setOpenDropdown(null)}
+                                  className={`block px-4 py-2 transition-colors ${
+                                    active
+                                      ? "bg-blue-50 text-blue-700"
+                                      : "text-gray-700 hover:bg-gray-50"
+                                  }`}
+                                >
+                                  <div
+                                    className={`text-sm ${active ? "font-medium" : ""}`}
+                                  >
+                                    {item.label}
                                   </div>
-                                )}
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                                  {item.description && (
+                                    <div
+                                      className={`text-xs mt-0.5 ${active ? "text-blue-600" : "text-gray-500"}`}
+                                    >
+                                      {item.description}
+                                    </div>
+                                  )}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             <Link
               href="/sign-out"
               className="px-4 py-2 rounded-md font-medium transition-colors text-white hover:bg-gray-800 bg-gray-700"
@@ -406,8 +490,8 @@ export function SCMNav() {
             const isActive = isActiveCategory(category);
             const isExpanded = mobileExpandedCategory === category.label;
             const allItems = [
-              ...category.items.filter(i => i.href !== "---"),
-              ...(category.sections?.flatMap(s => s.items) || [])
+              ...category.items.filter((i) => i.href !== "---"),
+              ...(category.sections?.flatMap((s) => s.items) || []),
             ];
 
             return (

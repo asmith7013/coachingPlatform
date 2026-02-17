@@ -14,7 +14,7 @@ import {
  */
 export async function fetchPodsieResponses(
   assignmentId: string,
-  studentEmail: string
+  studentEmail: string,
 ): Promise<PodsieResponse[]> {
   const token = process.env.PODSIE_API_TOKEN;
 
@@ -31,11 +31,13 @@ export async function fetchPodsieResponses(
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ email: studentEmail }),
-    }
+    },
   );
 
   if (!response.ok) {
-    throw new Error(`Podsie API error: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Podsie API error: ${response.status} ${response.statusText}`,
+    );
   }
 
   const rawData = await response.json();
@@ -43,8 +45,13 @@ export async function fetchPodsieResponses(
   // Validate response with Zod schema
   const parseResult = PodsieApiResponseSchema.safeParse(rawData);
   if (!parseResult.success) {
-    console.error("Podsie API response validation failed:", parseResult.error.issues);
-    throw new Error(`Invalid Podsie API response format: ${parseResult.error.message}`);
+    console.error(
+      "Podsie API response validation failed:",
+      parseResult.error.issues,
+    );
+    throw new Error(
+      `Invalid Podsie API response format: ${parseResult.error.message}`,
+    );
   }
 
   const data = parseResult.data;

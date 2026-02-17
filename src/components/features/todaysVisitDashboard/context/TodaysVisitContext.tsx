@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useMemo } from 'react';
-import { useTodaysVisit } from '@/hooks/domain/useTodaysVisit';
-import { TodaysVisitDashboardContextType, TodaysVisitData } from '../types';
+import React, { createContext, useContext, useMemo } from "react";
+import { useTodaysVisit } from "@/hooks/domain/useTodaysVisit";
+import { TodaysVisitDashboardContextType, TodaysVisitData } from "../types";
 
-const TodaysVisitContext = createContext<TodaysVisitDashboardContextType | null>(null);
+const TodaysVisitContext =
+  createContext<TodaysVisitDashboardContextType | null>(null);
 
 interface TodaysVisitProviderProps {
   children: React.ReactNode;
@@ -12,10 +13,10 @@ interface TodaysVisitProviderProps {
   schoolId?: string;
 }
 
-export function TodaysVisitProvider({ 
-  children, 
-  coachId, 
-  schoolId 
+export function TodaysVisitProvider({
+  children,
+  coachId,
+  schoolId,
 }: TodaysVisitProviderProps) {
   const {
     todaysVisit: baseTodaysVisit,
@@ -23,7 +24,7 @@ export function TodaysVisitProvider({
     error: visitError,
     hasVisitToday,
     isVisitInPast,
-    isVisitInFuture
+    isVisitInFuture,
   } = useTodaysVisit({ coachId, schoolId });
 
   // TODO: Enhanced data fetching for schedule details
@@ -77,7 +78,9 @@ export function TodaysVisitProvider({
 export function useTodaysVisitData() {
   const context = useContext(TodaysVisitContext);
   if (!context) {
-    throw new Error('Today\'s visit hooks must be used within TodaysVisitProvider');
+    throw new Error(
+      "Today's visit hooks must be used within TodaysVisitProvider",
+    );
   }
   return {
     todaysVisit: context.todaysVisit,
@@ -89,7 +92,9 @@ export function useTodaysVisitData() {
 export function useTodaysVisitStatus() {
   const context = useContext(TodaysVisitContext);
   if (!context) {
-    throw new Error('Today\'s visit hooks must be used within TodaysVisitProvider');
+    throw new Error(
+      "Today's visit hooks must be used within TodaysVisitProvider",
+    );
   }
   return {
     hasVisitToday: context.hasVisitToday,
@@ -101,9 +106,11 @@ export function useTodaysVisitStatus() {
 export function useTodaysVisitActions() {
   const context = useContext(TodaysVisitContext);
   if (!context) {
-    throw new Error('Today\'s visit hooks must be used within TodaysVisitProvider');
+    throw new Error(
+      "Today's visit hooks must be used within TodaysVisitProvider",
+    );
   }
   return {
     refreshData: context.refreshData,
   };
-} 
+}

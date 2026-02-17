@@ -1,8 +1,11 @@
-import type { NYCPSStaff } from '@zod-schema/core/staff';
-import type { TeacherSchedule } from '@zod-schema/schedules/schedule-documents';
-import type { BellScheduleBlock, VisitScheduleBlock } from '@zod-schema/schedules/schedule-events';
-import { ScheduleAssignment } from '@enums';
-import { ScheduleAssignmentType } from '@enums';
+import type { NYCPSStaff } from "@zod-schema/core/staff";
+import type { TeacherSchedule } from "@zod-schema/schedules/schedule-documents";
+import type {
+  BellScheduleBlock,
+  VisitScheduleBlock,
+} from "@zod-schema/schedules/schedule-events";
+import { ScheduleAssignment } from "@enums";
+import { ScheduleAssignmentType } from "@enums";
 
 // =====================================
 // USE EXISTING SCHEMA TYPES WITH MINIMAL EXTENSIONS
@@ -17,21 +20,25 @@ export interface ScheduleGridProps {
   timeSlots: BellScheduleBlock[];
   visits: VisitScheduleBlock[];
   onCellClick?: (teacherId: string, period: number) => void;
-  onPortionSelect?: (teacherId: string, period: number, portion: ScheduleAssignmentType) => Promise<void>;
+  onPortionSelect?: (
+    teacherId: string,
+    period: number,
+    portion: ScheduleAssignmentType,
+  ) => Promise<void>;
   selectedTeacher?: string;
   selectedPeriod?: number;
-  
+
   // Footer props
   selectedPortion?: ScheduleAssignmentType;
   onRequestClear?: () => void;
   clearResult?: ClearScheduleResult | null;
   isClearing?: boolean;
-  scheduleStatus?: 'ready' | 'loading' | 'error';
+  scheduleStatus?: "ready" | "loading" | "error";
   scheduleStatusText?: string;
   onExport?: () => void;
   isExporting?: boolean;
   showExport?: boolean;
-  
+
   className?: string;
 }
 
@@ -50,7 +57,11 @@ export interface DropZoneCellProps {
   period: number;
   visits: VisitScheduleBlock[];
   teachers: NYCPSStaff[];
-  onPortionSelect?: (teacherId: string, period: number, portion: ScheduleAssignmentType) => Promise<void>;
+  onPortionSelect?: (
+    teacherId: string,
+    period: number,
+    portion: ScheduleAssignmentType,
+  ) => Promise<void>;
   selectedTeacher?: string;
   selectedPeriod?: number;
   className?: string;
@@ -88,7 +99,7 @@ export interface SelectionStatusFooterProps {
 }
 
 export interface ScheduleActionFooterProps {
-  status?: 'ready' | 'loading' | 'error';
+  status?: "ready" | "loading" | "error";
   statusText?: string;
   onExport?: () => void;
   isExporting?: boolean;
@@ -129,20 +140,18 @@ export interface ScheduleFooterProps {
   selectedPortion?: ScheduleAssignmentType;
   teachers: NYCPSStaff[];
   visits: VisitScheduleBlock[];
-  
+
   // Clear functionality
   onRequestClear?: () => void;
   clearResult?: ClearScheduleResult | null;
   isClearing?: boolean;
-  
+
   // Schedule status and actions
-  scheduleStatus?: 'ready' | 'loading' | 'error';
+  scheduleStatus?: "ready" | "loading" | "error";
   scheduleStatusText?: string;
   onExport?: () => void;
   isExporting?: boolean;
   showExport?: boolean;
-  
+
   className?: string;
 }
-
- 

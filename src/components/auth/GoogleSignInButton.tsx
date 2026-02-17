@@ -1,28 +1,30 @@
-'use client';
+"use client";
 
-import { useSignIn } from '@clerk/nextjs'
-import { Button } from '@/components/core/Button'
+import { useSignIn } from "@clerk/nextjs";
+import { Button } from "@/components/core/Button";
 
 interface GoogleSignInButtonProps {
-  redirectUrl?: string
+  redirectUrl?: string;
 }
 
-export function GoogleSignInButton({ redirectUrl = '/scm' }: GoogleSignInButtonProps) {
-  const { signIn, isLoaded } = useSignIn()
+export function GoogleSignInButton({
+  redirectUrl = "/scm",
+}: GoogleSignInButtonProps) {
+  const { signIn, isLoaded } = useSignIn();
 
   const signInWithGoogle = () => {
-    if (!isLoaded || !signIn) return
+    if (!isLoaded || !signIn) return;
 
     signIn.authenticateWithRedirect({
-      strategy: 'oauth_google',
-      redirectUrl: '/sso-callback',
-      redirectUrlComplete: redirectUrl
-    })
-  }
-  
+      strategy: "oauth_google",
+      redirectUrl: "/sso-callback",
+      redirectUrlComplete: redirectUrl,
+    });
+  };
+
   return (
-    <Button 
-      onClick={signInWithGoogle} 
+    <Button
+      onClick={signInWithGoogle}
       intent="primary"
       disabled={!isLoaded}
       className="w-full"
@@ -47,5 +49,5 @@ export function GoogleSignInButton({ redirectUrl = '/scm' }: GoogleSignInButtonP
       </svg>
       Sign in with Google
     </Button>
-  )
-} 
+  );
+}

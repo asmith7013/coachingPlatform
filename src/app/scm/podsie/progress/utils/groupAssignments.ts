@@ -2,12 +2,15 @@
  * Shared utility for grouping lessons with their matching mastery checks
  */
 
-import { SECTION_OPTIONS, getSectionDisplayName } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
+import {
+  SECTION_OPTIONS,
+  getSectionDisplayName,
+} from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
 
 interface Assignment {
   podsieAssignmentId: string;
   unitLessonId: string;
-  activityType?: 'sidekick' | 'mastery-check' | 'assessment';
+  activityType?: "sidekick" | "mastery-check" | "assessment";
   section?: string;
   subsection?: number;
 }
@@ -35,19 +38,20 @@ export interface GroupedBySection<T extends Assignment> {
  * @returns Array of grouped assignments with lesson and optional masteryCheck
  */
 export function groupAssignmentsByUnitLesson<T extends Assignment>(
-  assignments: T[]
+  assignments: T[],
 ): GroupedAssignment<T>[] {
   const grouped: GroupedAssignment<T>[] = [];
   const processedIds = new Set<string>();
 
   // FIRST PASS: Process all sidekick lessons and find their matching mastery checks
-  assignments.forEach(assignment => {
-    if (assignment.activityType !== 'sidekick') return;
+  assignments.forEach((assignment) => {
+    if (assignment.activityType !== "sidekick") return;
 
     // Find matching mastery check by unitLessonId
     const masteryCheck = assignments.find(
-      a => a.activityType === 'mastery-check' &&
-           a.unitLessonId === assignment.unitLessonId
+      (a) =>
+        a.activityType === "mastery-check" &&
+        a.unitLessonId === assignment.unitLessonId,
     );
 
     grouped.push({
@@ -62,8 +66,8 @@ export function groupAssignmentsByUnitLesson<T extends Assignment>(
   });
 
   // SECOND PASS: Process any standalone mastery checks (those without a matching sidekick lesson)
-  assignments.forEach(assignment => {
-    if (assignment.activityType !== 'mastery-check') return;
+  assignments.forEach((assignment) => {
+    if (assignment.activityType !== "mastery-check") return;
     if (processedIds.has(assignment.podsieAssignmentId)) return;
 
     grouped.push({
@@ -75,8 +79,8 @@ export function groupAssignmentsByUnitLesson<T extends Assignment>(
   });
 
   // THIRD PASS: Process assessments as standalone items (displayed like sidekick lessons)
-  assignments.forEach(assignment => {
-    if (assignment.activityType !== 'assessment') return;
+  assignments.forEach((assignment) => {
+    if (assignment.activityType !== "assessment") return;
     if (processedIds.has(assignment.podsieAssignmentId)) return;
 
     grouped.push({
@@ -98,7 +102,7 @@ export function groupAssignmentsByUnitLesson<T extends Assignment>(
  * @returns Array of sections with their grouped assignments
  */
 export function groupAssignmentsBySection<T extends Assignment>(
-  assignments: T[]
+  assignments: T[],
 ): GroupedBySection<T>[] {
   // First group by unitLessonId
   const groupedAssignments = groupAssignmentsByUnitLesson(assignments);
@@ -107,8 +111,8 @@ export function groupAssignmentsBySection<T extends Assignment>(
   // Key format: "section" or "section:subsection" (e.g., "A" or "A:1")
   const sectionSubsectionMap = new Map<string, GroupedAssignment<T>[]>();
 
-  groupedAssignments.forEach(group => {
-    const section = group.lesson.section || 'Unknown';
+  groupedAssignments.forEach((group) => {
+    const section = group.lesson.section || "Unknown";
     const subsection = group.lesson.subsection;
     // Create composite key: "A" or "A:1" or "A:2"
     const key = subsection !== undefined ? `${section}:${subsection}` : section;
@@ -120,32 +124,38 @@ export function groupAssignmentsBySection<T extends Assignment>(
   });
 
   // Convert to array
-  const sections = Array.from(sectionSubsectionMap.entries()).map(([key, assignments]) => {
-    // Parse the composite key
-    const colonIndex = key.indexOf(':');
-    let section: string;
-    let subsection: number | undefined;
+  const sections = Array.from(sectionSubsectionMap.entries()).map(
+    ([key, assignments]) => {
+      // Parse the composite key
+      const colonIndex = key.indexOf(":");
+      let section: string;
+      let subsection: number | undefined;
 
-    if (colonIndex !== -1) {
-      section = key.substring(0, colonIndex);
-      subsection = parseInt(key.substring(colonIndex + 1), 10);
-    } else {
-      section = key;
-      subsection = undefined;
-    }
+      if (colonIndex !== -1) {
+        section = key.substring(0, colonIndex);
+        subsection = parseInt(key.substring(colonIndex + 1), 10);
+      } else {
+        section = key;
+        subsection = undefined;
+      }
 
-    return {
-      section,
-      subsection,
-      sectionDisplayName: getSectionDisplayName(section, subsection),
-      assignments,
-    };
-  });
+      return {
+        section,
+        subsection,
+        sectionDisplayName: getSectionDisplayName(section, subsection),
+        assignments,
+      };
+    },
+  );
 
   // Sort by SECTION_OPTIONS order, then by subsection
   sections.sort((a, b) => {
-    const indexA = SECTION_OPTIONS.indexOf(a.section as typeof SECTION_OPTIONS[number]);
-    const indexB = SECTION_OPTIONS.indexOf(b.section as typeof SECTION_OPTIONS[number]);
+    const indexA = SECTION_OPTIONS.indexOf(
+      a.section as (typeof SECTION_OPTIONS)[number],
+    );
+    const indexB = SECTION_OPTIONS.indexOf(
+      b.section as (typeof SECTION_OPTIONS)[number],
+    );
 
     // First, sort by section order
     if (indexA !== indexB) {

@@ -1,29 +1,34 @@
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { MondayBoard } from '@/lib/integrations/monday/types/board';
-import type { MondayUser } from '@/lib/integrations/monday/types/api';
-import type { MondayImportResponse, ImportPreview } from '@/lib/integrations/monday/types/import';
-import { useStandardMutation } from '@/query/client/hooks/mutations/useStandardMutation';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { MondayBoard } from "@/lib/integrations/monday/types/board";
+import type { MondayUser } from "@/lib/integrations/monday/types/api";
+import type {
+  MondayImportResponse,
+  ImportPreview,
+} from "@/lib/integrations/monday/types/import";
+import { useStandardMutation } from "@/query/client/hooks/mutations/useStandardMutation";
 
 /**
  * Hook for testing Monday.com connection
  */
 export function useMondayConnection() {
   return useQuery({
-    queryKey: ['monday', 'connection'],
+    queryKey: ["monday", "connection"],
     queryFn: async () => {
       try {
-        const response = await fetch('/api/integrations/monday/connection');
+        const response = await fetch("/api/integrations/monday/connection");
         const data = await response.json();
-        
+
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to test connection');
+          throw new Error(data.error || "Failed to test connection");
         }
-        
+
         return data;
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Connection test failed');
+        throw new Error(
+          error instanceof Error ? error.message : "Connection test failed",
+        );
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -36,17 +41,19 @@ export function useMondayConnection() {
 export function useMondayBoard() {
   return useStandardMutation<MondayBoard, Error, [string, number?]>(
     async ([boardId, limit]) => {
-      const response = await fetch(`/api/integrations/monday/board?boardId=${boardId}${limit ? `&limit=${limit}` : ''}`);
+      const response = await fetch(
+        `/api/integrations/monday/board?boardId=${boardId}${limit ? `&limit=${limit}` : ""}`,
+      );
       const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch board');
+        throw new Error(data.error || "Failed to fetch board");
       }
-      
+
       return data;
     },
     {},
-    "MondayBoard"
+    "MondayBoard",
   );
 }
 
@@ -55,19 +62,21 @@ export function useMondayBoard() {
  */
 export function useMondayBoards() {
   return useQuery({
-    queryKey: ['monday', 'boards'],
+    queryKey: ["monday", "boards"],
     queryFn: async () => {
       try {
-        const response = await fetch('/api/integrations/monday/boards');
+        const response = await fetch("/api/integrations/monday/boards");
         const data = await response.json();
-        
+
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch boards');
+          throw new Error(data.error || "Failed to fetch boards");
         }
-        
+
         return data.items || [];
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Failed to fetch boards');
+        throw new Error(
+          error instanceof Error ? error.message : "Failed to fetch boards",
+        );
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -79,21 +88,25 @@ export function useMondayBoards() {
  */
 export function useMondayPreviews(boardId: string | null) {
   return useQuery<ImportPreview[]>({
-    queryKey: ['monday', 'previews', boardId],
+    queryKey: ["monday", "previews", boardId],
     queryFn: async () => {
       if (!boardId) return [];
-      
+
       try {
-        const response = await fetch(`/api/integrations/monday/visits/potential?boardId=${boardId}`);
+        const response = await fetch(
+          `/api/integrations/monday/visits/potential?boardId=${boardId}`,
+        );
         const data = await response.json();
-        
+
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch previews');
+          throw new Error(data.error || "Failed to fetch previews");
         }
-        
+
         return data.items || [];
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Failed to fetch previews');
+        throw new Error(
+          error instanceof Error ? error.message : "Failed to fetch previews",
+        );
       }
     },
     enabled: !!boardId,
@@ -106,34 +119,42 @@ export function useMondayPreviews(boardId: string | null) {
  */
 export function useMondayImport() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async ({ ids, boardId }: { ids: string[], boardId: string }) => {
+    mutationFn: async ({
+      ids,
+      boardId,
+    }: {
+      ids: string[];
+      boardId: string;
+    }) => {
       try {
-        const response = await fetch('/api/integrations/monday/visits/import', {
-          method: 'POST',
+        const response = await fetch("/api/integrations/monday/visits/import", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ selectedItems: ids, boardId }),
         });
-        
+
         const data = await response.json();
-        
+
         if (!response.ok) {
-          throw new Error(data.error || 'Import failed');
+          throw new Error(data.error || "Import failed");
         }
-        
+
         return data;
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Import failed');
+        throw new Error(
+          error instanceof Error ? error.message : "Import failed",
+        );
       }
     },
     onSuccess: () => {
       // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: ['monday', 'previews'] });
-      queryClient.invalidateQueries({ queryKey: ['visits'] });
-    }
+      queryClient.invalidateQueries({ queryKey: ["monday", "previews"] });
+      queryClient.invalidateQueries({ queryKey: ["visits"] });
+    },
   });
 }
 
@@ -142,19 +163,23 @@ export function useMondayImport() {
  */
 export function useMondayUserByEmail(email: string) {
   return useQuery({
-    queryKey: ['monday', 'user', email],
+    queryKey: ["monday", "user", email],
     queryFn: async () => {
       try {
-        const response = await fetch(`/api/integrations/monday/user?email=${encodeURIComponent(email)}`);
+        const response = await fetch(
+          `/api/integrations/monday/user?email=${encodeURIComponent(email)}`,
+        );
         const data = await response.json();
-        
+
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to find user');
+          throw new Error(data.error || "Failed to find user");
         }
-        
+
         return data.data as MondayUser;
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Failed to find user');
+        throw new Error(
+          error instanceof Error ? error.message : "Failed to find user",
+        );
       }
     },
     enabled: !!email,
@@ -166,33 +191,38 @@ export function useMondayUserByEmail(email: string) {
  */
 export function useImportVisit() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (visitData: MondayImportResponse) => {
       try {
-        const response = await fetch('/api/integrations/monday/visits/import/complete', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          "/api/integrations/monday/visits/import/complete",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(visitData),
           },
-          body: JSON.stringify(visitData),
-        });
-        
+        );
+
         const data = await response.json();
-        
+
         if (!response.ok) {
-          throw new Error(data.error || 'Import failed');
+          throw new Error(data.error || "Import failed");
         }
-        
+
         return data;
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Import failed');
+        throw new Error(
+          error instanceof Error ? error.message : "Import failed",
+        );
       }
     },
     onSuccess: () => {
       // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: ['visits'] });
-    }
+      queryClient.invalidateQueries({ queryKey: ["visits"] });
+    },
   });
 }
 
@@ -201,33 +231,38 @@ export function useImportVisit() {
  */
 export function useImportVisits() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async (params: { selectedItems: string[]; boardId: string }) => {
+    mutationFn: async (params: {
+      selectedItems: string[];
+      boardId: string;
+    }) => {
       try {
-        const response = await fetch('/api/integrations/monday/visits/import', {
-          method: 'POST',
+        const response = await fetch("/api/integrations/monday/visits/import", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(params),
         });
-        
+
         const data = await response.json();
-        
+
         if (!response.ok) {
-          throw new Error(data.error || 'Import failed');
+          throw new Error(data.error || "Import failed");
         }
-        
+
         return data;
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Import failed');
+        throw new Error(
+          error instanceof Error ? error.message : "Import failed",
+        );
       }
     },
     onSuccess: () => {
       // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: ['visits'] });
-      queryClient.invalidateQueries({ queryKey: ['monday', 'previews'] });
-    }
+      queryClient.invalidateQueries({ queryKey: ["visits"] });
+      queryClient.invalidateQueries({ queryKey: ["monday", "previews"] });
+    },
   });
 }

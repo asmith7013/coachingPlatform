@@ -7,11 +7,13 @@
 ## API MODE vs CLI MODE
 
 **API Mode (browser wizard):** Your response is collected as a single stream.
+
 - Output ONLY HTML slides separated by `===SLIDE_SEPARATOR===`
 - NO preamble, NO announcements, NO "I'll generate..." text
 - First characters of response MUST be `<!DOCTYPE html>`
 
 **CLI Mode (file-by-file):** You write individual files with the Write tool.
+
 - Announce checkpoints as conversational text between file writes
 - Each file starts with `<!DOCTYPE html>`
 
@@ -32,6 +34,7 @@ Layout: [full-width | two-column | centered] | Components: [list of card-pattern
 ```
 
 **Example announcements:**
+
 ```
 SLIDE 3: Step 1 Question + CFU
 Action: generate-new
@@ -43,6 +46,7 @@ Layout: two-column | Components: title-zone, content-box, svg-card, answer-card 
 ```
 
 **If slide contains an SVG graph, add graph workflow:**
+
 ```
 SLIDE 2: Problem Setup
 Action: generate-new
@@ -51,6 +55,7 @@ Graph: Use card-patterns/svg-card.html → modify for X_MAX=10, Y_MAX=100
 ```
 
 **What goes IN the slide HTML file:**
+
 - The file starts with `<!DOCTYPE html>` - NOTHING before it
 - NO checkpoint announcements (those are conversational only)
 - NO protocol notes or comments
@@ -64,16 +69,16 @@ CFU and Answer boxes are now STACKED on the same slide (both appear, one after a
 
 **Note:** The number of step slides varies (N = 2-5 steps, default 3). Slide numbers after the steps shift accordingly. Let S = number of steps.
 
-| Slide # | Type | `data-slide-type` | Layout Options | Content |
-|---------|------|--------------------|----------------|---------|
-| 1 | Teacher Instructions | `teacher-instructions` | `two-column` | **Teacher-only (students start on Slide 2).** Big Idea + Learning Targets + Deck Overview |
-| 2 | Big Idea | `big-idea` | `centered` | Grade/Unit/Lesson + Big Idea badge + statement |
-| 3 | Problem Setup | `problem-setup` | `two-column` or `centered` | problem + visual |
-| 4 to 3+S | Steps 1-S | `step` | `two-column` or `centered` | step content + CFU + Answer (stacked). One slide per step. |
-| 3+S+1 | Practice Preview 1 | `practice-preview` | `two-column` or `centered` | Scenario 2 problem + visual + "Your Task" |
-| 3+S+2 | Practice Preview 2 | `practice-preview` | `two-column` or `centered` | Scenario 3 problem + visual + "Your Task" |
-| 3+S+3 | Printable | `printable-worksheet` | `full-width` | printable format |
-| 3+S+4 | Lesson Summary | `lesson-summary` | `full-width` | printable one-page lesson reference card |
+| Slide #  | Type                 | `data-slide-type`      | Layout Options             | Content                                                                                   |
+| -------- | -------------------- | ---------------------- | -------------------------- | ----------------------------------------------------------------------------------------- |
+| 1        | Teacher Instructions | `teacher-instructions` | `two-column`               | **Teacher-only (students start on Slide 2).** Big Idea + Learning Targets + Deck Overview |
+| 2        | Big Idea             | `big-idea`             | `centered`                 | Grade/Unit/Lesson + Big Idea badge + statement                                            |
+| 3        | Problem Setup        | `problem-setup`        | `two-column` or `centered` | problem + visual                                                                          |
+| 4 to 3+S | Steps 1-S            | `step`                 | `two-column` or `centered` | step content + CFU + Answer (stacked). One slide per step.                                |
+| 3+S+1    | Practice Preview 1   | `practice-preview`     | `two-column` or `centered` | Scenario 2 problem + visual + "Your Task"                                                 |
+| 3+S+2    | Practice Preview 2   | `practice-preview`     | `two-column` or `centered` | Scenario 3 problem + visual + "Your Task"                                                 |
+| 3+S+3    | Printable            | `printable-worksheet`  | `full-width`               | printable format                                                                          |
+| 3+S+4    | Lesson Summary       | `lesson-summary`       | `full-width`               | printable one-page lesson reference card                                                  |
 
 **Example with 3 steps (default):** Steps on slides 4-6, Practice Preview 1 on slide 7, Practice Preview 2 on slide 8, Printable on slide 9, Lesson Summary on slide 10.
 **Example with 5 steps:** Steps on slides 4-8, Practice Preview 1 on slide 9, Practice Preview 2 on slide 10, Printable on slide 11, Lesson Summary on slide 12.
@@ -83,25 +88,26 @@ Example: `<body style="width:960px;height:540px;..." data-slide-type="step">`
 
 **Layout Selection (step and practice slides):**
 
-| Choose `centered` when... | Choose `two-column` when... |
-|---------------------------|----------------------------|
-| Equation IS the visual | Text + separate visual needed |
-| Simple diagram (tape, hanger) | Complex visual (coordinate graph) |
-| Step is single operation | Multiple parts to explain |
-| Focus on ONE thing | Show text-visual relationship |
+| Choose `centered` when...                      | Choose `two-column` when...           |
+| ---------------------------------------------- | ------------------------------------- |
+| Equation IS the visual                         | Text + separate visual needed         |
+| Simple diagram (tape, hanger)                  | Complex visual (coordinate graph)     |
+| Step is single operation                       | Multiple parts to explain             |
+| Focus on ONE thing                             | Show text-visual relationship         |
 | **Diagram IS the content** (not supporting it) | **Diagram supports/illustrates text** |
 
 ### ⚠️ The Duplication Test (CRITICAL)
 
 **Before choosing two-column, ask: "Would I say the same thing on both sides?"**
 
-| If this happens... | Use this layout |
-|-------------------|-----------------|
-| Left explains "two meanings" + Right shows "two meanings" boxes | `centered` - let the diagram BE the explanation |
-| Left has equation + Right has graph of that equation | `two-column` - they show DIFFERENT representations |
-| Left describes groups + Right shows the same groups visually | `centered` - remove the text, enlarge the visual |
+| If this happens...                                              | Use this layout                                    |
+| --------------------------------------------------------------- | -------------------------------------------------- |
+| Left explains "two meanings" + Right shows "two meanings" boxes | `centered` - let the diagram BE the explanation    |
+| Left has equation + Right has graph of that equation            | `two-column` - they show DIFFERENT representations |
+| Left describes groups + Right shows the same groups visually    | `centered` - remove the text, enlarge the visual   |
 
 **Example of duplication (BAD - use centered instead):**
+
 ```
 LEFT COLUMN               RIGHT COLUMN
 "Meaning 1: How many      [Box: "Meaning 1:
@@ -109,15 +115,18 @@ slices per group?"         How many in each group?"]
 "Meaning 2: How many      [Box: "Meaning 2:
 groups?"                   How many groups?"]
 ```
+
 ↑ This duplicates! The visual boxes say the same thing as the text. Use `centered` and let the diagram speak for itself with a brief subtitle.
 
 **For `two-column` layout (text + visual side-by-side):**
+
 - Left: Main content (36-48px) + Problem reminder at bottom left corner (≤15 words)
 - Right: SVG visual or diagram
 - **⚠️ Left and right must show DIFFERENT content**
 - Problem reminder uses `card-patterns/simple-patterns/problem-reminder.html` positioned at y=450
 
 **For `centered` layout (stacked hero content):**
+
 - Main: Large equation/diagram centered (hero element)
 - Support: Brief text below (optional)
 - **Use when the diagram IS the teaching, not just supporting it**
@@ -125,6 +134,7 @@ groups?"                   How many groups?"]
 See `reference/layout-presets.md` for pixel dimensions and HTML examples.
 
 **Note:** Practice problems appear in TWO places:
+
 1. **Practice Preview slides (Preview)**: One problem per slide for whiteboard work (NO answers shown)
 2. **Printable slide**: Both problems with space for written work + answer key
 
@@ -137,22 +147,51 @@ See `reference/layout-presets.md` for pixel dimensions and HTML examples.
 Add BOTH boxes BEFORE the closing `</body>` tag on each Step slide (slides 4 through 3+S, where S = number of steps):
 
 **CFU Box (appears on first click):**
+
 ```html
-<div data-pptx-region="cfu-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 12px; border-left: 4px solid #f59e0b; z-index: 100;">
-  <p style="font-weight: bold; margin: 0 0 6px 0; font-size: 12px; color: #92400e;">CHECK FOR UNDERSTANDING</p>
-  <p style="margin: 0; font-size: 13px; color: #1d1d1d;">[CFU question using strategy verb]</p>
+<div
+  data-pptx-region="cfu-box"
+  data-pptx-x="653"
+  data-pptx-y="40"
+  data-pptx-w="280"
+  data-pptx-h="115"
+  style="position: absolute; top: 40px; right: 20px; width: 280px; background: #fef3c7; border-radius: 8px; padding: 12px; border-left: 4px solid #f59e0b; z-index: 100;"
+>
+  <p
+    style="font-weight: bold; margin: 0 0 6px 0; font-size: 12px; color: #92400e;"
+  >
+    CHECK FOR UNDERSTANDING
+  </p>
+  <p style="margin: 0; font-size: 13px; color: #1d1d1d;">
+    [CFU question using strategy verb]
+  </p>
 </div>
 ```
 
 **Answer Box (SAME position, appears on second click and overlays CFU):**
+
 ```html
-<div data-pptx-region="answer-box" data-pptx-x="653" data-pptx-y="40" data-pptx-w="280" data-pptx-h="115" style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 12px; border-left: 4px solid #22c55e; z-index: 101;">
-  <p style="font-weight: bold; margin: 0 0 6px 0; font-size: 12px; color: #166534;">ANSWER</p>
-  <p style="margin: 0; font-size: 13px; color: #1d1d1d;">[Answer explanation]</p>
+<div
+  data-pptx-region="answer-box"
+  data-pptx-x="653"
+  data-pptx-y="40"
+  data-pptx-w="280"
+  data-pptx-h="115"
+  style="position: absolute; top: 40px; right: 20px; width: 280px; background: #dcfce7; border-radius: 8px; padding: 12px; border-left: 4px solid #22c55e; z-index: 101;"
+>
+  <p
+    style="font-weight: bold; margin: 0 0 6px 0; font-size: 12px; color: #166534;"
+  >
+    ANSWER
+  </p>
+  <p style="margin: 0; font-size: 13px; color: #1d1d1d;">
+    [Answer explanation]
+  </p>
 </div>
 ```
 
 **How animation works:**
+
 - Both boxes are on the SAME slide at the SAME position (y=40)
 - `data-pptx-region="cfu-box"` appears on FIRST click (yellow box)
 - `data-pptx-region="answer-box"` appears on SECOND click (green box overlays yellow)
@@ -182,6 +221,7 @@ Add BOTH boxes BEFORE the closing `</body>` tag on each Step slide (slides 4 thr
 ### Step 5: Practice Problem Preview Slides
 
 **For Practice Preview slides (the two slides after the last step slide), use the Problem Setup slide (3) as a template but:**
+
 - Change title zone to: "PRACTICE PROBLEM [1/2]: [Scenario Name] [Icon]"
 - Use the appropriate scenario's graphPlan/diagramEvolution:
   - Practice Preview 1 (slide 3+S+1): Use `scenarios[1]` (Scenario 2)
@@ -193,6 +233,7 @@ Add BOTH boxes BEFORE the closing `</body>` tag on each Step slide (slides 4 thr
 ### Step 6: Repeat Protocol
 
 For each slide N from 1 through the last practice preview slide:
+
 1. Return to Step 1
 2. Announce checkpoint (plain text to user, CLI mode only)
 3. Compose slide using card-patterns
@@ -206,6 +247,7 @@ For each slide N from 1 through the last practice preview slide:
 This is a printable reference card that students can use to quickly recall the main idea from this lesson. Use `lesson-summary-snippet.html` as the template.
 
 **Content to include:**
+
 1. **Header:** "LESSON SUMMARY" badge + lesson title + Grade/Unit/Lesson
 2. **Big Idea (hero section):** Large, prominent statement from `strategyDefinition.bigIdea`
 3. **Strategy Steps:** Numbered list of all moves (2-5, verb + description) from `strategyDefinition.moves`
@@ -216,6 +258,7 @@ This is a printable reference card that students can use to quickly recall the m
 5. **Remember:** 1-2 sentence key takeaway synthesized from `learningGoals`
 
 **Requirements:**
+
 - Single `print-page` div (one page, 8.5in × 11in)
 - Uses Times New Roman font (matches printable worksheet)
 - Must include `print-page` CSS class for print detection
@@ -229,15 +272,18 @@ This is a printable reference card that students can use to quickly recall the m
 Your visual type was determined in Phase 1. Here's what each requires:
 
 **Text-only:**
+
 - No graphics - pure text/equation problems
 - Use content-box patterns only
 
 **HTML table:**
+
 - Simple data tables with highlighting
 - Use `<table>` with inline styles
 - See `card-patterns/simple-patterns/content-box.html` for table examples
 
 **SVG visual (ALL other graphics):**
+
 - Coordinate planes and graphs
 - Hanger diagrams and balance problems
 - Geometric shapes and diagrams
@@ -245,6 +291,7 @@ Your visual type was determined in Phase 1. Here's what each requires:
 - Any custom visual representation (coins, objects, arrays)
 
 **For SVG visuals, you MUST:**
+
 1. Read `04-svg-workflow.md` for coordinate graphs
 2. Read `../../reference/diagram-patterns.md` for other diagram types
 3. Wrap in container with `data-pptx-region="svg-container"`
@@ -256,6 +303,7 @@ Your visual type was determined in Phase 1. Here's what each requires:
 **Without `data-pptx-layer`, ALL SVG content becomes ONE merged image. Teachers cannot click, move, or edit individual elements.**
 
 Every SVG element group MUST have its own layer:
+
 ```html
 <svg viewBox="0 0 400 300">
   <g data-pptx-layer="label-title">
@@ -274,6 +322,7 @@ Every SVG element group MUST have its own layer:
 ```
 
 **Layer naming:**
+
 - `label-X` for text labels
 - `shape-N` or `shape-row-N` for shapes/objects
 - `base` for background elements
@@ -287,14 +336,15 @@ Every SVG element group MUST have its own layer:
 
 The mastery check (`problemAnalysis.graphPlan`) is for the student's exit ticket/assessment - it is NEVER shown in these slides. Each scenario has its own numbers/context, so each needs its own graphPlan:
 
-| Slides | Source | GraphPlan to Use |
-|--------|--------|------------------|
-| 3 through 3+S (Worked Example) | Scenario 1 | `scenarios[0].graphPlan` |
-| Practice Preview 1 (slide 3+S+1) | Scenario 2 | `scenarios[1].graphPlan` |
-| Practice Preview 2 (slide 3+S+2) | Scenario 3 | `scenarios[2].graphPlan` |
-| Printable (slide 3+S+3) | Scenarios 2 & 3 | `scenarios[1].graphPlan` and `scenarios[2].graphPlan` |
+| Slides                           | Source          | GraphPlan to Use                                      |
+| -------------------------------- | --------------- | ----------------------------------------------------- |
+| 3 through 3+S (Worked Example)   | Scenario 1      | `scenarios[0].graphPlan`                              |
+| Practice Preview 1 (slide 3+S+1) | Scenario 2      | `scenarios[1].graphPlan`                              |
+| Practice Preview 2 (slide 3+S+2) | Scenario 3      | `scenarios[2].graphPlan`                              |
+| Printable (slide 3+S+3)          | Scenarios 2 & 3 | `scenarios[1].graphPlan` and `scenarios[2].graphPlan` |
 
 Each GRAPH PLAN contains the semantic decisions for that scenario:
+
 - **Equations** with correct slope/y-intercept for that scenario's numbers
 - **Scale** (X_MAX, Y_MAX) appropriate for that scenario's values
 - **Line endpoints** (startPoint, endPoint) calculated for that scenario
@@ -308,16 +358,21 @@ Each GRAPH PLAN contains the semantic decisions for that scenario:
 ## Context-Aware Generation Modes
 
 ### Mode: Full (Default)
+
 Generate all slides from scratch.
 
 ### Mode: Continue
+
 Resume from where generation was interrupted.
+
 - DO NOT regenerate existing slides
 - Match style of existing slides exactly
 - Start from next slide number
 
 ### Mode: Update
+
 Regenerate only specific slides with targeted changes.
+
 - Output ONLY the slides marked for update
 - Maintain same structure as existing slides
 - Use original slide numbers
@@ -327,16 +382,19 @@ Regenerate only specific slides with targeted changes.
 ## Output Format
 
 **Each slide file must:**
+
 - Start with `<!DOCTYPE html>` as the very first characters
 - Contain ONLY valid HTML (no checkpoint comments, no protocol notes)
 - End with `</html>`
 
 **NEVER include in slide files:**
+
 - Checkpoint announcements (those are conversational text to user)
 - Protocol comments or notes
 - Any text before `<!DOCTYPE html>`
 
 When outputting multiple slides in conversation (API mode), separate with:
+
 ```
 ===SLIDE_SEPARATOR===
 ```

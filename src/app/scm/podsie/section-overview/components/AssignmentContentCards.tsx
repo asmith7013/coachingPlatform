@@ -8,7 +8,9 @@ interface AssignmentContentCardsProps {
   assignmentContent: AssignmentContent[];
 }
 
-export function AssignmentContentCards({ assignmentContent }: AssignmentContentCardsProps) {
+export function AssignmentContentCards({
+  assignmentContent,
+}: AssignmentContentCardsProps) {
   // Group assignments by unit
   const groupedByUnit = useMemo(() => {
     const groups = new Map<string, AssignmentContent[]>();
@@ -33,7 +35,9 @@ export function AssignmentContentCards({ assignmentContent }: AssignmentContentC
 
     return sorted.map(([unit, assignments]) => ({
       unit,
-      assignments: assignments.sort((a, b) => a.unitLessonId.localeCompare(b.unitLessonId)),
+      assignments: assignments.sort((a, b) =>
+        a.unitLessonId.localeCompare(b.unitLessonId),
+      ),
     }));
   }, [assignmentContent]);
 
@@ -44,7 +48,9 @@ export function AssignmentContentCards({ assignmentContent }: AssignmentContentC
           <Heading level="h2">Assignment Content</Heading>
         </Card.Header>
         <Card.Body>
-          <Text color="muted">No assignment content configured for this section</Text>
+          <Text color="muted">
+            No assignment content configured for this section
+          </Text>
         </Card.Body>
       </Card>
     );
@@ -55,7 +61,8 @@ export function AssignmentContentCards({ assignmentContent }: AssignmentContentC
       <Card.Header>
         <Heading level="h2">Assignment Content</Heading>
         <Text color="muted" textSize="sm">
-          All configured assignments for this section ({assignmentContent.length} total)
+          All configured assignments for this section (
+          {assignmentContent.length} total)
         </Text>
       </Card.Header>
 
@@ -68,7 +75,10 @@ export function AssignmentContentCards({ assignmentContent }: AssignmentContentC
               </Heading>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {assignments.map((assignment) => (
-                  <AssignmentCard key={assignment.scopeAndSequenceId} assignment={assignment} />
+                  <AssignmentCard
+                    key={assignment.scopeAndSequenceId}
+                    assignment={assignment}
+                  />
                 ))}
               </div>
             </div>
@@ -81,15 +91,23 @@ export function AssignmentContentCards({ assignmentContent }: AssignmentContentC
 
 // Individual assignment card
 function AssignmentCard({ assignment }: { assignment: AssignmentContent }) {
-  const hasSidekick = assignment.podsieActivities.some((a) => a.activityType === "sidekick");
-  const hasMasteryCheck = assignment.podsieActivities.some((a) => a.activityType === "mastery-check");
-  const hasAssessment = assignment.podsieActivities.some((a) => a.activityType === "assessment");
+  const hasSidekick = assignment.podsieActivities.some(
+    (a) => a.activityType === "sidekick",
+  );
+  const hasMasteryCheck = assignment.podsieActivities.some(
+    (a) => a.activityType === "mastery-check",
+  );
+  const hasAssessment = assignment.podsieActivities.some(
+    (a) => a.activityType === "assessment",
+  );
   const hasZearn = !!assignment.zearnActivity;
 
   return (
     <div
       className={`border rounded-lg p-4 ${
-        assignment.active ? "bg-white border-gray-300" : "bg-gray-50 border-gray-200 opacity-60"
+        assignment.active
+          ? "bg-white border-gray-300"
+          : "bg-gray-50 border-gray-200 opacity-60"
       }`}
     >
       {/* Lesson Header */}
@@ -120,21 +138,33 @@ function AssignmentCard({ assignment }: { assignment: AssignmentContent }) {
             {hasSidekick && (
               <ActivityBadge
                 label="Podsie Sidekick"
-                count={assignment.podsieActivities.filter((a) => a.activityType === "sidekick").length}
+                count={
+                  assignment.podsieActivities.filter(
+                    (a) => a.activityType === "sidekick",
+                  ).length
+                }
                 color="blue"
               />
             )}
             {hasMasteryCheck && (
               <ActivityBadge
                 label="Mastery Check"
-                count={assignment.podsieActivities.filter((a) => a.activityType === "mastery-check").length}
+                count={
+                  assignment.podsieActivities.filter(
+                    (a) => a.activityType === "mastery-check",
+                  ).length
+                }
                 color="purple"
               />
             )}
             {hasAssessment && (
               <ActivityBadge
                 label="Assessment"
-                count={assignment.podsieActivities.filter((a) => a.activityType === "assessment").length}
+                count={
+                  assignment.podsieActivities.filter(
+                    (a) => a.activityType === "assessment",
+                  ).length
+                }
                 color="red"
               />
             )}

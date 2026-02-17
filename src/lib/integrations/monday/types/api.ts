@@ -1,10 +1,10 @@
-import { BaseResponse, EntityResponse } from '@core-types/response';
-import { MondayBoard, MondayItem } from '@lib/integrations/monday/types/board';
+import { BaseResponse, EntityResponse } from "@core-types/response";
+import { MondayBoard, MondayItem } from "@lib/integrations/monday/types/board";
 
 /**
  * Standard API response wrapper compatible with core response patterns
  */
-export interface ApiResponse<T> extends Pick<BaseResponse, 'success'> {
+export interface ApiResponse<T> extends Pick<BaseResponse, "success"> {
   success: boolean;
   data?: T;
   error?: string;
@@ -14,7 +14,8 @@ export interface ApiResponse<T> extends Pick<BaseResponse, 'success'> {
 /**
  * API response format for board queries
  */
-export interface MondayBoardResponse extends Pick<EntityResponse<MondayBoard>, 'success'> {
+export interface MondayBoardResponse
+  extends Pick<EntityResponse<MondayBoard>, "success"> {
   boards: MondayBoard[];
   error?: string;
 }
@@ -31,7 +32,8 @@ export interface MondayItemsResponse {
 /**
  * Testing connection result
  */
-export interface MondayConnectionTestResult extends Pick<BaseResponse, 'success' | 'message'> {
+export interface MondayConnectionTestResult
+  extends Pick<BaseResponse, "success" | "message"> {
   success: boolean;
   data?: {
     name: string;
@@ -59,4 +61,4 @@ export interface MondayUserResponse {
   success: boolean;
   items: MondayUser[];
   error?: string;
-} 
+}

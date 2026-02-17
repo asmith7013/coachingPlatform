@@ -1,22 +1,33 @@
-import React from 'react';
-import { useForm } from '@tanstack/react-form';
-import { FormLayout } from '@components/composed/forms/FormLayout';
-import { Select } from '@components/core/fields/Select';
-import { Textarea } from '@components/core/fields/Textarea';
-import { CoachingActionPlan, CoachingActionPlanZodSchema } from '@zod-schema/cap';
-import { Button } from '@components/core/Button';
-import { IPGCoreActionZod, IPGSubCategoryZod } from '@enums';
+import React from "react";
+import { useForm } from "@tanstack/react-form";
+import { FormLayout } from "@components/composed/forms/FormLayout";
+import { Select } from "@components/core/fields/Select";
+import { Textarea } from "@components/core/fields/Textarea";
+import {
+  CoachingActionPlan,
+  CoachingActionPlanZodSchema,
+} from "@zod-schema/cap";
+import { Button } from "@components/core/Button";
+import { IPGCoreActionZod, IPGSubCategoryZod } from "@enums";
 
 interface CAPStage1Props {
-  data: Pick<CoachingActionPlan, 'ipgCoreAction' | 'ipgSubCategory' | 'rationale' | 'pdfAttachment'>;
-  onChange: (updates: Pick<CoachingActionPlan, 'ipgCoreAction' | 'ipgSubCategory' | 'rationale' | 'pdfAttachment'>) => void;
+  data: Pick<
+    CoachingActionPlan,
+    "ipgCoreAction" | "ipgSubCategory" | "rationale" | "pdfAttachment"
+  >;
+  onChange: (
+    updates: Pick<
+      CoachingActionPlan,
+      "ipgCoreAction" | "ipgSubCategory" | "rationale" | "pdfAttachment"
+    >,
+  ) => void;
   className?: string;
 }
 
-export function CoachingActionPlanStage1({ 
-  data, 
-  onChange, 
-  className 
+export function CoachingActionPlanStage1({
+  data,
+  onChange,
+  className,
 }: CAPStage1Props) {
   const form = useForm({
     defaultValues: data,
@@ -26,7 +37,7 @@ export function CoachingActionPlanStage1({
           ipgCoreAction: true,
           ipgSubCategory: true,
           rationale: true,
-          pdfAttachment: true
+          pdfAttachment: true,
         }).safeParse(value);
         if (!result.success) {
           return result.error.flatten().fieldErrors;
@@ -39,14 +50,14 @@ export function CoachingActionPlanStage1({
     },
   });
 
-  const coreActionOptions = IPGCoreActionZod.options.map((value: string) => ({ 
-    value, 
-    label: value 
+  const coreActionOptions = IPGCoreActionZod.options.map((value: string) => ({
+    value,
+    label: value,
   }));
-  
-  const subCategoryOptions = IPGSubCategoryZod.options.map((value: string) => ({ 
-    value, 
-    label: value 
+
+  const subCategoryOptions = IPGSubCategoryZod.options.map((value: string) => ({
+    value,
+    label: value,
   }));
 
   return (
@@ -58,40 +69,42 @@ export function CoachingActionPlanStage1({
         canSubmit={form.state.canSubmit}
         submitLabel="Save"
       >
-        <form onSubmit={(e) => { 
-          e.preventDefault(); 
-          form.handleSubmit(); 
-        }} className="space-y-6">
-          
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+          className="space-y-6"
+        >
           <form.Field name="ipgCoreAction">
             {(field) => (
-              <Select 
-                fieldApi={field} 
-                value={field.state.value} 
-                onChange={field.handleChange} 
-                label="IPG Core Action" 
-                options={coreActionOptions} 
+              <Select
+                fieldApi={field}
+                value={field.state.value}
+                onChange={field.handleChange}
+                label="IPG Core Action"
+                options={coreActionOptions}
               />
             )}
           </form.Field>
 
           <form.Field name="ipgSubCategory">
             {(field) => (
-              <Select 
-                fieldApi={field} 
-                value={field.state.value} 
-                onChange={field.handleChange} 
-                label="IPG Sub Category" 
-                options={subCategoryOptions} 
+              <Select
+                fieldApi={field}
+                value={field.state.value}
+                onChange={field.handleChange}
+                label="IPG Sub Category"
+                options={subCategoryOptions}
               />
             )}
           </form.Field>
 
           <form.Field name="rationale">
             {(field) => (
-              <Textarea 
-                fieldApi={field} 
-                label="Rationale" 
+              <Textarea
+                fieldApi={field}
+                label="Rationale"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
               />

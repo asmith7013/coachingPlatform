@@ -1,13 +1,16 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/core/Button';
-import { Card } from '@/components/composed/cards';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { SkeletonContainer } from '@/components/composed/feedback/SkeletonContainer';
-import { SkeletonCard, TableSkeleton } from '@/components/composed/feedback/SkeletonCard';
-import { ObservationListSkeleton } from '@/components/domain/observations/ObservationListSkeleton';
+import React, { useState } from "react";
+import { Button } from "@/components/core/Button";
+import { Card } from "@/components/composed/cards";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { SkeletonContainer } from "@/components/composed/feedback/SkeletonContainer";
+import {
+  SkeletonCard,
+  TableSkeleton,
+} from "@/components/composed/feedback/SkeletonCard";
+import { ObservationListSkeleton } from "@/components/domain/observations/ObservationListSkeleton";
 
 /**
  * Examples showing the clean SkeletonContainer pattern
@@ -24,20 +27,20 @@ export default function SkeletonContainerExamples() {
   };
 
   const toggleError = () => {
-    setError(error ? null : 'Something went wrong!');
+    setError(error ? null : "Something went wrong!");
   };
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
       <div className="space-y-8">
-        
         {/* Header */}
         <div>
           <Heading level="h1" className="mb-2">
             ✨ SkeletonContainer Pattern Examples
           </Heading>
           <Text color="muted">
-            Clean separation of concerns - components focus on content, container handles loading
+            Clean separation of concerns - components focus on content,
+            container handles loading
           </Text>
         </div>
 
@@ -49,10 +52,10 @@ export default function SkeletonContainerExamples() {
           <Card.Body>
             <div className="flex gap-4">
               <Button onClick={toggleLoading} disabled={isLoading}>
-                {isLoading ? 'Loading...' : 'Demo Loading State (3s)'}
+                {isLoading ? "Loading..." : "Demo Loading State (3s)"}
               </Button>
               <Button onClick={toggleError}>
-                {error ? 'Clear Error' : 'Demo Error State'}
+                {error ? "Clear Error" : "Demo Error State"}
               </Button>
             </div>
           </Card.Body>
@@ -62,7 +65,9 @@ export default function SkeletonContainerExamples() {
         <Card>
           <Card.Header>
             <Heading level="h2">Example 1: Staff List Component</Heading>
-            <Text color="muted">Clean component with SkeletonContainer wrapper</Text>
+            <Text color="muted">
+              Clean component with SkeletonContainer wrapper
+            </Text>
           </Card.Header>
           <Card.Body>
             <SkeletonContainer
@@ -71,7 +76,12 @@ export default function SkeletonContainerExamples() {
               skeleton={
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {Array.from({ length: 6 }, (_, i) => (
-                    <SkeletonCard key={i} showHeader={false} lines={2} actionCount={1} />
+                    <SkeletonCard
+                      key={i}
+                      showHeader={false}
+                      lines={2}
+                      actionCount={1}
+                    />
                   ))}
                 </div>
               }
@@ -87,8 +97,12 @@ export default function SkeletonContainerExamples() {
                   <Card key={i}>
                     <Card.Body>
                       <Text className="font-medium">Staff Member {i + 1}</Text>
-                      <Text textSize="sm" color="muted">Role: Teacher</Text>
-                      <Button appearance="outline" className="mt-2">View</Button>
+                      <Text textSize="sm" color="muted">
+                        Role: Teacher
+                      </Text>
+                      <Button appearance="outline" className="mt-2">
+                        View
+                      </Button>
                     </Card.Body>
                   </Card>
                 ))}
@@ -107,7 +121,9 @@ export default function SkeletonContainerExamples() {
             <SkeletonContainer
               isLoading={isLoading}
               error={error}
-              skeleton={<TableSkeleton rows={5} columns={4} showHeader={true} />}
+              skeleton={
+                <TableSkeleton rows={5} columns={4} showHeader={true} />
+              }
             >
               {/* Clean table component */}
               <div className="border rounded-lg overflow-hidden">
@@ -139,8 +155,12 @@ export default function SkeletonContainerExamples() {
         {/* Example 3: Your Original Observation List */}
         <Card>
           <Card.Header>
-            <Heading level="h2">Example 3: Observation List (Your Discovery!)</Heading>
-            <Text color="muted">This uses your original beautiful shimmer effect</Text>
+            <Heading level="h2">
+              Example 3: Observation List (Your Discovery!)
+            </Heading>
+            <Text color="muted">
+              This uses your original beautiful shimmer effect
+            </Text>
           </Card.Header>
           <Card.Body>
             <SkeletonContainer
@@ -152,7 +172,9 @@ export default function SkeletonContainerExamples() {
               <Card>
                 <Card.Header>
                   <Heading level="h3">Classroom Observations</Heading>
-                  <Text textSize="sm" color="muted">3 observations</Text>
+                  <Text textSize="sm" color="muted">
+                    3 observations
+                  </Text>
                 </Card.Header>
                 <Card.Body>
                   <div className="space-y-4">
@@ -164,8 +186,12 @@ export default function SkeletonContainerExamples() {
                               <Heading level="h4" className="mb-2">
                                 Cycle {i + 1} - Session A
                               </Heading>
-                              <Text textSize="sm" color="muted">Date: March {10 + i}, 2024</Text>
-                              <Text textSize="sm" color="muted">Status: Completed</Text>
+                              <Text textSize="sm" color="muted">
+                                Date: March {10 + i}, 2024
+                              </Text>
+                              <Text textSize="sm" color="muted">
+                                Status: Completed
+                              </Text>
                             </div>
                             <div className="flex gap-2">
                               <Button appearance="outline">View</Button>
@@ -191,7 +217,7 @@ export default function SkeletonContainerExamples() {
             <div className="bg-gray-50 p-4 rounded-lg">
               <Text className="mb-4 font-medium">Before (Complex):</Text>
               <pre className="text-sm overflow-x-auto mb-6 bg-red-50 p-3 rounded border">
-{`// ❌ Complex - loading logic mixed with component logic
+                {`// ❌ Complex - loading logic mixed with component logic
 function MyComponent({ isLoading, error, data }) {
   const showSkeleton = useSimpleSkeletonLoading(isLoading, 150);
   
@@ -201,10 +227,10 @@ function MyComponent({ isLoading, error, data }) {
   return <ActualComponent data={data} />;
 }`}
               </pre>
-              
+
               <Text className="mb-4 font-medium">After (Clean):</Text>
               <pre className="text-sm overflow-x-auto bg-green-50 p-3 rounded border">
-{`// ✅ Clean - component focuses on its responsibility  
+                {`// ✅ Clean - component focuses on its responsibility  
 function MyComponent({ isLoading, error, data }) {
   return (
     <SkeletonContainer
@@ -229,7 +255,9 @@ function MyComponent({ isLoading, error, data }) {
           <Card.Body>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Text className="font-medium mb-2 text-green-600">✅ What You Get</Text>
+                <Text className="font-medium mb-2 text-green-600">
+                  ✅ What You Get
+                </Text>
                 <ul className="space-y-1 text-sm">
                   <li>• Clean separation of concerns</li>
                   <li>• Zero code duplication</li>
@@ -239,7 +267,9 @@ function MyComponent({ isLoading, error, data }) {
                 </ul>
               </div>
               <div>
-                <Text className="font-medium mb-2 text-red-600">❌ What You Avoid</Text>
+                <Text className="font-medium mb-2 text-red-600">
+                  ❌ What You Avoid
+                </Text>
                 <ul className="space-y-1 text-sm">
                   <li>• Complex wrapper components</li>
                   <li>• Scattered loading logic</li>
@@ -251,8 +281,7 @@ function MyComponent({ isLoading, error, data }) {
             </div>
           </Card.Body>
         </Card>
-
       </div>
     </div>
   );
-} 
+}

@@ -76,6 +76,7 @@
 ## Ready for Phase 4
 
 When all items are checked, proceed to:
+
 ```
 Read: .claude/skills/create-worked-example-sg/phases/04-save-to-database.md
 ```

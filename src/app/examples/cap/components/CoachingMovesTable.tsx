@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface CoachingMove {
   category: string;
@@ -10,7 +10,9 @@ interface CoachingMovesTableProps {
   moves: CoachingMove[];
 }
 
-export const CoachingMovesTable: React.FC<CoachingMovesTableProps> = ({ moves }) => {
+export const CoachingMovesTable: React.FC<CoachingMovesTableProps> = ({
+  moves,
+}) => {
   return (
     <div className="overflow-x-auto mb-6">
       <table className="min-w-full divide-y divide-gray-200 border border-gray-200">
@@ -53,4 +55,4 @@ export const CoachingMovesTable: React.FC<CoachingMovesTableProps> = ({ moves })
       </table>
     </div>
   );
-}; 
+};

@@ -9,7 +9,8 @@ import {
  */
 export const currentUnitsKeys = {
   all: ["current-units"] as const,
-  byYear: (schoolYear: string) => [...currentUnitsKeys.all, schoolYear] as const,
+  byYear: (schoolYear: string) =>
+    [...currentUnitsKeys.all, schoolYear] as const,
 };
 
 /**

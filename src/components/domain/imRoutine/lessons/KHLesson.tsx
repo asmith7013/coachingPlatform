@@ -1,7 +1,7 @@
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { cn } from '@ui/utils/formatters';;
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { cn } from "@ui/utils/formatters";
 
 type KHLesson = {
   grade: string;
@@ -15,21 +15,29 @@ type KHLesson = {
   }[];
 };
 
-export function KHLesson({ lesson, selectedRoutines }: { lesson: KHLesson, selectedRoutines: string[] }) {
+export function KHLesson({
+  lesson,
+  selectedRoutines,
+}: {
+  lesson: KHLesson;
+  selectedRoutines: string[];
+}) {
   const hasSelected = lesson.activities.some((activity) =>
-    activity.routines.some((r) => selectedRoutines.includes(r.trim()))
+    activity.routines.some((r) => selectedRoutines.includes(r.trim())),
   );
 
   return (
     <Card
       className={cn(
-        'p-6 border-2 shadow-sm space-y-4',
-        hasSelected ? 'bg-background border-muted' : 'bg-surface border-surface'
+        "p-6 border-2 shadow-sm space-y-4",
+        hasSelected
+          ? "bg-background border-muted"
+          : "bg-surface border-surface",
       )}
     >
       <Heading
         level="h3"
-        className={cn('mb-2 text-primary', !hasSelected && 'text-muted')}
+        className={cn("mb-2 text-primary", !hasSelected && "text-muted")}
       >
         Lesson {lesson.lessonNumber}
       </Heading>
@@ -38,7 +46,9 @@ export function KHLesson({ lesson, selectedRoutines }: { lesson: KHLesson, selec
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface">
           {lesson.activities
             .filter((activity) =>
-              activity.routines.some((r) => selectedRoutines.includes(r.trim()))
+              activity.routines.some((r) =>
+                selectedRoutines.includes(r.trim()),
+              ),
             )
             .map((activity) => (
               <div
@@ -47,8 +57,8 @@ export function KHLesson({ lesson, selectedRoutines }: { lesson: KHLesson, selec
               >
                 <div className="mb-2 space-y-1">
                   <Text textSize="sm" className="font-medium text-text">
-                    {activity.activityNumber === 'Warm Up'
-                      ? 'Warm Up'
+                    {activity.activityNumber === "Warm Up"
+                      ? "Warm Up"
                       : `Activity ${activity.activityNumber}`}
                   </Text>
                   {activity.activityTitle && (
@@ -66,10 +76,10 @@ export function KHLesson({ lesson, selectedRoutines }: { lesson: KHLesson, selec
                         <span
                           key={i}
                           className={cn(
-                            'text-[10px] font-medium px-2 py-0.5 rounded',
+                            "text-[10px] font-medium px-2 py-0.5 rounded",
                             isMLR
-                              ? 'bg-primary text-white'
-                              : 'bg-secondary text-white'
+                              ? "bg-primary text-white"
+                              : "bg-secondary text-white",
                           )}
                         >
                           {routine}
@@ -87,4 +97,4 @@ export function KHLesson({ lesson, selectedRoutines }: { lesson: KHLesson, selec
       )}
     </Card>
   );
-} 
+}

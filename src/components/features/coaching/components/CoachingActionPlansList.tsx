@@ -1,12 +1,12 @@
 "use client";
 
-import React from 'react';
-import { Card } from '@/components/composed/cards';
-import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
-import { CoachingActionPlan } from '@zod-schema/core/cap';
-import { SkeletonContainer } from '@/components/composed/feedback/SkeletonContainer';
-import { CoachingActionPlanCard } from '@components/features/coaching/components/CoachingActionPlanCard';
+import React from "react";
+import { Card } from "@/components/composed/cards";
+import { Text } from "@/components/core/typography/Text";
+import { Heading } from "@/components/core/typography/Heading";
+import { CoachingActionPlan } from "@zod-schema/core/cap";
+import { SkeletonContainer } from "@/components/composed/feedback/SkeletonContainer";
+import { CoachingActionPlanCard } from "@components/features/coaching/components/CoachingActionPlanCard";
 
 interface CoachingActionPlansListProps {
   plans: CoachingActionPlan[];
@@ -25,7 +25,7 @@ export function CoachingActionPlansList({
   onEdit,
   onDelete,
   onView,
-  deletingIds = []
+  deletingIds = [],
 }: CoachingActionPlansListProps) {
   return (
     <SkeletonContainer
@@ -36,7 +36,9 @@ export function CoachingActionPlansList({
         <Card>
           <Card.Body>
             <div className="text-center py-8">
-              <Text color="danger">Error loading coaching action plans: {error}</Text>
+              <Text color="danger">
+                Error loading coaching action plans: {error}
+              </Text>
             </div>
           </Card.Body>
         </Card>
@@ -46,15 +48,16 @@ export function CoachingActionPlansList({
         <Card.Header>
           <Heading level="h3">Existing Coaching Action Plans</Heading>
           <Text textSize="sm" color="muted">
-            {plans.length} plan{plans.length !== 1 ? 's' : ''}
+            {plans.length} plan{plans.length !== 1 ? "s" : ""}
           </Text>
         </Card.Header>
-        
+
         <Card.Body>
           {plans.length === 0 ? (
             <div className="text-center py-8">
               <Text color="muted">
-                No coaching action plans found. Create your first plan using the form above.
+                No coaching action plans found. Create your first plan using the
+                form above.
               </Text>
             </div>
           ) : (
@@ -107,4 +110,4 @@ function CoachingActionPlanListSkeleton({ count }: { count: number }) {
       </Card.Body>
     </Card>
   );
-} 
+}

@@ -1,17 +1,64 @@
-<div class="slide-container" style="width: 100vw; height: 100vh; background: linear-gradient(135deg, #121212 0%, #14141e 100%); display: flex; flex-direction: column; padding: 50px 60px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif;">
+<div
+  class="slide-container"
+  style="
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #121212 0%, #14141e 100%);
+    display: flex;
+    flex-direction: column;
+    padding: 50px 60px;
+    color: #ffffff;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  "
+>
+  <!-- Title -->
+  <h2
+    style="
+      font-size: 42px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin: 0 0 15px 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    "
+  >
+    Your Turn: Stacking Chairs
+  </h2>
 
-    <!-- Title -->
-    <h2 style="font-size: 42px; font-weight: 700; color: #e2e8f0; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px;">Your Turn: Stacking Chairs</h2>
+  <!-- Problem Statement -->
+  <p
+    style="
+      font-size: 22px;
+      line-height: 1.5;
+      color: #cbd5e1;
+      margin: 0 0 25px 0;
+      max-width: 900px;
+    "
+  >
+    The cafeteria staff stacks chairs for storage. The graph shows the height of
+    the stack in centimeters for different numbers of chairs.
+    <strong style="color: #fbbf24"
+      >How much does each chair after the first add to the height of the
+      stack?</strong
+    >
+  </p>
 
-    <!-- Problem Statement -->
-    <p style="font-size: 22px; line-height: 1.5; color: #cbd5e1; margin: 0 0 25px 0; max-width: 900px;">
-        The cafeteria staff stacks chairs for storage. The graph shows the height of the stack in centimeters for different numbers of chairs. <strong style="color: #fbbf24;">How much does each chair after the first add to the height of the stack?</strong>
-    </p>
-
-    <!-- Graph Container -->
-    <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
-        <div style="background: rgba(30, 41, 59, 0.5); border: 2px solid #475569; border-radius: 16px; padding: 30px 40px;">
-            <!--
+  <!-- Graph Container -->
+  <div
+    style="flex: 1; display: flex; justify-content: center; align-items: center"
+  >
+    <div
+      style="
+        background: rgba(30, 41, 59, 0.5);
+        border: 2px solid #475569;
+        border-radius: 16px;
+        padding: 30px 40px;
+      "
+    >
+      <!--
             COORDINATE SYSTEM:
             X: chairs (0-12), Y: height in cm (0-70)
             Origin at pixel (50, 280), Plot area: 400px wide x 250px tall
@@ -22,62 +69,168 @@
             Point 1: x = 50 + (4/12)*400 = 183.3, y = 280 - (38/70)*250 = 280 - 135.7 = 144.3
             Point 2: x = 50 + (10/12)*400 = 383.3, y = 280 - (56/70)*250 = 280 - 200 = 80
             -->
-            <svg viewBox="0 0 500 340" style="width: 550px; height: 340px;">
-                <!-- Grid lines -->
-                <g stroke="#334155" stroke-width="0.5">
-                    <!-- Vertical grid lines at x = 2, 4, 6, 8, 10, 12 -->
-                    <line x1="117" y1="30" x2="117" y2="280"/>
-                    <line x1="183" y1="30" x2="183" y2="280"/>
-                    <line x1="250" y1="30" x2="250" y2="280"/>
-                    <line x1="317" y1="30" x2="317" y2="280"/>
-                    <line x1="383" y1="30" x2="383" y2="280"/>
-                    <line x1="450" y1="30" x2="450" y2="280"/>
-                    <!-- Horizontal grid lines -->
-                    <line x1="50" y1="230" x2="450" y2="230"/>
-                    <line x1="50" y1="180" x2="450" y2="180"/>
-                    <line x1="50" y1="130" x2="450" y2="130"/>
-                    <line x1="50" y1="80" x2="450" y2="80"/>
-                    <line x1="50" y1="30" x2="450" y2="30"/>
-                </g>
+      <svg viewBox="0 0 500 340" style="width: 550px; height: 340px">
+        <!-- Grid lines -->
+        <g stroke="#334155" stroke-width="0.5">
+          <!-- Vertical grid lines at x = 2, 4, 6, 8, 10, 12 -->
+          <line x1="117" y1="30" x2="117" y2="280" />
+          <line x1="183" y1="30" x2="183" y2="280" />
+          <line x1="250" y1="30" x2="250" y2="280" />
+          <line x1="317" y1="30" x2="317" y2="280" />
+          <line x1="383" y1="30" x2="383" y2="280" />
+          <line x1="450" y1="30" x2="450" y2="280" />
+          <!-- Horizontal grid lines -->
+          <line x1="50" y1="230" x2="450" y2="230" />
+          <line x1="50" y1="180" x2="450" y2="180" />
+          <line x1="50" y1="130" x2="450" y2="130" />
+          <line x1="50" y1="80" x2="450" y2="80" />
+          <line x1="50" y1="30" x2="450" y2="30" />
+        </g>
 
-                <!-- Axes -->
-                <line x1="50" y1="280" x2="450" y2="280" stroke="#94a3b8" stroke-width="2"/>
-                <line x1="50" y1="30" x2="50" y2="280" stroke="#94a3b8" stroke-width="2"/>
+        <!-- Axes -->
+        <line
+          x1="50"
+          y1="280"
+          x2="450"
+          y2="280"
+          stroke="#94a3b8"
+          stroke-width="2"
+        />
+        <line
+          x1="50"
+          y1="30"
+          x2="50"
+          y2="280"
+          stroke="#94a3b8"
+          stroke-width="2"
+        />
 
-                <!-- X-axis labels -->
-                <text x="50" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">0</text>
-                <text x="117" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">2</text>
-                <text x="183" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">4</text>
-                <text x="250" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">6</text>
-                <text x="317" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">8</text>
-                <text x="383" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">10</text>
-                <text x="450" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">12</text>
-                <text x="250" y="325" fill="#94a3b8" font-size="15" text-anchor="middle" font-weight="500">number of chairs</text>
+        <!-- X-axis labels -->
+        <text x="50" y="300" fill="#94a3b8" font-size="14" text-anchor="middle">
+          0
+        </text>
+        <text
+          x="117"
+          y="300"
+          fill="#94a3b8"
+          font-size="14"
+          text-anchor="middle"
+        >
+          2
+        </text>
+        <text
+          x="183"
+          y="300"
+          fill="#94a3b8"
+          font-size="14"
+          text-anchor="middle"
+        >
+          4
+        </text>
+        <text
+          x="250"
+          y="300"
+          fill="#94a3b8"
+          font-size="14"
+          text-anchor="middle"
+        >
+          6
+        </text>
+        <text
+          x="317"
+          y="300"
+          fill="#94a3b8"
+          font-size="14"
+          text-anchor="middle"
+        >
+          8
+        </text>
+        <text
+          x="383"
+          y="300"
+          fill="#94a3b8"
+          font-size="14"
+          text-anchor="middle"
+        >
+          10
+        </text>
+        <text
+          x="450"
+          y="300"
+          fill="#94a3b8"
+          font-size="14"
+          text-anchor="middle"
+        >
+          12
+        </text>
+        <text
+          x="250"
+          y="325"
+          fill="#94a3b8"
+          font-size="15"
+          text-anchor="middle"
+          font-weight="500"
+        >
+          number of chairs
+        </text>
 
-                <!-- Y-axis labels -->
-                <text x="42" y="284" fill="#94a3b8" font-size="14" text-anchor="end">0</text>
-                <text x="42" y="234" fill="#94a3b8" font-size="14" text-anchor="end">14</text>
-                <text x="42" y="184" fill="#94a3b8" font-size="14" text-anchor="end">28</text>
-                <text x="42" y="134" fill="#94a3b8" font-size="14" text-anchor="end">42</text>
-                <text x="42" y="84" fill="#94a3b8" font-size="14" text-anchor="end">56</text>
-                <text x="42" y="34" fill="#94a3b8" font-size="14" text-anchor="end">70</text>
-                <text x="15" y="155" fill="#94a3b8" font-size="15" text-anchor="middle" font-weight="500" transform="rotate(-90, 15, 155)">height (cm)</text>
+        <!-- Y-axis labels -->
+        <text x="42" y="284" fill="#94a3b8" font-size="14" text-anchor="end">
+          0
+        </text>
+        <text x="42" y="234" fill="#94a3b8" font-size="14" text-anchor="end">
+          14
+        </text>
+        <text x="42" y="184" fill="#94a3b8" font-size="14" text-anchor="end">
+          28
+        </text>
+        <text x="42" y="134" fill="#94a3b8" font-size="14" text-anchor="end">
+          42
+        </text>
+        <text x="42" y="84" fill="#94a3b8" font-size="14" text-anchor="end">
+          56
+        </text>
+        <text x="42" y="34" fill="#94a3b8" font-size="14" text-anchor="end">
+          70
+        </text>
+        <text
+          x="15"
+          y="155"
+          fill="#94a3b8"
+          font-size="15"
+          text-anchor="middle"
+          font-weight="500"
+          transform="rotate(-90, 15, 155)"
+        >
+          height (cm)
+        </text>
 
-                <!-- Data line - from y-intercept through points -->
-                <!-- Line: y = 3x + 26 (slope 3, y-int 26) -->
-                <!-- (0, 26): y = 280 - (26/70)*250 = 280 - 92.9 = 187.1 -->
-                <!-- (12, 62): y = 280 - (62/70)*250 = 280 - 221.4 = 58.6 -->
-                <line x1="50" y1="187" x2="450" y2="59" stroke="#60a5fa" stroke-width="3"/>
+        <!-- Data line - from y-intercept through points -->
+        <!-- Line: y = 3x + 26 (slope 3, y-int 26) -->
+        <!-- (0, 26): y = 280 - (26/70)*250 = 280 - 92.9 = 187.1 -->
+        <!-- (12, 62): y = 280 - (62/70)*250 = 280 - 221.4 = 58.6 -->
+        <line
+          x1="50"
+          y1="187"
+          x2="450"
+          y2="59"
+          stroke="#60a5fa"
+          stroke-width="3"
+        />
 
-                <!-- Data points with labels -->
-                <!-- Point (4, 38): x = 183, y = 280 - (38/70)*250 = 144.3 -->
-                <circle cx="183" cy="144" r="8" fill="#60a5fa"/>
-                <text x="198" y="135" fill="#fbbf24" font-size="16" font-weight="600">(4, 38)</text>
+        <!-- Data points with labels -->
+        <!-- Point (4, 38): x = 183, y = 280 - (38/70)*250 = 144.3 -->
+        <circle cx="183" cy="144" r="8" fill="#60a5fa" />
+        <text x="198" y="135" fill="#fbbf24" font-size="16" font-weight="600">
+          (4, 38)
+        </text>
 
-                <!-- Point (10, 56): x = 383, y = 280 - (56/70)*250 = 80 -->
-                <circle cx="383" cy="80" r="8" fill="#60a5fa"/>
-                <text x="398" y="71" fill="#fbbf24" font-size="16" font-weight="600">(10, 56)</text>
-            </svg>
-        </div>
+        <!-- Point (10, 56): x = 383, y = 280 - (56/70)*250 = 80 -->
+        <circle cx="383" cy="80" r="8" fill="#60a5fa" />
+        <text x="398" y="71" fill="#fbbf24" font-size="16" font-weight="600">
+          (10, 56)
+        </text>
+      </svg>
     </div>
+  </div>
 </div>

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { ExportDashboard } from '@/components/integrations/googleSheets/ExportDashboard';
+import { ExportDashboard } from "@/components/integrations/googleSheets/ExportDashboard";
 
 export default function GoogleSheetsExportPage() {
   return (
@@ -8,4 +8,4 @@ export default function GoogleSheetsExportPage() {
       <ExportDashboard />
     </div>
   );
-} 
+}

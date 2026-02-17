@@ -4,7 +4,10 @@
  */
 
 import { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
-import { PodsieCompletion, ScopeAndSequenceWithPodsie } from "@zod-schema/scm/podsie/podsie-completion";
+import {
+  PodsieCompletion,
+  ScopeAndSequenceWithPodsie,
+} from "@zod-schema/scm/podsie/podsie-completion";
 import { fetchScopeAndSequence } from "@actions/scm/scope-and-sequence/scope-and-sequence";
 import { fetchPodsieCompletionByQuery } from "@actions/scm/podsie/podsie-completion";
 import type { AllSectionsType } from "@schema/enum/scm";
@@ -14,10 +17,10 @@ import type { AllSectionsType } from "@schema/enum/scm";
  */
 export function joinLessonWithPodsieConfig(
   lesson: ScopeAndSequence,
-  podsieConfig: PodsieCompletion | null | undefined
+  podsieConfig: PodsieCompletion | null | undefined,
 ): ScopeAndSequenceWithPodsie {
   return {
-    id: lesson.id || '',
+    id: lesson.id || "",
     unitLessonId: lesson.unitLessonId,
     lessonName: lesson.lessonName,
     grade: lesson.grade,
@@ -25,15 +28,17 @@ export function joinLessonWithPodsieConfig(
     section: lesson.section,
     roadmapSkills: lesson.roadmapSkills,
     targetSkills: lesson.targetSkills,
-    podsieConfig: podsieConfig ? {
-      id: podsieConfig.id || '',
-      school: String(podsieConfig.school),
-      classSection: String(podsieConfig.classSection),
-      podsieAssignmentId: podsieConfig.podsieAssignmentId,
-      podsieQuestionMap: podsieConfig.podsieQuestionMap || [],
-      totalQuestions: podsieConfig.totalQuestions,
-      active: podsieConfig.active
-    } : undefined
+    podsieConfig: podsieConfig
+      ? {
+          id: podsieConfig.id || "",
+          school: String(podsieConfig.school),
+          classSection: String(podsieConfig.classSection),
+          podsieAssignmentId: podsieConfig.podsieAssignmentId,
+          podsieQuestionMap: podsieConfig.podsieQuestionMap || [],
+          totalQuestions: podsieConfig.totalQuestions,
+          active: podsieConfig.active,
+        }
+      : undefined,
   };
 }
 
@@ -45,16 +50,16 @@ export function joinLessonWithPodsieConfig(
  */
 export function joinLessonsWithPodsieConfigs(
   lessons: ScopeAndSequence[],
-  podsieConfigs: PodsieCompletion[]
+  podsieConfigs: PodsieCompletion[],
 ): ScopeAndSequenceWithPodsie[] {
   // Create a map for quick lookup
   const configMap = new Map<string, PodsieCompletion>();
-  podsieConfigs.forEach(config => {
+  podsieConfigs.forEach((config) => {
     configMap.set(config.unitLessonId, config);
   });
 
   // Join each lesson with its config
-  return lessons.map(lesson => {
+  return lessons.map((lesson) => {
     const config = configMap.get(lesson.unitLessonId);
     return joinLessonWithPodsieConfig(lesson, config);
   });
@@ -73,7 +78,7 @@ export async function fetchLessonsWithPodsieConfigs(
     grade?: string;
     unitNumber?: number;
     scopeSequenceTag?: string;
-  }
+  },
 ) {
   try {
     // Fetch lessons and configs in parallel
@@ -81,23 +86,25 @@ export async function fetchLessonsWithPodsieConfigs(
       fetchScopeAndSequence({
         page: 1,
         limit: 1000,
-        sortBy: 'unitNumber',
-        sortOrder: 'asc',
+        sortBy: "unitNumber",
+        sortOrder: "asc",
         filters: filters || {},
-        search: '',
-        searchFields: []
+        search: "",
+        searchFields: [],
       }),
-      fetchPodsieCompletionByQuery({ school, classSection, active: true })
+      fetchPodsieCompletionByQuery({ school, classSection, active: true }),
     ]);
 
     if (!lessonsResult.success || !configsResult.success) {
       return {
         success: false,
-        error: lessonsResult.error || configsResult.error || "Failed to fetch data"
+        error:
+          lessonsResult.error || configsResult.error || "Failed to fetch data",
       };
     }
 
-    const lessons = (lessonsResult.items || []) as unknown as ScopeAndSequence[];
+    const lessons = (lessonsResult.items ||
+      []) as unknown as ScopeAndSequence[];
     const configs = (configsResult.data || []) as unknown as PodsieCompletion[];
 
     // Join them
@@ -105,13 +112,13 @@ export async function fetchLessonsWithPodsieConfigs(
 
     return {
       success: true,
-      data: joined
+      data: joined,
     };
   } catch (error) {
-    console.error('💥 Error fetching lessons with Podsie configs:', error);
+    console.error("💥 Error fetching lessons with Podsie configs:", error);
     return {
       success: false,
-      error: String(error)
+      error: String(error),
     };
   }
 }
@@ -122,9 +129,11 @@ export async function fetchLessonsWithPodsieConfigs(
  */
 export function getPodsieAssignmentId(
   unitLessonId: string,
-  podsieConfigs: PodsieCompletion[]
+  podsieConfigs: PodsieCompletion[],
 ): string | undefined {
-  const config = podsieConfigs.find(c => c.unitLessonId === unitLessonId && c.active);
+  const config = podsieConfigs.find(
+    (c) => c.unitLessonId === unitLessonId && c.active,
+  );
   return config?.podsieAssignmentId;
 }
 
@@ -134,9 +143,11 @@ export function getPodsieAssignmentId(
  */
 export function getPodsieQuestionMap(
   unitLessonId: string,
-  podsieConfigs: PodsieCompletion[]
+  podsieConfigs: PodsieCompletion[],
 ): Array<{ questionNumber: number; questionId: string }> {
-  const config = podsieConfigs.find(c => c.unitLessonId === unitLessonId && c.active);
+  const config = podsieConfigs.find(
+    (c) => c.unitLessonId === unitLessonId && c.active,
+  );
   return config?.podsieQuestionMap || [];
 }
 
@@ -145,9 +156,9 @@ export function getPodsieQuestionMap(
  */
 export function hasPodsieConfig(
   unitLessonId: string,
-  podsieConfigs: PodsieCompletion[]
+  podsieConfigs: PodsieCompletion[],
 ): boolean {
-  return podsieConfigs.some(c => c.unitLessonId === unitLessonId && c.active);
+  return podsieConfigs.some((c) => c.unitLessonId === unitLessonId && c.active);
 }
 
 /**
@@ -155,10 +166,10 @@ export function hasPodsieConfig(
  */
 export function getLessonsWithPodsieConfigs(
   lessons: ScopeAndSequence[],
-  podsieConfigs: PodsieCompletion[]
+  podsieConfigs: PodsieCompletion[],
 ): ScopeAndSequenceWithPodsie[] {
   const joined = joinLessonsWithPodsieConfigs(lessons, podsieConfigs);
-  return joined.filter(lesson => lesson.podsieConfig !== undefined);
+  return joined.filter((lesson) => lesson.podsieConfig !== undefined);
 }
 
 /**
@@ -166,8 +177,8 @@ export function getLessonsWithPodsieConfigs(
  */
 export function getLessonsWithoutPodsieConfigs(
   lessons: ScopeAndSequence[],
-  podsieConfigs: PodsieCompletion[]
+  podsieConfigs: PodsieCompletion[],
 ): ScopeAndSequenceWithPodsie[] {
   const joined = joinLessonsWithPodsieConfigs(lessons, podsieConfigs);
-  return joined.filter(lesson => lesson.podsieConfig === undefined);
+  return joined.filter((lesson) => lesson.podsieConfig === undefined);
 }

@@ -5,56 +5,60 @@ import { Button } from "@components/core";
 import { Card } from "@components/composed/cards";
 import { Alert } from "@components/core/feedback/Alert";
 import { Spinner } from "@components/core/feedback";
-import { useMondayConnection, useMondayBoard, useMondayImport } from "@monday-hooks/useMondayQueries";
+import {
+  useMondayConnection,
+  useMondayBoard,
+  useMondayImport,
+} from "@monday-hooks/useMondayQueries";
 import { Heading } from "@components/core/typography/Heading";
 import { Text } from "@components/core/typography/Text";
 
 export default function MondayExample2() {
-  const [boardId, setBoardId] = useState('');
+  const [boardId, setBoardId] = useState("");
   const [error, setError] = useState<string | null>(null);
-  
+
   // React Query hooks
   const connectionQuery = useMondayConnection();
   const boardMutation = useMondayBoard();
   const importMutation = useMondayImport();
-  
+
   // Handle board fetch
   const handleFetchBoard = async () => {
     if (!boardId) {
-      setError('Please enter a board ID');
+      setError("Please enter a board ID");
       return;
     }
-    
+
     setError(null);
-    
+
     try {
       boardMutation.mutate([boardId]);
     } catch (err) {
-      console.error('Error fetching board:', err);
+      console.error("Error fetching board:", err);
       setError(err instanceof Error ? err.message : String(err));
     }
   };
-  
+
   // Handle import
   const handleImport = async () => {
     if (!boardId) {
-      setError('Please enter a board ID');
+      setError("Please enter a board ID");
       return;
     }
-    
+
     setError(null);
-    
+
     try {
       await importMutation.mutateAsync({
-        ids: ['123', '456'], // Example item IDs
-        boardId
+        ids: ["123", "456"], // Example item IDs
+        boardId,
       });
     } catch (err) {
-      console.error('Error importing items:', err);
+      console.error("Error importing items:", err);
       setError(err instanceof Error ? err.message : String(err));
     }
   };
-  
+
   // Determine loading state
   const isLoading = connectionQuery.isLoading || boardMutation.isPending;
 
@@ -66,7 +70,7 @@ export default function MondayExample2() {
           Example of using Monday.com integration hooks for imports
         </Text>
       </div>
-      
+
       {/* Connection status */}
       <Card className="mb-6">
         <Card.Body>
@@ -74,11 +78,14 @@ export default function MondayExample2() {
             <div>
               <Text className="font-medium">Connection Status</Text>
               <Text className="text-gray-600">
-                {connectionQuery.isLoading ? 'Checking...' : 
-                  connectionQuery.data?.success ? 'Connected' : 'Not connected'}
+                {connectionQuery.isLoading
+                  ? "Checking..."
+                  : connectionQuery.data?.success
+                    ? "Connected"
+                    : "Not connected"}
               </Text>
             </div>
-            <Button 
+            <Button
               onClick={() => connectionQuery.refetch()}
               disabled={isLoading}
             >
@@ -88,7 +95,7 @@ export default function MondayExample2() {
           </div>
         </Card.Body>
       </Card>
-      
+
       {/* Board fetch */}
       <Card className="mb-6">
         <Card.Body>
@@ -101,19 +108,19 @@ export default function MondayExample2() {
                 type="text"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 value={boardId}
-                onChange={e => setBoardId(e.target.value)}
+                onChange={(e) => setBoardId(e.target.value)}
                 placeholder="Enter Monday.com board ID"
               />
             </div>
             <div className="flex gap-2">
-              <Button 
+              <Button
                 onClick={handleFetchBoard}
                 disabled={isLoading || !boardId}
               >
                 {isLoading ? <Spinner size="sm" className="mr-2" /> : null}
                 Fetch Board
               </Button>
-              <Button 
+              <Button
                 onClick={handleImport}
                 disabled={isLoading || !boardId}
                 intent="primary"
@@ -131,11 +138,10 @@ export default function MondayExample2() {
                 </pre>
               </div>
             )}
-            </div>
-          </Card.Body>
-        </Card>
-      
-      
+          </div>
+        </Card.Body>
+      </Card>
+
       {/* Error display */}
       {error && (
         <Alert intent="error" className="mb-4">
@@ -143,7 +149,7 @@ export default function MondayExample2() {
           <Alert.Description>{error}</Alert.Description>
         </Alert>
       )}
-      
+
       {/* Loading state */}
       {isLoading && (
         <div className="flex justify-center items-center py-12">

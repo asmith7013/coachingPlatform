@@ -1,2 +1,2 @@
-export * from './ScoresPage';
-export * from './ScoreEntry'; 
+export * from "./ScoresPage";
+export * from "./ScoreEntry";

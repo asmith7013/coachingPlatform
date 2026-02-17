@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
+import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
 import { AllSectionsZod } from "@schema/enum/scm";
 
 // =====================================
@@ -12,12 +12,14 @@ import { AllSectionsZod } from "@schema/enum/scm";
  * Note: 'not-tracked' is used for days when attendance wasn't recorded
  * For calculations, assume 'not-tracked' means present if school was in session
  */
-export const AttendanceStatusSchema = z.enum([
-  'present',
-  'absent',
-  'late',
-  'not-tracked', // Used when attendance data wasn't collected for that day
-]).describe("Student attendance status for a given day");
+export const AttendanceStatusSchema = z
+  .enum([
+    "present",
+    "absent",
+    "late",
+    "not-tracked", // Used when attendance data wasn't collected for that day
+  ])
+  .describe("Student attendance status for a given day");
 
 export type AttendanceStatus = z.infer<typeof AttendanceStatusSchema>;
 
@@ -35,7 +37,10 @@ export type AttendanceStatus = z.infer<typeof AttendanceStatusSchema>;
  */
 export const AttendanceFieldsSchema = z.object({
   studentId: z.number().int().positive().describe("Student ID reference"),
-  email: z.string().email().describe("Student email for redundancy and querying"),
+  email: z
+    .string()
+    .email()
+    .describe("Student email for redundancy and querying"),
 
   date: z.string().describe("Attendance date in ISO format (YYYY-MM-DD)"),
   status: AttendanceStatusSchema.describe("Attendance status for this date"),
@@ -43,18 +48,29 @@ export const AttendanceFieldsSchema = z.object({
   section: AllSectionsZod.describe("Class section identifier"),
 
   // Optional context
-  blockType: z.enum(['single', 'double']).optional().describe("Block type for this day (single or double period)"),
-  notes: z.string().optional().describe("Optional notes about attendance (e.g., reason for absence)"),
+  blockType: z
+    .enum(["single", "double"])
+    .optional()
+    .describe("Block type for this day (single or double period)"),
+  notes: z
+    .string()
+    .optional()
+    .describe("Optional notes about attendance (e.g., reason for absence)"),
 
   // Sync tracking
-  syncedFrom: z.enum(['podsie', 'manual', 'import']).optional().describe("Source of attendance data"),
+  syncedFrom: z
+    .enum(["podsie", "manual", "import"])
+    .optional()
+    .describe("Source of attendance data"),
   lastSyncedAt: z.string().optional().describe("Last sync timestamp"),
 });
 
 /**
  * Full attendance schema with base document fields
  */
-export const AttendanceZodSchema = BaseDocumentSchema.merge(AttendanceFieldsSchema);
+export const AttendanceZodSchema = BaseDocumentSchema.merge(
+  AttendanceFieldsSchema,
+);
 
 /**
  * Input schema for creating/updating attendance records
@@ -77,7 +93,10 @@ export type AttendanceInput = z.infer<typeof AttendanceInputZodSchema>;
  */
 export const BulkAttendanceImportSchema = z.object({
   records: z.array(AttendanceInputZodSchema),
-  overwriteExisting: z.boolean().default(false).describe("Whether to overwrite existing records for same student+date"),
+  overwriteExisting: z
+    .boolean()
+    .default(false)
+    .describe("Whether to overwrite existing records for same student+date"),
 });
 
 export type BulkAttendanceImport = z.infer<typeof BulkAttendanceImportSchema>;
@@ -112,7 +131,11 @@ export const AttendanceSummarySchema = z.object({
   presentDays: z.number().int().nonnegative(),
   absentDays: z.number().int().nonnegative(),
   lateDays: z.number().int().nonnegative(),
-  attendanceRate: z.number().min(0).max(100).describe("Percentage of days present"),
+  attendanceRate: z
+    .number()
+    .min(0)
+    .max(100)
+    .describe("Percentage of days present"),
 });
 
 export type AttendanceSummary = z.infer<typeof AttendanceSummarySchema>;

@@ -1,69 +1,79 @@
-import { ThingsChecklist, ThingsChecklistItem, ThingsHeading, ThingsTodo, ThingsData, ThingsProject } from '@domain-types/things3-types';
+import {
+  ThingsChecklist,
+  ThingsChecklistItem,
+  ThingsHeading,
+  ThingsTodo,
+  ThingsData,
+  ThingsProject,
+} from "@domain-types/things3-types";
 
 /**
  * Parse plain text to JSON structure
  */
 export const parseTextToJSON = (
-  text: string, 
-  projectTitle: string = "", 
-  projectNotes: string = "", 
-  projectWhen: string = "anytime"
+  text: string,
+  projectTitle: string = "",
+  projectNotes: string = "",
+  projectWhen: string = "anytime",
 ): ThingsChecklist => {
   const checklist: ThingsChecklist = {
     title: projectTitle || "New Project",
     notes: projectNotes || "",
     when: projectWhen,
-    items: []
+    items: [],
   };
-  
-  const lines = text.split('\n').filter(line => line.trim() !== '');
-  
+
+  const lines = text.split("\n").filter((line) => line.trim() !== "");
+
   // Find sections (numbered items) and tasks (bullet points)
   let currentSection: ThingsChecklistItem | null = null;
-  
-  lines.forEach(line => {
+
+  lines.forEach((line) => {
     const trimmedLine = line.trim();
     const indentLevel = line.search(/\S|$/) / 2; // Assuming 2 spaces per indent level
-    
+
     // Skip project title if it's the first line and not indented
     if (indentLevel === 0 && checklist.items.length === 0 && !projectTitle) {
       checklist.title = trimmedLine;
       return;
     }
-    
+
     // Check if it's a section header (numbered item: "1. Something")
     const sectionMatch = trimmedLine.match(/^(\d+)\.(.+)/);
-    
+
     // Remove any list markers (* or -)
-    const cleanLine = trimmedLine.replace(/^[\*\-•\d\.]\s+/, '').trim();
-    
+    const cleanLine = trimmedLine.replace(/^[\*\-•\d\.]\s+/, "").trim();
+
     if (sectionMatch || (indentLevel === 0 && !trimmedLine.match(/^[\*\-•]/))) {
       // This is a main heading/section
       currentSection = {
         title: cleanLine,
-        type: 'heading',
-        children: []
+        type: "heading",
+        children: [],
       };
       checklist.items.push(currentSection);
-    } else if (currentSection && (indentLevel > 0 || trimmedLine.match(/^[\*\-•]/))) {
+    } else if (
+      currentSection &&
+      (indentLevel > 0 || trimmedLine.match(/^[\*\-•]/))
+    ) {
       // This is a task under the current section
       if (!currentSection.children) {
         currentSection.children = [];
       }
-      
+
       currentSection.children.push({
         title: cleanLine,
-        type: 'task'
+        type: "task",
       });
     } else {
       // This is a standalone task not under any section
       checklist.items.push({
         title: cleanLine,
-        type: 'task'
+        type: "task",
       });
     }
   });
-  
+
   return checklist;
 };
 
@@ -77,7 +87,7 @@ export function generateThingsURL(json: ThingsChecklist) {
   // Check if the input might already be in Things3 format
   // Use Record<string, unknown> instead of any
   const jsonRecord = json as unknown as Record<string, unknown>;
-  
+
   if (isThingsDataFormat(jsonRecord)) {
     // Input is already in Things3 format, use it directly
     return generateDirectThingsURL(jsonRecord as unknown as ThingsData);
@@ -89,32 +99,36 @@ export function generateThingsURL(json: ThingsChecklist) {
     attributes: {
       title: json.title || "Untitled Project",
       notes: json.notes || "",
-      when: json.when || "anytime"
+      when: json.when || "anytime",
     },
-    data: [] as Array<ThingsHeading | ThingsTodo>
+    data: [] as Array<ThingsHeading | ThingsTodo>,
   };
-  
+
   // Process each item
   if (json.items && Array.isArray(json.items)) {
-    json.items.forEach(item => {
-      if (item.type === 'heading') {
+    json.items.forEach((item) => {
+      if (item.type === "heading") {
         // Add heading
         project.data.push({
           type: "heading",
           attributes: {
-            title: item.title
-          }
+            title: item.title,
+          },
         });
-        
+
         // Add tasks under this heading
-        if ('children' in item && item.children && Array.isArray(item.children)) {
-          item.children.forEach(task => {
+        if (
+          "children" in item &&
+          item.children &&
+          Array.isArray(item.children)
+        ) {
+          item.children.forEach((task) => {
             project.data.push({
               type: "to-do", // Must use "to-do" with hyphen
               attributes: {
                 title: task.title || "Untitled Task", // Ensure title always exists
-                notes: task.notes || ""
-              }
+                notes: task.notes || "",
+              },
             });
           });
         }
@@ -124,18 +138,18 @@ export function generateThingsURL(json: ThingsChecklist) {
           type: "to-do", // Must use "to-do" with hyphen
           attributes: {
             title: item.title || "Untitled Task", // Ensure title always exists
-            notes: item.notes || ""
-          }
+            notes: item.notes || "",
+          },
         });
       }
     });
   }
-  
+
   // Wrap project in items array
   const thingsData: ThingsData = {
-    items: [project]
+    items: [project],
   };
-  
+
   return generateDirectThingsURL(thingsData);
 }
 
@@ -145,12 +159,12 @@ function isThingsDataFormat(json: Record<string, unknown>): boolean {
   if (!json.items || !Array.isArray(json.items) || json.items.length === 0) {
     return false;
   }
-  
+
   const firstItem = json.items[0] as Record<string, unknown>;
-  
+
   return (
-    !!firstItem && 
-    typeof firstItem === 'object' &&
+    !!firstItem &&
+    typeof firstItem === "object" &&
     firstItem.type === "project" &&
     !!firstItem.data &&
     Array.isArray(firstItem.data)
@@ -164,19 +178,22 @@ function generateDirectThingsURL(data: ThingsData): string {
     console.error("Invalid Things data structure:", data);
     throw new Error("Invalid Things data structure");
   }
-  
+
   // Ensure all to-do items have titles
-  data.items.forEach(project => {
+  data.items.forEach((project) => {
     if (project.data && Array.isArray(project.data)) {
-      project.data.forEach(item => {
-        if (item.type === "to-do" && (!item.attributes || !item.attributes.title)) {
+      project.data.forEach((item) => {
+        if (
+          item.type === "to-do" &&
+          (!item.attributes || !item.attributes.title)
+        ) {
           console.error("To-do item missing required title:", item);
           if (!item.attributes) {
             // Create an attributes object with the required title
-            Object.defineProperty(item, 'attributes', {
+            Object.defineProperty(item, "attributes", {
               value: { title: "Untitled Task" },
               writable: true,
-              enumerable: true
+              enumerable: true,
             });
           } else {
             item.attributes.title = "Untitled Task";
@@ -185,13 +202,13 @@ function generateDirectThingsURL(data: ThingsData): string {
       });
     }
   });
-  
+
   // Convert to JSON string
   const jsonString = JSON.stringify(data);
-  
+
   // Encode for URL
   const encodedJson = encodeURIComponent(jsonString);
-  
+
   // Create the Things URL
   return `things:///json?data=${encodedJson}&reveal=true`;
 }
@@ -206,8 +223,9 @@ export const getSampleData = (): {
   jsonFormat: ThingsChecklist;
 } => {
   const title = "Monday.com Integration";
-  const notes = "Tasks for integrating Monday.com data into our coaching platform";
-  
+  const notes =
+    "Tasks for integrating Monday.com data into our coaching platform";
+
   const jsonFormat: ThingsChecklist = {
     title,
     notes,
@@ -215,75 +233,81 @@ export const getSampleData = (): {
     items: [
       {
         title: "API Authentication Setup",
-        type: 'heading',
+        type: "heading",
         children: [
           {
             title: "Generate an API token from your Monday.com account",
-            type: 'task'
+            type: "task",
           },
           {
-            title: "Set up environment variables in your Next.js app for the token",
-            type: 'task'
-          }
-        ]
+            title:
+              "Set up environment variables in your Next.js app for the token",
+            type: "task",
+          },
+        ],
       },
       {
         title: "Schema Alignment Analysis",
-        type: 'heading',
+        type: "heading",
         children: [
           {
-            title: "Identify the Monday.com boards that contain your coaching data",
-            type: 'task'
+            title:
+              "Identify the Monday.com boards that contain your coaching data",
+            type: "task",
           },
           {
             title: "Map Monday.com columns to your Zod schema fields",
-            type: 'task'
+            type: "task",
           },
           {
-            title: "Identify any missing fields or information in your current schema",
-            type: 'task'
-          }
-        ]
+            title:
+              "Identify any missing fields or information in your current schema",
+            type: "task",
+          },
+        ],
       },
       {
         title: "GraphQL Query Development",
-        type: 'heading',
+        type: "heading",
         children: [
           {
             title: "Learn the basic structure of Monday.com GraphQL queries",
-            type: 'task'
+            type: "task",
           },
           {
-            title: "Create GraphQL queries for each data type you need to fetch",
-            type: 'task'
+            title:
+              "Create GraphQL queries for each data type you need to fetch",
+            type: "task",
           },
           {
             title: "Test your queries in the Monday GraphQL API Explorer",
-            type: 'task'
-          }
-        ]
+            type: "task",
+          },
+        ],
       },
       {
         title: "API Client Implementation",
-        type: 'heading',
+        type: "heading",
         children: [
           {
-            title: "Create a dedicated API client for Monday.com in your application",
-            type: 'task'
+            title:
+              "Create a dedicated API client for Monday.com in your application",
+            type: "task",
           },
           {
             title: "Implement error handling and retry logic",
-            type: 'task'
+            type: "task",
           },
           {
-            title: "Create typed response interfaces that match your query results",
-            type: 'task'
-          }
-        ]
-      }
-    ]
+            title:
+              "Create typed response interfaces that match your query results",
+            type: "task",
+          },
+        ],
+      },
+    ],
   };
-  
+
   const textFormat = `1. API Authentication Setup
 * Generate an API token from your Monday.com account
 * Set up environment variables in your Next.js app for the token
@@ -304,6 +328,6 @@ export const getSampleData = (): {
     title,
     notes,
     textFormat,
-    jsonFormat
+    jsonFormat,
   };
-}; 
+};

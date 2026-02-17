@@ -1,25 +1,36 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon, PlusIcon, CheckIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  XMarkIcon,
+  PlusIcon,
+  CheckIcon,
+} from "@heroicons/react/24/outline";
 import { PracticeProblem } from "@zod-schema/scm/roadmaps/roadmap-skill";
 
-export type SkillType = 'target' | 'essential' | 'helpful';
+export type SkillType = "target" | "essential" | "helpful";
 
 interface PracticeProblemsSectionProps {
   practiceProblems: PracticeProblem[];
   skillNumber: string;
   skillTitle?: string;
   skillType?: SkillType;
-  onAddToQueue?: (problem: PracticeProblem, skillNumber: string, skillTitle: string, skillType: SkillType) => void;
+  onAddToQueue?: (
+    problem: PracticeProblem,
+    skillNumber: string,
+    skillTitle: string,
+    skillType: SkillType,
+  ) => void;
   isInQueue?: (skillNumber: string, problemNumber: number | string) => boolean;
 }
 
 export function PracticeProblemsSection({
   practiceProblems,
   skillNumber,
-  skillTitle = '',
-  skillType = 'target',
+  skillTitle = "",
+  skillType = "target",
   onAddToQueue,
   isInQueue,
 }: PracticeProblemsSectionProps) {
@@ -42,7 +53,7 @@ export function PracticeProblemsSection({
 
   const prevProblem = () => {
     setCurrentProblemIndex((prev) =>
-      prev === 0 ? practiceProblems.length - 1 : prev - 1
+      prev === 0 ? practiceProblems.length - 1 : prev - 1,
     );
   };
 
@@ -53,7 +64,10 @@ export function PracticeProblemsSection({
           Practice Problems ({practiceProblems.length})
         </h4>
         <div className="relative bg-white rounded-lg border border-gray-200 overflow-hidden">
-          <div className="flex items-center justify-center bg-gray-50" style={{ height: '600px' }}>
+          <div
+            className="flex items-center justify-center bg-gray-50"
+            style={{ height: "600px" }}
+          >
             <img
               src={currentProblem.screenshotUrl}
               alt={`Practice Problem ${currentProblem.problemNumber}`}
@@ -100,14 +114,19 @@ export function PracticeProblemsSection({
             <button
               onClick={() => {
                 if (!isInQueue?.(skillNumber, currentProblem.problemNumber)) {
-                  onAddToQueue(currentProblem, skillNumber, skillTitle, skillType);
+                  onAddToQueue(
+                    currentProblem,
+                    skillNumber,
+                    skillTitle,
+                    skillType,
+                  );
                 }
               }}
               disabled={isInQueue?.(skillNumber, currentProblem.problemNumber)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer ${
                 isInQueue?.(skillNumber, currentProblem.problemNumber)
-                  ? 'bg-green-100 text-green-700 border border-green-200'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  ? "bg-green-100 text-green-700 border border-green-200"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
               }`}
             >
               {isInQueue?.(skillNumber, currentProblem.problemNumber) ? (
@@ -148,7 +167,10 @@ export function PracticeProblemsSection({
               </button>
 
               {/* Image container */}
-              <div className="flex items-center justify-center bg-gray-50 p-8" style={{ minHeight: '80vh' }}>
+              <div
+                className="flex items-center justify-center bg-gray-50 p-8"
+                style={{ minHeight: "80vh" }}
+              >
                 <img
                   src={currentProblem.screenshotUrl}
                   alt={`Practice Problem ${currentProblem.problemNumber}`}
@@ -174,7 +196,8 @@ export function PracticeProblemsSection({
                     <ChevronRightIcon className="w-6 h-6 text-white" />
                   </button>
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm font-medium">
-                    Problem {currentProblem.problemNumber} - {currentProblemIndex + 1} / {practiceProblems.length}
+                    Problem {currentProblem.problemNumber} -{" "}
+                    {currentProblemIndex + 1} / {practiceProblems.length}
                   </div>
                 </>
               )}

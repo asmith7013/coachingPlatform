@@ -1,19 +1,23 @@
 "use client"; // ✅ Ensures this component runs on the client-side.
 
-import React, { useState, 
-  // useCallback 
+import React, {
+  useState,
+  // useCallback
 } from "react";
-import { Text } from '@/components/core/typography/Text';
-import { Button } from '@/components/core/Button';
-import { DashboardPage } from '@/components/composed/layouts/DashboardPage';
+import { Text } from "@/components/core/typography/Text";
+import { Button } from "@/components/core/Button";
+import { DashboardPage } from "@/components/composed/layouts/DashboardPage";
 import { useSchoolsList, useSchoolsMutations } from "@hooks/domain/useSchools";
 import { School } from "@zod-schema/core/school";
 // import type { SchoolInput } from "@domain-types/school";
 // import { ResourceHeader } from "@/components/composed/layouts/ResourceHeader";
-import { EmptyListWrapper } from '@/components/core/empty/EmptyListWrapper';
-import { SchoolGridCard } from '@/components/domain/schools/SchoolGrid';
-import { CreateSchoolDialog } from '@/components/composed/dialogs/CreateSchoolDialog';
-import { BuildingLibraryIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
+import { EmptyListWrapper } from "@/components/core/empty/EmptyListWrapper";
+import { SchoolGridCard } from "@/components/domain/schools/SchoolGrid";
+import { CreateSchoolDialog } from "@/components/composed/dialogs/CreateSchoolDialog";
+import {
+  BuildingLibraryIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/outline";
 
 // import { createSchool, uploadSchoolFile } from "@actions/schools/schools";
 // import { Field, RigidResourceForm as GenericResourceForm } from "@components/composed/forms/RigidResourceForm";
@@ -35,7 +39,7 @@ export default function SchoolList() {
   } = useSchoolsList();
 
   // Get mutation functions from the mutations hook
-  const { 
+  const {
     delete: removeSchool,
     isDeleting,
     // isCreating
@@ -44,7 +48,7 @@ export default function SchoolList() {
   // Use local state for performance mode instead
   // const [performanceMode, setPerformanceMode] = useState(true);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  
+
   // const togglePerformanceMode = useCallback(() => {
   //   setPerformanceMode(prev => !prev);
   // }, []);
@@ -55,7 +59,7 @@ export default function SchoolList() {
   //   applyFilters({ schoolName: value });
   //   setSearchInput(value);
   // }, [applyFilters]);
-  
+
   const handleDeleteSchool = async (id: string) => {
     try {
       if (removeSchool) {
@@ -67,7 +71,12 @@ export default function SchoolList() {
   };
 
   if (loading) return <Text textSize="base">Loading Schools...</Text>;
-  if (schoolError) return <Text textSize="base" color="danger">Error loading schools: {schoolError.message}</Text>;
+  if (schoolError)
+    return (
+      <Text textSize="base" color="danger">
+        Error loading schools: {schoolError.message}
+      </Text>
+    );
 
   return (
     <DashboardPage>
@@ -75,7 +84,9 @@ export default function SchoolList() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Schools</h1>
-          <p className="text-gray-600">Manage and track schools across your district.</p>
+          <p className="text-gray-600">
+            Manage and track schools across your district.
+          </p>
         </div>
         <Button
           intent="primary"
@@ -104,17 +115,14 @@ export default function SchoolList() {
         togglePerformanceMode={togglePerformanceMode}
       /> */}
 
-      <EmptyListWrapper 
-        items={schools} 
+      <EmptyListWrapper
+        items={schools}
         resourceName="schools"
         title="No schools found"
         description="Get started by creating your first school"
         icon={BuildingLibraryIcon}
         action={
-          <Button
-            intent="primary"
-            onClick={() => setShowCreateDialog(true)}
-          >
+          <Button intent="primary" onClick={() => setShowCreateDialog(true)}>
             <PlusCircleIcon className="h-5 w-5 mr-2" />
             Create Your First School
           </Button>

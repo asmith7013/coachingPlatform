@@ -4,17 +4,14 @@
  */
 
 // Re-export types directly from the schema
-export type {
-    Note,
-    NoteInput
-  } from '@zod-schema/shared/notes';
-  
-  // Additional note-related types
-  export type NoteCategory = 'observation' | 'feedback' | 'action' | 'reflection';
-  
-  export interface NoteFilters {
-    type?: string;
-    startDate?: string;
-    endDate?: string;
-    search?: string;
-  }
+export type { Note, NoteInput } from "@zod-schema/shared/notes";
+
+// Additional note-related types
+export type NoteCategory = "observation" | "feedback" | "action" | "reflection";
+
+export interface NoteFilters {
+  type?: string;
+  startDate?: string;
+  endDate?: string;
+  search?: string;
+}

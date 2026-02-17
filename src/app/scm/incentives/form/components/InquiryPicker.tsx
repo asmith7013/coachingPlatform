@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  generateInquiryOptions,
-} from "../utils/generateInquiryOptions";
+import { generateInquiryOptions } from "../utils/generateInquiryOptions";
 
 interface InquiryPickerProps {
   sections: string[];

@@ -1,10 +1,10 @@
-'use server';
+"use server";
 
-import { put } from '@vercel/blob';
-import { withDbConnection } from '@server/db/ensure-connection';
-import { StateTestQuestionModel } from '@mongoose-schema/scm/state-test-question.model';
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import { put } from "@vercel/blob";
+import { withDbConnection } from "@server/db/ensure-connection";
+import { StateTestQuestionModel } from "@mongoose-schema/scm/state-test-question.model";
+import * as fs from "fs/promises";
+import * as path from "path";
 
 interface ReplaceResult {
   success: boolean;
@@ -26,8 +26,8 @@ export type YearResult = {
  */
 function sortFilesByNumber(files: string[]): string[] {
   return [...files].sort((a, b) => {
-    const numA = parseInt(a.match(/(\d+)/)?.[1] || '0');
-    const numB = parseInt(b.match(/(\d+)/)?.[1] || '0');
+    const numA = parseInt(a.match(/(\d+)/)?.[1] || "0");
+    const numB = parseInt(b.match(/(\d+)/)?.[1] || "0");
     return numA - numB;
   });
 }
@@ -36,13 +36,31 @@ function sortFilesByNumber(files: string[]): string[] {
  * Replace state test screenshots for a specific year with new images from local folders.
  * Files are matched to questions by sorting both by filename number and pageIndex.
  */
-export async function replaceScreenshotsForYear(year: string): Promise<YearResult> {
-  const basePath = '/Users/alexsmith/Documents/state-exam';
+export async function replaceScreenshotsForYear(
+  year: string,
+): Promise<YearResult> {
+  const basePath = "/Users/alexsmith/Documents/state-exam";
 
-  const grade6 = await replaceScreenshotsForGrade(path.join(basePath, `${year} 6`), '6', year);
-  const grade7 = await replaceScreenshotsForGrade(path.join(basePath, `${year} 7`), '7', year);
-  const grade8 = await replaceScreenshotsForGrade(path.join(basePath, `${year} 8`), '8', year);
-  const alg1 = await replaceScreenshotsForGrade(path.join(basePath, `${year} alg1`), 'alg1', year);
+  const grade6 = await replaceScreenshotsForGrade(
+    path.join(basePath, `${year} 6`),
+    "6",
+    year,
+  );
+  const grade7 = await replaceScreenshotsForGrade(
+    path.join(basePath, `${year} 7`),
+    "7",
+    year,
+  );
+  const grade8 = await replaceScreenshotsForGrade(
+    path.join(basePath, `${year} 8`),
+    "8",
+    year,
+  );
+  const alg1 = await replaceScreenshotsForGrade(
+    path.join(basePath, `${year} alg1`),
+    "alg1",
+    year,
+  );
 
   return { grade6, grade7, grade8, alg1 };
 }
@@ -51,18 +69,18 @@ export async function replaceScreenshotsForYear(year: string): Promise<YearResul
  * Replace all state test screenshots for 2023, 2024, and 2025.
  */
 export async function replaceAllScreenshots(): Promise<{
-  '2023': YearResult;
-  '2024': YearResult;
-  '2025': YearResult;
+  "2023": YearResult;
+  "2024": YearResult;
+  "2025": YearResult;
 }> {
-  const result2023 = await replaceScreenshotsForYear('2023');
-  const result2024 = await replaceScreenshotsForYear('2024');
-  const result2025 = await replaceScreenshotsForYear('2025');
+  const result2023 = await replaceScreenshotsForYear("2023");
+  const result2024 = await replaceScreenshotsForYear("2024");
+  const result2025 = await replaceScreenshotsForYear("2025");
 
   return {
-    '2023': result2023,
-    '2024': result2024,
-    '2025': result2025,
+    "2023": result2023,
+    "2024": result2024,
+    "2025": result2025,
   };
 }
 
@@ -77,7 +95,7 @@ export async function replaceAllScreenshots(): Promise<{
 export async function replaceScreenshotsFromFolder(
   folderPath: string,
   grade: string,
-  year: string
+  year: string,
 ): Promise<ReplaceResult> {
   return replaceScreenshotsForGrade(folderPath, grade, year);
 }
@@ -85,7 +103,7 @@ export async function replaceScreenshotsFromFolder(
 async function replaceScreenshotsForGrade(
   folderPath: string,
   grade: string,
-  year: string
+  year: string,
 ): Promise<ReplaceResult> {
   const errors: string[] = [];
   let replaced = 0;
@@ -98,12 +116,12 @@ async function replaceScreenshotsForGrade(
       try {
         files = await fs.readdir(folderPath);
       } catch (err) {
-        const error = `Failed to read folder ${folderPath}: ${err instanceof Error ? err.message : 'Unknown error'}`;
+        const error = `Failed to read folder ${folderPath}: ${err instanceof Error ? err.message : "Unknown error"}`;
         console.error(`❌ ${error}`);
         return { success: false, replaced: 0, total: 0, errors: [error] };
       }
       const pngFiles = files.filter(
-        (f) => f.toLowerCase().endsWith('.png') && !f.startsWith('_')
+        (f) => f.toLowerCase().endsWith(".png") && !f.startsWith("_"),
       );
 
       // Sort by number in filename (q01.png, q02.png, etc.)
@@ -113,7 +131,10 @@ async function replaceScreenshotsForGrade(
 
       // 2. Get questions from MongoDB sorted by pageIndex
       console.log(`🔍 Querying MongoDB for grade ${grade}, year ${year}...`);
-      const questions = await StateTestQuestionModel.find({ grade, examYear: year })
+      const questions = await StateTestQuestionModel.find({
+        grade,
+        examYear: year,
+      })
         .sort({ pageIndex: 1 })
         .lean();
 
@@ -145,29 +166,31 @@ async function replaceScreenshotsForGrade(
           const blobPath = `state-test-questions/${year}/grade-${grade}/${question.questionId}.png`;
 
           const blob = await put(blobPath, fileBuffer, {
-            access: 'public',
-            contentType: 'image/png',
+            access: "public",
+            contentType: "image/png",
             allowOverwrite: true,
           });
 
           // Update screenshotUrl in database
           await StateTestQuestionModel.findOneAndUpdate(
             { questionId: question.questionId },
-            { $set: { screenshotUrl: blob.url } }
+            { $set: { screenshotUrl: blob.url } },
           );
 
           replaced++;
           console.log(
-            `✓ [${i + 1}/${sortedFiles.length}] Uploaded: ${question.questionId} (Q${question.pageIndex}) ← ${file}`
+            `✓ [${i + 1}/${sortedFiles.length}] Uploaded: ${question.questionId} (Q${question.pageIndex}) ← ${file}`,
           );
         } catch (error) {
-          const errorMsg = `Failed to upload ${file} for question ${question.questionId}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+          const errorMsg = `Failed to upload ${file} for question ${question.questionId}: ${error instanceof Error ? error.message : "Unknown error"}`;
           console.error(`✗ [${i + 1}/${sortedFiles.length}] ${errorMsg}`);
           errors.push(errorMsg);
         }
       }
 
-      console.log(`\n📈 Grade ${grade} complete: ${replaced}/${sortedFiles.length} successful`);
+      console.log(
+        `\n📈 Grade ${grade} complete: ${replaced}/${sortedFiles.length} successful`,
+      );
 
       return {
         success: errors.length === 0,
@@ -177,7 +200,7 @@ async function replaceScreenshotsForGrade(
       };
     });
   } catch (err) {
-    const error = `Unexpected error for grade ${grade}, year ${year}: ${err instanceof Error ? err.message : 'Unknown error'}`;
+    const error = `Unexpected error for grade ${grade}, year ${year}: ${err instanceof Error ? err.message : "Unknown error"}`;
     console.error(`❌ ${error}`);
     return { success: false, replaced, total: 0, errors: [error] };
   }

@@ -14,16 +14,17 @@ Current worked example decks are too verbose compared to the SGI exemplar decks.
 
 ### What Makes SGI Decks Concise:
 
-| Element | SGI Pattern | Example |
-|---------|-------------|---------|
-| Problem reminder | 15 words max | "30 nuggets total. 6 per student. How many students?" |
-| Step subtitle | NONE | (removed entirely) |
-| CFU question | Single question, ≤12 words | "Why did I put the '?' at the beginning?" |
-| Answer explanation | 1-2 sentences, ≤25 words | "Each box represents one student." |
-| Math display | LARGE (60-80px) | Equations dominate the slide |
-| Columns | Complementary | Left = text, Right = visual (no duplication) |
+| Element            | SGI Pattern                | Example                                               |
+| ------------------ | -------------------------- | ----------------------------------------------------- |
+| Problem reminder   | 15 words max               | "30 nuggets total. 6 per student. How many students?" |
+| Step subtitle      | NONE                       | (removed entirely)                                    |
+| CFU question       | Single question, ≤12 words | "Why did I put the '?' at the beginning?"             |
+| Answer explanation | 1-2 sentences, ≤25 words   | "Each box represents one student."                    |
+| Math display       | LARGE (60-80px)            | Equations dominate the slide                          |
+| Columns            | Complementary              | Left = text, Right = visual (no duplication)          |
 
 ### The "3-Second Rule"
+
 A student should be able to scan the slide and understand the key point in 3 seconds. Every extra word slows this down.
 
 ---
@@ -73,20 +74,21 @@ A student should be able to scan the slide and understand the key point in 3 sec
 
 ## Word Limit Summary
 
-| Element | Max Words | Notes |
-|---------|-----------|-------|
-| Problem reminder box | 15 | Condensed summary repeated on slides 2-8 |
-| Step subtitle | 0 | REMOVED - no explanatory prose |
-| CFU question | 12 | Single question only |
-| Answer explanation | 25 | 1-2 sentences max |
-| Supporting text (left col) | 10 | Only if absolutely needed |
-| Visual labels (right col) | 3-5 per label | Numbers, variable names only |
+| Element                    | Max Words     | Notes                                    |
+| -------------------------- | ------------- | ---------------------------------------- |
+| Problem reminder box       | 15            | Condensed summary repeated on slides 2-8 |
+| Step subtitle              | 0             | REMOVED - no explanatory prose           |
+| CFU question               | 12            | Single question only                     |
+| Answer explanation         | 25            | 1-2 sentences max                        |
+| Supporting text (left col) | 10            | Only if absolutely needed                |
+| Visual labels (right col)  | 3-5 per label | Numbers, variable names only             |
 
 ---
 
 ## Banned Patterns
 
 **Never include:**
+
 - "First, let's..." / "Now we need to..." / "Let's start by..."
 - "Reading the graph: At point (x, y)..."
 - Two-part questions ("What is X? How did you calculate it?")
@@ -111,14 +113,14 @@ Before generating any slide, verify:
 
 ## Files Updated
 
-| File | Status | Changes |
-|------|--------|---------|
-| `reference/pedagogy.md` | ✅ Done | Added Rule 5 with text limits and complementary columns |
-| `phases/03-generate-slides/protocol.md` | ✅ Done | Added CFU/Answer requirements, left column rules, pre-flight checks, problem-reminder reference |
-| `phases/03-generate-slides/index.md` | ✅ Done | Added problem-reminder to component lists and slide structure table |
-| `reference/layout-presets.md` | ✅ Done | Column purpose clarification with allowed/not allowed tables |
-| `phases/03-generate-slides/card-patterns/simple-patterns/problem-reminder.html` | ✅ Done | New pattern with transformation examples |
-| `phases/02-confirm-and-plan/index.md` | ✅ Done | Added problem reminder field to scenario template |
+| File                                                                            | Status  | Changes                                                                                         |
+| ------------------------------------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------- |
+| `reference/pedagogy.md`                                                         | ✅ Done | Added Rule 5 with text limits and complementary columns                                         |
+| `phases/03-generate-slides/protocol.md`                                         | ✅ Done | Added CFU/Answer requirements, left column rules, pre-flight checks, problem-reminder reference |
+| `phases/03-generate-slides/index.md`                                            | ✅ Done | Added problem-reminder to component lists and slide structure table                             |
+| `reference/layout-presets.md`                                                   | ✅ Done | Column purpose clarification with allowed/not allowed tables                                    |
+| `phases/03-generate-slides/card-patterns/simple-patterns/problem-reminder.html` | ✅ Done | New pattern with transformation examples                                                        |
+| `phases/02-confirm-and-plan/index.md`                                           | ✅ Done | Added problem reminder field to scenario template                                               |
 
 ---
 
@@ -140,6 +142,7 @@ Before generating any slide, verify:
 ### 7. content-box.html - Larger Text Sizes ✅
 
 Updated default sizes for ~380px column width:
+
 - Header: 14px → 18px (default)
 - Body: 14px → 16px (default)
 - Equation: 24px → 36px (default), 48px (large/focus)
@@ -147,6 +150,7 @@ Updated default sizes for ~380px column width:
 ### 8. diagram-patterns.md - Simple Visuals Guidance ✅
 
 Added "Simple Visuals That Speak for Themselves" section:
+
 - The "Delete Test" - if visual makes sense without text, delete the text
 - Labels vs. Explanations table (what's allowed vs. not)
 - Visuals should FILL their column
@@ -154,6 +158,7 @@ Added "Simple Visuals That Speak for Themselves" section:
 ### 9. "3-Second Scan" Rule Enshrined ✅
 
 Updated across all key files:
+
 - **pedagogy.md**: Rule 5 renamed to "The 3-Second Scan Rule"
 - **protocol.md**: Pre-flight checklist now leads with 3-second scan test
 - **layout-presets.md**: Added 3-second scan test to column rules

@@ -24,7 +24,8 @@ function getIM360Url(lesson: Lesson): string {
   const gradeNum = lesson.grade.match(/\d+/)?.[0];
 
   // Determine if this is Algebra 1 (grade 9)
-  const isAlgebra1 = gradeNum === "9" || lesson.grade.toLowerCase().includes("algebra");
+  const isAlgebra1 =
+    gradeNum === "9" || lesson.grade.toLowerCase().includes("algebra");
 
   // Build URL based on course type
   let baseUrl = "";
@@ -41,7 +42,9 @@ function getIM360Url(lesson: Lesson): string {
   // Try to match section in different formats: "Section A", "A", etc.
   let section = "";
   if (lesson.section) {
-    const sectionMatch = lesson.section.match(/Section ([A-Z])/i) || lesson.section.match(/^([A-Z])$/i);
+    const sectionMatch =
+      lesson.section.match(/Section ([A-Z])/i) ||
+      lesson.section.match(/^([A-Z])$/i);
     section = sectionMatch ? `section-${sectionMatch[1].toLowerCase()}` : "";
   }
 
@@ -50,7 +53,11 @@ function getIM360Url(lesson: Lesson): string {
   return `${baseUrl}/${unit}/${section}/${lessonNum}/preparation?a=teacher`;
 }
 
-export function LessonListItem({ lesson, isSelected, onClick }: LessonListItemProps) {
+export function LessonListItem({
+  lesson,
+  isSelected,
+  onClick,
+}: LessonListItemProps) {
   const im360Url = getIM360Url(lesson);
 
   return (
@@ -58,16 +65,18 @@ export function LessonListItem({ lesson, isSelected, onClick }: LessonListItemPr
       onClick={onClick}
       className={`p-4 border-b border-gray-200 cursor-pointer transition-colors ${
         isSelected
-          ? 'bg-blue-50 border-l-4 border-l-blue-600'
-          : 'hover:bg-gray-50 border-l-4 border-l-transparent'
+          ? "bg-blue-50 border-l-4 border-l-blue-600"
+          : "hover:bg-gray-50 border-l-4 border-l-transparent"
       }`}
     >
       {/* Lesson Badge and Name */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold ${
-            isSelected ? 'bg-blue-600 text-white' : 'bg-gray-600 text-white'
-          }`}>
+          <span
+            className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold ${
+              isSelected ? "bg-blue-600 text-white" : "bg-gray-600 text-white"
+            }`}
+          >
             Lesson {lesson.lessonNumber}
           </span>
           <a
@@ -81,7 +90,9 @@ export function LessonListItem({ lesson, isSelected, onClick }: LessonListItemPr
             IM 360 →
           </a>
         </div>
-        <div className={`font-medium ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
+        <div
+          className={`font-medium ${isSelected ? "text-blue-900" : "text-gray-900"}`}
+        >
           {lesson.lessonName}
         </div>
       </div>

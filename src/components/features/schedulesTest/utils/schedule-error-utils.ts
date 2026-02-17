@@ -1,5 +1,5 @@
-import { ErrorContext } from '@error-types';
-import { createErrorContext } from '@error/core/context';
+import { ErrorContext } from "@error-types";
+import { createErrorContext } from "@error/core/context";
 
 /**
  * Create error context for schedule feature operations
@@ -7,14 +7,14 @@ import { createErrorContext } from '@error/core/context';
  */
 export function createScheduleErrorContext(
   operation: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
 ): ErrorContext {
-  return createErrorContext('Schedule', operation, {
-    category: 'business',
+  return createErrorContext("Schedule", operation, {
+    category: "business",
     metadata: {
-      feature: 'schedulesUpdated',
-      ...metadata
-    }
+      feature: "schedulesUpdated",
+      ...metadata,
+    },
   });
 }
 
@@ -26,14 +26,14 @@ export function createScheduleDataErrorContext(
   operation: string,
   schoolId: string,
   date: string,
-  additionalMetadata?: Record<string, unknown>
+  additionalMetadata?: Record<string, unknown>,
 ): ErrorContext {
   return createScheduleErrorContext(operation, {
     schoolId,
     date,
-    ...additionalMetadata
+    ...additionalMetadata,
   });
 }
 
 // Simplified from 5 error context creators to 2 essential ones
-// Following YAGNI principles and established error handling patterns 
+// Following YAGNI principles and established error handling patterns

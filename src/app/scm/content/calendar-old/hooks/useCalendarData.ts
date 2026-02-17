@@ -101,13 +101,19 @@ export function useCalendarData({
   const [lessons, setLessons] = useState<ScopeAndSequenceLesson[]>([]);
   const [daysOff, setDaysOff] = useState<string[]>([]);
   const [savedSchedules, setSavedSchedules] = useState<SavedUnitSchedule[]>([]);
-  const [allSectionConfigs, setAllSectionConfigs] = useState<SectionConfigOption[]>([]);
-  const [sectionDaysOff, setSectionDaysOff] = useState<SectionDayOffEvent[]>([]);
+  const [allSectionConfigs, setAllSectionConfigs] = useState<
+    SectionConfigOption[]
+  >([]);
+  const [sectionDaysOff, setSectionDaysOff] = useState<SectionDayOffEvent[]>(
+    [],
+  );
 
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingGradeData, setLoadingGradeData] = useState(false);
   const [loadingSchedules, setLoadingSchedules] = useState(false);
-  const [pendingSectionKey, setPendingSectionKey] = useState<string | null>(null);
+  const [pendingSectionKey, setPendingSectionKey] = useState<string | null>(
+    null,
+  );
 
   // Load saved selection from localStorage on mount
   useEffect(() => {
@@ -175,24 +181,31 @@ export function useCalendarData({
     const loadGradeData = async () => {
       setLoadingGradeData(true);
       try {
-        const scheduleFetches = selectedGrade === 'Algebra 1'
-          ? Promise.all([
-              fetchUnitSchedules(schoolYear, '8'),
-              fetchUnitSchedules(schoolYear, 'Algebra 1'),
-            ]).then(([grade8Result, alg1Result]) => {
-              const combined: SavedUnitSchedule[] = [];
-              if (grade8Result.success && grade8Result.data) {
-                combined.push(...(grade8Result.data as unknown as SavedUnitSchedule[]));
-              }
-              if (alg1Result.success && alg1Result.data) {
-                combined.push(...(alg1Result.data as unknown as SavedUnitSchedule[]));
-              }
-              return { success: true, data: combined };
-            })
-          : fetchUnitSchedules(schoolYear, selectedGrade).then(result => ({
-              success: result.success,
-              data: result.success ? result.data as unknown as SavedUnitSchedule[] : undefined
-            }));
+        const scheduleFetches =
+          selectedGrade === "Algebra 1"
+            ? Promise.all([
+                fetchUnitSchedules(schoolYear, "8"),
+                fetchUnitSchedules(schoolYear, "Algebra 1"),
+              ]).then(([grade8Result, alg1Result]) => {
+                const combined: SavedUnitSchedule[] = [];
+                if (grade8Result.success && grade8Result.data) {
+                  combined.push(
+                    ...(grade8Result.data as unknown as SavedUnitSchedule[]),
+                  );
+                }
+                if (alg1Result.success && alg1Result.data) {
+                  combined.push(
+                    ...(alg1Result.data as unknown as SavedUnitSchedule[]),
+                  );
+                }
+                return { success: true, data: combined };
+              })
+            : fetchUnitSchedules(schoolYear, selectedGrade).then((result) => ({
+                success: result.success,
+                data: result.success
+                  ? (result.data as unknown as SavedUnitSchedule[])
+                  : undefined,
+              }));
 
         const [lessonsResult, schedulesResult] = await Promise.all([
           fetchScopeAndSequenceByGrade(selectedGrade),
@@ -224,12 +237,16 @@ export function useCalendarData({
     const loadSectionSchedules = async () => {
       setLoadingSchedules(true);
       try {
-        const scopeTag = selectedSection.scopeSequenceTag || (selectedGrade === 'Algebra 1' ? 'Algebra 1' : `Grade ${selectedGrade}`);
+        const scopeTag =
+          selectedSection.scopeSequenceTag ||
+          (selectedGrade === "Algebra 1"
+            ? "Algebra 1"
+            : `Grade ${selectedGrade}`);
         const result = await fetchSectionUnitSchedules(
           schoolYear,
           scopeTag,
           selectedSection.school,
-          selectedSection.classSection
+          selectedSection.classSection,
         );
         if (result.success && result.data) {
           setSavedSchedules(result.data as unknown as SavedUnitSchedule[]);
@@ -258,7 +275,7 @@ export function useCalendarData({
         const result = await getSectionDaysOff(
           schoolYear,
           selectedSection.school,
-          selectedSection.classSection
+          selectedSection.classSection,
         );
         if (result.success && result.data) {
           setSectionDaysOff(result.data);
@@ -278,24 +295,33 @@ export function useCalendarData({
   const reloadGradeLevelSchedules = useCallback(async () => {
     setLoadingSchedules(true);
     try {
-      const result = selectedGrade === 'Algebra 1'
-        ? await Promise.all([
-            fetchUnitSchedules(schoolYear, '8'),
-            fetchUnitSchedules(schoolYear, 'Algebra 1'),
-          ]).then(([grade8Result, alg1Result]) => {
-            const combined: SavedUnitSchedule[] = [];
-            if (grade8Result.success && grade8Result.data) {
-              combined.push(...(grade8Result.data as unknown as SavedUnitSchedule[]));
-            }
-            if (alg1Result.success && alg1Result.data) {
-              combined.push(...(alg1Result.data as unknown as SavedUnitSchedule[]));
-            }
-            return { success: true, data: combined };
-          })
-        : await fetchUnitSchedules(schoolYear, selectedGrade).then(result => ({
-            success: result.success,
-            data: result.success ? result.data as unknown as SavedUnitSchedule[] : undefined
-          }));
+      const result =
+        selectedGrade === "Algebra 1"
+          ? await Promise.all([
+              fetchUnitSchedules(schoolYear, "8"),
+              fetchUnitSchedules(schoolYear, "Algebra 1"),
+            ]).then(([grade8Result, alg1Result]) => {
+              const combined: SavedUnitSchedule[] = [];
+              if (grade8Result.success && grade8Result.data) {
+                combined.push(
+                  ...(grade8Result.data as unknown as SavedUnitSchedule[]),
+                );
+              }
+              if (alg1Result.success && alg1Result.data) {
+                combined.push(
+                  ...(alg1Result.data as unknown as SavedUnitSchedule[]),
+                );
+              }
+              return { success: true, data: combined };
+            })
+          : await fetchUnitSchedules(schoolYear, selectedGrade).then(
+              (result) => ({
+                success: result.success,
+                data: result.success
+                  ? (result.data as unknown as SavedUnitSchedule[])
+                  : undefined,
+              }),
+            );
       if (result.success && result.data) {
         setSavedSchedules(result.data);
       } else {
@@ -325,5 +351,10 @@ export function useCalendarData({
 }
 
 // Export types for use in other components
-export type { ScopeAndSequenceLesson, SavedUnitSchedule, CalendarStorageData, SectionDayOffEvent };
+export type {
+  ScopeAndSequenceLesson,
+  SavedUnitSchedule,
+  CalendarStorageData,
+  SectionDayOffEvent,
+};
 export { CALENDAR_STORAGE_KEY };

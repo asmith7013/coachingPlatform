@@ -8,11 +8,7 @@ import { QueryParams } from "@/lib/types/core/query";
  * Fetch coaching action plan by ID
  */
 export async function fetchCoachingActionPlanById(id: string) {
-  return fetchById(
-    CoachingActionPlanModel,
-    id,
-    "Coaching action plan"
-  );
+  return fetchById(CoachingActionPlanModel, id, "Coaching action plan");
 }
 
 /**
@@ -21,5 +17,7 @@ export async function fetchCoachingActionPlanById(id: string) {
  */
 export const fetchCoachingActionPlansForApi = createApiSafeFetcher(
   CoachingActionPlanModel,
-  "title" // Default search field
-) as (params: QueryParams) => Promise<CollectionResponse<typeof CoachingActionPlanModel>>;
+  "title", // Default search field
+) as (
+  params: QueryParams,
+) => Promise<CollectionResponse<typeof CoachingActionPlanModel>>;

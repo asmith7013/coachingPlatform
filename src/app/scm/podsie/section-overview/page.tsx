@@ -12,7 +12,10 @@ import {
   type SectionOverviewData,
   type DailyAttendanceStats,
 } from "@/app/actions/scm/podsie/section-overview";
-import { getSectionVelocityByDateRange, type DailyVelocityStats } from "@/app/actions/scm/podsie/velocity/velocity";
+import {
+  getSectionVelocityByDateRange,
+  type DailyVelocityStats,
+} from "@/app/actions/scm/podsie/velocity/velocity";
 import { SectionCalendar } from "./components/SectionCalendar";
 import { BellScheduleDisplay } from "./components/BellScheduleDisplay";
 import { AssignmentContentCards } from "./components/AssignmentContentCards";
@@ -33,8 +36,12 @@ export default function SectionOverviewPage() {
   // State
   const [sectionGroups, setSectionGroups] = useState<SectionGroup[]>([]);
   const [selectedSectionId, setSelectedSectionId] = useState<string>("");
-  const [overviewData, setOverviewData] = useState<SectionOverviewData | null>(null);
-  const [attendanceData, setAttendanceData] = useState<DailyAttendanceStats[]>([]);
+  const [overviewData, setOverviewData] = useState<SectionOverviewData | null>(
+    null,
+  );
+  const [attendanceData, setAttendanceData] = useState<DailyAttendanceStats[]>(
+    [],
+  );
   const [velocityData, setVelocityData] = useState<DailyVelocityStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(false);
@@ -94,7 +101,7 @@ export default function SectionOverviewPage() {
         const attendanceResult = await getSectionAttendanceByDateRange(
           overviewResult.data.config.classSection,
           dateRange.start,
-          dateRange.end
+          dateRange.end,
         );
 
         if (attendanceResult.success) {
@@ -106,7 +113,7 @@ export default function SectionOverviewPage() {
           overviewResult.data.config.classSection,
           overviewResult.data.config.school,
           dateRange.start,
-          dateRange.end
+          dateRange.end,
         );
 
         if (velocityResult.success) {
@@ -164,7 +171,10 @@ export default function SectionOverviewPage() {
       <Card className="mb-6">
         <Card.Body>
           <div className="space-y-2">
-            <label htmlFor="section-select" className="block font-medium text-sm">
+            <label
+              htmlFor="section-select"
+              className="block font-medium text-sm"
+            >
               Select Section
             </label>
             <select
@@ -198,7 +208,9 @@ export default function SectionOverviewPage() {
 
       {!dataLoading && !selectedSectionId && (
         <div className="flex items-center justify-center min-h-[400px]">
-          <Text color="muted">Please select a section to view its overview</Text>
+          <Text color="muted">
+            Please select a section to view its overview
+          </Text>
         </div>
       )}
 
@@ -215,10 +227,14 @@ export default function SectionOverviewPage() {
           />
 
           {/* Bell Schedule */}
-          <BellScheduleDisplay bellSchedule={overviewData.config.bellSchedule} />
+          <BellScheduleDisplay
+            bellSchedule={overviewData.config.bellSchedule}
+          />
 
           {/* Assignment Content Cards */}
-          <AssignmentContentCards assignmentContent={overviewData.config.assignmentContent} />
+          <AssignmentContentCards
+            assignmentContent={overviewData.config.assignmentContent}
+          />
         </div>
       )}
     </div>

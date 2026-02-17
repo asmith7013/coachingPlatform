@@ -29,7 +29,7 @@ export interface TableSorting {
   /** Column ID to sort by */
   id: string;
   /** Sort direction */
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 /**
@@ -51,7 +51,15 @@ export interface TableFilter {
   /** Column ID to filter */
   id: string;
   /** Filter operator */
-  operator: 'equals' | 'contains' | 'startsWith' | 'endsWith' | 'gt' | 'gte' | 'lt' | 'lte';
+  operator:
+    | "equals"
+    | "contains"
+    | "startsWith"
+    | "endsWith"
+    | "gt"
+    | "gte"
+    | "lt"
+    | "lte";
   /** Filter value */
   value: string | number | boolean;
 }
@@ -96,4 +104,4 @@ export interface TableState {
   filters: TableFilter[];
   /** Expanded row IDs */
   expandedRowIds: Record<string, boolean>;
-} 
+}

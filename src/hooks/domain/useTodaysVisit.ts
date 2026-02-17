@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
-import { useVisits } from '@/hooks/domain/useVisits';
-import { useCoachingActionPlans } from '@/hooks/domain/useCoachingActionPlans';
-import { TodaysVisitData } from '@/components/features/todaysVisitDashboard/types';
+import { useMemo } from "react";
+import { useVisits } from "@/hooks/domain/useVisits";
+import { useCoachingActionPlans } from "@/hooks/domain/useCoachingActionPlans";
+import { TodaysVisitData } from "@/components/features/todaysVisitDashboard/types";
 
 interface UseTodaysVisitOptions {
   coachId?: string;
@@ -10,7 +10,7 @@ interface UseTodaysVisitOptions {
 
 export function useTodaysVisit(options: UseTodaysVisitOptions = {}) {
   const { coachId, schoolId } = options;
-  
+
   // Build filters based on options
   const visitFilters = useMemo(() => {
     const filters: Record<string, unknown> = {};
@@ -20,8 +20,13 @@ export function useTodaysVisit(options: UseTodaysVisitOptions = {}) {
   }, [coachId, schoolId]);
 
   // Fetch data with optional filtering
-  const { items: visits, isLoading: visitsLoading, error: visitsError } = useVisits.list({ filters: visitFilters });
-  const { items: actionPlans, isLoading: plansLoading } = useCoachingActionPlans.list();
+  const {
+    items: visits,
+    isLoading: visitsLoading,
+    error: visitsError,
+  } = useVisits.list({ filters: visitFilters });
+  const { items: actionPlans, isLoading: plansLoading } =
+    useCoachingActionPlans.list();
 
   const isLoading = visitsLoading || plansLoading;
 
@@ -33,16 +38,18 @@ export function useTodaysVisit(options: UseTodaysVisitOptions = {}) {
     today.setHours(0, 0, 0, 0);
 
     const visitWithDistance = visits
-      .filter(visit => visit.date)
-      .map(visit => {
+      .filter((visit) => visit.date)
+      .map((visit) => {
         const visitDate = new Date(visit.date!);
         visitDate.setHours(0, 0, 0, 0);
-        const daysFromToday = Math.round((visitDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-        
+        const daysFromToday = Math.round(
+          (visitDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+        );
+
         return {
           visit,
           daysFromToday,
-          absDistance: Math.abs(daysFromToday)
+          absDistance: Math.abs(daysFromToday),
         };
       })
       .sort((a, b) => a.absDistance - b.absDistance)[0];
@@ -50,20 +57,21 @@ export function useTodaysVisit(options: UseTodaysVisitOptions = {}) {
     if (!visitWithDistance) return null;
 
     // Get related action plan with embedded data
-    const actionPlan = actionPlans.find(plan => 
-      plan._id === visitWithDistance.visit.coachingActionPlanId
+    const actionPlan = actionPlans.find(
+      (plan) => plan._id === visitWithDistance.visit.coachingActionPlanId,
     );
 
     if (!actionPlan) return null;
 
     // Get embedded weekly plan using index
-    const weeklyPlan = visitWithDistance.visit.weeklyPlanIndex !== undefined 
-      ? actionPlan.weeklyPlans[visitWithDistance.visit.weeklyPlanIndex]
-      : null;
+    const weeklyPlan =
+      visitWithDistance.visit.weeklyPlanIndex !== undefined
+        ? actionPlan.weeklyPlans[visitWithDistance.visit.weeklyPlanIndex]
+        : null;
 
     // Get embedded metrics using outcome indexes
-    const relevantMetrics = visitWithDistance.visit.focusOutcomeIndexes
-      ?.flatMap(outcomeIndex => {
+    const relevantMetrics =
+      visitWithDistance.visit.focusOutcomeIndexes?.flatMap((outcomeIndex) => {
         const outcome = actionPlan.outcomes[outcomeIndex];
         return outcome?.metrics || [];
       }) || [];
@@ -90,10 +98,10 @@ export function useTodaysVisit(options: UseTodaysVisitOptions = {}) {
         type: metric.type,
         description: metric.description,
         collectionMethod: metric.collectionMethod,
-        baselineValue: metric.baselineValue || '',
+        baselineValue: metric.baselineValue || "",
         targetValue: metric.targetValue,
-        currentValue: metric.currentValue || '',
-      }))
+        currentValue: metric.currentValue || "",
+      })),
     };
 
     return todaysVisitData;
@@ -107,4 +115,4 @@ export function useTodaysVisit(options: UseTodaysVisitOptions = {}) {
     isVisitInPast: todaysVisit ? todaysVisit.daysFromToday < 0 : false,
     isVisitInFuture: todaysVisit ? todaysVisit.daysFromToday > 0 : false,
   };
-} 
+}

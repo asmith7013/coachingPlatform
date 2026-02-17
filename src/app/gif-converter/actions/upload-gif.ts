@@ -6,7 +6,7 @@ export async function uploadGifToBlob(gifData: Uint8Array, filename?: string) {
   try {
     const timestamp = Date.now();
     const blobFileName = filename
-      ? `gif-converter/${filename.replace(/[^a-zA-Z0-9.-]/g, '_')}-${timestamp}.gif`
+      ? `gif-converter/${filename.replace(/[^a-zA-Z0-9.-]/g, "_")}-${timestamp}.gif`
       : `gif-converter/converted-${timestamp}.gif`;
 
     // Convert Uint8Array to Blob for upload

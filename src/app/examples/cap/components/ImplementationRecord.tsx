@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface ImplementationRecordItem {
   date: string;
@@ -13,10 +13,15 @@ interface ImplementationRecordProps {
   dates: string[];
 }
 
-export const ImplementationRecord: React.FC<ImplementationRecordProps> = ({ records, dates }) => {
+export const ImplementationRecord: React.FC<ImplementationRecordProps> = ({
+  records,
+  dates,
+}) => {
   return (
     <div className="mt-6">
-      <h3 className="font-semibold text-lg mb-2">Implementation Record / Decision Log</h3>
+      <h3 className="font-semibold text-lg mb-2">
+        Implementation Record / Decision Log
+      </h3>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 border border-gray-200">
           <thead>
@@ -59,7 +64,7 @@ export const ImplementationRecord: React.FC<ImplementationRecordProps> = ({ reco
               </tr>
             ))}
             {/* Empty rows for future entries */}
-            {dates.length > records.length && 
+            {dates.length > records.length &&
               dates.slice(records.length).map((_, idx) => (
                 <tr key={`empty-${idx}`}>
                   <td className="px-3 py-3 whitespace-nowrap border-r border-gray-200"></td>
@@ -68,11 +73,10 @@ export const ImplementationRecord: React.FC<ImplementationRecordProps> = ({ reco
                   <td className="px-3 py-3 whitespace-normal border-r border-gray-200"></td>
                   <td className="px-3 py-3 whitespace-normal"></td>
                 </tr>
-              ))
-            }
+              ))}
           </tbody>
         </table>
       </div>
     </div>
   );
-}; 
+};

@@ -3,4 +3,4 @@
  * Re-exports all scope and sequence schemas for convenient importing
  */
 
-export * from './scope-and-sequence';
+export * from "./scope-and-sequence";

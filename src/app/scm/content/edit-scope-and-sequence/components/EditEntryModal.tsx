@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { XMarkIcon, PlusIcon, TrashIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import {
+  XMarkIcon,
+  PlusIcon,
+  TrashIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
 import {
   GRADE_OPTIONS,
   SECTION_OPTIONS,
@@ -21,23 +26,37 @@ interface EditEntryModalProps {
   isLoading?: boolean;
 }
 
-const STANDARD_CONTEXT_OPTIONS: StandardContext[] = ["current", "buildingOn", "buildingTowards"];
+const STANDARD_CONTEXT_OPTIONS: StandardContext[] = [
+  "current",
+  "buildingOn",
+  "buildingTowards",
+];
 
 // Pattern validation helpers
-function getExpectedLessonType(section: string): "lesson" | "rampUp" | "assessment" | null {
+function getExpectedLessonType(
+  section: string,
+): "lesson" | "rampUp" | "assessment" | null {
   if (section === "Ramp Ups") return "rampUp";
   if (section === "Unit Assessment") return "assessment";
   if (["A", "B", "C", "D", "E", "F"].includes(section)) return "lesson";
   return null;
 }
 
-function getExpectedUnitLessonId(unitNumber: number, lessonNumber: number, lessonType: string): string {
+function getExpectedUnitLessonId(
+  unitNumber: number,
+  lessonNumber: number,
+  lessonType: string,
+): string {
   if (lessonType === "rampUp") return `${unitNumber}.RU${lessonNumber}`;
   if (lessonType === "assessment") return `${unitNumber}.UA`;
   return `${unitNumber}.${lessonNumber}`;
 }
 
-function getExpectedLessonName(lessonNumber: number, lessonTitle: string, lessonType: string): string | null {
+function getExpectedLessonName(
+  lessonNumber: number,
+  lessonTitle: string,
+  lessonType: string,
+): string | null {
   if (!lessonTitle && lessonType !== "assessment") return null;
   if (lessonType === "rampUp") return `Ramp Up ${lessonNumber}: ${lessonTitle}`;
   if (lessonType === "assessment") return "Unit Assessment";
@@ -128,7 +147,11 @@ export function EditEntryModal({
 
     // Check unitLessonId format
     if (unitNumber && lessonType) {
-      const expectedId = getExpectedUnitLessonId(unitNumber, lessonNumber, lessonType);
+      const expectedId = getExpectedUnitLessonId(
+        unitNumber,
+        lessonNumber,
+        lessonType,
+      );
       if (unitLessonId && unitLessonId !== expectedId) {
         result.push({
           field: "unitLessonId",
@@ -141,7 +164,11 @@ export function EditEntryModal({
 
     // Check lessonName format
     if (lessonType && (lessonTitle || lessonType === "assessment")) {
-      const expectedName = getExpectedLessonName(lessonNumber, lessonTitle, lessonType);
+      const expectedName = getExpectedLessonName(
+        lessonNumber,
+        lessonTitle,
+        lessonType,
+      );
       if (expectedName && lessonName && lessonName !== expectedName) {
         result.push({
           field: "lessonName",
@@ -176,7 +203,17 @@ export function EditEntryModal({
     }
 
     return result;
-  }, [grade, unitLessonId, unitNumber, lessonNumber, lessonName, lessonType, lessonTitle, section, scopeSequenceTag]);
+  }, [
+    grade,
+    unitLessonId,
+    unitNumber,
+    lessonNumber,
+    lessonName,
+    lessonType,
+    lessonTitle,
+    section,
+    scopeSequenceTag,
+  ]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -190,8 +227,22 @@ export function EditEntryModal({
       lessonName,
       lessonType: lessonType as "lesson" | "rampUp" | "assessment" | undefined,
       lessonTitle: lessonTitle || undefined,
-      section: section as "Ramp Ups" | "A" | "B" | "C" | "D" | "E" | "F" | "Unit Assessment" | undefined,
-      scopeSequenceTag: scopeSequenceTag as "Grade 6" | "Grade 7" | "Grade 8" | "Algebra 1" | undefined,
+      section: section as
+        | "Ramp Ups"
+        | "A"
+        | "B"
+        | "C"
+        | "D"
+        | "E"
+        | "F"
+        | "Unit Assessment"
+        | undefined,
+      scopeSequenceTag: scopeSequenceTag as
+        | "Grade 6"
+        | "Grade 7"
+        | "Grade 8"
+        | "Algebra 1"
+        | undefined,
       roadmapSkills,
       targetSkills,
       standards,
@@ -239,10 +290,17 @@ export function EditEntryModal({
     setStandards([...standards, { code: "", text: "", context: undefined }]);
   };
 
-  const updateStandard = (index: number, field: keyof Standard, value: string) => {
+  const updateStandard = (
+    index: number,
+    field: keyof Standard,
+    value: string,
+  ) => {
     const updated = [...standards];
     if (field === "context") {
-      updated[index] = { ...updated[index], [field]: value as StandardContext || undefined };
+      updated[index] = {
+        ...updated[index],
+        [field]: (value as StandardContext) || undefined,
+      };
     } else {
       updated[index] = { ...updated[index], [field]: value };
     }
@@ -302,19 +360,31 @@ export function EditEntryModal({
                   Pattern Violations Detected ({violations.length})
                 </h4>
                 <p className="text-xs text-amber-700 mt-1">
-                  This entry has values that don&apos;t match expected patterns. You can fix them or keep the existing values.
+                  This entry has values that don&apos;t match expected patterns.
+                  You can fix them or keep the existing values.
                 </p>
                 <ul className="mt-2 space-y-2">
                   {violations.map((v, i) => (
-                    <li key={i} className="flex items-start justify-between gap-2 text-xs bg-white p-2 rounded border border-amber-100">
+                    <li
+                      key={i}
+                      className="flex items-start justify-between gap-2 text-xs bg-white p-2 rounded border border-amber-100"
+                    >
                       <div>
-                        <span className="font-medium text-amber-800">{v.field}:</span>{" "}
+                        <span className="font-medium text-amber-800">
+                          {v.field}:
+                        </span>{" "}
                         <span className="text-gray-700">{v.message}</span>
                         {v.expected && v.actual && (
                           <div className="mt-1 text-gray-500">
-                            Expected: <code className="bg-green-50 px-1 rounded">{v.expected}</code>
+                            Expected:{" "}
+                            <code className="bg-green-50 px-1 rounded">
+                              {v.expected}
+                            </code>
                             {" → "}
-                            Actual: <code className="bg-red-50 px-1 rounded">{v.actual}</code>
+                            Actual:{" "}
+                            <code className="bg-red-50 px-1 rounded">
+                              {v.actual}
+                            </code>
                           </div>
                         )}
                       </div>
@@ -336,10 +406,15 @@ export function EditEntryModal({
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-y-auto p-6 space-y-6"
+        >
           {/* Basic Info Section */}
           <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Basic Information</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-3">
+              Basic Information
+            </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {/* Grade */}
               <div>
@@ -383,7 +458,9 @@ export function EditEntryModal({
                 <input
                   type="number"
                   value={lessonNumber}
-                  onChange={(e) => setLessonNumber(parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    setLessonNumber(parseInt(e.target.value) || 0)
+                  }
                   className="w-full px-3 py-2 border rounded-lg"
                   required
                 />
@@ -440,7 +517,9 @@ export function EditEntryModal({
 
           {/* Classification Section */}
           <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Classification</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-3">
+              Classification
+            </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {/* Lesson Type */}
               <div>
@@ -455,7 +534,11 @@ export function EditEntryModal({
                   <option value="">-- Select --</option>
                   {LESSON_TYPE_OPTIONS.map((type) => (
                     <option key={type} value={type}>
-                      {type === "lesson" ? "Lesson" : type === "rampUp" ? "Ramp Up" : "Assessment"}
+                      {type === "lesson"
+                        ? "Lesson"
+                        : type === "rampUp"
+                          ? "Ramp Up"
+                          : "Assessment"}
                     </option>
                   ))}
                 </select>
@@ -529,7 +612,10 @@ export function EditEntryModal({
                     type="text"
                     value={newRoadmapSkill}
                     onChange={(e) => setNewRoadmapSkill(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addRoadmapSkill())}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" &&
+                      (e.preventDefault(), addRoadmapSkill())
+                    }
                     placeholder="Add skill number"
                     className="flex-1 px-3 py-2 border rounded-lg"
                   />
@@ -570,7 +656,10 @@ export function EditEntryModal({
                     type="text"
                     value={newTargetSkill}
                     onChange={(e) => setNewTargetSkill(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTargetSkill())}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" &&
+                      (e.preventDefault(), addTargetSkill())
+                    }
                     placeholder="Add skill number"
                     className="flex-1 px-3 py-2 border rounded-lg"
                   />
@@ -618,25 +707,34 @@ export function EditEntryModal({
             </div>
             <div className="space-y-3">
               {standards.map((standard, i) => (
-                <div key={i} className="flex gap-2 items-start bg-white p-3 rounded border">
+                <div
+                  key={i}
+                  className="flex gap-2 items-start bg-white p-3 rounded border"
+                >
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-2">
                     <input
                       type="text"
                       value={standard.code}
-                      onChange={(e) => updateStandard(i, "code", e.target.value)}
+                      onChange={(e) =>
+                        updateStandard(i, "code", e.target.value)
+                      }
                       placeholder="Code (e.g., NY-8.G.1)"
                       className="px-2 py-1 border rounded text-sm"
                     />
                     <input
                       type="text"
                       value={standard.text}
-                      onChange={(e) => updateStandard(i, "text", e.target.value)}
+                      onChange={(e) =>
+                        updateStandard(i, "text", e.target.value)
+                      }
                       placeholder="Standard text"
                       className="px-2 py-1 border rounded text-sm md:col-span-2"
                     />
                     <select
                       value={standard.context || ""}
-                      onChange={(e) => updateStandard(i, "context", e.target.value)}
+                      onChange={(e) =>
+                        updateStandard(i, "context", e.target.value)
+                      }
                       className="px-2 py-1 border rounded text-sm cursor-pointer"
                     >
                       <option value="">-- Context --</option>
@@ -661,20 +759,26 @@ export function EditEntryModal({
                 </div>
               ))}
               {standards.length === 0 && (
-                <p className="text-sm text-gray-500 italic">No standards added yet.</p>
+                <p className="text-sm text-gray-500 italic">
+                  No standards added yet.
+                </p>
               )}
             </div>
           </div>
 
           {/* Learning Targets Section */}
           <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Learning Targets</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-3">
+              Learning Targets
+            </h3>
             <div className="flex gap-2 mb-2">
               <input
                 type="text"
                 value={newLearningTarget}
                 onChange={(e) => setNewLearningTarget(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addLearningTarget())}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && (e.preventDefault(), addLearningTarget())
+                }
                 placeholder="Add a learning target"
                 className="flex-1 px-3 py-2 border rounded-lg"
               />
@@ -703,7 +807,9 @@ export function EditEntryModal({
                 </li>
               ))}
               {learningTargets.length === 0 && (
-                <p className="text-sm text-gray-500 italic">No learning targets added yet.</p>
+                <p className="text-sm text-gray-500 italic">
+                  No learning targets added yet.
+                </p>
               )}
             </ul>
           </div>

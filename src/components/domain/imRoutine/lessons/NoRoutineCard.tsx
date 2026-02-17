@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Card } from '@/components/composed/cards/Card';
-import { Text } from '@/components/core/typography/Text';
-import { cn } from '@ui/utils/formatters';;
+import { Card } from "@/components/composed/cards/Card";
+import { Text } from "@/components/core/typography/Text";
+import { cn } from "@ui/utils/formatters";
 
 type Props = {
   lessonNumber: string;
@@ -11,10 +11,7 @@ type Props = {
 export function NoRoutineCard({ lessonNumber }: Props) {
   return (
     <Card
-      className={cn(
-        'text-muted',
-        'transition-all duration-150 bg-white'
-      )}
+      className={cn("text-muted", "transition-all duration-150 bg-white")}
       padding="sm"
     >
       <Text textSize="lg" color="muted" weight="semibold">

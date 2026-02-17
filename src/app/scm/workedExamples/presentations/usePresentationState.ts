@@ -1,11 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import type { WorkedExampleDeck, HtmlSlide } from '@zod-schema/scm/worked-example';
-import { getDeckBySlug } from '@actions/worked-examples';
-import { downloadPptxLocally } from '@/lib/utils/download-pptx';
-import type { ExportStatus } from './types';
-import { getAnimatableBoxes, buildExportTitle } from './utils';
+import { useEffect, useState, useCallback, useMemo } from "react";
+import type {
+  WorkedExampleDeck,
+  HtmlSlide,
+} from "@zod-schema/scm/worked-example";
+import { getDeckBySlug } from "@actions/worked-examples";
+import { downloadPptxLocally } from "@/lib/utils/download-pptx";
+import type { ExportStatus } from "./types";
+import { getAnimatableBoxes, buildExportTitle } from "./utils";
 
 interface UsePresentationStateProps {
   slug: string;
@@ -27,11 +30,13 @@ export function usePresentationState({
   const [scriptsLoaded, setScriptsLoaded] = useState<Set<string>>(new Set());
   const [showHtmlViewer, setShowHtmlViewer] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [exportStatus, setExportStatus] = useState<ExportStatus>('idle');
+  const [exportStatus, setExportStatus] = useState<ExportStatus>("idle");
   const [exportError, setExportError] = useState<string | null>(null);
   const [googleSlidesUrl, setGoogleSlidesUrl] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'html' | 'slides'>('html');
-  const [revealedBoxes, setRevealedBoxes] = useState<Map<number, Set<string>>>(new Map());
+  const [viewMode, setViewMode] = useState<"html" | "slides">("html");
+  const [revealedBoxes, setRevealedBoxes] = useState<Map<number, Set<string>>>(
+    new Map(),
+  );
 
   // Load deck from database
   useEffect(() => {
@@ -47,10 +52,10 @@ export function usePresentationState({
             setGoogleSlidesUrl(deckData.googleSlidesUrl);
           }
         } else {
-          setError(result.error || 'Failed to load deck');
+          setError(result.error || "Failed to load deck");
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load deck');
+        setError(err instanceof Error ? err.message : "Failed to load deck");
       } finally {
         setLoading(false);
       }
@@ -65,11 +70,14 @@ export function usePresentationState({
   }, [initialSlide]);
 
   // Get animatable boxes for current slide
-  const currentSlideHtml = deck?.htmlSlides?.[currentSlide]?.htmlContent || '';
-  const animatableBoxes = useMemo(() => getAnimatableBoxes(currentSlideHtml), [currentSlideHtml]);
+  const currentSlideHtml = deck?.htmlSlides?.[currentSlide]?.htmlContent || "";
+  const animatableBoxes = useMemo(
+    () => getAnimatableBoxes(currentSlideHtml),
+    [currentSlideHtml],
+  );
   const currentRevealed = useMemo(
     () => revealedBoxes.get(currentSlide) || new Set<string>(),
-    [revealedBoxes, currentSlide]
+    [revealedBoxes, currentSlide],
   );
 
   // Find next unrevealed box
@@ -85,7 +93,7 @@ export function usePresentationState({
   // Navigation
   const nextSlide = useCallback(() => {
     if (nextUnrevealedBox) {
-      setRevealedBoxes(prev => {
+      setRevealedBoxes((prev) => {
         const newMap = new Map(prev);
         const slideRevealed = new Set(newMap.get(currentSlide) || []);
         slideRevealed.add(nextUnrevealedBox);
@@ -104,7 +112,7 @@ export function usePresentationState({
 
   const prevSlide = useCallback(() => {
     if (currentRevealed.size > 0) {
-      setRevealedBoxes(prev => {
+      setRevealedBoxes((prev) => {
         const newMap = new Map(prev);
         newMap.delete(currentSlide);
         return newMap;
@@ -125,27 +133,29 @@ export function usePresentationState({
   useEffect(() => {
     if (!currentSlideData?.scripts || !isOpen) return;
 
-    const cdnScripts = currentSlideData.scripts.filter(s => s.type === 'cdn');
-    cdnScripts.forEach(script => {
+    const cdnScripts = currentSlideData.scripts.filter((s) => s.type === "cdn");
+    cdnScripts.forEach((script) => {
       if (!scriptsLoaded.has(script.content)) {
-        const scriptEl = document.createElement('script');
+        const scriptEl = document.createElement("script");
         scriptEl.src = script.content;
         scriptEl.async = true;
         scriptEl.onload = () => {
-          setScriptsLoaded(prev => new Set([...prev, script.content]));
+          setScriptsLoaded((prev) => new Set([...prev, script.content]));
         };
         document.body.appendChild(scriptEl);
       }
     });
 
-    const inlineScripts = currentSlideData.scripts.filter(s => s.type === 'inline');
+    const inlineScripts = currentSlideData.scripts.filter(
+      (s) => s.type === "inline",
+    );
     const executeInlineScripts = () => {
-      inlineScripts.forEach(script => {
+      inlineScripts.forEach((script) => {
         try {
           const scriptFunc = new Function(script.content);
           scriptFunc();
         } catch (err) {
-          console.error('Error executing inline script:', err);
+          console.error("Error executing inline script:", err);
         }
       });
     };
@@ -156,9 +166,9 @@ export function usePresentationState({
 
   // Export to Google Slides
   const handleExportToGoogleSlides = useCallback(async () => {
-    if (!deck?.htmlSlides || exportStatus === 'exporting') return;
+    if (!deck?.htmlSlides || exportStatus === "exporting") return;
 
-    setExportStatus('exporting');
+    setExportStatus("exporting");
     setExportError(null);
 
     const slidesPayload = deck.htmlSlides.map((slide) => ({
@@ -177,33 +187,36 @@ export function usePresentationState({
     await downloadPptxLocally(slidesPayload, exportTitle, deck.mathConcept);
 
     try {
-      const response = await fetch('/api/scm/worked-examples/export-google-slides', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slides: slidesPayload,
-          title: exportTitle,
-          mathConcept: deck.mathConcept,
-          slug: deck.slug,
-        }),
-      });
+      const response = await fetch(
+        "/api/scm/worked-examples/export-google-slides",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            slides: slidesPayload,
+            title: exportTitle,
+            mathConcept: deck.mathConcept,
+            slug: deck.slug,
+          }),
+        },
+      );
 
       const data = await response.json();
 
       if (data.success && data.url) {
-        setExportStatus('success');
+        setExportStatus("success");
         setGoogleSlidesUrl(data.url);
-        window.open(data.url, '_blank');
-        setTimeout(() => setExportStatus('idle'), 3000);
+        window.open(data.url, "_blank");
+        setTimeout(() => setExportStatus("idle"), 3000);
       } else {
-        setExportStatus('error');
-        setExportError(data.error || 'Export failed');
-        setTimeout(() => setExportStatus('idle'), 5000);
+        setExportStatus("error");
+        setExportError(data.error || "Export failed");
+        setTimeout(() => setExportStatus("idle"), 5000);
       }
     } catch (err) {
-      setExportStatus('error');
-      setExportError(err instanceof Error ? err.message : 'Export failed');
-      setTimeout(() => setExportStatus('idle'), 5000);
+      setExportStatus("error");
+      setExportError(err instanceof Error ? err.message : "Export failed");
+      setTimeout(() => setExportStatus("idle"), 5000);
     }
   }, [deck, exportStatus]);
 
@@ -222,7 +235,7 @@ export function usePresentationState({
 
   // Check if deck has analysis data for editing
   const hasAnalysisData = Boolean(
-    deck?.problemAnalysis && deck?.strategyDefinition && deck?.scenarios
+    deck?.problemAnalysis && deck?.strategyDefinition && deck?.scenarios,
   );
 
   return {

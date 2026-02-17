@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BaseDocumentSchema, toInputSchema } from '@zod-schema/base-schemas';
+import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
 import { ScopeSequenceTagZod } from "@schema/enum/scm";
 
 // =====================================
@@ -23,37 +23,56 @@ export const LearningContentFieldsSchema = z.object({
   // IDENTIFYING KEYS
   // =====================================
 
-  scopeSequenceTag: ScopeSequenceTagZod.describe("Scope and sequence tag (e.g., 'Grade 8', 'Algebra 1')"),
+  scopeSequenceTag: ScopeSequenceTagZod.describe(
+    "Scope and sequence tag (e.g., 'Grade 8', 'Algebra 1')",
+  ),
   grade: z.string().describe("Grade level (e.g., '6', '7', '8')"),
   unit: z.number().int().positive().describe("Unit number (e.g., 1, 2, 3, 4)"),
-  lessonSection: z.string().describe("Section within the unit (e.g., 'A', 'B', 'C', 'D', 'E', 'F', 'Ramp Ups', 'Unit Assessment')"),
+  lessonSection: z
+    .string()
+    .describe(
+      "Section within the unit (e.g., 'A', 'B', 'C', 'D', 'E', 'F', 'Ramp Ups', 'Unit Assessment')",
+    ),
 
   // =====================================
   // CONTENT
   // =====================================
 
-  content: z.string().describe("Markdown-formatted learning objectives content (one item per line, optionally prefixed with '- ' or '• ')"),
+  content: z
+    .string()
+    .describe(
+      "Markdown-formatted learning objectives content (one item per line, optionally prefixed with '- ' or '• ')",
+    ),
 
   // =====================================
   // METADATA
   // =====================================
 
-  active: z.boolean().default(true).describe("Whether this learning content is active"),
+  active: z
+    .boolean()
+    .default(true)
+    .describe("Whether this learning content is active"),
   notes: z.string().optional().describe("Optional notes about this content"),
 });
 
 // Full schema with base document fields
-export const LearningContentZodSchema = BaseDocumentSchema.merge(LearningContentFieldsSchema);
+export const LearningContentZodSchema = BaseDocumentSchema.merge(
+  LearningContentFieldsSchema,
+);
 
 // Input schema for creation
-export const LearningContentInputZodSchema = toInputSchema(LearningContentZodSchema);
+export const LearningContentInputZodSchema = toInputSchema(
+  LearningContentZodSchema,
+);
 
 // =====================================
 // TYPE EXPORTS
 // =====================================
 
 export type LearningContent = z.infer<typeof LearningContentZodSchema>;
-export type LearningContentInput = z.infer<typeof LearningContentInputZodSchema>;
+export type LearningContentInput = z.infer<
+  typeof LearningContentInputZodSchema
+>;
 
 // =====================================
 // QUERY SCHEMA

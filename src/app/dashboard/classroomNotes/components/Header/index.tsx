@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button } from '@/components/core/Button';
+import React from "react";
+import { Button } from "@/components/core/Button";
 
 interface HeaderProps {
   startStopwatch: () => void;
@@ -11,18 +11,10 @@ const Header: React.FC<HeaderProps> = ({ startStopwatch, pauseStopwatch }) => {
     <div className="flex items-center justify-between">
       <h1 className="text-2xl font-bold">Classroom Observation Notes</h1>
       <div className="flex space-x-3">
-        <Button 
-          type="button" 
-          appearance="outline" 
-          onClick={startStopwatch}
-        >
+        <Button type="button" appearance="outline" onClick={startStopwatch}>
           Start Timer
         </Button>
-        <Button 
-          type="button"
-          appearance="outline"
-          onClick={pauseStopwatch}
-        >
+        <Button type="button" appearance="outline" onClick={pauseStopwatch}>
           Pause Timer
         </Button>
       </div>
@@ -30,4 +22,4 @@ const Header: React.FC<HeaderProps> = ({ startStopwatch, pauseStopwatch }) => {
   );
 };
 
-export default Header; 
+export default Header;

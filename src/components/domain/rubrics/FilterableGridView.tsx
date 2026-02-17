@@ -1,10 +1,17 @@
-'use client';
+"use client";
 
-import React, { ReactNode } from 'react';
-import { cn } from '@ui/utils/formatters';;
-import { GroupWithId, ItemWithId, useItemToGroupMap } from '@/components/domain/rubrics/utils/use-item-to-group-map';
+import React, { ReactNode } from "react";
+import { cn } from "@ui/utils/formatters";
+import {
+  GroupWithId,
+  ItemWithId,
+  useItemToGroupMap,
+} from "@/components/domain/rubrics/utils/use-item-to-group-map";
 
-export interface FilterableGridViewProps<TGroup extends GroupWithId, TItem extends ItemWithId> {
+export interface FilterableGridViewProps<
+  TGroup extends GroupWithId,
+  TItem extends ItemWithId,
+> {
   groups: TGroup[];
   selectedItems: Set<string>;
   renderItemGroup: (group: TGroup, selectedItems: Set<string>) => ReactNode;
@@ -16,7 +23,10 @@ export interface FilterableGridViewProps<TGroup extends GroupWithId, TItem exten
   className?: string;
 }
 
-export function FilterableGridView<TGroup extends GroupWithId, TItem extends ItemWithId>({
+export function FilterableGridView<
+  TGroup extends GroupWithId,
+  TItem extends ItemWithId,
+>({
   groups,
   selectedItems,
   renderItemGroup,
@@ -25,7 +35,7 @@ export function FilterableGridView<TGroup extends GroupWithId, TItem extends Ite
   sidebar,
   headerCard,
   emptyState,
-  className
+  className,
 }: FilterableGridViewProps<TGroup, TItem>) {
   const itemToGroupMap = useItemToGroupMap(groups, extractItems);
   const hasSelectedItems = selectedItems.size > 0;
@@ -33,17 +43,17 @@ export function FilterableGridView<TGroup extends GroupWithId, TItem extends Ite
 
   // Filter groups based on selected items using the itemToGroupMap
   const filteredGroups = hasSelectedItems
-    ? groups.filter(group => {
+    ? groups.filter((group) => {
         const items = extractItems(group);
-        return items.some(item => selectedItems.has(item.id));
+        return items.some((item) => selectedItems.has(item.id));
       })
     : groups;
 
   // Get all unique items for sidebar rendering
   const allItems = React.useMemo(() => {
     const itemSet = new Set<TItem>();
-    groups.forEach(group => {
-      extractItems(group).forEach(item => {
+    groups.forEach((group) => {
+      extractItems(group).forEach((item) => {
         if (selectedItems.has(item.id)) {
           itemSet.add(item);
         }
@@ -53,12 +63,12 @@ export function FilterableGridView<TGroup extends GroupWithId, TItem extends Ite
   }, [groups, extractItems, selectedItems]);
 
   return (
-    <div className={cn('grid grid-cols-[1fr,320px] gap-6', className)}>
+    <div className={cn("grid grid-cols-[1fr,320px] gap-6", className)}>
       <div className="space-y-6">
         {headerCard}
         {hasGroups ? (
           <div className="space-y-6">
-            {filteredGroups.map(group => (
+            {filteredGroups.map((group) => (
               <div key={group.id} className="">
                 {renderItemGroup(group, selectedItems)}
               </div>
@@ -72,12 +82,10 @@ export function FilterableGridView<TGroup extends GroupWithId, TItem extends Ite
         {/* Render selected items in sidebar if renderItemInSidebar is provided */}
         {renderItemInSidebar && allItems.length > 0 && (
           <div className="space-y-4">
-            {allItems.map(item => {
+            {allItems.map((item) => {
               const groupIds = itemToGroupMap.get(item.id) || [];
               return (
-                <div key={item.id}>
-                  {renderItemInSidebar(item, groupIds)}
-                </div>
+                <div key={item.id}>{renderItemInSidebar(item, groupIds)}</div>
               );
             })}
           </div>
@@ -86,4 +94,4 @@ export function FilterableGridView<TGroup extends GroupWithId, TItem extends Ite
       </div>
     </div>
   );
-} 
+}

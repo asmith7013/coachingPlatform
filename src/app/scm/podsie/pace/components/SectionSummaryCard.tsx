@@ -34,9 +34,9 @@ interface SectionSummaryCardProps {
 
 // Badge styling for special populations
 const SPECIAL_POP_BADGE_STYLES: Record<string, { bg: string; text: string }> = {
-  'ICT': { bg: 'bg-indigo-100', text: 'text-indigo-800' },
-  '12-1-1': { bg: 'bg-teal-100', text: 'text-teal-800' },
-  'MLL': { bg: 'bg-orange-100', text: 'text-orange-800' },
+  ICT: { bg: "bg-indigo-100", text: "text-indigo-800" },
+  "12-1-1": { bg: "bg-teal-100", text: "text-teal-800" },
+  MLL: { bg: "bg-orange-100", text: "text-orange-800" },
 };
 
 export function SectionSummaryCard({
@@ -51,14 +51,14 @@ export function SectionSummaryCard({
   const currentUnit = currentUnitInfo?.currentUnit ?? null;
 
   // Derive scope tag from section
-  const scopeSequenceTag = useMemo(() => getScopeTagForSection(section), [section]);
+  const scopeSequenceTag = useMemo(
+    () => getScopeTagForSection(section),
+    [section],
+  );
 
   // Load units and config (school is required to fetch section config)
-  const { sectionConfigAssignments, loading: loadingConfig } = useUnitsAndConfig(
-    scopeSequenceTag,
-    section,
-    school
-  );
+  const { sectionConfigAssignments, loading: loadingConfig } =
+    useUnitsAndConfig(scopeSequenceTag, section, school);
 
   // Load all lessons for the unit
   const { lessons: allLessonsInUnit, loading: loadingLessons } = useLessons(
@@ -66,7 +66,7 @@ export function SectionSummaryCard({
     section,
     currentUnit,
     "all",
-    sectionConfigAssignments
+    sectionConfigAssignments,
   );
 
   // Load progress data
@@ -74,13 +74,23 @@ export function SectionSummaryCard({
     section,
     currentUnit,
     allLessonsInUnit,
-    school
+    school,
   );
 
   // Compute pacing data (school is required for proper student filtering)
-  const pacingData = usePacingData(section, currentUnit, allLessonsInUnit, progressData, excludeRampUps, pacingDate, true, school);
+  const pacingData = usePacingData(
+    section,
+    currentUnit,
+    allLessonsInUnit,
+    progressData,
+    excludeRampUps,
+    pacingDate,
+    true,
+    school,
+  );
 
-  const isLoading = loadingConfig || loadingLessons || loadingProgress || pacingData.loading;
+  const isLoading =
+    loadingConfig || loadingLessons || loadingProgress || pacingData.loading;
 
   const { students, completedStudents } = pacingData;
 
@@ -94,7 +104,12 @@ export function SectionSummaryCard({
 
   // Report counts to parent when data loads (must be before any early returns)
   useEffect(() => {
-    if (onCountsLoaded && !isLoading && currentUnitInfo && currentUnit !== null) {
+    if (
+      onCountsLoaded &&
+      !isLoading &&
+      currentUnitInfo &&
+      currentUnit !== null
+    ) {
       onCountsLoaded(section, {
         farBehind: farBehindCount,
         behind: behindCount,
@@ -104,7 +119,19 @@ export function SectionSummaryCard({
         complete: completeCount,
       });
     }
-  }, [onCountsLoaded, section, isLoading, currentUnitInfo, currentUnit, farBehindCount, behindCount, onTrackCount, aheadCount, farAheadCount, completeCount]);
+  }, [
+    onCountsLoaded,
+    section,
+    isLoading,
+    currentUnitInfo,
+    currentUnit,
+    farBehindCount,
+    behindCount,
+    onTrackCount,
+    aheadCount,
+    farAheadCount,
+    completeCount,
+  ]);
 
   // No calendar data case
   if (!currentUnitInfo || currentUnit === null) {
@@ -123,9 +150,15 @@ export function SectionSummaryCard({
           {specialPopulations && specialPopulations.length > 0 && (
             <div className="flex items-center gap-1">
               {specialPopulations.map((pop) => {
-                const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+                const style = SPECIAL_POP_BADGE_STYLES[pop] || {
+                  bg: "bg-gray-100",
+                  text: "text-gray-800",
+                };
                 return (
-                  <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
+                  <span
+                    key={pop}
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}
+                  >
                     {pop}
                   </span>
                 );
@@ -148,14 +181,22 @@ export function SectionSummaryCard({
             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-600 text-white">
               {school}
             </span>
-            {specialPopulations && specialPopulations.length > 0 && specialPopulations.map((pop) => {
-              const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
-              return (
-                <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
-                  {pop}
-                </span>
-              );
-            })}
+            {specialPopulations &&
+              specialPopulations.length > 0 &&
+              specialPopulations.map((pop) => {
+                const style = SPECIAL_POP_BADGE_STYLES[pop] || {
+                  bg: "bg-gray-100",
+                  text: "text-gray-800",
+                };
+                return (
+                  <span
+                    key={pop}
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}
+                  >
+                    {pop}
+                  </span>
+                );
+              })}
           </div>
           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
             Unit {currentUnit}
@@ -177,41 +218,109 @@ export function SectionSummaryCard({
     completeCount;
 
   // Calculate percentages
-  const farBehindPercent = totalStudents > 0 ? Math.round((students.farBehind.length / totalStudents) * 100) : 0;
-  const behindPercent = totalStudents > 0 ? Math.round((students.behind.length / totalStudents) * 100) : 0;
-  const onTrackPercent = totalStudents > 0 ? Math.round((students.onTrack.length / totalStudents) * 100) : 0;
-  const aheadPercent = totalStudents > 0 ? Math.round((students.ahead.length / totalStudents) * 100) : 0;
-  const farAheadPercent = totalStudents > 0 ? Math.round((students.farAhead.length / totalStudents) * 100) : 0;
-  const completePercent = totalStudents > 0 ? Math.round((completeCount / totalStudents) * 100) : 0;
+  const farBehindPercent =
+    totalStudents > 0
+      ? Math.round((students.farBehind.length / totalStudents) * 100)
+      : 0;
+  const behindPercent =
+    totalStudents > 0
+      ? Math.round((students.behind.length / totalStudents) * 100)
+      : 0;
+  const onTrackPercent =
+    totalStudents > 0
+      ? Math.round((students.onTrack.length / totalStudents) * 100)
+      : 0;
+  const aheadPercent =
+    totalStudents > 0
+      ? Math.round((students.ahead.length / totalStudents) * 100)
+      : 0;
+  const farAheadPercent =
+    totalStudents > 0
+      ? Math.round((students.farAhead.length / totalStudents) * 100)
+      : 0;
+  const completePercent =
+    totalStudents > 0 ? Math.round((completeCount / totalStudents) * 100) : 0;
 
   const segments = [
-    { percent: farBehindPercent, count: students.farBehind.length, bg: "bg-red-50", border: "border-red-500", text: "text-red-700", dot: "bg-red-500", label: "Far Behind" },
-    { percent: behindPercent, count: students.behind.length, bg: "bg-yellow-50", border: "border-yellow-500", text: "text-yellow-700", dot: "bg-yellow-500", label: "Behind" },
-    { percent: onTrackPercent, count: students.onTrack.length, bg: "bg-green-50", border: "border-green-500", text: "text-green-700", dot: "bg-green-500", label: "On Pace" },
-    { percent: aheadPercent, count: students.ahead.length, bg: "bg-sky-50", border: "border-sky-500", text: "text-sky-700", dot: "bg-sky-500", label: "Ahead" },
-    { percent: farAheadPercent, count: students.farAhead.length, bg: "bg-blue-100", border: "border-blue-600", text: "text-blue-700", dot: "bg-blue-600", label: "Far Ahead" },
-    { percent: completePercent, count: completeCount, bg: "bg-purple-100", border: "border-purple-500", text: "text-purple-700", dot: "bg-purple-500", label: "Complete" },
-  ].filter(s => s.percent > 0);
+    {
+      percent: farBehindPercent,
+      count: students.farBehind.length,
+      bg: "bg-red-50",
+      border: "border-red-500",
+      text: "text-red-700",
+      dot: "bg-red-500",
+      label: "Far Behind",
+    },
+    {
+      percent: behindPercent,
+      count: students.behind.length,
+      bg: "bg-yellow-50",
+      border: "border-yellow-500",
+      text: "text-yellow-700",
+      dot: "bg-yellow-500",
+      label: "Behind",
+    },
+    {
+      percent: onTrackPercent,
+      count: students.onTrack.length,
+      bg: "bg-green-50",
+      border: "border-green-500",
+      text: "text-green-700",
+      dot: "bg-green-500",
+      label: "On Pace",
+    },
+    {
+      percent: aheadPercent,
+      count: students.ahead.length,
+      bg: "bg-sky-50",
+      border: "border-sky-500",
+      text: "text-sky-700",
+      dot: "bg-sky-500",
+      label: "Ahead",
+    },
+    {
+      percent: farAheadPercent,
+      count: students.farAhead.length,
+      bg: "bg-blue-100",
+      border: "border-blue-600",
+      text: "text-blue-700",
+      dot: "bg-blue-600",
+      label: "Far Ahead",
+    },
+    {
+      percent: completePercent,
+      count: completeCount,
+      bg: "bg-purple-100",
+      border: "border-purple-500",
+      text: "text-purple-700",
+      dot: "bg-purple-500",
+      label: "Complete",
+    },
+  ].filter((s) => s.percent > 0);
 
   // Get lessons in the expected section for badge display
   const expectedSectionInfo = pacingData.unitSections.find(
-    s => s.sectionId === pacingData.expectedSection || s.sectionName === pacingData.expectedSectionName
+    (s) =>
+      s.sectionId === pacingData.expectedSection ||
+      s.sectionName === pacingData.expectedSectionName,
   );
 
   // Format lesson badges (e.g., "L2", "L3", "RU1", "RU2")
-  const lessonBadges = expectedSectionInfo?.lessons.map(lesson => {
-    const isRampUp = lesson.lessonName.toLowerCase().includes('ru') ||
-                     lesson.lessonName.toLowerCase().includes('ramp');
-    if (isRampUp) {
-      // Extract number from "RU1" or "Ramp Up 1" format
-      const num = lesson.lessonName.match(/\d+/)?.[0] || '';
-      return `RU${num}`;
-    } else {
-      // Extract number from "Lesson 1" or "L1" format
-      const num = lesson.lessonName.match(/\d+/)?.[0] || '';
-      return `L${num}`;
-    }
-  }) || [];
+  const lessonBadges =
+    expectedSectionInfo?.lessons.map((lesson) => {
+      const isRampUp =
+        lesson.lessonName.toLowerCase().includes("ru") ||
+        lesson.lessonName.toLowerCase().includes("ramp");
+      if (isRampUp) {
+        // Extract number from "RU1" or "Ramp Up 1" format
+        const num = lesson.lessonName.match(/\d+/)?.[0] || "";
+        return `RU${num}`;
+      } else {
+        // Extract number from "Lesson 1" or "L1" format
+        const num = lesson.lessonName.match(/\d+/)?.[0] || "";
+        return `L${num}`;
+      }
+    }) || [];
 
   return (
     <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
@@ -222,9 +331,15 @@ export function SectionSummaryCard({
           {school}
         </span>
         {specialPopulations?.map((pop) => {
-          const style = SPECIAL_POP_BADGE_STYLES[pop] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+          const style = SPECIAL_POP_BADGE_STYLES[pop] || {
+            bg: "bg-gray-100",
+            text: "text-gray-800",
+          };
           return (
-            <span key={pop} className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}>
+            <span
+              key={pop}
+              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${style.bg} ${style.text}`}
+            >
               {pop}
             </span>
           );
@@ -239,13 +354,14 @@ export function SectionSummaryCard({
             {segments.map((segment, index) => {
               const isFirst = index === 0;
               const isLast = index === segments.length - 1;
-              const roundedClass = isFirst && isLast
-                ? "rounded-full"
-                : isFirst
-                  ? "rounded-l-full"
-                  : isLast
-                    ? "rounded-r-full"
-                    : "";
+              const roundedClass =
+                isFirst && isLast
+                  ? "rounded-full"
+                  : isFirst
+                    ? "rounded-l-full"
+                    : isLast
+                      ? "rounded-r-full"
+                      : "";
               return (
                 <div
                   key={index}
@@ -254,7 +370,9 @@ export function SectionSummaryCard({
                   title={`${segment.label}: ${segment.count} (${segment.percent}%)`}
                 >
                   {segment.percent >= 8 && (
-                    <span className={`text-[10px] ${segment.text} font-bold whitespace-nowrap`}>
+                    <span
+                      className={`text-[10px] ${segment.text} font-bold whitespace-nowrap`}
+                    >
                       {segment.percent}%
                     </span>
                   )}
@@ -270,8 +388,12 @@ export function SectionSummaryCard({
                 className="flex items-center justify-center"
                 style={{ width: `${segment.percent}%` }}
               >
-                <span className={`flex items-center gap-0.5 text-[10px] ${segment.text}`}>
-                  <UserIcon className={`w-2.5 h-2.5 ${segment.dot.replace('bg-', 'text-')}`} />
+                <span
+                  className={`flex items-center gap-0.5 text-[10px] ${segment.text}`}
+                >
+                  <UserIcon
+                    className={`w-2.5 h-2.5 ${segment.dot.replace("bg-", "text-")}`}
+                  />
                   {segment.count}
                 </span>
               </div>
@@ -284,13 +406,17 @@ export function SectionSummaryCard({
 
       {/* Footer with current section info */}
       <div className="-mx-4 -mb-4 mt-3 pt-3 pb-4 px-4 border-t border-gray-200 bg-white rounded-b-lg flex items-center gap-1.5">
-        <span className="text-xs font-semibold text-gray-500">Current Section:</span>
+        <span className="text-xs font-semibold text-gray-500">
+          Current Section:
+        </span>
         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
           Unit {currentUnit}
         </span>
-        {(currentUnitInfo?.currentSectionName || pacingData.expectedSectionName) && (
+        {(currentUnitInfo?.currentSectionName ||
+          pacingData.expectedSectionName) && (
           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-            {currentUnitInfo?.currentSectionName || pacingData.expectedSectionName}
+            {currentUnitInfo?.currentSectionName ||
+              pacingData.expectedSectionName}
           </span>
         )}
         {lessonBadges.map((badge, idx) => (

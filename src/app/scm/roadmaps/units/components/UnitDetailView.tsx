@@ -10,25 +10,42 @@ import { BookOpenIcon } from "@heroicons/react/24/outline";
 interface UnitDetailViewProps {
   unit: RoadmapUnit | null;
   selectedSection: string;
-  onSkillClick?: (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => void;
+  onSkillClick?: (
+    skillNumber: string,
+    color: "blue" | "green" | "orange" | "purple",
+  ) => void;
   selectedStudents?: Student[];
 }
 
 // Calculate mastery for a single student
-function calculateStudentMastery(student: Student | undefined, skillNumbers: string[]): { mastered: number; total: number } {
+function calculateStudentMastery(
+  student: Student | undefined,
+  skillNumbers: string[],
+): { mastered: number; total: number } {
   if (!student || !skillNumbers || skillNumbers.length === 0) {
     return { mastered: 0, total: skillNumbers?.length || 0 };
   }
 
   const masteredSkills = student.masteredSkills || [];
-  const masteredCount = skillNumbers.filter(skill => masteredSkills.includes(skill)).length;
+  const masteredCount = skillNumbers.filter((skill) =>
+    masteredSkills.includes(skill),
+  ).length;
 
   return { mastered: masteredCount, total: skillNumbers.length };
 }
 
-export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedStudents = [] }: UnitDetailViewProps) {
-  const [essentialSkillsFromTargets, setEssentialSkillsFromTargets] = useState<string[]>([]);
-  const [helpfulSkillsFromTargets, setHelpfulSkillsFromTargets] = useState<string[]>([]);
+export function UnitDetailView({
+  unit,
+  selectedSection,
+  onSkillClick,
+  selectedStudents = [],
+}: UnitDetailViewProps) {
+  const [essentialSkillsFromTargets, setEssentialSkillsFromTargets] = useState<
+    string[]
+  >([]);
+  const [helpfulSkillsFromTargets, setHelpfulSkillsFromTargets] = useState<
+    string[]
+  >([]);
   const [isLoadingPrerequisites, setIsLoadingPrerequisites] = useState(false);
 
   // Fetch essential and helpful skills from all target skills
@@ -48,16 +65,20 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
           const allEssentialSkills = new Set<string>();
           const allHelpfulSkills = new Set<string>();
 
-          result.data.forEach(skill => {
+          result.data.forEach((skill) => {
             if (skill.essentialSkills) {
-              skill.essentialSkills.forEach((essential: { skillNumber: string }) => {
-                allEssentialSkills.add(essential.skillNumber);
-              });
+              skill.essentialSkills.forEach(
+                (essential: { skillNumber: string }) => {
+                  allEssentialSkills.add(essential.skillNumber);
+                },
+              );
             }
             if (skill.helpfulSkills) {
-              skill.helpfulSkills.forEach((helpful: { skillNumber: string }) => {
-                allHelpfulSkills.add(helpful.skillNumber);
-              });
+              skill.helpfulSkills.forEach(
+                (helpful: { skillNumber: string }) => {
+                  allHelpfulSkills.add(helpful.skillNumber);
+                },
+              );
             }
           });
 
@@ -65,7 +86,7 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
           setHelpfulSkillsFromTargets(Array.from(allHelpfulSkills));
         }
       } catch (error) {
-        console.error('Error fetching prerequisite skills:', error);
+        console.error("Error fetching prerequisite skills:", error);
         setEssentialSkillsFromTargets([]);
         setHelpfulSkillsFromTargets([]);
       } finally {
@@ -82,17 +103,22 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
         <div className="text-center p-8">
           <BookOpenIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
           <div className="text-gray-600 font-medium mb-1">No Unit Selected</div>
-          <div className="text-gray-500 text-sm">Select a grade and unit to view details</div>
+          <div className="text-gray-500 text-sm">
+            Select a grade and unit to view details
+          </div>
         </div>
       </div>
     );
   }
 
   // Determine if we're showing a single student's mastery
-  const singleStudent = selectedStudents.length === 1 ? selectedStudents[0] : undefined;
+  const singleStudent =
+    selectedStudents.length === 1 ? selectedStudents[0] : undefined;
 
   // Calculate mastery for each category if single student
-  const targetMastery = singleStudent ? calculateStudentMastery(singleStudent, unit.targetSkills) : null;
+  const targetMastery = singleStudent
+    ? calculateStudentMastery(singleStudent, unit.targetSkills)
+    : null;
 
   // Essential Skills: Use aggregated essential skills from all target skills
   const essentialMastery = singleStudent
@@ -105,10 +131,12 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
     : null;
 
   // Support Skills: Use unit.additionalSupportSkills (if exists and not empty)
-  const hasSupportSkills = unit.additionalSupportSkills && unit.additionalSupportSkills.length > 0;
-  const supportMastery = singleStudent && hasSupportSkills
-    ? calculateStudentMastery(singleStudent, unit.additionalSupportSkills)
-    : null;
+  const hasSupportSkills =
+    unit.additionalSupportSkills && unit.additionalSupportSkills.length > 0;
+  const supportMastery =
+    singleStudent && hasSupportSkills
+      ? calculateStudentMastery(singleStudent, unit.additionalSupportSkills)
+      : null;
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
@@ -119,16 +147,20 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
             Unit {unit.unitNumber}
           </span>
           <h2 className="text-2xl font-bold text-gray-900 min-w-0">
-            {unit.unitTitle.replace(/^\d+\s*-\s*/, '')}
+            {unit.unitTitle.replace(/^\d+\s*-\s*/, "")}
           </h2>
         </div>
 
         {/* Stats Summary for this Unit */}
-        <div className={`grid gap-4 ${hasSupportSkills ? 'grid-cols-4' : 'grid-cols-3'}`}>
+        <div
+          className={`grid gap-4 ${hasSupportSkills ? "grid-cols-4" : "grid-cols-3"}`}
+        >
           {/* Target Skills */}
           <div className="text-center bg-white rounded-lg border border-gray-200 p-3">
             <div className="text-2xl font-bold text-skill-target">
-              {targetMastery ? `${targetMastery.mastered}/${targetMastery.total}` : unit.targetCount}
+              {targetMastery
+                ? `${targetMastery.mastered}/${targetMastery.total}`
+                : unit.targetCount}
             </div>
             <div className="text-xs text-gray-500">Target Skills</div>
           </div>
@@ -165,7 +197,9 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
           {hasSupportSkills && (
             <div className="text-center bg-white rounded-lg border border-gray-200 p-3">
               <div className="text-2xl font-bold text-skill-support">
-                {supportMastery ? `${supportMastery.mastered}/${supportMastery.total}` : unit.additionalSupportSkills.length}
+                {supportMastery
+                  ? `${supportMastery.mastered}/${supportMastery.total}`
+                  : unit.additionalSupportSkills.length}
               </div>
               <div className="text-xs text-gray-500">Support Skills</div>
             </div>
@@ -179,7 +213,11 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
         {unit.targetSkills && unit.targetSkills.length > 0 && (
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-4">
-              Target Skills ({singleStudent ? `${targetMastery?.mastered}/${targetMastery?.total}` : unit.targetSkills.length})
+              Target Skills (
+              {singleStudent
+                ? `${targetMastery?.mastered}/${targetMastery?.total}`
+                : unit.targetSkills.length}
+              )
             </h3>
             <SkillListWithProgress
               skillNumbers={unit.targetSkills}
@@ -193,21 +231,26 @@ export function UnitDetailView({ unit, selectedSection, onSkillClick, selectedSt
         )}
 
         {/* Support Skills Section - Displayed as individual skills in unit */}
-        {unit.additionalSupportSkills && unit.additionalSupportSkills.length > 0 && (
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">
-              Support Skills ({singleStudent && supportMastery ? `${supportMastery.mastered}/${supportMastery.total}` : unit.additionalSupportSkills.length})
-            </h3>
-            <SkillListWithProgress
-              skillNumbers={unit.additionalSupportSkills}
-              selectedSection={selectedSection}
-              onSkillClick={onSkillClick}
-              skillType="support"
-              showPrerequisites={false}
-              selectedStudents={selectedStudents}
-            />
-          </div>
-        )}
+        {unit.additionalSupportSkills &&
+          unit.additionalSupportSkills.length > 0 && (
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">
+                Support Skills (
+                {singleStudent && supportMastery
+                  ? `${supportMastery.mastered}/${supportMastery.total}`
+                  : unit.additionalSupportSkills.length}
+                )
+              </h3>
+              <SkillListWithProgress
+                skillNumbers={unit.additionalSupportSkills}
+                selectedSection={selectedSection}
+                onSkillClick={onSkillClick}
+                skillType="support"
+                showPrerequisites={false}
+                selectedStudents={selectedStudents}
+              />
+            </div>
+          )}
 
         {/* Helpful Skills Section - Note: These are shown nested under Target Skills above */}
         {/* The count in the stats represents aggregated helpful prerequisites from all target skills */}

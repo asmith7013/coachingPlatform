@@ -1,14 +1,14 @@
-import { useState, useCallback } from 'react';
-import { 
-  scrapeRoadmapsSkills, 
+import { useState, useCallback } from "react";
+import {
+  scrapeRoadmapsSkills,
   scrapeRoadmapsSkillsDebug,
-  validateRoadmapsCredentials
-} from '../actions/scrape-skills';
-import { 
-  RoadmapsCredentials, 
-  SkillData, 
-  RoadmapsScrapingResponse 
-} from '../lib/types';
+  validateRoadmapsCredentials,
+} from "../actions/scrape-skills";
+import {
+  RoadmapsCredentials,
+  SkillData,
+  RoadmapsScrapingResponse,
+} from "../lib/types";
 
 export interface RoadmapsScraperState {
   results: SkillData[];
@@ -26,8 +26,16 @@ export interface RoadmapsScraperState {
 }
 
 export interface RoadmapsScraperActions {
-  scrapeSkills: (credentials: RoadmapsCredentials, urls: string[], delay?: number) => Promise<void>;
-  scrapeSkillsDebug: (credentials: RoadmapsCredentials, urls: string[], delay?: number) => Promise<void>;
+  scrapeSkills: (
+    credentials: RoadmapsCredentials,
+    urls: string[],
+    delay?: number,
+  ) => Promise<void>;
+  scrapeSkillsDebug: (
+    credentials: RoadmapsCredentials,
+    urls: string[],
+    delay?: number,
+  ) => Promise<void>;
   validateCredentials: (credentials: RoadmapsCredentials) => Promise<void>;
   clearResults: () => void;
   clearError: () => void;
@@ -43,150 +51,171 @@ const initialState: RoadmapsScraperState = {
   validationResult: null,
   currentSkillNumber: undefined,
   currentSkillIndex: undefined,
-  totalSkills: undefined
+  totalSkills: undefined,
 };
 
 /**
  * Hook for managing Roadmaps scraper state and operations
  * Follows the exact pattern from useIMScraper for consistency
  */
-export function useRoadmapsScraper(): RoadmapsScraperState & RoadmapsScraperActions {
+export function useRoadmapsScraper(): RoadmapsScraperState &
+  RoadmapsScraperActions {
   const [state, setState] = useState<RoadmapsScraperState>(initialState);
 
   const setLoading = useCallback((loading: boolean) => {
-    setState(prev => ({ ...prev, isLoading: loading }));
+    setState((prev) => ({ ...prev, isLoading: loading }));
   }, []);
 
   const setError = useCallback((error: string | null) => {
-    setState(prev => ({ ...prev, error }));
+    setState((prev) => ({ ...prev, error }));
   }, []);
 
-  const setResults = useCallback((results: SkillData[], response?: RoadmapsScrapingResponse) => {
-    setState(prev => ({ 
-      ...prev, 
-      results, 
-      lastResponse: response || null 
-    }));
-  }, []);
+  const setResults = useCallback(
+    (results: SkillData[], response?: RoadmapsScrapingResponse) => {
+      setState((prev) => ({
+        ...prev,
+        results,
+        lastResponse: response || null,
+      }));
+    },
+    [],
+  );
 
   const setValidating = useCallback((validating: boolean) => {
-    setState(prev => ({ ...prev, isValidating: validating }));
+    setState((prev) => ({ ...prev, isValidating: validating }));
   }, []);
 
-  const setValidationResult = useCallback((result: { authenticated?: boolean; message?: string } | null) => {
-    setState(prev => ({ ...prev, validationResult: result }));
-  }, []);
+  const setValidationResult = useCallback(
+    (result: { authenticated?: boolean; message?: string } | null) => {
+      setState((prev) => ({ ...prev, validationResult: result }));
+    },
+    [],
+  );
 
-  const scrapeSkills = useCallback(async (
-    credentials: RoadmapsCredentials,
-    urls: string[],
-    delay: number = 2000
-  ) => {
-    setLoading(true);
-    setError(null);
-    setState(prev => ({
-      ...prev,
-      totalSkills: urls.length,
-      currentSkillIndex: 0,
-      currentSkillNumber: urls[0]?.split('/').pop() || ''
-    }));
-
-    try {
-      // Since server action doesn't support streaming, we'll update state after completion
-      // but show initial progress
-      const response = await scrapeRoadmapsSkills({
-        credentials,
-        skillUrls: urls,
-        delayBetweenRequests: delay
-      });
-
-      if (response.success && response.data) {
-        setResults(response.data.skills, response.data);
-      } else {
-        setError(response.error || 'Unknown error occurred');
-        setResults([]);
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      setError(errorMessage);
-      setResults([]);
-    } finally {
-      setLoading(false);
-      setState(prev => ({
+  const scrapeSkills = useCallback(
+    async (
+      credentials: RoadmapsCredentials,
+      urls: string[],
+      delay: number = 2000,
+    ) => {
+      setLoading(true);
+      setError(null);
+      setState((prev) => ({
         ...prev,
-        currentSkillNumber: undefined,
-        currentSkillIndex: undefined,
-        totalSkills: undefined
+        totalSkills: urls.length,
+        currentSkillIndex: 0,
+        currentSkillNumber: urls[0]?.split("/").pop() || "",
       }));
-    }
-  }, [setLoading, setError, setResults]);
 
-  const scrapeSkillsDebug = useCallback(async (
-    credentials: RoadmapsCredentials, 
-    urls: string[], 
-    delay: number = 3000
-  ) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      console.log('🚀 Starting debug scraping session from hook...');
-      const response = await scrapeRoadmapsSkillsDebug({
-        credentials,
-        skillUrls: urls,
-        delayBetweenRequests: delay
-      });
-      
-      if (response.success && response.data) {
-        setResults(response.data.skills, response.data);
-        console.log('✅ Debug scraping completed successfully');
-      } else {
-        setError(response.error || 'Unknown error occurred');
-        setResults([]);
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      console.error('❌ Debug scraping error:', err);
-      setError(errorMessage);
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [setLoading, setError, setResults]);
+      try {
+        // Since server action doesn't support streaming, we'll update state after completion
+        // but show initial progress
+        const response = await scrapeRoadmapsSkills({
+          credentials,
+          skillUrls: urls,
+          delayBetweenRequests: delay,
+        });
 
-  const validateCredentials = useCallback(async (credentials: RoadmapsCredentials) => {
-    setValidating(true);
-    setError(null);
-    setValidationResult(null);
-    
-    try {
-      const response = await validateRoadmapsCredentials(credentials);
-      
-      if (response.success && response.data) {
-        setValidationResult(response.data);
-        
-        // If validation failed, also set it as an error
-        if (!response.data.authenticated) {
-          setError(response.data.message || 'Credential validation failed');
+        if (response.success && response.data) {
+          setResults(response.data.skills, response.data);
+        } else {
+          setError(response.error || "Unknown error occurred");
+          setResults([]);
         }
-      } else {
-        setError(response.error || 'Unknown error occurred during validation');
-        setValidationResult(null);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        setError(errorMessage);
+        setResults([]);
+      } finally {
+        setLoading(false);
+        setState((prev) => ({
+          ...prev,
+          currentSkillNumber: undefined,
+          currentSkillIndex: undefined,
+          totalSkills: undefined,
+        }));
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      setError(errorMessage);
+    },
+    [setLoading, setError, setResults],
+  );
+
+  const scrapeSkillsDebug = useCallback(
+    async (
+      credentials: RoadmapsCredentials,
+      urls: string[],
+      delay: number = 3000,
+    ) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        console.log("🚀 Starting debug scraping session from hook...");
+        const response = await scrapeRoadmapsSkillsDebug({
+          credentials,
+          skillUrls: urls,
+          delayBetweenRequests: delay,
+        });
+
+        if (response.success && response.data) {
+          setResults(response.data.skills, response.data);
+          console.log("✅ Debug scraping completed successfully");
+        } else {
+          setError(response.error || "Unknown error occurred");
+          setResults([]);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        console.error("❌ Debug scraping error:", err);
+        setError(errorMessage);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setLoading, setError, setResults],
+  );
+
+  const validateCredentials = useCallback(
+    async (credentials: RoadmapsCredentials) => {
+      setValidating(true);
+      setError(null);
       setValidationResult(null);
-    } finally {
-      setValidating(false);
-    }
-  }, [setValidating, setError, setValidationResult]);
+
+      try {
+        const response = await validateRoadmapsCredentials(credentials);
+
+        if (response.success && response.data) {
+          setValidationResult(response.data);
+
+          // If validation failed, also set it as an error
+          if (!response.data.authenticated) {
+            setError(response.data.message || "Credential validation failed");
+          }
+        } else {
+          setError(
+            response.error || "Unknown error occurred during validation",
+          );
+          setValidationResult(null);
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        setError(errorMessage);
+        setValidationResult(null);
+      } finally {
+        setValidating(false);
+      }
+    },
+    [setValidating, setError, setValidationResult],
+  );
 
   const clearResults = useCallback(() => {
-    setState(prev => ({ 
-      ...prev, 
-      results: [], 
-      lastResponse: null 
+    setState((prev) => ({
+      ...prev,
+      results: [],
+      lastResponse: null,
     }));
   }, []);
 
@@ -206,6 +235,6 @@ export function useRoadmapsScraper(): RoadmapsScraperState & RoadmapsScraperActi
     validateCredentials,
     clearResults,
     clearError,
-    reset
+    reset,
   };
 }

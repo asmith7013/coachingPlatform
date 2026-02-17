@@ -1,30 +1,35 @@
-import { createCrudHooks } from '@query/client/factories/crud-factory';
-import { ZodSchema } from 'zod';
-import { 
-  VisitScheduleZodSchema, 
-  type VisitSchedule 
-} from '@/lib/schema/zod-schema/schedules/schedule-documents';
-import { 
+import { createCrudHooks } from "@query/client/factories/crud-factory";
+import { ZodSchema } from "zod";
+import {
+  VisitScheduleZodSchema,
+  type VisitSchedule,
+} from "@/lib/schema/zod-schema/schedules/schedule-documents";
+import {
   fetchVisitSchedules,
   fetchVisitScheduleById,
   createVisitSchedule,
   updateVisitSchedule,
-  deleteVisitSchedule
-} from '@/app/actions/schedules/visit-schedule';
+  deleteVisitSchedule,
+} from "@/app/actions/schedules/visit-schedule";
 
 // Standard CRUD factory usage - no custom logic
 const visitScheduleHooks = createCrudHooks({
-  entityType: 'visitSchedules',
+  entityType: "visitSchedules",
   schema: VisitScheduleZodSchema as ZodSchema<VisitSchedule>,
   serverActions: {
     fetch: fetchVisitSchedules,
     fetchById: fetchVisitScheduleById,
     create: createVisitSchedule,
     update: updateVisitSchedule,
-    delete: deleteVisitSchedule
+    delete: deleteVisitSchedule,
   },
-  validSortFields: ['date', 'coachId', 'schoolId', 'createdAt'],
-  relatedEntityTypes: ['schools', 'staff', 'coachingActionPlans', 'bellSchedules']
+  validSortFields: ["date", "coachId", "schoolId", "createdAt"],
+  relatedEntityTypes: [
+    "schools",
+    "staff",
+    "coachingActionPlans",
+    "bellSchedules",
+  ],
 });
 
 // Export individual hooks
@@ -38,15 +43,15 @@ export const useVisitSchedules = {
   list: useVisitSchedulesList,
   byId: useVisitScheduleById,
   mutations: useVisitSchedulesMutations,
-  manager: useVisitScheduleManager
+  manager: useVisitScheduleManager,
 };
 
 // Individual exports for backward compatibility
-export { 
-  useVisitSchedulesList, 
-  useVisitScheduleById, 
-  useVisitSchedulesMutations, 
-  useVisitScheduleManager
+export {
+  useVisitSchedulesList,
+  useVisitScheduleById,
+  useVisitSchedulesMutations,
+  useVisitScheduleManager,
 };
 
-export default useVisitSchedules; 
+export default useVisitSchedules;

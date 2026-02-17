@@ -1,8 +1,8 @@
 "use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { AssignmentVariationModel } from '@mongoose-schema/scm/podsie';
-import { handleServerError } from '@error/handlers/server';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { AssignmentVariationModel } from "@mongoose-schema/scm/podsie";
+import { handleServerError } from "@error/handlers/server";
 
 export async function deleteVariationBySlug(slug: string) {
   return withDbConnection(async () => {
@@ -12,7 +12,7 @@ export async function deleteVariationBySlug(slug: string) {
       if (result.deletedCount === 0) {
         return {
           success: false,
-          error: 'Assignment variation not found',
+          error: "Assignment variation not found",
         };
       }
 
@@ -23,7 +23,10 @@ export async function deleteVariationBySlug(slug: string) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to delete assignment variation'),
+        error: handleServerError(
+          error,
+          "Failed to delete assignment variation",
+        ),
       };
     }
   });

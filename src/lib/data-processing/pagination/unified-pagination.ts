@@ -11,13 +11,15 @@ import { validateWithSchema } from "@query/client/utilities/selector-helpers";
  * Cleans up empty, null, or undefined filter values that would cause unwanted filtering
  * This prevents issues where empty string searches filter out all results
  */
-function cleanFilters(filters: Record<string, unknown>): Record<string, unknown> {
+function cleanFilters(
+  filters: Record<string, unknown>,
+): Record<string, unknown> {
   const cleaned: Record<string, unknown> = {};
-  
+
   for (const [key, value] of Object.entries(filters)) {
     // Skip empty strings, null, undefined, and empty arrays
     if (
-      value !== '' &&
+      value !== "" &&
       value !== null &&
       value !== undefined &&
       !(Array.isArray(value) && value.length === 0)
@@ -25,7 +27,7 @@ function cleanFilters(filters: Record<string, unknown>): Record<string, unknown>
       cleaned[key] = value;
     }
   }
-  
+
   return cleaned;
 }
 
@@ -35,7 +37,7 @@ function cleanFilters(filters: Record<string, unknown>): Record<string, unknown>
 function sanitizeSortField(
   sortBy: string | undefined,
   validSortFields: string[],
-  defaultSortField: string
+  defaultSortField: string,
 ): string {
   if (!sortBy || !validSortFields.includes(sortBy)) {
     return defaultSortField;
@@ -53,63 +55,67 @@ export async function executePaginatedQuery<T extends BaseDocument>(
   config: {
     validSortFields?: string[];
     validateSchema?: boolean;
-  } = {}
+  } = {},
 ): Promise<PaginatedResponse<T>> {
   try {
     // Extract configuration options with defaults
     const {
-      validSortFields = ['createdAt', 'updatedAt'],
-      validateSchema = false
+      validSortFields = ["createdAt", "updatedAt"],
+      validateSchema = false,
     } = config;
-    
+
     // Extract query parameters
-    const { 
-      page, 
-      limit, 
-      sortBy = 'createdAt', 
-      sortOrder = 'desc',
+    const {
+      page,
+      limit,
+      sortBy = "createdAt",
+      sortOrder = "desc",
       filters = {},
     } = params;
-    
+
     // Connect to database
     await connectToDB();
-    
+
     // Clean filters - this is the key fix!
     const cleanedFilters = cleanFilters(filters);
-    
+
     // Sanitize sort field
-    const sortField = sanitizeSortField(sortBy, validSortFields, 'createdAt');
-    const sortValue = sortOrder === 'asc' ? 1 : -1;
-    
+    const sortField = sanitizeSortField(sortBy, validSortFields, "createdAt");
+    const sortValue = sortOrder === "asc" ? 1 : -1;
+
     // Build the query using CLEANED filters
-    const query = model.find(cleanedFilters)
+    const query = model
+      .find(cleanedFilters)
       .sort({ [sortField]: sortValue })
       .skip(calculateSkip({ page, limit }))
       .limit(limit);
-    
+
     // Execute query and count total using CLEANED filters
     const [documents, totalItems] = await Promise.all([
       query.exec(),
-      model.countDocuments(cleanedFilters)
+      model.countDocuments(cleanedFilters),
     ]);
 
     // Apply toJSON() to each document to trigger transforms
-    const transformedItems = documents.map(doc => doc.toJSON());
-    
+    const transformedItems = documents.map((doc) => doc.toJSON());
+
     // Ensure items is an array
     const itemsArray = Array.isArray(transformedItems) ? transformedItems : [];
-    
+
     // Simple data processing:
     let processedItems = itemsArray as T[];
-    
+
     // 2. Optional schema validation
     if (validateSchema) {
       processedItems = validateWithSchema(processedItems, schema);
     }
-    
+
     // Calculate metadata
-    const totalPages = calculatePaginationMeta(totalItems, { page, limit }).totalPages;
-    
+    const totalPages = calculatePaginationMeta(totalItems, {
+      page,
+      limit,
+    }).totalPages;
+
     // Return the complete paginated response
     return {
       success: true,
@@ -119,7 +125,7 @@ export async function executePaginatedQuery<T extends BaseDocument>(
       limit,
       totalPages,
       hasMore: page < totalPages,
-      empty: processedItems.length === 0
+      empty: processedItems.length === 0,
     };
   } catch (error) {
     return {
@@ -131,7 +137,7 @@ export async function executePaginatedQuery<T extends BaseDocument>(
       totalPages: 0,
       hasMore: false,
       empty: true,
-      error: handleServerError(error)
+      error: handleServerError(error),
     } as PaginatedResponse<T>;
   }
 }
@@ -146,13 +152,13 @@ export async function fetchPaginatedResource<T extends BaseDocument>(
   config: {
     validSortFields?: string[];
     validateSchema?: boolean;
-  } = {}
-): Promise<PaginatedResponse<T>> {  
+  } = {},
+): Promise<PaginatedResponse<T>> {
   return executePaginatedQuery<T>(
     model as unknown as Model<Document>,
     schema,
     params,
-    config
+    config,
   );
 }
 
@@ -168,17 +174,17 @@ export function calculateSkip(params: { page: number; limit: number }): number {
  */
 export function calculatePaginationMeta(
   total: number,
-  params: { page: number; limit: number }
+  params: { page: number; limit: number },
 ): PaginationMeta {
   const { page, limit } = params;
   const totalPages = Math.max(1, Math.ceil(total / limit));
-  
+
   return {
     page,
     limit,
     total,
     totalPages,
     hasMore: page < totalPages,
-    isEmpty: total === 0
+    isEmpty: total === 0,
   };
 }

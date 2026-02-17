@@ -4,13 +4,16 @@ import SentryBoundaryWrapper from "@components/error/SentryBoundaryWrapper";
 import { QueryProvider } from "@query/core/provider";
 import "@/app/globals.css";
 import { PerformanceMonitorProvider } from "@lib/dev/debugging/usePerformanceMonitoring";
-import { ClerkProvider } from '@clerk/nextjs'
-import { AuthProvider } from '@/providers/AuthProvider'
-import { Toaster } from 'sonner';
-import { Analytics } from '@vercel/analytics/react';
-import { PostHogProvider, PostHogIdentifier } from '@/providers/PostHogProvider';
-import { PostHogPageView } from '@/components/analytics/PostHogPageView';
-import { PageViewTracker } from '@/components/analytics/PageViewTracker';
+import { ClerkProvider } from "@clerk/nextjs";
+import { AuthProvider } from "@/providers/AuthProvider";
+import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react";
+import {
+  PostHogProvider,
+  PostHogIdentifier,
+} from "@/providers/PostHogProvider";
+import { PostHogPageView } from "@/components/analytics/PostHogPageView";
+import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -22,7 +25,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Solves Coaching",
@@ -35,7 +38,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable} ${inter.className} h-full`}>
+    <html
+      lang="en"
+      className={`${geist.variable} ${geistMono.variable} ${inter.className} h-full`}
+    >
       <body className={`bg-seasalt text-gunmetal font-sans antialiased h-full`}>
         <PostHogProvider>
           <ClerkProvider dynamic>

@@ -1,11 +1,16 @@
-import React from 'react';
-import { Card } from '@/components/composed/cards/Card';
-import { Heading } from '@/components/core/typography/Heading';
-import { Text } from '@/components/core/typography/Text';
-import { Badge } from '@/components/core/feedback/Badge';
-import { ClockIcon, UserGroupIcon, AcademicCapIcon, MapPinIcon } from '@heroicons/react/24/outline';
-import { useTodaysVisitData } from '../context/TodaysVisitContext';
-import { formatMediumDate } from '@/lib/data-processing/transformers/utils/date-utils';
+import React from "react";
+import { Card } from "@/components/composed/cards/Card";
+import { Heading } from "@/components/core/typography/Heading";
+import { Text } from "@/components/core/typography/Text";
+import { Badge } from "@/components/core/feedback/Badge";
+import {
+  ClockIcon,
+  UserGroupIcon,
+  AcademicCapIcon,
+  MapPinIcon,
+} from "@heroicons/react/24/outline";
+import { useTodaysVisitData } from "../context/TodaysVisitContext";
+import { formatMediumDate } from "@/lib/data-processing/transformers/utils/date-utils";
 
 export function ScheduleDisplayCard() {
   const { todaysVisit, isLoading } = useTodaysVisitData();
@@ -56,7 +61,8 @@ export function ScheduleDisplayCard() {
           <div className="text-center py-8">
             <UserGroupIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <Text color="muted">
-              Schedule details will be available once visit scheduling is implemented.
+              Schedule details will be available once visit scheduling is
+              implemented.
             </Text>
             <Text textSize="sm" color="muted" className="mt-2">
               Visit ID: {todaysVisit.visit._id}
@@ -78,14 +84,18 @@ export function ScheduleDisplayCard() {
                     {teacher.name}
                   </Text>
                   <Badge intent="secondary" className="text-xs">
-                    {teacher.periods.length} period{teacher.periods.length !== 1 ? 's' : ''}
+                    {teacher.periods.length} period
+                    {teacher.periods.length !== 1 ? "s" : ""}
                   </Badge>
                 </div>
 
                 {/* Periods */}
                 <div className="pl-8 space-y-2">
                   {teacher.periods.map((period) => (
-                    <div key={period.periodNumber} className="flex items-center justify-between">
+                    <div
+                      key={period.periodNumber}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center gap-3">
                         <Badge intent="primary" className="text-xs min-w-fit">
                           Period {period.periodNumber}
@@ -117,16 +127,18 @@ export function ScheduleDisplayCard() {
         {todaysVisit.visit.allowedPurpose && (
           <div className="border-t pt-4">
             <div className="space-y-2">
-              <Text textSize="sm" color="muted" className="font-medium uppercase tracking-wide">
+              <Text
+                textSize="sm"
+                color="muted"
+                className="font-medium uppercase tracking-wide"
+              >
                 Visit Purpose
               </Text>
-              <Badge intent="info">
-                {todaysVisit.visit.allowedPurpose}
-              </Badge>
+              <Badge intent="info">{todaysVisit.visit.allowedPurpose}</Badge>
             </div>
           </div>
         )}
       </div>
     </Card>
   );
-} 
+}

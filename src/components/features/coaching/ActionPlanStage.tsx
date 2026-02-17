@@ -1,12 +1,12 @@
-import React from 'react';
-import { cn } from '@/lib/ui/utils/formatters';
-import { ActionPlanStageProps } from '@domain-types/coaching-action-plan';
+import React from "react";
+import { cn } from "@/lib/ui/utils/formatters";
+import { ActionPlanStageProps } from "@domain-types/coaching-action-plan";
 
-export const ActionPlanStage: React.FC<ActionPlanStageProps> = ({ 
-  number, 
-  title, 
-  children, 
-  className = "" 
+export const ActionPlanStage: React.FC<ActionPlanStageProps> = ({
+  number,
+  title,
+  children,
+  className = "",
 }) => {
   return (
     <div className={cn("bg-white rounded-lg shadow-sm p-6", className)}>
@@ -16,11 +16,9 @@ export const ActionPlanStage: React.FC<ActionPlanStageProps> = ({
           Stage {number}: {title}
         </h2>
       </div>
-      
+
       {/* Full width content area */}
-      <div className="w-full">
-        {children}
-      </div>
+      <div className="w-full">{children}</div>
     </div>
   );
-}; 
+};

@@ -1,6 +1,6 @@
-import React from 'react';
-import { tv } from 'tailwind-variants';
-import { Textarea } from '@/components/core/fields/Textarea';
+import React from "react";
+import { tv } from "tailwind-variants";
+import { Textarea } from "@/components/core/fields/Textarea";
 
 interface FeedbackSectionProps {
   formData: {
@@ -9,18 +9,25 @@ interface FeedbackSectionProps {
     grow: string;
     nextSteps: string;
   };
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  handleInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => void;
 }
 
 const sectionTitle = tv({
-  base: "text-lg font-semibold border-b pb-2 mb-3"
+  base: "text-lg font-semibold border-b pb-2 mb-3",
 });
 
 const fieldLabel = tv({
-  base: "text-sm font-medium text-gray-700 mb-1"
+  base: "text-sm font-medium text-gray-700 mb-1",
 });
 
-const FeedbackSection: React.FC<FeedbackSectionProps> = ({ formData, handleInputChange }) => {
+const FeedbackSection: React.FC<FeedbackSectionProps> = ({
+  formData,
+  handleInputChange,
+}) => {
   return (
     <div>
       <h3 className={sectionTitle()}>Feedback</h3>
@@ -70,4 +77,4 @@ const FeedbackSection: React.FC<FeedbackSectionProps> = ({ formData, handleInput
   );
 };
 
-export default FeedbackSection; 
+export default FeedbackSection;

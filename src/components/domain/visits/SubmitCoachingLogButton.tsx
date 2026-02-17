@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Button } from '@/components/core/Button';
-import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import React from "react";
+import { Button } from "@/components/core/Button";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
 interface SubmitCoachingLogButtonProps {
   visitId: string;
-  intent?: 'primary' | 'secondary' | 'danger' | 'success';
-  appearance?: 'solid' | 'alt' | 'outline';
-  textSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl';
+  intent?: "primary" | "secondary" | "danger" | "success";
+  appearance?: "solid" | "alt" | "outline";
+  textSize?: "xs" | "sm" | "base" | "lg" | "xl";
   disabled?: boolean;
   className?: string;
   children?: React.ReactNode;
@@ -16,24 +16,24 @@ interface SubmitCoachingLogButtonProps {
 
 export function SubmitCoachingLogButton({
   visitId,
-  intent = 'primary',
-  appearance = 'solid',
-  textSize = 'sm',
+  intent = "primary",
+  appearance = "solid",
+  textSize = "sm",
   disabled = false,
   className,
-  children
+  children,
 }: SubmitCoachingLogButtonProps) {
   const handleSubmitCoachingLog = () => {
     if (!visitId) {
-      console.warn('SubmitCoachingLogButton: visitId is required');
+      console.warn("SubmitCoachingLogButton: visitId is required");
       return;
     }
 
     // Create URL with visitId parameter
     const coachingLogUrl = `/dashboard/coaching-log-automation?visitId=${encodeURIComponent(visitId)}`;
-    
+
     // Open in new tab
-    window.open(coachingLogUrl, '_blank', 'noopener,noreferrer');
+    window.open(coachingLogUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -46,7 +46,7 @@ export function SubmitCoachingLogButton({
       className={className}
       icon={<PencilSquareIcon className="h-4 w-4" />}
     >
-      {children || 'Submit Coaching Log'}
+      {children || "Submit Coaching Log"}
     </Button>
   );
-} 
+}

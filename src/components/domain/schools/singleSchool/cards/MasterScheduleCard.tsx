@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { Card } from '@composed-components/cards/Card'
-import { TodaysVisitDashboard } from '@/components/features/todaysVisitDashboard/TodaysVisitDashboard'
+import { Card } from "@composed-components/cards/Card";
+import { TodaysVisitDashboard } from "@/components/features/todaysVisitDashboard/TodaysVisitDashboard";
 
 interface TodaysVisitDashboardCardProps {
   schoolId: string;
@@ -13,7 +13,7 @@ function TodaysVisitDashboardCard({ schoolId }: TodaysVisitDashboardCardProps) {
     <Card>
       <TodaysVisitDashboard schoolId={schoolId} />
     </Card>
-  )
+  );
 }
 
-export default TodaysVisitDashboardCard 
+export default TodaysVisitDashboardCard;

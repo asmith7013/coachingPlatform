@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import React, { useMemo } from 'react';
-import { useForm } from '@tanstack/react-form';
-import { Alert } from '@components/core/feedback/Alert';
-import { FormLayout } from '@components/composed/forms/FormLayout';
-import { Input } from '@components/core/fields/Input';
-import { Select } from '@components/core/fields/Select';
-import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
-import { VisitInput } from '@zod-schema/visits/visit';
-import { VisitInputZodSchema } from '@zod-schema/visits/visit';
-import { VisitFieldConfig } from '@forms/fieldConfig/integrations';
-import type { Field } from '@ui-types/form';
+import React, { useMemo } from "react";
+import { useForm } from "@tanstack/react-form";
+import { Alert } from "@components/core/feedback/Alert";
+import { FormLayout } from "@components/composed/forms/FormLayout";
+import { Input } from "@components/core/fields/Input";
+import { Select } from "@components/core/fields/Select";
+import { ReferenceSelect } from "@components/core/fields/ReferenceSelect";
+import { VisitInput } from "@zod-schema/visits/visit";
+import { VisitInputZodSchema } from "@zod-schema/visits/visit";
+import { VisitFieldConfig } from "@forms/fieldConfig/integrations";
+import type { Field } from "@ui-types/form";
 
 /**
  * Props for the ImportCompletionForm component
@@ -32,12 +32,12 @@ export function ImportCompletionForm({
   onSubmit,
   onCancel,
   missingFields,
-  disabled = false
+  disabled = false,
 }: ImportCompletionFormProps) {
   // Filter fields to only include missing ones
   const filteredFields = useMemo(() => {
-    return VisitFieldConfig.filter((field: Field<VisitInput>) => 
-      missingFields.includes(String(field.name))
+    return VisitFieldConfig.filter((field: Field<VisitInput>) =>
+      missingFields.includes(String(field.name)),
     );
   }, [missingFields]);
 
@@ -46,11 +46,11 @@ export function ImportCompletionForm({
     defaultValues: importedVisit,
     validators: {
       onChange: VisitInputZodSchema,
-      onSubmit: VisitInputZodSchema
+      onSubmit: VisitInputZodSchema,
     },
     onSubmit: async ({ value }) => {
       onSubmit(value as VisitInput);
-    }
+    },
   });
 
   // Show message if no missing fields
@@ -72,13 +72,13 @@ export function ImportCompletionForm({
         <Alert.Description>
           <p>Please complete the following fields to import this visit:</p>
           <ul className="list-disc list-inside mt-1">
-            {missingFields.map(field => (
+            {missingFields.map((field) => (
               <li key={field}>{field}</li>
             ))}
           </ul>
         </Alert.Description>
       </Alert>
-      
+
       <FormLayout
         title="Complete Visit Information"
         description="The following fields need to be completed before this visit can be imported."
@@ -102,24 +102,30 @@ export function ImportCompletionForm({
               >
                 {fieldConfig.label}
               </label>
-              
+
               <form.Field name={String(fieldConfig.name)}>
                 {(field) => (
                   <div className="space-y-1">
-                    {['text', 'email', 'password', 'number', 'date'].includes(fieldConfig.type) && (
+                    {["text", "email", "password", "number", "date"].includes(
+                      fieldConfig.type,
+                    ) && (
                       <Input
                         type={fieldConfig.type}
-                        value={String(field.state.value ?? '')}
+                        value={String(field.state.value ?? "")}
                         onChange={(e) => field.handleChange(e.target.value)}
                         onBlur={field.handleBlur}
                         placeholder={fieldConfig.placeholder}
                         disabled={fieldConfig.disabled}
                       />
                     )}
-                    {fieldConfig.type === 'select' && (
-                      fieldConfig.multiple ? (
+                    {fieldConfig.type === "select" &&
+                      (fieldConfig.multiple ? (
                         <Select
-                          value={Array.isArray(field.state.value) ? field.state.value as string[] : []}
+                          value={
+                            Array.isArray(field.state.value)
+                              ? (field.state.value as string[])
+                              : []
+                          }
                           onChange={field.handleChange}
                           options={fieldConfig.options || []}
                           placeholder={fieldConfig.placeholder}
@@ -128,17 +134,20 @@ export function ImportCompletionForm({
                         />
                       ) : (
                         <Select
-                          value={typeof field.state.value === 'string' ? field.state.value as string : ''}
+                          value={
+                            typeof field.state.value === "string"
+                              ? (field.state.value as string)
+                              : ""
+                          }
                           onChange={field.handleChange}
                           options={fieldConfig.options || []}
                           placeholder={fieldConfig.placeholder}
                           disabled={fieldConfig.disabled}
                         />
-                      )
-                    )}
-                    {fieldConfig.type === 'reference' && (
+                      ))}
+                    {fieldConfig.type === "reference" && (
                       <ReferenceSelect
-                        url={fieldConfig.url || ''}
+                        url={fieldConfig.url || ""}
                         value={field.state.value as string | string[]}
                         onChange={field.handleChange}
                         multiple={fieldConfig.multiple}
@@ -148,11 +157,12 @@ export function ImportCompletionForm({
                         label={fieldConfig.label}
                       />
                     )}
-                    {field.state.meta.errors?.length > 0 && typeof field.state.meta.errors[0] === 'string' && (
-                      <p className="text-sm text-destructive">
-                        {field.state.meta.errors[0]}
-                      </p>
-                    )}
+                    {field.state.meta.errors?.length > 0 &&
+                      typeof field.state.meta.errors[0] === "string" && (
+                        <p className="text-sm text-destructive">
+                          {field.state.meta.errors[0]}
+                        </p>
+                      )}
                   </div>
                 )}
               </form.Field>
@@ -162,4 +172,4 @@ export function ImportCompletionForm({
       </FormLayout>
     </div>
   );
-} 
+}

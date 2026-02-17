@@ -71,7 +71,7 @@ export interface AppliedQuestionMap {
 // Path to the podsie-curriculum repo (relative to user's home directory)
 const CURRICULUM_BASE_PATH = path.join(
   process.env.HOME || "/Users/alexsmith",
-  "Documents/GitHub/podsie-curriculum"
+  "Documents/GitHub/podsie-curriculum",
 );
 
 // =====================================
@@ -114,7 +114,11 @@ function numericSort(a: string, b: string): number {
 // PARSE VARIATIONS
 // =====================================
 
-function parseVariations(variationsDir: string, assignmentFolder: string, questionNumber: number): VariationInfo[] {
+function parseVariations(
+  variationsDir: string,
+  assignmentFolder: string,
+  questionNumber: number,
+): VariationInfo[] {
   if (!fs.existsSync(variationsDir)) {
     return [];
   }
@@ -123,15 +127,24 @@ function parseVariations(variationsDir: string, assignmentFolder: string, questi
   const variationFolders = getSubdirectories(variationsDir).sort(numericSort);
 
   for (const folderName of variationFolders) {
-    const questionYmlPath = path.join(variationsDir, folderName, "question.yml");
-    const questionContentsPath = path.join(variationsDir, folderName, "question-contents.md");
+    const questionYmlPath = path.join(
+      variationsDir,
+      folderName,
+      "question.yml",
+    );
+    const questionContentsPath = path.join(
+      variationsDir,
+      folderName,
+      "question-contents.md",
+    );
     const questionData = readYamlFile<QuestionYml>(questionYmlPath);
 
     // Check if this folder has a question (either yml or contents.md)
     if (questionData || fs.existsSync(questionContentsPath)) {
       const variationOrder = parseInt(folderName, 10);
       // Use external_id from yml if available, otherwise generate from path
-      const variationExternalId = questionData?.external_id ||
+      const variationExternalId =
+        questionData?.external_id ||
         `path:${assignmentFolder}:q${questionNumber}:v${variationOrder}`;
 
       variations.push({
@@ -209,11 +222,16 @@ function parseAssignment(assignmentPath: string): CurriculumQuestionMap | null {
 
     const questionNumber = parseInt(qFolderName, 10);
     const variationsDir = path.join(questionDir, "variations");
-    const variations = parseVariations(variationsDir, folderName, questionNumber);
+    const variations = parseVariations(
+      variationsDir,
+      folderName,
+      questionNumber,
+    );
 
     // If no question.yml, generate an external_id from the path
     // Format: path:<assignment-folder>:q<number>
-    const questionExternalId = questionData?.external_id || `path:${folderName}:q${questionNumber}`;
+    const questionExternalId =
+      questionData?.external_id || `path:${folderName}:q${questionNumber}`;
 
     questions.push({
       questionNumber,
@@ -232,15 +250,20 @@ function parseAssignment(assignmentPath: string): CurriculumQuestionMap | null {
 
   // Calculate summary
   const totalRootQuestions = questions.length;
-  const totalVariations = questions.reduce((sum, q) => sum + q.variationCount, 0);
+  const totalVariations = questions.reduce(
+    (sum, q) => sum + q.variationCount,
+    0,
+  );
   const q1HasVariations = questions[0]?.hasVariations ?? false;
 
   const questionsWithVariations = questions.filter((q) => q.hasVariations);
   const variationsPerQuestion =
     questionsWithVariations.length > 0
       ? Math.round(
-          questionsWithVariations.reduce((sum, q) => sum + q.variationCount, 0) /
-            questionsWithVariations.length
+          questionsWithVariations.reduce(
+            (sum, q) => sum + q.variationCount,
+            0,
+          ) / questionsWithVariations.length,
         )
       : 0;
 
@@ -343,7 +366,10 @@ export async function scanCurriculumAssignments(): Promise<{
     console.error("Error scanning curriculum:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error scanning curriculum",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Unknown error scanning curriculum",
     };
   }
 }
@@ -356,7 +382,7 @@ export async function scanCurriculumAssignments(): Promise<{
  * Find a curriculum assignment that matches a Podsie assignment name
  */
 export async function findCurriculumMatch(
-  podsieAssignmentName: string
+  podsieAssignmentName: string,
 ): Promise<{
   success: boolean;
   data?: CurriculumQuestionMap;
@@ -387,7 +413,7 @@ export async function findCurriculumMatch(
     const targetWords = normalizedTarget.split(/\s+/);
     const assignmentWords = assignment.assignment.normalizedTitle.split(/\s+/);
 
-    const commonWords = targetWords.filter(w => assignmentWords.includes(w));
+    const commonWords = targetWords.filter((w) => assignmentWords.includes(w));
     const union = new Set([...targetWords, ...assignmentWords]);
     const score = commonWords.length / union.size;
 
@@ -424,7 +450,7 @@ export async function findCurriculumMatch(
  */
 function applyQuestionStructure(
   curriculumMap: CurriculumQuestionMap,
-  podsieQuestionIds: number[]
+  podsieQuestionIds: number[],
 ): AppliedQuestionMap[] {
   const result: AppliedQuestionMap[] = [];
   let podsieIndex = 0;
@@ -475,7 +501,7 @@ function applyQuestionStructure(
  */
 export async function getQuestionMapFromCurriculum(
   podsieAssignmentName: string,
-  podsieQuestionIds: number[]
+  podsieQuestionIds: number[],
 ): Promise<{
   success: boolean;
   data?: {
@@ -487,7 +513,7 @@ export async function getQuestionMapFromCurriculum(
 }> {
   console.warn(
     `[DEPRECATED] getQuestionMapFromCurriculum is deprecated. ` +
-    `Use getQuestionMapByName from podsie-question-map instead.`
+      `Use getQuestionMapByName from podsie-question-map instead.`,
   );
 
   // Find matching curriculum assignment
@@ -504,12 +530,15 @@ export async function getQuestionMapFromCurriculum(
   if (podsieQuestionIds.length !== expectedTotal) {
     console.warn(
       `Question count mismatch for "${podsieAssignmentName}": ` +
-      `expected ${expectedTotal}, got ${podsieQuestionIds.length}`
+        `expected ${expectedTotal}, got ${podsieQuestionIds.length}`,
     );
   }
 
   // Apply the structure
-  const questionMap = applyQuestionStructure(curriculumMatch, podsieQuestionIds);
+  const questionMap = applyQuestionStructure(
+    curriculumMatch,
+    podsieQuestionIds,
+  );
 
   return {
     success: true,
@@ -542,7 +571,7 @@ export async function bulkSyncQuestionMapsFromCurriculum(
     assignmentId: number;
     assignmentName: string;
     questionIds: number[];
-  }>
+  }>,
 ): Promise<{
   success: boolean;
   results: BulkQuestionMapSyncResult[];
@@ -556,7 +585,7 @@ export async function bulkSyncQuestionMapsFromCurriculum(
   for (const assignment of assignments) {
     const mapResult = await getQuestionMapFromCurriculum(
       assignment.assignmentName,
-      assignment.questionIds
+      assignment.questionIds,
     );
 
     if (mapResult.success && mapResult.data) {
@@ -609,7 +638,7 @@ export async function checkCurriculumMatches(
   assignments: Array<{
     assignmentId: number;
     assignmentName: string;
-  }>
+  }>,
 ): Promise<{
   success: boolean;
   previews: CurriculumMatchPreview[];
@@ -621,7 +650,7 @@ export async function checkCurriculumMatches(
   if (!scanResult.success || !scanResult.data) {
     return {
       success: false,
-      previews: assignments.map(a => ({
+      previews: assignments.map((a) => ({
         assignmentId: a.assignmentId,
         assignmentName: a.assignmentName,
         hasCurriculumMatch: false,
@@ -636,7 +665,9 @@ export async function checkCurriculumMatches(
   let unmatchedCount = 0;
 
   for (const assignment of assignments) {
-    const normalizedTarget = normalizeLessonName(assignment.assignmentName).normalized;
+    const normalizedTarget = normalizeLessonName(
+      assignment.assignmentName,
+    ).normalized;
 
     // Try exact normalized match first
     let curriculumMatch = scanResult.data.byNormalizedName[normalizedTarget];
@@ -646,8 +677,11 @@ export async function checkCurriculumMatches(
       let bestScore = 0;
       for (const candidateMap of scanResult.data.assignments) {
         const targetWords = normalizedTarget.split(/\s+/);
-        const assignmentWords = candidateMap.assignment.normalizedTitle.split(/\s+/);
-        const commonWords = targetWords.filter(w => assignmentWords.includes(w));
+        const assignmentWords =
+          candidateMap.assignment.normalizedTitle.split(/\s+/);
+        const commonWords = targetWords.filter((w) =>
+          assignmentWords.includes(w),
+        );
         const union = new Set([...targetWords, ...assignmentWords]);
         const score = commonWords.length / union.size;
 
@@ -726,8 +760,8 @@ export async function getAllCurriculumAssignments(): Promise<{
     };
   }
 
-  const assignments: CurriculumAssignmentSummary[] = scanResult.data.assignments.map(
-    (assignment) => {
+  const assignments: CurriculumAssignmentSummary[] =
+    scanResult.data.assignments.map((assignment) => {
       // Extract course and unit from path
       // e.g., "courses/IM-8th-Grade/modules/Unit-3/assignments/Ramp-Up-2"
       const pathParts = assignment.assignment.path.split("/");
@@ -746,8 +780,7 @@ export async function getAllCurriculumAssignments(): Promise<{
         q1HasVariations: assignment.summary.q1HasVariations,
         variationsPerQuestion: assignment.summary.variationsPerQuestion,
       };
-    }
-  );
+    });
 
   // Sort by course, then unit, then title
   assignments.sort((a, b) => {
@@ -784,7 +817,7 @@ export interface ExportQuestionMapResult {
  * Later, when matching to Podsie, the numeric IDs will be applied
  */
 export async function exportCurriculumQuestionMapToDb(
-  curriculumPath: string
+  curriculumPath: string,
 ): Promise<{
   success: boolean;
   data?: ExportQuestionMapResult;
@@ -799,7 +832,7 @@ export async function exportCurriculumQuestionMapToDb(
 
     // Find the assignment by path
     const assignment = scanResult.data.assignments.find(
-      (a) => a.assignment.path === curriculumPath
+      (a) => a.assignment.path === curriculumPath,
     );
 
     if (!assignment) {
@@ -834,7 +867,9 @@ export async function exportCurriculumQuestionMapToDb(
     }
 
     // Import the save function dynamically to avoid circular deps
-    const { saveQuestionMap } = await import("@/app/actions/scm/podsie/podsie-question-map");
+    const { saveQuestionMap } = await import(
+      "@/app/actions/scm/podsie/podsie-question-map"
+    );
 
     // Save to database using the title as the assignment identifier
     // We use "curriculum:" prefix to distinguish from Podsie numeric IDs
@@ -896,7 +931,7 @@ export async function exportAllCurriculumQuestionMapsToDb(): Promise<{
 
   for (const assignment of scanResult.data.assignments) {
     const exportResult = await exportCurriculumQuestionMapToDb(
-      assignment.assignment.path
+      assignment.assignment.path,
     );
 
     if (exportResult.success && exportResult.data) {

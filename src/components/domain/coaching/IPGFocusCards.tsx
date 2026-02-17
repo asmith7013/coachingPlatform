@@ -1,5 +1,8 @@
-import React from 'react';
-import { ClickableCards, type ClickableCardColor } from '@/components/composed/cards/ClickableCards';
+import React from "react";
+import {
+  ClickableCards,
+  type ClickableCardColor,
+} from "@/components/composed/cards/ClickableCards";
 
 export interface IPGFocusCardsProps {
   selectedValue?: string;
@@ -7,7 +10,7 @@ export interface IPGFocusCardsProps {
   options: Array<{
     value: string;
     label: string;
-    colorCode: 'primary' | 'secondary' | 'success';
+    colorCode: "primary" | "secondary" | "success";
   }>;
   className?: string;
 }
@@ -16,12 +19,12 @@ export const IPGFocusCards: React.FC<IPGFocusCardsProps> = ({
   selectedValue,
   onSelect,
   options,
-  className
+  className,
 }) => {
   // Color mapping function for core actions
   const getColor = (value: string): ClickableCardColor => {
-    const option = options.find(opt => opt.value === value);
-    return option?.colorCode || 'muted';
+    const option = options.find((opt) => opt.value === value);
+    return option?.colorCode || "muted";
   };
 
   return (
@@ -41,4 +44,4 @@ export const IPGFocusCards: React.FC<IPGFocusCardsProps> = ({
       ))}
     </ClickableCards>
   );
-}; 
+};

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Button } from '@/components/core/Button';
-import { Card } from '@/components/composed/cards';
-import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
-import { ClassroomObservation } from '@/lib/schema/zod-schema/visits/classroom-observation';
-import { toDateString } from '@/lib/data-processing/transformers/utils/date-utils';
+import React from "react";
+import { Button } from "@/components/core/Button";
+import { Card } from "@/components/composed/cards";
+import { Text } from "@/components/core/typography/Text";
+import { Heading } from "@/components/core/typography/Heading";
+import { ClassroomObservation } from "@/lib/schema/zod-schema/visits/classroom-observation";
+import { toDateString } from "@/lib/data-processing/transformers/utils/date-utils";
 
 interface ObservationCardProps {
   observation: ClassroomObservation;
@@ -17,17 +17,20 @@ interface ObservationCardProps {
   disabled?: boolean;
 }
 
-export function ObservationCard({ 
-  observation, 
-  onEdit, 
-  onDelete, 
+export function ObservationCard({
+  observation,
+  onEdit,
+  onDelete,
   onView,
   isDeleting = false,
-  disabled = false 
+  disabled = false,
 }: ObservationCardProps) {
-  
   const handleDelete = () => {
-    if (window.confirm(`Are you sure you want to delete the observation "${observation.cycle} - ${observation.session}"?`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete the observation "${observation.cycle} - ${observation.session}"?`,
+      )
+    ) {
       onDelete(observation._id);
     }
   };
@@ -40,27 +43,33 @@ export function ObservationCard({
             <Heading level="h4" className="mb-2">
               {observation.cycle} - {observation.session}
             </Heading>
-            
+
             <div className="space-y-1 text-sm text-gray-600">
               <div>
                 <Text textSize="sm" color="muted">
                   Date: {toDateString(new Date(observation.date))}
                 </Text>
               </div>
-              
+
               <div>
                 <Text textSize="sm" color="muted">
-                  Status: <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                    observation.status === 'completed' ? 'bg-green-100 text-green-800' :
-                    observation.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                    observation.status === 'reviewed' ? 'bg-purple-100 text-purple-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
+                  Status:{" "}
+                  <span
+                    className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                      observation.status === "completed"
+                        ? "bg-green-100 text-green-800"
+                        : observation.status === "in_progress"
+                          ? "bg-blue-100 text-blue-800"
+                          : observation.status === "reviewed"
+                            ? "bg-purple-100 text-purple-800"
+                            : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
                     {observation.status}
                   </span>
                 </Text>
               </div>
-              
+
               {observation.lessonTitle && (
                 <div>
                   <Text textSize="sm" color="muted">
@@ -68,7 +77,7 @@ export function ObservationCard({
                   </Text>
                 </div>
               )}
-              
+
               {observation.lessonCourse && (
                 <div>
                   <Text textSize="sm" color="muted">
@@ -76,25 +85,27 @@ export function ObservationCard({
                   </Text>
                 </div>
               )}
-              
+
               {observation.otherContext && (
                 <div>
                   <Text textSize="sm" color="muted">
-                    Context: {observation.otherContext.length > 100 
-                      ? `${observation.otherContext.substring(0, 100)}...` 
+                    Context:{" "}
+                    {observation.otherContext.length > 100
+                      ? `${observation.otherContext.substring(0, 100)}...`
                       : observation.otherContext}
                   </Text>
                 </div>
               )}
-              
+
               <div>
                 <Text textSize="sm" color="muted">
-                  Shared with Teacher: {observation.isSharedWithTeacher ? 'Yes' : 'No'}
+                  Shared with Teacher:{" "}
+                  {observation.isSharedWithTeacher ? "Yes" : "No"}
                 </Text>
               </div>
             </div>
           </div>
-          
+
           <div className="flex gap-2 ml-4">
             {onView && (
               <Button
@@ -106,7 +117,7 @@ export function ObservationCard({
                 👁️ View
               </Button>
             )}
-            
+
             <Button
               appearance="outline"
               onClick={() => onEdit(observation)}
@@ -115,7 +126,7 @@ export function ObservationCard({
             >
               ✏️ Edit
             </Button>
-            
+
             <Button
               appearance="outline"
               intent="danger"
@@ -123,11 +134,11 @@ export function ObservationCard({
               disabled={disabled || isDeleting}
               className="flex items-center gap-1 text-sm"
             >
-              {isDeleting ? '⏳' : '🗑️'} Delete
+              {isDeleting ? "⏳" : "🗑️"} Delete
             </Button>
           </div>
         </div>
       </Card.Body>
     </Card>
   );
-} 
+}

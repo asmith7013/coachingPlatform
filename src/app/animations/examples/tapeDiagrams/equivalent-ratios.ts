@@ -3,7 +3,8 @@ import { ExampleSketch } from "../../types";
 export const TAPE_DIAGRAM_EQUIVALENT_RATIOS: ExampleSketch = {
   id: "tape-diagram-equivalent-ratios",
   name: "Tape Diagram: Equivalent Ratios",
-  description: "Interactive tape diagram showing equivalent ratios with unit rate and slider control",
+  description:
+    "Interactive tape diagram showing equivalent ratios with unit rate and slider control",
   code: `// Interactive Tape Diagram for Equivalent Ratios
 // Shows unit rate and allows slider control to scale the ratio
 

@@ -1,13 +1,13 @@
 "use client";
 
-import React from 'react';
-import { Button } from '@/components/core/Button';
-import { Card } from '@/components/composed/cards';
-import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
-import { Badge } from '@/components/core/feedback/Badge';
-import { CoachingActionPlan } from '@zod-schema/core/cap';
-import { EditIcon, TrashIcon, EyeIcon } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/core/Button";
+import { Card } from "@/components/composed/cards";
+import { Text } from "@/components/core/typography/Text";
+import { Heading } from "@/components/core/typography/Heading";
+import { Badge } from "@/components/core/feedback/Badge";
+import { CoachingActionPlan } from "@zod-schema/core/cap";
+import { EditIcon, TrashIcon, EyeIcon } from "lucide-react";
 
 interface CoachingActionPlanCardProps {
   plan: CoachingActionPlan;
@@ -24,15 +24,20 @@ export function CoachingActionPlanCard({
   onDelete,
   onView,
   isDeleting = false,
-  disabled = false
+  disabled = false,
 }: CoachingActionPlanCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'success';
-      case 'completed': return 'info';
-      case 'paused': return 'warning';
-      case 'draft': return 'neutral';
-      default: return 'neutral';
+      case "active":
+        return "success";
+      case "completed":
+        return "info";
+      case "paused":
+        return "warning";
+      case "draft":
+        return "neutral";
+      default:
+        return "neutral";
     }
   };
 
@@ -47,7 +52,10 @@ export function CoachingActionPlanCard({
                 {plan.title}
               </Heading>
               <Text textSize="sm" color="muted">
-                {plan.academicYear} • {Array.isArray(plan.teachers) ? plan.teachers.join(', ') : plan.teachers}
+                {plan.academicYear} •{" "}
+                {Array.isArray(plan.teachers)
+                  ? plan.teachers.join(", ")
+                  : plan.teachers}
               </Text>
             </div>
             <Badge intent={getStatusColor(plan.status)} className="ml-2">
@@ -62,14 +70,14 @@ export function CoachingActionPlanCard({
             </Text>
             {plan.startDate && (
               <Text textSize="sm">
-                <span className="font-medium">Start Date:</span> {
-                  new Date(plan.startDate).toLocaleDateString()
-                }
+                <span className="font-medium">Start Date:</span>{" "}
+                {new Date(plan.startDate).toLocaleDateString()}
               </Text>
             )}
             {plan.goalDescription && (
               <Text textSize="sm" className="line-clamp-2">
-                <span className="font-medium">Goal:</span> {plan.goalDescription}
+                <span className="font-medium">Goal:</span>{" "}
+                {plan.goalDescription}
               </Text>
             )}
           </div>
@@ -87,7 +95,7 @@ export function CoachingActionPlanCard({
                 View
               </Button>
             )}
-            
+
             <Button
               appearance="outline"
               onClick={() => onEdit(plan)}
@@ -97,7 +105,7 @@ export function CoachingActionPlanCard({
               <EditIcon className="h-4 w-4" />
               Edit
             </Button>
-            
+
             <Button
               appearance="outline"
               intent="danger"
@@ -106,11 +114,11 @@ export function CoachingActionPlanCard({
               className="flex items-center gap-1"
             >
               <TrashIcon className="h-4 w-4" />
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </div>
         </div>
       </Card.Body>
     </Card>
   );
-} 
+}

@@ -5,7 +5,7 @@ import {
   ChevronRightIcon,
   ArrowTrendingUpIcon,
   ChartBarIcon,
-} from '@heroicons/react/24/outline';
+} from "@heroicons/react/24/outline";
 
 export default function PodsieHomePage() {
   const pages = [
@@ -13,14 +13,14 @@ export default function PodsieHomePage() {
       title: "Progress",
       href: "/scm/podsie/progress",
       Icon: ArrowTrendingUpIcon,
-      description: "Track student progress on Podsie lessons and assessments."
+      description: "Track student progress on Podsie lessons and assessments.",
     },
     {
       title: "Velocity",
       href: "/scm/podsie/velocity",
       Icon: ChartBarIcon,
-      description: "Track class velocity and completion rates over time."
-    }
+      description: "Track class velocity and completion rates over time.",
+    },
   ];
 
   return (
@@ -40,9 +40,17 @@ export default function PodsieHomePage() {
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <ul role="list" className="divide-y divide-gray-100">
           {pages.map((page) => (
-            <li key={page.href} className="relative flex justify-between hover:bg-gray-50 transition-colors">
-              <Link href={page.href} className="flex flex-1 items-center gap-x-4 px-6 py-4">
-                {page.Icon && <page.Icon className="w-6 h-6 text-gray-600 flex-shrink-0" />}
+            <li
+              key={page.href}
+              className="relative flex justify-between hover:bg-gray-50 transition-colors"
+            >
+              <Link
+                href={page.href}
+                className="flex flex-1 items-center gap-x-4 px-6 py-4"
+              >
+                {page.Icon && (
+                  <page.Icon className="w-6 h-6 text-gray-600 flex-shrink-0" />
+                )}
                 <div className="min-w-0 flex-auto">
                   <p className="text-sm font-semibold text-gray-900">
                     {page.title}
@@ -51,7 +59,10 @@ export default function PodsieHomePage() {
                     {page.description}
                   </p>
                 </div>
-                <ChevronRightIcon aria-hidden="true" className="size-5 flex-none text-gray-400" />
+                <ChevronRightIcon
+                  aria-hidden="true"
+                  className="size-5 flex-none text-gray-400"
+                />
               </Link>
             </li>
           ))}

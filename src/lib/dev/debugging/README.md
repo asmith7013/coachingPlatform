@@ -13,18 +13,22 @@ This package provides tools for tracking component performance, detecting render
 ## Quick Start
 
 ```tsx
-import { useRenderCounter, RenderLoopDetector, withPerformanceMonitoring } from '@/lib/performance';
+import {
+  useRenderCounter,
+  RenderLoopDetector,
+  withPerformanceMonitoring,
+} from "@/lib/performance";
 
 // 1. Basic render counting in a component
 function MyComponent() {
-  const renderCount = useRenderCounter('MyComponent');
+  const renderCount = useRenderCounter("MyComponent");
   // ... component code ...
 }
 
 // 2. Wrap a problematic component with monitoring
 <RenderLoopDetector componentId="MyComponent">
   <MyComponent />
-</RenderLoopDetector>
+</RenderLoopDetector>;
 
 // 3. Use a higher-order component for monitoring
 const MonitoredComponent = withPerformanceMonitoring(MyComponent);
@@ -58,7 +62,7 @@ const MonitoredComponent = withPerformanceMonitoring(MyComponent);
 // 1. Quick temporary check
 <RenderLoopDetector componentId="SuspiciousComponent">
   <SuspiciousComponent />
-</RenderLoopDetector>
+</RenderLoopDetector>;
 
 // 2. Permanent monitoring
 const EnhancedComponent = withRenderLoopDetection(MyComponent);
@@ -69,15 +73,17 @@ const EnhancedComponent = withRenderLoopDetection(MyComponent);
 ```tsx
 function OptimizationCandidate() {
   // Add this to components you want to optimize
-  const { getStats, getRenderCount } = usePerformanceMonitoring('OptimizationCandidate');
-  
+  const { getStats, getRenderCount } = usePerformanceMonitoring(
+    "OptimizationCandidate",
+  );
+
   // Check render count in effect
   useEffect(() => {
     if (getRenderCount() > 5) {
-      console.log('Performance stats:', getStats());
+      console.log("Performance stats:", getStats());
     }
   }, [getStats, getRenderCount]);
-  
+
   // ... component code ...
 }
 ```
@@ -89,7 +95,7 @@ function OptimizationCandidate() {
 <PerformanceMonitorProvider>
   <App />
   <PerformanceDebugger /> {/* Shows stats UI when monitoring is enabled */}
-</PerformanceMonitorProvider>
+</PerformanceMonitorProvider>;
 
 // Later, to enable monitoring:
 const { toggleMonitoring } = useContext(PerformanceContext);
@@ -118,4 +124,4 @@ const { toggleMonitoring } = useContext(PerformanceContext);
 2. Wrap suspicious components with `RenderLoopDetector` to get detailed metrics
 3. Check for state updates in effects without proper dependencies
 4. Look for new object/function references created during render
-5. Consider using the performance monitoring HOCs for complex components 
+5. Consider using the performance monitoring HOCs for complex components

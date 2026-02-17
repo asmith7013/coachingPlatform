@@ -14,14 +14,15 @@ export default function TailwindSanityCheck() {
 
       {/* 🎨 Theme Token Check (Semantic Colors) */}
       <div className="bg-secondary text-white p-4 rounded">
-        If this is soft gray bg and dark gunmetal text → Theme tokens are working
+        If this is soft gray bg and dark gunmetal text → Theme tokens are
+        working
       </div>
 
       {/* 🧪 Arbitrary Utility Check */}
       <div className="bg-success text-white p-4 rounded">
         If this is green background → arbitrary class names are supported
       </div>
-            {/* 🧪 Arbitrary Utility Check */}
+      {/* 🧪 Arbitrary Utility Check */}
       <div className="bg-primary text-white p-4 rounded">
         If this is green background → arbitrary class names are supported
       </div>
@@ -34,7 +35,8 @@ export default function TailwindSanityCheck() {
           color: "var(--colors-text)",
         }}
       >
-        If this uses theme.css variables (seasalt bg + gunmetal text), your custom CSS vars are injected
+        If this uses theme.css variables (seasalt bg + gunmetal text), your
+        custom CSS vars are injected
       </div>
 
       {/* 🧠 Font Family Debug */}
@@ -43,4 +45,4 @@ export default function TailwindSanityCheck() {
       </div>
     </div>
   );
-} 
+}

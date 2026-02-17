@@ -2,7 +2,10 @@
 
 import React from "react";
 import type { StudentRoadmapData } from "@/app/actions/scm/roadmaps/roadmap-completions";
-import { StackedSkillsBarChart, type BarDataItem } from "./StackedSkillsBarChart";
+import {
+  StackedSkillsBarChart,
+  type BarDataItem,
+} from "./StackedSkillsBarChart";
 
 interface RoadmapBarChartProps {
   sectionName: string;
@@ -13,13 +16,10 @@ interface RoadmapBarChartProps {
   className?: string;
 }
 
-export function RoadmapBarChart({
-  students,
-  className,
-}: RoadmapBarChartProps) {
+export function RoadmapBarChart({ students, className }: RoadmapBarChartProps) {
   // Sort students alphabetically by first name
   const sortedStudents = [...students].sort((a, b) =>
-    a.firstName.localeCompare(b.firstName)
+    a.firstName.localeCompare(b.firstName),
   );
 
   // Transform student data to bar chart format

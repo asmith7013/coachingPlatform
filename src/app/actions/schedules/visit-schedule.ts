@@ -2,11 +2,11 @@
 
 import { createCrudActions } from "@server/crud";
 import { VisitScheduleModel } from "@/lib/schema/mongoose-schema/schedules/schedule-documents.model";
-import { 
-  VisitScheduleZodSchema, 
+import {
+  VisitScheduleZodSchema,
   VisitScheduleInputZodSchema,
   type VisitSchedule,
-  type VisitScheduleInput
+  type VisitScheduleInput,
 } from "@/lib/schema/zod-schema/schedules/schedule-documents";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { QueryParams } from "@core-types/query";
@@ -19,9 +19,9 @@ const visitScheduleActions = createCrudActions({
   inputSchema: VisitScheduleInputZodSchema as ZodType<VisitScheduleInput>,
   name: "Visit Schedule",
   revalidationPaths: ["/dashboard/schedules", "/dashboard/visits"],
-  sortFields: ['date', 'coachId', 'schoolId', 'createdAt'],
-  defaultSortField: 'date',
-  defaultSortOrder: 'desc'
+  sortFields: ["date", "coachId", "schoolId", "createdAt"],
+  defaultSortField: "date",
+  defaultSortOrder: "desc",
 });
 
 // Export standard CRUD functions with connection handling
@@ -33,7 +33,10 @@ export async function createVisitSchedule(data: VisitScheduleInput) {
   return withDbConnection(() => visitScheduleActions.create(data));
 }
 
-export async function updateVisitSchedule(id: string, data: Partial<VisitScheduleInput>) {
+export async function updateVisitSchedule(
+  id: string,
+  data: Partial<VisitScheduleInput>,
+) {
   return withDbConnection(() => visitScheduleActions.update(id, data));
 }
 
@@ -43,4 +46,4 @@ export async function deleteVisitSchedule(id: string) {
 
 export async function fetchVisitScheduleById(id: string) {
   return withDbConnection(() => visitScheduleActions.fetchById(id));
-} 
+}

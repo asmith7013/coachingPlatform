@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/core/Button';
+import React, { useState } from "react";
+import { Button } from "@/components/core/Button";
 // import { Text } from '@/components/core/typography/Text';
-import { typography } from '@/lib/tokens/typography';
-import { cn } from '@ui/utils/formatters';;
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { typography } from "@/lib/tokens/typography";
+import { cn } from "@ui/utils/formatters";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 
 type RoutineFilterProps = {
   allRoutines: string[];
@@ -15,8 +15,8 @@ type RoutineFilterProps = {
   selectedLesson?: string;
   lessonRoutines?: string[];
   onLessonSelected?: () => void;
-  version: 'KH' | 'ILC';
-  setVersion: (version: 'KH' | 'ILC') => void;
+  version: "KH" | "ILC";
+  setVersion: (version: "KH" | "ILC") => void;
 };
 
 export function RoutineFilter({
@@ -31,7 +31,7 @@ export function RoutineFilter({
   onLessonSelected: _onLessonSelected,
 }: RoutineFilterProps) {
   const [hasManuallyFiltered, setHasManuallyFiltered] = useState(false);
-  
+
   // Sort routines to display MLR routines first
   const sortedRoutines = allRoutines.sort((a, b) => {
     const isMLRa = /^MLR\d+/.test(a);
@@ -56,11 +56,13 @@ export function RoutineFilter({
 
   const handleSelectAllMLRs = () => {
     setHasManuallyFiltered(true);
-    const mlrRoutines = sortedRoutines.filter((routine) => /^MLR\d+/.test(routine));
+    const mlrRoutines = sortedRoutines.filter((routine) =>
+      /^MLR\d+/.test(routine),
+    );
     setSelectedRoutines(mlrRoutines);
   };
 
-  const handleVersionChange = (newVersion: 'KH' | 'ILC') => {
+  const handleVersionChange = (newVersion: "KH" | "ILC") => {
     setVersion(newVersion);
     setSelectedRoutines([]); // Reset selected routines when changing versions
     setHasManuallyFiltered(false);
@@ -72,27 +74,27 @@ export function RoutineFilter({
       <div>
         <motion.label
           layout
-          className={cn(typography.weight.bold, 'text-text block mb-2')}
+          className={cn(typography.weight.bold, "text-text block mb-2")}
         >
           Currently Viewing:
         </motion.label>
 
         <div className="flex gap-2">
           <Button
-            onClick={() => handleVersionChange('KH')}
+            onClick={() => handleVersionChange("KH")}
             textSize="sm"
             padding="sm"
             intent="secondary"
-            appearance={version === 'KH' ? 'solid' : 'outline'}
+            appearance={version === "KH" ? "solid" : "outline"}
           >
             Kendall Hunt
           </Button>
           <Button
-            onClick={() => handleVersionChange('ILC')}
+            onClick={() => handleVersionChange("ILC")}
             textSize="sm"
             padding="sm"
             intent="primary"
-            appearance={version === 'ILC' ? 'solid' : 'outline'}
+            appearance={version === "ILC" ? "solid" : "outline"}
           >
             ILC
           </Button>
@@ -103,14 +105,14 @@ export function RoutineFilter({
       <motion.div layout>
         <motion.label
           layout
-          className={cn(typography.weight.bold, 'text-text block mb-2')}
+          className={cn(typography.weight.bold, "text-text block mb-2")}
         >
           Filter All:
         </motion.label>
         {/* Filter Actions */}
         <motion.div layout className="flex flex-wrap gap-2 mb-6">
           <AnimatePresence mode="popLayout">
-            {version === 'KH' && (
+            {version === "KH" && (
               <motion.div
                 key="select-all-routines"
                 initial={{ opacity: 0, y: 4 }}
@@ -125,15 +127,24 @@ export function RoutineFilter({
                   }}
                   textSize="sm"
                   padding="sm"
-                  disabled={selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered}
+                  disabled={
+                    selectedRoutines.length === sortedRoutines.length &&
+                    hasManuallyFiltered
+                  }
                   intent="secondary"
-                  appearance={selectedRoutines.length === sortedRoutines.length && hasManuallyFiltered ? 'outline' : 'solid'}
+                  appearance={
+                    selectedRoutines.length === sortedRoutines.length &&
+                    hasManuallyFiltered
+                      ? "outline"
+                      : "solid"
+                  }
                 >
                   <span className="inline-flex items-center gap-2">
-                    {selectedRoutines.length !== sortedRoutines.length && hasManuallyFiltered && (
-                      // <CheckIcon className="h-4 w-4 shrink-0 text-white" />
-                      <CheckIcon className="w-4 h-4 min-w-4 min-h-4 text-white align-middle" />
-                    )}
+                    {selectedRoutines.length !== sortedRoutines.length &&
+                      hasManuallyFiltered && (
+                        // <CheckIcon className="h-4 w-4 shrink-0 text-white" />
+                        <CheckIcon className="w-4 h-4 min-w-4 min-h-4 text-white align-middle" />
+                      )}
                     <span>Select All Routines</span>
                   </span>
                 </Button>
@@ -142,7 +153,9 @@ export function RoutineFilter({
 
             {/* Select All MLRs Button */}
             {(() => {
-              const mlrRoutines = sortedRoutines.filter((routine) => /^MLR\d+/.test(routine));
+              const mlrRoutines = sortedRoutines.filter((routine) =>
+                /^MLR\d+/.test(routine),
+              );
               const areAllMLRsSelected =
                 mlrRoutines.length > 0 &&
                 mlrRoutines.every((mlr) => selectedRoutines.includes(mlr));
@@ -162,13 +175,17 @@ export function RoutineFilter({
                     disabled={areAllMLRsSelected && hasManuallyFiltered}
                     title={
                       mlrRoutines.length === 0
-                        ? 'No MLRs available in this view'
+                        ? "No MLRs available in this view"
                         : areAllMLRsSelected && hasManuallyFiltered
-                          ? 'All MLRs already selected'
-                          : 'Select all MLRs'
+                          ? "All MLRs already selected"
+                          : "Select all MLRs"
                     }
                     intent="primary"
-                    appearance={areAllMLRsSelected && hasManuallyFiltered ? 'outline' : 'solid'}
+                    appearance={
+                      areAllMLRsSelected && hasManuallyFiltered
+                        ? "outline"
+                        : "solid"
+                    }
                   >
                     <span className="inline-flex items-center gap-2">
                       {!areAllMLRsSelected && hasManuallyFiltered && (
@@ -198,7 +215,7 @@ export function RoutineFilter({
                 padding="sm"
                 disabled={selectedRoutines.length === 0}
                 intent="secondary"
-                appearance={selectedRoutines.length === 0 ? 'outline' : 'solid'}
+                appearance={selectedRoutines.length === 0 ? "outline" : "solid"}
               >
                 <span className="inline-flex items-center gap-2">
                   {selectedRoutines.length > 0 && hasManuallyFiltered && (
@@ -212,7 +229,7 @@ export function RoutineFilter({
         </motion.div>
         <motion.label
           layout
-          className={cn(typography.weight.bold, 'text-text block mb-2')}
+          className={cn(typography.weight.bold, "text-text block mb-2")}
         >
           Filter Routines:
         </motion.label>
@@ -236,11 +253,9 @@ export function RoutineFilter({
                     onClick={() => handleClick(routine)}
                     textSize="sm"
                     padding="sm"
-                    intent={isMLR ? 'primary' : 'secondary'}
+                    intent={isMLR ? "primary" : "secondary"}
                     appearance={
-                      isSelected && hasManuallyFiltered
-                        ? 'solid'
-                        : 'outline'
+                      isSelected && hasManuallyFiltered ? "solid" : "outline"
                     }
                     className="justify-start text-left"
                   >

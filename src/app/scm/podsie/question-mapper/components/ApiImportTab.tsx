@@ -80,7 +80,7 @@ export function ApiImportTab({ showToast }: ApiImportTabProps) {
       // Then, fetch fresh data from Podsie API
       const result = await generateQuestionMapFromResponses(
         assignmentId.trim(),
-        email
+        email,
       );
 
       if (result.success && result.data) {
@@ -127,7 +127,7 @@ export function ApiImportTab({ showToast }: ApiImportTabProps) {
     // Confirm if overwriting existing
     if (existingMapping) {
       const confirmed = window.confirm(
-        `This will overwrite the existing mapping for "${existingMapping.assignmentName}". Continue?`
+        `This will overwrite the existing mapping for "${existingMapping.assignmentName}". Continue?`,
       );
       if (!confirmed) return;
     }

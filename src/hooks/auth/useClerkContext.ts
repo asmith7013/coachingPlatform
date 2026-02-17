@@ -11,16 +11,16 @@
  * Higher-level hooks like useAuthenticatedUser can build on top of this.
  */
 
-import { useUser, useOrganization } from '@clerk/nextjs';
-import { useMemo } from 'react';
-import { UserMetadataZodSchema } from '@zod-schema/core-types/auth';
-import { UserMetadata } from '@core-types/auth';
-import { validateSafe } from '@/lib/data-processing/validation/zod-validation';
+import { useUser, useOrganization } from "@clerk/nextjs";
+import { useMemo } from "react";
+import { UserMetadataZodSchema } from "@zod-schema/core-types/auth";
+import { UserMetadata } from "@core-types/auth";
+import { validateSafe } from "@/lib/data-processing/validation/zod-validation";
 
 export interface ClerkContextValue {
   // Raw Clerk data
-  user: ReturnType<typeof useUser>['user'];
-  organization: ReturnType<typeof useOrganization>['organization'];
+  user: ReturnType<typeof useUser>["user"];
+  organization: ReturnType<typeof useOrganization>["organization"];
 
   // Loading states
   isLoaded: boolean;
@@ -74,22 +74,23 @@ export function useClerkContext(): ClerkContextValue {
 
   // Create case-insensitive role lookup set
   const rolesLowerSet = useMemo(() => {
-    return new Set(metadata.roles.map(r => r.toLowerCase()));
+    return new Set(metadata.roles.map((r) => r.toLowerCase()));
   }, [metadata.roles]);
 
   // Pre-computed role checks
-  const isSuperAdmin = rolesLowerSet.has('super_admin');
-  const isCoach = rolesLowerSet.has('coach');
-  const isDirector = rolesLowerSet.has('director');
-  const isSeniorDirector = rolesLowerSet.has('senior director');
-  const isTeacher = rolesLowerSet.has('teacher');
-  const isPrincipal = rolesLowerSet.has('principal');
-  const isAdministrator = rolesLowerSet.has('administrator');
-  const isCPM = rolesLowerSet.has('cpm');
+  const isSuperAdmin = rolesLowerSet.has("super_admin");
+  const isCoach = rolesLowerSet.has("coach");
+  const isDirector = rolesLowerSet.has("director");
+  const isSeniorDirector = rolesLowerSet.has("senior director");
+  const isTeacher = rolesLowerSet.has("teacher");
+  const isPrincipal = rolesLowerSet.has("principal");
+  const isAdministrator = rolesLowerSet.has("administrator");
+  const isCPM = rolesLowerSet.has("cpm");
 
   // Merge organization permissions with user permissions
   const allPermissions = useMemo(() => {
-    const orgPermissions = (organization?.publicMetadata?.permissions as string[]) || [];
+    const orgPermissions =
+      (organization?.publicMetadata?.permissions as string[]) || [];
     return Array.from(new Set([...metadata.permissions, ...orgPermissions]));
   }, [metadata.permissions, organization]);
 
@@ -98,48 +99,51 @@ export function useClerkContext(): ClerkContextValue {
     return (role: string) => rolesLowerSet.has(role.toLowerCase());
   }, [rolesLowerSet]);
 
-  return useMemo(() => ({
-    // Raw Clerk data
-    user,
-    organization,
+  return useMemo(
+    () => ({
+      // Raw Clerk data
+      user,
+      organization,
 
-    // Loading states
-    isLoaded,
-    isSignedIn: isSignedIn || false,
+      // Loading states
+      isLoaded,
+      isSignedIn: isSignedIn || false,
 
-    // Validated metadata
-    metadata,
+      // Validated metadata
+      metadata,
 
-    // Pre-computed role checks
-    isSuperAdmin,
-    isCoach,
-    isDirector,
-    isSeniorDirector,
-    isTeacher,
-    isPrincipal,
-    isAdministrator,
-    isCPM,
+      // Pre-computed role checks
+      isSuperAdmin,
+      isCoach,
+      isDirector,
+      isSeniorDirector,
+      isTeacher,
+      isPrincipal,
+      isAdministrator,
+      isCPM,
 
-    // Merged permissions
-    allPermissions,
+      // Merged permissions
+      allPermissions,
 
-    // Utility
-    checkRole,
-  }), [
-    user,
-    organization,
-    isLoaded,
-    isSignedIn,
-    metadata,
-    isSuperAdmin,
-    isCoach,
-    isDirector,
-    isSeniorDirector,
-    isTeacher,
-    isPrincipal,
-    isAdministrator,
-    isCPM,
-    allPermissions,
-    checkRole,
-  ]);
+      // Utility
+      checkRole,
+    }),
+    [
+      user,
+      organization,
+      isLoaded,
+      isSignedIn,
+      metadata,
+      isSuperAdmin,
+      isCoach,
+      isDirector,
+      isSeniorDirector,
+      isTeacher,
+      isPrincipal,
+      isAdministrator,
+      isCPM,
+      allPermissions,
+      checkRole,
+    ],
+  );
 }

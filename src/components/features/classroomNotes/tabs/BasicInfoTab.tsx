@@ -1,29 +1,33 @@
 "use client";
 
-import React from 'react';
-import { tv } from 'tailwind-variants';
-import { Input } from '@components/core/fields/Input';
-import { Textarea } from '@components/core/fields/Textarea';
-import { ReferenceSelect } from '@components/core/fields/ReferenceSelect';
-import { getStaffUrl } from '@server/api/client/api_endpoints';
-import { ClassroomObservationInput } from '@zod-schema/visits/classroom-observation';
+import React from "react";
+import { tv } from "tailwind-variants";
+import { Input } from "@components/core/fields/Input";
+import { Textarea } from "@components/core/fields/Textarea";
+import { ReferenceSelect } from "@components/core/fields/ReferenceSelect";
+import { getStaffUrl } from "@server/api/client/api_endpoints";
+import { ClassroomObservationInput } from "@zod-schema/visits/classroom-observation";
 
 const fieldLabel = tv({
-  base: "text-sm font-medium text-gray-700 mb-1"
+  base: "text-sm font-medium text-gray-700 mb-1",
 });
 
 interface BasicInfoTabProps {
   formData: ClassroomObservationInput;
   selectedTeacher: string;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  onInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => void;
   onTeacherChange: (value: string) => void;
 }
 
-export function BasicInfoTab({ 
-  formData, 
-  selectedTeacher, 
-  onInputChange, 
-  onTeacherChange 
+export function BasicInfoTab({
+  formData,
+  selectedTeacher,
+  onInputChange,
+  onTeacherChange,
 }: BasicInfoTabProps) {
   return (
     <div className="space-y-6">
@@ -52,17 +56,18 @@ export function BasicInfoTab({
           <Input
             type="date"
             name="date"
-            value={formData.date instanceof Date 
-              ? formData.date.toISOString().split('T')[0]
-              : (formData.date || '').toString().split('T')[0]
+            value={
+              formData.date instanceof Date
+                ? formData.date.toISOString().split("T")[0]
+                : (formData.date || "").toString().split("T")[0]
             }
             onChange={(e) => {
               const dateValue = e.target.value;
               const syntheticEvent = {
                 target: {
-                  name: 'date',
-                  value: new Date(dateValue).toISOString()
-                }
+                  name: "date",
+                  value: new Date(dateValue).toISOString(),
+                },
               } as React.ChangeEvent<HTMLInputElement>;
               onInputChange(syntheticEvent);
             }}
@@ -71,9 +76,11 @@ export function BasicInfoTab({
         <div>
           <ReferenceSelect
             label="Teacher"
-            url={getStaffUrl('nycps')}
+            url={getStaffUrl("nycps")}
             value={selectedTeacher}
-            onChange={(value) => onTeacherChange(Array.isArray(value) ? value[0] : value)}
+            onChange={(value) =>
+              onTeacherChange(Array.isArray(value) ? value[0] : value)
+            }
             placeholder="Select Teacher"
           />
         </div>
@@ -83,7 +90,7 @@ export function BasicInfoTab({
         <label className={fieldLabel()}>Lesson Title</label>
         <Input
           name="lessonTitle"
-          value={(formData.lessonTitle as string) || ''}
+          value={(formData.lessonTitle as string) || ""}
           onChange={onInputChange}
           placeholder="Lesson title or topic"
         />
@@ -93,7 +100,7 @@ export function BasicInfoTab({
           <label className={fieldLabel()}>Course</label>
           <Input
             name="lessonCourse"
-            value={(formData.lessonCourse as string) || ''}
+            value={(formData.lessonCourse as string) || ""}
             onChange={onInputChange}
             placeholder="Course name"
           />
@@ -102,7 +109,7 @@ export function BasicInfoTab({
           <label className={fieldLabel()}>Unit</label>
           <Input
             name="lessonUnit"
-            value={(formData.lessonUnit as string) || ''}
+            value={(formData.lessonUnit as string) || ""}
             onChange={onInputChange}
             placeholder="Unit name"
           />
@@ -111,7 +118,7 @@ export function BasicInfoTab({
           <label className={fieldLabel()}>Lesson Number</label>
           <Input
             name="lessonNumber"
-            value={(formData.lessonNumber as string) || ''}
+            value={(formData.lessonNumber as string) || ""}
             onChange={onInputChange}
             placeholder="Lesson #"
           />
@@ -129,4 +136,4 @@ export function BasicInfoTab({
       </div>
     </div>
   );
-} 
+}

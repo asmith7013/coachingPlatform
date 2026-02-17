@@ -1,15 +1,11 @@
-'use client'
+"use client";
 
-import { SummerProgramShell } from '@components/features/313/SummerProgramShell'
+import { SummerProgramShell } from "@components/features/313/SummerProgramShell";
 
-export default function SummerProgramLayout({ 
-  children 
-}: { 
-  children: React.ReactNode 
+export default function SummerProgramLayout({
+  children,
+}: {
+  children: React.ReactNode;
 }) {
-  return (
-    <SummerProgramShell>
-      {children}
-    </SummerProgramShell>
-  )
-} 
+  return <SummerProgramShell>{children}</SummerProgramShell>;
+}

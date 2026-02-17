@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 interface HtmlViewerProps {
   slideNumber: number;
@@ -36,11 +36,11 @@ export function HtmlViewer({
               onClick={handleCopy}
               className={`w-8 h-8 flex items-center justify-center rounded-full transition-all cursor-pointer ${
                 copied
-                  ? 'bg-green-500 text-white scale-110'
-                  : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                  ? "bg-green-500 text-white scale-110"
+                  : "bg-gray-200 hover:bg-gray-300 text-gray-600"
               }`}
               aria-label="Copy HTML"
-              title={copied ? 'Copied!' : 'Copy HTML'}
+              title={copied ? "Copied!" : "Copy HTML"}
             >
               {copied ? (
                 <svg
@@ -100,7 +100,7 @@ export function HtmlViewer({
         {/* HTML Content */}
         <div className="flex-1 overflow-auto p-4 bg-gray-900">
           <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap break-words">
-            {htmlContent || 'No HTML content'}
+            {htmlContent || "No HTML content"}
           </pre>
         </div>
 

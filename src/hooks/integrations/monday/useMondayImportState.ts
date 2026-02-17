@@ -1,7 +1,7 @@
 /**
  * Hook for tracking the state of a Monday.com visit import process
  */
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 // Define the SelectedItem type
 export interface SelectedItem {
@@ -15,20 +15,24 @@ export interface SelectedItem {
 
 /**
  * Hook for tracking the state of a Monday.com visit import process
- * 
+ *
  * This hook provides state management for the multi-step Monday.com import process.
  * It tracks the current import stage, the data being imported, and any missing fields.
  */
 export function useMondayImport() {
   // State to track the current visit import process
-  const [currentStage, setCurrentStage] = useState<'selection' | 'completion' | 'success' | 'error'>('selection');
-  const [currentVisitData, setCurrentVisitData] = useState<SelectedItem | null>(null);
+  const [currentStage, setCurrentStage] = useState<
+    "selection" | "completion" | "success" | "error"
+  >("selection");
+  const [currentVisitData, setCurrentVisitData] = useState<SelectedItem | null>(
+    null,
+  );
   const [missingFields, setMissingFields] = useState<string[]>([]);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
   // Reset state
   const resetState = useCallback(() => {
-    setCurrentStage('selection');
+    setCurrentStage("selection");
     setCurrentVisitData(null);
     setMissingFields([]);
     setSelectedItemId(null);
@@ -43,8 +47,8 @@ export function useMondayImport() {
     setMissingFields,
     selectedItemId,
     setSelectedItemId,
-    resetState
+    resetState,
   };
 }
 
-export default useMondayImport; 
+export default useMondayImport;

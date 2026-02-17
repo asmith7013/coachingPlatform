@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { connectToDB } from "@server/db/connection";
 import { CycleModel } from "@mongoose-schema/core/cycle.model";
@@ -13,10 +13,10 @@ import { ZodType } from "zod";
 export async function fetchCycles(params: QueryParams) {
   try {
     await connectToDB();
-    
+
     // Extract the params we need and pass the rest through
     const { sortBy = "cycleNum", sortOrder = "asc", ...otherParams } = params;
-    
+
     return await fetchPaginatedResource(
       CycleModel,
       CycleZodSchema as ZodType<Cycle>,
@@ -24,9 +24,9 @@ export async function fetchCycles(params: QueryParams) {
         ...otherParams,
         sortBy,
         sortOrder,
-      }
+      },
     );
   } catch (error) {
     throw handleServerError(error);
   }
-} 
+}

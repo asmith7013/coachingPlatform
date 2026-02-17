@@ -1,1 +1,1 @@
-export * from './school-field-config'; 
+export * from "./school-field-config";

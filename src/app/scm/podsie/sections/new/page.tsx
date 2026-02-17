@@ -39,11 +39,15 @@ export default function NewSectionPage() {
   // Form state
   const [school, setSchool] = useState<SchoolsType | "">("");
   const [classSection, setClassSection] = useState<AllSectionsType | "">(
-    (podsieGroupCode as AllSectionsType) || ""
+    (podsieGroupCode as AllSectionsType) || "",
   );
   const [gradeLevel, setGradeLevel] = useState<Grade | "">("");
-  const [scopeSequenceTag, setScopeSequenceTag] = useState<ScopeSequenceTagType | "">("");
-  const [specialPopulations, setSpecialPopulations] = useState<SpecialPopulationType[]>([]);
+  const [scopeSequenceTag, setScopeSequenceTag] = useState<
+    ScopeSequenceTagType | ""
+  >("");
+  const [specialPopulations, setSpecialPopulations] = useState<
+    SpecialPopulationType[]
+  >([]);
 
   // Podsie group info (from URL params)
   const [groupInfo] = useState<PodsieGroupInfo | null>(
@@ -54,7 +58,7 @@ export default function NewSectionPage() {
           groupCode: podsieGroupCode || "",
           courseName: podsieCourseName || "",
         }
-      : null
+      : null,
   );
 
   // Update classSection when groupCode changes
@@ -68,7 +72,7 @@ export default function NewSectionPage() {
     setSpecialPopulations((prev) =>
       prev.includes(population)
         ? prev.filter((p) => p !== population)
-        : [...prev, population]
+        : [...prev, population],
     );
   };
 
@@ -164,7 +168,10 @@ export default function NewSectionPage() {
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-lg shadow-sm p-6"
+        >
           <div className="space-y-6">
             {/* School */}
             <div>
@@ -193,7 +200,9 @@ export default function NewSectionPage() {
               </label>
               <select
                 value={classSection}
-                onChange={(e) => setClassSection(e.target.value as AllSectionsType | "")}
+                onChange={(e) =>
+                  setClassSection(e.target.value as AllSectionsType | "")
+                }
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
@@ -237,7 +246,11 @@ export default function NewSectionPage() {
               </label>
               <select
                 value={scopeSequenceTag}
-                onChange={(e) => setScopeSequenceTag(e.target.value as ScopeSequenceTagType | "")}
+                onChange={(e) =>
+                  setScopeSequenceTag(
+                    e.target.value as ScopeSequenceTagType | "",
+                  )
+                }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select (optional)...</option>
@@ -271,7 +284,8 @@ export default function NewSectionPage() {
                     />
                     <span className="text-gray-700">
                       {population === "ICT" && "ICT (Integrated Co-Teaching)"}
-                      {population === "12-1-1" && "12-1-1 (Smaller class with IEPs)"}
+                      {population === "12-1-1" &&
+                        "12-1-1 (Smaller class with IEPs)"}
                       {population === "MLL" && "MLL (Multilingual Learners)"}
                     </span>
                   </label>
@@ -288,7 +302,10 @@ export default function NewSectionPage() {
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <Spinner size="sm" className="border-white/30 border-t-white" />
+                    <Spinner
+                      size="sm"
+                      className="border-white/30 border-t-white"
+                    />
                     Creating...
                   </span>
                 ) : (
@@ -301,15 +318,17 @@ export default function NewSectionPage() {
 
         {/* Help Text */}
         <div className="mt-6 bg-gray-100 rounded-lg p-4 text-sm text-gray-600">
-          <h3 className="font-medium text-gray-700 mb-2">About Special Populations</h3>
+          <h3 className="font-medium text-gray-700 mb-2">
+            About Special Populations
+          </h3>
           <ul className="space-y-1 list-disc list-inside">
             <li>
-              <strong>ICT:</strong> Co-taught class with students with IEPs alongside
-              general education students
+              <strong>ICT:</strong> Co-taught class with students with IEPs
+              alongside general education students
             </li>
             <li>
-              <strong>12-1-1:</strong> Smaller class (max 12 students) with all students
-              having IEPs, served by 1 teacher and 1 paraprofessional
+              <strong>12-1-1:</strong> Smaller class (max 12 students) with all
+              students having IEPs, served by 1 teacher and 1 paraprofessional
             </li>
             <li>
               <strong>MLL:</strong> Section for students learning English as an

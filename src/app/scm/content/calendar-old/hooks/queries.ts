@@ -76,8 +76,7 @@ export const calendarKeys = {
     [...calendarKeys.all, "days-off", schoolYear] as const,
 
   // Lessons (scope & sequence)
-  lessons: (grade: string) =>
-    [...calendarKeys.all, "lessons", grade] as const,
+  lessons: (grade: string) => [...calendarKeys.all, "lessons", grade] as const,
 
   // Grade-level schedules
   gradeSchedules: (schoolYear: string, grade: string) =>
@@ -88,17 +87,29 @@ export const calendarKeys = {
     schoolYear: string,
     scopeTag: string,
     school: string,
-    classSection: string
+    classSection: string,
   ) =>
-    [...calendarKeys.all, "section-schedules", schoolYear, scopeTag, school, classSection] as const,
+    [
+      ...calendarKeys.all,
+      "section-schedules",
+      schoolYear,
+      scopeTag,
+      school,
+      classSection,
+    ] as const,
 
   // Section days off
   sectionDaysOff: (schoolYear: string, school: string, classSection: string) =>
-    [...calendarKeys.all, "section-days-off", schoolYear, school, classSection] as const,
+    [
+      ...calendarKeys.all,
+      "section-days-off",
+      schoolYear,
+      school,
+      classSection,
+    ] as const,
 
   // Section configs
-  sectionConfigs: () =>
-    [...calendarKeys.all, "section-configs"] as const,
+  sectionConfigs: () => [...calendarKeys.all, "section-configs"] as const,
 
   // Assignment content (for subsection data)
   assignmentContent: (school: string, classSection: string) =>
@@ -194,9 +205,10 @@ export function useSectionConfigsQuery() {
 export function useSchedulesQuery(
   schoolYear: string,
   selectedGrade: string,
-  selectedSection: SectionConfigOption | null
+  selectedSection: SectionConfigOption | null,
 ) {
-  const scopeTag = selectedSection?.scopeSequenceTag ||
+  const scopeTag =
+    selectedSection?.scopeSequenceTag ||
     (selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`);
 
   return useQuery({
@@ -205,7 +217,7 @@ export function useSchedulesQuery(
           schoolYear,
           scopeTag,
           selectedSection.school,
-          selectedSection.classSection
+          selectedSection.classSection,
         )
       : calendarKeys.gradeSchedules(schoolYear, selectedGrade),
     queryFn: async () => {
@@ -215,7 +227,7 @@ export function useSchedulesQuery(
           schoolYear,
           scopeTag,
           selectedSection.school,
-          selectedSection.classSection
+          selectedSection.classSection,
         );
         if (!result.success) {
           throw new Error(result.error || "Failed to fetch section schedules");
@@ -231,10 +243,14 @@ export function useSchedulesQuery(
           ]);
           const combined: SavedUnitSchedule[] = [];
           if (grade8Result.success && grade8Result.data) {
-            combined.push(...(grade8Result.data as unknown as SavedUnitSchedule[]));
+            combined.push(
+              ...(grade8Result.data as unknown as SavedUnitSchedule[]),
+            );
           }
           if (alg1Result.success && alg1Result.data) {
-            combined.push(...(alg1Result.data as unknown as SavedUnitSchedule[]));
+            combined.push(
+              ...(alg1Result.data as unknown as SavedUnitSchedule[]),
+            );
           }
           return combined;
         } else {
@@ -257,10 +273,14 @@ export function useSchedulesQuery(
 export function useSectionDaysOffQuery(
   schoolYear: string,
   school: string | undefined,
-  classSection: string | undefined
+  classSection: string | undefined,
 ) {
   return useQuery({
-    queryKey: calendarKeys.sectionDaysOff(schoolYear, school ?? "", classSection ?? ""),
+    queryKey: calendarKeys.sectionDaysOff(
+      schoolYear,
+      school ?? "",
+      classSection ?? "",
+    ),
     queryFn: async () => {
       if (!school || !classSection) {
         return [];
@@ -291,7 +311,7 @@ export interface AssignmentContentItem {
  */
 export function useAssignmentContentQuery(
   school: string | undefined,
-  classSection: string | undefined
+  classSection: string | undefined,
 ) {
   return useQuery({
     queryKey: calendarKeys.assignmentContent(school ?? "", classSection ?? ""),

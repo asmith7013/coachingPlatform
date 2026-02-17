@@ -2,7 +2,11 @@
 
 import { z, ZodType } from "zod";
 import { LookForModel } from "@mongoose-schema/look-fors/look-for.model";
-import { LookFor,LookForZodSchema, LookForInputZodSchema } from "@zod-schema/look-fors/look-for";
+import {
+  LookFor,
+  LookForZodSchema,
+  LookForInputZodSchema,
+} from "@zod-schema/look-fors/look-for";
 import { createCrudActions } from "@server/crud";
 import { withDbConnection } from "@server/db/ensure-connection";
 import type { QueryParams } from "@core-types/query";
@@ -21,9 +25,9 @@ const lookForActions = createCrudActions({
   inputSchema: LookForInputZodSchema,
   name: "Look For",
   revalidationPaths: ["/dashboard/lookFors"],
-  sortFields: ['lookForText', 'createdAt', 'updatedAt'],
-  defaultSortField: 'createdAt',
-  defaultSortOrder: 'desc'
+  sortFields: ["lookForText", "createdAt", "updatedAt"],
+  defaultSortField: "createdAt",
+  defaultSortOrder: "desc",
 });
 
 // Export the generated actions with connection handling
@@ -50,7 +54,10 @@ export async function fetchLookForById(id: string) {
 // File upload actions
 export const uploadLookForFile = async (file: File): Promise<string> => {
   try {
-    const result = await uploadFileWithProgress(file, "/api/lookFors/bulk-upload");
+    const result = await uploadFileWithProgress(
+      file,
+      "/api/lookFors/bulk-upload",
+    );
     return result.message || "No message";
   } catch (error) {
     throw handleServerError(error);
@@ -61,33 +68,33 @@ export async function uploadLookFors(data: LookForInput[]) {
   return withDbConnection(async () => {
     try {
       const result = await bulkUploadToDB(
-        data, 
-        LookForModel, 
-        LookForInputZodSchema, 
-        ["/dashboard/lookFors"]
+        data,
+        LookForModel,
+        LookForInputZodSchema,
+        ["/dashboard/lookFors"],
       );
-      
+
       if (!result.success) {
         return {
           success: false,
-          error: result.error
+          error: result.error,
         };
       }
 
       return {
         success: true,
-        items: result.items
+        items: result.items,
       };
     } catch (error) {
       if (error instanceof z.ZodError) {
         return {
           success: false,
-          error: handleValidationError(error)
+          error: handleValidationError(error),
         };
       }
       return {
         success: false,
-        error: handleServerError(error)
+        error: handleServerError(error),
       };
     }
   });

@@ -2,11 +2,11 @@
 
 import { createCrudActions } from "@server/crud";
 import { CycleModel } from "@mongoose-schema/core/cycle.model";
-import { 
-  CycleZodSchema, 
+import {
+  CycleZodSchema,
   CycleInputZodSchema,
   type CycleInput,
-  Cycle
+  Cycle,
 } from "@zod-schema/core/cycle";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { QueryParams } from "@core-types/query";
@@ -19,9 +19,9 @@ const cycleActions = createCrudActions({
   inputSchema: CycleInputZodSchema as ZodType<CycleInput>,
   name: "Cycle",
   revalidationPaths: ["/dashboard/cycles"],
-  sortFields: ['cycleNum', 'createdAt', 'updatedAt'],
-  defaultSortField: 'cycleNum',
-  defaultSortOrder: 'asc'
+  sortFields: ["cycleNum", "createdAt", "updatedAt"],
+  defaultSortField: "cycleNum",
+  defaultSortOrder: "asc",
 });
 
 // Export individual functions with connection handling
@@ -43,4 +43,4 @@ export async function fetchCycles(params: QueryParams) {
 
 export async function fetchCycleById(id: string) {
   return withDbConnection(() => cycleActions.fetchById(id));
-} 
+}

@@ -1,4 +1,7 @@
-import type { UnitSectionInfo, StudentLessonInfo } from "../../../hooks/usePacingData";
+import type {
+  UnitSectionInfo,
+  StudentLessonInfo,
+} from "../../../hooks/usePacingData";
 
 // Column configuration for the progress bar
 // Used for both zone columns and the complete column

@@ -7,7 +7,12 @@ import { getSectionVelocityByDateRange } from "@/app/actions/scm/podsie/velocity
  */
 export const weeklyVelocityKeys = {
   all: ["weekly-velocity"] as const,
-  section: (section: string, school: string, startDate: string, endDate: string) =>
+  section: (
+    section: string,
+    school: string,
+    startDate: string,
+    endDate: string,
+  ) =>
     [...weeklyVelocityKeys.all, section, school, startDate, endDate] as const,
 };
 
@@ -36,7 +41,7 @@ export interface SectionWeeklyData {
 export function useWeeklyVelocity(
   sections: readonly SectionConfig[],
   startDate: string,
-  endDate: string
+  endDate: string,
 ) {
   const queries = useQueries({
     queries: sections.map(({ section, school }) => ({
@@ -48,7 +53,7 @@ export function useWeeklyVelocity(
           startDate,
           endDate,
           true, // includeNotTracked
-          true // includeStudentDetails
+          true, // includeStudentDetails
         );
 
         if (!result.success) {

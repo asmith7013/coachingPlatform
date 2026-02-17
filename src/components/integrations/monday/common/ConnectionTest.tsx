@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@components/core/Button';
-import { Alert } from '@components/core/feedback/Alert';
-import { Spinner } from '@components/core/feedback/Spinner';
-import { MondayConnectionTestResult } from '@lib/integrations/monday/types/api';
-import { testConnection } from '@lib/integrations/monday/client/client';
+import { useState } from "react";
+import { Button } from "@components/core/Button";
+import { Alert } from "@components/core/feedback/Alert";
+import { Spinner } from "@components/core/feedback/Spinner";
+import { MondayConnectionTestResult } from "@lib/integrations/monday/types/api";
+import { testConnection } from "@lib/integrations/monday/client/client";
 
 export interface ConnectionTestProps {
   className?: string;
@@ -13,33 +13,35 @@ export interface ConnectionTestProps {
 
 export function ConnectionTest({ className }: ConnectionTestProps) {
   const [connectionTestStatus, setConnectionTestStatus] = useState<{
-    status: 'idle' | 'loading' | 'success' | 'error';
+    status: "idle" | "loading" | "success" | "error";
     message?: string;
-  }>({ status: 'idle' });
+  }>({ status: "idle" });
 
   // Test API connection
   const handleTestConnection = async () => {
-    setConnectionTestStatus({ status: 'loading' });
-    
+    setConnectionTestStatus({ status: "loading" });
+
     try {
-      const result = await testConnection() as unknown as MondayConnectionTestResult;
-      
+      const result =
+        (await testConnection()) as unknown as MondayConnectionTestResult;
+
       if (result.success && result.data) {
-        setConnectionTestStatus({ 
-          status: 'success', 
-          message: `Connected as ${result.data.name} (${result.data.email})` 
+        setConnectionTestStatus({
+          status: "success",
+          message: `Connected as ${result.data.name} (${result.data.email})`,
         });
       } else {
-        setConnectionTestStatus({ 
-          status: 'error', 
-          message: result.error || "Connection test failed" 
+        setConnectionTestStatus({
+          status: "error",
+          message: result.error || "Connection test failed",
         });
       }
     } catch (err) {
       console.error("Connection test error:", err);
-      setConnectionTestStatus({ 
-        status: 'error', 
-        message: err instanceof Error ? err.message : "An unknown error occurred" 
+      setConnectionTestStatus({
+        status: "error",
+        message:
+          err instanceof Error ? err.message : "An unknown error occurred",
       });
     }
   };
@@ -48,31 +50,33 @@ export function ConnectionTest({ className }: ConnectionTestProps) {
     <div className={className}>
       {/* Connection test button */}
       <div className="flex justify-end">
-        <Button 
-          intent="secondary" 
+        <Button
+          intent="secondary"
           textSize="sm"
           padding="sm"
           onClick={handleTestConnection}
-          disabled={connectionTestStatus.status === 'loading'}
+          disabled={connectionTestStatus.status === "loading"}
         >
-          {connectionTestStatus.status === 'loading' ? (
+          {connectionTestStatus.status === "loading" ? (
             <>
               <Spinner size="sm" className="mr-2" />
               Testing Connection...
             </>
-          ) : "Test Connection"}
+          ) : (
+            "Test Connection"
+          )}
         </Button>
       </div>
-      
+
       {/* Connection test result */}
-      {connectionTestStatus.status === 'success' && (
+      {connectionTestStatus.status === "success" && (
         <Alert intent="success">
           <Alert.Title>Connection Successful</Alert.Title>
           <Alert.Description>{connectionTestStatus.message}</Alert.Description>
         </Alert>
       )}
-      
-      {connectionTestStatus.status === 'error' && (
+
+      {connectionTestStatus.status === "error" && (
         <Alert intent="error">
           <Alert.Title>Connection Failed</Alert.Title>
           <Alert.Description>{connectionTestStatus.message}</Alert.Description>
@@ -80,4 +84,4 @@ export function ConnectionTest({ className }: ConnectionTestProps) {
       )}
     </div>
   );
-} 
+}

@@ -1,38 +1,49 @@
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { queryKeys } from '@query/core/keys';
-import { fetchLessonCompletions, fetchDailyClassEvents } from '@actions/scm/analytics';
-import { ZearnCompletion, AssessmentCompletion, DailyClassEvent, LessonCompletion } from '@zod-schema/scm/core';
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { queryKeys } from "@query/core/keys";
+import {
+  fetchLessonCompletions,
+  fetchDailyClassEvents,
+} from "@actions/scm/analytics";
+import {
+  ZearnCompletion,
+  AssessmentCompletion,
+  DailyClassEvent,
+  LessonCompletion,
+} from "@zod-schema/scm/core";
 
 /**
  * Hook for fetching all lesson completion data with filtering capability
  */
 export function useLessonCompletions(filters?: Record<string, unknown>) {
   const query = useQuery({
-    queryKey: queryKeys.entities.list('lesson-completions', filters || {}),
+    queryKey: queryKeys.entities.list("lesson-completions", filters || {}),
     queryFn: async () => {
       const result = await fetchLessonCompletions({
         page: 1,
         limit: 1000, // Get all data for analytics
-        sortBy: 'dateOfCompletion',
-        sortOrder: 'desc',
-        filters: filters || {}
+        sortBy: "dateOfCompletion",
+        sortOrder: "desc",
+        filters: filters || {},
       });
-      
+
       if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch lesson completions');
+        throw new Error(result.error || "Failed to fetch lesson completions");
       }
-      
+
       return result;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   return {
-    data: query.data?.success && 'items' in query.data ? query.data.items as LessonCompletion[] : undefined,
+    data:
+      query.data?.success && "items" in query.data
+        ? (query.data.items as LessonCompletion[])
+        : undefined,
     isLoading: query.isLoading,
-    error: query.error, 
-    refetch: query.refetch
+    error: query.error,
+    refetch: query.refetch,
   };
 }
 
@@ -41,20 +52,22 @@ export function useLessonCompletions(filters?: Record<string, unknown>) {
  */
 export function useZearnData() {
   const { data, isLoading, error, refetch } = useLessonCompletions({
-    completionType: 'zearn'
+    completionType: "zearn",
   });
 
   const zearnData = useMemo(() => {
-    return data?.filter((item): item is ZearnCompletion => 
-      item.completionType === 'zearn'
-    ) || null;
+    return (
+      data?.filter(
+        (item): item is ZearnCompletion => item.completionType === "zearn",
+      ) || null
+    );
   }, [data]);
 
   return {
     data: zearnData,
     isLoading,
     error: error?.message || null,
-    refetch
+    refetch,
   };
 }
 
@@ -63,20 +76,23 @@ export function useZearnData() {
  */
 export function useSnorklData() {
   const { data, isLoading, error, refetch } = useLessonCompletions({
-    completionType: 'snorkl_assessment'
+    completionType: "snorkl_assessment",
   });
 
   const snorklData = useMemo(() => {
-    return data?.filter((item): item is AssessmentCompletion => 
-      item.completionType === 'snorkl_assessment'
-    ) || null;
+    return (
+      data?.filter(
+        (item): item is AssessmentCompletion =>
+          item.completionType === "snorkl_assessment",
+      ) || null
+    );
   }, [data]);
 
   return {
     data: snorklData,
     isLoading,
     error: error?.message || null,
-    refetch
+    refetch,
   };
 }
 
@@ -85,30 +101,33 @@ export function useSnorklData() {
  */
 export function useAttendanceData() {
   const query = useQuery({
-    queryKey: queryKeys.entities.list('daily-class-events', {}),
+    queryKey: queryKeys.entities.list("daily-class-events", {}),
     queryFn: async () => {
       const result = await fetchDailyClassEvents({
         page: 1,
         limit: 1000, // Get all data for analytics
-        sortBy: 'date',
-        sortOrder: 'desc',
-        filters: {}
+        sortBy: "date",
+        sortOrder: "desc",
+        filters: {},
       });
-      
+
       if (!result.success) {
-        throw new Error(result.error || 'Failed to fetch attendance data');
+        throw new Error(result.error || "Failed to fetch attendance data");
       }
-      
+
       return result;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   return {
-    data: query.data?.success && 'items' in query.data ? query.data.items as DailyClassEvent[] : null,
+    data:
+      query.data?.success && "items" in query.data
+        ? (query.data.items as DailyClassEvent[])
+        : null,
     isLoading: query.isLoading,
     error: query.error?.message || null,
-    refetch: query.refetch
+    refetch: query.refetch,
   };
 }
 
@@ -123,11 +142,11 @@ export function useAnalyticsManager() {
     // Base data
     lessonCompletions,
     attendanceData,
-    
+
     // Combined loading state
     isLoading: lessonCompletions.isLoading || attendanceData.isLoading,
-    
+
     // Combined error state
-    error: lessonCompletions.error || attendanceData.error
+    error: lessonCompletions.error || attendanceData.error,
   };
-} 
+}

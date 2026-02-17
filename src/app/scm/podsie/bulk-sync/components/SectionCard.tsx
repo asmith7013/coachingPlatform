@@ -29,7 +29,7 @@ export function SectionCard({
   unitGroups,
   syncing,
   onSyncSection,
-  onSyncUnit
+  onSyncUnit,
 }: SectionCardProps) {
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
@@ -59,7 +59,9 @@ export function SectionCard({
                 : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
             }`}
           >
-            <ArrowPathIcon className={`w-5 h-5 ${syncing ? "animate-spin" : ""}`} />
+            <ArrowPathIcon
+              className={`w-5 h-5 ${syncing ? "animate-spin" : ""}`}
+            />
             Sync Section
           </button>
         </div>

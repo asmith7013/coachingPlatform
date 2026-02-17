@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import type { CloseButtonProps } from '../types';
+import type { CloseButtonProps } from "../types";
 
 export function CloseButton({ onClose }: CloseButtonProps) {
   return (

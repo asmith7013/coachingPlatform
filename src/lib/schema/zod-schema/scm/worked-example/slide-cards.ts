@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Atomic Component Schemas for Slide Content
@@ -16,10 +16,10 @@ import { z } from 'zod';
 
 // Available atomic component types
 export const CardTypeSchema = z.enum([
-  'content', // Any text-based content (prose, lists, equations, tables)
-  'svg', // Visual container for graphs/diagrams
-  'cfu', // Check for Understanding overlay
-  'answer', // Answer reveal overlay
+  "content", // Any text-based content (prose, lists, equations, tables)
+  "svg", // Visual container for graphs/diagrams
+  "cfu", // Check for Understanding overlay
+  "answer", // Answer reveal overlay
 ]);
 export type CardType = z.infer<typeof CardTypeSchema>;
 
@@ -46,7 +46,7 @@ export const BaseCardSchema = z.object({
  * AI generates this using patterns from card-patterns/content-box.html
  */
 export const ContentCardSchema = BaseCardSchema.extend({
-  type: z.literal('content'),
+  type: z.literal("content"),
   htmlContent: z.string(), // Complete HTML for the content box
 });
 export type ContentCard = z.infer<typeof ContentCardSchema>;
@@ -60,8 +60,8 @@ export type ContentCard = z.infer<typeof ContentCardSchema>;
  * - Caption for accessibility
  */
 export const SvgCardSchema = BaseCardSchema.extend({
-  type: z.literal('svg'),
-  viewBox: z.string().default('0 0 560 350'),
+  type: z.literal("svg"),
+  viewBox: z.string().default("0 0 560 350"),
   svgContent: z.string(), // Inner SVG content
   layers: z.array(z.string()).optional(), // Layer IDs for animation
   caption: z.string().optional(),
@@ -75,7 +75,7 @@ export type SvgCard = z.infer<typeof SvgCardSchema>;
  * Animates on click in PPTX.
  */
 export const CfuCardSchema = BaseCardSchema.extend({
-  type: z.literal('cfu'),
+  type: z.literal("cfu"),
   question: z.string(),
 });
 export type CfuCard = z.infer<typeof CfuCardSchema>;
@@ -87,13 +87,13 @@ export type CfuCard = z.infer<typeof CfuCardSchema>;
  * Animates on click in PPTX.
  */
 export const AnswerCardSchema = BaseCardSchema.extend({
-  type: z.literal('answer'),
+  type: z.literal("answer"),
   explanation: z.string(),
 });
 export type AnswerCard = z.infer<typeof AnswerCardSchema>;
 
 // Discriminated union of all component types
-export const CardDefinitionSchema = z.discriminatedUnion('type', [
+export const CardDefinitionSchema = z.discriminatedUnion("type", [
   ContentCardSchema,
   SvgCardSchema,
   CfuCardSchema,

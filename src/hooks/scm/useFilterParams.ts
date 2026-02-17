@@ -53,7 +53,7 @@ export const unitToSlug = (unit: string): string => {
 
 export const slugToUnit = (slug: string, availableUnits: string[]): string => {
   if (!slug) return "";
-  const matchingUnit = availableUnits.find(u => {
+  const matchingUnit = availableUnits.find((u) => {
     const unitNum = u.match(/(\d+)/);
     return unitNum && unitNum[1] === slug;
   });
@@ -134,19 +134,24 @@ export function useFilterParams({
   });
 
   const [selectedUnit, setSelectedUnit] = useState("");
-  const [pendingUnitSlug, setPendingUnitSlug] = useState(() =>
-    searchParams.get("unit") || ""
+  const [pendingUnitSlug, setPendingUnitSlug] = useState(
+    () => searchParams.get("unit") || "",
   );
 
   // Update URL when selections change
-  const updateUrlParams = useCallback((scopeTag: string, gradeWithin: string, unit: string) => {
-    const params = new URLSearchParams();
-    if (scopeTag) params.set("ss", scopeTagToSlug(scopeTag));
-    if (gradeWithin) params.set("g", gradeToSlug(gradeWithin));
-    if (unit) params.set("unit", unitToSlug(unit));
-    const queryString = params.toString();
-    router.replace(`${pathname}${queryString ? `?${queryString}` : ""}`, { scroll: false });
-  }, [router, pathname]);
+  const updateUrlParams = useCallback(
+    (scopeTag: string, gradeWithin: string, unit: string) => {
+      const params = new URLSearchParams();
+      if (scopeTag) params.set("ss", scopeTagToSlug(scopeTag));
+      if (gradeWithin) params.set("g", gradeToSlug(gradeWithin));
+      if (unit) params.set("unit", unitToSlug(unit));
+      const queryString = params.toString();
+      router.replace(`${pathname}${queryString ? `?${queryString}` : ""}`, {
+        scroll: false,
+      });
+    },
+    [router, pathname],
+  );
 
   // Resolve pending unit slug once units are available
   useEffect(() => {
@@ -160,29 +165,38 @@ export function useFilterParams({
   }, [pendingUnitSlug, availableUnits, selectedUnit]);
 
   // Handler for scope tag changes (clears grade and unit)
-  const handleScopeTagChange = useCallback((newTag: string) => {
-    setSelectedScopeTag(newTag);
-    setSelectedGradeWithin("");
-    setSelectedUnit("");
-    updateUrlParams(newTag, "", "");
-  }, [updateUrlParams]);
+  const handleScopeTagChange = useCallback(
+    (newTag: string) => {
+      setSelectedScopeTag(newTag);
+      setSelectedGradeWithin("");
+      setSelectedUnit("");
+      updateUrlParams(newTag, "", "");
+    },
+    [updateUrlParams],
+  );
 
   // Handler for grade within changes (clears unit)
-  const handleGradeWithinChange = useCallback((newGrade: string) => {
-    setSelectedGradeWithin(newGrade);
-    setSelectedUnit("");
-    updateUrlParams(selectedScopeTag, newGrade, "");
-  }, [selectedScopeTag, updateUrlParams]);
+  const handleGradeWithinChange = useCallback(
+    (newGrade: string) => {
+      setSelectedGradeWithin(newGrade);
+      setSelectedUnit("");
+      updateUrlParams(selectedScopeTag, newGrade, "");
+    },
+    [selectedScopeTag, updateUrlParams],
+  );
 
   // Handler for unit changes (optionally update grade within if provided)
-  const handleUnitChange = useCallback((newUnit: string, gradeWithin?: string) => {
-    const newGradeWithin = gradeWithin ?? selectedGradeWithin;
-    if (gradeWithin) {
-      setSelectedGradeWithin(gradeWithin);
-    }
-    setSelectedUnit(newUnit);
-    updateUrlParams(selectedScopeTag, newGradeWithin, newUnit);
-  }, [selectedScopeTag, selectedGradeWithin, updateUrlParams]);
+  const handleUnitChange = useCallback(
+    (newUnit: string, gradeWithin?: string) => {
+      const newGradeWithin = gradeWithin ?? selectedGradeWithin;
+      if (gradeWithin) {
+        setSelectedGradeWithin(gradeWithin);
+      }
+      setSelectedUnit(newUnit);
+      updateUrlParams(selectedScopeTag, newGradeWithin, newUnit);
+    },
+    [selectedScopeTag, selectedGradeWithin, updateUrlParams],
+  );
 
   return {
     selectedScopeTag,

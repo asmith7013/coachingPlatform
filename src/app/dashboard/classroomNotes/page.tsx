@@ -1,20 +1,20 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import { Card } from '@/components/composed/cards';
-import { Button } from '@/components/core/Button';
-import Header from './components/Header';
-import BasicInfo from './components/BasicInfo';
-import CurriculumSelector from './components/CurriculumSelector';
-import FeedbackSection from './components/FeedbackSection';
-import LearningSection from './components/LearningSection';
-import LessonFlow from './components/LessonFlow';
-import ProgressMonitoring from './components/ProgressMonitoring';
-import TimeTracking from './components/TimeTracking';
-import Transcripts from './components/Transcripts';
-import PreExitChecklist from './components/PreExitChecklist';
-import { curriculumData, exampleLessonData } from './data';
-import { getTodayString } from '@/lib/data-processing/transformers/utils/date-utils';
+import React, { useState } from "react";
+import { Card } from "@/components/composed/cards";
+import { Button } from "@/components/core/Button";
+import Header from "./components/Header";
+import BasicInfo from "./components/BasicInfo";
+import CurriculumSelector from "./components/CurriculumSelector";
+import FeedbackSection from "./components/FeedbackSection";
+import LearningSection from "./components/LearningSection";
+import LessonFlow from "./components/LessonFlow";
+import ProgressMonitoring from "./components/ProgressMonitoring";
+import TimeTracking from "./components/TimeTracking";
+import Transcripts from "./components/Transcripts";
+import PreExitChecklist from "./components/PreExitChecklist";
+import { curriculumData, exampleLessonData } from "./data";
+import { getTodayString } from "@/lib/data-processing/transformers/utils/date-utils";
 
 // Type definitions for form data
 export interface TimeData {
@@ -61,24 +61,24 @@ export interface FormData {
   teacher: string;
   curriculum: CurriculumSelection;
   otherContext: string;
-  
+
   learningTargets: string;
   coolDown: string;
-  
+
   glow: string;
   wonder: string;
   grow: string;
   nextSteps: string;
-  
+
   // Activity sections
   warmUp: ActivitySection;
   activity1: ActivitySection;
   activity2: ActivitySection;
   lessonSynthesis: ActivitySection;
-  
+
   // Progress monitoring
   progressMonitoring: ProgressMonitoring;
-  
+
   // Transcripts
   transcripts: Transcripts;
 }
@@ -86,56 +86,59 @@ export interface FormData {
 const ClassroomNotesPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [timeData, setTimeData] = useState<TimeData>({
-    startTime: '',
-    endTime: '',
-    stopwatchTime: '00:00:00',
-    startedWhen: '',
+    startTime: "",
+    endTime: "",
+    stopwatchTime: "00:00:00",
+    startedWhen: "",
   });
-  
+
   // Form data state - pre-populated with example data
   const [formData, setFormData] = useState<FormData>({
-    cycle: 'Cycle 2',
-    session: 'Session 3',
+    cycle: "Cycle 2",
+    session: "Session 3",
     date: getTodayString(),
-    teacher: 'Ms. Johnson',
+    teacher: "Ms. Johnson",
     curriculum: {
       course: exampleLessonData.course,
       unit: exampleLessonData.unit,
       lesson: exampleLessonData.lesson,
-      title: exampleLessonData.title
+      title: exampleLessonData.title,
     },
-    otherContext: 'Block period class. 28 students present. Co-teaching with Mr. Smith.',
-    
-    learningTargets: exampleLessonData.learningGoals.map(goal => `• ${goal}`).join('\n'),
-    coolDown: '',
-    
-    glow: '',
-    wonder: '',
-    grow: '',
-    nextSteps: '',
-    
+    otherContext:
+      "Block period class. 28 students present. Co-teaching with Mr. Smith.",
+
+    learningTargets: exampleLessonData.learningGoals
+      .map((goal) => `• ${goal}`)
+      .join("\n"),
+    coolDown: "",
+
+    glow: "",
+    wonder: "",
+    grow: "",
+    nextSteps: "",
+
     // Activity sections
     warmUp: {
-      launch: '',
-      workTime: '',
-      synthesis: '',
+      launch: "",
+      workTime: "",
+      synthesis: "",
     },
     activity1: {
-      launch: '',
-      workTime: '',
-      synthesis: '',
+      launch: "",
+      workTime: "",
+      synthesis: "",
     },
     activity2: {
-      launch: '',
-      workTime: '',
-      synthesis: '',
+      launch: "",
+      workTime: "",
+      synthesis: "",
     },
     lessonSynthesis: {
-      launch: '',
-      workTime: '',
-      synthesis: '',
+      launch: "",
+      workTime: "",
+      synthesis: "",
     },
-    
+
     // Progress monitoring
     progressMonitoring: {
       teacherDebriefing: false,
@@ -146,113 +149,127 @@ const ClassroomNotesPage = () => {
       visibleThinking: false,
       followUpQuestions: false,
     },
-    
+
     // Transcripts
     transcripts: {
-      warmUpLaunch: '',
-      activity1Launch: '',
-      activity2Launch: '',
-      synthesisLaunch: '',
-    }
+      warmUpLaunch: "",
+      activity1Launch: "",
+      activity2Launch: "",
+      synthesisLaunch: "",
+    },
   });
-  
+
   const startStopwatch = () => {
     console.log("Starting stopwatch");
     // Stopwatch logic implementation
   };
-  
+
   const pauseStopwatch = () => {
     console.log("Pausing stopwatch");
     // Pause stopwatch logic
   };
-  
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    
+
     // Handle nested fields
-    if (name.includes('.')) {
-      const [section, field] = name.split('.');
-      
-      if (section === 'warmUp' || section === 'activity1' || section === 'activity2' || section === 'lessonSynthesis') {
+    if (name.includes(".")) {
+      const [section, field] = name.split(".");
+
+      if (
+        section === "warmUp" ||
+        section === "activity1" ||
+        section === "activity2" ||
+        section === "lessonSynthesis"
+      ) {
         setFormData({
           ...formData,
           [section]: {
-            ...formData[section as keyof typeof formData] as ActivitySection,
-            [field]: value
-          }
+            ...(formData[section as keyof typeof formData] as ActivitySection),
+            [field]: value,
+          },
         });
-      } else if (section === 'transcripts') {
+      } else if (section === "transcripts") {
         setFormData({
           ...formData,
           transcripts: {
             ...formData.transcripts,
-            [field]: value
-          }
+            [field]: value,
+          },
         });
-      } else if (section === 'curriculum') {
+      } else if (section === "curriculum") {
         handleCurriculumChange(field, value);
       }
     } else {
       setFormData({
         ...formData,
-        [name]: value
+        [name]: value,
       });
     }
   };
-  
+
   const handleCurriculumChange = (field: string, value: string) => {
     // Update the curriculum field
     const newCurriculum = { ...formData.curriculum, [field]: value };
-    
+
     // If changing to the example lesson, populate with example data
     let learningTargets = formData.learningTargets;
     let title = formData.curriculum.title;
-    
-    if (field === 'lesson' && 
-        newCurriculum.course === exampleLessonData.course && 
-        newCurriculum.unit === exampleLessonData.unit && 
-        value === exampleLessonData.lesson) {
-      learningTargets = exampleLessonData.learningGoals.map(goal => `• ${goal}`).join('\n');
+
+    if (
+      field === "lesson" &&
+      newCurriculum.course === exampleLessonData.course &&
+      newCurriculum.unit === exampleLessonData.unit &&
+      value === exampleLessonData.lesson
+    ) {
+      learningTargets = exampleLessonData.learningGoals
+        .map((goal) => `• ${goal}`)
+        .join("\n");
       title = exampleLessonData.title;
-    } else if (field === 'course' || field === 'unit') {
+    } else if (field === "course" || field === "unit") {
       // Reset lesson title for other selections
-      title = '';
+      title = "";
     }
-    
+
     // Update form data
     setFormData({
       ...formData,
       curriculum: {
         ...newCurriculum,
-        title
+        title,
       },
-      learningTargets
+      learningTargets,
     });
   };
-  
+
   const handleCheckboxChange = (name: string) => {
     // For progress monitoring checkboxes
-    const [section, field] = name.split('.');
-    
-    if (section === 'progressMonitoring') {
+    const [section, field] = name.split(".");
+
+    if (section === "progressMonitoring") {
       setFormData({
         ...formData,
         progressMonitoring: {
           ...formData.progressMonitoring,
-          [field as keyof ProgressMonitoring]: !formData.progressMonitoring[field as keyof ProgressMonitoring]
-        }
+          [field as keyof ProgressMonitoring]:
+            !formData.progressMonitoring[field as keyof ProgressMonitoring],
+        },
       });
     }
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       // Save to database logic would go here
       console.log("Submitting form data:", formData);
-      
+
       // Mock successful submission
       setTimeout(() => {
         setIsLoading(false);
@@ -266,85 +283,90 @@ const ClassroomNotesPage = () => {
   };
 
   // Custom Card components for compatibility
-  const CardHeader: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className }) => (
-    <div className={className}>{children}</div>
-  );
-  
-  const CardBody: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className }) => (
-    <div className={className}>{children}</div>
-  );
-  
-  const CardFooter: React.FC<{ children: React.ReactNode, className?: string }> = ({ children, className }) => (
-    <div className={className}>{children}</div>
-  );
+  const CardHeader: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+  }> = ({ children, className }) => <div className={className}>{children}</div>;
+
+  const CardBody: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+  }> = ({ children, className }) => <div className={className}>{children}</div>;
+
+  const CardFooter: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+  }> = ({ children, className }) => <div className={className}>{children}</div>;
 
   // Composite Card component
   const CompositeCard = Object.assign(Card, {
     Header: CardHeader,
     Body: CardBody,
-    Footer: CardFooter
+    Footer: CardFooter,
   });
-  
+
   return (
     <div className="container mx-auto px-4 py-6 max-w-5xl">
       <form onSubmit={handleSubmit}>
         <CompositeCard className="mb-6">
           <CompositeCard.Header className="p-4 border-b">
-            <Header startStopwatch={startStopwatch} pauseStopwatch={pauseStopwatch} />
-          </CompositeCard.Header>
-          
-          <CompositeCard.Body className="p-4">
-            <BasicInfo 
-              formData={formData} 
-              handleInputChange={handleInputChange} 
+            <Header
+              startStopwatch={startStopwatch}
+              pauseStopwatch={pauseStopwatch}
             />
-            
-            <CurriculumSelector 
+          </CompositeCard.Header>
+
+          <CompositeCard.Body className="p-4">
+            <BasicInfo
+              formData={formData}
+              handleInputChange={handleInputChange}
+            />
+
+            <CurriculumSelector
               formData={formData}
               handleInputChange={handleInputChange}
               curriculumData={curriculumData}
               exampleLessonData={exampleLessonData}
             />
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <FeedbackSection 
-                formData={formData} 
-                handleInputChange={handleInputChange} 
+              <FeedbackSection
+                formData={formData}
+                handleInputChange={handleInputChange}
               />
-              
-              <LearningSection 
-                formData={formData} 
-                handleInputChange={handleInputChange} 
+
+              <LearningSection
+                formData={formData}
+                handleInputChange={handleInputChange}
               />
             </div>
-            
-            <LessonFlow 
-              formData={formData} 
-              handleInputChange={handleInputChange} 
+
+            <LessonFlow
+              formData={formData}
+              handleInputChange={handleInputChange}
             />
-            
-            <ProgressMonitoring 
-              formData={formData} 
-              handleCheckboxChange={handleCheckboxChange} 
+
+            <ProgressMonitoring
+              formData={formData}
+              handleCheckboxChange={handleCheckboxChange}
             />
-            
-            <TimeTracking 
-              timeData={timeData} 
-              setTimeData={setTimeData} 
+
+            <TimeTracking timeData={timeData} setTimeData={setTimeData} />
+
+            <Transcripts
+              formData={formData}
+              handleInputChange={handleInputChange}
             />
-            
-            <Transcripts 
-              formData={formData} 
-              handleInputChange={handleInputChange} 
-            />
-            
+
             <PreExitChecklist />
           </CompositeCard.Body>
-          
+
           <CompositeCard.Footer className="flex justify-end space-x-3 p-4 border-t">
-            <Button appearance="outline" type="button">Cancel</Button>
+            <Button appearance="outline" type="button">
+              Cancel
+            </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Save Observation Notes'}
+              {isLoading ? "Saving..." : "Save Observation Notes"}
             </Button>
           </CompositeCard.Footer>
         </CompositeCard>

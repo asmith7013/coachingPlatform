@@ -15,14 +15,16 @@ import { createCrudActions } from "@server/crud/crud-factory";
 // =====================================
 
 const podsieScmGroupCrud = createCrudActions({
-  model: PodsieScmGroupModel as unknown as Parameters<typeof createCrudActions>[0]['model'],
+  model: PodsieScmGroupModel as unknown as Parameters<
+    typeof createCrudActions
+  >[0]["model"],
   schema: PodsieScmGroupZodSchema as ZodType<PodsieScmGroup>,
   inputSchema: PodsieScmGroupInputZodSchema as ZodType<PodsieScmGroupInput>,
-  name: 'PodsieScmGroup',
-  revalidationPaths: ['/scm/podsie/module-config'],
-  sortFields: ['podsieGroupId', 'createdAt', 'updatedAt'],
-  defaultSortField: 'podsieGroupId',
-  defaultSortOrder: 'asc'
+  name: "PodsieScmGroup",
+  revalidationPaths: ["/scm/podsie/module-config"],
+  sortFields: ["podsieGroupId", "createdAt", "updatedAt"],
+  defaultSortField: "podsieGroupId",
+  defaultSortOrder: "asc",
 });
 
 export const createPodsieScmGroup = podsieScmGroupCrud.create;

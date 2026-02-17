@@ -1,6 +1,6 @@
-import type { Visit } from '@zod-schema/visits/visit';
-import { ScheduleAssignment } from '@enums';
-import type { BellSchedule } from '@/lib/schema/zod-schema/schedules/schedule';
+import type { Visit } from "@zod-schema/visits/visit";
+import { ScheduleAssignment } from "@enums";
+import type { BellSchedule } from "@/lib/schema/zod-schema/schedules/schedule";
 
 // Note: ScheduleAssignmentType and PlannedVisit were from planned-visit schema
 type PlannedVisit = Visit;
@@ -19,10 +19,10 @@ export interface TimeSlot {
 }
 
 export interface PeriodTime {
-    period: number;
-    start: string;
-    end: string;
-  }
+  period: number;
+  start: string;
+  end: string;
+}
 
 /**
  * Schedule filters for querying and display
@@ -156,7 +156,7 @@ export interface ThreeZoneTimeSlotProps {
   assignedTeacher?: string | null;
   assignedPurpose?: string | null;
   availableZones?: ScheduleAssignment[];
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   showLabels?: boolean;
   isSelected?: boolean;
   isActive?: boolean;
@@ -212,7 +212,7 @@ export interface ScheduleInteractionState {
  * Customizes schedule display and behavior
  */
 export interface ScheduleConfig {
-  displayFormat: 'grid' | 'list' | 'compact';
+  displayFormat: "grid" | "list" | "compact";
   showPeriodNumbers: boolean;
   showTimeLabels: boolean;
   enableDragDrop: boolean;
@@ -232,8 +232,6 @@ export type { BellSchedule };
 
 export { ScheduleAssignment };
 
-
 // ===== HOOK RETURN TYPES =====
-
 
 export type { PlannedVisit };

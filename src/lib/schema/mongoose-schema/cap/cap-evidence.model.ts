@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-import { standardDocumentFields, standardSchemaOptions } from '@mongoose-schema/shared-options';
+import {
+  standardDocumentFields,
+  standardSchemaOptions,
+} from "@mongoose-schema/shared-options";
 
 // Define schema fields, mirroring Zod schema structure
 const schemaFields = {
@@ -12,11 +15,14 @@ const schemaFields = {
   url: { type: String, required: false },
   uploadedFile: { type: String, required: false },
   dateCollected: { type: String, required: true }, // ISO date string
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
 // Create schema with timestamps and standard transform
-const CapEvidenceSchema = new mongoose.Schema(schemaFields, standardSchemaOptions);
+const CapEvidenceSchema = new mongoose.Schema(
+  schemaFields,
+  standardSchemaOptions,
+);
 
 // Add indexes for performance
 CapEvidenceSchema.index({ coachingActionPlanId: 1 });
@@ -26,5 +32,6 @@ CapEvidenceSchema.index({ dateCollected: 1 });
 CapEvidenceSchema.index({ ownerIds: 1 });
 
 // Create model, checking for existing models
-export const CapEvidenceModel = mongoose.models.CapEvidence || 
+export const CapEvidenceModel =
+  mongoose.models.CapEvidence ||
   mongoose.model("CapEvidence", CapEvidenceSchema);

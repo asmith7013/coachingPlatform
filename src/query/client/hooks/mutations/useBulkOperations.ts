@@ -1,42 +1,44 @@
 // src/query/client/hooks/mutations/useBulkOperations.ts
 
-import { useStandardMutation } from '@query/client/hooks/mutations/useStandardMutation';
-import { CollectionResponse } from '@core-types/response';
-import { ZodSchema } from 'zod';
-import { BaseDocument } from '@core-types/document';
-import { useInvalidation } from '@query/cache/invalidation';
-import { extractItems } from '@data-processing/transformers/utils/response-utils';
-import { validateArraySafe } from '@data-processing/validation/zod-validation';
+import { useStandardMutation } from "@query/client/hooks/mutations/useStandardMutation";
+import { CollectionResponse } from "@core-types/response";
+import { ZodSchema } from "zod";
+import { BaseDocument } from "@core-types/document";
+import { useInvalidation } from "@query/cache/invalidation";
+import { extractItems } from "@data-processing/transformers/utils/response-utils";
+import { validateArraySafe } from "@data-processing/validation/zod-validation";
 
 export interface BulkOperationOptions<T extends BaseDocument> {
   /** Entity type name (e.g., 'schools', 'staff') */
   entityType: string;
-  
+
   /** ✅ NOW REQUIRED: Zod schema for data validation */
   schema: ZodSchema<T>;
-  
+
   /** Function to perform bulk upload */
   bulkUpload?: (data: T[]) => Promise<CollectionResponse<T>>;
-  
+
   /** Function to perform bulk delete */
   bulkDelete?: (ids: string[]) => Promise<CollectionResponse<unknown>>;
-  
+
   /** Function to perform bulk update */
-  bulkUpdate?: (updates: Array<{ id: string; data: Partial<T> }>) => Promise<CollectionResponse<T>>;
-  
+  bulkUpdate?: (
+    updates: Array<{ id: string; data: Partial<T> }>,
+  ) => Promise<CollectionResponse<T>>;
+
   /** Error context for error reporting */
   errorContext?: string;
-  
+
   /** Whether to use selector system */
   useSelector?: boolean;
-  
+
   /** Optional related entity types to invalidate on mutations */
   relatedEntityTypes?: string[];
 }
 
 /**
  * Hook for performing bulk operations with React Query and schema validation
- * 
+ *
  * @example
  * ```typescript
  * const bulkOps = useBulkOperations({
@@ -46,7 +48,7 @@ export interface BulkOperationOptions<T extends BaseDocument> {
  *   bulkDelete: deleteSchools,
  *   relatedEntityTypes: ['staff', 'visits'] // Will invalidate staff and visits when schools are modified
  * });
- * 
+ *
  * // Use the operations
  * bulkOps.bulkUpload(schoolsData);
  * ```
@@ -59,30 +61,28 @@ export function useBulkOperations<T extends BaseDocument>({
   bulkUpdate,
   errorContext = entityType,
   useSelector: _useSelector = false,
-  relatedEntityTypes = []
+  relatedEntityTypes = [],
 }: BulkOperationOptions<T>) {
   const { invalidateList } = useInvalidation();
-  
+
   /**
    * Invalidates the entity and any related entities
    */
   const invalidateData = async () => {
     // Invalidate the main entity type
     await invalidateList(entityType);
-    
+
     // Invalidate any related entity types
     if (relatedEntityTypes.length > 0) {
-      await Promise.all(
-        relatedEntityTypes.map(type => invalidateList(type))
-      );
+      await Promise.all(relatedEntityTypes.map((type) => invalidateList(type)));
     }
   };
-  
+
   // Upload mutation with centralized error handling
   const uploadMutation = useStandardMutation(
     async (data: T[]) => {
       if (!bulkUpload) {
-        throw new Error('Bulk upload function not provided');
+        throw new Error("Bulk upload function not provided");
       }
       return await bulkUpload(data);
     },
@@ -91,35 +91,35 @@ export function useBulkOperations<T extends BaseDocument>({
         // Transform response with schema validation
         const items = extractItems(response);
         const _validatedItems = validateArraySafe(schema, items);
-        
+
         // Use invalidation hook instead of direct queryClient call
         await invalidateData();
-      }
+      },
     },
-    `${errorContext}.bulkUpload`
+    `${errorContext}.bulkUpload`,
   );
 
   // Delete mutation with centralized error handling
   const deleteMutation = useStandardMutation(
     async (ids: string[]) => {
       if (!bulkDelete) {
-        throw new Error('Bulk delete function not provided');
+        throw new Error("Bulk delete function not provided");
       }
       return await bulkDelete(ids);
     },
     {
       onSuccess: async () => {
         await invalidateData();
-      }
+      },
     },
-    `${errorContext}.bulkDelete`
+    `${errorContext}.bulkDelete`,
   );
 
   // Update mutation with centralized error handling
   const updateMutation = useStandardMutation(
     async (updates: Array<{ id: string; data: Partial<T> }>) => {
       if (!bulkUpdate) {
-        throw new Error('Bulk update function not provided');
+        throw new Error("Bulk update function not provided");
       }
       return await bulkUpdate(updates);
     },
@@ -128,30 +128,30 @@ export function useBulkOperations<T extends BaseDocument>({
         // Transform response with schema validation
         const items = extractItems(response);
         const _validatedItems = validateArraySafe(schema, items);
-        
+
         await invalidateData();
-      }
+      },
     },
-    `${errorContext}.bulkUpdate`
+    `${errorContext}.bulkUpdate`,
   );
-  
+
   return {
     // Bulk upload operations
     bulkUpload: bulkUpload ? uploadMutation.mutate : null,
     bulkUploadAsync: bulkUpload ? uploadMutation.mutateAsync : null,
     isUploading: uploadMutation.isPending,
     uploadError: uploadMutation.error,
-    
+
     // Bulk delete operations
     bulkDelete: bulkDelete ? deleteMutation.mutate : null,
     bulkDeleteAsync: bulkDelete ? deleteMutation.mutateAsync : null,
     isDeleting: deleteMutation.isPending,
     deleteError: deleteMutation.error,
-    
+
     // Bulk update operations
     bulkUpdate: bulkUpdate ? updateMutation.mutate : null,
     bulkUpdateAsync: bulkUpdate ? updateMutation.mutateAsync : null,
     isUpdating: updateMutation.isPending,
-    updateError: updateMutation.error
+    updateError: updateMutation.error,
   };
 }

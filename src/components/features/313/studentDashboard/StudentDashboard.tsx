@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { StudentAuth } from './StudentAuth';
-import { AttendanceOverview } from './AttendanceOverview';
+import { StudentAuth } from "./StudentAuth";
+import { AttendanceOverview } from "./AttendanceOverview";
 // import { ZearnProgress } from './ZearnProgress';
 // import { PreAssessmentData } from './PreAssessmentData';
 // import { ScopeSequenceProgress } from './ScopeSequenceProgress';
-import { CombinedLessonProgress } from './CombinedLessonProgress';
-import { useStudentData } from '@/hooks/domain/313/useStudentData';
-import { Card } from '@/components/composed/cards/Card';
-import { Text } from '@/components/core/typography/Text';
-import { Heading } from '@/components/core/typography/Heading';
-import { Button } from '@/components/core/Button';
-import { MonthlyCalendar } from './monthlyCalendar/MonthlyCalendar';
-import { useStudentCalendarData } from '@/hooks/domain/313/useStudentCalendarData';
-import { StudentData } from '@/lib/schema/zod-schema/scm/student/student-data';
+import { CombinedLessonProgress } from "./CombinedLessonProgress";
+import { useStudentData } from "@/hooks/domain/313/useStudentData";
+import { Card } from "@/components/composed/cards/Card";
+import { Text } from "@/components/core/typography/Text";
+import { Heading } from "@/components/core/typography/Heading";
+import { Button } from "@/components/core/Button";
+import { MonthlyCalendar } from "./monthlyCalendar/MonthlyCalendar";
+import { useStudentCalendarData } from "@/hooks/domain/313/useStudentCalendarData";
+import { StudentData } from "@/lib/schema/zod-schema/scm/student/student-data";
 // import { ScopeSequenceProgress } from './ScopeSequenceProgress';
 
 interface StudentDashboardProps {
@@ -25,7 +25,7 @@ interface StudentDashboardProps {
  */
 function StudentCalendarView({ studentData }: { studentData: StudentData }) {
   const { dailyCompletions } = useStudentCalendarData(studentData);
-  
+
   return (
     <MonthlyCalendar
       dailyCompletions={dailyCompletions}
@@ -35,24 +35,24 @@ function StudentCalendarView({ studentData }: { studentData: StudentData }) {
 }
 
 export function StudentDashboard({ studentId }: StudentDashboardProps) {
-  const { 
-    data, 
-    isLoading, 
-    error, 
-    isAuthenticated, 
+  const {
+    data,
+    isLoading,
+    error,
+    isAuthenticated,
     isAuthenticating,
     authenticate,
     logout,
-    refreshData
+    refreshData,
   } = useStudentData(studentId);
 
   // Show authentication screen if not authenticated
   if (!isAuthenticated) {
     return (
-      <StudentAuth 
-        onAuthenticate={authenticate} 
-        isLoading={isAuthenticating} 
-        error={error} 
+      <StudentAuth
+        onAuthenticate={authenticate}
+        isLoading={isAuthenticating}
+        error={error}
       />
     );
   }
@@ -86,15 +86,11 @@ export function StudentDashboard({ studentId }: StudentDashboardProps) {
               {error || "No data found for this student"}
             </Text>
             <div className="space-y-2">
-              <Button 
-                intent="primary" 
-                onClick={refreshData}
-                className="w-full"
-              >
+              <Button intent="primary" onClick={refreshData} className="w-full">
                 Try Again
               </Button>
-              <Button 
-                intent="secondary" 
+              <Button
+                intent="secondary"
                 appearance="outline"
                 onClick={logout}
                 className="w-full"
@@ -115,22 +111,21 @@ export function StudentDashboard({ studentId }: StudentDashboardProps) {
         <div className="max-w-6xl mx-auto px-6 py-6">
           <div className="flex justify-between items-center">
             <div>
-              <Heading level="h1">Welcome
-                {/* , {data.firstName}  */}
-                ! 👋</Heading>
-              <Text color="muted">
-                Summer Rising - Section {data.section}
-              </Text>
+              <Heading level="h1">
+                Welcome
+                {/* , {data.firstName}  */}! 👋
+              </Heading>
+              <Text color="muted">Summer Rising - Section {data.section}</Text>
             </div>
             <div className="flex space-x-2">
-              <Button 
-                intent="secondary" 
+              <Button
+                intent="secondary"
                 appearance="outline"
                 onClick={refreshData}
                 disabled={isLoading}
                 className="text-sm"
               >
-                {isLoading ? 'Refreshing...' : 'Refresh'}
+                {isLoading ? "Refreshing..." : "Refresh"}
               </Button>
               {/* <Button 
                 intent="secondary" 
@@ -147,20 +142,18 @@ export function StudentDashboard({ studentId }: StudentDashboardProps) {
 
       {/* Main Dashboard Content */}
       <div className="max-w-6xl mx-auto p-6 space-y-6">
-                {/* Row 1 - Scope & Sequence Progress (Full Width, Most Prominent) */}
+        {/* Row 1 - Scope & Sequence Progress (Full Width, Most Prominent) */}
         {/* <ScopeSequenceProgress 
           progress={data.scopeSequenceProgress} 
           studentSection={data.section}
         /> */}
         {/* Row 1 - Combined Lesson Progress (Full Width, Most Prominent) */}
-        <CombinedLessonProgress 
-          studentData={data}
-        />
+        <CombinedLessonProgress studentData={data} />
 
         {/* Row 2 - Attendance (Half Width) + Calendar (Half Width) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <AttendanceOverview attendance={data.attendance} />
-          
+
           {/* Daily Progress Calendar */}
           <Card>
             <Card.Header>
@@ -183,10 +176,11 @@ export function StudentDashboard({ studentId }: StudentDashboardProps) {
         {/* Footer */}
         <div className="text-center py-8">
           <Text textSize="xs" color="muted">
-            Keep up the great work! Your progress is being tracked to help you succeed in math.
+            Keep up the great work! Your progress is being tracked to help you
+            succeed in math.
           </Text>
         </div>
       </div>
     </div>
   );
-} 
+}

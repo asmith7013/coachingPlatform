@@ -1,11 +1,8 @@
 "use server";
 
 import { z } from "zod";
-import {
-  ProcessedLessonZodSchema,
-  type ProcessedLesson
-} from '../lib/types';
-import { claudeClient } from '@/lib/api/integrations/claude/client';
+import { ProcessedLessonZodSchema, type ProcessedLesson } from "../lib/types";
+import { claudeClient } from "@/lib/api/integrations/claude/client";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
 
@@ -19,24 +16,28 @@ const SingleLessonProcessingZodSchema = z.object({
     grade: z.string(),
     unit: z.string(),
     lesson: z.string(),
-    lessonNumber: z.number().optional()
-  })
+    lessonNumber: z.number().optional(),
+  }),
 });
 
 /**
  * Schema for batch processing multiple lessons
  */
 const BatchProcessingRequestZodSchema = z.object({
-  lessons: z.array(z.object({
-    htmlContent: z.string().min(1, "HTML content is required"),
-    lessonMetadata: z.object({
-      url: z.string().url(),
-      grade: z.string(),
-      unit: z.string(),
-      lesson: z.string(),
-      lessonNumber: z.number().optional()
-    })
-  })).min(1, "At least one lesson is required")
+  lessons: z
+    .array(
+      z.object({
+        htmlContent: z.string().min(1, "HTML content is required"),
+        lessonMetadata: z.object({
+          url: z.string().url(),
+          grade: z.string(),
+          unit: z.string(),
+          lesson: z.string(),
+          lessonNumber: z.number().optional(),
+        }),
+      }),
+    )
+    .min(1, "At least one lesson is required"),
 });
 
 /**
@@ -47,21 +48,23 @@ const BatchProcessingResponseZodSchema = z.object({
   totalRequested: z.number(),
   totalSuccessful: z.number(),
   totalFailed: z.number(),
-  processedLessons: z.array(z.object({
-    lessonMetadata: z.object({
-      url: z.string().url(),
-      grade: z.string(),
-      unit: z.string(),
-      lesson: z.string(),
-      lessonNumber: z.number().optional()
+  processedLessons: z.array(
+    z.object({
+      lessonMetadata: z.object({
+        url: z.string().url(),
+        grade: z.string(),
+        unit: z.string(),
+        lesson: z.string(),
+        lessonNumber: z.number().optional(),
+      }),
+      result: ProcessedLessonZodSchema.optional(),
+      success: z.boolean(),
+      error: z.string().optional(),
     }),
-    result: ProcessedLessonZodSchema.optional(),
-    success: z.boolean(),
-    error: z.string().optional()
-  })),
+  ),
   startTime: z.string(),
   endTime: z.string(),
-  duration: z.string()
+  duration: z.string(),
 });
 
 type BatchProcessingResponse = z.infer<typeof BatchProcessingResponseZodSchema>;
@@ -72,50 +75,52 @@ type BatchProcessingResponse = z.infer<typeof BatchProcessingResponseZodSchema>;
  */
 export async function processSingleLesson(request: unknown) {
   const startTime = new Date().toISOString();
-  
+
   try {
     // Validate request data
     const validatedRequest = SingleLessonProcessingZodSchema.parse(request);
     const { htmlContent, lessonMetadata } = validatedRequest;
-    
-    console.log('🤖 Processing single lesson with Claude...');
-    console.log('📝 Lesson:', lessonMetadata.url);
-    
+
+    console.log("🤖 Processing single lesson with Claude...");
+    console.log("📝 Lesson:", lessonMetadata.url);
+
     // Process with Claude
     const processedMarkdown = await claudeClient.processLessonContent(
-      htmlContent, 
-      lessonMetadata
+      htmlContent,
+      lessonMetadata,
     );
-    
-    // Parse the processed content to extract sections
-    const processedLesson = parseProcessedMarkdown(processedMarkdown, lessonMetadata);
 
-    console.log('✅ Single lesson processed successfully');
-    
+    // Parse the processed content to extract sections
+    const processedLesson = parseProcessedMarkdown(
+      processedMarkdown,
+      lessonMetadata,
+    );
+
+    console.log("✅ Single lesson processed successfully");
+
     // Validate response structure
     const validatedResponse = ProcessedLessonZodSchema.parse(processedLesson);
-    
+
     return {
       success: true,
-      data: validatedResponse
+      data: validatedResponse,
     };
-    
   } catch (error) {
     const endTime = new Date().toISOString();
     const _duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
-    
-    console.error('Error in processSingleLesson:', error);
-    
+
+    console.error("Error in processSingleLesson:", error);
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: handleValidationError(error)
+        error: handleValidationError(error),
       };
     }
-    
+
     return {
       success: false,
-      error: handleServerError(error, 'processSingleLesson')
+      error: handleServerError(error, "processSingleLesson"),
     };
   }
 }
@@ -126,70 +131,77 @@ export async function processSingleLesson(request: unknown) {
  */
 export async function processBatchLessons(request: unknown) {
   const startTime = new Date().toISOString();
-  
+
   try {
     // Validate request data
     const validatedRequest = BatchProcessingRequestZodSchema.parse(request);
     const { lessons } = validatedRequest;
-    
-    console.log('🚀 Starting batch processing with Claude...');
-    console.log('📊 Total lessons to process:', lessons.length);
-    
+
+    console.log("🚀 Starting batch processing with Claude...");
+    console.log("📊 Total lessons to process:", lessons.length);
+
     const processedLessons = [];
-    
+
     // Process lessons sequentially to avoid rate limits
     for (let i = 0; i < lessons.length; i++) {
       const lesson = lessons[i];
-      console.log(`🤖 Processing lesson ${i + 1}/${lessons.length}: ${lesson.lessonMetadata.url}`);
-      
+      console.log(
+        `🤖 Processing lesson ${i + 1}/${lessons.length}: ${lesson.lessonMetadata.url}`,
+      );
+
       try {
         // Process with Claude
         const processedMarkdown = await claudeClient.processLessonContent(
           lesson.htmlContent,
-          lesson.lessonMetadata
+          lesson.lessonMetadata,
         );
-        
+
         // Parse the processed content
-        const processedLesson = parseProcessedMarkdown(processedMarkdown, lesson.lessonMetadata);
-        
+        const processedLesson = parseProcessedMarkdown(
+          processedMarkdown,
+          lesson.lessonMetadata,
+        );
+
         processedLessons.push({
           lessonMetadata: lesson.lessonMetadata,
           result: processedLesson,
           success: true,
-          error: undefined
+          error: undefined,
         });
-        
+
         console.log(`✅ Lesson ${i + 1} processed successfully`);
-        
+
         // Add delay between requests to avoid rate limits
         if (i < lessons.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
-        
       } catch (lessonError) {
         console.error(`❌ Failed to process lesson ${i + 1}:`, lessonError);
-        
+
         processedLessons.push({
           lessonMetadata: lesson.lessonMetadata,
           result: undefined,
           success: false,
-          error: lessonError instanceof Error ? lessonError.message : 'Unknown error'
+          error:
+            lessonError instanceof Error
+              ? lessonError.message
+              : "Unknown error",
         });
       }
     }
-    
+
     const endTime = new Date().toISOString();
     const duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
-    
+
     // Count successful and failed processing
-    const successful = processedLessons.filter(lesson => lesson.success);
-    const failed = processedLessons.filter(lesson => !lesson.success);
-    
-    console.log('📊 Processing Results:');
+    const successful = processedLessons.filter((lesson) => lesson.success);
+    const failed = processedLessons.filter((lesson) => !lesson.success);
+
+    console.log("📊 Processing Results:");
     console.log(`   ✅ Successful: ${successful.length}`);
     console.log(`   ❌ Failed: ${failed.length}`);
     console.log(`   ⏱️ Duration: ${duration}`);
-    
+
     const response: BatchProcessingResponse = {
       success: true,
       totalRequested: lessons.length,
@@ -198,33 +210,32 @@ export async function processBatchLessons(request: unknown) {
       processedLessons,
       startTime,
       endTime,
-      duration
+      duration,
     };
-    
+
     // Validate response structure
     const validatedResponse = BatchProcessingResponseZodSchema.parse(response);
-    
+
     return {
       success: true,
-      data: validatedResponse
+      data: validatedResponse,
     };
-    
   } catch (error) {
     const endTime = new Date().toISOString();
     const _duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
-    
-    console.error('Error in processBatchLessons:', error);
-    
+
+    console.error("Error in processBatchLessons:", error);
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: handleValidationError(error)
+        error: handleValidationError(error),
       };
     }
-    
+
     return {
       success: false,
-      error: handleServerError(error, 'processBatchLessons')
+      error: handleServerError(error, "processBatchLessons"),
     };
   }
 }
@@ -233,43 +244,53 @@ export async function processBatchLessons(request: unknown) {
  * Parse processed markdown from Claude into structured sections
  */
 function parseProcessedMarkdown(
-  markdown: string, 
+  markdown: string,
   lessonMetadata: {
     url: string;
     grade: string;
     unit: string;
     lesson: string;
     lessonNumber?: number;
-  }
+  },
 ): ProcessedLesson {
   const needsReview: string[] = [];
-  
+
   // Extract title (look for ## Lesson [Number])
   const titleMatch = markdown.match(/##\s*Lesson\s*\d+/i);
-  const title = titleMatch ? titleMatch[0].trim() : `Lesson ${lessonMetadata.lesson}`;
-  
+  const title = titleMatch
+    ? titleMatch[0].trim()
+    : `Lesson ${lessonMetadata.lesson}`;
+
   // Extract lesson URL line
-  const urlMatch = markdown.match(/\*\*Lesson URL:\*\*\s*\[([^\]]+)\]\(([^)]+)\)/);
+  const urlMatch = markdown.match(
+    /\*\*Lesson URL:\*\*\s*\[([^\]]+)\]\(([^)]+)\)/,
+  );
   const lessonUrl = urlMatch ? urlMatch[2] : lessonMetadata.url;
-  
+
   // Extract Canvas section
-  const canvasMatch = markdown.match(/\*\*Canvas\*\*:?\s*([\s\S]*?)(?=\*\*Question Text\*\*|$)/i);
-  const canvas = canvasMatch ? canvasMatch[1].trim() : '';
+  const canvasMatch = markdown.match(
+    /\*\*Canvas\*\*:?\s*([\s\S]*?)(?=\*\*Question Text\*\*|$)/i,
+  );
+  const canvas = canvasMatch ? canvasMatch[1].trim() : "";
 
   // Extract Question Text section
-  const questionMatch = markdown.match(/\*\*Question Text\*\*:?\s*([\s\S]*?)(?=\*\*Acceptance Criteria\*\*|$)/i);
-  const questionText = questionMatch ? questionMatch[1].trim() : '';
+  const questionMatch = markdown.match(
+    /\*\*Question Text\*\*:?\s*([\s\S]*?)(?=\*\*Acceptance Criteria\*\*|$)/i,
+  );
+  const questionText = questionMatch ? questionMatch[1].trim() : "";
 
   // Extract Acceptance Criteria section
-  const criteriaMatch = markdown.match(/\*\*Acceptance Criteria\*\*:?\s*([\s\S]*?)$/i);
-  const acceptanceCriteria = criteriaMatch ? criteriaMatch[1].trim() : '';
-  
+  const criteriaMatch = markdown.match(
+    /\*\*Acceptance Criteria\*\*:?\s*([\s\S]*?)$/i,
+  );
+  const acceptanceCriteria = criteriaMatch ? criteriaMatch[1].trim() : "";
+
   // Check for review flags
   const reviewMatches = markdown.match(/\[NEEDS MANUAL REVIEW[^\]]*\]/g);
   if (reviewMatches) {
     needsReview.push(...reviewMatches);
   }
-  
+
   return {
     title,
     lessonUrl,
@@ -278,6 +299,6 @@ function parseProcessedMarkdown(
     acceptanceCriteria,
     fullMarkdown: markdown,
     needsReview,
-    processedAt: new Date().toISOString()
+    processedAt: new Date().toISOString(),
   };
 }
