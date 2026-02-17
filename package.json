@@ -27,6 +27,8 @@
     "knip": "knip",
     "sync-skill-content": "tsx scripts/sync-skill-content.ts",
     "prebuild": "npm run generate-css && tsc --noEmit --strict && npm run lint",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src",
     "postinstall": "patch-package"
   },
   "dependencies": {
