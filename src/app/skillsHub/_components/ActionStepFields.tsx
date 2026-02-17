@@ -13,7 +13,7 @@ import { IconTrash } from "@tabler/icons-react";
 
 export interface ActionStepFormData {
   description: string;
-  dueDate: Date | null;
+  dueDate: string | null;
   evidenceOfCompletion: string;
   skillIds: string[];
 }
