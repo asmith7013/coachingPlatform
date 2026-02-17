@@ -12,8 +12,6 @@ import {
   PostHogProvider,
   PostHogIdentifier,
 } from "@/providers/PostHogProvider";
-import { PostHogPageView } from "@/components/analytics/PostHogPageView";
-import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -46,8 +44,6 @@ export default function RootLayout({
         <PostHogProvider>
           <ClerkProvider dynamic>
             <PostHogIdentifier />
-            <PostHogPageView />
-            <PageViewTracker />
             <QueryProvider>
               <AuthProvider>
                 <SentryBoundaryWrapper>

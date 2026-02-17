@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-export const SummerDistricts = ["D11", "D9"] as const;
-
-export const Sections313 = [
+export const Sections = [
   "802",
   "803",
   "804",
@@ -18,7 +16,7 @@ export const SectionsPS19 = ["601", "602", "603"] as const;
 
 export const SectionsX644 = ["601", "602", "603", "604", "605", "606"] as const;
 
-export const Teachers313 = [
+export const Teachers = [
   "CARDONA",
   "COMPRES",
   "MALUNGA",
@@ -27,7 +25,7 @@ export const Teachers313 = [
   "NEWMAN",
 ] as const;
 
-export const Roadmaps313 = [
+export const Roadmaps = [
   "Illustrative Math New York - 4th Grade",
   "Illustrative Math New York - 5th Grade",
   "Illustrative Math New York - 6th Grade",
@@ -38,29 +36,26 @@ export const Roadmaps313 = [
 
 export const Schools = ["IS313", "PS19", "X644"] as const;
 
-export const SummerDistrictsZod = z.enum(SummerDistricts);
-export type SummerDistrictsType = z.infer<typeof SummerDistrictsZod>;
-
-export const Sections313Zod = z.enum(Sections313);
-export type Sections313Type = z.infer<typeof Sections313Zod>;
+export const SectionsZod = z.enum(Sections);
+export type SectionsType = z.infer<typeof SectionsZod>;
 
 export const SectionsPS19Zod = z.enum(SectionsPS19);
 export type SectionsPS19Type = z.infer<typeof SectionsPS19Zod>;
 
 // Combined sections for all schools
 export const AllSections = [
-  ...Sections313,
+  ...Sections,
   ...SectionsPS19,
   ...SectionsX644,
 ] as const;
 export const AllSectionsZod = z.enum(AllSections);
 export type AllSectionsType = z.infer<typeof AllSectionsZod>;
 
-export const Teachers313Zod = z.enum(Teachers313);
-export type Teachers313Type = z.infer<typeof Teachers313Zod>;
+export const TeachersZod = z.enum(Teachers);
+export type TeachersType = z.infer<typeof TeachersZod>;
 
-export const Roadmaps313Zod = z.enum(Roadmaps313);
-export type Roadmaps313Type = z.infer<typeof Roadmaps313Zod>;
+export const RoadmapsZod = z.enum(Roadmaps);
+export type RoadmapsType = z.infer<typeof RoadmapsZod>;
 
 export const SchoolsZod = z.enum(Schools);
 export type SchoolsType = z.infer<typeof SchoolsZod>;
@@ -121,7 +116,7 @@ export const SPECIAL_POPULATION_DESCRIPTIONS: Record<
  * Roadmap assignment for a section
  */
 export type RoadmapAssignment = {
-  roadmapName: Roadmaps313Type;
+  roadmapName: RoadmapsType;
   isPrimary: boolean;
 };
 
@@ -242,7 +237,7 @@ export function getRoadmapsForSection(section: string): RoadmapAssignment[] {
  */
 export function getPrimaryRoadmapForSection(
   section: string,
-): Roadmaps313Type | undefined {
+): RoadmapsType | undefined {
   const roadmaps = getRoadmapsForSection(section);
   return roadmaps.find((r) => r.isPrimary)?.roadmapName;
 }
@@ -250,9 +245,7 @@ export function getPrimaryRoadmapForSection(
 /**
  * Helper function to get all roadmap names for a section
  */
-export function getAllRoadmapNamesForSection(
-  section: string,
-): Roadmaps313Type[] {
+export function getAllRoadmapNamesForSection(section: string): RoadmapsType[] {
   return getRoadmapsForSection(section).map((r) => r.roadmapName);
 }
 
@@ -265,7 +258,7 @@ export function getAllRoadmapNamesForSection(
  */
 export interface ScraperFilterConfig {
   classes: string[];
-  roadmap: Roadmaps313Type;
+  roadmap: RoadmapsType;
   studentGrade: string;
   skillGrade: string;
 }
@@ -274,7 +267,7 @@ export interface ScraperFilterConfig {
  * Section scraper configuration (may have multiple configs for dual-roadmap sections)
  */
 export interface SectionScraperConfig {
-  sectionName: Sections313Type;
+  sectionName: SectionsType;
   displayName: string;
   configs: ScraperFilterConfig[];
 }
@@ -400,7 +393,7 @@ export const SCRAPER_SECTION_CONFIGS: SectionScraperConfig[] = [
  * Helper function to get scraper config for a specific section
  */
 export function getScraperConfigForSection(
-  section: Sections313Type,
+  section: SectionsType,
 ): SectionScraperConfig | undefined {
   return SCRAPER_SECTION_CONFIGS.find((c) => c.sectionName === section);
 }

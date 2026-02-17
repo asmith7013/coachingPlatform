@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { withDbConnection } from "@server/db/ensure-connection";
-import { Attendance313 } from "@mongoose-schema/scm/student/attendance.model";
+import { Attendance } from "@mongoose-schema/scm/student/attendance.model";
 import {
   AttendanceStatusSchema,
   type AttendanceInput,
@@ -133,7 +133,7 @@ export async function importAttendanceData(jsonData: unknown, school?: string) {
       let createdCount = 0;
 
       for (const record of attendanceRecords) {
-        const result = await Attendance313.updateOne(
+        const result = await Attendance.updateOne(
           { studentId: record.studentId, date: record.date },
           { $set: record },
           { upsert: true },
@@ -195,7 +195,7 @@ export async function getAttendanceByDateRange(
         query.section = section;
       }
 
-      const records = await Attendance313.find(query)
+      const records = await Attendance.find(query)
         .sort({ date: 1, studentId: 1 })
         .lean();
 
@@ -221,7 +221,7 @@ export async function getAttendanceByDateRange(
 export async function getAttendanceByStudent(studentId: number) {
   return withDbConnection(async () => {
     try {
-      const records = await Attendance313.find({ studentId })
+      const records = await Attendance.find({ studentId })
         .sort({ date: -1 })
         .lean();
 
@@ -248,7 +248,7 @@ export async function getAttendanceByStudent(studentId: number) {
 export async function getAttendanceSummary(studentId: number) {
   return withDbConnection(async () => {
     try {
-      const records = await Attendance313.find({ studentId }).lean();
+      const records = await Attendance.find({ studentId }).lean();
 
       const totalDays = records.length;
       const presentDays = records.filter((r) => r.status === "present").length;

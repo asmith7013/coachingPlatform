@@ -2,7 +2,7 @@
 
 import { withDbConnection } from "@server/db/ensure-connection";
 import { SectionConfigModel } from "@mongoose-schema/scm/podsie/section-config.model";
-import { Attendance313 } from "@mongoose-schema/scm/student/attendance.model";
+import { Attendance } from "@mongoose-schema/scm/student/attendance.model";
 import { StudentModel } from "@mongoose-schema/scm/student/student.model";
 import { SchoolCalendarModel } from "@mongoose-schema/calendar/school-calendar.model";
 import { handleServerError } from "@error/handlers/server";
@@ -165,7 +165,7 @@ export async function getSectionAttendanceByDateRange(
 > {
   return withDbConnection(async () => {
     try {
-      const records = await Attendance313.find({
+      const records = await Attendance.find({
         section,
         date: { $gte: startDate, $lte: endDate },
       }).lean();

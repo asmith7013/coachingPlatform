@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
-import { AllSectionsZod, Teachers313Zod, SchoolsZod } from "@schema/enum/scm";
+import { AllSectionsZod, TeachersZod, SchoolsZod } from "@schema/enum/scm";
 
 // =====================================
 // STUDENT ACTIVITY SCHEMA
@@ -268,7 +268,7 @@ export const StudentFieldsSchema = z.object({
 
   school: SchoolsZod.describe("School identifier (IS313, PS19, or X644)"),
   section: AllSectionsZod.describe("Class section identifier"),
-  teacher: Teachers313Zod.describe("Assigned teacher").optional(),
+  teacher: TeachersZod.describe("Assigned teacher").optional(),
 
   gradeLevel: z.string().describe("Current grade level (e.g., '6'").optional(),
   //   subject: z.string().min(1).describe("Subject area"),

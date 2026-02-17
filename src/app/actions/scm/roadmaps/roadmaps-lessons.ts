@@ -1,7 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
 import { RoadmapsLessonModel } from "@mongoose-schema/scm/roadmaps/roadmap.model";
 import { RoadmapsLessonInputZodSchema } from "@zod-schema/scm/roadmaps/roadmap";
 import { withDbConnection } from "@server/db/ensure-connection";
@@ -47,9 +46,6 @@ export async function createRoadmapsLesson(lessonData: unknown) {
 
       const savedLesson = await lesson.save();
       console.log("✅ Roadmaps lesson created successfully:", savedLesson._id);
-
-      // Revalidate relevant paths
-      revalidatePath("/313/roadmaps");
 
       return {
         success: true,
@@ -156,9 +152,6 @@ export async function bulkCreateRoadmapsLessons(lessonsData: unknown) {
         `📊 Bulk operation complete: ${results.length} successful, ${errors.length} errors`,
       );
 
-      // Revalidate relevant paths
-      revalidatePath("/313/roadmaps");
-
       return {
         success: true,
         data: {
@@ -224,10 +217,6 @@ export async function updateRoadmapsLesson(
         "✅ Roadmaps lesson updated successfully:",
         updatedLesson._id,
       );
-
-      // Revalidate relevant paths
-      revalidatePath("/313/roadmaps");
-      revalidatePath(`/313/roadmaps/${lessonId}`);
 
       return {
         success: true,
@@ -324,9 +313,6 @@ export async function deleteRoadmapsLesson(lessonId: string) {
       }
 
       console.log("✅ Roadmaps lesson deleted successfully");
-
-      // Revalidate relevant paths
-      revalidatePath("/313/roadmaps");
 
       return {
         success: true,

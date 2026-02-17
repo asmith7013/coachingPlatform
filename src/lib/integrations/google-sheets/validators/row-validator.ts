@@ -12,7 +12,7 @@ import {
   ColumnAliases,
   ColumnMappingResult,
 } from "../types/spreadsheet-types";
-import { Sections313Type } from "@/lib/schema/enum/scm";
+import { SectionsType } from "@/lib/schema/enum/scm";
 
 // =====================================
 // COLUMN MAPPING UTILITIES
@@ -230,7 +230,7 @@ export function validateAndParseRow(
 
   try {
     teacher = TeacherZod.parse(teacherStr);
-    section = sectionStr as Sections313Type;
+    section = sectionStr as SectionsType;
     attendance = AttendanceStatusZod.parse(attendanceStr);
   } catch (error) {
     if (error instanceof z.ZodError) {

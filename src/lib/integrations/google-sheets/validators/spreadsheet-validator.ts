@@ -10,7 +10,7 @@ import {
   ValidatedRowData,
   MasteryDetail,
 } from "../types/spreadsheet-types";
-import { Sections313Type } from "@schema/enum/scm";
+import { SectionsType } from "@schema/enum/scm";
 
 /**
  * Column mapping using existing normalization patterns
@@ -155,7 +155,7 @@ export class SpreadsheetRowValidator {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         teacher,
-        section: section as Sections313Type,
+        section: section as SectionsType,
         classLengthMin: classLengthMin || 60,
         attendance,
         instructionReceivedMin: parseInt(getValue("instruction")) || undefined,

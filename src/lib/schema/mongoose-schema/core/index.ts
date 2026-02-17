@@ -6,4 +6,3 @@ export {
   TeachingLabStaffModel,
   ExperienceModel,
 } from "./staff.model";
-export { CoachingActionPlanModel } from "./cap.core.model";

@@ -130,3 +130,16 @@ export {
 // TIMESHEET HOOKS
 // ============================================================
 export { useTimesheetEntries, timesheetKeys } from "./timesheet";
+
+// ============================================================
+// STUDENT CRUD HOOKS
+// ============================================================
+export {
+  useStudentsList,
+  useStudentById,
+  useStudentsMutations,
+  useStudentManager,
+  useStudentManagerWithSpecialization,
+  useStudentsWithNotifications,
+  useStudents,
+} from "./useStudents";

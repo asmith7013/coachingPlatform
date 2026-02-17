@@ -2,7 +2,7 @@
 
 import { withDbConnection } from "@server/db/ensure-connection";
 import { SectionConfigModel } from "@mongoose-schema/scm/podsie/section-config.model";
-import { Attendance313 } from "@mongoose-schema/scm/student/attendance.model";
+import { Attendance } from "@mongoose-schema/scm/student/attendance.model";
 import { StudentModel } from "@mongoose-schema/scm/student/student.model";
 import { handleServerError } from "@error/handlers/server";
 import type { AttendanceRecord } from "@zod-schema/scm/student/attendance";
@@ -199,7 +199,7 @@ export async function getSectionVelocityByDateRange(
         .lean();
 
       // Get ALL attendance records for date range (we'll filter by includeNotTracked later in calculations)
-      const attendanceRecords = await Attendance313.find({
+      const attendanceRecords = await Attendance.find({
         section,
         date: { $gte: startDate, $lte: endDate },
       }).lean();

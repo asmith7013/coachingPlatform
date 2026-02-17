@@ -10,7 +10,7 @@ import {
   createScopeAndSequence,
   fetchScopeAndSequence,
 } from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
-import { Sections313, SectionsPS19 } from "@schema/enum/scm";
+import { Sections, SectionsPS19 } from "@schema/enum/scm";
 
 type PodsieAssignment = any; // Temporary - needs refactoring for new schema
 
@@ -74,7 +74,7 @@ export function ManualCreateAssignmentModal({
     const options: SectionOption[] = [];
 
     // IS313 sections
-    Sections313.forEach((section) => {
+    Sections.forEach((section) => {
       const grade = section.startsWith("6")
         ? "6"
         : section.startsWith("7")

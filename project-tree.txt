@@ -238,6 +238,7 @@
 │   ├── test-variant-mapping.ts
 │   ├── update-313-imports.js
 │   ├── update-alg1-standards.js
+│   ├── update-alg1-standards.ts
 │   ├── update-grade6-standards.js
 │   ├── update-grade7-standards.js
 │   ├── update-grade8-standards.js
@@ -712,7 +713,6 @@
 │   │   │   │   └── page.tsx
 │   │   │   └── todays-visit-dashboard
 │   │   │       └── page.tsx
-│   │   ├── exemplar
 │   │   ├── gif-converter
 │   │   │   ├── actions
 │   │   │   │   └── upload-gif.ts
@@ -1272,9 +1272,8 @@
 │   │   │   │       └── types.ts
 │   │   │   └── things3
 │   │   │       └── page.tsx
-│   │   ├── unauthorized
-│   │   │   └── page.tsx
-│   │   └── upload-skill-video
+│   │   └── unauthorized
+│   │       └── page.tsx
 │   ├── components
 │   │   ├── analytics
 │   │   │   ├── AnalyticsDashboard.tsx
@@ -2352,4 +2351,4 @@
 ├── tsconfig.paths.json
 └── tsconfig.tsbuildinfo
 
-717 directories, 1636 files
+715 directories, 1637 files

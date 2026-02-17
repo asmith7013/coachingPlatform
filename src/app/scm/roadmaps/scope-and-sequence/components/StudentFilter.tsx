@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { Student } from "@zod-schema/scm/student/student";
 import { fetchStudents } from "@actions/scm/student/students";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { SECTION_ROADMAP_CONFIG, Roadmaps313Type } from "@schema/enum/scm";
+import { SECTION_ROADMAP_CONFIG, RoadmapsType } from "@schema/enum/scm";
 
 interface StudentFilterProps {
   onStudentSelect: (student: Student | null) => void;
@@ -23,7 +23,7 @@ interface StudentFilterProps {
  */
 function getScopeSectionsForTag(scopeSequenceTag: string): string[] {
   // Map scope sequence tags to full roadmap names
-  const tagToRoadmap: Record<string, Roadmaps313Type> = {
+  const tagToRoadmap: Record<string, RoadmapsType> = {
     "Grade 6": "Illustrative Math New York - 6th Grade",
     "Grade 7": "Illustrative Math New York - 7th Grade",
     "Grade 8": "Illustrative Math New York - 8th Grade",

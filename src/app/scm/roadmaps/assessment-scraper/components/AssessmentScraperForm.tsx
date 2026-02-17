@@ -8,7 +8,7 @@ import { GradeLevels } from "@/lib/schema/enum/shared-enums";
 import {
   getScraperSectionOptions,
   getScraperConfigForSection,
-  type Sections313Type,
+  type SectionsType,
 } from "@/lib/schema/enum/scm";
 
 interface AssessmentScraperFormProps {
@@ -22,7 +22,7 @@ export function AssessmentScraperForm({
 }: AssessmentScraperFormProps) {
   const [email] = useState("alex.smith@teachinglab.org");
   const [password] = useState("rbx1KQD3fpv7qhd!erc");
-  const [selectedSection, setSelectedSection] = useState<Sections313Type | "">(
+  const [selectedSection, setSelectedSection] = useState<SectionsType | "">(
     "804",
   );
   const [selectedRoadmapIndex, setSelectedRoadmapIndex] = useState(0);
@@ -39,19 +39,19 @@ export function AssessmentScraperForm({
 
   // Get current section config
   const currentSectionConfig = selectedSection
-    ? getScraperConfigForSection(selectedSection as Sections313Type)
+    ? getScraperConfigForSection(selectedSection as SectionsType)
     : undefined;
 
   // Check if current section has multiple roadmaps (e.g., 802)
   const hasMultipleRoadmaps = (currentSectionConfig?.configs.length || 0) > 1;
 
   // Handle section selection change
-  const handleSectionChange = (section: Sections313Type | "") => {
+  const handleSectionChange = (section: SectionsType | "") => {
     setSelectedSection(section);
     setSelectedRoadmapIndex(0); // Reset to first roadmap
 
     if (section) {
-      const config = getScraperConfigForSection(section as Sections313Type);
+      const config = getScraperConfigForSection(section as SectionsType);
       if (config && config.configs.length > 0) {
         const firstConfig = config.configs[0];
         setClasses(firstConfig.classes.join(", "));
@@ -124,7 +124,7 @@ export function AssessmentScraperForm({
             <select
               value={selectedSection}
               onChange={(e) =>
-                handleSectionChange(e.target.value as Sections313Type | "")
+                handleSectionChange(e.target.value as SectionsType | "")
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               disabled={isLoading}

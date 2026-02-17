@@ -1,4 +1,4 @@
-import { Cycle } from "@/lib/types/domain/cycle";
+import type { Cycle } from "@zod-schema/core/cycle";
 
 // Helper function
 export function getCycleDisplayString(cycle: Cycle): string {

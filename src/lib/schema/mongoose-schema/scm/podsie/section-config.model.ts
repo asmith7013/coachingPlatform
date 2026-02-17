@@ -7,7 +7,7 @@ import {
 import {
   Schools,
   AllSections,
-  Teachers313,
+  Teachers,
   SpecialPopulations,
 } from "@schema/enum/scm";
 
@@ -127,7 +127,7 @@ const sectionConfigFields = {
     enum: AllSections,
     index: true,
   },
-  teacher: { type: String, required: false, enum: Teachers313, index: true },
+  teacher: { type: String, required: false, enum: Teachers, index: true },
   gradeLevel: { type: String, required: true, index: true },
   scopeSequenceTag: {
     type: String,

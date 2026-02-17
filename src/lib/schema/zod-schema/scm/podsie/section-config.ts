@@ -3,7 +3,7 @@ import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
 import {
   AllSectionsZod,
   SchoolsZod,
-  Teachers313Zod,
+  TeachersZod,
   ScopeSequenceTagZod,
   SpecialPopulationsZod,
 } from "@schema/enum/scm";
@@ -331,9 +331,7 @@ export const SectionConfigFieldsSchema = z.object({
   classSection: AllSectionsZod.describe(
     "Class section (e.g., '802', '803', '601')",
   ),
-  teacher: Teachers313Zod.optional().describe(
-    "Current teacher for this section",
-  ),
+  teacher: TeachersZod.optional().describe("Current teacher for this section"),
   gradeLevel: GradeZod.describe(
     "Grade level (e.g., '6', '7', '8', 'Algebra 1')",
   ),
@@ -424,7 +422,7 @@ export type SectionConfigInput = z.infer<typeof SectionConfigInputZodSchema>;
 export const SectionConfigQuerySchema = z.object({
   school: SchoolsZod.optional(),
   classSection: AllSectionsZod.optional(),
-  teacher: Teachers313Zod.optional(),
+  teacher: TeachersZod.optional(),
   gradeLevel: z.string().optional(),
   active: z.boolean().optional(),
 });

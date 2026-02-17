@@ -3,22 +3,16 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 import { AuthenticatedUser } from "@core-types/auth";
-import { useUserStaff } from "@/hooks/domain";
 
-type AuthContextType = AuthenticatedUser & {
-  staff: ReturnType<typeof useUserStaff>;
-};
+type AuthContextType = AuthenticatedUser;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const authData = useAuthenticatedUser();
-  const staff = useUserStaff();
 
   return (
-    <AuthContext.Provider value={{ ...authData, staff }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={authData}>{children}</AuthContext.Provider>
   );
 }
 

@@ -3,7 +3,7 @@
  * Re-exports all student models for convenient importing
  */
 
-export { Attendance313 } from "./attendance.model";
+export { Attendance } from "./attendance.model";
 export { StudentModel } from "./student.model";
 export { StudentActivityModel } from "./student-activity.model";
 export { StudentPerformanceModel } from "./student-performance.model";

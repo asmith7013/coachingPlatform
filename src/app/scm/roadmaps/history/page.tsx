@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef } from "react";
 import { importZearnCompletions } from "@/app/actions/scm/roadmaps/zearn-completions";
-import { Sections313 } from "@/lib/schema/enum/scm";
+import { Sections } from "@/lib/schema/enum/scm";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { Button } from "@/components/core/Button";
 import { Dialog as Modal } from "@/components/composed/dialogs/Dialog";
@@ -17,7 +17,7 @@ import { DeprecationModal } from "@/app/scm/podsie/components/DeprecationModal";
 const SECTION_OPTIONS: Array<{ value: string; label: string; grade?: string }> =
   [
     { value: "", label: "All Sections" },
-    ...[...Sections313]
+    ...[...Sections]
       .sort((a: string, b: string) => {
         const numA = parseInt(a.match(/\d+/)?.[0] || "0");
         const numB = parseInt(b.match(/\d+/)?.[0] || "0");

@@ -1,7 +1,6 @@
 "use server";
 
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
 import { type PipelineStage } from "mongoose";
 import { StudentPerformanceModel } from "@mongoose-schema/scm/student/student-performance.model";
 import { RoadmapsStudentDataModel } from "@mongoose-schema/scm/student/roadmaps-student-data.model";
@@ -48,10 +47,6 @@ export async function createStudentPerformance(data: unknown) {
         "✅ Student performance created successfully:",
         savedPerformance._id,
       );
-
-      // Revalidate relevant paths
-      revalidatePath("/313/student-performance");
-      revalidatePath(`/313/students/${validatedData.studentId}`);
 
       return {
         success: true,
@@ -149,10 +144,6 @@ export async function updateStudentPerformance(
 
       console.log("✅ Student performance updated successfully");
 
-      // Revalidate relevant paths
-      revalidatePath("/313/student-performance");
-      revalidatePath(`/313/students/${validatedData.studentId}`);
-
       return {
         success: true,
         data: updatedPerformance,
@@ -219,10 +210,6 @@ export async function updateSkillPerformance(
       }
 
       console.log("✅ Skill performance updated successfully");
-
-      // Revalidate relevant paths
-      revalidatePath("/313/student-performance");
-      revalidatePath(`/313/students/${studentId}`);
 
       return {
         success: true,
@@ -397,9 +384,6 @@ export async function bulkUpdateStudentPerformances(
         `✅ Bulk update completed: ${result.modifiedCount} records updated`,
       );
 
-      // Revalidate relevant paths
-      revalidatePath("/313/student-performance");
-
       return {
         success: true,
         data: result,
@@ -434,10 +418,6 @@ export async function deleteStudentPerformance(performanceId: string) {
       }
 
       console.log("✅ Student performance deleted successfully");
-
-      // Revalidate relevant paths
-      revalidatePath("/313/student-performance");
-      revalidatePath(`/313/students/${deletedPerformance.studentId}`);
 
       return {
         success: true,

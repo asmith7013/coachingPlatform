@@ -94,11 +94,11 @@ AttendanceSchema.index({ date: 1 });
 
 // Clear existing model in development to avoid OverwriteModelError
 if (process.env.NODE_ENV === "development") {
-  delete mongoose.models["Attendance313"];
+  delete mongoose.models["Attendance"];
 }
 
-export const Attendance313: Model<AttendanceRecord> =
-  mongoose.models["Attendance313"] ||
-  mongoose.model<AttendanceRecord>("Attendance313", AttendanceSchema);
+export const Attendance: Model<AttendanceRecord> =
+  mongoose.models["Attendance"] ||
+  mongoose.model<AttendanceRecord>("Attendance", AttendanceSchema);
 
-export default Attendance313;
+export default Attendance;
