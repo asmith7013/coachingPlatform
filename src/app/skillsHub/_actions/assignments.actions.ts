@@ -3,10 +3,100 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { SkillsHubCoachTeacherAssignment } from "@mongoose-schema/skills-hub/coach-teacher-assignment.model";
+import { NYCPSStaffModel } from "@mongoose-schema/core/staff.model";
+import { SchoolModel } from "@mongoose-schema/core/school.model";
 import {
   CoachTeacherAssignmentInputSchema,
   type CoachTeacherAssignmentDocument,
 } from "../_types/assignment.types";
+
+export interface StaffOption {
+  _id: string;
+  staffName: string;
+  email?: string;
+  schoolIds?: string[];
+}
+
+export interface SchoolOption {
+  _id: string;
+  schoolName: string;
+}
+
+export async function getCoaches(): Promise<{
+  success: boolean;
+  data?: StaffOption[];
+  error?: string;
+}> {
+  return withDbConnection(async () => {
+    try {
+      const docs = await NYCPSStaffModel.find({
+        rolesNYCPS: "Coach",
+      })
+        .select("staffName email schoolIds")
+        .sort({ staffName: 1 })
+        .lean();
+      const data = docs.map((d: Record<string, unknown>) =>
+        JSON.parse(JSON.stringify(d)),
+      ) as StaffOption[];
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "getCoaches"),
+      };
+    }
+  });
+}
+
+export async function getTeachers(): Promise<{
+  success: boolean;
+  data?: StaffOption[];
+  error?: string;
+}> {
+  return withDbConnection(async () => {
+    try {
+      const docs = await NYCPSStaffModel.find({
+        rolesNYCPS: "Teacher",
+      })
+        .select("staffName email schoolIds")
+        .sort({ staffName: 1 })
+        .lean();
+      const data = docs.map((d: Record<string, unknown>) =>
+        JSON.parse(JSON.stringify(d)),
+      ) as StaffOption[];
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "getTeachers"),
+      };
+    }
+  });
+}
+
+export async function getSchools(): Promise<{
+  success: boolean;
+  data?: SchoolOption[];
+  error?: string;
+}> {
+  return withDbConnection(async () => {
+    try {
+      const docs = await SchoolModel.find({})
+        .select("schoolName")
+        .sort({ schoolName: 1 })
+        .lean();
+      const data = docs.map((d: Record<string, unknown>) =>
+        JSON.parse(JSON.stringify(d)),
+      ) as SchoolOption[];
+      return { success: true, data };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "getSchools"),
+      };
+    }
+  });
+}
 
 export async function getCoachTeachers(coachStaffId: string): Promise<{
   success: boolean;
