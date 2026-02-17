@@ -17,7 +17,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/scm/(.*)", // SCM API (has own API key auth)
   "/scm/workedExamples/viewer(.*)", // Worked examples viewer (public)
   "/scm/content/state-exam(.*)", // State exam questions (public)
-  "/skillsHub/(auth)/(.*)", // SkillsHub sign-in (magic link)
+  "/skillsHub/sign-in(.*)", // SkillsHub sign-in (magic link)
 ]);
 
 export default clerkMiddleware(async (auth, request) => {

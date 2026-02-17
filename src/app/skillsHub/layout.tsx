@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { MantineShell } from "./_components/MantineShell";
 import { SkillsHubNav } from "./_components/SkillsHubNav";
@@ -39,8 +38,9 @@ export default async function SkillsHubLayout({
 }) {
   const authResult = await getAuthenticatedUser();
 
+  // Not authenticated — render children without nav (sign-in page will render here)
   if (!authResult.success) {
-    redirect("/skillsHub/sign-in");
+    return <MantineShell>{children}</MantineShell>;
   }
 
   const { email } = authResult.data;
