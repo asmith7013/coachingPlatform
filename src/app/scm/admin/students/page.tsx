@@ -13,7 +13,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { TablePagination } from "@/components/composed/tables/features/pagination";
-import { useStudents } from "@hooks/domain/313/useStudents";
+import { useStudents } from "@hooks/scm/useStudents";
 import { createStudent } from "@actions/scm/student/students";
 import {
   createStudentDefaults,

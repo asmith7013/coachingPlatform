@@ -946,15 +946,14 @@ export async function syncSectionRampUpProgress(
         query._id = options.testStudentId;
       }
 
-      const docs =
-        await StudentModel.find(query).lean<
-          Array<{
-            _id: unknown;
-            firstName: string;
-            lastName: string;
-            email?: string;
-          }>
-        >();
+      const docs = await StudentModel.find(query).lean<
+        Array<{
+          _id: unknown;
+          firstName: string;
+          lastName: string;
+          email?: string;
+        }>
+      >();
 
       return docs.map((doc) => ({
         _id: String(doc._id),
