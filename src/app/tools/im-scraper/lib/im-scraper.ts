@@ -290,8 +290,8 @@ export class IMScraper {
       // Only restore element styles (elements are permanently removed, no restoration needed)
       try {
         if (originalStyles) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           await element.evaluate((el: HTMLElement, styles: any) => {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
             el.style.padding = styles.padding || "";
             el.style.backgroundColor = styles.backgroundColor || "";
             el.style.boxSizing = styles.boxSizing || "";

@@ -35,8 +35,8 @@ export class SimplifiedCooldownParser {
       taskSection.length > 0 ? taskSection.html() || "" : "";
 
     // Extract Student Response raw HTML
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const responseHeading = $("h3").filter((_: number, elem: any) => {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
       return $(elem).text().toLowerCase().includes("student response");
     });
 
@@ -45,9 +45,10 @@ export class SimplifiedCooldownParser {
       // Get the heading and all content until next h3
       const responseContent = responseHeading.nextUntil("h3").addBack();
       studentResponse_rawHtml = responseContent
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((_: number, el: any) => $.html(el))
         .get()
-        .join(""); // eslint-disable-line @typescript-eslint/no-explicit-any
+        .join("");
     }
 
     return {
@@ -253,8 +254,8 @@ export class SimplifiedCooldownParser {
 
     // Extract images first
     const images: Array<{ url: string; alt: string }> = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     $clone.find("img").each((_: number, img: any) => {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
       const $img = $(img);
       const url = $img.attr("src") || "";
       const alt =
@@ -275,8 +276,8 @@ export class SimplifiedCooldownParser {
 
   private extractStudentResponse($: CheerioRoot) {
     // Find the "Student Response" heading
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const responseHeading = $("h3").filter((_: number, elem: any) => {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
       return $(elem).text().toLowerCase().includes("student response");
     });
 
@@ -326,8 +327,8 @@ export class SimplifiedCooldownParser {
 
     $container
       .find(mathSelectors.join(", "))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .each((index: number, elem: any) => {
-        // eslint-disable-line @typescript-eslint/no-explicit-any
         const $elem = $(elem); // FIXED: Use the main $ function passed as parameter
         const rawHtml = $elem.prop("outerHTML") || "";
 

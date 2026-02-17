@@ -129,10 +129,9 @@ export function extractFontFamily(
  * Parse a paragraph element into text runs with proper formatting
  * Handles mixed inline styles like <strong>Think:</strong> rest of text
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function parseTextRuns(
-  $: any,
-  $el: any,
+  $: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  $el: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   defaultColor: string = "1D1D1D",
 ): TextRun[] {
   const runs: TextRun[] = [];

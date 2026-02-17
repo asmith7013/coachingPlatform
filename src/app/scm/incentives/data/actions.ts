@@ -165,9 +165,9 @@ export async function fetchActivityData(
 /**
  * Get activity summary statistics
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getActivitySummary(
   filters: ActivityDataFilters = {},
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<{ success: boolean; data?: any; error?: string }> {
   return withDbConnection(async () => {
     try {

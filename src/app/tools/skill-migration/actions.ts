@@ -14,9 +14,9 @@ export async function testSingleSkillMigration(skillNumber: string) {
   return withDbConnection(async () => {
     try {
       // Get the skill
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const skill = (await RoadmapsSkillModel.findOne({
         skillNumber,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       }).lean()) as any;
 
       if (!skill) {

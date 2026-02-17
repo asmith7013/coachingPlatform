@@ -449,10 +449,10 @@ export default function PodsieProgressPage() {
       }
 
       // Generate CSV content
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const csvContent = generateProgressCsv(
         lessons,
         progressData,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         studentsResult.items as any,
       );
 

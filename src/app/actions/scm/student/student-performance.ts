@@ -468,8 +468,8 @@ export async function getStudentsBySkillStatus(
         `🔍 Finding students with skill ${skillCode} status: ${status}`,
       );
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const matchStage: any = {
-        // eslint-disable-line @typescript-eslint/no-explicit-any
         skillPerformances: {
           $elemMatch: {
             skillCode: skillCode,

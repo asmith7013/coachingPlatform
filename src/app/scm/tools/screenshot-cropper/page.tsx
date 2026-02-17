@@ -544,7 +544,6 @@ function QuestionCard({
           }
           disabled={disabled || uploading}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             ref={(el) => {
               imageRefs.current[question.questionId] = el;
