@@ -23,7 +23,16 @@ const isPublicRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, request) => {
   // Protect everything except public routes
   if (!isPublicRoute(request)) {
-    await auth.protect();
+    if (request.nextUrl.pathname.startsWith("/skillsHub")) {
+      await auth.protect({
+        unauthenticatedUrl: new URL(
+          "/skillsHub/sign-in",
+          request.url,
+        ).toString(),
+      });
+    } else {
+      await auth.protect();
+    }
   }
 });
 
