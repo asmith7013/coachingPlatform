@@ -422,7 +422,6 @@ export function StandardsUnitMatrix({
                             : `${row.standard} (${row.percent}%, ${row.questionCount} questions)`
                         }
                         position="top"
-                        clickable
                       >
                         <div className="cursor-help flex flex-col items-center leading-tight">
                           <span className={`text-[11px] ${colors.text}`}>

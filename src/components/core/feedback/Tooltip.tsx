@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 
 interface TooltipProps {
   content: React.ReactNode;
@@ -159,34 +160,36 @@ export function Tooltip({
       >
         {children}
       </div>
-      {isShown && (
-        <div
-          ref={tooltipRef}
-          className={`fixed z-50 px-2 py-1.5 text-xs text-white bg-gray-900 rounded shadow-lg whitespace-pre-wrap ${
-            isPinned ? "select-text cursor-text ring-1 ring-white/30" : ""
-          }`}
-          style={{
-            top: coords.top,
-            left: coords.left,
-            maxWidth,
-          }}
-        >
-          {isPinned && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsPinned(false);
-                setIsVisible(false);
-              }}
-              className="absolute -top-1.5 -right-1.5 w-4 h-4 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-full text-[10px] leading-none cursor-pointer"
-            >
-              ×
-            </button>
-          )}
-          {content}
-        </div>
-      )}
+      {isShown &&
+        createPortal(
+          <div
+            ref={tooltipRef}
+            className={`fixed z-50 px-2 py-1.5 text-xs text-white bg-gray-900 rounded shadow-lg whitespace-pre-wrap ${
+              isPinned ? "select-text cursor-text ring-1 ring-white/30" : ""
+            }`}
+            style={{
+              top: coords.top,
+              left: coords.left,
+              maxWidth,
+            }}
+          >
+            {isPinned && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsPinned(false);
+                  setIsVisible(false);
+                }}
+                className="absolute -top-1.5 -right-1.5 w-4 h-4 flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-white rounded-full text-[10px] leading-none cursor-pointer"
+              >
+                ×
+              </button>
+            )}
+            {content}
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

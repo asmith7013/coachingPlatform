@@ -253,7 +253,6 @@ export function LessonsTable({
                                     key={idx}
                                     content={std.text}
                                     position="bottom"
-                                    clickable
                                   >
                                     <span
                                       className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs cursor-help ${
