@@ -3,6 +3,7 @@
 import React, { useState, useRef, useCallback } from "react";
 import ReactCrop, {
   type PercentCrop,
+  type PixelCrop,
   convertToPixelCrop,
 } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
@@ -538,7 +539,7 @@ function QuestionCard({
       <div className="border-2 border-red-300 rounded inline-block">
         <ReactCrop
           crop={crop}
-          onChange={(_, percentCrop) =>
+          onChange={(_: PixelCrop, percentCrop: PercentCrop) =>
             onCropChange(question.questionId, percentCrop)
           }
           disabled={disabled || uploading}
