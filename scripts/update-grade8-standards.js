@@ -3,7 +3,7 @@
 
 // Load the standards data
 const fs = require('fs');
-const standardsData = JSON.parse(fs.readFileSync('/Users/alexsmith/ai-coaching-platform/docs/standards8.json', 'utf8'));
+const standardsData = JSON.parse(fs.readFileSync('/Users/alexsmith/solves-coaching/docs/standards8.json', 'utf8'));
 
 let totalProcessed = 0;
 let successfulUpdates = 0;

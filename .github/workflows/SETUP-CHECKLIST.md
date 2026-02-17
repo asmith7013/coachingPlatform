@@ -20,7 +20,7 @@ Add these 4 secrets:
 - [ ] `SCRAPER_API_KEY` = (the key you just generated)
 - [ ] `ROADMAPS_USERNAME` = (your Roadmaps username)
 - [ ] `ROADMAPS_PASSWORD` = (your Roadmaps password)
-- [ ] `VERCEL_DEPLOYMENT_URL` = `https://ai-coaching-platform.vercel.app` (or your custom domain)
+- [ ] `VERCEL_DEPLOYMENT_URL` = `https://solves-coaching.vercel.app` (or your custom domain)
 
 ## ☐ Step 3: Add API Key to Vercel
 

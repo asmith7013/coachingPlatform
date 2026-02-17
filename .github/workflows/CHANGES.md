@@ -88,7 +88,7 @@ curl -X POST http://localhost:3000/api/roadmaps/scrape \
 
 ### Test Production
 ```bash
-curl -X POST https://ai-coaching-platform.vercel.app/api/roadmaps/scrape \
+curl -X POST https://solves-coaching.vercel.app/api/roadmaps/scrape \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{

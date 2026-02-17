@@ -158,7 +158,7 @@ podsie-curriculum/.claude/skills/question-types/
 ```
 
 ```
-ai-coaching-platform/.claude/skills/create-p5-animation/animation-types/
+solves-coaching/.claude/skills/create-p5-animation/animation-types/
 ├── README.md                           # Decision tree, overview
 ├── SUMMARY.md                          # Implementation summary
 ├── implement-dynamic-dilation/         # Specific animation type
@@ -171,7 +171,7 @@ ai-coaching-platform/.claude/skills/create-p5-animation/animation-types/
 
 ### Differences
 - **podsie**: question-types for D3 interactive questions
-- **ai-coaching**: animation-types for p5.js math visualizations
+- **solves-coaching**: animation-types for p5.js math visualizations
 - Both share the concept of configurable scaffolds vs specific implementations
 
 ## Success Metrics

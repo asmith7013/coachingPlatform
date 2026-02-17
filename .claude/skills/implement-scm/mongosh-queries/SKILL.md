@@ -7,14 +7,14 @@ Quick reference for querying SCM-related collections using mongosh.
 **Important:** Always source `.env.local` first to load the `DATABASE_URL` environment variable:
 
 ```bash
-source /Users/alexsmith/ai-coaching-platform/.env.local 2>/dev/null
+source /Users/alexsmith/solves-coaching/.env.local 2>/dev/null
 mongosh "$DATABASE_URL" --eval "YOUR_COMMAND_HERE"
 ```
 
 Or as a one-liner:
 
 ```bash
-source /Users/alexsmith/ai-coaching-platform/.env.local 2>/dev/null && mongosh "$DATABASE_URL" --eval "YOUR_COMMAND_HERE"
+source /Users/alexsmith/solves-coaching/.env.local 2>/dev/null && mongosh "$DATABASE_URL" --eval "YOUR_COMMAND_HERE"
 ```
 
 ## Query Categories
@@ -22,6 +22,7 @@ source /Users/alexsmith/ai-coaching-platform/.env.local 2>/dev/null && mongosh "
 - [students.md](students.md) - Student records and progress
 - [sections.md](sections.md) - Section configs and class settings
 - [podsie.md](podsie.md) - Podsie completions and assignments
+- [zearn.md](zearn.md) - Zearn import records
 - [roadmaps.md](roadmaps.md) - Units, skills, and student assessment data
 - [curriculum.md](curriculum.md) - Scope and sequence, learning content
 - [calendar.md](calendar.md) - Unit schedules and planning

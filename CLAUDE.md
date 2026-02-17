@@ -15,7 +15,7 @@ Claude Code CAN and SHOULD use `mongosh` for database operations. Always use the
 **Important:** Always source `.env.local` first to load the DATABASE_URL (only needed once per shell session):
 
 ```bash
-source /Users/alexsmith/ai-coaching-platform/.env.local 2>/dev/null
+source /Users/alexsmith/solves-coaching/.env.local 2>/dev/null
 mongosh "$DATABASE_URL" --eval "YOUR_COMMAND_HERE"
 ```
 
@@ -24,7 +24,7 @@ Here are common patterns (assuming DATABASE_URL is already loaded):
 #### Find Documents
 
 ```bash
-source /Users/alexsmith/ai-coaching-platform/.env.local 2>/dev/null
+source /Users/alexsmith/solves-coaching/.env.local 2>/dev/null
 mongosh "$DATABASE_URL" --eval "
 db['collection-name'].find({ field: 'value' }).forEach(printjson);
 "
