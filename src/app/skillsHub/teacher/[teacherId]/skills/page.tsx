@@ -1,37 +1,22 @@
 "use client";
 
-import { Title, Text, Card } from "@mantine/core";
-import { useSkillsHubFilters } from "@/lib/skills-hub/hooks/useSkillsHubFilters";
-import { CoachTeacherSelector } from "@/lib/skills-hub/components/core/CoachTeacherSelector";
-import { SkillMap } from "@/lib/skills-hub/components/skills/SkillMap";
+import { useParams } from "next/navigation";
+import { Title, Text, Container } from "@mantine/core";
+import { SkillProgressionView } from "@/lib/skills-hub/components/skills/SkillProgressionView";
 
 export default function TeacherProgressPage() {
-  const { selectedTeacherId, setSelectedTeacherId } = useSkillsHubFilters();
+  const params = useParams();
+  const teacherId = params.teacherId as string;
 
   return (
-    <div className="mx-auto" style={{ maxWidth: "1600px" }}>
-      <Card shadow="sm" p="lg" mb="lg">
+    <Container size="xl" py="lg">
+      <div>
         <Title order={2}>My Progress</Title>
-        <Text size="sm" c="dimmed">
-          Overall progress across all skills and resources to deepen your
-          practice
+        <Text size="sm" c="dimmed" mb="lg">
+          Track your teaching skill development
         </Text>
-      </Card>
-
-      <CoachTeacherSelector
-        selectedTeacherId={selectedTeacherId}
-        onTeacherChange={setSelectedTeacherId}
-      />
-
-      {selectedTeacherId ? (
-        <SkillMap teacherStaffId={selectedTeacherId} isCoachView={false} />
-      ) : (
-        <Card shadow="sm" p="lg">
-          <Text c="dimmed" ta="center" py="xl">
-            Select a teacher to view their progress
-          </Text>
-        </Card>
-      )}
-    </div>
+      </div>
+      <SkillProgressionView teacherStaffId={teacherId} />
+    </Container>
   );
 }
