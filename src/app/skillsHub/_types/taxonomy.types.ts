@@ -6,7 +6,7 @@ export const TeacherSkillSchema = z.object({
   name: z.string(),
   description: z.string(),
   level: z.union([z.literal(1), z.literal(2)]),
-  pairedSkillId: z.string().nullable().optional(),
+  pairedSkillId: z.string().uuid().nullable().optional(),
 });
 
 export const TeacherSkillSubDomainSchema = z.object({

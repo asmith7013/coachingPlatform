@@ -16,7 +16,7 @@ export function isSkillLocked(
   if (skill.level === 1) return false;
   if (!skill.pairedSkillId) return false;
 
-  const paired = allSkills.find((s) => s.id === skill.pairedSkillId);
+  const paired = allSkills.find((s) => s.uuid === skill.pairedSkillId);
   if (!paired) return false;
 
   return statusMap.get(paired.uuid)?.status !== "proficient";
