@@ -62,7 +62,6 @@ export async function updateSkillStatus(
           $setOnInsert: {
             teacherStaffId,
             skillId,
-            level2Unlocked: false,
           },
         },
         { upsert: true, new: true, runValidators: true },
@@ -104,7 +103,6 @@ export async function bulkUpdateSkillStatuses(
             $setOnInsert: {
               teacherStaffId,
               skillId: u.skillId,
-              level2Unlocked: false,
             },
           },
           upsert: true,
@@ -117,47 +115,6 @@ export async function bulkUpdateSkillStatuses(
       return {
         success: false,
         error: handleServerError(error, "bulkUpdateSkillStatuses"),
-      };
-    }
-  });
-}
-
-export async function unlockLevel2(
-  teacherStaffId: string,
-  skillIds: string[],
-): Promise<{ success: boolean; error?: string }> {
-  return withDbConnection(async () => {
-    try {
-      const authResult = await getAuthenticatedUser();
-      if (!authResult.success) {
-        return { success: false, error: "Unauthorized" };
-      }
-
-      const ops = skillIds.map((skillId) => ({
-        updateOne: {
-          filter: { teacherStaffId, skillId },
-          update: {
-            $set: {
-              level2Unlocked: true,
-              updatedBy: authResult.data.metadata.staffId || null,
-              updatedAt: new Date(),
-            },
-            $setOnInsert: {
-              teacherStaffId,
-              skillId,
-              status: "not_started",
-            },
-          },
-          upsert: true,
-        },
-      }));
-
-      await SkillsHubTeacherSkillStatus.bulkWrite(ops);
-      return { success: true };
-    } catch (error) {
-      return {
-        success: false,
-        error: handleServerError(error, "unlockLevel2"),
       };
     }
   });

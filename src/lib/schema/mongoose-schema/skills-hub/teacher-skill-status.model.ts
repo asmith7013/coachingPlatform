@@ -17,7 +17,6 @@ const TeacherSkillStatusSchema = new mongoose.Schema(
       enum: ["not_started", "active", "developing", "proficient"],
       default: "not_started",
     },
-    level2Unlocked: { type: Boolean, default: false },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "NYCPSStaff",

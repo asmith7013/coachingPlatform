@@ -7,18 +7,20 @@ import {
   Group,
   Accordion,
   Stack,
-  Button,
   SimpleGrid,
   Box,
 } from "@mantine/core";
 import { SkillCard } from "./SkillCard";
 import { groupSkillsByLevel } from "../_lib/taxonomy";
+import { isSkillLocked } from "../_lib/skill-lock";
+import { SkillStatusEnum } from "../_types/skill-status.types";
 import type {
   TeacherSkillDomain,
+  TeacherSkillSubDomain,
+  TeacherSkill,
   TeacherSkillFlat,
 } from "../_types/taxonomy.types";
 import type { TeacherSkillStatusDocument } from "../_types/skill-status.types";
-import type { SkillStatus } from "../_types/skill-status.types";
 
 interface DomainSectionProps {
   domain: TeacherSkillDomain;
@@ -26,7 +28,27 @@ interface DomainSectionProps {
   teacherStaffId: string;
   isCoachView: boolean;
   onStatusChanged: () => void;
-  onUnlockLevel2: (skillIds: string[]) => void;
+}
+
+function enrichSkill(
+  skill: TeacherSkill,
+  domain: TeacherSkillDomain,
+  subDomain: TeacherSkillSubDomain,
+): TeacherSkillFlat {
+  return {
+    ...skill,
+    domainUuid: domain.uuid,
+    domainId: domain.id,
+    domainName: domain.name,
+    subDomainUuid: subDomain.uuid,
+    subDomainId: subDomain.id,
+    subDomainName: subDomain.name,
+  };
+}
+
+function getSkillStatus(statusDoc: TeacherSkillStatusDocument | undefined) {
+  const parsed = SkillStatusEnum.safeParse(statusDoc?.status);
+  return parsed.success ? parsed.data : ("not_started" as const);
 }
 
 export function DomainSection({
@@ -35,29 +57,14 @@ export function DomainSection({
   teacherStaffId,
   isCoachView,
   onStatusChanged,
-  onUnlockLevel2,
 }: DomainSectionProps) {
   const allSkills: TeacherSkillFlat[] = domain.subDomains.flatMap((sd) =>
-    sd.skills.map((s) => ({
-      ...s,
-      domainUuid: domain.uuid,
-      domainId: domain.id,
-      domainName: domain.name,
-      subDomainUuid: sd.uuid,
-      subDomainId: sd.id,
-      subDomainName: sd.name,
-    })),
+    sd.skills.map((s) => enrichSkill(s, domain, sd)),
   );
 
   const activeCount = allSkills.filter(
     (s) => statusMap.get(s.uuid)?.status === "active",
   ).length;
-
-  const level2Skills = allSkills.filter((s) => s.level === 2);
-  const hasLevel2 = level2Skills.length > 0;
-  const level2Unlocked = level2Skills.some(
-    (s) => statusMap.get(s.uuid)?.level2Unlocked,
-  );
 
   return (
     <Card shadow="sm" withBorder>
@@ -102,31 +109,17 @@ export function DomainSection({
                       Level 1
                     </Text>
                     <Stack gap={2}>
-                      {l1Skills.map((skill) => {
-                        const statusDoc = statusMap.get(skill.uuid);
-                        return (
-                          <SkillCard
-                            key={skill.id}
-                            skill={{
-                              ...skill,
-                              domainUuid: domain.uuid,
-                              domainId: domain.id,
-                              domainName: domain.name,
-                              subDomainUuid: subDomain.uuid,
-                              subDomainId: subDomain.id,
-                              subDomainName: subDomain.name,
-                            }}
-                            status={
-                              (statusDoc?.status as SkillStatus) ||
-                              "not_started"
-                            }
-                            level2Unlocked={true}
-                            teacherStaffId={teacherStaffId}
-                            isCoachView={isCoachView}
-                            onStatusChanged={onStatusChanged}
-                          />
-                        );
-                      })}
+                      {l1Skills.map((skill) => (
+                        <SkillCard
+                          key={skill.id}
+                          skill={enrichSkill(skill, domain, subDomain)}
+                          status={getSkillStatus(statusMap.get(skill.uuid))}
+                          isLocked={false}
+                          teacherStaffId={teacherStaffId}
+                          isCoachView={isCoachView}
+                          onStatusChanged={onStatusChanged}
+                        />
+                      ))}
                     </Stack>
                   </Box>
 
@@ -143,33 +136,21 @@ export function DomainSection({
                         Level 2
                       </Text>
                       <Stack gap={2}>
-                        {sdL2Skills.map((skill) => {
-                          const statusDoc = statusMap.get(skill.uuid);
-                          return (
-                            <SkillCard
-                              key={skill.id}
-                              skill={{
-                                ...skill,
-                                domainUuid: domain.uuid,
-                                domainId: domain.id,
-                                domainName: domain.name,
-                                subDomainUuid: subDomain.uuid,
-                                subDomainId: subDomain.id,
-                                subDomainName: subDomain.name,
-                              }}
-                              status={
-                                (statusDoc?.status as SkillStatus) ||
-                                "not_started"
-                              }
-                              level2Unlocked={
-                                statusDoc?.level2Unlocked || level2Unlocked
-                              }
-                              teacherStaffId={teacherStaffId}
-                              isCoachView={isCoachView}
-                              onStatusChanged={onStatusChanged}
-                            />
-                          );
-                        })}
+                        {sdL2Skills.map((skill) => (
+                          <SkillCard
+                            key={skill.id}
+                            skill={enrichSkill(skill, domain, subDomain)}
+                            status={getSkillStatus(statusMap.get(skill.uuid))}
+                            isLocked={isSkillLocked(
+                              skill,
+                              statusMap,
+                              subDomain.skills,
+                            )}
+                            teacherStaffId={teacherStaffId}
+                            isCoachView={isCoachView}
+                            onStatusChanged={onStatusChanged}
+                          />
+                        ))}
                       </Stack>
                     </Box>
                   )}
@@ -179,18 +160,6 @@ export function DomainSection({
           );
         })}
       </Accordion>
-
-      {hasLevel2 && !level2Unlocked && isCoachView && (
-        <Button
-          variant="light"
-          color="violet"
-          size="xs"
-          mt="sm"
-          onClick={() => onUnlockLevel2(level2Skills.map((s) => s.uuid))}
-        >
-          Unlock Level 2 Skills
-        </Button>
-      )}
     </Card>
   );
 }

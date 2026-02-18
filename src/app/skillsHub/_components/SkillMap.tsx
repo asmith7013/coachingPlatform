@@ -8,7 +8,6 @@ import {
   useTeacherSkillStatuses,
   skillStatusKeys,
 } from "../_hooks/useTeacherSkillStatuses";
-import { unlockLevel2 } from "../_actions/skill-status.actions";
 import type { TeacherSkillStatusDocument } from "../_types/skill-status.types";
 
 interface SkillMapProps {
@@ -60,11 +59,6 @@ export function SkillMap({ teacherStaffId, isCoachView }: SkillMapProps) {
     });
   };
 
-  const handleUnlockLevel2 = async (skillIds: string[]) => {
-    await unlockLevel2(teacherStaffId, skillIds);
-    handleStatusChanged();
-  };
-
   return (
     <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
       {taxonomy.domains.map((domain) => (
@@ -75,7 +69,6 @@ export function SkillMap({ teacherStaffId, isCoachView }: SkillMapProps) {
           teacherStaffId={teacherStaffId}
           isCoachView={isCoachView}
           onStatusChanged={handleStatusChanged}
-          onUnlockLevel2={handleUnlockLevel2}
         />
       ))}
     </SimpleGrid>
