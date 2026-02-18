@@ -3,7 +3,7 @@
 import { useParams, useSearchParams } from "next/navigation";
 import { Card, Text, Stack, Center } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { useSkillsHubAuth } from "@/lib/skills-hub/components/layout/ViewAsContext";
 import { useTaxonomy } from "@/lib/skills-hub/hooks/useTaxonomy";
 import {
   useTeacherSkillStatuses,
@@ -23,7 +23,7 @@ export default function SkillDetailPage() {
   const searchParams = useSearchParams();
   const skillId = params.skillId as string;
   const teacherId = searchParams.get("teacherId") || "";
-  const { hasRole } = useAuthenticatedUser();
+  const { hasRole } = useSkillsHubAuth();
   const queryClient = useQueryClient();
 
   const isCoach =

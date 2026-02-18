@@ -2,7 +2,7 @@
 
 import { Title, Text, Card, Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { useSkillsHubAuth } from "@/lib/skills-hub/components/layout/ViewAsContext";
 import { useSkillsHubFilters } from "@/lib/skills-hub/hooks/useSkillsHubFilters";
 import { useCoachCaseload } from "@/lib/skills-hub/hooks/useCoachCaseload";
 import { CaseloadTable } from "@/lib/skills-hub/components/caseload/CaseloadTable";
@@ -10,7 +10,7 @@ import { getCoaches } from "@/lib/skills-hub/admin/coaching-assignments/coaching
 import type { StaffOption } from "@/lib/skills-hub/admin/coaching-assignments/coaching-assignment.actions";
 
 export default function CaseloadPage() {
-  const { metadata, hasRole } = useAuthenticatedUser();
+  const { metadata, hasRole } = useSkillsHubAuth();
   const isAdmin = hasRole("super_admin") || hasRole("director");
 
   const { selectedCoachId, setSelectedCoachId } = useSkillsHubFilters();

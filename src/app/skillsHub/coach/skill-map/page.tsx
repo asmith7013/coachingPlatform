@@ -1,13 +1,13 @@
 "use client";
 
 import { Title, Text, Card } from "@mantine/core";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { useSkillsHubAuth } from "@/lib/skills-hub/components/layout/ViewAsContext";
 import { useSkillsHubFilters } from "@/lib/skills-hub/hooks/useSkillsHubFilters";
 import { CoachTeacherSelector } from "@/lib/skills-hub/components/core/CoachTeacherSelector";
 import { SkillMap } from "@/lib/skills-hub/components/skills/SkillMap";
 
 export default function SkillMapPage() {
-  const { hasRole } = useAuthenticatedUser();
+  const { hasRole } = useSkillsHubAuth();
   const isCoach =
     hasRole("coach") || hasRole("super_admin") || hasRole("director");
 
