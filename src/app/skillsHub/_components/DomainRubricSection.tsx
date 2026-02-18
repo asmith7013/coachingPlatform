@@ -33,15 +33,17 @@ export function DomainRubricSection({
   const allSkills: TeacherSkillFlat[] = domain.subDomains.flatMap((sd) =>
     sd.skills.map((s) => ({
       ...s,
+      domainUuid: domain.uuid,
       domainId: domain.id,
       domainName: domain.name,
+      subDomainUuid: sd.uuid,
       subDomainId: sd.id,
       subDomainName: sd.name,
     })),
   );
 
-  const activeSkills = allSkills.filter((s) => activeSkillIds.has(s.id));
-  const otherSkills = allSkills.filter((s) => !activeSkillIds.has(s.id));
+  const activeSkills = allSkills.filter((s) => activeSkillIds.has(s.uuid));
+  const otherSkills = allSkills.filter((s) => !activeSkillIds.has(s.uuid));
 
   if (activeSkills.length === 0 && otherSkills.length === 0) return null;
 
@@ -58,14 +60,14 @@ export function DomainRubricSection({
 
       <Stack gap={0} mt="sm">
         {activeSkills.map((skill) => {
-          const data = skillRatings.get(skill.id) || {
+          const data = skillRatings.get(skill.uuid) || {
             rating: null,
             evidence: "",
           };
           return (
             <SkillRatingRow
               key={skill.id}
-              skillId={skill.id}
+              skillId={skill.uuid}
               skillName={skill.name}
               skillDescription={skill.description}
               rating={data.rating}
@@ -88,14 +90,14 @@ export function DomainRubricSection({
             <Accordion.Panel>
               <Stack gap={0}>
                 {otherSkills.map((skill) => {
-                  const data = skillRatings.get(skill.id) || {
+                  const data = skillRatings.get(skill.uuid) || {
                     rating: null,
                     evidence: "",
                   };
                   return (
                     <SkillRatingRow
                       key={skill.id}
-                      skillId={skill.id}
+                      skillId={skill.uuid}
                       skillName={skill.name}
                       skillDescription={skill.description}
                       rating={data.rating}

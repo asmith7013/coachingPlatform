@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const TeacherSkillSchema = z.object({
+  uuid: z.string().uuid(),
   id: z.string(),
   name: z.string(),
   description: z.string(),
@@ -9,12 +10,14 @@ export const TeacherSkillSchema = z.object({
 });
 
 export const TeacherSkillSubDomainSchema = z.object({
+  uuid: z.string().uuid(),
   id: z.string(),
   name: z.string(),
   skills: z.array(TeacherSkillSchema),
 });
 
 export const TeacherSkillDomainSchema = z.object({
+  uuid: z.string().uuid(),
   id: z.string(),
   name: z.string(),
   subDomains: z.array(TeacherSkillSubDomainSchema),
@@ -32,8 +35,10 @@ export type TeacherSkillDomain = z.infer<typeof TeacherSkillDomainSchema>;
 export type TeacherSkillsIndex = z.infer<typeof TeacherSkillsIndexSchema>;
 
 export type TeacherSkillFlat = TeacherSkill & {
+  domainUuid: string;
   domainId: string;
   domainName: string;
+  subDomainUuid: string;
   subDomainId: string;
   subDomainName: string;
 };

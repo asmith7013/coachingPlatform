@@ -22,7 +22,6 @@ export interface StaffOption {
   schoolIds?: string[];
 }
 
-
 export async function getCoaches(): Promise<{
   success: boolean;
   data?: StaffOption[];
@@ -151,13 +150,13 @@ export async function assignTeacher(
       });
 
       // Auto-derive school from the teacher's record
-      const teacher = (await NYCPSStaffModel.findById(
-        validated.teacherStaffId,
-      )
+      const teacher = (await NYCPSStaffModel.findById(validated.teacherStaffId)
         .select("schoolIds")
         .lean()) as { schoolIds?: string[] } | null;
       const schoolId =
-        teacher && Array.isArray(teacher.schoolIds) && teacher.schoolIds.length > 0
+        teacher &&
+        Array.isArray(teacher.schoolIds) &&
+        teacher.schoolIds.length > 0
           ? String(teacher.schoolIds[0])
           : undefined;
 

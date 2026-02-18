@@ -91,8 +91,8 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
     setSkillRatings((prev) => {
       const next = new Map(prev);
       subDomain.skills.forEach((skill) => {
-        const existing = next.get(skill.id) || { rating: null, evidence: "" };
-        next.set(skill.id, { ...existing, rating });
+        const existing = next.get(skill.uuid) || { rating: null, evidence: "" };
+        next.set(skill.uuid, { ...existing, rating });
       });
       return next;
     });
@@ -106,8 +106,8 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
     setSkillRatings((prev) => {
       const next = new Map(prev);
       subDomain.skills.forEach((skill) => {
-        const existing = next.get(skill.id) || { rating: null, evidence: "" };
-        next.set(skill.id, { ...existing, evidence });
+        const existing = next.get(skill.uuid) || { rating: null, evidence: "" };
+        next.set(skill.uuid, { ...existing, evidence });
       });
       return next;
     });
@@ -118,18 +118,15 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
     subDomain: TeacherSkillSubDomain,
   ): RatingScale | null => {
     const first = subDomain.skills[0];
-    return first ? (skillRatings.get(first.id)?.rating ?? null) : null;
+    return first ? (skillRatings.get(first.uuid)?.rating ?? null) : null;
   };
 
   const getSubDomainEvidence = (subDomain: TeacherSkillSubDomain): string => {
     const first = subDomain.skills[0];
-    return first ? (skillRatings.get(first.id)?.evidence ?? "") : "";
+    return first ? (skillRatings.get(first.uuid)?.evidence ?? "") : "";
   };
 
-  const handleDomainRating = (
-    domainId: string,
-    rating: RatingScale | null,
-  ) => {
+  const handleDomainRating = (domainId: string, rating: RatingScale | null) => {
     setDomainRatings((prev) => {
       const next = new Map(prev);
       const existing = next.get(domainId) || { rating: null, evidence: "" };
@@ -266,10 +263,10 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
               const isExpanded = expandedDomains.has(domain.id);
 
               const activeSubDomains = domain.subDomains.filter((sd) =>
-                sd.skills.some((s) => activeSkillIds.has(s.id)),
+                sd.skills.some((s) => activeSkillIds.has(s.uuid)),
               );
               const otherSubDomains = domain.subDomains.filter(
-                (sd) => !sd.skills.some((s) => activeSkillIds.has(s.id)),
+                (sd) => !sd.skills.some((s) => activeSkillIds.has(s.uuid)),
               );
 
               const visibleSubDomains = isExpanded
@@ -299,7 +296,7 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
                   const subRating = getSubDomainRating(subDomain);
                   const subEvidence = getSubDomainEvidence(subDomain);
                   const hasFocus = subDomain.skills.some((s) =>
-                    activeSkillIds.has(s.id),
+                    activeSkillIds.has(s.uuid),
                   );
 
                   return (

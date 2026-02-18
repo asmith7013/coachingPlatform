@@ -209,117 +209,117 @@ export function AssignmentManager() {
         )}
 
         {coaches && coaches.length > 0 && (
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
-          {/* Left Panel: Coach Selection + Current Caseload */}
-          <Card withBorder p="lg">
-            <Stack gap="md">
-              <Title order={4}>Select Coach</Title>
-              <Select
-                placeholder="Search for a coach..."
-                searchable
-                data={coachOptions}
-                value={selectedCoachId}
-                onChange={setSelectedCoachId}
-              />
+          <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
+            {/* Left Panel: Coach Selection + Current Caseload */}
+            <Card withBorder p="lg">
+              <Stack gap="md">
+                <Title order={4}>Select Coach</Title>
+                <Select
+                  placeholder="Search for a coach..."
+                  searchable
+                  data={coachOptions}
+                  value={selectedCoachId}
+                  onChange={setSelectedCoachId}
+                />
 
-              {!selectedCoachId ? (
-                <Text c="dimmed" size="sm">
-                  Select a coach to view their caseload
-                </Text>
-              ) : assignmentsLoading ? (
-                <Center py="md">
-                  <Loader size="sm" />
-                </Center>
-              ) : !assignments || assignments.length === 0 ? (
-                <Text c="dimmed" size="sm">
-                  No teachers assigned to this coach
-                </Text>
-              ) : (
-                <Table striped highlightOnHover>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th>Teacher</Table.Th>
-                      <Table.Th>School</Table.Th>
-                      <Table.Th>Assigned</Table.Th>
-                      <Table.Th w={50} />
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {assignments.map((a) => {
-                      const teacher = a.teacherStaffId as unknown as {
-                        _id: string;
-                        staffName: string;
-                        email?: string;
-                      };
-                      const teacherName =
-                        typeof teacher === "object"
-                          ? teacher.staffName
-                          : "Unknown";
+                {!selectedCoachId ? (
+                  <Text c="dimmed" size="sm">
+                    Select a coach to view their caseload
+                  </Text>
+                ) : assignmentsLoading ? (
+                  <Center py="md">
+                    <Loader size="sm" />
+                  </Center>
+                ) : !assignments || assignments.length === 0 ? (
+                  <Text c="dimmed" size="sm">
+                    No teachers assigned to this coach
+                  </Text>
+                ) : (
+                  <Table striped highlightOnHover>
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>Teacher</Table.Th>
+                        <Table.Th>School</Table.Th>
+                        <Table.Th>Assigned</Table.Th>
+                        <Table.Th w={50} />
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {assignments.map((a) => {
+                        const teacher = a.teacherStaffId as unknown as {
+                          _id: string;
+                          staffName: string;
+                          email?: string;
+                        };
+                        const teacherName =
+                          typeof teacher === "object"
+                            ? teacher.staffName
+                            : "Unknown";
 
-                      return (
-                        <Table.Tr key={a._id}>
-                          <Table.Td>{teacherName}</Table.Td>
-                          <Table.Td>{a.schoolId ?? "—"}</Table.Td>
-                          <Table.Td>
-                            {new Date(a.assignedAt).toLocaleDateString()}
-                          </Table.Td>
-                          <Table.Td>
-                            <ActionIcon
-                              variant="subtle"
-                              color="red"
-                              size="sm"
-                              onClick={() =>
-                                setRemoveTarget({
-                                  id: a._id,
-                                  name: teacherName,
-                                })
-                              }
-                            >
-                              <IconTrash size={14} />
-                            </ActionIcon>
-                          </Table.Td>
-                        </Table.Tr>
-                      );
-                    })}
-                  </Table.Tbody>
-                </Table>
-              )}
-            </Stack>
-          </Card>
+                        return (
+                          <Table.Tr key={a._id}>
+                            <Table.Td>{teacherName}</Table.Td>
+                            <Table.Td>{a.schoolId ?? "—"}</Table.Td>
+                            <Table.Td>
+                              {new Date(a.assignedAt).toLocaleDateString()}
+                            </Table.Td>
+                            <Table.Td>
+                              <ActionIcon
+                                variant="subtle"
+                                color="red"
+                                size="sm"
+                                onClick={() =>
+                                  setRemoveTarget({
+                                    id: a._id,
+                                    name: teacherName,
+                                  })
+                                }
+                              >
+                                <IconTrash size={14} />
+                              </ActionIcon>
+                            </Table.Td>
+                          </Table.Tr>
+                        );
+                      })}
+                    </Table.Tbody>
+                  </Table>
+                )}
+              </Stack>
+            </Card>
 
-          {/* Right Panel: Add Teachers */}
-          <Card withBorder p="lg">
-            <Stack gap="md">
-              <Title order={4}>Add Teachers</Title>
+            {/* Right Panel: Add Teachers */}
+            <Card withBorder p="lg">
+              <Stack gap="md">
+                <Title order={4}>Add Teachers</Title>
 
-              {!selectedCoachId ? (
-                <Text c="dimmed" size="sm">
-                  Select a coach first to assign teachers
-                </Text>
-              ) : (
-                <>
-                  <MultiSelect
-                    placeholder="Search and select teachers..."
-                    searchable
-                    data={teacherOptions}
-                    value={selectedTeacherIds}
-                    onChange={setSelectedTeacherIds}
-                  />
+                {!selectedCoachId ? (
+                  <Text c="dimmed" size="sm">
+                    Select a coach first to assign teachers
+                  </Text>
+                ) : (
+                  <>
+                    <MultiSelect
+                      placeholder="Search and select teachers..."
+                      searchable
+                      data={teacherOptions}
+                      value={selectedTeacherIds}
+                      onChange={setSelectedTeacherIds}
+                    />
 
-                  <Group justify="flex-end">
-                    <Button
-                      onClick={handleAssign}
-                      loading={assigning}
-                      disabled={selectedTeacherIds.length === 0}
-                    >
-                      Assign Selected Teachers
-                    </Button>
-                  </Group>
-                </>
-              )}
-            </Stack>
-          </Card>
-        </SimpleGrid>
+                    <Group justify="flex-end">
+                      <Button
+                        onClick={handleAssign}
+                        loading={assigning}
+                        disabled={selectedTeacherIds.length === 0}
+                      >
+                        Assign Selected Teachers
+                      </Button>
+                    </Group>
+                  </>
+                )}
+              </Stack>
+            </Card>
+          </SimpleGrid>
         )}
       </Stack>
 

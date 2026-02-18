@@ -42,7 +42,11 @@ export function SkillCard({
   const handleStatusChange = async (newStatus: string | null) => {
     if (!newStatus) return;
     setSaving(true);
-    await updateSkillStatus(teacherStaffId, skill.id, newStatus as SkillStatus);
+    await updateSkillStatus(
+      teacherStaffId,
+      skill.uuid,
+      newStatus as SkillStatus,
+    );
     setSaving(false);
     setEditing(false);
     onStatusChanged?.();

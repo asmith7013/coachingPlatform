@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Modal,
-  TextInput,
-  Select,
-  Button,
-  Stack,
-  Alert,
-} from "@mantine/core";
+import { Modal, TextInput, Select, Button, Stack, Alert } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { Schools } from "@schema/enum/scm";
@@ -68,12 +61,7 @@ export function CreateStaffModal({
   };
 
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title={`Add New ${role}`}
-      centered
-    >
+    <Modal opened={opened} onClose={onClose} title={`Add New ${role}`} centered>
       <Stack gap="md">
         {error && (
           <Alert
@@ -104,7 +92,11 @@ export function CreateStaffModal({
 
         <Select
           label="School"
-          placeholder={role === "Teacher" ? "Select a school" : "Select a school (optional)"}
+          placeholder={
+            role === "Teacher"
+              ? "Select a school"
+              : "Select a school (optional)"
+          }
           data={schoolOptions}
           value={schoolId}
           onChange={setSchoolId}
@@ -117,7 +109,9 @@ export function CreateStaffModal({
         <Button
           onClick={handleSubmit}
           loading={saving}
-          disabled={!name.trim() || !email.trim() || (role === "Teacher" && !schoolId)}
+          disabled={
+            !name.trim() || !email.trim() || (role === "Teacher" && !schoolId)
+          }
           fullWidth
         >
           Create {role}

@@ -27,9 +27,7 @@ export default function CaseloadPage() {
   });
 
   // Admins pick a coach; coaches/teachers use their own staffId
-  const staffId = isAdmin
-    ? (selectedCoachId ?? "")
-    : (metadata.staffId || "");
+  const staffId = isAdmin ? (selectedCoachId ?? "") : metadata.staffId || "";
 
   const { teachers, loading, error } = useCoachCaseload(staffId);
 

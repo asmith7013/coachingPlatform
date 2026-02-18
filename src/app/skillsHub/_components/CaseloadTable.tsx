@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Table, Text, Skeleton, Stack, Group, ActionIcon, Tooltip } from "@mantine/core";
+import {
+  Table,
+  Text,
+  Skeleton,
+  Stack,
+  Group,
+  ActionIcon,
+  Tooltip,
+} from "@mantine/core";
 import { IconEye, IconClipboardPlus, IconMap } from "@tabler/icons-react";
 import type { CoachTeacherAssignmentDocument } from "../_types/assignment.types";
 

@@ -82,7 +82,6 @@ export function SkillsHubNav() {
 
   // Standalone nav links (not in dropdowns)
   const standaloneLinks: NavItem[] = [
-    { href: "/skillsHub", label: "Home" },
     { href: "/skillsHub/skills", label: "All Skills" },
   ];
 
@@ -96,21 +95,24 @@ export function SkillsHubNav() {
           },
         ]
       : []),
-    {
-      label: "Coaching",
-      Icon: ClipboardDocumentCheckIcon,
-      items: [
-        ...(isTeacher
-          ? []
-          : [{ href: "/skillsHub/caseload", label: "Caseload" }]),
-      ],
-    },
+    ...(!isTeacher
+      ? [
+          {
+            label: "Coaching",
+            Icon: ClipboardDocumentCheckIcon,
+            items: [
+              { href: "/skillsHub/caseload", label: "Caseload" },
+              { href: "/skillsHub/skill-map", label: "Skill Map" },
+              { href: "/skillsHub/observations", label: "Observations" },
+              { href: "/skillsHub/action-plans", label: "Action Plans" },
+            ],
+          },
+        ]
+      : []),
     {
       label: "Admin",
       Icon: Cog6ToothIcon,
-      items: [
-        { href: "/skillsHub/admin/assignments", label: "Assignments" },
-      ],
+      items: [{ href: "/skillsHub/admin/assignments", label: "Assignments" }],
       adminOnly: true,
     },
   ];
@@ -122,15 +124,12 @@ export function SkillsHubNav() {
   };
 
   const toggleMobileCategory = (label: string) => {
-    setMobileExpandedCategory(
-      mobileExpandedCategory === label ? null : label,
-    );
+    setMobileExpandedCategory(mobileExpandedCategory === label ? null : label);
   };
 
   const isActiveCategory = (category: NavCategory) => {
     return category.items.some(
-      (item) =>
-        pathname === item.href || pathname.startsWith(item.href + "/"),
+      (item) => pathname === item.href || pathname.startsWith(item.href + "/"),
     );
   };
 
@@ -145,10 +144,7 @@ export function SkillsHubNav() {
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div
-        className="mx-auto px-4 lg:px-6 py-3"
-        style={{ maxWidth: "1600px" }}
-      >
+      <div className="mx-auto px-4 lg:px-6 py-3" style={{ maxWidth: "1600px" }}>
         <div className="flex justify-between items-center gap-2">
           {/* Mobile menu button */}
           <div className="flex lg:hidden">

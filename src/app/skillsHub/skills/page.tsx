@@ -1,21 +1,23 @@
 "use client";
 
-import { Title, Text, Table, Stack, Container } from "@mantine/core";
-import taxonomy from "../_data/teacher-skills.json";
-
-interface Skill {
-  id: string;
-  name: string;
-  description: string;
-  level: 1 | 2;
-}
+import {
+  Title,
+  Text,
+  Table,
+  Stack,
+  Container,
+  Center,
+  Loader,
+} from "@mantine/core";
+import { useTaxonomy } from "../_hooks/useTaxonomy";
+import type { TeacherSkill } from "../_types/taxonomy.types";
 
 function pairSkills(
-  skills: Skill[],
-): { l1: Skill | null; l2: Skill | null }[] {
+  skills: TeacherSkill[],
+): { l1: TeacherSkill | null; l2: TeacherSkill | null }[] {
   const l1 = skills.filter((s) => s.level === 1);
   const l2 = skills.filter((s) => s.level === 2);
-  const rows: { l1: Skill | null; l2: Skill | null }[] = [];
+  const rows: { l1: TeacherSkill | null; l2: TeacherSkill | null }[] = [];
   const maxLen = Math.max(l1.length, l2.length);
   for (let i = 0; i < maxLen; i++) {
     rows.push({ l1: l1[i] ?? null, l2: l2[i] ?? null });
@@ -24,6 +26,24 @@ function pairSkills(
 }
 
 export default function SkillsPage() {
+  const { taxonomy, loading, error } = useTaxonomy();
+
+  if (loading) {
+    return (
+      <Center py="xl">
+        <Loader />
+      </Center>
+    );
+  }
+
+  if (error || !taxonomy) {
+    return (
+      <Center py="xl">
+        <Text c="red">{error || "Failed to load skills taxonomy"}</Text>
+      </Center>
+    );
+  }
+
   const domains = taxonomy.domains;
 
   return (
@@ -80,7 +100,7 @@ export default function SkillsPage() {
                   </Table.Thead>
                   <Table.Tbody>
                     {domain.subDomains.map((sub) => {
-                      const rows = pairSkills(sub.skills as Skill[]);
+                      const rows = pairSkills(sub.skills);
                       return rows.map((row, i) => (
                         <Table.Tr key={`${sub.id}-${i}`}>
                           {i === 0 && (

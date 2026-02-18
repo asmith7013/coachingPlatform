@@ -59,11 +59,11 @@ export default function SkillDetailPage() {
     );
   }
 
-  const statusDoc = statuses.find((s) => s.skillId === skillId);
+  const statusDoc = statuses.find((s) => s.skillId === skill.uuid);
   const currentStatus: SkillStatus =
     (statusDoc?.status as SkillStatus) || "not_started";
 
-  const linkedPlans = plans.filter((p) => p.skillIds.includes(skillId));
+  const linkedPlans = plans.filter((p) => p.skillIds.includes(skill.uuid));
 
   const handleStatusChanged = () => {
     queryClient.invalidateQueries({
@@ -110,7 +110,7 @@ export default function SkillDetailPage() {
           </Text>
           <SkillObservationTimeline
             observations={observations}
-            skillId={skillId}
+            skillId={skill.uuid}
           />
         </Card>
 
@@ -120,7 +120,7 @@ export default function SkillDetailPage() {
           </Text>
           <SkillNotesSection
             teacherStaffId={teacherId}
-            skillId={skillId}
+            skillId={skill.uuid}
             isCoachView={isCoach}
           />
         </Card>

@@ -39,7 +39,7 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
     taxonomy?.domains.flatMap((d) =>
       d.subDomains.flatMap((sd) =>
         sd.skills.map((s) => ({
-          value: s.id,
+          value: s.uuid,
           label: s.name,
           group: d.name,
         })),
