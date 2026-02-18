@@ -8,6 +8,8 @@ import { Spinner } from "@/components/core/feedback/Spinner";
 import { AcademicCapIcon, BookOpenIcon } from "@heroicons/react/24/outline";
 import { useRoadmapUnits, useSectionOptions } from "@/hooks/scm";
 import type { RoadmapUnit as Unit } from "@zod-schema/scm/roadmaps/roadmap-unit";
+import { useUrlSyncedState } from "@/hooks/scm/useUrlSyncedState";
+import { fullGradeToSlug, slugToFullGrade } from "@/hooks/scm/useFilterParams";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },
@@ -20,9 +22,15 @@ const GRADE_OPTIONS = [
 ];
 
 export default function MasteryGridPage() {
-  const [selectedGrade, setSelectedGrade] = useState("");
+  const [selectedGrade, setSelectedGrade] = useUrlSyncedState("ss", {
+    storageKey: "scm-mastery-grid-grade",
+    toSlug: fullGradeToSlug,
+    fromSlug: slugToFullGrade,
+  });
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
-  const [selectedSection, setSelectedSection] = useState<string>("");
+  const [selectedSection, setSelectedSection] = useUrlSyncedState("section", {
+    storageKey: "scm-mastery-grid-section",
+  });
   const studentGridView = true;
 
   // Data fetching with React Query hooks

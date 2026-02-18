@@ -101,8 +101,19 @@ export function useCalendarState() {
   );
   const [hasAttemptedRestore, setHasAttemptedRestore] = useState(false);
 
-  // Load saved selection from localStorage on mount
+  // Load saved selection from URL (priority) or localStorage on mount
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlGrade = urlParams.get("g");
+    const urlSection = urlParams.get("section");
+
+    if (urlGrade) {
+      const grade = urlGrade === "alg-1" ? "Algebra 1" : urlGrade;
+      setSelectedGrade(grade);
+      if (urlSection) setPendingSectionKey(urlSection);
+      return;
+    }
+
     try {
       const saved = localStorage.getItem(CALENDAR2_STORAGE_KEY);
       if (saved) {
@@ -115,7 +126,7 @@ export function useCalendarState() {
     }
   }, []);
 
-  // Save selection to localStorage when it changes
+  // Save selection to localStorage and URL when it changes
   useEffect(() => {
     try {
       const data = {
@@ -128,6 +139,21 @@ export function useCalendarState() {
     } catch (error) {
       console.error("Error saving calendar2 selection:", error);
     }
+
+    // Sync to URL
+    const params = new URLSearchParams(window.location.search);
+    params.set("g", selectedGrade === "Algebra 1" ? "alg-1" : selectedGrade);
+    if (selectedSection) {
+      params.set("section", selectedSection.classSection);
+    } else {
+      params.delete("section");
+    }
+    const qs = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${qs ? `?${qs}` : ""}`,
+    );
   }, [selectedGrade, selectedSection]);
 
   // Restore pending section once configs are loaded
@@ -139,11 +165,21 @@ export function useCalendarState() {
     )
       return;
 
-    const [school, classSection] = pendingSectionKey.split("|");
-    const section = sectionConfigs.find(
-      (s: SectionConfigOption) =>
-        s.school === school && s.classSection === classSection,
-    );
+    let section: SectionConfigOption | undefined;
+    if (pendingSectionKey.includes("|")) {
+      // localStorage format: "school|classSection"
+      const [school, classSection] = pendingSectionKey.split("|");
+      section = sectionConfigs.find(
+        (s: SectionConfigOption) =>
+          s.school === school && s.classSection === classSection,
+      );
+    } else {
+      // URL format: just "classSection"
+      section = sectionConfigs.find(
+        (s: SectionConfigOption) => s.classSection === pendingSectionKey,
+      );
+    }
+
     if (section) {
       const scopeTag =
         selectedGrade === "Algebra 1" ? "Algebra 1" : `Grade ${selectedGrade}`;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 /**
  * Batch URL updates to avoid race conditions when multiple hooks
@@ -81,15 +81,18 @@ export function useUrlSyncedState(
     return localStorage.getItem(storageKey) || "";
   });
 
+  // Capture mount-time values in a ref so the effect can run once without deps
+  const mountRef = useRef({ paramName, value, toSlug });
+
   // On mount: if value came from localStorage (not URL), sync to URL
   useEffect(() => {
+    const { paramName: p, value: v, toSlug: ts } = mountRef.current;
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has(paramName)) return;
-    if (!value) return;
+    if (urlParams.has(p)) return;
+    if (!v) return;
 
-    const slug = toSlug ? toSlug(value) : value;
-    batchUrlUpdate(paramName, slug);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const slug = ts ? ts(v) : v;
+    batchUrlUpdate(p, slug);
   }, []);
 
   const setValue = useCallback(

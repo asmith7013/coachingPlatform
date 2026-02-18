@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useUrlSyncedState } from "@/hooks/scm/useUrlSyncedState";
 
 // =====================================
 // TYPES
@@ -41,11 +42,19 @@ const STORAGE_KEYS = {
 // =====================================
 
 /**
- * Manage form filters with localStorage persistence
+ * Manage form filters with URL + localStorage persistence.
+ *
+ * URL params are the source of truth (shareable).
+ * localStorage is the fallback for cross-session persistence.
+ * Uses the same localStorage keys so Summary/Table pages share state.
  */
 export function useFormFilters() {
-  const [unitId, setUnitIdState] = useState<string>("");
-  const [section, setSectionState] = useState<string>("");
+  const [unitId, setUnitId] = useUrlSyncedState("unit", {
+    storageKey: STORAGE_KEYS.UNIT,
+  });
+  const [section, setSection] = useUrlSyncedState("section", {
+    storageKey: STORAGE_KEYS.SECTION,
+  });
   const [date, setDateState] = useState<string>(() => {
     // Get local timezone date (YYYY-MM-DD)
     const now = new Date();
@@ -54,35 +63,13 @@ export function useFormFilters() {
     const day = String(now.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   });
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    const storedUnit = localStorage.getItem(STORAGE_KEYS.UNIT);
-    const storedSection = localStorage.getItem(STORAGE_KEYS.SECTION);
-    // Always default to today's date (don't load from localStorage)
-
-    if (storedUnit) setUnitIdState(storedUnit);
-    if (storedSection) setSectionState(storedSection);
-
-    setIsLoaded(true);
-  }, []);
-
-  const setUnitId = useCallback((value: string) => {
-    setUnitIdState(value);
-    localStorage.setItem(STORAGE_KEYS.UNIT, value);
-  }, []);
-
-  const setSection = useCallback((value: string) => {
-    setSectionState(value);
-    localStorage.setItem(STORAGE_KEYS.SECTION, value);
-  }, []);
 
   const setDate = useCallback((value: string) => {
     setDateState(value);
     localStorage.setItem(STORAGE_KEYS.DATE, value);
   }, []);
 
+  // useUrlSyncedState initializes synchronously from URL/localStorage
   return {
     unitId,
     section,
@@ -90,7 +77,7 @@ export function useFormFilters() {
     setUnitId,
     setSection,
     setDate,
-    isLoaded,
+    isLoaded: true,
   };
 }
 

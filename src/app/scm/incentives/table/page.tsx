@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
   exportActivityDataAsCSV,
   deleteActivity,
@@ -12,6 +12,7 @@ import { useRoadmapUnits } from "@/hooks/scm";
 import type { RoadmapUnit as Unit } from "@zod-schema/scm/roadmaps/roadmap-unit";
 import { useActivityTypes, useActivityData } from "../hooks";
 import { Spinner } from "@/components/core/feedback/Spinner";
+import { useUrlSyncedState } from "@/hooks/scm/useUrlSyncedState";
 
 /** Check if a unitId looks like a MongoDB ObjectId (24-char hex) */
 function isMongoObjectId(id: string | undefined): boolean {
@@ -243,20 +244,12 @@ function ActivityTable({
 }
 
 export default function IncentivesTablePage() {
-  // Section filter (shared with form page via localStorage)
-  const [section, setSection] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("incentives-form-section") || "";
-    }
-    return "";
+  // Filters synced to URL + localStorage (shared keys with form/data pages)
+  const [section, setSection] = useUrlSyncedState("section", {
+    storageKey: "incentives-form-section",
   });
-
-  // Unit filter only applies to platform data
-  const [unitId, setUnitId] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("incentives-form-current-unit") || "";
-    }
-    return "";
+  const [unitId, setUnitId] = useUrlSyncedState("unit", {
+    storageKey: "incentives-form-current-unit",
   });
 
   // Fetch ALL records for the section (no unit filter) so we can split by source
@@ -313,27 +306,6 @@ export default function IncentivesTablePage() {
     activityType: string;
     activityLabel: string;
   }>({ activityDate: "", activityType: "", activityLabel: "" });
-
-  // Persist filters
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (section) {
-        localStorage.setItem("incentives-form-section", section);
-      } else {
-        localStorage.removeItem("incentives-form-section");
-      }
-    }
-  }, [section]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (unitId) {
-        localStorage.setItem("incentives-form-current-unit", unitId);
-      } else {
-        localStorage.removeItem("incentives-form-current-unit");
-      }
-    }
-  }, [unitId]);
 
   const handleExportCSV = async () => {
     setIsExporting(true);

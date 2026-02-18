@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useUrlSyncedState } from "@/hooks/scm/useUrlSyncedState";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { Skeleton } from "@/components/core/feedback/Skeleton";
@@ -41,9 +42,18 @@ export default function StateExamQuestionsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Filters
-  const [selectedGrade, setSelectedGrade] = useState<string>("");
-  const [selectedUnit, setSelectedUnit] = useState<number | null>(null);
+  // Filters (URL-synced for shareability)
+  const [selectedGrade, setSelectedGrade] = useUrlSyncedState("g", {
+    storageKey: "scm-state-exam-grade",
+  });
+  const [unitParam, setUnitParam] = useUrlSyncedState("unit", {
+    storageKey: "scm-state-exam-unit",
+  });
+  const selectedUnit = unitParam ? Number(unitParam) : null;
+  const setSelectedUnit = useCallback(
+    (unit: number | null) => setUnitParam(unit !== null ? String(unit) : ""),
+    [setUnitParam],
+  );
   const [selectedSection, setSelectedSection] = useState<string>("all");
   const [showSubstandards, setShowSubstandards] = useState(true);
 
@@ -305,7 +315,7 @@ export default function StateExamQuestionsPage() {
 
   const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedGrade(e.target.value);
-    setSelectedUnit(null);
+    setUnitParam("");
     setSelectedSection("all");
     setSelectedForPrint(new Set()); // Clear print selection on grade change
   };
