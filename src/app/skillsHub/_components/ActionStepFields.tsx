@@ -21,7 +21,7 @@ export interface ActionStepFormData {
 interface ActionStepFieldsProps {
   step: ActionStepFormData;
   index: number;
-  skillOptions: { value: string; label: string; group?: string }[];
+  skillOptions: { group: string; items: { value: string; label: string }[] }[];
   canRemove: boolean;
   onChange: (
     index: number,

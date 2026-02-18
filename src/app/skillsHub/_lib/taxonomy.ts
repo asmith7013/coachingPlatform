@@ -9,7 +9,7 @@ let cacheTimestamp = 0;
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 const MATHKCS_API_URL =
-  process.env.MATHKCS_API_URL || "https://mathkcs.vercel.app";
+  process.env.MATHKCS_API_URL || "https://scm.podsie.org";
 
 export async function fetchTaxonomy(): Promise<TeacherSkillsIndex> {
   if (cachedTaxonomy && Date.now() - cacheTimestamp < CACHE_TTL) {

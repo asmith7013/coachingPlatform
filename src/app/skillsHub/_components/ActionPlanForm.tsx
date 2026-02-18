@@ -36,15 +36,15 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
   const [submitting, setSubmitting] = useState(false);
 
   const skillOptions =
-    taxonomy?.domains.flatMap((d) =>
-      d.subDomains.flatMap((sd) =>
+    taxonomy?.domains.map((d) => ({
+      group: d.name,
+      items: d.subDomains.flatMap((sd) =>
         sd.skills.map((s) => ({
           value: s.uuid,
           label: s.name,
-          group: d.name,
         })),
       ),
-    ) ?? [];
+    })) ?? [];
 
   const handleStepChange = (
     index: number,
