@@ -7,12 +7,7 @@ import { useActionPlans } from "@/lib/skills-hub/hooks/useActionPlans";
 import { ActionPlanList } from "@/lib/skills-hub/components/action-plans/ActionPlanList";
 
 export default function TeacherActionPlansPage() {
-  const {
-    selectedCoachId,
-    selectedTeacherId,
-    setSelectedCoachId,
-    setSelectedTeacherId,
-  } = useSkillsHubFilters();
+  const { selectedTeacherId, setSelectedTeacherId } = useSkillsHubFilters();
   const { plans, loading, error } = useActionPlans(selectedTeacherId ?? "");
 
   return (
@@ -25,8 +20,6 @@ export default function TeacherActionPlansPage() {
       </Card>
 
       <CoachTeacherSelector
-        selectedCoachId={selectedCoachId}
-        onCoachChange={setSelectedCoachId}
         selectedTeacherId={selectedTeacherId}
         onTeacherChange={setSelectedTeacherId}
       />

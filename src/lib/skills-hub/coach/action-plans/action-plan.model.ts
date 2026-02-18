@@ -18,6 +18,8 @@ const ActionPlanSchema = new mongoose.Schema(
     },
     title: { type: String, required: true },
     skillIds: [{ type: String }],
+    why: { type: String },
+    actionStep: { type: String },
     status: {
       type: String,
       enum: ["open", "closed", "archived"],

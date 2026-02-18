@@ -50,7 +50,6 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
   const [skillIds, setSkillIds] = useState<string[]>([]);
   const [why, setWhy] = useState("");
   const [actionStep, setActionStep] = useState("");
-  const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
   const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(
     teacherStaffId,
   );
@@ -138,8 +137,6 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
   return (
     <Stack gap="lg">
       <CoachTeacherSelector
-        selectedCoachId={selectedCoachId}
-        onCoachChange={setSelectedCoachId}
         selectedTeacherId={selectedTeacherId}
         onTeacherChange={setSelectedTeacherId}
       />

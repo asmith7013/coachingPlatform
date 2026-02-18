@@ -11,12 +11,7 @@ export default function SkillMapPage() {
   const isCoach =
     hasRole("coach") || hasRole("super_admin") || hasRole("director");
 
-  const {
-    selectedCoachId,
-    selectedTeacherId,
-    setSelectedCoachId,
-    setSelectedTeacherId,
-  } = useSkillsHubFilters();
+  const { selectedTeacherId, setSelectedTeacherId } = useSkillsHubFilters();
 
   return (
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
@@ -28,8 +23,6 @@ export default function SkillMapPage() {
       </Card>
 
       <CoachTeacherSelector
-        selectedCoachId={selectedCoachId}
-        onCoachChange={setSelectedCoachId}
         selectedTeacherId={selectedTeacherId}
         onTeacherChange={setSelectedTeacherId}
       />

@@ -6,12 +6,7 @@ import { CoachTeacherSelector } from "@/lib/skills-hub/components/core/CoachTeac
 import { ObservationGuide } from "@/lib/skills-hub/components/observations/ObservationGuide";
 
 export default function ObservationsPage() {
-  const {
-    selectedCoachId,
-    selectedTeacherId,
-    setSelectedCoachId,
-    setSelectedTeacherId,
-  } = useSkillsHubFilters();
+  const { selectedTeacherId, setSelectedTeacherId } = useSkillsHubFilters();
 
   return (
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
@@ -23,8 +18,6 @@ export default function ObservationsPage() {
       </Card>
 
       <CoachTeacherSelector
-        selectedCoachId={selectedCoachId}
-        onCoachChange={setSelectedCoachId}
         selectedTeacherId={selectedTeacherId}
         onTeacherChange={setSelectedTeacherId}
       />

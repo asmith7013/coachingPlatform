@@ -6,12 +6,7 @@ import { CoachTeacherSelector } from "@/lib/skills-hub/components/core/CoachTeac
 import { SkillMap } from "@/lib/skills-hub/components/skills/SkillMap";
 
 export default function TeacherDashboardPage() {
-  const {
-    selectedCoachId,
-    selectedTeacherId,
-    setSelectedCoachId,
-    setSelectedTeacherId,
-  } = useSkillsHubFilters();
+  const { selectedTeacherId, setSelectedTeacherId } = useSkillsHubFilters();
 
   return (
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
@@ -23,8 +18,6 @@ export default function TeacherDashboardPage() {
       </Card>
 
       <CoachTeacherSelector
-        selectedCoachId={selectedCoachId}
-        onCoachChange={setSelectedCoachId}
         selectedTeacherId={selectedTeacherId}
         onTeacherChange={setSelectedTeacherId}
       />
