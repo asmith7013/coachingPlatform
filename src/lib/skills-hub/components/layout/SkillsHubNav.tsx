@@ -482,7 +482,7 @@ export function SkillsHubNav() {
           onClick={() => setFabOpen(!fabOpen)}
           className="w-9 h-9 rounded-full bg-gray-900 border border-gray-600 shadow-lg flex items-center justify-center cursor-pointer hover:bg-gray-800 transition-colors"
         >
-          <WrenchScrewdriverIcon className="w-4 h-4 text-white" />
+          <WrenchScrewdriverIcon className="w-5 h-5 text-white" />
         </button>
       </div>
     </>

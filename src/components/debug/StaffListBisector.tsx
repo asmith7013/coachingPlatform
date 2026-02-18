@@ -2,23 +2,23 @@
 
 import React, { useState } from "react";
 import { StaffListDebugger } from "./StaffListDebugger";
-import type { NYCPSStaff } from "@zod-schema/core/staff";
+import type { Staff } from "@zod-schema/core/staff";
 
 // Use Partial type for mock data to avoid having to provide all required fields
-const MOCK_STAFF: Partial<NYCPSStaff>[] = [
+const MOCK_STAFF: Partial<Staff>[] = [
   {
     _id: "1",
     staffName: "Test Teacher 1",
     email: "teacher1@example.com",
     schoolIds: ["school1"],
-    rolesNYCPS: ["Teacher"],
+    roles: ["Teacher"],
   },
   {
     _id: "2",
     staffName: "Test Teacher 2",
     email: "teacher2@example.com",
     schoolIds: ["school1"],
-    rolesNYCPS: ["Teacher"],
+    roles: ["Teacher"],
   },
 ];
 
@@ -50,7 +50,7 @@ const StaticSearchBar = () => (
   </div>
 );
 
-const StaticStaffCard = ({ staff }: { staff: Partial<NYCPSStaff> }) => (
+const StaticStaffCard = ({ staff }: { staff: Partial<Staff> }) => (
   <div className="p-4 mb-2 border rounded bg-white">
     <h3>{staff.staffName}</h3>
     <p>{staff.email}</p>

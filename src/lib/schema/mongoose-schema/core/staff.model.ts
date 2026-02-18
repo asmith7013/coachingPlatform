@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import {
-  RolesNYCPS,
-  RolesTL,
+  Roles,
   Subjects,
   SpecialGroups,
   AdminLevels,
@@ -43,48 +42,35 @@ const NoteSchema = new mongoose.Schema(
   { _id: false },
 );
 
-const baseStaffFields = {
+// Unified staff schema — superset of all previous staff types
+const staffFields = {
+  // Core fields
   staffName: { type: String, required: true },
   email: { type: String },
   schoolIds: [{ type: String }],
   mondayUser: { type: MondayUserSchema },
-  ...standardDocumentFields,
-};
+  roles: [{ type: String, enum: Object.values(Roles) }],
 
-const nycpsStaffFields = {
-  ...baseStaffFields,
-  gradeLevelsSupported: [
-    { type: String, required: true, enum: Object.values(GradeLevels) },
-  ],
-  subjects: [{ type: String, required: true, enum: Object.values(Subjects) }],
-  specialGroups: [
-    { type: String, required: true, enum: Object.values(SpecialGroups) },
-  ],
-  rolesNYCPS: [{ type: String, enum: Object.values(RolesNYCPS) }],
+  // Teacher-specific fields
+  gradeLevelsSupported: [{ type: String, enum: Object.values(GradeLevels) }],
+  subjects: [{ type: String, enum: Object.values(Subjects) }],
+  specialGroups: [{ type: String, enum: Object.values(SpecialGroups) }],
   pronunciation: { type: String },
   notes: [NoteSchema],
   experience: [ExperienceSchema],
-};
 
-const teachingLabStaffFields = {
-  ...baseStaffFields,
+  // Admin/TL-specific fields
   adminLevel: { type: String, enum: Object.values(AdminLevels) },
   assignedDistricts: [{ type: String }],
-  rolesTL: [{ type: String, enum: Object.values(RolesTL) }],
+
+  ...standardDocumentFields,
 };
 
-const StaffMemberSchema = new mongoose.Schema(baseStaffFields, {
+const StaffSchema = new mongoose.Schema(staffFields, {
   ...standardSchemaOptions,
-  collection: "staffmembers",
+  collection: "staff",
 });
-const NYCPSStaffSchema = new mongoose.Schema(nycpsStaffFields, {
-  ...standardSchemaOptions,
-  collection: "nycpsstaffs",
-});
-const TeachingLabStaffSchema = new mongoose.Schema(teachingLabStaffFields, {
-  ...standardSchemaOptions,
-  collection: "teachinglabstaffs",
-});
+
 const ExperienceModelSchema = new mongoose.Schema(ExperienceSchema, {
   ...standardSchemaOptions,
   collection: "experiences",
@@ -94,14 +80,9 @@ const NoteModelSchema = new mongoose.Schema(NoteSchema, {
   collection: "notes",
 });
 
-export const StaffMemberModel =
-  mongoose.models.StaffMember ||
-  mongoose.model("StaffMember", StaffMemberSchema);
-export const NYCPSStaffModel =
-  mongoose.models.NYCPSStaff || mongoose.model("NYCPSStaff", NYCPSStaffSchema);
-export const TeachingLabStaffModel =
-  mongoose.models.TeachingLabStaff ||
-  mongoose.model("TeachingLabStaff", TeachingLabStaffSchema);
+export const StaffModel =
+  mongoose.models.Staff || mongoose.model("Staff", StaffSchema);
+
 export const ExperienceModel =
   mongoose.models.Experience ||
   mongoose.model("Experience", ExperienceModelSchema);

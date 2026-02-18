@@ -105,21 +105,14 @@ export enum Duration {
 }
 
 /**
- * Roles in NYC Public Schools
+ * Staff roles
  */
-export enum RolesNYCPS {
+export enum Roles {
   TEACHER = "Teacher",
   PRINCIPAL = "Principal",
   AP = "AP",
   COACH = "Coach",
   ADMINISTRATOR = "Administrator",
-}
-
-/**
- * Roles in Teaching Lab
- */
-export enum RolesTL {
-  COACH = "Coach",
   CPM = "CPM",
   DIRECTOR = "Director",
   SENIOR_DIRECTOR = "Senior Director",
@@ -435,12 +428,8 @@ export const DurationValues = Object.values(Duration);
 export type DurationType = z.infer<typeof DurationZod>; // This will be a number type
 
 // Roles NYCPS
-export const RolesNYCPSZod = createZodEnum(RolesNYCPS);
-export type RolesNYCPSType = z.infer<typeof RolesNYCPSZod>;
-
-// Roles TL
-export const RolesTLZod = createZodEnum(RolesTL);
-export type RolesTLType = z.infer<typeof RolesTLZod>;
+export const RolesZod = createZodEnum(Roles);
+export type RolesType = z.infer<typeof RolesZod>;
 
 // Admin Levels
 export const AdminLevelZod = createZodEnum(AdminLevels);
@@ -573,8 +562,7 @@ export type AcademicYear = z.infer<typeof AcademicYearZod>;
 export { GradeLevels as AllowedGradeEnum };
 export { Subjects as AllowedSubjectsEnum };
 export { SpecialGroups as AllowedSpecialGroupsEnum };
-export { RolesNYCPS as AllowedRolesNYCPSEnum };
-export { RolesTL as AllowedRolesTLEnum };
+export { Roles as AllowedRolesEnum };
 export { AdminLevels as TLAdminTypeEnum };
 export { DayTypes as DayTypeEnum };
 export { BlockDayTypes as BlockDayTypeEnum };

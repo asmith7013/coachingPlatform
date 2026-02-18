@@ -4,7 +4,7 @@ import {
   ErrorContextBaseZodSchema,
   AuthenticatedUserBaseZodSchema,
 } from "@zod-schema/core-types/auth";
-import { RolesNYCPSZod, RolesTLZod } from "@enums";
+import { RolesZod } from "@enums";
 
 // Keep permission constants as TypeScript (they're static constants)
 export const PERMISSIONS = {
@@ -79,32 +79,26 @@ export const PERMISSIONS = {
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
-// Map existing role enums to our auth system (keep as TypeScript)
-export const NYCPS_ROLES = RolesNYCPSZod.enum;
-export const TL_ROLES = RolesTLZod.enum;
+// Role constants from the unified Roles enum
+export const STAFF_ROLES = RolesZod.enum;
 
 // Combined roles type
-export type Role =
-  | z.infer<typeof RolesNYCPSZod>
-  | z.infer<typeof RolesTLZod>
-  | "super_admin";
+export type Role = z.infer<typeof RolesZod> | "super_admin";
 
-// Role-permission mappings using existing enums (keep as TypeScript)
+// Role-permission mappings
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  // NYCPS Roles
-  [NYCPS_ROLES.Teacher]: [
+  [STAFF_ROLES.Teacher]: [
     PERMISSIONS.DASHBOARD_VIEW,
     PERMISSIONS.VISIT_VIEW,
     PERMISSIONS.SCHEDULE_VIEW,
     PERMISSIONS.NOTES_VIEW,
   ],
 
-  [NYCPS_ROLES.Principal]: [
+  [STAFF_ROLES.Principal]: [
     PERMISSIONS.DASHBOARD_VIEW,
     PERMISSIONS.SCHOOLS_VIEW,
     PERMISSIONS.SCHOOLS_EDIT,
     PERMISSIONS.STAFF_VIEW,
-    PERMISSIONS.STAFF_NYCPS_VIEW,
     PERMISSIONS.VISIT_VIEW,
     PERMISSIONS.SCHEDULE_VIEW,
     PERMISSIONS.REPORTS_VIEW,
@@ -113,51 +107,20 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     PERMISSIONS.SCORING_VIEW,
   ],
 
-  [NYCPS_ROLES.AP]: [
+  [STAFF_ROLES.AP]: [
     PERMISSIONS.DASHBOARD_VIEW,
     PERMISSIONS.SCHOOLS_VIEW,
     PERMISSIONS.STAFF_VIEW,
-    PERMISSIONS.STAFF_NYCPS_VIEW,
     PERMISSIONS.VISIT_VIEW,
     PERMISSIONS.SCHEDULE_VIEW,
     PERMISSIONS.NOTES_VIEW,
     PERMISSIONS.LOOKFORS_VIEW,
   ],
 
-  [NYCPS_ROLES.Coach]: [
-    PERMISSIONS.DASHBOARD_VIEW,
-    PERMISSIONS.VISIT_VIEW,
-    PERMISSIONS.VISIT_CREATE,
-    PERMISSIONS.VISIT_EDIT,
-    PERMISSIONS.COACHING_LOG_VIEW,
-    PERMISSIONS.COACHING_LOG_CREATE,
-    PERMISSIONS.COACHING_LOG_EDIT,
-    PERMISSIONS.COACHING_PLANS_VIEW,
-    PERMISSIONS.COACHING_PLANS_CREATE,
-    PERMISSIONS.COACHING_PLANS_EDIT,
-    PERMISSIONS.SCHEDULE_VIEW,
-    PERMISSIONS.NOTES_VIEW,
-    PERMISSIONS.NOTES_CREATE,
-    PERMISSIONS.NOTES_EDIT,
-    PERMISSIONS.LOOKFORS_VIEW,
-    PERMISSIONS.SCORING_VIEW,
-    PERMISSIONS.SCORING_CREATE,
-    PERMISSIONS.SCORING_EDIT,
-  ],
-
-  [NYCPS_ROLES.Administrator]: [
+  [STAFF_ROLES.Coach]: [
     PERMISSIONS.DASHBOARD_VIEW,
     PERMISSIONS.SCHOOLS_VIEW,
     PERMISSIONS.STAFF_VIEW,
-    PERMISSIONS.STAFF_NYCPS_VIEW,
-  ],
-
-  // Teaching Lab Roles
-  [TL_ROLES.Coach]: [
-    PERMISSIONS.DASHBOARD_VIEW,
-    PERMISSIONS.SCHOOLS_VIEW,
-    PERMISSIONS.STAFF_VIEW,
-    PERMISSIONS.STAFF_TEACHINGLAB_VIEW,
     PERMISSIONS.VISIT_VIEW,
     PERMISSIONS.VISIT_CREATE,
     PERMISSIONS.VISIT_EDIT,
@@ -180,13 +143,18 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     PERMISSIONS.SCORING_EDIT,
   ],
 
-  [TL_ROLES.CPM]: [
+  [STAFF_ROLES.Administrator]: [
+    PERMISSIONS.DASHBOARD_VIEW,
+    PERMISSIONS.SCHOOLS_VIEW,
+    PERMISSIONS.STAFF_VIEW,
+  ],
+
+  [STAFF_ROLES.CPM]: [
     PERMISSIONS.DASHBOARD_ADMIN,
     PERMISSIONS.SCHOOLS_VIEW,
     PERMISSIONS.SCHOOLS_EDIT,
     PERMISSIONS.STAFF_VIEW,
     PERMISSIONS.STAFF_EDIT,
-    PERMISSIONS.STAFF_TEACHINGLAB_VIEW,
     PERMISSIONS.VISIT_VIEW,
     PERMISSIONS.VISIT_CREATE,
     PERMISSIONS.VISIT_EDIT,
@@ -202,7 +170,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     PERMISSIONS.SCORING_VIEW,
   ],
 
-  [TL_ROLES.Director]: [
+  [STAFF_ROLES.Director]: [
     PERMISSIONS.DASHBOARD_ADMIN,
     PERMISSIONS.SCHOOLS_VIEW,
     PERMISSIONS.SCHOOLS_CREATE,
@@ -210,7 +178,6 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     PERMISSIONS.STAFF_VIEW,
     PERMISSIONS.STAFF_CREATE,
     PERMISSIONS.STAFF_EDIT,
-    PERMISSIONS.STAFF_TEACHINGLAB_VIEW,
     PERMISSIONS.VISIT_VIEW,
     PERMISSIONS.VISIT_CREATE,
     PERMISSIONS.VISIT_EDIT,
@@ -225,15 +192,9 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     PERMISSIONS.SCORING_VIEW,
   ],
 
-  [TL_ROLES["Senior Director"]]: [
-    // All permissions
-    ...Object.values(PERMISSIONS),
-  ],
+  [STAFF_ROLES["Senior Director"]]: [...Object.values(PERMISSIONS)],
 
-  super_admin: [
-    // All permissions
-    ...Object.values(PERMISSIONS),
-  ],
+  super_admin: [...Object.values(PERMISSIONS)],
 };
 
 // Derive types from Zod schemas

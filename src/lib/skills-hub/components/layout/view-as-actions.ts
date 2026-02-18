@@ -1,21 +1,19 @@
 "use server";
 
 import { withDbConnection } from "@server/db/ensure-connection";
-import { NYCPSStaffModel } from "@mongoose-schema/core/staff.model";
-import { TeachingLabStaffModel } from "@mongoose-schema/core/staff.model";
+import { StaffModel } from "@mongoose-schema/core/staff.model";
 
 export interface MockStaffData {
   staffId: string;
   staffName: string;
   email: string;
-  staffType: "nycps" | "teachinglab";
   roles: string[];
   schoolIds: string[];
 }
 
 const MOCK_USERS = {
-  coach: { email: "alex.smith@teachinglab.org", collection: "teachinglab" },
-  teacher: { email: "ccardona@schools.nyc.gov", collection: "nycps" },
+  coach: { email: "alex.smith@teachinglab.org" },
+  teacher: { email: "ccardona@schools.nyc.gov" },
 } as const;
 
 export async function getMockStaffData(): Promise<{
@@ -25,16 +23,16 @@ export async function getMockStaffData(): Promise<{
 }> {
   return withDbConnection(async () => {
     try {
-      const coachDoc = (await TeachingLabStaffModel.findOne({
+      const coachDoc = (await StaffModel.findOne({
         email: MOCK_USERS.coach.email,
       })
-        .select("staffName email rolesTL schoolIds")
+        .select("staffName email roles schoolIds")
         .lean()) as Record<string, unknown> | null;
 
-      const teacherDoc = (await NYCPSStaffModel.findOne({
+      const teacherDoc = (await StaffModel.findOne({
         email: MOCK_USERS.teacher.email,
       })
-        .select("staffName email rolesNYCPS schoolIds")
+        .select("staffName email roles schoolIds")
         .lean()) as Record<string, unknown> | null;
 
       const coach: MockStaffData | null = coachDoc
@@ -42,8 +40,7 @@ export async function getMockStaffData(): Promise<{
             staffId: String(coachDoc._id),
             staffName: coachDoc.staffName as string,
             email: MOCK_USERS.coach.email,
-            staffType: "teachinglab",
-            roles: (coachDoc.rolesTL as string[]) || ["Coach"],
+            roles: (coachDoc.roles as string[]) || ["Coach"],
             schoolIds: (coachDoc.schoolIds as string[]) || [],
           }
         : null;
@@ -53,8 +50,7 @@ export async function getMockStaffData(): Promise<{
             staffId: String(teacherDoc._id),
             staffName: teacherDoc.staffName as string,
             email: MOCK_USERS.teacher.email,
-            staffType: "nycps",
-            roles: (teacherDoc.rolesNYCPS as string[]) || ["Teacher"],
+            roles: (teacherDoc.roles as string[]) || ["Teacher"],
             schoolIds: (teacherDoc.schoolIds as string[]) || [],
           }
         : null;

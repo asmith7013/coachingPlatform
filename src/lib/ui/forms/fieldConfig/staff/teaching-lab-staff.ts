@@ -1,11 +1,11 @@
 import type { Field } from "@ui-types/form";
-import type { TeachingLabStaffInput } from "@zod-schema/core/staff";
+import type { StaffInput } from "@zod-schema/core/staff";
 
 /**
- * Simple field configuration for Teaching Lab Staff forms
- * Following the new domain-specific pattern
+ * Field configuration for admin-level staff fields
+ * (adminLevel, assignedDistricts)
  */
-export const TeachingLabStaffFieldConfig: Field<TeachingLabStaffInput>[] = [
+export const AdminStaffFieldConfig: Field<StaffInput>[] = [
   {
     name: "staffName",
     label: "Full Name",
@@ -25,33 +25,28 @@ export const TeachingLabStaffFieldConfig: Field<TeachingLabStaffInput>[] = [
     options: [
       { value: "Coach", label: "Coach" },
       { value: "Manager", label: "Manager" },
-      { value: "Admin", label: "Admin" },
+      { value: "CPM", label: "CPM" },
+      { value: "Director", label: "Director" },
+      { value: "Senior Director", label: "Senior Director" },
     ],
   },
   {
-    name: "rolesTL",
-    label: "Teaching Lab Roles",
+    name: "roles",
+    label: "Roles",
     type: "select",
     multiple: true,
     options: [
-      { value: "Math Specialist", label: "Math Specialist" },
-      { value: "ELA Specialist", label: "ELA Specialist" },
       { value: "Coach", label: "Coach" },
-      { value: "Manager", label: "Manager" },
+      { value: "CPM", label: "CPM" },
+      { value: "Director", label: "Director" },
+      { value: "Senior Director", label: "Senior Director" },
     ],
   },
   {
-    name: "schools",
+    name: "schoolIds",
     label: "Assigned Schools",
     type: "reference",
     url: "/api/schools",
-    multiple: true,
-  },
-  {
-    name: "owners",
-    label: "Owners",
-    type: "reference",
-    url: "/api/staff",
     multiple: true,
   },
   {
@@ -62,3 +57,6 @@ export const TeachingLabStaffFieldConfig: Field<TeachingLabStaffInput>[] = [
     multiple: true,
   },
 ];
+
+/** @deprecated Use AdminStaffFieldConfig */
+export const TeachingLabStaffFieldConfig = AdminStaffFieldConfig;

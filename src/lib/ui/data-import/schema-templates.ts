@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { SchoolInputZodSchema } from "@zod-schema/core/school";
-import { NYCPSStaffInputZodSchema } from "@zod-schema/core/staff";
+import { StaffInputZodSchema } from "@zod-schema/core/staff";
 import { VisitInputZodSchema } from "@zod-schema/visits/visit";
 import { BellScheduleInputZodSchema } from "@/lib/schema/zod-schema/schedules/schedule";
 import { TeacherScheduleInputZodSchema } from "@/lib/schema/zod-schema/schedules/schedule";
@@ -15,8 +15,7 @@ import {
   GradeLevels,
   Subjects,
   SpecialGroups,
-  RolesNYCPS,
-  RolesTL,
+  Roles,
   AdminLevels,
   AllowedPurposes,
   ModeDone,
@@ -52,8 +51,7 @@ function getFieldDefault(fieldName: string): unknown {
     "gradeLevelsSupported",
     "subjects",
     "specialGroups",
-    "rolesNYCPS",
-    "rolesTL",
+    "roles",
     "staffList",
     "schedules",
     "cycles",
@@ -185,8 +183,7 @@ const FIELD_TO_ENUM_MAP = {
   gradeLevelsSupported: { name: "GradeLevels", enum: GradeLevels },
   subjects: { name: "Subjects", enum: Subjects },
   specialGroups: { name: "SpecialGroups", enum: SpecialGroups },
-  rolesNYCPS: { name: "RolesNYCPS", enum: RolesNYCPS },
-  rolesTL: { name: "RolesTL", enum: RolesTL },
+  roles: { name: "Roles", enum: Roles },
   adminLevel: { name: "AdminLevels", enum: AdminLevels },
   allowedPurpose: { name: "AllowedPurposes", enum: AllowedPurposes },
   modeDone: { name: "ModeDone", enum: ModeDone },
@@ -308,9 +305,7 @@ function generateFieldInstructions(entityName: string): string {
  * Generate templates using transformer-based approach
  */
 export const SCHOOL_TEMPLATE = createTemplateFromSchema(SchoolInputZodSchema);
-export const STAFF_TEMPLATE = createTemplateFromSchema(
-  NYCPSStaffInputZodSchema,
-);
+export const STAFF_TEMPLATE = createTemplateFromSchema(StaffInputZodSchema);
 export const VISIT_TEMPLATE = createVisitTemplate();
 export const BELL_SCHEDULE_TEMPLATE = createBellScheduleTemplate();
 export const MASTER_SCHEDULE_TEMPLATE = createMasterScheduleTemplate();
@@ -324,7 +319,7 @@ export function validateTemplateData(
 ): { success: boolean; data?: unknown; error?: string } {
   const schemas = {
     school: SchoolInputZodSchema,
-    staff: NYCPSStaffInputZodSchema,
+    staff: StaffInputZodSchema,
     visits: VisitInputZodSchema,
     bellSchedules: BellScheduleInputZodSchema,
     masterSchedule: TeacherScheduleInputZodSchema,
@@ -380,8 +375,8 @@ export function getFieldInfo(
     case "staff":
       return {
         template: STAFF_TEMPLATE,
-        fields: extractSchemaFields(NYCPSStaffInputZodSchema),
-        schema: NYCPSStaffInputZodSchema,
+        fields: extractSchemaFields(StaffInputZodSchema),
+        schema: StaffInputZodSchema,
       };
     case "visits":
       return {

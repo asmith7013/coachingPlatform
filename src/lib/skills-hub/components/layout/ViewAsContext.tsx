@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { createContext, useContext, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 import { getMockStaffData, type MockStaffData } from "./view-as-actions";
@@ -38,7 +38,7 @@ function buildMockUser(
     roles = ["Teacher"];
     metadata = {
       staffId: t.staffId,
-      staffType: t.staffType,
+      staffType: "nycps",
       roles,
       permissions: [],
       schoolIds: t.schoolIds,
@@ -52,7 +52,7 @@ function buildMockUser(
     roles = ["Coach"];
     metadata = {
       staffId: c.staffId,
-      staffType: c.staffType,
+      staffType: "nycps",
       roles,
       permissions: [],
       schoolIds: c.schoolIds,
@@ -67,7 +67,7 @@ function buildMockUser(
     roles = ["Director"];
     metadata = {
       staffId: c?.staffId || "",
-      staffType: c?.staffType || "teachinglab",
+      staffType: "nycps",
       roles,
       permissions: [],
       schoolIds: c?.schoolIds || [],
