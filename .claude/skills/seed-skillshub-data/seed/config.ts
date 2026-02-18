@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
-export const TEACHER_EMAIL = "ccardona@schools.nyc.gov";
+export const TEACHER_EMAIL = "jane.doe@schools.nyc.gov";
 export const COACH_EMAIL = "alex.smith@teachinglab.org";
 
 export const ACTION_PLANS = {
   open: {
     title: "Small Group Facilitation",
     status: "open" as const,
-    why: "Ms. Cardona needs to strengthen her ability to facilitate meaningful student-to-student interactions during small group instruction.",
+    why: "The teacher needs to strengthen their ability to facilitate meaningful student-to-student interactions during small group instruction.",
     actionStep: "Focus on implementing turn-and-talk routines and promoting growth mindset language during small group sessions.",
     skillIds: [
       "facilitate-student-to-student-relationships",

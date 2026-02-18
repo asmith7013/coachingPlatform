@@ -13,7 +13,7 @@ export interface MockStaffData {
 
 const MOCK_USERS = {
   coach: { email: "alex.smith@teachinglab.org" },
-  teacher: { email: "ccardona@schools.nyc.gov" },
+  teacher: { email: "jane.doe@schools.nyc.gov" },
 } as const;
 
 export async function getMockStaffData(): Promise<{
