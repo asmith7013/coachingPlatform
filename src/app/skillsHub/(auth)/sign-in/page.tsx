@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useSignIn } from "@clerk/nextjs";
+import { useState, useEffect } from "react";
+import { useSignIn, useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import {
   Card,
   TextInput,
@@ -17,6 +18,15 @@ import { IconMail, IconCheck, IconBrandGoogle } from "@tabler/icons-react";
 
 export default function SkillsHubSignInPage() {
   const { signIn, isLoaded } = useSignIn();
+  const { isSignedIn } = useAuth();
+  const router = useRouter();
+
+  // Redirect if already signed in
+  useEffect(() => {
+    if (isSignedIn) {
+      router.replace("/skillsHub");
+    }
+  }, [isSignedIn, router]);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle",

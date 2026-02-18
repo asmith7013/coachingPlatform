@@ -55,14 +55,28 @@ export default function SkillsHubPage() {
                 label: "My Skills",
               },
             ]
-          : []),
+          : [
+              {
+                href: "/skillsHub/caseload",
+                label: "Select Teacher",
+              },
+            ]),
       ],
     },
     {
       title: "Observations",
       description: "Record and review classroom observations",
       icon: <IconClipboardCheck size={24} />,
-      links: [],
+      links: [
+        ...(isTeacher
+          ? []
+          : [
+              {
+                href: "/skillsHub/caseload",
+                label: "Select Teacher",
+              },
+            ]),
+      ],
     },
     {
       title: "Admin",

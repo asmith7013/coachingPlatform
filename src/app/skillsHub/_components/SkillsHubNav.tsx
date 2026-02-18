@@ -2,50 +2,61 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
-  Group,
-  Menu,
-  Burger,
-  Drawer,
-  UnstyledButton,
-  Stack,
-  Text,
-  Divider,
-  Accordion,
-  Box,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import {
-  IconChevronDown,
-  IconMap,
-  IconClipboardCheck,
-  IconSettings,
-  IconLogout,
-} from "@tabler/icons-react";
+  MapIcon,
+  ClipboardDocumentCheckIcon,
+  Cog6ToothIcon,
+  Bars3Icon,
+  XMarkIcon,
+  ChevronDownIcon,
+  ArrowRightStartOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 
 type NavItem = { href: string; label: string };
 
 type NavCategory = {
   label: string;
-  icon: React.ReactNode;
+  Icon: React.ComponentType<{ className?: string }>;
   items: NavItem[];
   adminOnly?: boolean;
 };
 
 export function SkillsHubNav() {
   const pathname = usePathname();
-  const { hasRole } = useAuthenticatedUser();
-  const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] =
-    useDisclosure(false);
+  const { hasRole, metadata } = useAuthenticatedUser();
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileExpandedCategory, setMobileExpandedCategory] = useState<
+    string | null
+  >(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isSuperAdmin = hasRole("super_admin");
   const isDirector = hasRole("director");
   const isAdmin = isSuperAdmin || isDirector;
+  const isCoach = hasRole("coach");
+  const isTeacher = !isAdmin && !isCoach;
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpenDropdown(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Handle scroll to show/hide navigation
   useEffect(() => {
     function handleScroll() {
       const currentScrollY = window.scrollY;
@@ -65,276 +76,260 @@ export function SkillsHubNav() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  const teacherSkillsHref = metadata.staffId
+    ? `/skillsHub/teacher/${metadata.staffId}`
+    : "/skillsHub";
+
   const categories: NavCategory[] = [
     {
       label: "Skills",
-      icon: <IconMap size={18} />,
-      items: [{ href: "/skillsHub", label: "Hub" }],
+      Icon: MapIcon,
+      items: [
+        { href: "/skillsHub", label: "Hub" },
+        ...(isTeacher
+          ? [{ href: teacherSkillsHref, label: "My Skill Map" }]
+          : [{ href: "/skillsHub/caseload", label: "Caseload" }]),
+      ],
     },
     {
       label: "Coaching",
-      icon: <IconClipboardCheck size={18} />,
-      items: [{ href: "/skillsHub/caseload", label: "My Caseload" }],
+      Icon: ClipboardDocumentCheckIcon,
+      items: [
+        { href: "/skillsHub/caseload", label: "My Caseload" },
+        ...(isTeacher
+          ? []
+          : [
+              {
+                href: "/skillsHub/caseload",
+                label: "Observations",
+              },
+            ]),
+      ],
     },
     {
       label: "Admin",
-      icon: <IconSettings size={18} />,
-      items: [{ href: "/skillsHub/admin/assignments", label: "Assignments" }],
+      Icon: Cog6ToothIcon,
+      items: [
+        { href: "/skillsHub/admin/assignments", label: "Assignments" },
+      ],
       adminOnly: true,
     },
   ];
 
   const visibleCategories = categories.filter((c) => !c.adminOnly || isAdmin);
 
-  const isActiveCategory = (category: NavCategory) => {
-    return category.items.some(
-      (item) => pathname === item.href || pathname.startsWith(item.href + "/"),
+  const toggleDropdown = (label: string) => {
+    setOpenDropdown(openDropdown === label ? null : label);
+  };
+
+  const toggleMobileCategory = (label: string) => {
+    setMobileExpandedCategory(
+      mobileExpandedCategory === label ? null : label,
     );
   };
 
-  const isActiveItem = (item: NavItem) => {
+  const isActiveCategory = (category: NavCategory) => {
+    return category.items.some(
+      (item) =>
+        pathname === item.href || pathname.startsWith(item.href + "/"),
+    );
+  };
+
+  const isItemActive = (item: NavItem) => {
     return pathname === item.href || pathname.startsWith(item.href + "/");
   };
 
   return (
     <nav
-      className={`sticky top-0 z-50 transition-transform duration-300 ${
+      ref={dropdownRef}
+      className={`bg-gray-900 shadow-lg sticky top-0 z-50 transition-transform duration-300 ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
-      style={{ backgroundColor: "#111827" }}
     >
-      <div className="mx-auto px-4 lg:px-6 py-3" style={{ maxWidth: "1600px" }}>
-        <Group justify="space-between">
-          {/* Mobile burger */}
-          <Box hiddenFrom="md">
-            <Burger
-              opened={mobileOpened}
-              onClick={toggleMobile}
-              size="sm"
-              color="white"
-            />
-          </Box>
+      <div
+        className="mx-auto px-4 lg:px-6 py-3"
+        style={{ maxWidth: "1600px" }}
+      >
+        <div className="flex justify-between items-center gap-2">
+          {/* Mobile menu button */}
+          <div className="flex lg:hidden">
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="inline-flex items-center justify-center rounded-md p-2 text-gray-300 hover:bg-gray-800 hover:text-white cursor-pointer"
+            >
+              <span className="sr-only">Open main menu</span>
+              {mobileOpen ? (
+                <XMarkIcon className="h-6 w-6" />
+              ) : (
+                <Bars3Icon className="h-6 w-6" />
+              )}
+            </button>
+          </div>
 
-          {/* Desktop nav */}
-          <Group gap="xs" visibleFrom="md">
+          {/* Desktop navigation */}
+          <div className="hidden lg:flex gap-2 relative">
             {visibleCategories.map((category) => {
-              const active = isActiveCategory(category);
+              const isActive = isActiveCategory(category);
+              const isOpen = openDropdown === category.label;
 
+              // Single-item categories render as direct links
               if (category.items.length === 1) {
                 const item = category.items[0];
                 return (
-                  <UnstyledButton
+                  <Link
                     key={category.label}
-                    component={Link}
                     href={item.href}
-                    px="md"
-                    py="xs"
-                    style={{
-                      borderRadius: "6px",
-                      color: active ? "white" : "#d1d5db",
-                      backgroundColor: active
-                        ? "rgba(255,255,255,0.1)"
-                        : "transparent",
-                      fontWeight: 500,
-                      fontSize: "14px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
+                    className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 ${
+                      isActive
+                        ? "bg-gray-700 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-gray-800"
+                    }`}
                   >
-                    {category.icon}
+                    <category.Icon className="w-5 h-5 flex-shrink-0" />
                     {category.label}
-                  </UnstyledButton>
+                  </Link>
                 );
               }
 
               return (
-                <Menu
-                  key={category.label}
-                  trigger="click"
-                  shadow="md"
-                  width={220}
-                  position="bottom-start"
-                  offset={4}
-                >
-                  <Menu.Target>
-                    <UnstyledButton
-                      px="md"
-                      py="xs"
-                      style={{
-                        borderRadius: "6px",
-                        color: active ? "white" : "#d1d5db",
-                        backgroundColor: active
-                          ? "rgba(255,255,255,0.1)"
-                          : "transparent",
-                        fontWeight: 500,
-                        fontSize: "14px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
+                <div key={category.label} className="relative">
+                  <button
+                    onClick={() => toggleDropdown(category.label)}
+                    className={`px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2 cursor-pointer ${
+                      isActive
+                        ? "bg-gray-700 text-white"
+                        : "text-gray-300 hover:text-white hover:bg-gray-800"
+                    }`}
+                  >
+                    <category.Icon className="w-5 h-5 flex-shrink-0" />
+                    {category.label}
+                    <svg
+                      className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      {category.icon}
-                      {category.label}
-                      <IconChevronDown size={14} />
-                    </UnstyledButton>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    {category.items.map((item) => (
-                      <Menu.Item
-                        key={item.href}
-                        component={Link}
-                        href={item.href}
-                        style={{
-                          backgroundColor: isActiveItem(item)
-                            ? "var(--mantine-color-teal-0)"
-                            : undefined,
-                          color: isActiveItem(item)
-                            ? "var(--mantine-color-teal-7)"
-                            : undefined,
-                          fontWeight: isActiveItem(item) ? 600 : undefined,
-                        }}
-                      >
-                        {item.label}
-                      </Menu.Item>
-                    ))}
-                  </Menu.Dropdown>
-                </Menu>
-              );
-            })}
-          </Group>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
 
-          {/* Right side: Sign out */}
-          <Group gap="xs">
-            <UnstyledButton
-              component={Link}
-              href="/sign-out"
-              px="md"
-              py="xs"
-              style={{
-                borderRadius: "6px",
-                color: "white",
-                backgroundColor: "rgba(255,255,255,0.1)",
-                fontWeight: 500,
-                fontSize: "14px",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              <IconLogout size={16} />
-              <Text component="span" size="sm" visibleFrom="md">
-                Sign Out
-              </Text>
-            </UnstyledButton>
-          </Group>
-        </Group>
-      </div>
-
-      {/* Mobile drawer */}
-      <Drawer
-        opened={mobileOpened}
-        onClose={closeMobile}
-        size="xs"
-        title={
-          <Text fw={700} size="lg">
-            Skills Hub
-          </Text>
-        }
-        styles={{
-          body: { padding: "0 16px 16px" },
-        }}
-      >
-        <Stack gap="xs">
-          {visibleCategories.map((category) => (
-            <div key={category.label}>
-              {category.items.length === 1 ? (
-                <UnstyledButton
-                  component={Link}
-                  href={category.items[0].href}
-                  onClick={closeMobile}
-                  px="md"
-                  py="sm"
-                  style={{
-                    borderRadius: "6px",
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    backgroundColor: isActiveCategory(category)
-                      ? "var(--mantine-color-teal-0)"
-                      : undefined,
-                    color: isActiveCategory(category)
-                      ? "var(--mantine-color-teal-7)"
-                      : undefined,
-                    fontWeight: isActiveCategory(category) ? 600 : 400,
-                  }}
-                >
-                  {category.icon}
-                  {category.label}
-                </UnstyledButton>
-              ) : (
-                <Accordion variant="filled">
-                  <Accordion.Item value={category.label}>
-                    <Accordion.Control
-                      icon={category.icon}
-                      style={{
-                        fontWeight: isActiveCategory(category) ? 600 : 400,
-                      }}
-                    >
-                      {category.label}
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                      <Stack gap={4}>
-                        {category.items.map((item) => (
-                          <UnstyledButton
-                            key={item.href}
-                            component={Link}
+                  {isOpen && (
+                    <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[200px] z-50">
+                      {category.items.map((item) => {
+                        const active = isItemActive(item);
+                        return (
+                          <Link
+                            key={item.href + item.label}
                             href={item.href}
-                            onClick={closeMobile}
-                            px="md"
-                            py="xs"
-                            style={{
-                              borderRadius: "4px",
-                              fontSize: "14px",
-                              backgroundColor: isActiveItem(item)
-                                ? "var(--mantine-color-teal-0)"
-                                : undefined,
-                              color: isActiveItem(item)
-                                ? "var(--mantine-color-teal-7)"
-                                : undefined,
-                              fontWeight: isActiveItem(item) ? 600 : 400,
-                            }}
+                            onClick={() => setOpenDropdown(null)}
+                            className={`block px-4 py-2 text-sm transition-colors ${
+                              active
+                                ? "bg-blue-50 text-blue-700 font-medium"
+                                : "text-gray-700 hover:bg-gray-50"
+                            }`}
                           >
                             {item.label}
-                          </UnstyledButton>
-                        ))}
-                      </Stack>
-                    </Accordion.Panel>
-                  </Accordion.Item>
-                </Accordion>
-              )}
-            </div>
-          ))}
-          <Divider my="xs" />
-          <UnstyledButton
-            component={Link}
-            href="/sign-out"
-            onClick={closeMobile}
-            px="md"
-            py="sm"
-            style={{
-              borderRadius: "6px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <IconLogout size={18} />
-            Sign Out
-          </UnstyledButton>
-        </Stack>
-      </Drawer>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Right side: Sign out */}
+          <div className="flex gap-2 items-center">
+            <Link
+              href="/sign-out"
+              className="px-4 py-2 rounded-md font-medium transition-colors text-white hover:bg-gray-800 bg-gray-700 flex items-center gap-2"
+            >
+              <ArrowRightStartOnRectangleIcon className="w-4 h-4" />
+              <span className="hidden lg:inline">Sign Out</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu panel */}
+      {mobileOpen && (
+        <div className="lg:hidden">
+          <div className="space-y-1 px-3 pb-4 pt-2">
+            {visibleCategories.map((category) => {
+              const isActive = isActiveCategory(category);
+              const isExpanded = mobileExpandedCategory === category.label;
+
+              if (category.items.length === 1) {
+                const item = category.items[0];
+                return (
+                  <Link
+                    key={category.label}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium ${
+                      isActive
+                        ? "bg-gray-700 text-white"
+                        : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                    }`}
+                  >
+                    <category.Icon className="w-5 h-5 flex-shrink-0" />
+                    {category.label}
+                  </Link>
+                );
+              }
+
+              return (
+                <div key={category.label}>
+                  <button
+                    onClick={() => toggleMobileCategory(category.label)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
+                      isActive
+                        ? "bg-gray-700 text-white"
+                        : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <category.Icon className="w-5 h-5 flex-shrink-0" />
+                      {category.label}
+                    </div>
+                    <ChevronDownIcon
+                      className={`w-4 h-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                    />
+                  </button>
+
+                  {isExpanded && (
+                    <div className="mt-1 ml-4 space-y-1">
+                      {category.items.map((item) => {
+                        const active = isItemActive(item);
+                        return (
+                          <Link
+                            key={item.href + item.label}
+                            href={item.href}
+                            onClick={() => setMobileOpen(false)}
+                            className={`block px-3 py-2 rounded-md text-sm ${
+                              active
+                                ? "bg-gray-700 text-white font-medium"
+                                : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                            }`}
+                          >
+                            {item.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

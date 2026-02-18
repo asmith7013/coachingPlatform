@@ -19,19 +19,18 @@ import {
   Center,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconTrash } from "@tabler/icons-react";
+import { IconTrash, IconUserPlus } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
+import { CreateStaffModal } from "./CreateStaffModal";
 import {
   getCoaches,
   getTeachers,
-  getSchools,
   getCoachTeachers,
   assignTeacher,
   removeAssignment,
 } from "../_actions/assignments.actions";
-import type {
-  StaffOption,
-  SchoolOption,
-} from "../_actions/assignments.actions";
+import type { StaffOption } from "../_actions/assignments.actions";
+import { Schools } from "@schema/enum/scm";
 import type { CoachTeacherAssignmentDocument } from "../_types/assignment.types";
 
 export function AssignmentManager() {
@@ -44,6 +43,12 @@ export function AssignmentManager() {
     id: string;
     name: string;
   } | null>(null);
+  const [
+    teacherModalOpened,
+    { open: openTeacherModal, close: closeTeacherModal },
+  ] = useDisclosure(false);
+  const [coachModalOpened, { open: openCoachModal, close: closeCoachModal }] =
+    useDisclosure(false);
 
   const { data: coaches, isLoading: coachesLoading } = useQuery({
     queryKey: ["skillshub-coaches"],
@@ -63,16 +68,6 @@ export function AssignmentManager() {
       return result.data as StaffOption[];
     },
     staleTime: 5 * 60 * 1000,
-  });
-
-  const { data: schools } = useQuery({
-    queryKey: ["skillshub-schools"],
-    queryFn: async () => {
-      const result = await getSchools();
-      if (!result.success) throw new Error(result.error);
-      return result.data as SchoolOption[];
-    },
-    staleTime: 10 * 60 * 1000,
   });
 
   const { data: assignments, isLoading: assignmentsLoading } = useQuery({
@@ -110,9 +105,9 @@ export function AssignmentManager() {
     label: `${t.staffName}${t.email ? ` (${t.email})` : ""}`,
   }));
 
-  const schoolOptions = (schools || []).map((s) => ({
-    value: s._id,
-    label: s.schoolName,
+  const schoolOptions = Schools.map((s) => ({
+    value: s,
+    label: s,
   }));
 
   const selectedCoach = coaches?.find((c) => c._id === selectedCoachId);
@@ -197,19 +192,39 @@ export function AssignmentManager() {
     );
   }
 
-  if (!coaches || coaches.length === 0) {
-    return (
-      <Text c="dimmed" ta="center" py="xl">
-        No staff members with coach role found
-      </Text>
-    );
-  }
-
   return (
     <>
       <Stack gap="lg">
-        <Title order={2}>Coach-Teacher Assignments</Title>
+        <Group justify="space-between">
+          <Title order={2}>Coach-Teacher Assignments</Title>
+          <Group>
+            <Button
+              variant="light"
+              leftSection={<IconUserPlus size={16} />}
+              onClick={openTeacherModal}
+              size="sm"
+            >
+              Add Teacher
+            </Button>
+            <Button
+              variant="light"
+              leftSection={<IconUserPlus size={16} />}
+              onClick={openCoachModal}
+              size="sm"
+            >
+              Add Coach
+            </Button>
+          </Group>
+        </Group>
 
+        {(!coaches || coaches.length === 0) && (
+          <Text c="dimmed" ta="center" py="xl">
+            No staff members with coach role found. Use &quot;Add Coach&quot;
+            above to create one.
+          </Text>
+        )}
+
+        {coaches && coaches.length > 0 && (
         <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
           {/* Left Panel: Coach Selection + Current Caseload */}
           <Card withBorder p="lg">
@@ -339,7 +354,28 @@ export function AssignmentManager() {
             </Stack>
           </Card>
         </SimpleGrid>
+        )}
       </Stack>
+
+      <CreateStaffModal
+        opened={teacherModalOpened}
+        onClose={closeTeacherModal}
+        role="Teacher"
+        schoolOptions={schoolOptions}
+        onCreated={() => {
+          queryClient.invalidateQueries({ queryKey: ["skillshub-teachers"] });
+        }}
+      />
+
+      <CreateStaffModal
+        opened={coachModalOpened}
+        onClose={closeCoachModal}
+        role="Coach"
+        schoolOptions={schoolOptions}
+        onCreated={() => {
+          queryClient.invalidateQueries({ queryKey: ["skillshub-coaches"] });
+        }}
+      />
 
       {/* Remove confirmation modal */}
       <Modal
