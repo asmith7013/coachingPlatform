@@ -15,14 +15,24 @@ const isPublicRoute = createRouteMatcher([
   "/api/timesheet", // Timesheet API (has own API key auth)
   "/api/podsie/(.*)", // Podsie API (has own API key auth)
   "/api/scm/(.*)", // SCM API (has own API key auth)
-  "/scm/workedExamples/viewer(.*)", // ✅ Worked examples viewer (public)
-  "/scm/content/state-exam(.*)", // ✅ State exam questions (public)
+  "/scm/workedExamples/viewer(.*)", // Worked examples viewer (public)
+  "/scm/content/state-exam(.*)", // State exam questions (public)
+  "/skillsHub/sign-in(.*)", // SkillsHub sign-in (magic link)
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
   // Protect everything except public routes
   if (!isPublicRoute(request)) {
-    await auth.protect();
+    if (request.nextUrl.pathname.startsWith("/skillsHub")) {
+      await auth.protect({
+        unauthenticatedUrl: new URL(
+          "/skillsHub/sign-in",
+          request.url,
+        ).toString(),
+      });
+    } else {
+      await auth.protect();
+    }
   }
 });
 
