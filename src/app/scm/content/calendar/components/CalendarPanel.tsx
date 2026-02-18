@@ -38,6 +38,7 @@ interface CalendarPanelProps {
   isWeekend: (date: Date) => boolean;
   onDateClick: (dateStr: string) => void;
   onSectionDayOffClick: (event: { date: string; name: string }) => void;
+  onAddEvent?: (dateStr: string) => void;
 }
 
 export function CalendarPanel({
@@ -55,6 +56,7 @@ export function CalendarPanel({
   isWeekend,
   onDateClick,
   onSectionDayOffClick,
+  onAddEvent,
 }: CalendarPanelProps) {
   return (
     <div className="w-2/3 p-4 overflow-y-auto bg-gray-100 relative">
@@ -110,6 +112,7 @@ export function CalendarPanel({
             isWeekend={isWeekend}
             onDateClick={onDateClick}
             onSectionDayOffClick={onSectionDayOffClick}
+            onAddEvent={onAddEvent}
           />
         );
       })}

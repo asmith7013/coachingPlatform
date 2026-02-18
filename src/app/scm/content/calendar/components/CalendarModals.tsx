@@ -42,6 +42,7 @@ interface CalendarModalsProps {
     hasMathClass: boolean,
   ) => Promise<void>;
   addDayOffPending: boolean;
+  addDayOffDefaultDate?: string;
 
   // Delete day off modal
   showDeleteDayOffModal: boolean;
@@ -83,6 +84,7 @@ export function CalendarModals({
   onCloseAddDayOff,
   onAddDayOff,
   addDayOffPending,
+  addDayOffDefaultDate,
   showDeleteDayOffModal,
   onCloseDeleteDayOff,
   onDeleteDayOff,
@@ -136,6 +138,7 @@ export function CalendarModals({
           currentSection={selectedSection}
           allSections={matchingSections}
           unitSchedules={unitSchedules}
+          defaultDate={addDayOffDefaultDate}
         />
       )}
 

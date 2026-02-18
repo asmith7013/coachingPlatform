@@ -6,6 +6,108 @@ import { Dialog } from "@/components/composed/dialogs/Dialog";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import type { SectionConfigOption, UnitScheduleLocal } from "./types";
 
+// Section colors matching MonthCalendarV2 / SimplifiedUnitView
+const SECTION_COLORS = [
+  { base: "#2563EB", light: "#DBEAFE" }, // blue
+  { base: "#059669", light: "#D1FAE5" }, // green
+  { base: "#D97706", light: "#FEF3C7" }, // amber
+  { base: "#7C3AED", light: "#EDE9FE" }, // purple
+  { base: "#DB2777", light: "#FCE7F3" }, // pink
+  { base: "#0891B2", light: "#CFFAFE" }, // cyan
+  { base: "#EA580C", light: "#FFEDD5" }, // orange
+  { base: "#0D9488", light: "#CCFBF1" }, // teal
+];
+
+function MiniCalendar({
+  date,
+  unitSchedules,
+}: {
+  date: string;
+  unitSchedules: UnitScheduleLocal[];
+}) {
+  const parsed = new Date(date + "T12:00:00");
+  const year = parsed.getFullYear();
+  const month = parsed.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startPadding = firstDay.getDay();
+  const totalDays = lastDay.getDate();
+
+  const days: (number | null)[] = [];
+  for (let i = 0; i < startPadding; i++) days.push(null);
+  for (let d = 1; d <= totalDays; d++) days.push(d);
+
+  // Build a map of dateStr → section color index for this month
+  const dateColorMap = useMemo(() => {
+    const map = new Map<string, { base: string; light: string }>();
+    let colorIdx = 0;
+    for (const unit of unitSchedules) {
+      for (const section of unit.sections) {
+        const color = SECTION_COLORS[colorIdx % SECTION_COLORS.length];
+        if (section.startDate && section.endDate) {
+          const start = new Date(section.startDate + "T12:00:00");
+          const end = new Date(section.endDate + "T12:00:00");
+          const cur = new Date(start);
+          while (cur <= end) {
+            const ds = cur.toISOString().split("T")[0];
+            if (!map.has(ds)) map.set(ds, color);
+            cur.setDate(cur.getDate() + 1);
+          }
+        }
+        colorIdx++;
+      }
+    }
+    return map;
+  }, [unitSchedules]);
+
+  const monthLabel = new Date(year, month, 1).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <div className="border border-gray-200 rounded-lg p-2 mt-2">
+      <div className="text-xs font-medium text-gray-500 text-center mb-1">
+        {monthLabel}
+      </div>
+      <div className="grid grid-cols-7 gap-px">
+        {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
+          <div
+            key={`h-${i}`}
+            className="text-center text-[9px] text-gray-400 font-medium"
+          >
+            {d}
+          </div>
+        ))}
+        {days.map((day, i) => {
+          if (day === null) return <div key={`e-${i}`} className="h-5" />;
+          const ds = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+          const color = dateColorMap.get(ds);
+          const isSelected = ds === date;
+          const dayOfWeek = new Date(year, month, day).getDay();
+          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+          return (
+            <div
+              key={ds}
+              className={`h-5 flex items-center justify-center text-[10px] rounded ${
+                isSelected ? "ring-2 ring-amber-500 font-bold" : ""
+              } ${isWeekend ? "text-gray-300" : "text-gray-700"}`}
+              style={
+                color && !isWeekend
+                  ? { backgroundColor: color.light }
+                  : undefined
+              }
+            >
+              {day}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 interface AddDayOffModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -20,6 +122,7 @@ interface AddDayOffModalProps {
   currentSection: SectionConfigOption;
   allSections: SectionConfigOption[];
   unitSchedules: UnitScheduleLocal[];
+  defaultDate?: string;
 }
 
 export function AddDayOffModal({
@@ -30,14 +133,20 @@ export function AddDayOffModal({
   currentSection,
   allSections,
   unitSchedules,
+  defaultDate,
 }: AddDayOffModalProps) {
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(defaultDate ?? "");
   const [name, setName] = useState("");
   const [shiftSchedule, setShiftSchedule] = useState(true);
   const [hasMathClass, setHasMathClass] = useState(false); // Default: no math class
   const [selectedSections, setSelectedSections] = useState<Set<string>>(
     new Set([`${currentSection.school}|${currentSection.classSection}`]),
   );
+
+  // Reset date when defaultDate changes (modal reopens with new preloaded date)
+  useEffect(() => {
+    if (defaultDate) setDate(defaultDate);
+  }, [defaultDate]);
 
   // Check if the selected date falls within any scheduled range
   const dateInScheduledRange = useMemo(() => {
@@ -107,6 +216,7 @@ export function AddDayOffModal({
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
             />
+            {date && <MiniCalendar date={date} unitSchedules={unitSchedules} />}
           </div>
 
           {/* Name of Event */}

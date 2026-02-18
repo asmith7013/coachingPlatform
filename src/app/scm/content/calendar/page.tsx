@@ -71,6 +71,7 @@ export default function Calendar2Page() {
           isWeekend={state.isWeekend}
           onDateClick={state.handleDateClick}
           onSectionDayOffClick={state.handleSectionDayOffClick}
+          onAddEvent={state.selectedSection ? state.handleAddEvent : undefined}
         />
       </div>
 
@@ -97,9 +98,13 @@ export default function Calendar2Page() {
         selectedUnits={state.selectedUnits}
         setSelectedUnits={state.setSelectedUnits}
         showAddDayOffModal={state.showAddDayOffModal}
-        onCloseAddDayOff={() => state.setShowAddDayOffModal(false)}
+        onCloseAddDayOff={() => {
+          state.setShowAddDayOffModal(false);
+          state.setAddEventDate(null);
+        }}
         onAddDayOff={state.handleAddDayOff}
         addDayOffPending={state.addDayOffPending}
+        addDayOffDefaultDate={state.addEventDate ?? undefined}
         showDeleteDayOffModal={state.showDeleteDayOffModal}
         onCloseDeleteDayOff={() => {
           state.setShowDeleteDayOffModal(false);
