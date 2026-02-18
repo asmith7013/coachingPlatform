@@ -12,7 +12,7 @@ export const CoachTeacherAssignmentDocumentSchema = z.object({
   _id: z.string(),
   coachStaffId: z.string(),
   teacherStaffId: z.string(),
-  schoolId: z.string().optional(),
+  schoolId: z.string().nullable().optional(),
   assignedAt: z.string(),
   removedAt: z.string().nullable(),
 });
