@@ -3,12 +3,12 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
-import { SkillsHubTeacherSkillStatus } from "@mongoose-schema/skills-hub";
+import { SkillsHubTeacherSkillStatus } from "./teacher-skill-status.model";
 import {
   SkillStatusEnum,
   type SkillStatus,
   type TeacherSkillStatusDocument,
-} from "../_types/skill-status.types";
+} from "./skill-status.types";
 
 export async function getTeacherSkillStatuses(teacherStaffId: string): Promise<{
   success: boolean;

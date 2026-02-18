@@ -3,12 +3,12 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
-import { SkillsHubObservation } from "@mongoose-schema/skills-hub/observation.model";
+import { SkillsHubObservation } from "./observation.model";
 import {
   ObservationInputSchema,
   type ObservationInput,
   type ObservationDocument,
-} from "../_types/observation.types";
+} from "./observation.types";
 
 export async function createObservation(input: ObservationInput): Promise<{
   success: boolean;

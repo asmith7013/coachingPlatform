@@ -3,14 +3,14 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
-import { SkillsHubActionPlan } from "@mongoose-schema/skills-hub/action-plan.model";
-import { SkillsHubActionStep } from "@mongoose-schema/skills-hub/action-step.model";
+import { SkillsHubActionPlan } from "./action-plan.model";
+import { SkillsHubActionStep } from "./action-step.model";
 import {
   ActionPlanInputSchema,
   type ActionPlanInput,
   type ActionPlanDocument,
-} from "../_types/action-plan.types";
-import type { ActionStepInput } from "../_types/action-step.types";
+} from "./action-plan.types";
+import type { ActionStepInput } from "./action-step.types";
 
 export async function getActionPlans(teacherStaffId: string): Promise<{
   success: boolean;
