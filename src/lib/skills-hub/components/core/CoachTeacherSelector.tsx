@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card, Group, Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { useSkillsHubAuth } from "../layout/ViewAsContext";
 import { useCoachCaseload } from "../../hooks/useCoachCaseload";
 import { getCoaches } from "../../admin/coaching-assignments/coaching-assignment.actions";
 import type { StaffOption } from "../../admin/coaching-assignments/coaching-assignment.actions";
@@ -17,7 +17,7 @@ export function CoachTeacherSelector({
   selectedTeacherId,
   onTeacherChange,
 }: CoachTeacherSelectorProps) {
-  const { metadata, hasRole } = useAuthenticatedUser();
+  const { metadata, hasRole } = useSkillsHubAuth();
   const isSuperAdmin = hasRole("super_admin");
   const isDirector = hasRole("director");
   const isAdmin = isSuperAdmin || isDirector;

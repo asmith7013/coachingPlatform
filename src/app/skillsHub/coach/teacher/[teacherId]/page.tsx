@@ -4,13 +4,13 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Group, Title, Button, Text, Card } from "@mantine/core";
 import { IconClipboardPlus, IconEye } from "@tabler/icons-react";
-import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { useSkillsHubAuth } from "@/lib/skills-hub/components/layout/ViewAsContext";
 import { SkillMap } from "@/lib/skills-hub/components/skills/SkillMap";
 
 export default function TeacherSkillMapPage() {
   const params = useParams();
   const teacherId = params.teacherId as string;
-  const { hasRole } = useAuthenticatedUser();
+  const { hasRole } = useSkillsHubAuth();
 
   const isCoach =
     hasRole("coach") || hasRole("super_admin") || hasRole("director");
