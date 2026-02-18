@@ -40,17 +40,26 @@ export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
-        {teachers.map((assignment) => (
+        {teachers.map((assignment) => {
+          const teacher = assignment.teacherStaffId as unknown as
+            | { _id: string; staffName: string }
+            | string;
+          const teacherName =
+            typeof teacher === "object" ? teacher.staffName : "Unknown";
+          const teacherId =
+            typeof teacher === "object" ? teacher._id : String(teacher);
+
+          return (
           <Table.Tr
             key={assignment._id}
             style={{ cursor: "pointer" }}
             onClick={() =>
-              router.push(`/skillsHub/teacher/${assignment.teacherStaffId}`)
+              router.push(`/skillsHub/teacher/${teacherId}`)
             }
           >
             <Table.Td>
               <Text size="sm" fw={500}>
-                {assignment.teacherStaffId}
+                {teacherName}
               </Text>
             </Table.Td>
             <Table.Td>
@@ -62,7 +71,8 @@ export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
               </Text>
             </Table.Td>
           </Table.Tr>
-        ))}
+        );
+        })}
       </Table.Tbody>
     </Table>
   );
