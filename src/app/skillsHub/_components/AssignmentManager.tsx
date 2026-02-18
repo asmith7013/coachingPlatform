@@ -30,10 +30,7 @@ import {
   removeAssignment,
 } from "../_actions/assignments.actions";
 import type { StaffOption } from "../_actions/assignments.actions";
-import type {
-  CoachTeacherAssignmentDocument,
-  PopulatedAssignment,
-} from "../_types/assignment.types";
+import type { PopulatedAssignment } from "../_types/assignment.types";
 
 export function AssignmentManager() {
   const queryClient = useQueryClient();
