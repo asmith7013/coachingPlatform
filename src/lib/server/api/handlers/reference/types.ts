@@ -9,7 +9,7 @@ import { BaseReference } from "@core-types/reference";
  * Generic type for any fetch function that returns items and total
  */
 export type FetchFunction<T extends Record<string, unknown>> = (
-  params: QueryParams
+  params: QueryParams,
 ) => Promise<PaginatedResponse<T> | CollectionResponse<T>>;
 
 /**
@@ -20,27 +20,30 @@ export type ItemMapFunction<T, R extends BaseReference> = (item: T) => R;
 /**
  * Options for the reference endpoint factory
  */
-export interface ReferenceEndpointOptions<T extends Record<string, unknown>, R extends BaseReference> {
+export interface ReferenceEndpointOptions<
+  T extends Record<string, unknown>,
+  R extends BaseReference,
+> {
   /**
    * The fetch function that retrieves the data
    */
   fetchFunction: FetchFunction<T>;
-  
+
   /**
    * Function to map each item to a reference format
    */
   mapItem: ItemMapFunction<T, R>;
-  
+
   /**
    * Log prefix for consistent logging (defaults to "API")
    */
   logPrefix?: string;
-  
+
   /**
    * Default search field (e.g., "schoolName", "staffName")
    */
   defaultSearchField?: string;
-  
+
   /**
    * Default limit for pagination (defaults to 20)
    */
@@ -51,7 +54,7 @@ export interface ReferenceEndpointOptions<T extends Record<string, unknown>, R e
    * Extends the base QueryParamsZodSchema
    */
   querySchema?: z.ZodType<QueryParams>;
-  
+
   /**
    * Custom schema for response validation
    * Defaults to a schema based on BaseReferenceZodSchema

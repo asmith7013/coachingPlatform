@@ -17,7 +17,7 @@ export async function fetchRampUpProgress(
   unitCode: string,
   rampUpId?: string,
   podsieAssignmentId?: string,
-  school?: string
+  school?: string,
 ): Promise<{
   success: boolean;
   data: StudentRampUpProgressData[];
@@ -34,7 +34,7 @@ export async function fetchRampUpProgress(
         unitCode: string;
         rampUpId: string;
         rampUpName?: string;
-        activityType?: 'sidekick' | 'mastery-check' | 'assessment';
+        activityType?: "sidekick" | "mastery-check" | "assessment";
         questions: RampUpQuestion[];
         totalQuestions: number;
         completedCount: number;
@@ -50,13 +50,15 @@ export async function fetchRampUpProgress(
         date: string;
         activityType: string;
         activityLabel: string;
-        smallGroupType?: 'mastery' | 'prerequisite';
+        smallGroupType?: "mastery" | "prerequisite";
         inquiryQuestion?: string;
       }>;
     }
 
     // Helper function to parse Zearn lesson code (e.g., "G8 M3 L10")
-    function parseZearnLessonCode(lessonCode: string): { grade: string; module: string; lesson: string } | null {
+    function parseZearnLessonCode(
+      lessonCode: string,
+    ): { grade: string; module: string; lesson: string } | null {
       const match = lessonCode.match(/G(\d+)\s+M(\d+)\s+L(\d+)/);
       if (!match) return null;
       return { grade: match[1], module: match[2], lesson: match[3] };
@@ -78,7 +80,9 @@ export async function fetchRampUpProgress(
         query.school = school;
       }
       const docs = await StudentModel.find(query)
-        .select("_id firstName lastName podsieProgress zearnLessons classActivities")
+        .select(
+          "_id firstName lastName podsieProgress zearnLessons classActivities",
+        )
         .lean<StudentDoc[]>();
 
       return docs;
@@ -86,10 +90,10 @@ export async function fetchRampUpProgress(
 
     // Calculate today and yesterday dates for activity filtering (local timezone)
     const todayDate = new Date();
-    const todayStr = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
+    const todayStr = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, "0")}-${String(todayDate.getDate()).padStart(2, "0")}`;
     const yesterdayDate = new Date(todayDate);
     yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-    const yesterdayStr = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
+    const yesterdayStr = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, "0")}-${String(yesterdayDate.getDate()).padStart(2, "0")}`;
 
     // Build result array
     const result: StudentRampUpProgressData[] = [];
@@ -106,9 +110,9 @@ export async function fetchRampUpProgress(
 
       for (const activity of student.classActivities || []) {
         const activityDate = activity.date;
-        const label = activity.activityLabel?.toLowerCase() || '';
-        const isSmallGroup = label.includes('small group');
-        const isInquiry = label.includes('inquiry');
+        const label = activity.activityLabel?.toLowerCase() || "";
+        const isSmallGroup = label.includes("small group");
+        const isInquiry = label.includes("inquiry");
 
         if (activityDate === todayStr) {
           if (isSmallGroup) smallGroupToday = true;
@@ -120,10 +124,11 @@ export async function fetchRampUpProgress(
       }
 
       // Find matching progress entry(ies)
-      const progressEntries = (student.podsieProgress || []).filter(p => {
+      const progressEntries = (student.podsieProgress || []).filter((p) => {
         if (p.unitCode !== unitCode) return false;
         if (rampUpId && p.rampUpId !== rampUpId) return false;
-        if (podsieAssignmentId && p.podsieAssignmentId !== podsieAssignmentId) return false;
+        if (podsieAssignmentId && p.podsieAssignmentId !== podsieAssignmentId)
+          return false;
         return true;
       });
 
@@ -135,7 +140,7 @@ export async function fetchRampUpProgress(
           let zearnCompletionDate: string | undefined;
 
           if (student.zearnLessons && p.rampUpId) {
-            const matchingZearnLesson = student.zearnLessons.find(zl => {
+            const matchingZearnLesson = student.zearnLessons.find((zl) => {
               const convertedId = zearnToUnitLessonId(zl.lessonCode);
               return convertedId === p.rampUpId;
             });
@@ -175,7 +180,7 @@ export async function fetchRampUpProgress(
         let zearnCompletionDate: string | undefined;
 
         if (student.zearnLessons && rampUpId) {
-          const matchingZearnLesson = student.zearnLessons.find(zl => {
+          const matchingZearnLesson = student.zearnLessons.find((zl) => {
             const convertedId = zearnToUnitLessonId(zl.lessonCode);
             return convertedId === rampUpId;
           });

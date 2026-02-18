@@ -42,11 +42,11 @@ const userActions = createCrudActions({
   inputSchema: UserInputZodSchema,
   revalidationPaths: ["/dashboard/users"],
   options: {
-    validSortFields: ['name', 'createdAt'],
-    defaultSortField: 'name',
-    defaultSortOrder: 'asc',
-    entityName: 'User'
-  }
+    validSortFields: ["name", "createdAt"],
+    defaultSortField: "name",
+    defaultSortOrder: "asc",
+    entityName: "User",
+  },
 });
 
 // Use the generated actions
@@ -60,12 +60,9 @@ export async function fetchUsers(params = {}) {
 Handles batch operations with consistent error reporting:
 
 ```typescript
-const result = await bulkUploadToDB(
-  usersData,
-  UserModel,
-  UserInputZodSchema,
-  ["/dashboard/users"]
-);
+const result = await bulkUploadToDB(usersData, UserModel, UserInputZodSchema, [
+  "/dashboard/users",
+]);
 ```
 
 ## Error Handling Transition
@@ -88,4 +85,4 @@ Error responses are fully typed to ensure consistent handling across the applica
   error: "User not found", // For backward compatibility
   errors: [{ error: "User not found" }]
 }
-``` 
+```

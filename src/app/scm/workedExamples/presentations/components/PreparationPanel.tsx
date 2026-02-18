@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { PLANNING_STEPS } from '../planningSteps';
+import { PLANNING_STEPS } from "../planningSteps";
 
 interface PreparationPanelProps {
   onClose: () => void;
@@ -61,11 +61,16 @@ export function PreparationPanel({ onClose }: PreparationPanelProps) {
               <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex-shrink-0">
                 {step.step}
               </span>
-              <h3 className="font-semibold text-sm text-gray-900">{step.title}</h3>
+              <h3 className="font-semibold text-sm text-gray-900">
+                {step.title}
+              </h3>
             </div>
             <ul className="space-y-1.5 mt-3">
               {step.items.map((item, idx) => (
-                <li key={idx} className="flex items-start text-xs text-gray-600">
+                <li
+                  key={idx}
+                  className="flex items-start text-xs text-gray-600"
+                >
                   <span className="mr-2 text-blue-400 text-sm">•</span>
                   <span>{item}</span>
                 </li>
@@ -73,7 +78,10 @@ export function PreparationPanel({ onClose }: PreparationPanelProps) {
               {step.subItems && (
                 <ul className="ml-4 mt-1 space-y-1">
                   {step.subItems.map((subItem, idx) => (
-                    <li key={idx} className="flex items-start text-xs text-gray-500">
+                    <li
+                      key={idx}
+                      className="flex items-start text-xs text-gray-500"
+                    >
                       <span className="mr-2 text-gray-300">–</span>
                       <span>{subItem}</span>
                     </li>

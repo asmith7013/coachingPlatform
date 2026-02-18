@@ -11,18 +11,32 @@ interface CalendarDayProps {
 }
 
 // Block type indicator component (same as in SectionDetailTable)
-function BlockTypeIndicator({ blockType }: { blockType: 'single' | 'double' | 'none' }) {
-  if (blockType === 'none') return null;
+function BlockTypeIndicator({
+  blockType,
+}: {
+  blockType: "single" | "double" | "none";
+}) {
+  if (blockType === "none") return null;
 
   return (
     <div className="flex items-center justify-center gap-0.5">
-      <div className={`w-1.5 h-1.5 rounded-full ${blockType === 'single' || blockType === 'double' ? 'bg-indigo-600' : 'bg-gray-300'}`} />
-      {blockType === 'double' && <div className="w-1.5 h-1.5 rounded-full bg-indigo-600" />}
+      <div
+        className={`w-1.5 h-1.5 rounded-full ${blockType === "single" || blockType === "double" ? "bg-indigo-600" : "bg-gray-300"}`}
+      />
+      {blockType === "double" && (
+        <div className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
+      )}
     </div>
   );
 }
 
-export function CalendarDay({ date, stats, isWeekend, isDayOff, showRampUps }: CalendarDayProps) {
+export function CalendarDay({
+  date,
+  stats,
+  isWeekend,
+  isDayOff,
+  showRampUps,
+}: CalendarDayProps) {
   let bgColor = "bg-white";
   let textColor = "text-gray-900";
 
@@ -32,7 +46,9 @@ export function CalendarDay({ date, stats, isWeekend, isDayOff, showRampUps }: C
   }
 
   return (
-    <div className={`h-20 rounded border border-gray-200 ${bgColor} ${textColor} p-1 flex flex-col`}>
+    <div
+      className={`h-20 rounded border border-gray-200 ${bgColor} ${textColor} p-1 flex flex-col`}
+    >
       {/* Date number at top with block type indicator */}
       <div className="flex items-center justify-between mb-0.5">
         <div className="text-xs font-medium">{date.getDate()}</div>

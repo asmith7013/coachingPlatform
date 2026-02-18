@@ -1,16 +1,22 @@
 /**
  * Centralized Token Types
- * 
+ *
  * This file defines TypeScript types for all token systems to ensure
  * consistent typing across the application.
  */
 
-import { textSize, weight, heading } from '@/lib/tokens/typography';
-import { alignments } from '@/lib/tokens/text';
-import { textColors } from '@/lib/tokens/colors';
-import { radii, shadows } from '@/lib/tokens/shape';
-import { paddingX, paddingY, gap, stack, componentSize } from '@/lib/tokens/spacing';
-import { semanticColorMap, tailwindColors } from '@/lib/tokens/semantic-colors';
+import { textSize, weight, heading } from "@/lib/tokens/typography";
+import { alignments } from "@/lib/tokens/text";
+import { textColors } from "@/lib/tokens/colors";
+import { radii, shadows } from "@/lib/tokens/shape";
+import {
+  paddingX,
+  paddingY,
+  gap,
+  stack,
+  componentSize,
+} from "@/lib/tokens/spacing";
+import { semanticColorMap, tailwindColors } from "@/lib/tokens/semantic-colors";
 
 // Typography types
 export type TextSize = keyof typeof textSize;
@@ -35,7 +41,7 @@ export type Stack = keyof typeof stack;
 export type ComponentSize = keyof typeof componentSize;
 
 // Common padding combinations
-export type PaddingSize = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+export type PaddingSize = "none" | "xs" | "sm" | "md" | "lg" | "xl";
 
 // For use with component variants that take different size combinations
 export interface SizeProps {
@@ -46,7 +52,7 @@ export interface SizeProps {
 // For use with typography components
 export interface TypographyProps {
   textSize?: TextSize;
-  weight?: Weight; 
+  weight?: Weight;
   color?: TextColor;
 }
 
@@ -67,17 +73,20 @@ export interface LayoutProps {
  * Helper function to enforce that a value is a valid token of a particular type
  * Use this for runtime validation of token values
  */
-export function isValidToken<T extends string>(value: string, tokenType: Record<string, unknown>): value is T {
+export function isValidToken<T extends string>(
+  value: string,
+  tokenType: Record<string, unknown>,
+): value is T {
   return value in tokenType;
 }
 
 /**
  * Example usage:
- * 
+ *
  * // In a component that needs to validate props:
  * function validateProps(props: { textSize?: string }) {
  *   if (props.textSize && !isValidToken<TextSize>(props.textSize, textSize)) {
  *     console.warn(`Invalid textSize: ${props.textSize}`);
  *   }
  * }
- */ 
+ */

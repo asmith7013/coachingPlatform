@@ -1,5 +1,5 @@
-import type { Field } from '@ui-types/form';
-import type { NYCPSStaffInput } from '@zod-schema/core/staff';
+import type { Field } from "@ui-types/form";
+import type { NYCPSStaffInput } from "@zod-schema/core/staff";
 
 /**
  * Simple field configuration for NYCPS Staff forms
@@ -46,8 +46,8 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
       { value: "Grade 5", label: "Grade 5" },
       { value: "Grade 6", label: "Grade 6" },
       { value: "Grade 7", label: "Grade 7" },
-      { value: "Grade 8", label: "Grade 8" }
-    ]
+      { value: "Grade 8", label: "Grade 8" },
+    ],
   },
   {
     name: "subjects",
@@ -56,12 +56,12 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
     multiple: true,
     options: [
       { value: "Math 6", label: "Math 6" },
-      { value: "Math 7", label: "Math 7" }, 
+      { value: "Math 7", label: "Math 7" },
       { value: "Math 8", label: "Math 8" },
       { value: "Algebra I", label: "Algebra I" },
       { value: "Geometry", label: "Geometry" },
-      { value: "Algebra II", label: "Algebra II" }
-    ]
+      { value: "Algebra II", label: "Algebra II" },
+    ],
   },
   {
     name: "specialGroups",
@@ -70,8 +70,8 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
     multiple: true,
     options: [
       { value: "SPED", label: "SPED" },
-      { value: "ELL", label: "ELL" }
-    ]
+      { value: "ELL", label: "ELL" },
+    ],
   },
   {
     name: "rolesNYCPS",
@@ -83,13 +83,13 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
       { value: "Principal", label: "Principal" },
       { value: "AP", label: "Assistant Principal" },
       { value: "Coach", label: "Coach" },
-      { value: "Administrator", label: "Administrator" }
-    ]
+      { value: "Administrator", label: "Administrator" },
+    ],
   },
   {
     name: "pronunciation",
     label: "Name Pronunciation",
     type: "text",
     placeholder: "Phonetic pronunciation guide",
-  }
-]; 
+  },
+];

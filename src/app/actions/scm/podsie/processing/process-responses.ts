@@ -24,7 +24,7 @@ export function processResponsesToQuestions(
   questionMapping?: number[][],
   totalQuestions?: number,
   baseQuestionIds?: number[],
-  questionIdToNumber?: { [questionId: string]: number }
+  questionIdToNumber?: { [questionId: string]: number },
 ): {
   questions: Map<number, ProcessedQuestionData>;
   assignmentName: string;
@@ -45,7 +45,13 @@ export function processResponsesToQuestions(
   }
 
   // Fallback: Use baseQuestionIds or totalQuestions
-  return processWithoutMapping(responses, assignmentName, totalQuestions, baseQuestionIds, questionIdToNumber);
+  return processWithoutMapping(
+    responses,
+    assignmentName,
+    totalQuestions,
+    baseQuestionIds,
+    questionIdToNumber,
+  );
 }
 
 /**
@@ -54,7 +60,7 @@ export function processResponsesToQuestions(
 function processWithMapping(
   responses: PodsieResponse[],
   questionMapping: number[][],
-  assignmentName: string
+  assignmentName: string,
 ): {
   questions: Map<number, ProcessedQuestionData>;
   assignmentName: string;
@@ -99,13 +105,23 @@ function processWithMapping(
     }
 
     // Check both is_correct and aiEvaluation.isAccepted
-    const isAccepted = response.response_payload?.aiEvaluation?.isAccepted ?? true;
+    const isAccepted =
+      response.response_payload?.aiEvaluation?.isAccepted ?? true;
 
     // Extract AI analysis scores if available
     const aiAnalysis = response.response_payload?.aiAnalysis;
-    const correctScore = aiAnalysis?.answersCorrect !== undefined ? (aiAnalysis.answersCorrect ? 1 : 0) : undefined;
+    const correctScore =
+      aiAnalysis?.answersCorrect !== undefined
+        ? aiAnalysis.answersCorrect
+          ? 1
+          : 0
+        : undefined;
     const explanationScore = aiAnalysis?.explanationGrading
-      ? (aiAnalysis.explanationGrading === 'full' ? 3 : aiAnalysis.explanationGrading === 'partial' ? 2 : 1)
+      ? aiAnalysis.explanationGrading === "full"
+        ? 3
+        : aiAnalysis.explanationGrading === "partial"
+          ? 2
+          : 1
       : undefined;
 
     // If this response is correct AND accepted, mark as completed
@@ -143,7 +159,7 @@ function processWithoutMapping(
   assignmentName: string,
   totalQuestions?: number,
   baseQuestionIds?: number[],
-  questionIdToNumber?: { [questionId: string]: number }
+  questionIdToNumber?: { [questionId: string]: number },
 ): {
   questions: Map<number, ProcessedQuestionData>;
   assignmentName: string;
@@ -163,7 +179,8 @@ function processWithoutMapping(
     // Otherwise fall back to sequential positions (1, 2, 3, 4, 5...)
     const idToPosition = new Map<number, number>();
     baseQuestionIds.forEach((id, index) => {
-      const actualQuestionNumber = questionIdToNumber?.[String(id)] ?? (index + 1);
+      const actualQuestionNumber =
+        questionIdToNumber?.[String(id)] ?? index + 1;
       idToPosition.set(id, actualQuestionNumber);
     });
 
@@ -191,13 +208,23 @@ function processWithoutMapping(
       }
 
       // Check both is_correct and aiEvaluation.isAccepted
-      const isAccepted = response.response_payload?.aiEvaluation?.isAccepted ?? true;
+      const isAccepted =
+        response.response_payload?.aiEvaluation?.isAccepted ?? true;
 
       // Extract AI analysis scores if available
       const aiAnalysis = response.response_payload?.aiAnalysis;
-      const correctScore = aiAnalysis?.answersCorrect !== undefined ? (aiAnalysis.answersCorrect ? 1 : 0) : undefined;
+      const correctScore =
+        aiAnalysis?.answersCorrect !== undefined
+          ? aiAnalysis.answersCorrect
+            ? 1
+            : 0
+          : undefined;
       const explanationScore = aiAnalysis?.explanationGrading
-        ? (aiAnalysis.explanationGrading === 'full' ? 3 : aiAnalysis.explanationGrading === 'partial' ? 2 : 1)
+        ? aiAnalysis.explanationGrading === "full"
+          ? 3
+          : aiAnalysis.explanationGrading === "partial"
+            ? 2
+            : 1
         : undefined;
 
       // If this response is correct AND accepted, mark as completed
@@ -235,13 +262,23 @@ function processWithoutMapping(
     }
 
     // Check both is_correct and aiEvaluation.isAccepted
-    const isAccepted = response.response_payload?.aiEvaluation?.isAccepted ?? true;
+    const isAccepted =
+      response.response_payload?.aiEvaluation?.isAccepted ?? true;
 
     // Extract AI analysis scores if available
     const aiAnalysis = response.response_payload?.aiAnalysis;
-    const correctScore = aiAnalysis?.answersCorrect !== undefined ? (aiAnalysis.answersCorrect ? 1 : 0) : undefined;
+    const correctScore =
+      aiAnalysis?.answersCorrect !== undefined
+        ? aiAnalysis.answersCorrect
+          ? 1
+          : 0
+        : undefined;
     const explanationScore = aiAnalysis?.explanationGrading
-      ? (aiAnalysis.explanationGrading === 'full' ? 3 : aiAnalysis.explanationGrading === 'partial' ? 2 : 1)
+      ? aiAnalysis.explanationGrading === "full"
+        ? 3
+        : aiAnalysis.explanationGrading === "partial"
+          ? 2
+          : 1
       : undefined;
 
     // If this response is correct AND accepted, mark as completed

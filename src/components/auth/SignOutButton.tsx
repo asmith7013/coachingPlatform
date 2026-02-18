@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useClerk } from '@clerk/nextjs'
-import { Button } from '@/components/core/Button'
+import { useClerk } from "@clerk/nextjs";
+import { Button } from "@/components/core/Button";
 
 export function SignOutButton() {
-  const { signOut } = useClerk()
-  
+  const { signOut } = useClerk();
+
   const handleSignOut = () => {
-    signOut({ redirectUrl: '/sign-in' })
-  }
-  
+    signOut({ redirectUrl: "/sign-in" });
+  };
+
   return (
     <Button
       onClick={handleSignOut}
@@ -32,5 +32,5 @@ export function SignOutButton() {
       </svg>
       Sign out
     </Button>
-  )
-} 
+  );
+}

@@ -9,7 +9,9 @@ interface InstructionalDesignSectionProps {
   strategyDefinition: StrategyDefinition;
   editingStrategySteps: boolean;
   setEditingStrategySteps: (editing: boolean) => void;
-  updateStrategyMoves: (moves: { verb: string; description: string; result: string }[]) => void;
+  updateStrategyMoves: (
+    moves: { verb: string; description: string; result: string }[],
+  ) => void;
 }
 
 export function InstructionalDesignSection({
@@ -66,9 +68,7 @@ export function InstructionalDesignSection({
                 }}
                 className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
                 title={
-                  editingStrategySteps
-                    ? "Done editing"
-                    : "Edit strategy steps"
+                  editingStrategySteps ? "Done editing" : "Edit strategy steps"
                 }
               >
                 {editingStrategySteps ? (
@@ -83,10 +83,7 @@ export function InstructionalDesignSection({
           content: editingStrategySteps ? (
             <div className="space-y-4">
               {strategyDefinition.moves.map((move, i) => (
-                <div
-                  key={i}
-                  className="bg-gray-50 rounded p-3 space-y-2"
-                >
+                <div key={i} className="bg-gray-50 rounded p-3 space-y-2">
                   <div className="flex items-center gap-2">
                     <Badge intent="primary" size="xs" rounded="full">
                       {i + 1}
@@ -160,16 +157,21 @@ export function InstructionalDesignSection({
                 </div>
               ))}
               {/* Discovery Questions */}
-              {strategyDefinition.discoveryQuestions && strategyDefinition.discoveryQuestions.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-gray-100">
-                  <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide">Discovery Questions</span>
-                  <ul className="mt-1 space-y-1">
-                    {strategyDefinition.discoveryQuestions.map((q, i) => (
-                      <li key={i} className="text-xs text-gray-600 italic">&ldquo;{q}&rdquo;</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {strategyDefinition.discoveryQuestions &&
+                strategyDefinition.discoveryQuestions.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-gray-100">
+                    <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide">
+                      Discovery Questions
+                    </span>
+                    <ul className="mt-1 space-y-1">
+                      {strategyDefinition.discoveryQuestions.map((q, i) => (
+                        <li key={i} className="text-xs text-gray-600 italic">
+                          &ldquo;{q}&rdquo;
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
             </div>
           ),
         },

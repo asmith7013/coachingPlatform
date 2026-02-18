@@ -1,19 +1,10 @@
-import { cn } from '@ui/utils/formatters';
-import { tv, type VariantProps } from 'tailwind-variants'
-import {
-  radiusVariant,
-  disabledVariant,
-} from '@ui-variants/shared-variants'
-import { 
-  textColors 
-} from '@ui-tokens/tokens'
-import { 
-  TextSizeToken,
-  PaddingToken,
-  RadiusToken
-} from '@ui-tokens/types'
-import { FieldWrapper } from './FieldWrapper'
-import type { AnyFieldApi } from '@tanstack/react-form';
+import { cn } from "@ui/utils/formatters";
+import { tv, type VariantProps } from "tailwind-variants";
+import { radiusVariant, disabledVariant } from "@ui-variants/shared-variants";
+import { textColors } from "@ui-tokens/tokens";
+import { TextSizeToken, PaddingToken, RadiusToken } from "@ui-tokens/types";
+import { FieldWrapper } from "./FieldWrapper";
+import type { AnyFieldApi } from "@tanstack/react-form";
 
 export interface SwitchProps {
   checked: boolean;
@@ -33,99 +24,92 @@ export interface SwitchProps {
 // 🎨 Switch style variants
 const switchStyles = tv({
   slots: {
-    wrapper: [
-      'relative flex items-start',
-    ],
+    wrapper: ["relative flex items-start"],
     track: [
-      'relative inline-flex flex-shrink-0 cursor-pointer',
-      'rounded-full border-2 border-transparent',
-      'transition-colors duration-200 ease-in-out',
-      'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
-      'cursor-pointer disabled:cursor-not-allowed',
+      "relative inline-flex flex-shrink-0 cursor-pointer",
+      "rounded-full border-2 border-transparent",
+      "transition-colors duration-200 ease-in-out",
+      "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+      "cursor-pointer disabled:cursor-not-allowed",
     ],
     thumb: [
-      'pointer-events-none inline-block',
-      'transform rounded-full bg-white shadow ring-0',
-      'transition duration-200 ease-in-out',
+      "pointer-events-none inline-block",
+      "transform rounded-full bg-white shadow ring-0",
+      "transition duration-200 ease-in-out",
     ],
-    description: [
-      textColors.muted,
-    ],
+    description: [textColors.muted],
   },
   variants: {
     textSize: {
-      xs: { 
-        wrapper: 'gap-x-2',
-        description: 'text-xs',
-        track: 'h-3.5 w-6',
-        thumb: 'h-2.5 w-2.5',
+      xs: {
+        wrapper: "gap-x-2",
+        description: "text-xs",
+        track: "h-3.5 w-6",
+        thumb: "h-2.5 w-2.5",
       },
-      sm: { 
-        wrapper: 'gap-x-2.5',
-        description: 'text-sm',
-        track: 'h-4 w-7',
-        thumb: 'h-3 w-3',
+      sm: {
+        wrapper: "gap-x-2.5",
+        description: "text-sm",
+        track: "h-4 w-7",
+        thumb: "h-3 w-3",
       },
-      base: { 
-        wrapper: 'gap-x-3',
-        description: 'text-base',
-        track: 'h-5 w-9',
-        thumb: 'h-4 w-4',
+      base: {
+        wrapper: "gap-x-3",
+        description: "text-base",
+        track: "h-5 w-9",
+        thumb: "h-4 w-4",
       },
-      lg: { 
-        wrapper: 'gap-x-3.5',
-        description: 'text-lg',
-        track: 'h-6 w-10',
-        thumb: 'h-5 w-5',
+      lg: {
+        wrapper: "gap-x-3.5",
+        description: "text-lg",
+        track: "h-6 w-10",
+        thumb: "h-5 w-5",
       },
-      xl: { 
-        wrapper: 'gap-x-4',
-        description: 'text-xl',
-        track: 'h-7 w-12',
-        thumb: 'h-6 w-6',
+      xl: {
+        wrapper: "gap-x-4",
+        description: "text-xl",
+        track: "h-7 w-12",
+        thumb: "h-6 w-6",
       },
-      '2xl': { 
-        wrapper: 'gap-x-5',
-        description: 'text-2xl',
-        track: 'h-8 w-14',
-        thumb: 'h-7 w-7',
+      "2xl": {
+        wrapper: "gap-x-5",
+        description: "text-2xl",
+        track: "h-8 w-14",
+        thumb: "h-7 w-7",
       },
     },
     padding: {
-      none: { wrapper: 'p-0' },
-      xs: { wrapper: 'p-1' },
-      sm: { wrapper: 'p-1.5' },
-      md: { wrapper: 'p-2' },
-      lg: { wrapper: 'p-3' },
-      xl: { wrapper: 'p-4' },
-      '2xl': { wrapper: 'p-6' },
+      none: { wrapper: "p-0" },
+      xs: { wrapper: "p-1" },
+      sm: { wrapper: "p-1.5" },
+      md: { wrapper: "p-2" },
+      lg: { wrapper: "p-3" },
+      xl: { wrapper: "p-4" },
+      "2xl": { wrapper: "p-6" },
     },
     radius: radiusVariant.variants.radius,
     disabled: disabledVariant.variants.disabled,
     checked: {
       true: {
-        track: 'bg-primary',
-        thumb: 'translate-x-[133%]',
+        track: "bg-primary",
+        thumb: "translate-x-[133%]",
       },
       false: {
-        track: 'bg-surface-hover',
-        thumb: 'translate-x-0',
+        track: "bg-surface-hover",
+        thumb: "translate-x-0",
       },
     },
     error: {
       true: {
-        track: [
-          'border-danger',
-          'focus:ring-danger',
-        ],
+        track: ["border-danger", "focus:ring-danger"],
       },
       false: {},
     },
   },
   defaultVariants: {
-    textSize: 'base',
-    padding: 'md',
-    radius: 'full',
+    textSize: "base",
+    padding: "md",
+    radius: "full",
     checked: false,
     error: false,
   },
@@ -133,7 +117,7 @@ const switchStyles = tv({
     {
       disabled: true,
       class: {
-        track: 'opacity-50',
+        track: "opacity-50",
       },
     },
   ],
@@ -161,25 +145,26 @@ export function Switch({
   // TanStack Form integration
   const finalChecked = fieldApi ? Boolean(fieldApi.state.value) : checked;
   const finalError = fieldApi ? fieldApi.state.meta.errors?.[0] : error;
-  const finalDisabled = disabled || (fieldApi ? fieldApi.state.meta.isValidating : false);
-  
-  const handleChange = fieldApi ? 
-    (newChecked: boolean) => fieldApi.handleChange(newChecked) :
-    onChange;
+  const finalDisabled =
+    disabled || (fieldApi ? fieldApi.state.meta.isValidating : false);
 
-  const styles = switchStyles({ 
-    checked: finalChecked as boolean, 
+  const handleChange = fieldApi
+    ? (newChecked: boolean) => fieldApi.handleChange(newChecked)
+    : onChange;
+
+  const styles = switchStyles({
+    checked: finalChecked as boolean,
     error: Boolean(finalError),
     disabled: finalDisabled,
     textSize,
     padding,
-    radius: radius as SwitchVariants['radius'],
+    radius: radius as SwitchVariants["radius"],
   });
 
   return (
-    <FieldWrapper 
-      id={fieldApi?.name || "switch"} 
-      label={label} 
+    <FieldWrapper
+      id={fieldApi?.name || "switch"}
+      label={label}
       error={finalError}
       textSize={textSize}
       padding={padding}
@@ -203,5 +188,5 @@ export function Switch({
         )}
       </div>
     </FieldWrapper>
-  )
+  );
 }

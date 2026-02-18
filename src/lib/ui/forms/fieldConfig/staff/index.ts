@@ -1,2 +1,2 @@
-export * from './teaching-lab-staff';
-export * from './nycps-staff';
+export * from "./teaching-lab-staff";
+export * from "./nycps-staff";

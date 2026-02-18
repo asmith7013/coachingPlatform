@@ -1,36 +1,36 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import type { SlideType } from '@zod-schema/scm/worked-example';
+import { useState } from "react";
+import type { SlideType } from "@zod-schema/scm/worked-example";
 
 const SLIDE_TYPE_VALUES: SlideType[] = [
-  'teacher-instructions',
-  'big-idea',
-  'problem-setup',
-  'step',
-  'practice-preview',
-  'printable-worksheet',
-  'lesson-summary',
+  "teacher-instructions",
+  "big-idea",
+  "problem-setup",
+  "step",
+  "practice-preview",
+  "printable-worksheet",
+  "lesson-summary",
 ];
 
 const SLIDE_TYPE_LABELS: Record<SlideType, string> = {
-  'teacher-instructions': 'Teacher',
-  'big-idea': 'Big Idea',
-  'problem-setup': 'Setup',
-  'step': 'Step',
-  'practice-preview': 'Practice',
-  'printable-worksheet': 'Printable',
-  'lesson-summary': 'Summary',
+  "teacher-instructions": "Teacher",
+  "big-idea": "Big Idea",
+  "problem-setup": "Setup",
+  step: "Step",
+  "practice-preview": "Practice",
+  "printable-worksheet": "Printable",
+  "lesson-summary": "Summary",
 };
 
 const SLIDE_TYPE_COLORS: Record<SlideType, string> = {
-  'teacher-instructions': 'bg-amber-100 text-amber-700',
-  'big-idea': 'bg-blue-100 text-blue-700',
-  'problem-setup': 'bg-green-100 text-green-700',
-  'step': 'bg-purple-100 text-purple-700',
-  'practice-preview': 'bg-teal-100 text-teal-700',
-  'printable-worksheet': 'bg-orange-100 text-orange-700',
-  'lesson-summary': 'bg-rose-100 text-rose-700',
+  "teacher-instructions": "bg-amber-100 text-amber-700",
+  "big-idea": "bg-blue-100 text-blue-700",
+  "problem-setup": "bg-green-100 text-green-700",
+  step: "bg-purple-100 text-purple-700",
+  "practice-preview": "bg-teal-100 text-teal-700",
+  "printable-worksheet": "bg-orange-100 text-orange-700",
+  "lesson-summary": "bg-rose-100 text-rose-700",
 };
 
 interface SlideThumbnailsProps {
@@ -42,7 +42,7 @@ interface SlideThumbnailsProps {
   onSelectSlide: (index: number) => void;
   onToggleSlideToEdit: (index: number) => void;
   onDeselectSlide: (index: number) => void;
-  onSetSlideSelectionMode: (index: number, mode: 'edit' | 'context') => void;
+  onSetSlideSelectionMode: (index: number, mode: "edit" | "context") => void;
   onClearSelections: () => void;
   onUpdateSlideType: (index: number, slideType: SlideType) => void;
 }
@@ -98,7 +98,7 @@ export function SlideThumbnails({
                   }
                 }}
                 className={`absolute top-1 left-1 z-10 w-3.5 h-3.5 cursor-pointer ${
-                  isInContext ? 'accent-gray-800' : 'accent-purple-600'
+                  isInContext ? "accent-gray-800" : "accent-purple-600"
                 }`}
               />
               {/* Thumbnail button */}
@@ -106,17 +106,23 @@ export function SlideThumbnails({
                 onClick={() => onSelectSlide(index)}
                 className={`w-full aspect-video rounded border-2 transition-colors cursor-pointer overflow-hidden ${
                   index === selectedSlideIndex
-                    ? 'border-blue-500'
+                    ? "border-blue-500"
                     : isInEdit
-                    ? 'border-purple-400 bg-purple-50'
-                    : isInContext
-                    ? 'border-gray-400 border-dashed bg-gray-50'
-                    : 'border-gray-300 hover:border-gray-400'
+                      ? "border-purple-400 bg-purple-50"
+                      : isInContext
+                        ? "border-gray-400 border-dashed bg-gray-50"
+                        : "border-gray-300 hover:border-gray-400"
                 }`}
               >
-                <div className={`w-full h-full flex items-center justify-center text-xs font-medium ${
-                  isInEdit ? 'bg-purple-50 text-purple-700' : isInContext ? 'bg-gray-50 text-gray-600' : 'bg-gray-100 text-gray-500'
-                }`}>
+                <div
+                  className={`w-full h-full flex items-center justify-center text-xs font-medium ${
+                    isInEdit
+                      ? "bg-purple-50 text-purple-700"
+                      : isInContext
+                        ? "bg-gray-50 text-gray-600"
+                        : "bg-gray-100 text-gray-500"
+                  }`}
+                >
                   {index + 1}
                 </div>
               </button>
@@ -161,21 +167,21 @@ export function SlideThumbnails({
               {isSelected && (
                 <div className="flex mt-1 text-[10px] rounded overflow-hidden border border-gray-300">
                   <button
-                    onClick={() => onSetSlideSelectionMode(index, 'edit')}
+                    onClick={() => onSetSlideSelectionMode(index, "edit")}
                     className={`flex-1 px-1.5 py-0.5 cursor-pointer transition-colors ${
                       isInEdit
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-white text-gray-600 hover:bg-gray-100'
+                        ? "bg-purple-600 text-white"
+                        : "bg-white text-gray-600 hover:bg-gray-100"
                     }`}
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => onSetSlideSelectionMode(index, 'context')}
+                    onClick={() => onSetSlideSelectionMode(index, "context")}
                     className={`flex-1 px-1.5 py-0.5 cursor-pointer transition-colors ${
                       isInContext
-                        ? 'bg-gray-600 text-white'
-                        : 'bg-white text-gray-600 hover:bg-gray-100'
+                        ? "bg-gray-600 text-white"
+                        : "bg-white text-gray-600 hover:bg-gray-100"
                     }`}
                   >
                     Ctx
@@ -188,12 +194,18 @@ export function SlideThumbnails({
       </div>
       {/* Slide type legend */}
       <div className="mt-4 pt-3 border-t border-gray-200">
-        <div className="text-[9px] font-medium text-gray-500 mb-1.5 uppercase tracking-wider">Slide Types</div>
+        <div className="text-[9px] font-medium text-gray-500 mb-1.5 uppercase tracking-wider">
+          Slide Types
+        </div>
         <div className="space-y-0.5">
           {SLIDE_TYPE_VALUES.map((type) => (
             <div key={type} className="flex items-center gap-1">
-              <span className={`inline-block w-2 h-2 rounded-sm ${SLIDE_TYPE_COLORS[type].split(' ')[0]}`} />
-              <span className="text-[9px] text-gray-500">{SLIDE_TYPE_LABELS[type]}</span>
+              <span
+                className={`inline-block w-2 h-2 rounded-sm ${SLIDE_TYPE_COLORS[type].split(" ")[0]}`}
+              />
+              <span className="text-[9px] text-gray-500">
+                {SLIDE_TYPE_LABELS[type]}
+              </span>
             </div>
           ))}
         </div>

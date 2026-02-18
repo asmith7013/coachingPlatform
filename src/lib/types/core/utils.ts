@@ -48,4 +48,4 @@ export type Nullable<T> = T | null;
 /**
  * Type alias for an optional type
  */
-export type Optional<T> = T | undefined; 
+export type Optional<T> = T | undefined;

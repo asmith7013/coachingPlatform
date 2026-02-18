@@ -20,7 +20,7 @@ export function useProgressData(
   selectedSection: string,
   selectedUnit: number | null,
   lessons: LessonConfig[],
-  school?: string
+  school?: string,
 ) {
   const queryClient = useQueryClient();
 
@@ -30,20 +30,27 @@ export function useProgressData(
 
   // Determine if query should be enabled
   const enabled = Boolean(
-    selectedSection && selectedUnit !== null && lessons.length > 0
+    selectedSection && selectedUnit !== null && lessons.length > 0,
   );
 
-  const queryKey = useMemo(() =>
-    school
-      ? [...progressKeys.byUnit(selectedSection, unitCode), school]
-      : progressKeys.byUnit(selectedSection, unitCode),
-    [selectedSection, unitCode, school]
+  const queryKey = useMemo(
+    () =>
+      school
+        ? [...progressKeys.byUnit(selectedSection, unitCode), school]
+        : progressKeys.byUnit(selectedSection, unitCode),
+    [selectedSection, unitCode, school],
   );
 
   const { data, isLoading, error } = useQuery({
     queryKey,
     queryFn: async () => {
-      const result = await fetchRampUpProgress(selectedSection, unitCode, undefined, undefined, school);
+      const result = await fetchRampUpProgress(
+        selectedSection,
+        unitCode,
+        undefined,
+        undefined,
+        school,
+      );
       if (result.success) {
         return result.data;
       }
@@ -62,15 +69,15 @@ export function useProgressData(
       queryClient.setQueryData<ProgressData[]>(queryKey, (prevData) => {
         if (!prevData) return newData;
         const filtered = prevData.filter(
-          (p) => p.podsieAssignmentId !== podsieAssignmentId
+          (p) => p.podsieAssignmentId !== podsieAssignmentId,
         );
         const assignmentData = newData.filter(
-          (p) => p.podsieAssignmentId === podsieAssignmentId
+          (p) => p.podsieAssignmentId === podsieAssignmentId,
         );
         return [...filtered, ...assignmentData];
       });
     },
-    [queryClient, queryKey]
+    [queryClient, queryKey],
   );
 
   /**
@@ -85,7 +92,7 @@ export function useProgressData(
         return newData;
       });
     },
-    [queryClient, queryKey]
+    [queryClient, queryKey],
   );
 
   /**

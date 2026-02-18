@@ -30,7 +30,10 @@ export function useNormalizeStandard() {
  * @param questionStd - The question's standard (e.g., "8.EE.7a")
  * @param filterStd - The filter standard (e.g., "8.EE.7" or "8.EE.7a")
  */
-export function standardMatches(questionStd: string, filterStd: string): boolean {
+export function standardMatches(
+  questionStd: string,
+  filterStd: string,
+): boolean {
   if (questionStd === filterStd) return true;
 
   // If filter is a substandard (ends with letter), require exact match only
@@ -40,7 +43,10 @@ export function standardMatches(questionStd: string, filterStd: string): boolean
 
   // Filter is a parent standard - check if question is a child
   // e.g., "8.EE.7a" starts with "8.EE.7"
-  if (questionStd.startsWith(filterStd) && /^[a-z]$/i.test(questionStd.slice(filterStd.length))) {
+  if (
+    questionStd.startsWith(filterStd) &&
+    /^[a-z]$/i.test(questionStd.slice(filterStd.length))
+  ) {
     return true;
   }
   return false;
@@ -100,7 +106,10 @@ export function getDomainLabel(domain: string): string {
 /**
  * Numeric sort for standards (e.g., G.1, G.2, G.10 not G.1, G.10, G.2)
  */
-export function numericStandardSort(a: { standard: string }, b: { standard: string }): number {
+export function numericStandardSort(
+  a: { standard: string },
+  b: { standard: string },
+): number {
   const aMatch = a.standard.match(/\.(\d+)$/);
   const bMatch = b.standard.match(/\.(\d+)$/);
   const aNum = aMatch ? parseInt(aMatch[1], 10) : 0;

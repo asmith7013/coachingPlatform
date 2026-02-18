@@ -1,9 +1,13 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const PageViewSchema = z.object({
   userId: z.string().optional(), // Clerk user ID (optional for anonymous tracking)
   clerkId: z.string().optional(), // Alias for consistency
-  userEmail: z.string().email({ message: "Invalid email format" }).optional().or(z.literal('')),
+  userEmail: z
+    .string()
+    .email({ message: "Invalid email format" })
+    .optional()
+    .or(z.literal("")),
   sessionId: z.string(), // Browser session identifier
   page: z.string(), // Page path (e.g., "/roadmaps/123")
   fullUrl: z.string().url(),

@@ -1,13 +1,13 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { 
-  DailyClassEventInput, 
-  ZearnCompletionInput, 
+import {
+  DailyClassEventInput,
+  ZearnCompletionInput,
   AssessmentCompletionInput,
   AttendanceStatusType,
-} from '@zod-schema/scm/core';
-import { SyncResultZodSchema } from '@zod-schema/integrations/google-sheets-export';
-import { CollectionResponse } from '@core-types/response';
+} from "@zod-schema/scm/core";
+import { SyncResultZodSchema } from "@zod-schema/integrations/google-sheets-export";
+import { CollectionResponse } from "@core-types/response";
 
 // =====================================
 // RAW SPREADSHEET TYPES
@@ -44,7 +44,7 @@ export interface ValidatedRowData {
   attendance: AttendanceStatusType;
   instructionReceivedMin?: number;
   zearnCompletions: string; // Comma-separated lesson codes
-  masteryAttempts: string;   // Comma-separated lesson codes
+  masteryAttempts: string; // Comma-separated lesson codes
   mastery1: MasteryDetail | null;
   mastery2: MasteryDetail | null;
   mastery3: MasteryDetail | null;
@@ -138,7 +138,11 @@ export interface SheetResetRequest {
  * Result of a single reset operation
  */
 export interface ResetOperation {
-  operation: 'updateDate' | 'convertFilter' | 'setFormulas' | 'clearInterventions';
+  operation:
+    | "updateDate"
+    | "convertFilter"
+    | "setFormulas"
+    | "clearInterventions";
   success: boolean;
   details?: string;
 }
@@ -161,4 +165,4 @@ export interface BatchResetResult {
   successfulResets: number;
   failedResets: number;
   results: ResetResult[];
-} 
+}

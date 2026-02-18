@@ -21,21 +21,34 @@ interface Lesson {
 
 interface LessonDetailViewProps {
   lesson: Lesson | null;
-  onSkillClick?: (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => void;
+  onSkillClick?: (
+    skillNumber: string,
+    color: "blue" | "green" | "orange" | "purple",
+  ) => void;
   masteredSkills?: string[];
   selectedSection?: string;
   selectedStudents?: Student[];
 }
 
-export function LessonDetailView({ lesson, onSkillClick, masteredSkills = [], selectedSection, selectedStudents = [] }: LessonDetailViewProps) {
+export function LessonDetailView({
+  lesson,
+  onSkillClick,
+  masteredSkills = [],
+  selectedSection,
+  selectedStudents = [],
+}: LessonDetailViewProps) {
   // Empty state
   if (!lesson) {
     return (
       <div className="flex items-center justify-center h-full p-8">
         <div className="text-center">
           <BookOpenIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-          <div className="text-gray-600 font-medium mb-1">No Lesson Selected</div>
-          <div className="text-gray-500 text-sm">Select a grade, unit, and lesson to view details</div>
+          <div className="text-gray-600 font-medium mb-1">
+            No Lesson Selected
+          </div>
+          <div className="text-gray-500 text-sm">
+            Select a grade, unit, and lesson to view details
+          </div>
         </div>
       </div>
     );
@@ -95,7 +108,8 @@ export function LessonDetailView({ lesson, onSkillClick, masteredSkills = [], se
           <div className="border-t border-gray-200 pt-6">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="text-blue-800 text-sm">
-                No skills tagged to this lesson yet. Skills can be added to track roadmap and target skills for this lesson.
+                No skills tagged to this lesson yet. Skills can be added to
+                track roadmap and target skills for this lesson.
               </div>
             </div>
           </div>

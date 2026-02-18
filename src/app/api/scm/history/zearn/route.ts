@@ -67,19 +67,33 @@ export async function GET(req: NextRequest) {
 
       if (groupIdParam || moduleIdParam || assignmentIdParam) {
         const moduleQuery: Record<string, unknown> = {};
-        if (groupIdParam) moduleQuery.podsieGroupId = parseInt(groupIdParam, 10);
-        if (moduleIdParam) moduleQuery.podsieModuleId = parseInt(moduleIdParam, 10);
+        if (groupIdParam)
+          moduleQuery.podsieGroupId = parseInt(groupIdParam, 10);
+        if (moduleIdParam)
+          moduleQuery.podsieModuleId = parseInt(moduleIdParam, 10);
 
         const modules = await PodsieScmModuleModel.find(moduleQuery, {
           assignments: 1,
         }).lean();
 
         allowedLessonCodes = new Set<string>();
-        const assignmentIdFilter = assignmentIdParam ? parseInt(assignmentIdParam, 10) : null;
+        const assignmentIdFilter = assignmentIdParam
+          ? parseInt(assignmentIdParam, 10)
+          : null;
 
         for (const mod of modules) {
-          for (const assignment of (mod as unknown as { assignments: Array<{ podsieAssignmentId: number; zearnLessonCode?: string }> }).assignments || []) {
-            if (assignmentIdFilter != null && assignment.podsieAssignmentId !== assignmentIdFilter) {
+          for (const assignment of (
+            mod as unknown as {
+              assignments: Array<{
+                podsieAssignmentId: number;
+                zearnLessonCode?: string;
+              }>;
+            }
+          ).assignments || []) {
+            if (
+              assignmentIdFilter != null &&
+              assignment.podsieAssignmentId !== assignmentIdFilter
+            ) {
               continue;
             }
             if (assignment.zearnLessonCode) {
@@ -122,13 +136,18 @@ export async function GET(req: NextRequest) {
 
         for (const lesson of student.zearnLessons || []) {
           // Filter by allowed lesson codes if specified
-          if (allowedLessonCodes && !allowedLessonCodes.has(lesson.lessonCode)) {
+          if (
+            allowedLessonCodes &&
+            !allowedLessonCodes.has(lesson.lessonCode)
+          ) {
             continue;
           }
 
           // Parse lesson code to extract grade and module
           // Format: "G8 M2 L1" or "G3 M1 L10"
-          const lessonMatch = lesson.lessonCode.match(/G(\d+)\s+M(\d+)\s+L(\d+)/);
+          const lessonMatch = lesson.lessonCode.match(
+            /G(\d+)\s+M(\d+)\s+L(\d+)/,
+          );
           const grade = lessonMatch ? lessonMatch[1] : "";
           const moduleNum = lessonMatch ? lessonMatch[2] : "";
 
@@ -174,7 +193,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in zearn history GET:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

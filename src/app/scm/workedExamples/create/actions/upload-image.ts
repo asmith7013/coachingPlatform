@@ -8,11 +8,11 @@ import { put } from "@vercel/blob";
 export async function uploadMasteryCheckImage(
   imageData: Uint8Array,
   filename: string,
-  contentType: string = "image/png"
+  contentType: string = "image/png",
 ) {
   try {
     const timestamp = Date.now();
-    const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, "_");
     const blobFileName = `worked-example-creator/${sanitizedFilename}-${timestamp}`;
 
     const imageBlob = new Blob([imageData], { type: contentType });

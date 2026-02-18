@@ -4,13 +4,13 @@ export function checkFieldConfigCoverage<T extends ZodRawShape>(
   schema: ZodObject<T>,
   config: Record<string, unknown>,
   schemaLabel = "ZodSchema",
-  configLabel = "FieldConfig"
+  configLabel = "FieldConfig",
 ): void {
   const schemaFields = Object.keys(schema.shape);
   const configFields = Object.keys(config);
 
-  const missing = schemaFields.filter(field => !configFields.includes(field));
-  const extra = configFields.filter(field => !schemaFields.includes(field));
+  const missing = schemaFields.filter((field) => !configFields.includes(field));
+  const extra = configFields.filter((field) => !schemaFields.includes(field));
 
   console.group(`🧪 Schema ↔ Config Check: ${schemaLabel} vs ${configLabel}`);
   if (missing.length) {
@@ -23,4 +23,4 @@ export function checkFieldConfigCoverage<T extends ZodRawShape>(
     console.log(`✅ ${schemaLabel} and ${configLabel} are aligned!`);
   }
   console.groupEnd();
-} 
+}

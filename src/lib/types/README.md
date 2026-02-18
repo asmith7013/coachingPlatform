@@ -12,13 +12,11 @@ The type system is organized into subdirectories:
   - `pagination.ts` - Types for pagination
   - `response.ts` - Standardized API response types
   - `utils.ts` - General utility types
-  
 - **`domain/`** - Domain-specific types modeling business entities
   - `staff.ts` - Staff member types
   - `school.ts` - School-related types
   - `look-for.ts` - Look-for types
   - `visit.ts` - Visit types
-  
 - **`ui/`** - Types for UI components and user interfaces
   - `form.ts` - Form field and configuration types
   - `table.ts` - Table component types
@@ -31,11 +29,11 @@ Import types directly from the appropriate module:
 
 ```typescript
 // Import specific types from their modules
-import { BaseDocument } from '@/lib/types/core/document';
-import { PaginatedResponse } from '@/lib/types/core/response';
+import { BaseDocument } from "@/lib/types/core/document";
+import { PaginatedResponse } from "@/lib/types/core/response";
 
 // Or use the barrel files for convenience
-import { BaseDocument, PaginatedResponse } from '@/lib/types/core';
+import { BaseDocument, PaginatedResponse } from "@/lib/types/core";
 ```
 
 ### Adding New Types
@@ -68,4 +66,4 @@ The type system is being implemented in phases:
 - Extend base types rather than duplicating them
 - Use generic types where appropriate for reusability
 - Keep interfaces focused and single-purpose
-- Use type guards to ensure type safety 
+- Use type guards to ensure type safety

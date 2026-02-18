@@ -1,6 +1,6 @@
 "use server";
 
-import { RoadmapsStudentDataModel } from '@/lib/schema/mongoose-schema/scm/student/roadmaps-student-data.model';
+import { RoadmapsStudentDataModel } from "@/lib/schema/mongoose-schema/scm/student/roadmaps-student-data.model";
 import { connectToDB } from "@server/db/connection";
 import { handleServerError } from "@error/handlers/server";
 
@@ -35,41 +35,47 @@ export async function fetchStudentAssessmentData(filters?: {
       .exec();
 
     // Flatten the data to show all attempts for all students
-    const flattenedData = studentData.flatMap(student => {
-      return student.skillPerformances.flatMap(skill => {
-        if (skill.attempts && Array.isArray(skill.attempts) && skill.attempts.length > 0) {
-          return skill.attempts.map(attempt => ({
+    const flattenedData = studentData.flatMap((student) => {
+      return student.skillPerformances.flatMap((skill) => {
+        if (
+          skill.attempts &&
+          Array.isArray(skill.attempts) &&
+          skill.attempts.length > 0
+        ) {
+          return skill.attempts.map((attempt) => ({
             studentId: student.studentId,
             studentName: student.studentName,
             schoolId: student.schoolId,
             assessmentDate: student.assessmentDate,
             skillCode: skill.skillCode,
-            skillName: skill.skillName || '',
-            skillGrade: skill.skillGrade || '',
-            unit: skill.unit || '',
+            skillName: skill.skillName || "",
+            skillGrade: skill.skillGrade || "",
+            unit: skill.unit || "",
             status: skill.status,
             attemptNumber: attempt.attemptNumber,
             dateCompleted: attempt.dateCompleted,
             score: attempt.score,
-            passed: attempt.passed
+            passed: attempt.passed,
           }));
         } else {
           // If no attempts, return the skill with basic info
-          return [{
-            studentId: student.studentId,
-            studentName: student.studentName,
-            schoolId: student.schoolId,
-            assessmentDate: student.assessmentDate,
-            skillCode: skill.skillCode,
-            skillName: skill.skillName || '',
-            skillGrade: skill.skillGrade || '',
-            unit: skill.unit || '',
-            status: skill.status,
-            attemptNumber: 0,
-            dateCompleted: skill.lastUpdated || '',
-            score: skill.score || '',
-            passed: (skill.status as unknown as string) === 'Mastered'
-          }];
+          return [
+            {
+              studentId: student.studentId,
+              studentName: student.studentName,
+              schoolId: student.schoolId,
+              assessmentDate: student.assessmentDate,
+              skillCode: skill.skillCode,
+              skillName: skill.skillName || "",
+              skillGrade: skill.skillGrade || "",
+              unit: skill.unit || "",
+              status: skill.status,
+              attemptNumber: 0,
+              dateCompleted: skill.lastUpdated || "",
+              score: skill.score || "",
+              passed: (skill.status as unknown as string) === "Mastered",
+            },
+          ];
         }
       });
     });
@@ -77,25 +83,25 @@ export async function fetchStudentAssessmentData(filters?: {
     // Apply date filters
     let filteredData = flattenedData;
     if (filters?.startDate) {
-      filteredData = filteredData.filter(row =>
-        new Date(row.dateCompleted) >= new Date(filters.startDate!)
+      filteredData = filteredData.filter(
+        (row) => new Date(row.dateCompleted) >= new Date(filters.startDate!),
       );
     }
     if (filters?.endDate) {
-      filteredData = filteredData.filter(row =>
-        new Date(row.dateCompleted) <= new Date(filters.endDate!)
+      filteredData = filteredData.filter(
+        (row) => new Date(row.dateCompleted) <= new Date(filters.endDate!),
       );
     }
 
     return {
       success: true,
-      data: filteredData
+      data: filteredData,
     };
   } catch (error) {
-    console.error('Error fetching student assessment data:', error);
+    console.error("Error fetching student assessment data:", error);
     return {
       success: false,
-      error: handleServerError(error, 'fetchStudentAssessmentData')
+      error: handleServerError(error, "fetchStudentAssessmentData"),
     };
   }
 }
@@ -107,9 +113,7 @@ export async function getAssessmentDateRange() {
   try {
     await connectToDB();
 
-    const studentData = await RoadmapsStudentDataModel.find({})
-      .lean()
-      .exec();
+    const studentData = await RoadmapsStudentDataModel.find({}).lean().exec();
 
     const allDates: Date[] = [];
 
@@ -131,26 +135,30 @@ export async function getAssessmentDateRange() {
     if (allDates.length === 0) {
       return {
         success: true,
-        data: { minDate: null, maxDate: null, allDates: [] }
+        data: { minDate: null, maxDate: null, allDates: [] },
       };
     }
 
     const sortedDates = allDates.sort((a, b) => a.getTime() - b.getTime());
-    const uniqueDates = Array.from(new Set(sortedDates.map(d => d.toISOString().split('T')[0])));
+    const uniqueDates = Array.from(
+      new Set(sortedDates.map((d) => d.toISOString().split("T")[0])),
+    );
 
     return {
       success: true,
       data: {
-        minDate: sortedDates[0].toISOString().split('T')[0],
-        maxDate: sortedDates[sortedDates.length - 1].toISOString().split('T')[0],
-        allDates: uniqueDates
-      }
+        minDate: sortedDates[0].toISOString().split("T")[0],
+        maxDate: sortedDates[sortedDates.length - 1]
+          .toISOString()
+          .split("T")[0],
+        allDates: uniqueDates,
+      },
     };
   } catch (error) {
-    console.error('Error getting assessment date range:', error);
+    console.error("Error getting assessment date range:", error);
     return {
       success: false,
-      error: handleServerError(error, 'getAssessmentDateRange')
+      error: handleServerError(error, "getAssessmentDateRange"),
     };
   }
 }

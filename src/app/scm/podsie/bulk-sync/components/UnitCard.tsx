@@ -13,7 +13,7 @@ export function UnitCard({
   unitNumber,
   assignments,
   syncing,
-  onSyncUnit
+  onSyncUnit,
 }: UnitCardProps) {
   return (
     <div className="border border-gray-200 rounded-lg">
@@ -24,7 +24,7 @@ export function UnitCard({
             Unit {unitNumber}
           </h3>
           <p className="text-sm text-gray-600">
-            {assignments.length} assignment{assignments.length !== 1 ? 's' : ''}
+            {assignments.length} assignment{assignments.length !== 1 ? "s" : ""}
           </p>
         </div>
         <button
@@ -36,7 +36,9 @@ export function UnitCard({
               : "bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer"
           }`}
         >
-          <ArrowPathIcon className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
+          <ArrowPathIcon
+            className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`}
+          />
           Sync Unit
         </button>
       </div>
@@ -44,10 +46,7 @@ export function UnitCard({
       {/* Assignments List */}
       <div className="divide-y divide-gray-200">
         {assignments.map((assignment, idx) => (
-          <AssignmentItem
-            key={idx}
-            assignment={assignment}
-          />
+          <AssignmentItem key={idx} assignment={assignment} />
         ))}
       </div>
     </div>

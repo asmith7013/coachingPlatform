@@ -1,6 +1,9 @@
 // src/lib/schema/mongoose-schema/scm/timesheet/timesheet-entry.model.ts
-import mongoose from 'mongoose';
-import { standardSchemaOptions, standardDocumentFields } from '../../shared-options';
+import mongoose from "mongoose";
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "../../shared-options";
 
 /**
  * Timesheet Entry Schema
@@ -60,7 +63,7 @@ const timesheetEntryFields = {
 
 const TimesheetEntrySchema = new mongoose.Schema(timesheetEntryFields, {
   ...standardSchemaOptions,
-  collection: 'timesheet-entries',
+  collection: "timesheet-entries",
 });
 
 // Compound index for efficient date range queries
@@ -71,4 +74,4 @@ TimesheetEntrySchema.index({ submittedAt: -1 });
 
 export const TimesheetEntryModel =
   mongoose.models.TimesheetEntry ||
-  mongoose.model('TimesheetEntry', TimesheetEntrySchema);
+  mongoose.model("TimesheetEntry", TimesheetEntrySchema);

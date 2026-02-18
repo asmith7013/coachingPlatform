@@ -1,8 +1,8 @@
 // Unified event styling system
-export * from './event-styles'
+export * from "./event-styles";
 
 // Re-export common styling utilities for easy access
-export { 
+export {
   EVENT_COLOR_MAP,
   getEventColorClasses,
   getEventContainerClasses,
@@ -11,5 +11,5 @@ export {
   getEventPosition,
   formatEventDuration,
   formatEventTime,
-  eventItem
-} from './event-styles' 
+  eventItem,
+} from "./event-styles";

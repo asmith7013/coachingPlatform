@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams, usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
+import { PresentationChartBarIcon } from "@heroicons/react/24/outline";
 
 const GRADE_OPTIONS = [
   { href: "/scm/workedExamples/viewer?grade=6", label: "Grade 6" },
@@ -29,7 +29,10 @@ export function PublicSCMNav() {
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -59,9 +62,9 @@ export function PublicSCMNav() {
   }, [lastScrollY]);
 
   const currentGrade = searchParams.get("grade");
-  const currentLabel = GRADE_OPTIONS.find(
-    (opt) => opt.href.includes(`grade=${currentGrade}`)
-  )?.label || "Worked Examples";
+  const currentLabel =
+    GRADE_OPTIONS.find((opt) => opt.href.includes(`grade=${currentGrade}`))
+      ?.label || "Worked Examples";
 
   return (
     <nav
@@ -86,7 +89,12 @@ export function PublicSCMNav() {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
 

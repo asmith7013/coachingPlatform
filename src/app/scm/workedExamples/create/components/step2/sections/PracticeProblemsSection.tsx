@@ -63,24 +63,18 @@ export function PracticeProblemsSection({
                       tabIndex={0}
                       onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
-                        setEditingScenario(
-                          editingScenario === 1 ? null : 1,
-                        );
+                        setEditingScenario(editingScenario === 1 ? null : 1);
                       }}
                       onKeyDown={(e: React.KeyboardEvent) => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.stopPropagation();
                           e.preventDefault();
-                          setEditingScenario(
-                            editingScenario === 1 ? null : 1,
-                          );
+                          setEditingScenario(editingScenario === 1 ? null : 1);
                         }
                       }}
                       className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
                       title={
-                        editingScenario === 1
-                          ? "Done editing"
-                          : "Edit scenario"
+                        editingScenario === 1 ? "Done editing" : "Edit scenario"
                       }
                     >
                       {editingScenario === 1 ? (
@@ -120,8 +114,7 @@ export function PracticeProblemsSection({
                       </div>
                       <div
                         className={
-                          scenarios[1].visualPlan ||
-                          scenarios[1].graphPlan
+                          scenarios[1].visualPlan || scenarios[1].graphPlan
                             ? "border-b border-gray-200 py-4"
                             : "pt-4"
                         }
@@ -200,24 +193,18 @@ export function PracticeProblemsSection({
                       tabIndex={0}
                       onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
-                        setEditingScenario(
-                          editingScenario === 2 ? null : 2,
-                        );
+                        setEditingScenario(editingScenario === 2 ? null : 2);
                       }}
                       onKeyDown={(e: React.KeyboardEvent) => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.stopPropagation();
                           e.preventDefault();
-                          setEditingScenario(
-                            editingScenario === 2 ? null : 2,
-                          );
+                          setEditingScenario(editingScenario === 2 ? null : 2);
                         }
                       }}
                       className="p-1 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors cursor-pointer"
                       title={
-                        editingScenario === 2
-                          ? "Done editing"
-                          : "Edit scenario"
+                        editingScenario === 2 ? "Done editing" : "Edit scenario"
                       }
                     >
                       {editingScenario === 2 ? (
@@ -257,8 +244,7 @@ export function PracticeProblemsSection({
                       </div>
                       <div
                         className={
-                          scenarios[2].visualPlan ||
-                          scenarios[2].graphPlan
+                          scenarios[2].visualPlan || scenarios[2].graphPlan
                             ? "border-b border-gray-200 py-4"
                             : "pt-4"
                         }

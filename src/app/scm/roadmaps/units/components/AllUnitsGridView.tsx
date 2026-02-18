@@ -7,7 +7,7 @@ import { RoadmapsSkill } from "@zod-schema/scm/roadmaps/roadmap-skill";
 import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps/roadmaps-skills";
 import { fetchStudents } from "@/app/actions/scm/student/students";
 import { SkillProgressBar } from "./SkillProgressBar";
-import React from 'react';
+import React from "react";
 import { BookOpenIcon } from "@heroicons/react/24/outline";
 
 interface AllUnitsGridViewProps {
@@ -24,9 +24,11 @@ interface GroupedSupportSkill {
 export function AllUnitsGridView({
   units,
   selectedSection,
-  selectedGrade
+  selectedGrade,
 }: AllUnitsGridViewProps) {
-  const [unitSkillsMap, setUnitSkillsMap] = useState<Map<string, RoadmapsSkill[]>>(new Map());
+  const [unitSkillsMap, setUnitSkillsMap] = useState<
+    Map<string, RoadmapsSkill[]>
+  >(new Map());
   const [supportSkills, setSupportSkills] = useState<GroupedSupportSkill[]>([]);
   const [sectionStudents, setSectionStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,14 +49,14 @@ export function AllUnitsGridView({
           sortOrder: "asc",
           filters: { active: true, section: selectedSection },
           search: "",
-          searchFields: []
+          searchFields: [],
         });
 
         if (result.success && result.items) {
           setSectionStudents(result.items as Student[]);
         }
       } catch (error) {
-        console.error('Error loading section students:', error);
+        console.error("Error loading section students:", error);
       }
     };
 
@@ -75,7 +77,9 @@ export function AllUnitsGridView({
 
         for (const unit of units) {
           if (unit.targetSkills && unit.targetSkills.length > 0) {
-            const result = await fetchRoadmapsSkillsByNumbers(unit.targetSkills);
+            const result = await fetchRoadmapsSkillsByNumbers(
+              unit.targetSkills,
+            );
             if (result.success && result.data) {
               skillsMap.set(unit._id, result.data as RoadmapsSkill[]);
             }
@@ -84,7 +88,7 @@ export function AllUnitsGridView({
 
         setUnitSkillsMap(skillsMap);
       } catch (error) {
-        console.error('Error loading skills:', error);
+        console.error("Error loading skills:", error);
       } finally {
         setLoading(false);
       }
@@ -106,44 +110,52 @@ export function AllUnitsGridView({
         const targetSkillNumbers = new Set<string>();
 
         // Collect all target skill numbers
-        units.forEach(unit => {
+        units.forEach((unit) => {
           if (unit.targetSkills) {
-            unit.targetSkills.forEach(num => targetSkillNumbers.add(num));
+            unit.targetSkills.forEach((num) => targetSkillNumbers.add(num));
           }
         });
 
         // Collect all support skills from various sources
-        units.forEach(unit => {
+        units.forEach((unit) => {
           // Add additionalSupportSkills
           if (unit.additionalSupportSkills) {
-            unit.additionalSupportSkills.forEach(num => supportSkillNumbers.add(num));
+            unit.additionalSupportSkills.forEach((num) =>
+              supportSkillNumbers.add(num),
+            );
           }
 
           // Add essential and helpful skills from target skills
           const targetSkills = unitSkillsMap.get(unit._id) || [];
-          targetSkills.forEach(skill => {
+          targetSkills.forEach((skill) => {
             if (skill.essentialSkills) {
-              skill.essentialSkills.forEach(es => supportSkillNumbers.add(es.skillNumber));
+              skill.essentialSkills.forEach((es) =>
+                supportSkillNumbers.add(es.skillNumber),
+              );
             }
             if (skill.helpfulSkills) {
-              skill.helpfulSkills.forEach(hs => supportSkillNumbers.add(hs.skillNumber));
+              skill.helpfulSkills.forEach((hs) =>
+                supportSkillNumbers.add(hs.skillNumber),
+              );
             }
           });
         });
 
         // Remove any skills that are already target skills
-        targetSkillNumbers.forEach(num => supportSkillNumbers.delete(num));
+        targetSkillNumbers.forEach((num) => supportSkillNumbers.delete(num));
 
         // Fetch all support skills
         if (supportSkillNumbers.size > 0) {
-          const result = await fetchRoadmapsSkillsByNumbers(Array.from(supportSkillNumbers));
+          const result = await fetchRoadmapsSkillsByNumbers(
+            Array.from(supportSkillNumbers),
+          );
           if (result.success && result.data) {
             const skills = result.data as RoadmapsSkill[];
 
             // Parse grade level and create grouped skills
-            const grouped: GroupedSupportSkill[] = skills.map(skill => ({
+            const grouped: GroupedSupportSkill[] = skills.map((skill) => ({
               skill,
-              gradeLevel: parseGradeLevel(skill.standards)
+              gradeLevel: parseGradeLevel(skill.standards),
             }));
 
             // Sort by grade level (highest first)
@@ -153,7 +165,7 @@ export function AllUnitsGridView({
           }
         }
       } catch (error) {
-        console.error('Error loading support skills:', error);
+        console.error("Error loading support skills:", error);
       }
     };
 
@@ -180,8 +192,8 @@ export function AllUnitsGridView({
 
     // Check asEssential (skills that have this skill as essential)
     if (skill.appearsIn.asEssential) {
-      skill.appearsIn.asEssential.forEach(item => {
-        item.units?.forEach(unit => {
+      skill.appearsIn.asEssential.forEach((item) => {
+        item.units?.forEach((unit) => {
           if (unit.grade === selectedGrade) {
             unitNumbers.add(unit.unitNumber);
           }
@@ -191,8 +203,8 @@ export function AllUnitsGridView({
 
     // Check asHelpful (skills that have this skill as helpful)
     if (skill.appearsIn.asHelpful) {
-      skill.appearsIn.asHelpful.forEach(item => {
-        item.units?.forEach(unit => {
+      skill.appearsIn.asHelpful.forEach((item) => {
+        item.units?.forEach((unit) => {
           if (unit.grade === selectedGrade) {
             unitNumbers.add(unit.unitNumber);
           }
@@ -202,7 +214,7 @@ export function AllUnitsGridView({
 
     // Check asSupport (units where this skill appears as additional support)
     if (skill.appearsIn.asSupport) {
-      skill.appearsIn.asSupport.forEach(unit => {
+      skill.appearsIn.asSupport.forEach((unit) => {
         if (unit.grade === selectedGrade) {
           unitNumbers.add(unit.unitNumber);
         }
@@ -234,7 +246,9 @@ export function AllUnitsGridView({
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
       {/* Header */}
       <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-        <h2 className="text-xl font-bold text-gray-900">All Units - Mastery Grid</h2>
+        <h2 className="text-xl font-bold text-gray-900">
+          All Units - Mastery Grid
+        </h2>
         <p className="text-sm text-gray-600">
           {units.length} units - {sectionStudents.length} students
         </p>
@@ -245,11 +259,20 @@ export function AllUnitsGridView({
         <table className="w-full border-collapse text-sm">
           <thead className="bg-gray-100">
             <tr className="bg-gray-100 border-b border-gray-300 sticky top-0 z-20">
-              <th className="bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300 w-24">Skill #</th>
-              <th className="bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300">Skill Name</th>
-              <th className="bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300 w-32">Units</th>
-              {sectionStudents.map(student => (
-                <th key={student._id} className="bg-gray-100 px-2 py-3 text-center font-semibold text-gray-700 border-r border-gray-300 text-xs min-w-[80px]">
+              <th className="bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300 w-24">
+                Skill #
+              </th>
+              <th className="bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300">
+                Skill Name
+              </th>
+              <th className="bg-gray-100 px-4 py-3 text-left font-semibold text-gray-700 border-r border-gray-300 w-32">
+                Units
+              </th>
+              {sectionStudents.map((student) => (
+                <th
+                  key={student._id}
+                  className="bg-gray-100 px-2 py-3 text-center font-semibold text-gray-700 border-r border-gray-300 text-xs min-w-[80px]"
+                >
                   <div className="break-words">
                     {student.firstName} {student.lastName}
                   </div>
@@ -260,26 +283,33 @@ export function AllUnitsGridView({
               <th className="bg-gray-100 px-4 py-2 border-r border-gray-300"></th>
               <th className="bg-gray-100 px-4 py-2 border-r border-gray-300"></th>
               <th className="bg-gray-100 px-4 py-2 border-r border-gray-300"></th>
-              {sectionStudents.map(student => {
+              {sectionStudents.map((student) => {
                 // Collect all skill numbers across all units
                 const allSkillNumbers: string[] = [];
 
                 // Add all target skills from all units
-                unitSkillsMap.forEach(skills => {
-                  skills.forEach(skill => allSkillNumbers.push(skill.skillNumber));
+                unitSkillsMap.forEach((skills) => {
+                  skills.forEach((skill) =>
+                    allSkillNumbers.push(skill.skillNumber),
+                  );
                 });
 
                 // Add all support skills
-                supportSkills.forEach(gs => allSkillNumbers.push(gs.skill.skillNumber));
+                supportSkills.forEach((gs) =>
+                  allSkillNumbers.push(gs.skill.skillNumber),
+                );
 
                 // Count mastered skills
-                const masteredCount = allSkillNumbers.filter(skillNum =>
-                  hasMastered(student, skillNum)
+                const masteredCount = allSkillNumbers.filter((skillNum) =>
+                  hasMastered(student, skillNum),
                 ).length;
                 const totalCount = allSkillNumbers.length;
 
                 return (
-                  <th key={student._id} className="bg-gray-100 px-2 py-2 text-center text-xs font-semibold text-gray-700 border-r border-gray-300">
+                  <th
+                    key={student._id}
+                    className="bg-gray-100 px-2 py-2 text-center text-xs font-semibold text-gray-700 border-r border-gray-300"
+                  >
                     {masteredCount}/{totalCount}
                   </th>
                 );
@@ -295,17 +325,26 @@ export function AllUnitsGridView({
                 <React.Fragment key={unit._id}>
                   {/* Unit Header Row */}
                   <tr className="bg-gray-200 border-t-2 border-b border-gray-400">
-                    <td colSpan={3} className="px-4 py-2 text-left font-semibold text-gray-900 text-xs">
-                      Unit {unit.unitNumber} - {unit.unitTitle.replace(/^\d+\s*-\s*/, '')}
+                    <td
+                      colSpan={3}
+                      className="px-4 py-2 text-left font-semibold text-gray-900 text-xs"
+                    >
+                      Unit {unit.unitNumber} -{" "}
+                      {unit.unitTitle.replace(/^\d+\s*-\s*/, "")}
                     </td>
-                    {sectionStudents.map(student => {
+                    {sectionStudents.map((student) => {
                       // Count how many skills in this unit the student has mastered
-                      const unitSkillNumbers = unitSkills.map(s => s.skillNumber);
-                      const masteredInUnit = unitSkillNumbers.filter(skillNum =>
-                        hasMastered(student, skillNum)
+                      const unitSkillNumbers = unitSkills.map(
+                        (s) => s.skillNumber,
+                      );
+                      const masteredInUnit = unitSkillNumbers.filter(
+                        (skillNum) => hasMastered(student, skillNum),
                       ).length;
                       return (
-                        <td key={student._id} className="px-2 py-3 text-center font-semibold text-gray-700 border-r border-gray-300 text-xs">
+                        <td
+                          key={student._id}
+                          className="px-2 py-3 text-center font-semibold text-gray-700 border-r border-gray-300 text-xs"
+                        >
                           {masteredInUnit}/{unitSkillNumbers.length}
                         </td>
                       );
@@ -314,12 +353,15 @@ export function AllUnitsGridView({
 
                   {/* Target Skills for this unit */}
                   {unitSkills.map((skill) => {
-                    const masteredCount = sectionStudents.filter(student =>
-                      hasMastered(student, skill.skillNumber)
+                    const masteredCount = sectionStudents.filter((student) =>
+                      hasMastered(student, skill.skillNumber),
                     ).length;
 
                     return (
-                      <tr key={skill.skillNumber} className="bg-purple-50 border-b border-gray-200">
+                      <tr
+                        key={skill.skillNumber}
+                        className="bg-purple-50 border-b border-gray-200"
+                      >
                         <td className="bg-purple-50 px-4 py-2 border-r border-gray-300">
                           <SkillProgressBar
                             skillNumber={skill.skillNumber}
@@ -332,16 +374,36 @@ export function AllUnitsGridView({
                           {skill.title}
                         </td>
                         <td className="bg-purple-50 px-4 py-2 border-r border-gray-300"></td>
-                        {sectionStudents.map(student => {
-                          const isMastered = hasMastered(student, skill.skillNumber);
+                        {sectionStudents.map((student) => {
+                          const isMastered = hasMastered(
+                            student,
+                            skill.skillNumber,
+                          );
                           return (
-                            <td key={student._id} className="px-2 py-2 border-r border-gray-300 text-center">
-                              <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
-                                isMastered ? 'bg-purple-600' : 'border-2 border-gray-300'
-                              }`}>
+                            <td
+                              key={student._id}
+                              className="px-2 py-2 border-r border-gray-300 text-center"
+                            >
+                              <div
+                                className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
+                                  isMastered
+                                    ? "bg-purple-600"
+                                    : "border-2 border-gray-300"
+                                }`}
+                              >
                                 {isMastered && (
-                                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  <svg
+                                    className="w-3 h-3 text-white"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M5 13l4 4L19 7"
+                                    />
                                   </svg>
                                 )}
                               </div>
@@ -358,7 +420,10 @@ export function AllUnitsGridView({
             {/* Support Skills Section Header */}
             {supportSkills.length > 0 && (
               <tr className="bg-gray-200 border-t-2 border-b border-gray-400">
-                <td colSpan={3 + sectionStudents.length} className="px-4 py-3 text-left font-bold text-gray-900">
+                <td
+                  colSpan={3 + sectionStudents.length}
+                  className="px-4 py-3 text-left font-bold text-gray-900"
+                >
                   Support Skills
                 </td>
               </tr>
@@ -366,31 +431,39 @@ export function AllUnitsGridView({
 
             {/* Support Skills Rows (sorted by grade level, highest first) */}
             {supportSkills.map(({ skill, gradeLevel }, index) => {
-              const masteredCount = sectionStudents.filter(student =>
-                hasMastered(student, skill.skillNumber)
+              const masteredCount = sectionStudents.filter((student) =>
+                hasMastered(student, skill.skillNumber),
               ).length;
 
               // Check if this is the first skill of a new grade level
-              const isNewGradeLevel = index === 0 || supportSkills[index - 1].gradeLevel !== gradeLevel;
+              const isNewGradeLevel =
+                index === 0 ||
+                supportSkills[index - 1].gradeLevel !== gradeLevel;
 
               return (
                 <React.Fragment key={skill.skillNumber}>
                   {/* Grade Level Header Row */}
                   {isNewGradeLevel && (
                     <tr className="bg-gray-100 border-t border-b border-gray-300">
-                      <td colSpan={3} className="px-4 py-2 text-left font-semibold text-gray-700">
-                        Grade {gradeLevel === 999 ? 'Unknown' : gradeLevel}
+                      <td
+                        colSpan={3}
+                        className="px-4 py-2 text-left font-semibold text-gray-700"
+                      >
+                        Grade {gradeLevel === 999 ? "Unknown" : gradeLevel}
                       </td>
-                      {sectionStudents.map(student => {
+                      {sectionStudents.map((student) => {
                         // Count how many skills in this grade level the student has mastered
                         const gradeLevelSkillNumbers = supportSkills
-                          .filter(s => s.gradeLevel === gradeLevel)
-                          .map(s => s.skill.skillNumber);
-                        const masteredInGrade = gradeLevelSkillNumbers.filter(skillNum =>
-                          hasMastered(student, skillNum)
+                          .filter((s) => s.gradeLevel === gradeLevel)
+                          .map((s) => s.skill.skillNumber);
+                        const masteredInGrade = gradeLevelSkillNumbers.filter(
+                          (skillNum) => hasMastered(student, skillNum),
                         ).length;
                         return (
-                          <td key={student._id} className="px-2 py-2 text-center font-semibold text-gray-600 border-r border-gray-300 text-xs">
+                          <td
+                            key={student._id}
+                            className="px-2 py-2 text-center font-semibold text-gray-600 border-r border-gray-300 text-xs"
+                          >
                             {masteredInGrade}/{gradeLevelSkillNumbers.length}
                           </td>
                         );
@@ -413,7 +486,7 @@ export function AllUnitsGridView({
                     </td>
                     <td className="bg-white px-4 py-2 border-r border-gray-300">
                       <div className="grid grid-cols-2 gap-1 w-20">
-                        {getUnitBadges(skill).map(unitNum => (
+                        {getUnitBadges(skill).map((unitNum) => (
                           <span
                             key={unitNum}
                             className="inline-flex items-center justify-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-200 text-gray-600"
@@ -423,16 +496,36 @@ export function AllUnitsGridView({
                         ))}
                       </div>
                     </td>
-                    {sectionStudents.map(student => {
-                      const isMastered = hasMastered(student, skill.skillNumber);
+                    {sectionStudents.map((student) => {
+                      const isMastered = hasMastered(
+                        student,
+                        skill.skillNumber,
+                      );
                       return (
-                        <td key={student._id} className="px-2 py-2 border-r border-gray-300 text-center">
-                          <div className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
-                            isMastered ? 'bg-skill-support' : 'border-2 border-gray-300'
-                          }`}>
+                        <td
+                          key={student._id}
+                          className="px-2 py-2 border-r border-gray-300 text-center"
+                        >
+                          <div
+                            className={`w-5 h-5 mx-auto rounded-full flex items-center justify-center ${
+                              isMastered
+                                ? "bg-skill-support"
+                                : "border-2 border-gray-300"
+                            }`}
+                          >
                             {isMastered && (
-                              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              <svg
+                                className="w-3 h-3 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 13l4 4L19 7"
+                                />
                               </svg>
                             )}
                           </div>

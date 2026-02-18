@@ -1,13 +1,13 @@
 // ===== MAIN COMPONENTS =====
-export { 
+export {
   TanStackTable,
   CompactTanStackTable,
   SearchableTanStackTable,
-  PaginatedTanStackTable
-} from './TanStackTable'
+  PaginatedTanStackTable,
+} from "./TanStackTable";
 
 // ===== TYPES =====
-export type { 
+export type {
   TanStackTableProps,
-  TanStackTableVariants
-} from './TanStackTable' 
+  TanStackTableVariants,
+} from "./TanStackTable";

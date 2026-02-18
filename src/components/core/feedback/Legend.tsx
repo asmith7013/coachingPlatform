@@ -45,7 +45,9 @@ export function Legend({ children, title = "Legend" }: LegendProps) {
   return (
     <div className="mt-4 pt-3 border-t border-gray-100">
       <div className="bg-gray-100 rounded-lg p-3">
-        <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">{title}</h4>
+        <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
+          {title}
+        </h4>
         <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
           {children}
         </div>

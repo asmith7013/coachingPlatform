@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     if (!schoolYear) {
       return NextResponse.json(
         { success: false, error: "schoolYear parameter is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -71,8 +71,11 @@ export async function GET(req: NextRequest) {
 
     if (!result) {
       return NextResponse.json(
-        { success: false, error: `No calendar found for school year ${schoolYear}` },
-        { status: 404 }
+        {
+          success: false,
+          error: `No calendar found for school year ${schoolYear}`,
+        },
+        { status: 404 },
       );
     }
 
@@ -84,7 +87,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in calendar days-off API:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

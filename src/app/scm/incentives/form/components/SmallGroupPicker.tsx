@@ -54,7 +54,9 @@ export function SmallGroupPicker({
   };
 
   const [data, setData] = useState<SmallGroupData>(() => parseValue(value));
-  const [suggestionMessage, setSuggestionMessage] = useState<string | null>(null);
+  const [suggestionMessage, setSuggestionMessage] = useState<string | null>(
+    null,
+  );
   const hasAutoFilled = useRef(false);
 
   // Sync with external value changes
@@ -91,7 +93,7 @@ export function SmallGroupPicker({
           studentId!,
           formDate!,
           unitNumber,
-          scopeSequenceTag!
+          scopeSequenceTag!,
         );
 
         if (result.success && result.data) {
@@ -172,9 +174,7 @@ export function SmallGroupPicker({
 
       {/* Auto-fill suggestion message */}
       {suggestionMessage && (
-        <div className="text-xs text-gray-500 italic">
-          {suggestionMessage}
-        </div>
+        <div className="text-xs text-gray-500 italic">{suggestionMessage}</div>
       )}
 
       {/* Skill Picker - only shown when prerequisite is selected */}

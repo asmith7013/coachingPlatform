@@ -39,7 +39,9 @@ export const UnitScheduleFieldsSchema = z.object({
   scopeSequenceTag: z.string().optional(), // e.g., "Grade 8", "Algebra 1" - identifies the curriculum
 });
 
-export const UnitScheduleZodSchema = BaseDocumentSchema.merge(UnitScheduleFieldsSchema);
+export const UnitScheduleZodSchema = BaseDocumentSchema.merge(
+  UnitScheduleFieldsSchema,
+);
 export const UnitScheduleInputZodSchema = toInputSchema(UnitScheduleZodSchema);
 
 export type UnitSchedule = z.infer<typeof UnitScheduleZodSchema>;

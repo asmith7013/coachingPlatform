@@ -7,16 +7,17 @@ import { ErrorContext } from "@error-types";
  */
 export function handleServerError(
   error: unknown,
-  context: string | ErrorContext = "serverAction"
+  context: string | ErrorContext = "serverAction",
 ): string {
   // Create context if string provided
-  const errorContext: ErrorContext = typeof context === 'string'
-    ? { component: "Server", operation: context }
-    : { component: "Server", ...context };
-  
+  const errorContext: ErrorContext =
+    typeof context === "string"
+      ? { component: "Server", operation: context }
+      : { component: "Server", ...context };
+
   // Log error through unified system
   logError(error, errorContext);
-  
+
   // Return formatted message
   return formatErrorMessage(error);
 }

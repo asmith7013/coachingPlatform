@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 const nextStepFields = {
   description: { type: String, required: true },
@@ -8,18 +11,17 @@ const nextStepFields = {
   schoolId: { type: String, required: true },
   coachingActionPlanId: { type: String, required: true },
   visitId: { type: String, required: false },
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
 const NextStepSchema = new mongoose.Schema(nextStepFields, {
   ...standardSchemaOptions,
-  collection: 'nextsteps'
+  collection: "nextsteps",
 });
 
-export const NextStepModel = mongoose.models.NextStep || 
-  mongoose.model("NextStep", NextStepSchema);
+export const NextStepModel =
+  mongoose.models.NextStep || mongoose.model("NextStep", NextStepSchema);
 
 export async function getNextStepModel() {
   return NextStepModel;
 }
-  

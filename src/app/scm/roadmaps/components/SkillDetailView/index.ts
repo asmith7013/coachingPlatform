@@ -1,12 +1,16 @@
-export { SkillDetailView, type SkillDetailSections, type SkillDetailViewProps } from './SkillDetailView';
-export { SkillDetailHeader } from './SkillDetailHeader';
-export { DescriptionSection } from './DescriptionSection';
-export { StandardsSection } from './StandardsSection';
-export { AppearsInSection } from './AppearsInSection';
-export { PrerequisitesSection } from './PrerequisitesSection';
-export { VideoSection } from './VideoSection';
-export { PracticeProblemsSection } from './PracticeProblemsSection';
-export { EssentialQuestionSection } from './EssentialQuestionSection';
-export { CommonMisconceptionsSection } from './CommonMisconceptionsSection';
-export { VocabularySection } from './VocabularySection';
-export { ModelsAndManipulativesSection } from './ModelsAndManipulativesSection';
+export {
+  SkillDetailView,
+  type SkillDetailSections,
+  type SkillDetailViewProps,
+} from "./SkillDetailView";
+export { SkillDetailHeader } from "./SkillDetailHeader";
+export { DescriptionSection } from "./DescriptionSection";
+export { StandardsSection } from "./StandardsSection";
+export { AppearsInSection } from "./AppearsInSection";
+export { PrerequisitesSection } from "./PrerequisitesSection";
+export { VideoSection } from "./VideoSection";
+export { PracticeProblemsSection } from "./PracticeProblemsSection";
+export { EssentialQuestionSection } from "./EssentialQuestionSection";
+export { CommonMisconceptionsSection } from "./CommonMisconceptionsSection";
+export { VocabularySection } from "./VocabularySection";
+export { ModelsAndManipulativesSection } from "./ModelsAndManipulativesSection";

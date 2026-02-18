@@ -1,12 +1,17 @@
 "use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
-import { CreateWorkedExampleDeckSchema, type CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
-import { getAuthenticatedUser } from '@/lib/server/auth';
-import { handleServerError } from '@error/handlers/server';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { WorkedExampleDeck } from "@mongoose-schema/worked-example-deck.model";
+import {
+  CreateWorkedExampleDeckSchema,
+  type CreateWorkedExampleDeckInput,
+} from "@zod-schema/scm/worked-example";
+import { getAuthenticatedUser } from "@/lib/server/auth";
+import { handleServerError } from "@error/handlers/server";
 
-export async function saveWorkedExampleDeck(deckData: CreateWorkedExampleDeckInput) {
+export async function saveWorkedExampleDeck(
+  deckData: CreateWorkedExampleDeckInput,
+) {
   return withDbConnection(async () => {
     try {
       const authResult = await getAuthenticatedUser();
@@ -14,7 +19,7 @@ export async function saveWorkedExampleDeck(deckData: CreateWorkedExampleDeckInp
       if (!authResult.success) {
         return {
           success: false,
-          error: 'Unauthorized. Please sign in to save a deck.',
+          error: "Unauthorized. Please sign in to save a deck.",
         };
       }
 
@@ -29,10 +34,10 @@ export async function saveWorkedExampleDeck(deckData: CreateWorkedExampleDeckInp
       const existingDeck = await WorkedExampleDeck.findOne({ slug: finalSlug });
       if (existingDeck) {
         // Find all slugs that start with the base slug (e.g., "my-deck", "my-deck-v2", "my-deck-v3")
-        const baseSlug = validated.slug.replace(/-v\d+$/, ''); // Remove existing version suffix
+        const baseSlug = validated.slug.replace(/-v\d+$/, ""); // Remove existing version suffix
         const existingSlugs = await WorkedExampleDeck.find(
           { slug: { $regex: `^${baseSlug}(-v\\d+)?$` } },
-          { slug: 1 }
+          { slug: 1 },
         ).lean();
 
         // Find the highest version number
@@ -65,7 +70,7 @@ export async function saveWorkedExampleDeck(deckData: CreateWorkedExampleDeckInp
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to save worked example deck'),
+        error: handleServerError(error, "Failed to save worked example deck"),
       };
     }
   });

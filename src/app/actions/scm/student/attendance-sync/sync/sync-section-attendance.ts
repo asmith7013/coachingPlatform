@@ -17,15 +17,21 @@ import type { AttendanceSyncResult, AttendanceSyncOptions } from "../types";
 export async function syncSectionAttendance(
   groupId: string,
   section: string,
-  options: AttendanceSyncOptions
+  options: AttendanceSyncOptions,
 ): Promise<AttendanceSyncResult> {
   try {
     // Fetch attendance data from Podsie API
-    const attendanceData = await fetchPodsieAttendance(groupId, options.startDate);
+    const attendanceData = await fetchPodsieAttendance(
+      groupId,
+      options.startDate,
+    );
 
     // Import the fetched data using existing import logic
     // Pass school to filter students (important for sections in multiple schools)
-    const importResult = await importAttendanceData(attendanceData, options.school);
+    const importResult = await importAttendanceData(
+      attendanceData,
+      options.school,
+    );
 
     if (!importResult.success || !importResult.data) {
       return {

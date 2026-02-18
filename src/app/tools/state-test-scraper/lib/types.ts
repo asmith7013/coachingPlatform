@@ -1,5 +1,5 @@
 // Re-export the StateTestQuestion type from the Zod schema
-export type { StateTestQuestion } from '@/lib/schema/zod-schema/scm/state-test-question';
+export type { StateTestQuestion } from "@/lib/schema/zod-schema/scm/state-test-question";
 
 export interface ScraperConfig {
   email: string;
@@ -13,16 +13,16 @@ export interface ScraperConfig {
  */
 export const SELECTORS = {
   // Login page selectors
-  EMAIL_INPUT: '#login_form_login',
+  EMAIL_INPUT: "#login_form_login",
   NEXT_BUTTON: 'input[type="submit"][value="Next"]',
-  PASSWORD_INPUT: '#login_form_password',
+  PASSWORD_INPUT: "#login_form_password",
 
   // Page metadata selectors
-  EXAM_TITLE: '#subject-description span',
+  EXAM_TITLE: "#subject-description span",
 
   // Question container and element selectors
   QUESTION_CONTAINER: 'div[id^="problem-link-"]',
-  STANDARD_LABEL: 'span.label.label-default.objective',
-  QUESTION_IMAGE: '.document-image img',
-  QUESTION_TYPE: '.type-icon img',
+  STANDARD_LABEL: "span.label.label-default.objective",
+  QUESTION_IMAGE: ".document-image img",
+  QUESTION_TYPE: ".type-icon img",
 } as const;

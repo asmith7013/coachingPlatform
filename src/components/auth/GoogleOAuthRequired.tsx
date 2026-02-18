@@ -1,8 +1,11 @@
-'use client';
+"use client";
 
-import { useGoogleOAuthStatus } from '@/hooks/auth/useGoogleOAuthStatus';
-import { useUser, useClerk } from '@clerk/nextjs';
-import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { useGoogleOAuthStatus } from "@/hooks/auth/useGoogleOAuthStatus";
+import { useUser, useClerk } from "@clerk/nextjs";
+import {
+  ExclamationTriangleIcon,
+  ArrowPathIcon,
+} from "@heroicons/react/24/outline";
 
 interface GoogleOAuthRequiredProps {
   children: React.ReactNode;
@@ -27,16 +30,17 @@ interface GoogleOAuthRequiredProps {
  */
 export function GoogleOAuthRequired({
   children,
-  action = 'use this feature',
+  action = "use this feature",
   warnOnly = false,
 }: GoogleOAuthRequiredProps) {
-  const { isLoaded, isValid, needsReauth, isLoading, errorMessage, refetch } = useGoogleOAuthStatus();
+  const { isLoaded, isValid, needsReauth, isLoading, errorMessage, refetch } =
+    useGoogleOAuthStatus();
   const { user } = useUser();
   const clerk = useClerk();
 
   // Check if user signed in with Google
   const hasGoogleAccount = user?.externalAccounts?.some(
-    (account) => account.provider === 'google'
+    (account) => account.provider === "google",
   );
 
   const handleReauth = async () => {

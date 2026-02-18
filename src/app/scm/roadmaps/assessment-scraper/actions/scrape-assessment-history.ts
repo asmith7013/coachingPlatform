@@ -1,45 +1,49 @@
 "use server";
 
 import { z } from "zod";
-import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import { chromium, Browser, BrowserContext, Page } from "playwright";
 import {
   AssessmentScraperConfigZod,
   AssessmentScraperResponseZod,
-  type AssessmentScraperResponse
-} from '@/lib/schema/zod-schema/scm/assessment-scraper';
-import { authenticateRoadmaps } from '../../shared/lib/roadmaps-auth';
-import { parseAssessmentCSV } from '../lib/csv-parser';
+  type AssessmentScraperResponse,
+} from "@/lib/schema/zod-schema/scm/assessment-scraper";
+import { authenticateRoadmaps } from "../../shared/lib/roadmaps-auth";
+import { parseAssessmentCSV } from "../lib/csv-parser";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import * as os from 'os';
+import * as fs from "fs/promises";
+import * as path from "path";
+import * as os from "os";
 
-const ASSESSMENT_HISTORY_URL = 'https://roadmaps.teachtoone.org/assessment-history';
+const ASSESSMENT_HISTORY_URL =
+  "https://roadmaps.teachtoone.org/assessment-history";
 
 /**
  * Selectors for the assessment history page based on the HTML
  */
 const SELECTORS = {
   // Multiselect for classes
-  CLASS_MULTISELECT: '#class',
-  CLASS_TRIGGER: '#class .p-multiselect-trigger',
-  CLASS_PANEL: '.p-multiselect-panel',
-  CLASS_ITEMS: '.p-multiselect-items .p-multiselect-item',
+  CLASS_MULTISELECT: "#class",
+  CLASS_TRIGGER: "#class .p-multiselect-trigger",
+  CLASS_PANEL: ".p-multiselect-panel",
+  CLASS_ITEMS: ".p-multiselect-items .p-multiselect-item",
 
   // Dropdown for roadmap
-  ROADMAP_DROPDOWN: '#roadmap',
-  ROADMAP_TRIGGER: '#roadmap .p-dropdown-trigger',
-  ROADMAP_PANEL: '.p-dropdown-panel',
-  ROADMAP_ITEMS: '.p-dropdown-items .p-dropdown-item',
+  ROADMAP_DROPDOWN: "#roadmap",
+  ROADMAP_TRIGGER: "#roadmap .p-dropdown-trigger",
+  ROADMAP_PANEL: ".p-dropdown-panel",
+  ROADMAP_ITEMS: ".p-dropdown-items .p-dropdown-item",
 
   // Multiselect for student grade (has wrong id="site", use label-based selector)
-  STUDENT_GRADE_MULTISELECT: 'label:has-text("Student Grade") + div.p-multiselect',
-  STUDENT_GRADE_TRIGGER: 'label:has-text("Student Grade") + div.p-multiselect .p-multiselect-trigger',
+  STUDENT_GRADE_MULTISELECT:
+    'label:has-text("Student Grade") + div.p-multiselect',
+  STUDENT_GRADE_TRIGGER:
+    'label:has-text("Student Grade") + div.p-multiselect .p-multiselect-trigger',
 
   // Multiselect for skill grade (also has wrong id="site")
   SKILL_GRADE_MULTISELECT: 'label:has-text("Skill Grade") + div.p-multiselect',
-  SKILL_GRADE_TRIGGER: 'label:has-text("Skill Grade") + div.p-multiselect .p-multiselect-trigger',
+  SKILL_GRADE_TRIGGER:
+    'label:has-text("Skill Grade") + div.p-multiselect .p-multiselect-trigger',
 
   // Export button
   EXPORT_BUTTON: 'button:has-text("Export Data Table")',
@@ -62,13 +66,18 @@ async function selectClass(page: Page, className: string): Promise<void> {
 
   for (const item of items) {
     // Get the text from the span element inside the li
-    const spanText = await item.locator('span').textContent();
-    const trimmedText = spanText?.trim() ?? '';
+    const spanText = await item.locator("span").textContent();
+    const trimmedText = spanText?.trim() ?? "";
     // Match if text equals className or starts with "className - " (class + teacher name format)
-    if (trimmedText === className || trimmedText.startsWith(className + ' - ')) {
+    if (
+      trimmedText === className ||
+      trimmedText.startsWith(className + " - ")
+    ) {
       await item.click();
       found = true;
-      console.log(`  ✅ Class "${className}" selected (matched: "${trimmedText}")`);
+      console.log(
+        `  ✅ Class "${className}" selected (matched: "${trimmedText}")`,
+      );
       break;
     }
   }
@@ -78,7 +87,7 @@ async function selectClass(page: Page, className: string): Promise<void> {
   }
 
   // Click away to close the dropdown
-  await page.keyboard.press('Escape');
+  await page.keyboard.press("Escape");
   await page.waitForTimeout(300);
 }
 
@@ -89,13 +98,13 @@ async function selectDropdownOption(
   page: Page,
   triggerSelector: string,
   optionText: string,
-  label: string
+  label: string,
 ): Promise<void> {
   console.log(`📋 Selecting ${label}: ${optionText}`);
 
   // Click the trigger to open dropdown
   await page.click(triggerSelector);
-  await page.waitForSelector('.p-dropdown-panel', { timeout: 5000 });
+  await page.waitForSelector(".p-dropdown-panel", { timeout: 5000 });
   await page.waitForTimeout(500);
 
   // Find and click the specific option by text
@@ -114,21 +123,23 @@ async function _selectMultiselectOption(
   page: Page,
   triggerSelector: string,
   optionText: string,
-  label: string
+  label: string,
 ): Promise<void> {
   console.log(`📋 Selecting ${label}: ${optionText}`);
 
   // Click the trigger to open multiselect
   await page.click(triggerSelector);
-  await page.waitForSelector('.p-multiselect-panel', { timeout: 5000 });
+  await page.waitForSelector(".p-multiselect-panel", { timeout: 5000 });
   await page.waitForTimeout(500);
 
   // Find and click the specific option - look for span text inside the li
-  const items = await page.locator('.p-multiselect-items .p-multiselect-item').all();
+  const items = await page
+    .locator(".p-multiselect-items .p-multiselect-item")
+    .all();
   let found = false;
 
   for (const item of items) {
-    const spanText = await item.locator('span').textContent();
+    const spanText = await item.locator("span").textContent();
     if (spanText?.trim() === optionText) {
       await item.click();
       found = true;
@@ -142,7 +153,7 @@ async function _selectMultiselectOption(
   }
 
   // Click away to close the multiselect
-  await page.keyboard.press('Escape');
+  await page.keyboard.press("Escape");
   await page.waitForTimeout(300);
 }
 
@@ -161,48 +172,51 @@ export async function scrapeAssessmentHistory(request: unknown) {
     const validatedRequest = AssessmentScraperConfigZod.parse(request);
     const { credentials, filters, delayBetweenActions } = validatedRequest;
 
-    console.log('🚀 Starting Assessment History scraping...');
+    console.log("🚀 Starting Assessment History scraping...");
     console.log(`📊 Filters:`, filters);
 
     // Create temporary download directory
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'assessment-export-'));
+    const tempDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), "assessment-export-"),
+    );
     downloadPath = tempDir;
     console.log(`📁 Download directory: ${downloadPath}`);
 
     // Initialize browser
     browser = await chromium.launch({
       headless: false,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      userAgent:
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       viewport: { width: 1280, height: 1000 },
       acceptDownloads: true,
-      timezoneId: 'America/New_York'  // Set timezone to Eastern Time
+      timezoneId: "America/New_York", // Set timezone to Eastern Time
     });
 
     page = await context.newPage();
 
     // Perform authentication
-    console.log('🔐 Performing authentication...');
+    console.log("🔐 Performing authentication...");
     const authResult = await authenticateRoadmaps(page, credentials);
 
     if (!authResult.success) {
-      throw new Error(authResult.error || 'Authentication failed');
+      throw new Error(authResult.error || "Authentication failed");
     }
 
-    console.log('✅ Authentication successful');
+    console.log("✅ Authentication successful");
 
     // Navigate to assessment history page
     console.log(`🌐 Navigating to: ${ASSESSMENT_HISTORY_URL}`);
-    await page.goto(ASSESSMENT_HISTORY_URL, { waitUntil: 'networkidle' });
-    console.log('✅ Assessment history page loaded');
+    await page.goto(ASSESSMENT_HISTORY_URL, { waitUntil: "networkidle" });
+    console.log("✅ Assessment history page loaded");
 
     await page.waitForTimeout(delayBetweenActions);
 
     // Apply filters
-    console.log('🎯 Applying filters...');
+    console.log("🎯 Applying filters...");
 
     // 1. Select classes
     for (const className of filters.classes) {
@@ -211,7 +225,12 @@ export async function scrapeAssessmentHistory(request: unknown) {
     }
 
     // 2. Select roadmap
-    await selectDropdownOption(page, SELECTORS.ROADMAP_TRIGGER, filters.roadmap, 'Roadmap');
+    await selectDropdownOption(
+      page,
+      SELECTORS.ROADMAP_TRIGGER,
+      filters.roadmap,
+      "Roadmap",
+    );
     await page.waitForTimeout(delayBetweenActions);
 
     // 3. Select student grade (multiselect)
@@ -224,38 +243,43 @@ export async function scrapeAssessmentHistory(request: unknown) {
     // await selectMultiselectOption(page, SELECTORS.SKILL_GRADE_TRIGGER, filters.skillGrade, 'Skill Grade');
     // await page.waitForTimeout(delayBetweenActions);
 
-    console.log('✅ All filters applied (Student Grade and Skill Grade filters temporarily disabled)');
+    console.log(
+      "✅ All filters applied (Student Grade and Skill Grade filters temporarily disabled)",
+    );
 
     // Wait for table to load with filtered data
     await page.waitForTimeout(2000);
 
     // Click export button and wait for download
-    console.log('📥 Clicking Export Data Table button...');
+    console.log("📥 Clicking Export Data Table button...");
 
-    const downloadPromise = page.waitForEvent('download', { timeout: 30000 });
+    const downloadPromise = page.waitForEvent("download", { timeout: 30000 });
     await page.click(SELECTORS.EXPORT_BUTTON);
 
     const download = await downloadPromise;
-    const downloadFilePath = path.join(downloadPath, download.suggestedFilename());
+    const downloadFilePath = path.join(
+      downloadPath,
+      download.suggestedFilename(),
+    );
     await download.saveAs(downloadFilePath);
 
     console.log(`✅ CSV downloaded: ${downloadFilePath}`);
 
     // Read and parse the CSV
-    console.log('📊 Parsing CSV data...');
-    const csvContent = await fs.readFile(downloadFilePath, 'utf-8');
+    console.log("📊 Parsing CSV data...");
+    const csvContent = await fs.readFile(downloadFilePath, "utf-8");
     const assessmentData = parseAssessmentCSV(csvContent);
 
     console.log(`✅ Parsed ${assessmentData.length} assessment rows`);
 
     // Calculate statistics
-    const uniqueStudents = new Set(assessmentData.map(row => row.name));
-    const uniqueSkills = new Set(assessmentData.map(row => row.skillNumber));
+    const uniqueStudents = new Set(assessmentData.map((row) => row.name));
+    const uniqueSkills = new Set(assessmentData.map((row) => row.skillNumber));
 
     const endTime = new Date().toISOString();
     const duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
 
-    console.log('📊 Scraping Results:');
+    console.log("📊 Scraping Results:");
     console.log(`   📝 Total Rows: ${assessmentData.length}`);
     console.log(`   👥 Students: ${uniqueStudents.size}`);
     console.log(`   🎯 Skills: ${uniqueSkills.size}`);
@@ -270,7 +294,7 @@ export async function scrapeAssessmentHistory(request: unknown) {
       errors: [],
       startTime,
       endTime,
-      duration
+      duration,
     };
 
     // Validate response structure
@@ -278,22 +302,21 @@ export async function scrapeAssessmentHistory(request: unknown) {
 
     return {
       success: true,
-      data: validatedResponse
+      data: validatedResponse,
     };
-
   } catch (error) {
-    console.error('💥 Error in scrapeAssessmentHistory:', error);
+    console.error("💥 Error in scrapeAssessmentHistory:", error);
 
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: handleValidationError(error)
+        error: handleValidationError(error),
       };
     }
 
     return {
       success: false,
-      error: handleServerError(error, 'scrapeAssessmentHistory')
+      error: handleServerError(error, "scrapeAssessmentHistory"),
     };
   } finally {
     // Clean up resources
@@ -301,15 +324,15 @@ export async function scrapeAssessmentHistory(request: unknown) {
       if (page) await page.close();
       if (context) await context.close();
       if (browser) await browser.close();
-      console.log('🧹 Browser resources cleaned up');
+      console.log("🧹 Browser resources cleaned up");
 
       // Clean up download directory
       if (downloadPath) {
         await fs.rm(downloadPath, { recursive: true, force: true });
-        console.log('🧹 Temporary files cleaned up');
+        console.log("🧹 Temporary files cleaned up");
       }
     } catch (cleanupError) {
-      console.error('⚠️ Error during cleanup:', cleanupError);
+      console.error("⚠️ Error during cleanup:", cleanupError);
     }
   }
 }

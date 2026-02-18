@@ -1,47 +1,44 @@
-import React from 'react';
-import { cn } from '@ui/utils/formatters';
-import { humanFileSize } from '@ui/utils/formatters';
-import { tv } from 'tailwind-variants';
-import {
-  RadiusToken,
-  ShadowToken
-} from '@/lib/tokens/types';
-import { paddingX, paddingY } from '@/lib/tokens/tokens';
-import type { BaseComponentProps } from '@/lib/types/core/token';
+import React from "react";
+import { cn } from "@ui/utils/formatters";
+import { humanFileSize } from "@ui/utils/formatters";
+import { tv } from "tailwind-variants";
+import { RadiusToken, ShadowToken } from "@/lib/tokens/types";
+import { paddingX, paddingY } from "@/lib/tokens/tokens";
+import type { BaseComponentProps } from "@/lib/types/core/token";
 
 // File card styling with variants
 const fileCard = tv({
-  base: 'bg-white flex items-center rounded overflow-hidden',
+  base: "bg-white flex items-center rounded overflow-hidden",
   variants: {
     radius: {
-      none: 'rounded-none',
-      sm: 'rounded-sm',
-      md: 'rounded-md',
-      lg: 'rounded-lg',
-      xl: 'rounded-xl',
-      '2xl': 'rounded-2xl',
-      full: 'rounded-full',
+      none: "rounded-none",
+      sm: "rounded-sm",
+      md: "rounded-md",
+      lg: "rounded-lg",
+      xl: "rounded-xl",
+      "2xl": "rounded-2xl",
+      full: "rounded-full",
     },
     shadow: {
-      none: 'shadow-none',
-      sm: 'shadow-sm',
-      md: 'shadow-md',
-      lg: 'shadow-lg',
-      xl: 'shadow-xl',
-      '2xl': 'shadow-2xl',
+      none: "shadow-none",
+      sm: "shadow-sm",
+      md: "shadow-md",
+      lg: "shadow-lg",
+      xl: "shadow-xl",
+      "2xl": "shadow-2xl",
     },
     border: {
-      true: 'border border-gray-200',
-      false: '',
+      true: "border border-gray-200",
+      false: "",
     },
     variant: {
-      outlined: 'border border-gray-200',
-      filled: 'bg-gray-50',
-      default: '',
+      outlined: "border border-gray-200",
+      filled: "bg-gray-50",
+      default: "",
     },
     hoverable: {
-      true: 'transition-colors duration-200 hover:bg-gray-50',
-      false: '',
+      true: "transition-colors duration-200 hover:bg-gray-50",
+      false: "",
     },
     padding: {
       sm: `${paddingX.sm} ${paddingY.xs}`,
@@ -50,11 +47,11 @@ const fileCard = tv({
     },
   },
   defaultVariants: {
-    padding: 'sm',
-    radius: 'md',
-    shadow: 'sm',
+    padding: "sm",
+    radius: "md",
+    shadow: "sm",
     border: true,
-    variant: 'default',
+    variant: "default",
     hoverable: true,
   },
 });
@@ -70,9 +67,9 @@ export interface FileCardProps extends BaseComponentProps {
   radius?: RadiusToken;
   shadow?: ShadowToken;
   border?: boolean;
-  variant?: 'default' | 'outlined' | 'filled';
+  variant?: "default" | "outlined" | "filled";
   hoverable?: boolean;
-  padding?: 'sm' | 'md' | 'lg';
+  padding?: "sm" | "md" | "lg";
 }
 
 export function FileCard({
@@ -102,7 +99,7 @@ export function FileCard({
           variant,
           hoverable,
         }),
-        className
+        className,
       )}
     >
       <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 text-blue-500">
@@ -140,4 +137,4 @@ export function FileCard({
       </div>
     </div>
   );
-} 
+}

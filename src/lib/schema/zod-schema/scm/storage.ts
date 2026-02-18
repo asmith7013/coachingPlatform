@@ -45,12 +45,14 @@ export const SnorklScrapingMetadataZodSchema = z.object({
   totalClassesScraped: z.number(),
   totalActivitiesFound: z.number(),
   totalErrorsEncountered: z.number(),
-  classesProcessed: z.array(z.object({
-    className: z.string(),
-    classId: z.string(),
-    activitiesFound: z.number(),
-    errors: z.array(z.string()),
-  })),
+  classesProcessed: z.array(
+    z.object({
+      className: z.string(),
+      classId: z.string(),
+      activitiesFound: z.number(),
+      errors: z.array(z.string()),
+    }),
+  ),
   globalErrors: z.array(z.string()),
   csvUrlsGenerated: z.array(z.string()),
   createdAt: z.string().optional(),
@@ -58,20 +60,28 @@ export const SnorklScrapingMetadataZodSchema = z.object({
 });
 
 // Types
-export type SnorklStudentResponse = z.infer<typeof SnorklStudentResponseZodSchema>;
+export type SnorklStudentResponse = z.infer<
+  typeof SnorklStudentResponseZodSchema
+>;
 export type SnorklStudentData = z.infer<typeof SnorklStudentDataZodSchema>;
 export type SnorklActivityInput = z.infer<typeof SnorklActivityInputZodSchema>;
 export type SnorklActivity = z.infer<typeof SnorklActivityZodSchema>;
-export type SnorklScrapingMetadata = z.infer<typeof SnorklScrapingMetadataZodSchema>;
+export type SnorklScrapingMetadata = z.infer<
+  typeof SnorklScrapingMetadataZodSchema
+>;
 
 // CSV processing helper schema (for parsing downloaded CSV files)
-export const SnorklCsvRowZodSchema = z.object({
-  "First Name": z.string(),
-  "Last Name": z.string(),
-  "Best Response Correct - Yes or No": z.enum(["Yes", "No"]),
-  "Best Response Explanation Score (0-4)": z.string().transform(val => parseInt(val)),
-  "Best Response Date": z.string(),
-  // Additional response columns will be dynamically added
-}).passthrough(); // Allow additional columns
+export const SnorklCsvRowZodSchema = z
+  .object({
+    "First Name": z.string(),
+    "Last Name": z.string(),
+    "Best Response Correct - Yes or No": z.enum(["Yes", "No"]),
+    "Best Response Explanation Score (0-4)": z
+      .string()
+      .transform((val) => parseInt(val)),
+    "Best Response Date": z.string(),
+    // Additional response columns will be dynamically added
+  })
+  .passthrough(); // Allow additional columns
 
 export type SnorklCsvRow = z.infer<typeof SnorklCsvRowZodSchema>;

@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
-import { Alert } from '@/components/core/feedback/Alert';
-import { SimpleCard } from '@/components/core/cards/SimpleCard';
-import { IMCredentials } from '../lib/types';
+import React, { useState } from "react";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/fields/Input";
+import { Alert } from "@/components/core/feedback/Alert";
+import { SimpleCard } from "@/components/core/cards/SimpleCard";
+import { IMCredentials } from "../lib/types";
 
 interface AuthenticationFormProps {
   onCredentialsSubmit: (credentials: IMCredentials) => Promise<void>;
@@ -18,13 +18,13 @@ export function AuthenticationForm({
   onCredentialsSubmit,
   isValidating,
   credentialsValid,
-  error
+  error,
 }: AuthenticationFormProps) {
   const [credentials, setCredentials] = useState<IMCredentials>({
-    email: 'alex.smith@teachinglab.org',
-    password: 'rFw&Yn3%7w2Dc502'
+    email: "alex.smith@teachinglab.org",
+    password: "rFw&Yn3%7w2Dc502",
   });
-  
+
   const [formErrors, setFormErrors] = useState<{
     email?: string;
     password?: string;
@@ -32,42 +32,42 @@ export function AuthenticationForm({
 
   const validateForm = (): boolean => {
     const errors: typeof formErrors = {};
-    
+
     if (!credentials.email) {
-      errors.email = 'Email is required';
+      errors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credentials.email)) {
-      errors.email = 'Please enter a valid email address';
+      errors.email = "Please enter a valid email address";
     }
-    
+
     if (!credentials.password) {
-      errors.password = 'Password is required';
+      errors.password = "Password is required";
     }
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     await onCredentialsSubmit(credentials);
   };
 
   const handleInputChange = (field: keyof IMCredentials, value: string) => {
-    setCredentials(prev => ({
+    setCredentials((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
-    
+
     // Clear field error when user starts typing
     if (formErrors[field]) {
-      setFormErrors(prev => ({
+      setFormErrors((prev) => ({
         ...prev,
-        [field]: undefined
+        [field]: undefined,
       }));
     }
   };
@@ -89,19 +89,19 @@ export function AuthenticationForm({
               label="Email"
               type="email"
               value={credentials.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
+              onChange={(e) => handleInputChange("email", e.target.value)}
               error={formErrors.email}
               placeholder="your.email@teachinglab.org"
               required
               disabled={isValidating}
             />
-            
+
             <Input
               id="password"
               label="Password"
               type="password"
               value={credentials.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
+              onChange={(e) => handleInputChange("password", e.target.value)}
               error={formErrors.password}
               placeholder="Enter your password"
               required
@@ -116,7 +116,7 @@ export function AuthenticationForm({
               disabled={isValidating}
               intent="primary"
             >
-              {isValidating ? 'Validating...' : 'Validate Credentials'}
+              {isValidating ? "Validating..." : "Validate Credentials"}
             </Button>
           </div>
         </form>
@@ -129,7 +129,7 @@ export function AuthenticationForm({
               <Alert.Description>{error}</Alert.Description>
             </Alert>
           )}
-          
+
           {credentialsValid === true && (
             <Alert intent="success">
               <Alert.Title>Authentication Successful</Alert.Title>
@@ -138,7 +138,7 @@ export function AuthenticationForm({
               </Alert.Description>
             </Alert>
           )}
-          
+
           {credentialsValid === false && !error && (
             <Alert intent="warning">
               <Alert.Title>Authentication Failed</Alert.Title>
@@ -151,10 +151,14 @@ export function AuthenticationForm({
 
         {/* Instructions */}
         <div className="mt-6 p-4 bg-gray-50 rounded-md">
-          <h4 className="text-sm font-medium text-gray-900 mb-2">Instructions:</h4>
+          <h4 className="text-sm font-medium text-gray-900 mb-2">
+            Instructions:
+          </h4>
           <ul className="text-sm text-gray-600 space-y-1">
             <li>• Use your Teaching Lab email address</li>
-            <li>• Enter the same password you use for the IM curriculum platform</li>
+            <li>
+              • Enter the same password you use for the IM curriculum platform
+            </li>
             <li>• Credentials are validated before scraping begins</li>
             <li>• Your credentials are not stored permanently</li>
           </ul>

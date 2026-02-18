@@ -2,13 +2,17 @@
 
 import React, { lazy, Suspense } from "react";
 import { cn } from "@ui/utils/formatters";
-import { Legend, LegendGroup, LegendItem } from "@/components/core/feedback/Legend";
+import {
+  Legend,
+  LegendGroup,
+  LegendItem,
+} from "@/components/core/feedback/Legend";
 
 // Lazy load the heavy Chart.js component
 const SkillsBarChart = lazy(() =>
   import("./SkillsBarChart").then((module) => ({
     default: module.SkillsBarChart,
-  }))
+  })),
 );
 
 export interface BarDataItem {
@@ -87,8 +91,11 @@ export function StackedSkillsBarChart({
           offset: 4,
           formatter: (_value: number, context: { dataIndex: number }) => {
             const item = data[context.dataIndex];
-            const practiceStr = item.practiceValue > 0 ? `+${item.practiceValue}` : "";
-            const attemptStr = item.attemptedCount ? `(${item.attemptedCount})` : "";
+            const practiceStr =
+              item.practiceValue > 0 ? `+${item.practiceValue}` : "";
+            const attemptStr = item.attemptedCount
+              ? `(${item.attemptedCount})`
+              : "";
             return [practiceStr, attemptStr].filter(Boolean).join(" ");
           },
           color: "rgb(5, 150, 105)", // emerald-600
@@ -134,7 +141,9 @@ export function StackedSkillsBarChart({
             const idx = context[0].dataIndex;
             const item = data[idx];
             const total = item.diagnosticValue + item.practiceValue;
-            const lines = [`Total: ${Number.isInteger(total) ? total : total.toFixed(1)} skills`];
+            const lines = [
+              `Total: ${Number.isInteger(total) ? total : total.toFixed(1)} skills`,
+            ];
             if (item.tooltipExtra) {
               lines.push(...item.tooltipExtra);
             }
@@ -203,11 +212,15 @@ export function StackedSkillsBarChart({
       <Legend title="Chart Key">
         <LegendGroup>
           <LegendItem
-            icon={<span className="inline-block w-3 h-3 rounded-sm bg-gray-300" />}
+            icon={
+              <span className="inline-block w-3 h-3 rounded-sm bg-gray-300" />
+            }
             label="Diagnostic Baseline"
           />
           <LegendItem
-            icon={<span className="inline-block w-3 h-3 rounded-sm bg-emerald-500" />}
+            icon={
+              <span className="inline-block w-3 h-3 rounded-sm bg-emerald-500" />
+            }
             label="Skills Mastered"
           />
         </LegendGroup>

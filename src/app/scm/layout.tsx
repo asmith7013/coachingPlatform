@@ -1,43 +1,47 @@
-import { Metadata } from 'next';
-import { getAuthenticatedUser } from '@/lib/server/auth';
-import { SCMNav } from './SCMNav';
-import { PublicSCMNav } from './PublicSCMNav';
+import { Metadata } from "next";
+import { getAuthenticatedUser } from "@/lib/server/auth";
+import { SCMNav } from "./SCMNav";
+import { PublicSCMNav } from "./PublicSCMNav";
 
 export const metadata: Metadata = {
-  title: 'SCM',
+  title: "SCM",
 };
 
-const ALLOWED_DOMAINS = ['schools.nyc.gov', 'teachinglab.org', 'teachinglabstudio.com'];
+const ALLOWED_DOMAINS = [
+  "schools.nyc.gov",
+  "teachinglab.org",
+  "teachinglabstudio.com",
+];
 
 const ALLOWED_NYC_EMAILS = [
-  'ADurant@schools.nyc.gov',
-  'YSanchez27@schools.nyc.gov',
-  'knewman7@schools.nyc.gov',
-  'JDeLancer3@schools.nyc.gov',
-  'pcompres@schools.nyc.gov',
-  'ccardona@schools.nyc.gov',
-  'hviery@schools.nyc.gov',
-  'EMorales5@schools.nyc.gov',
-  'eburnside@schools.nyc.gov',
-  'YDurant@schools.nyc.gov',
-  'mmalunga@schools.nyc.gov',
-  'NMcandrewesteve@schools.nyc.gov',
-  'codonnell11@schools.nyc.gov',
-  'dcolosimo@schools.nyc.gov',
-  'AKatechis@schools.nyc.gov',
-  'CMccarthy@schools.nyc.gov',
-  'asmith7013@gmail.com',
-  'kmcnickle@gmail.com',
-  'mrscardonagarcia@gmail.com',
-  'pcompres10@gmail.com',
-  'mmalunga2002@gmail.com',
-  'johnnydelancer@gmail.com'
+  "ADurant@schools.nyc.gov",
+  "YSanchez27@schools.nyc.gov",
+  "knewman7@schools.nyc.gov",
+  "JDeLancer3@schools.nyc.gov",
+  "pcompres@schools.nyc.gov",
+  "ccardona@schools.nyc.gov",
+  "hviery@schools.nyc.gov",
+  "EMorales5@schools.nyc.gov",
+  "eburnside@schools.nyc.gov",
+  "YDurant@schools.nyc.gov",
+  "mmalunga@schools.nyc.gov",
+  "NMcandrewesteve@schools.nyc.gov",
+  "codonnell11@schools.nyc.gov",
+  "dcolosimo@schools.nyc.gov",
+  "AKatechis@schools.nyc.gov",
+  "CMccarthy@schools.nyc.gov",
+  "asmith7013@gmail.com",
+  "kmcnickle@gmail.com",
+  "mrscardonagarcia@gmail.com",
+  "pcompres10@gmail.com",
+  "mmalunga2002@gmail.com",
+  "johnnydelancer@gmail.com",
 ];
 
 function isAllowedDomain(email: string | null | undefined): boolean {
   if (!email) return false;
 
-  const domain = email.split('@')[1];
+  const domain = email.split("@")[1];
   return ALLOWED_DOMAINS.includes(domain);
 }
 
@@ -66,9 +70,7 @@ export default async function SCMLayout({
     return (
       <div className="min-h-screen bg-gray-50">
         <PublicSCMNav />
-        <div className="p-6">
-          {children}
-        </div>
+        <div className="p-6">{children}</div>
       </div>
     );
   }
@@ -81,15 +83,17 @@ export default async function SCMLayout({
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md text-center">
           <div className="text-red-600 text-5xl mb-4">🚫</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Access Denied
+          </h1>
           <p className="text-gray-600 mb-4">
             Access to SCM is restricted to authorized email domains only.
           </p>
           <p className="text-sm text-gray-500 mb-6">
-            Allowed domains: {ALLOWED_DOMAINS.map(d => `@${d}`).join(', ')}
+            Allowed domains: {ALLOWED_DOMAINS.map((d) => `@${d}`).join(", ")}
           </p>
           <p className="text-sm text-gray-400 mb-6">
-            Your email: <strong>{email || 'Unknown'}</strong>
+            Your email: <strong>{email || "Unknown"}</strong>
           </p>
           <a
             href="/sign-out"
@@ -105,9 +109,7 @@ export default async function SCMLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       <SCMNav />
-      <div className="p-6">
-        {children}
-      </div>
+      <div className="p-6">{children}</div>
     </div>
   );
 }

@@ -42,7 +42,13 @@ export interface StudentActivityRecord {
  * Fetch all activity data with optional filters
  * NOW QUERIES student-activities collection instead of embedded arrays
  */
-export async function fetchActivityData(filters: ActivityDataFilters = {}): Promise<{ success: boolean; data?: StudentActivityRecord[]; error?: string }> {
+export async function fetchActivityData(
+  filters: ActivityDataFilters = {},
+): Promise<{
+  success: boolean;
+  data?: StudentActivityRecord[];
+  error?: string;
+}> {
   return withDbConnection(async () => {
     try {
       console.log("🔵 [fetchActivityData] Called with filters:", filters);
@@ -50,7 +56,7 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
       // Build MongoDB query for student-activities collection
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const query: any = {
-        gradeLevel: "8"
+        gradeLevel: "8",
       };
 
       if (filters.section) {
@@ -79,20 +85,28 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
         }
       }
 
-      console.log("🔵 [fetchActivityData] MongoDB query:", JSON.stringify(query, null, 2));
+      console.log(
+        "🔵 [fetchActivityData] MongoDB query:",
+        JSON.stringify(query, null, 2),
+      );
 
       // Fetch activities from dedicated collection
-      const activities = await StudentActivityModel.find(query)
-        .sort({ date: -1, studentName: 1 });
+      const activities = await StudentActivityModel.find(query).sort({
+        date: -1,
+        studentName: 1,
+      });
 
-      console.log("🔵 [fetchActivityData] Found activities:", activities.length);
+      console.log(
+        "🔵 [fetchActivityData] Found activities:",
+        activities.length,
+      );
 
       // Extract unique lesson IDs to fetch lesson names
-      const lessonIds = [...new Set(
-        activities
-          .map(a => a.lessonId)
-          .filter((id): id is string => !!id)
-      )];
+      const lessonIds = [
+        ...new Set(
+          activities.map((a) => a.lessonId).filter((id): id is string => !!id),
+        ),
+      ];
 
       // Fetch lesson names if there are any lesson IDs
       const lessonMap = new Map<string, string>();
@@ -102,9 +116,11 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
           lessonName: string;
         }
 
-        const lessons = await ScopeAndSequenceModel.find({
-          _id: { $in: lessonIds }
-        }).select('_id lessonName').lean() as unknown as LessonData[];
+        const lessons = (await ScopeAndSequenceModel.find({
+          _id: { $in: lessonIds },
+        })
+          .select("_id lessonName")
+          .lean()) as unknown as LessonData[];
 
         lessons.forEach((lesson) => {
           lessonMap.set(lesson._id.toString(), lesson.lessonName);
@@ -126,7 +142,9 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
           activityLabel: activityData.activityLabel,
           unitId: activityData.unitId,
           lessonId: activityData.lessonId,
-          lessonName: activityData.lessonId ? lessonMap.get(activityData.lessonId) : undefined,
+          lessonName: activityData.lessonId
+            ? lessonMap.get(activityData.lessonId)
+            : undefined,
           skillId: activityData.skillId,
           inquiryQuestion: activityData.inquiryQuestion,
           customDetail: activityData.customDetail,
@@ -136,7 +154,10 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
 
       return { success: true, data: records };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to fetch activity data") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to fetch activity data"),
+      };
     }
   });
 }
@@ -144,37 +165,45 @@ export async function fetchActivityData(filters: ActivityDataFilters = {}): Prom
 /**
  * Get activity summary statistics
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getActivitySummary(filters: ActivityDataFilters = {}): Promise<{ success: boolean; data?: any; error?: string }> {
+export async function getActivitySummary(
+  filters: ActivityDataFilters = {},
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<{ success: boolean; data?: any; error?: string }> {
   return withDbConnection(async () => {
     try {
       const result = await fetchActivityData(filters);
 
-      if (typeof result === 'string' || !result.success || !result.data) {
-        return { success: false, error: typeof result !== 'string' && result.error ? result.error : "Failed to fetch data" };
+      if (typeof result === "string" || !result.success || !result.data) {
+        return {
+          success: false,
+          error:
+            typeof result !== "string" && result.error
+              ? result.error
+              : "Failed to fetch data",
+        };
       }
 
       const records = result.data as StudentActivityRecord[];
 
       // Calculate statistics
       const totalActivities = records.length;
-      const uniqueStudents = new Set(records.map(r => r.studentId)).size;
+      const uniqueStudents = new Set(records.map((r) => r.studentId)).size;
 
       // Activities by type
       const byType: { [key: string]: number } = {};
-      records.forEach(r => {
+      records.forEach((r) => {
         byType[r.activityLabel] = (byType[r.activityLabel] || 0) + 1;
       });
 
       // Activities by date
       const byDate: { [key: string]: number } = {};
-      records.forEach(r => {
+      records.forEach((r) => {
         byDate[r.activityDate] = (byDate[r.activityDate] || 0) + 1;
       });
 
       // Activities by student
       const byStudent: { [key: string]: number } = {};
-      records.forEach(r => {
+      records.forEach((r) => {
         byStudent[r.studentName] = (byStudent[r.studentName] || 0) + 1;
       });
 
@@ -192,14 +221,20 @@ export async function getActivitySummary(filters: ActivityDataFilters = {}): Pro
           byType,
           byDate,
           topStudents,
-          dateRange: records.length > 0 ? {
-            earliest: records[records.length - 1].activityDate,
-            latest: records[0].activityDate,
-          } : null,
+          dateRange:
+            records.length > 0
+              ? {
+                  earliest: records[records.length - 1].activityDate,
+                  latest: records[0].activityDate,
+                }
+              : null,
         },
       };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to calculate summary") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to calculate summary"),
+      };
     }
   });
 }
@@ -207,13 +242,21 @@ export async function getActivitySummary(filters: ActivityDataFilters = {}): Pro
 /**
  * Export activity data as CSV
  */
-export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {}): Promise<{ success: boolean; data?: string; error?: string }> {
+export async function exportActivityDataAsCSV(
+  filters: ActivityDataFilters = {},
+): Promise<{ success: boolean; data?: string; error?: string }> {
   return withDbConnection(async () => {
     try {
       const result = await fetchActivityData(filters);
 
-      if (typeof result === 'string' || !result.success || !result.data) {
-        return { success: false, error: typeof result !== 'string' && result.error ? result.error : "Failed to fetch data" };
+      if (typeof result === "string" || !result.success || !result.data) {
+        return {
+          success: false,
+          error:
+            typeof result !== "string" && result.error
+              ? result.error
+              : "Failed to fetch data",
+        };
       }
 
       const records = result.data as StudentActivityRecord[];
@@ -233,7 +276,7 @@ export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {})
       ];
 
       // Generate CSV rows
-      const rows = records.map(r => [
+      const rows = records.map((r) => [
         r.studentName,
         r.section,
         r.activityDate,
@@ -248,7 +291,11 @@ export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {})
 
       // Escape CSV values
       const escapeCSV = (value: string) => {
-        if (value.includes(",") || value.includes('"') || value.includes("\n")) {
+        if (
+          value.includes(",") ||
+          value.includes('"') ||
+          value.includes("\n")
+        ) {
           return `"${value.replace(/"/g, '""')}"`;
         }
         return value;
@@ -257,14 +304,17 @@ export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {})
       // Build CSV string
       const csvLines = [
         headers.map(escapeCSV).join(","),
-        ...rows.map(row => row.map(v => escapeCSV(v.toString())).join(",")),
+        ...rows.map((row) => row.map((v) => escapeCSV(v.toString())).join(",")),
       ];
 
       const csv = csvLines.join("\n");
 
       return { success: true, data: csv };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to export CSV") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to export CSV"),
+      };
     }
   });
 }
@@ -274,11 +324,19 @@ export async function exportActivityDataAsCSV(filters: ActivityDataFilters = {})
  */
 export async function updateActivity(
   activityId: string,
-  updates: { activityDate?: string; activityType?: string; activityLabel?: string }
+  updates: {
+    activityDate?: string;
+    activityType?: string;
+    activityLabel?: string;
+  },
 ): Promise<{ success: boolean; error?: string }> {
   return withDbConnection(async () => {
     try {
-      const updateData: { date?: string; activityType?: string; activityLabel?: string } = {};
+      const updateData: {
+        date?: string;
+        activityType?: string;
+        activityLabel?: string;
+      } = {};
 
       if (updates.activityDate !== undefined) {
         updateData.date = updates.activityDate;
@@ -293,7 +351,7 @@ export async function updateActivity(
       const result = await StudentActivityModel.findByIdAndUpdate(
         activityId,
         { $set: updateData },
-        { new: true }
+        { new: true },
       );
 
       if (!result) {
@@ -302,7 +360,10 @@ export async function updateActivity(
 
       return { success: true };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to update activity") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to update activity"),
+      };
     }
   });
 }
@@ -310,7 +371,9 @@ export async function updateActivity(
 /**
  * Delete a single activity by ID
  */
-export async function deleteActivity(activityId: string): Promise<{ success: boolean; error?: string }> {
+export async function deleteActivity(
+  activityId: string,
+): Promise<{ success: boolean; error?: string }> {
   return withDbConnection(async () => {
     try {
       const result = await StudentActivityModel.findByIdAndDelete(activityId);
@@ -321,7 +384,10 @@ export async function deleteActivity(activityId: string): Promise<{ success: boo
 
       return { success: true };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "Failed to delete activity") };
+      return {
+        success: false,
+        error: handleServerError(error, "Failed to delete activity"),
+      };
     }
   });
 }

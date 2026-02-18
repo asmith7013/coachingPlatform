@@ -1,6 +1,7 @@
 # Worked Example Browser Wizard
 
 This folder contains the complete worked example creation system, including:
+
 - **UI components** (React wizard)
 - **AI prompting** (phases, templates, patterns)
 - **Server actions** (Claude API calls)
@@ -66,31 +67,31 @@ src/app/scm/workedExamples/create/
 Exports all AI content (markdown and HTML) as strings:
 
 ```typescript
-import { PEDAGOGY_RULES, GRAPH_SNIPPET, TECHNICAL_RULES } from './ai';
+import { PEDAGOGY_RULES, GRAPH_SNIPPET, TECHNICAL_RULES } from "./ai";
 ```
 
 ### lib/prompts.ts
 
 Imports from `../ai` and builds prompts for Claude API:
 
-| Function | Purpose |
-|----------|---------|
-| `ANALYZE_PROBLEM_SYSTEM_PROMPT` | Phase 1 system prompt with JSON schema |
-| `GENERATE_SLIDES_SYSTEM_PROMPT` | Phase 3 system prompt with templates |
-| `buildAnalyzePrompt()` | Builds user prompt with context |
-| `buildGenerateSlidesPrompt()` | Builds user prompt with pre-calculated coordinates |
+| Function                        | Purpose                                            |
+| ------------------------------- | -------------------------------------------------- |
+| `ANALYZE_PROBLEM_SYSTEM_PROMPT` | Phase 1 system prompt with JSON schema             |
+| `GENERATE_SLIDES_SYSTEM_PROMPT` | Phase 3 system prompt with templates               |
+| `buildAnalyzePrompt()`          | Builds user prompt with context                    |
+| `buildGenerateSlidesPrompt()`   | Builds user prompt with pre-calculated coordinates |
 
 ### lib/types.ts
 
 TypeScript interfaces for all data structures:
 
-| Interface | Purpose |
-|-----------|---------|
-| `WizardState` | Full wizard state (all steps) |
-| `ProblemAnalysis` | Claude's analysis output |
-| `StrategyDefinition` | Strategy name, moves, slide headers |
-| `Scenario` | Each scenario with context, numbers, graphPlan |
-| `GraphPlan` | Pre-calculated graph coordinates |
+| Interface            | Purpose                                        |
+| -------------------- | ---------------------------------------------- |
+| `WizardState`        | Full wizard state (all steps)                  |
+| `ProblemAnalysis`    | Claude's analysis output                       |
+| `StrategyDefinition` | Strategy name, moves, slide headers            |
+| `Scenario`           | Each scenario with context, numbers, graphPlan |
+| `GraphPlan`          | Pre-calculated graph coordinates               |
 
 ## Common Update Patterns
 
@@ -116,9 +117,9 @@ TypeScript interfaces for all data structures:
 
 Each scenario needs its own `graphPlan` for coordinate-graph problems:
 
-| Slides | Scenario | GraphPlan Source |
-|--------|----------|------------------|
-| 2-6 (Worked Example) | scenarios[0] | `scenarios[0].graphPlan` |
+| Slides                            | Scenario                   | GraphPlan Source          |
+| --------------------------------- | -------------------------- | ------------------------- |
+| 2-6 (Worked Example)              | scenarios[0]               | `scenarios[0].graphPlan`  |
 | 7 (Printable with Practice 1 & 2) | scenarios[1], scenarios[2] | Each scenario's graphPlan |
 
 **Never use `problemAnalysis.graphPlan` for slides** - that's the mastery check's graph.

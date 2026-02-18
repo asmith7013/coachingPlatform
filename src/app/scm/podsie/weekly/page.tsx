@@ -3,9 +3,18 @@
 import { useState, useMemo } from "react";
 import type { CurrentUnitInfo } from "@/app/actions/calendar/current-unit";
 import { Spinner } from "@/components/core/feedback/Spinner";
-import { CheckIcon, ClockIcon, XMarkIcon, ClipboardDocumentIcon } from "@heroicons/react/24/solid";
+import {
+  CheckIcon,
+  ClockIcon,
+  XMarkIcon,
+  ClipboardDocumentIcon,
+} from "@heroicons/react/24/solid";
 import { SectionSummaryCard } from "@/app/scm/podsie/pace/components";
-import { useWeeklyVelocity, useCurrentUnits, type SectionWeeklyData } from "@/hooks/scm";
+import {
+  useWeeklyVelocity,
+  useCurrentUnits,
+  type SectionWeeklyData,
+} from "@/hooks/scm";
 
 // Hardcoded sections for this page
 const SECTIONS = [
@@ -49,7 +58,11 @@ export default function WeeklySummaryPage() {
 
   // Data fetching with React Query hooks
   const { currentUnits } = useCurrentUnits(SCHOOL_YEAR);
-  const { sectionData, loading, error } = useWeeklyVelocity(SECTIONS, startDate, endDate);
+  const { sectionData, loading, error } = useWeeklyVelocity(
+    SECTIONS,
+    startDate,
+    endDate,
+  );
 
   // Calculate attendance percentages
   const getAttendancePercentages = (data: SectionWeeklyData) => {
@@ -65,14 +78,19 @@ export default function WeeklySummaryPage() {
 
   // Sorted sections data
   const sortedSections = useMemo(() => {
-    return SECTIONS.map(s => sectionData.get(s.section)).filter((d): d is SectionWeeklyData => d !== undefined);
+    return SECTIONS.map((s) => sectionData.get(s.section)).filter(
+      (d): d is SectionWeeklyData => d !== undefined,
+    );
   }, [sectionData]);
 
   // Get current unit info for a section
-  const getCurrentUnitForSection = (section: string, school: string): CurrentUnitInfo | null => {
+  const getCurrentUnitForSection = (
+    section: string,
+    school: string,
+  ): CurrentUnitInfo | null => {
     return (
       currentUnits.find(
-        (cu) => cu.school === school && cu.classSection === section
+        (cu) => cu.school === school && cu.classSection === section,
       ) || null
     );
   };
@@ -123,7 +141,10 @@ export default function WeeklySummaryPage() {
         <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
-              <label htmlFor="startDate" className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="startDate"
+                className="text-sm font-medium text-gray-700"
+              >
                 Start Date
               </label>
               <input
@@ -135,7 +156,10 @@ export default function WeeklySummaryPage() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <label htmlFor="endDate" className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="endDate"
+                className="text-sm font-medium text-gray-700"
+              >
                 End Date
               </label>
               <input
@@ -147,7 +171,10 @@ export default function WeeklySummaryPage() {
               />
             </div>
             <div className="flex items-center gap-2 ml-auto">
-              <label htmlFor="pacingDate" className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="pacingDate"
+                className="text-sm font-medium text-gray-700"
+              >
                 Pacing Date
               </label>
               <input
@@ -182,7 +209,9 @@ export default function WeeklySummaryPage() {
         {!loading && sortedSections.length > 0 && (
           <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
             <div className="flex items-center justify-between px-6 py-3 bg-gray-50 border-b">
-              <h2 className="text-lg font-semibold text-gray-900">Weekly Mastery & Attendance</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Weekly Mastery & Attendance
+              </h2>
               <button
                 onClick={handleCopyMarkdown}
                 className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer transition-colors"
@@ -211,28 +240,37 @@ export default function WeeklySummaryPage() {
                   return (
                     <tr key={data.section}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-lg font-bold text-gray-900">{data.section}</span>
+                        <span className="text-lg font-bold text-gray-900">
+                          {data.section}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="text-gray-900">
-                          {data.totalMasteryChecks} Mastery Checks ({data.masteryChecksPerStudent} per student)
+                          {data.totalMasteryChecks} Mastery Checks (
+                          {data.masteryChecksPerStudent} per student)
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
                           {/* Present - Green Check */}
                           <span className="flex items-center gap-1 text-sm">
-                            <span className="text-gray-900">{percentages.present}%</span>
+                            <span className="text-gray-900">
+                              {percentages.present}%
+                            </span>
                             <CheckIcon className="w-5 h-5 text-green-500" />
                           </span>
                           {/* Late - Yellow Clock */}
                           <span className="flex items-center gap-1 text-sm">
-                            <span className="text-gray-900">{percentages.late}%</span>
+                            <span className="text-gray-900">
+                              {percentages.late}%
+                            </span>
                             <ClockIcon className="w-5 h-5 text-yellow-500" />
                           </span>
                           {/* Absent - Red X */}
                           <span className="flex items-center gap-1 text-sm">
-                            <span className="text-gray-900">{percentages.absent}%</span>
+                            <span className="text-gray-900">
+                              {percentages.absent}%
+                            </span>
                             <XMarkIcon className="w-5 h-5 text-red-500" />
                           </span>
                         </div>
@@ -249,7 +287,9 @@ export default function WeeklySummaryPage() {
         {!loading && (
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Pacing Progress</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Pacing Progress
+              </h2>
               <div className="flex items-center gap-3 text-xs text-gray-600">
                 <span className="font-bold text-gray-700">Key:</span>
                 <span className="flex items-center gap-1">
@@ -295,7 +335,9 @@ export default function WeeklySummaryPage() {
         {/* No Data State */}
         {!loading && sortedSections.length === 0 && !error && (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <p className="text-gray-600">No data available for the selected date range</p>
+            <p className="text-gray-600">
+              No data available for the selected date range
+            </p>
           </div>
         )}
       </div>

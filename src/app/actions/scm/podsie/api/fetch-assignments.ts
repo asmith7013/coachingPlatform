@@ -14,22 +14,28 @@ import type { PodsieAssignmentInfo } from "../types";
  */
 const PodsieAssignedAssignmentsSchema = z.object({
   success: z.boolean(),
-  data: z.array(z.object({
-    group_name: z.string(),
-    assignment_name: z.string(),
-    assignment_id: z.number(),
-    module_name: z.string().nullish(),
-    assignment_url: z.string().optional(),
-    assignment_questions: z.array(z.object({
-      questions: z.object({
-        id: z.number(),
-        questionContent: z.object({
-          type: z.string(),
-          questionText: z.string(),
-        }).passthrough(),
-      }),
-    })),
-  })),
+  data: z.array(
+    z.object({
+      group_name: z.string(),
+      assignment_name: z.string(),
+      assignment_id: z.number(),
+      module_name: z.string().nullish(),
+      assignment_url: z.string().optional(),
+      assignment_questions: z.array(
+        z.object({
+          questions: z.object({
+            id: z.number(),
+            questionContent: z
+              .object({
+                type: z.string(),
+                questionText: z.string(),
+              })
+              .passthrough(),
+          }),
+        }),
+      ),
+    }),
+  ),
 });
 
 // =====================================
@@ -42,12 +48,20 @@ const PodsieAssignedAssignmentsSchema = z.object({
  */
 export async function fetchAssignedAssignments(
   studentEmail: string,
-  includeLessons?: boolean
-): Promise<{ success: boolean; assignments: PodsieAssignmentInfo[]; error?: string }> {
+  includeLessons?: boolean,
+): Promise<{
+  success: boolean;
+  assignments: PodsieAssignmentInfo[];
+  error?: string;
+}> {
   const token = process.env.PODSIE_API_TOKEN;
 
   if (!token) {
-    return { success: false, assignments: [], error: "PODSIE_API_TOKEN not configured" };
+    return {
+      success: false,
+      assignments: [],
+      error: "PODSIE_API_TOKEN not configured",
+    };
   }
 
   try {
@@ -61,9 +75,9 @@ export async function fetchAssignedAssignments(
         },
         body: JSON.stringify({
           email: studentEmail,
-          ...(includeLessons !== undefined && { includeLessons })
+          ...(includeLessons !== undefined && { includeLessons }),
         }),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -78,7 +92,10 @@ export async function fetchAssignedAssignments(
     const parseResult = PodsieAssignedAssignmentsSchema.safeParse(rawData);
 
     if (!parseResult.success) {
-      console.error("Podsie assigned-assignments validation failed:", parseResult.error.issues);
+      console.error(
+        "Podsie assigned-assignments validation failed:",
+        parseResult.error.issues,
+      );
       return {
         success: false,
         assignments: [],
@@ -88,18 +105,22 @@ export async function fetchAssignedAssignments(
 
     const data = parseResult.data;
     if (!data.success) {
-      return { success: false, assignments: [], error: "Podsie returned unsuccessful response" };
+      return {
+        success: false,
+        assignments: [],
+        error: "Podsie returned unsuccessful response",
+      };
     }
 
     // Transform to our format
-    const assignments: PodsieAssignmentInfo[] = data.data.map(a => ({
+    const assignments: PodsieAssignmentInfo[] = data.data.map((a) => ({
       assignmentId: a.assignment_id,
       assignmentName: a.assignment_name,
       groupName: a.group_name,
       moduleName: a.module_name,
       totalQuestions: a.assignment_questions.length,
-      questionIds: a.assignment_questions.map(q => q.questions.id),
-      questions: a.assignment_questions.map(q => q.questions), // Include full question data for variant analysis
+      questionIds: a.assignment_questions.map((q) => q.questions.id),
+      questions: a.assignment_questions.map((q) => q.questions), // Include full question data for variant analysis
     }));
 
     return { success: true, assignments };
@@ -117,7 +138,7 @@ export async function fetchAssignedAssignments(
  * Get a sample student email from a section for fetching assignments
  */
 export async function getSampleStudentEmailForSection(
-  section: string
+  section: string,
 ): Promise<{ success: boolean; email?: string; error?: string }> {
   try {
     const student = await withDbConnection(async () => {
@@ -131,7 +152,10 @@ export async function getSampleStudentEmailForSection(
     });
 
     if (!student || !student.email) {
-      return { success: false, error: "No student with email found in section" };
+      return {
+        success: false,
+        error: "No student with email found in section",
+      };
     }
 
     return { success: true, email: student.email };
@@ -149,8 +173,12 @@ export async function getSampleStudentEmailForSection(
  */
 export async function fetchAssignmentsForSection(
   section: string,
-  includeLessons?: boolean
-): Promise<{ success: boolean; assignments: PodsieAssignmentInfo[]; error?: string }> {
+  includeLessons?: boolean,
+): Promise<{
+  success: boolean;
+  assignments: PodsieAssignmentInfo[];
+  error?: string;
+}> {
   // Get a sample student email
   const emailResult = await getSampleStudentEmailForSection(section);
   if (!emailResult.success || !emailResult.email) {

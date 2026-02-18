@@ -17,7 +17,7 @@ import { handleServerError } from "@/lib/error/handlers/server";
  */
 export async function generateQuestionMapFromResponses(
   assignmentId: string,
-  email: string = "alexander.smith@teachinglab.org"
+  email: string = "alexander.smith@teachinglab.org",
 ) {
   try {
     // Fetch responses from Podsie
@@ -31,16 +31,19 @@ export async function generateQuestionMapFromResponses(
     }
 
     // Extract question IDs and sort by creation time (chronological order = question order)
-    const sortedResponses = [...responses].sort((a, b) =>
-      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    const sortedResponses = [...responses].sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     );
 
     // Generate question map - all questions are root questions
-    const questionMap: PodsieQuestionMap[] = sortedResponses.map((response, index) => ({
-      questionNumber: index + 1,
-      questionId: response.question_id.toString(),
-      isRoot: true,
-    }));
+    const questionMap: PodsieQuestionMap[] = sortedResponses.map(
+      (response, index) => ({
+        questionNumber: index + 1,
+        questionId: response.question_id.toString(),
+        isRoot: true,
+      }),
+    );
 
     return {
       success: true,
@@ -54,7 +57,10 @@ export async function generateQuestionMapFromResponses(
   } catch (error) {
     return {
       success: false,
-      error: handleServerError(error, "Failed to generate question map from responses"),
+      error: handleServerError(
+        error,
+        "Failed to generate question map from responses",
+      ),
     };
   }
 }
@@ -87,7 +93,7 @@ export async function saveQuestionMap(input: PodsieQuestionMapInput) {
           upsert: true,
           new: true,
           runValidators: true,
-        }
+        },
       );
 
       return {
@@ -114,7 +120,9 @@ export async function saveQuestionMap(input: PodsieQuestionMapInput) {
 export async function getQuestionMap(assignmentId: string) {
   return withDbConnection(async () => {
     try {
-      const questionMap = await PodsieQuestionMapModel.findOne({ assignmentId });
+      const questionMap = await PodsieQuestionMapModel.findOne({
+        assignmentId,
+      });
 
       if (!questionMap) {
         return {
@@ -148,12 +156,16 @@ export async function getQuestionMapByName(assignmentName: string) {
   return withDbConnection(async () => {
     try {
       // Try exact match first
-      let questionMap = await PodsieQuestionMapModel.findOne({ assignmentName });
+      let questionMap = await PodsieQuestionMapModel.findOne({
+        assignmentName,
+      });
 
       if (!questionMap) {
         // Try case-insensitive match
         questionMap = await PodsieQuestionMapModel.findOne({
-          assignmentName: { $regex: new RegExp(`^${escapeRegex(assignmentName)}$`, 'i') }
+          assignmentName: {
+            $regex: new RegExp(`^${escapeRegex(assignmentName)}$`, "i"),
+          },
         });
       }
 
@@ -161,7 +173,7 @@ export async function getQuestionMapByName(assignmentName: string) {
         // Try partial match - find maps where the name contains key parts
         // Normalize the search name: remove "Lesson X:", colons, etc.
         const normalizedSearch = assignmentName
-          .replace(/^(Lesson|Ramp Up)\s*\d+[:\s]*/i, '')
+          .replace(/^(Lesson|Ramp Up)\s*\d+[:\s]*/i, "")
           .trim()
           .toLowerCase();
 
@@ -173,15 +185,16 @@ export async function getQuestionMapByName(assignmentName: string) {
 
         for (const map of allMaps) {
           const normalizedMapName = map.assignmentName
-            .replace(/^(Lesson|Ramp Up)\s*\d+[:\s]*/i, '')
+            .replace(/^(Lesson|Ramp Up)\s*\d+[:\s]*/i, "")
             .trim()
             .toLowerCase();
 
           // Check if names are similar (contain same key words)
           const searchWords = normalizedSearch.split(/\s+/);
           const mapWords = normalizedMapName.split(/\s+/);
-          const commonWords = searchWords.filter(w => mapWords.includes(w));
-          const score = commonWords.length / Math.max(searchWords.length, mapWords.length);
+          const commonWords = searchWords.filter((w) => mapWords.includes(w));
+          const score =
+            commonWords.length / Math.max(searchWords.length, mapWords.length);
 
           if (score > bestScore && score >= 0.6) {
             bestScore = score;
@@ -195,7 +208,7 @@ export async function getQuestionMapByName(assignmentName: string) {
           return {
             success: true,
             data: serialized,
-            matchType: 'fuzzy' as const,
+            matchType: "fuzzy" as const,
             matchScore: bestScore,
           };
         }
@@ -209,7 +222,7 @@ export async function getQuestionMapByName(assignmentName: string) {
       return {
         success: true,
         data: questionMap.toJSON(),
-        matchType: 'exact' as const,
+        matchType: "exact" as const,
       };
     } catch (error) {
       return {
@@ -222,7 +235,7 @@ export async function getQuestionMapByName(assignmentName: string) {
 
 // Helper to escape regex special characters
 function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 // =====================================
@@ -265,7 +278,9 @@ export async function listQuestionMaps() {
 export async function deleteQuestionMap(assignmentId: string) {
   return withDbConnection(async () => {
     try {
-      const result = await PodsieQuestionMapModel.findOneAndDelete({ assignmentId });
+      const result = await PodsieQuestionMapModel.findOneAndDelete({
+        assignmentId,
+      });
 
       if (!result) {
         return {

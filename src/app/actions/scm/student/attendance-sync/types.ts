@@ -15,14 +15,14 @@ export interface AttendanceSyncResult {
   notTracked: number;
   errors?: string[];
   error?: string;
-  rawData?: unknown;  // Raw API response for debugging
+  rawData?: unknown; // Raw API response for debugging
 }
 
 /**
  * Options for attendance sync operations
  */
 export interface AttendanceSyncOptions {
-  startDate: string;  // ISO format YYYY-MM-DD
-  endDate?: string;   // Optional, defaults to today
-  school?: string;    // School code to filter students
+  startDate: string; // ISO format YYYY-MM-DD
+  endDate?: string; // Optional, defaults to today
+  school?: string; // School code to filter students
 }

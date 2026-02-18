@@ -1,53 +1,60 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
-import type { AssessmentScraperConfig } from '@/lib/schema/zod-schema/scm/assessment-scraper';
-import { GradeLevels } from '@/lib/schema/enum/shared-enums';
+import React, { useState } from "react";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/fields/Input";
+import type { AssessmentScraperConfig } from "@/lib/schema/zod-schema/scm/assessment-scraper";
+import { GradeLevels } from "@/lib/schema/enum/shared-enums";
 import {
   getScraperSectionOptions,
   getScraperConfigForSection,
-  type Sections313Type
-} from '@/lib/schema/enum/scm';
+  type SectionsType,
+} from "@/lib/schema/enum/scm";
 
 interface AssessmentScraperFormProps {
   onSubmit: (config: AssessmentScraperConfig) => void;
   isLoading: boolean;
 }
 
-export function AssessmentScraperForm({ onSubmit, isLoading }: AssessmentScraperFormProps) {
-  const [email] = useState('alex.smith@teachinglab.org');
-  const [password] = useState('rbx1KQD3fpv7qhd!erc');
-  const [selectedSection, setSelectedSection] = useState<Sections313Type | ''>('804');
+export function AssessmentScraperForm({
+  onSubmit,
+  isLoading,
+}: AssessmentScraperFormProps) {
+  const [email] = useState("alex.smith@teachinglab.org");
+  const [password] = useState("rbx1KQD3fpv7qhd!erc");
+  const [selectedSection, setSelectedSection] = useState<SectionsType | "">(
+    "804",
+  );
   const [selectedRoadmapIndex, setSelectedRoadmapIndex] = useState(0);
-  const [classes, setClasses] = useState('804');
-  const [roadmap, setRoadmap] = useState('Illustrative Math New York - 8th Grade');
-  const [studentGrade, setStudentGrade] = useState('8th Grade');
-  const [skillGrade, setSkillGrade] = useState('8th Grade');
-  const [schoolId] = useState('school-313');
+  const [classes, setClasses] = useState("804");
+  const [roadmap, setRoadmap] = useState(
+    "Illustrative Math New York - 8th Grade",
+  );
+  const [studentGrade, setStudentGrade] = useState("8th Grade");
+  const [skillGrade, setSkillGrade] = useState("8th Grade");
+  const [schoolId] = useState("school-313");
   const [delay] = useState(1000);
 
   const sectionOptions = getScraperSectionOptions();
 
   // Get current section config
   const currentSectionConfig = selectedSection
-    ? getScraperConfigForSection(selectedSection as Sections313Type)
+    ? getScraperConfigForSection(selectedSection as SectionsType)
     : undefined;
 
   // Check if current section has multiple roadmaps (e.g., 802)
   const hasMultipleRoadmaps = (currentSectionConfig?.configs.length || 0) > 1;
 
   // Handle section selection change
-  const handleSectionChange = (section: Sections313Type | '') => {
+  const handleSectionChange = (section: SectionsType | "") => {
     setSelectedSection(section);
     setSelectedRoadmapIndex(0); // Reset to first roadmap
 
     if (section) {
-      const config = getScraperConfigForSection(section as Sections313Type);
+      const config = getScraperConfigForSection(section as SectionsType);
       if (config && config.configs.length > 0) {
         const firstConfig = config.configs[0];
-        setClasses(firstConfig.classes.join(', '));
+        setClasses(firstConfig.classes.join(", "));
         setRoadmap(firstConfig.roadmap);
         setStudentGrade(firstConfig.studentGrade);
         setSkillGrade(firstConfig.skillGrade);
@@ -61,7 +68,7 @@ export function AssessmentScraperForm({ onSubmit, isLoading }: AssessmentScraper
 
     if (currentSectionConfig && currentSectionConfig.configs[index]) {
       const config = currentSectionConfig.configs[index];
-      setClasses(config.classes.join(', '));
+      setClasses(config.classes.join(", "));
       setRoadmap(config.roadmap);
       setStudentGrade(config.studentGrade);
       setSkillGrade(config.skillGrade);
@@ -74,16 +81,18 @@ export function AssessmentScraperForm({ onSubmit, isLoading }: AssessmentScraper
     const config: AssessmentScraperConfig = {
       credentials: {
         email,
-        password
+        password,
       },
       filters: {
-        classes: classes.split(',').map(c => c.trim()),
+        classes: classes.split(",").map((c) => c.trim()),
         roadmap,
-        studentGrade: studentGrade as typeof GradeLevels[keyof typeof GradeLevels],
-        skillGrade: skillGrade as typeof GradeLevels[keyof typeof GradeLevels]
+        studentGrade:
+          studentGrade as (typeof GradeLevels)[keyof typeof GradeLevels],
+        skillGrade:
+          skillGrade as (typeof GradeLevels)[keyof typeof GradeLevels],
       },
       schoolId,
-      delayBetweenActions: delay
+      delayBetweenActions: delay,
     };
 
     onSubmit(config);
@@ -103,7 +112,9 @@ export function AssessmentScraperForm({ onSubmit, isLoading }: AssessmentScraper
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Filters Section */}
         <div className="space-y-4 pt-4 border-t">
-          <h3 className="text-lg font-medium text-gray-900">Assessment Filters</h3>
+          <h3 className="text-lg font-medium text-gray-900">
+            Assessment Filters
+          </h3>
 
           {/* Section Preset Selector */}
           <div>
@@ -112,12 +123,14 @@ export function AssessmentScraperForm({ onSubmit, isLoading }: AssessmentScraper
             </label>
             <select
               value={selectedSection}
-              onChange={(e) => handleSectionChange(e.target.value as Sections313Type | '')}
+              onChange={(e) =>
+                handleSectionChange(e.target.value as SectionsType | "")
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               disabled={isLoading}
             >
               <option value="">Manual Entry (No Preset)</option>
-              {sectionOptions.map(option => (
+              {sectionOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
@@ -143,19 +156,23 @@ export function AssessmentScraperForm({ onSubmit, isLoading }: AssessmentScraper
                     disabled={isLoading}
                     className={`
                       flex-1 px-4 py-2 rounded-md font-medium transition-colors
-                      ${selectedRoadmapIndex === index
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                      ${
+                        selectedRoadmapIndex === index
+                          ? "bg-blue-600 text-white"
+                          : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
                       }
-                      ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                      ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
                     `}
                   >
-                    {config.roadmap.includes('Algebra') ? 'Algebra 1' : '8th Grade'}
+                    {config.roadmap.includes("Algebra")
+                      ? "Algebra 1"
+                      : "8th Grade"}
                   </button>
                 ))}
               </div>
               <p className="mt-2 text-sm text-gray-600">
-                ℹ️ This section requires scraping both roadmaps separately. Select which one to scrape now.
+                ℹ️ This section requires scraping both roadmaps separately.
+                Select which one to scrape now.
               </p>
             </div>
           )}
@@ -198,15 +215,10 @@ export function AssessmentScraperForm({ onSubmit, isLoading }: AssessmentScraper
           />
         </div>
 
-
         {/* Submit Button */}
         <div className="pt-4">
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full"
-          >
-            {isLoading ? 'Scraping...' : 'Scrape & Update Student Data'}
+          <Button type="submit" disabled={isLoading} className="w-full">
+            {isLoading ? "Scraping..." : "Scrape & Update Student Data"}
           </Button>
         </div>
       </form>

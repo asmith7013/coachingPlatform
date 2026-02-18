@@ -47,4 +47,8 @@ export interface ExistingMapping {
 }
 
 // Re-export for convenience
-export type { PodsieQuestionMap, CurriculumAssignmentSummary, ExportQuestionMapResult };
+export type {
+  PodsieQuestionMap,
+  CurriculumAssignmentSummary,
+  ExportQuestionMapResult,
+};

@@ -56,7 +56,7 @@ interface SectionSyncResult {
 async function syncAssignment(
   classSection: string,
   assignment: AssignmentContent,
-  school?: string
+  school?: string,
 ): Promise<{ success: number; failed: number; errors: string[] }> {
   const activities = assignment.podsieActivities || [];
   if (activities.length === 0) {
@@ -70,17 +70,20 @@ async function syncAssignment(
 
   for (const activity of activities) {
     const activityTypeLabel =
-      activity.activityType === 'mastery-check' ? 'Mastery Check' :
-      activity.activityType === 'assessment' ? 'Assessment' :
-      'Sidekick';
+      activity.activityType === "mastery-check"
+        ? "Mastery Check"
+        : activity.activityType === "assessment"
+          ? "Assessment"
+          : "Sidekick";
 
     // Validate required data before sync
-    const rootQuestions = activity.podsieQuestionMap
-      ?.filter(q => q.isRoot !== false) || [];
+    const rootQuestions =
+      activity.podsieQuestionMap?.filter((q) => q.isRoot !== false) || [];
 
-    const baseQuestionIds = rootQuestions.length > 0
-      ? rootQuestions.map(q => Number(q.questionId))
-      : [];
+    const baseQuestionIds =
+      rootQuestions.length > 0
+        ? rootQuestions.map((q) => Number(q.questionId))
+        : [];
 
     if (baseQuestionIds.length === 0) {
       const errorMsg = `${assignment.lessonName} (${activityTypeLabel}): Empty question map`;
@@ -92,7 +95,7 @@ async function syncAssignment(
 
     // Build questionIdToNumber map
     const questionIdToNumber: { [questionId: string]: number } = {};
-    rootQuestions.forEach(q => {
+    rootQuestions.forEach((q) => {
       questionIdToNumber[q.questionId] = q.questionNumber;
     });
 
@@ -105,10 +108,12 @@ async function syncAssignment(
     }
 
     try {
-      const parts = assignment.unitLessonId.split('.');
+      const parts = assignment.unitLessonId.split(".");
       const unitCode = `${assignment.grade}.${parts[0]}`;
 
-      console.log(`  [Sync] ${assignment.unitLessonId} - ${activityTypeLabel}: ${baseQuestionIds.length} questions`);
+      console.log(
+        `  [Sync] ${assignment.unitLessonId} - ${activityTypeLabel}: ${baseQuestionIds.length} questions`,
+      );
 
       const result = await syncSectionRampUpProgress(
         classSection,
@@ -119,16 +124,21 @@ async function syncAssignment(
         activity.totalQuestions || 0,
         {
           baseQuestionIds,
-          questionIdToNumber: Object.keys(questionIdToNumber).length > 0 ? questionIdToNumber : undefined,
+          questionIdToNumber:
+            Object.keys(questionIdToNumber).length > 0
+              ? questionIdToNumber
+              : undefined,
           variations: activity.variations ?? 3,
           q1HasVariations: activity.q1HasVariations ?? false,
-          activityType: activity.activityType
+          activityType: activity.activityType,
         },
-        school
+        school,
       );
 
       if (result.success) {
-        console.log(`    ✓ ${result.successfulSyncs}/${result.totalStudents} students synced`);
+        console.log(
+          `    ✓ ${result.successfulSyncs}/${result.totalStudents} students synced`,
+        );
         success++;
       } else {
         const errorMsg = `${assignment.lessonName} (${activityTypeLabel}): ${result.error || `${result.failedSyncs} students failed`}`;
@@ -137,7 +147,7 @@ async function syncAssignment(
         failed++;
       }
     } catch (err) {
-      const errorMsg = `${assignment.lessonName} (${activityTypeLabel}): ${err instanceof Error ? err.message : 'Unknown error'}`;
+      const errorMsg = `${assignment.lessonName} (${activityTypeLabel}): ${err instanceof Error ? err.message : "Unknown error"}`;
       console.error(`    ✗ ${errorMsg}`, err);
       errors.push(errorMsg);
       failed++;
@@ -157,14 +167,16 @@ async function syncAssignment(
  * @param options - Optional sync options including school filter
  */
 export async function syncCurrentUnits(
-  options: SyncCurrentUnitsOptions = {}
+  options: SyncCurrentUnitsOptions = {},
 ): Promise<SyncCurrentUnitsResult> {
-  console.log('🚀 Starting current units sync...');
+  console.log("🚀 Starting current units sync...");
   if (options.school) {
     console.log(`📍 Filtering to school: ${options.school}`);
   }
   if (options.chunk && options.chunkSize) {
-    console.log(`📦 Processing chunk ${options.chunk} (${options.chunkSize} sections per chunk)`);
+    console.log(
+      `📦 Processing chunk ${options.chunk} (${options.chunkSize} sections per chunk)`,
+    );
   }
   const startTime = Date.now();
 
@@ -176,24 +188,32 @@ export async function syncCurrentUnits(
     successfulSyncs: 0,
     failedSyncs: 0,
     errors: [],
-    sectionResults: []
+    sectionResults: [],
   };
 
   try {
     // Step 1: Load all sections and current units
-    console.log('\n📋 Loading sections and current units...');
+    console.log("\n📋 Loading sections and current units...");
     const [sectionsResult, currentUnitsResult] = await Promise.all([
       getAllSectionConfigs(),
-      getCurrentUnitsForAllSections(SCHOOL_YEAR)
+      getCurrentUnitsForAllSections(SCHOOL_YEAR),
     ]);
 
     if (!sectionsResult.success || !sectionsResult.data) {
-      result.errors.push('Failed to load sections: ' + ('error' in sectionsResult ? sectionsResult.error : 'Unknown error'));
+      result.errors.push(
+        "Failed to load sections: " +
+          ("error" in sectionsResult ? sectionsResult.error : "Unknown error"),
+      );
       return result;
     }
 
     if (!currentUnitsResult.success || !currentUnitsResult.data) {
-      result.errors.push('Failed to load current units: ' + ('error' in currentUnitsResult ? currentUnitsResult.error : 'Unknown error'));
+      result.errors.push(
+        "Failed to load current units: " +
+          ("error" in currentUnitsResult
+            ? currentUnitsResult.error
+            : "Unknown error"),
+      );
       return result;
     }
 
@@ -212,35 +232,48 @@ export async function syncCurrentUnits(
           id: section.id,
           school: schoolGroup.school,
           classSection: section.classSection,
-          gradeLevel: section.gradeLevel
+          gradeLevel: section.gradeLevel,
         });
       });
     });
 
     // Filter to sections that have current units
-    let sectionsWithCurrentUnits = currentUnitsResult.data.filter(cu => cu.currentUnit !== null);
+    let sectionsWithCurrentUnits = currentUnitsResult.data.filter(
+      (cu) => cu.currentUnit !== null,
+    );
 
     // Filter by school if provided
     if (options.school) {
-      sectionsWithCurrentUnits = sectionsWithCurrentUnits.filter(cu => cu.school === options.school);
+      sectionsWithCurrentUnits = sectionsWithCurrentUnits.filter(
+        (cu) => cu.school === options.school,
+      );
     }
 
     const totalSectionsBeforeChunking = sectionsWithCurrentUnits.length;
-    console.log(`📊 Found ${totalSectionsBeforeChunking} sections with active current units`);
+    console.log(
+      `📊 Found ${totalSectionsBeforeChunking} sections with active current units`,
+    );
 
     // Apply chunking if specified
     if (options.chunk && options.chunkSize) {
       const startIndex = (options.chunk - 1) * options.chunkSize;
       const endIndex = startIndex + options.chunkSize;
-      const totalChunks = Math.ceil(totalSectionsBeforeChunking / options.chunkSize);
+      const totalChunks = Math.ceil(
+        totalSectionsBeforeChunking / options.chunkSize,
+      );
 
-      sectionsWithCurrentUnits = sectionsWithCurrentUnits.slice(startIndex, endIndex);
-      console.log(`📦 Chunk ${options.chunk}/${totalChunks}: Processing sections ${startIndex + 1}-${Math.min(endIndex, totalSectionsBeforeChunking)} of ${totalSectionsBeforeChunking}`);
+      sectionsWithCurrentUnits = sectionsWithCurrentUnits.slice(
+        startIndex,
+        endIndex,
+      );
+      console.log(
+        `📦 Chunk ${options.chunk}/${totalChunks}: Processing sections ${startIndex + 1}-${Math.min(endIndex, totalSectionsBeforeChunking)} of ${totalSectionsBeforeChunking}`,
+      );
     }
 
     if (sectionsWithCurrentUnits.length === 0) {
       result.success = true;
-      result.errors.push('No sections have current units scheduled for today');
+      result.errors.push("No sections have current units scheduled for today");
       return result;
     }
 
@@ -254,7 +287,9 @@ export async function syncCurrentUnits(
         continue;
       }
 
-      console.log(`\n📚 Processing ${currentUnitInfo.school} - ${currentUnitInfo.classSection} (Unit ${currentUnitInfo.currentUnit})`);
+      console.log(
+        `\n📚 Processing ${currentUnitInfo.school} - ${currentUnitInfo.classSection} (Unit ${currentUnitInfo.currentUnit})`,
+      );
 
       const sectionResult: SectionSyncResult = {
         school: currentUnitInfo.school,
@@ -263,33 +298,42 @@ export async function syncCurrentUnits(
         assignmentsProcessed: 0,
         activitiesSynced: 0,
         activitiesFailed: 0,
-        errors: []
+        errors: [],
       };
 
       try {
         // Load assignment content
-        const contentResult = await getAssignmentContent(currentUnitInfo.school, currentUnitInfo.classSection);
+        const contentResult = await getAssignmentContent(
+          currentUnitInfo.school,
+          currentUnitInfo.classSection,
+        );
 
         if (!contentResult.success || !contentResult.data) {
-          sectionResult.errors.push('Failed to load assignment content');
+          sectionResult.errors.push("Failed to load assignment content");
           result.sectionResults.push(sectionResult);
           continue;
         }
 
         // Filter assignments to current unit only
-        const currentUnitAssignments = contentResult.data.filter(a => {
-          const parts = a.unitLessonId.split('.');
+        const currentUnitAssignments = contentResult.data.filter((a) => {
+          const parts = a.unitLessonId.split(".");
           const unitNum = parseInt(parts[0]);
           return unitNum === currentUnitInfo.currentUnit;
         });
 
-        console.log(`  Found ${currentUnitAssignments.length} assignments in Unit ${currentUnitInfo.currentUnit}`);
+        console.log(
+          `  Found ${currentUnitAssignments.length} assignments in Unit ${currentUnitInfo.currentUnit}`,
+        );
         result.totalSections++;
         result.totalAssignments += currentUnitAssignments.length;
 
         // Sync each assignment
         for (const assignment of currentUnitAssignments) {
-          const syncResult = await syncAssignment(currentUnitInfo.classSection, assignment, currentUnitInfo.school);
+          const syncResult = await syncAssignment(
+            currentUnitInfo.classSection,
+            assignment,
+            currentUnitInfo.school,
+          );
 
           sectionResult.assignmentsProcessed++;
           sectionResult.activitiesSynced += syncResult.success;
@@ -301,7 +345,7 @@ export async function syncCurrentUnits(
           result.failedSyncs += syncResult.failed;
         }
       } catch (err) {
-        const errorMsg = `Error processing section: ${err instanceof Error ? err.message : 'Unknown error'}`;
+        const errorMsg = `Error processing section: ${err instanceof Error ? err.message : "Unknown error"}`;
         sectionResult.errors.push(errorMsg);
         result.errors.push(`${currentUnitInfo.classSection}: ${errorMsg}`);
       }
@@ -318,10 +362,11 @@ export async function syncCurrentUnits(
 
     result.success = result.failedSyncs === 0;
     return result;
-
   } catch (error) {
-    result.errors.push(`Fatal error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    console.error('💥 Fatal error during sync:', error);
+    result.errors.push(
+      `Fatal error: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
+    console.error("💥 Fatal error during sync:", error);
     return result;
   }
 }

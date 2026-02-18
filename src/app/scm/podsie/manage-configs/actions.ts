@@ -16,7 +16,7 @@ export async function updateQuestionMapping(
   scopeAndSequenceId: string,
   podsieAssignmentId: string,
   questionMapIndex: number,
-  updatedQuestion: PodsieQuestionMap
+  updatedQuestion: PodsieQuestionMap,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     return await withDbConnection(async () => {
@@ -26,18 +26,18 @@ export async function updateQuestionMapping(
       if (!config) {
         return {
           success: false,
-          error: "Section config not found"
+          error: "Section config not found",
         };
       }
 
       // Find the assignment content
-      const assignmentContent = (config.assignmentContent as unknown as Array<{
+      const assignmentContent = config.assignmentContent as unknown as Array<{
         scopeAndSequenceId: string;
         podsieActivities: Array<{
           podsieAssignmentId: string;
           podsieQuestionMap?: PodsieQuestionMap[];
         }>;
-      }>);
+      }>;
 
       let updated = false;
 
@@ -45,12 +45,15 @@ export async function updateQuestionMapping(
         if (content.scopeAndSequenceId.toString() === scopeAndSequenceId) {
           // Find the specific activity
           const activity = content.podsieActivities?.find(
-            a => a.podsieAssignmentId === podsieAssignmentId
+            (a) => a.podsieAssignmentId === podsieAssignmentId,
           );
 
           if (activity && activity.podsieQuestionMap) {
             // Update the specific question at the index
-            if (questionMapIndex >= 0 && questionMapIndex < activity.podsieQuestionMap.length) {
+            if (
+              questionMapIndex >= 0 &&
+              questionMapIndex < activity.podsieQuestionMap.length
+            ) {
               activity.podsieQuestionMap[questionMapIndex] = updatedQuestion;
               updated = true;
               break;
@@ -62,20 +65,20 @@ export async function updateQuestionMapping(
       if (!updated) {
         return {
           success: false,
-          error: "Question not found in mapping"
+          error: "Question not found in mapping",
         };
       }
 
       // Mark the field as modified to ensure Mongoose saves it
-      config.markModified('assignmentContent');
+      config.markModified("assignmentContent");
 
       // Save the config
       await config.save();
 
       // Revalidate relevant paths
-      revalidatePath('/scm/roadmaps/manage-configs');
-      revalidatePath('/scm/roadmaps/section-configs');
-      revalidatePath('/scm/podsie/progress');
+      revalidatePath("/scm/roadmaps/manage-configs");
+      revalidatePath("/scm/roadmaps/section-configs");
+      revalidatePath("/scm/podsie/progress");
 
       return { success: true };
     });
@@ -83,7 +86,7 @@ export async function updateQuestionMapping(
     console.error("Error updating question mapping:", error);
     return {
       success: false,
-      error: handleServerError(error, "Failed to update question mapping")
+      error: handleServerError(error, "Failed to update question mapping"),
     };
   }
 }
@@ -97,30 +100,38 @@ export async function updateActivityConfig(
   classSection: string,
   scopeAndSequenceId: string,
   podsieAssignmentId: string,
-  field: 'totalQuestions' | 'variations' | 'q1HasVariations',
-  value: number | boolean
+  field: "totalQuestions" | "variations" | "q1HasVariations",
+  value: number | boolean,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     return await withDbConnection(async () => {
       // Validate input
-      if (field === 'variations' && typeof value === 'number' && (value < 0 || value > 10)) {
+      if (
+        field === "variations" &&
+        typeof value === "number" &&
+        (value < 0 || value > 10)
+      ) {
         return {
           success: false,
-          error: "Variations must be between 0 and 10"
+          error: "Variations must be between 0 and 10",
         };
       }
 
-      if (field === 'totalQuestions' && typeof value === 'number' && value < 1) {
+      if (
+        field === "totalQuestions" &&
+        typeof value === "number" &&
+        value < 1
+      ) {
         return {
           success: false,
-          error: "Total questions must be at least 1"
+          error: "Total questions must be at least 1",
         };
       }
 
-      if (field === 'q1HasVariations' && typeof value !== 'boolean') {
+      if (field === "q1HasVariations" && typeof value !== "boolean") {
         return {
           success: false,
-          error: "q1HasVariations must be a boolean"
+          error: "q1HasVariations must be a boolean",
         };
       }
 
@@ -130,12 +141,12 @@ export async function updateActivityConfig(
       if (!config) {
         return {
           success: false,
-          error: "Section config not found"
+          error: "Section config not found",
         };
       }
 
       // Find the assignment content
-      const assignmentContent = (config.assignmentContent as unknown as Array<{
+      const assignmentContent = config.assignmentContent as unknown as Array<{
         scopeAndSequenceId: string;
         podsieActivities: Array<{
           podsieAssignmentId: string;
@@ -143,7 +154,7 @@ export async function updateActivityConfig(
           variations?: number;
           q1HasVariations?: boolean;
         }>;
-      }>);
+      }>;
 
       let updated = false;
 
@@ -151,16 +162,16 @@ export async function updateActivityConfig(
         if (content.scopeAndSequenceId.toString() === scopeAndSequenceId) {
           // Find the specific activity
           const activity = content.podsieActivities?.find(
-            a => a.podsieAssignmentId === podsieAssignmentId
+            (a) => a.podsieAssignmentId === podsieAssignmentId,
           );
 
           if (activity) {
             // Update the field
-            if (field === 'totalQuestions') {
+            if (field === "totalQuestions") {
               activity.totalQuestions = value as number;
-            } else if (field === 'variations') {
+            } else if (field === "variations") {
               activity.variations = value as number;
-            } else if (field === 'q1HasVariations') {
+            } else if (field === "q1HasVariations") {
               activity.q1HasVariations = value as boolean;
             }
             updated = true;
@@ -172,20 +183,20 @@ export async function updateActivityConfig(
       if (!updated) {
         return {
           success: false,
-          error: "Assignment activity not found"
+          error: "Assignment activity not found",
         };
       }
 
       // Mark the field as modified to ensure Mongoose saves it
-      config.markModified('assignmentContent');
+      config.markModified("assignmentContent");
 
       // Save the config
       await config.save();
 
       // Revalidate relevant paths
-      revalidatePath('/scm/roadmaps/manage-configs');
-      revalidatePath('/scm/roadmaps/section-configs');
-      revalidatePath('/scm/podsie/progress');
+      revalidatePath("/scm/roadmaps/manage-configs");
+      revalidatePath("/scm/roadmaps/section-configs");
+      revalidatePath("/scm/podsie/progress");
 
       return { success: true };
     });
@@ -193,7 +204,10 @@ export async function updateActivityConfig(
     console.error("Error updating activity config:", error);
     return {
       success: false,
-      error: handleServerError(error, "Failed to update activity configuration")
+      error: handleServerError(
+        error,
+        "Failed to update activity configuration",
+      ),
     };
   }
 }

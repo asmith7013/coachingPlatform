@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 
 interface DashboardHeaderProps {
   onReset: () => void;
@@ -11,9 +11,10 @@ export function DashboardHeader({ onReset }: DashboardHeaderProps) {
     <div className="mb-8">
       <h1 className="text-3xl font-bold text-gray-900">IM Scraper Tool</h1>
       <p className="mt-2 text-lg text-gray-600">
-        Extract cooldown content from Illustrative Mathematics curriculum lessons
+        Extract cooldown content from Illustrative Mathematics curriculum
+        lessons
       </p>
-      
+
       <div className="mt-4">
         <button
           onClick={onReset}

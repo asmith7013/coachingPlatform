@@ -9,33 +9,36 @@ export const SyncResultZodSchema = z.object({
   successfulRows: z.number().optional(),
   failedRows: z.number().optional(),
   zearnCompletions: z.number().optional(),
-  snorklCompletions: z.number().optional()
+  snorklCompletions: z.number().optional(),
 });
-
 
 export const ExportResultZodSchema = z.object({
   totalRowsExported: z.number(),
-  processedSheets: z.array(z.object({
-    name: z.string(),
-    rowsExported: z.number(),
-    duplicatesFound: z.boolean(),
-    error: z.string().optional()
-  })),
+  processedSheets: z.array(
+    z.object({
+      name: z.string(),
+      rowsExported: z.number(),
+      duplicatesFound: z.boolean(),
+      error: z.string().optional(),
+    }),
+  ),
   duplicatesFound: z.boolean(),
-  duplicateDetails: z.array(z.object({
-    existing: z.string(),
-    new: z.string(),
-    studentId: z.string()
-  })),
-  syncResult: SyncResultZodSchema.optional()
+  duplicateDetails: z.array(
+    z.object({
+      existing: z.string(),
+      new: z.string(),
+      studentId: z.string(),
+    }),
+  ),
+  syncResult: SyncResultZodSchema.optional(),
 });
 
 export const ExportConfigZodSchema = z.object({
   spreadsheetId: z.string().min(1, "Spreadsheet ID is required"),
   userEmail: z.string().email("Valid email required"),
   dryRun: z.boolean().default(false),
-  syncToMongoDB: z.boolean().default(false)
+  syncToMongoDB: z.boolean().default(false),
 });
 
 export type ExportResult = z.infer<typeof ExportResultZodSchema>;
-export type ExportConfig = z.infer<typeof ExportConfigZodSchema>; 
+export type ExportConfig = z.infer<typeof ExportConfigZodSchema>;

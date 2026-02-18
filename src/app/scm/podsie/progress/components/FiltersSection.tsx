@@ -4,7 +4,10 @@ import { UnitOption } from "../types";
 interface FiltersSectionProps {
   // Section filter - uses composite value "school|section" for unique identification
   selectedSection: string;
-  sectionGroups: Array<{ school: string; sections: Array<{ value: string; label: string }> }>;
+  sectionGroups: Array<{
+    school: string;
+    sections: Array<{ value: string; label: string }>;
+  }>;
   onSectionChange: (section: string) => void;
 
   // Unit filter
@@ -15,7 +18,12 @@ interface FiltersSectionProps {
 
   // Lesson section filter
   selectedLessonSection: string;
-  sectionOptions: Array<{ id: string; name: string; count: number; inStock: boolean }>;
+  sectionOptions: Array<{
+    id: string;
+    name: string;
+    count: number;
+    inStock: boolean;
+  }>;
   loadingLessons: boolean;
   onLessonSectionChange: (section: string) => void;
 }
@@ -94,48 +102,54 @@ export function FiltersSection({
               {!selectedSection
                 ? "Select section first"
                 : loadingUnits
-                ? "Loading units..."
-                : units.length === 0
-                ? "No units available"
-                : "Select Unit"}
+                  ? "Loading units..."
+                  : units.length === 0
+                    ? "No units available"
+                    : "Select Unit"}
             </option>
             {/* For section 802, group by grade type */}
             {selectedSection === "802" ? (
               <>
                 {/* Algebra 1 (Grade 8) Units */}
-                {units.filter(u => u.grade === "8").length > 0 && (
+                {units.filter((u) => u.grade === "8").length > 0 && (
                   <optgroup label="Algebra 1 (Grade 8)">
                     {units
-                      .filter(u => u.grade === "8")
+                      .filter((u) => u.grade === "8")
                       .map((unit) => (
-                      <option key={`alg1-g8-${unit.unitNumber}`} value={unit.unitNumber}>
-                        {unit.unitName}
-                      </option>
-                    ))}
-                </optgroup>
-              )}
-              {/* Algebra 1 (Algebra Grade) Units */}
-              {units.filter(u => u.grade !== "8").length > 0 && (
-                <optgroup label="Algebra 1">
-                  {units
-                    .filter(u => u.grade !== "8")
-                    .map((unit) => (
-                      <option key={`alg1-galg1-${unit.unitNumber}`} value={unit.unitNumber}>
-                        {unit.unitName}
-                      </option>
-                    ))}
-                </optgroup>
-              )}
-            </>
-          ) : (
-            /* Regular units for other sections */
-            units.map((unit) => (
-              <option key={unit.unitNumber} value={unit.unitNumber}>
-                {unit.unitName}
-              </option>
-            ))
-          )}
-        </select>
+                        <option
+                          key={`alg1-g8-${unit.unitNumber}`}
+                          value={unit.unitNumber}
+                        >
+                          {unit.unitName}
+                        </option>
+                      ))}
+                  </optgroup>
+                )}
+                {/* Algebra 1 (Algebra Grade) Units */}
+                {units.filter((u) => u.grade !== "8").length > 0 && (
+                  <optgroup label="Algebra 1">
+                    {units
+                      .filter((u) => u.grade !== "8")
+                      .map((unit) => (
+                        <option
+                          key={`alg1-galg1-${unit.unitNumber}`}
+                          value={unit.unitNumber}
+                        >
+                          {unit.unitName}
+                        </option>
+                      ))}
+                  </optgroup>
+                )}
+              </>
+            ) : (
+              /* Regular units for other sections */
+              units.map((unit) => (
+                <option key={unit.unitNumber} value={unit.unitNumber}>
+                  {unit.unitName}
+                </option>
+              ))
+            )}
+          </select>
         </div>
       </div>
 
@@ -159,7 +173,9 @@ export function FiltersSection({
                     No lessons found for Unit {selectedUnit}
                   </div>
                   <div className="text-sm text-blue-700">
-                    This unit doesn&apos;t have any assigned lessons yet. Try selecting a different unit or check the section configuration.
+                    This unit doesn&apos;t have any assigned lessons yet. Try
+                    selecting a different unit or check the section
+                    configuration.
                   </div>
                 </div>
               </div>

@@ -1,40 +1,42 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import { PDFExtractorState, GRADE_OPTIONS } from './types';
+import { useState, useRef } from "react";
+import { PDFExtractorState, GRADE_OPTIONS } from "./types";
 import {
   processPDF,
   getPDFPageCount,
   sanitizeTitle,
   saveFilesToPublic,
   parseTitles,
-  validateForm
-} from './utils';
+  validateForm,
+} from "./utils";
 
 export default function PDFSavePage() {
   const [state, setState] = useState<PDFExtractorState>({
     selectedFile: null,
-    grade: '',
+    grade: "",
     unit: 1,
-    titles: '',
+    titles: "",
     pageCount: 0,
     isProcessing: false,
     extractedImages: [],
-    error: '',
-    success: ''
+    error: "",
+    success: "",
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateState = (updates: Partial<PDFExtractorState>) => {
-    setState(prev => ({ ...prev, ...updates }));
+    setState((prev) => ({ ...prev, ...updates }));
   };
 
   const clearMessages = () => {
-    updateState({ error: '', success: '' });
+    updateState({ error: "", success: "" });
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -45,15 +47,21 @@ export default function PDFSavePage() {
       const pageCount = await getPDFPageCount(file);
       updateState({ pageCount });
     } catch (error) {
-      updateState({ 
-        error: `Failed to load PDF: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        selectedFile: null 
+      updateState({
+        error: `Failed to load PDF: ${error instanceof Error ? error.message : "Unknown error"}`,
+        selectedFile: null,
       });
     }
   };
 
   const validateCurrentForm = (): string | null => {
-    return validateForm(state.selectedFile, state.grade, state.unit, state.titles, state.pageCount);
+    return validateForm(
+      state.selectedFile,
+      state.grade,
+      state.unit,
+      state.titles,
+      state.pageCount,
+    );
   };
 
   const handleProcess = async () => {
@@ -65,7 +73,7 @@ export default function PDFSavePage() {
 
     if (!state.selectedFile) return;
 
-    updateState({ isProcessing: true, error: '', success: '' });
+    updateState({ isProcessing: true, error: "", success: "" });
 
     try {
       // Process PDF and extract images
@@ -80,12 +88,12 @@ export default function PDFSavePage() {
 
       updateState({
         success: `Successfully processed ${images.length} pages. Downloaded zip file: curricula-${state.grade}-Unit-${state.unit}-ramp-ups.zip with proper folder structure. Extract the zip file to your desired location.`,
-        isProcessing: false
+        isProcessing: false,
       });
     } catch (error) {
-      updateState({ 
-        error: `Processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        isProcessing: false 
+      updateState({
+        error: `Processing failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        isProcessing: false,
       });
     }
   };
@@ -95,12 +103,17 @@ export default function PDFSavePage() {
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-8">PDF Page Extractor and Organizer</h1>
-      
+      <h1 className="text-3xl font-bold mb-8">
+        PDF Page Extractor and Organizer
+      </h1>
+
       <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
         {/* File Upload */}
         <div>
-          <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="file-upload"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Select PDF File
           </label>
           <input
@@ -120,7 +133,10 @@ export default function PDFSavePage() {
 
         {/* Grade Selection */}
         <div>
-          <label htmlFor="grade" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="grade"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Grade
           </label>
           <select
@@ -130,15 +146,20 @@ export default function PDFSavePage() {
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">Select Grade</option>
-            {GRADE_OPTIONS.map(grade => (
-              <option key={grade} value={grade}>{grade}</option>
+            {GRADE_OPTIONS.map((grade) => (
+              <option key={grade} value={grade}>
+                {grade}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Unit Number */}
         <div>
-          <label htmlFor="unit" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="unit"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Unit Number
           </label>
           <input
@@ -146,14 +167,19 @@ export default function PDFSavePage() {
             type="number"
             min="1"
             value={state.unit}
-            onChange={(e) => updateState({ unit: parseInt(e.target.value) || 1 })}
+            onChange={(e) =>
+              updateState({ unit: parseInt(e.target.value) || 1 })
+            }
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
         {/* Titles Input */}
         <div>
-          <label htmlFor="titles" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="titles"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Page Titles (one per line)
           </label>
           <textarea
@@ -161,16 +187,16 @@ export default function PDFSavePage() {
             rows={6}
             value={state.titles}
             onChange={(e) => updateState({ titles: e.target.value })}
-            placeholder={'Enter page titles, one per line...\\nExample:\\nIntroduction to Fractions\\nAdding Fractions\\nSubtracting Fractions'}
+            placeholder={
+              "Enter page titles, one per line...\\nExample:\\nIntroduction to Fractions\\nAdding Fractions\\nSubtracting Fractions"
+            }
             className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
           {state.pageCount > 0 && (
             <p className="mt-2 text-sm text-gray-600">
               Titles entered: {titleArray.length} / {state.pageCount} pages
               {titleArray.length !== state.pageCount && (
-                <span className="text-red-600 ml-2">
-                  ⚠️ Count mismatch
-                </span>
+                <span className="text-red-600 ml-2">⚠️ Count mismatch</span>
               )}
             </p>
           )}
@@ -179,9 +205,13 @@ export default function PDFSavePage() {
         {/* Preview */}
         {titleArray.length > 0 && state.grade && state.unit && (
           <div className="bg-gray-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">File Structure Preview:</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              File Structure Preview:
+            </h3>
             <div className="text-xs text-gray-600 font-mono">
-              <div>curricula/{state.grade}/Unit-{state.unit}/ramp-ups/</div>
+              <div>
+                curricula/{state.grade}/Unit-{state.unit}/ramp-ups/
+              </div>
               {titleArray.slice(0, 3).map((title, index) => (
                 <div key={index} className="ml-4">
                   ├── ramp-up-{index + 1}-{sanitizeTitle(title)}/
@@ -189,7 +219,9 @@ export default function PDFSavePage() {
                 </div>
               ))}
               {titleArray.length > 3 && (
-                <div className="ml-4 text-gray-500">... and {titleArray.length - 3} more folders</div>
+                <div className="ml-4 text-gray-500">
+                  ... and {titleArray.length - 3} more folders
+                </div>
               )}
             </div>
           </div>
@@ -223,28 +255,37 @@ export default function PDFSavePage() {
             disabled={!isFormValid || state.isProcessing}
             className={`w-full py-3 px-4 rounded-md font-medium ${
               isFormValid && !state.isProcessing
-                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? "bg-blue-600 hover:bg-blue-700 text-white"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
             } transition-colors`}
           >
-            {state.isProcessing ? 'Processing PDF...' : 'Extract Pages and Download Zip'}
+            {state.isProcessing
+              ? "Processing PDF..."
+              : "Extract Pages and Download Zip"}
           </button>
         </div>
 
         {/* Instructions */}
         <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-          <h3 className="text-sm font-medium text-blue-800 mb-2">Instructions:</h3>
+          <h3 className="text-sm font-medium text-blue-800 mb-2">
+            Instructions:
+          </h3>
           <ol className="text-sm text-blue-700 space-y-1 list-decimal list-inside">
             <li>Select a PDF file to upload</li>
             <li>Choose the appropriate grade level</li>
             <li>Enter the unit number</li>
             <li>Enter page titles, one per line (one title per PDF page)</li>
-            <li>Click &quot;Extract Pages and Download Zip&quot; to download a zip file with the complete folder structure</li>
-            <li>Extract the downloaded zip file to your desired location (it contains curricula/[grade]/Unit-[unit]/ramp-ups/ structure)</li>
+            <li>
+              Click &quot;Extract Pages and Download Zip&quot; to download a zip
+              file with the complete folder structure
+            </li>
+            <li>
+              Extract the downloaded zip file to your desired location (it
+              contains curricula/[grade]/Unit-[unit]/ramp-ups/ structure)
+            </li>
           </ol>
         </div>
       </div>
     </div>
   );
 }
-

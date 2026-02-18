@@ -1,15 +1,15 @@
-import { ElementType, ReactNode } from 'react'
-import { cn } from '@ui/utils/formatters';
-import { tv, type VariantProps } from 'tailwind-variants'
-import { textSize, weight, textColors } from '@/lib/tokens/tokens'
-import { 
+import { ElementType, ReactNode } from "react";
+import { cn } from "@ui/utils/formatters";
+import { tv, type VariantProps } from "tailwind-variants";
+import { textSize, weight, textColors } from "@/lib/tokens/tokens";
+import {
   TextSizeToken,
   FontWeightToken,
-  TextColorToken
-} from '@/lib/tokens/types'
+  TextColorToken,
+} from "@/lib/tokens/types";
 
 const text = tv({
-  base: 'font-body leading-normal',
+  base: "font-body leading-normal",
   variants: {
     textSize: {
       xs: textSize.xs,
@@ -17,7 +17,7 @@ const text = tv({
       base: textSize.base,
       lg: textSize.lg,
       xl: textSize.xl,
-      '2xl': textSize['2xl'],
+      "2xl": textSize["2xl"],
     },
     weight: {
       normal: weight.normal,
@@ -41,15 +41,15 @@ const text = tv({
     },
   },
   defaultVariants: {
-    textSize: 'base',
-    weight: 'normal',
-    color: 'default',
+    textSize: "base",
+    weight: "normal",
+    color: "default",
   },
 });
 
 export type TextVariants = VariantProps<typeof text>;
 
-interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
+interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, "color"> {
   children: ReactNode;
   as?: ElementType;
   textSize?: TextSizeToken;
@@ -60,7 +60,7 @@ interface TextProps extends Omit<React.HTMLAttributes<HTMLElement>, 'color'> {
 
 export function Text({
   children,
-  as: Component = 'p',
+  as: Component = "p",
   textSize,
   weight,
   color,
@@ -74,5 +74,5 @@ export function Text({
     >
       {children}
     </Component>
-  )
+  );
 }

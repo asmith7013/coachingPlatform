@@ -8,7 +8,9 @@ interface BellScheduleDisplayProps {
   bellSchedule?: BellSchedule;
 }
 
-export function BellScheduleDisplay({ bellSchedule }: BellScheduleDisplayProps) {
+export function BellScheduleDisplay({
+  bellSchedule,
+}: BellScheduleDisplayProps) {
   if (!bellSchedule) {
     return (
       <Card>
@@ -16,7 +18,9 @@ export function BellScheduleDisplay({ bellSchedule }: BellScheduleDisplayProps) 
           <Heading level="h2">Bell Schedule</Heading>
         </Card.Header>
         <Card.Body>
-          <Text color="muted">No bell schedule configured for this section</Text>
+          <Text color="muted">
+            No bell schedule configured for this section
+          </Text>
         </Card.Body>
       </Card>
     );
@@ -30,9 +34,11 @@ export function BellScheduleDisplay({ bellSchedule }: BellScheduleDisplayProps) 
     { key: "friday", label: "Friday", schedule: bellSchedule.friday },
   ];
 
-  const totalMeetings = BellScheduleHelpers.getTotalWeeklyMeetings(bellSchedule);
+  const totalMeetings =
+    BellScheduleHelpers.getTotalWeeklyMeetings(bellSchedule);
   const totalMinutes = BellScheduleHelpers.getTotalWeeklyMinutes(bellSchedule);
-  const averageLength = BellScheduleHelpers.getAverageMeetingLength(bellSchedule);
+  const averageLength =
+    BellScheduleHelpers.getAverageMeetingLength(bellSchedule);
 
   return (
     <Card>
@@ -48,19 +54,25 @@ export function BellScheduleDisplay({ bellSchedule }: BellScheduleDisplayProps) 
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="text-2xl font-bold text-blue-700">{totalMeetings}</div>
+              <div className="text-2xl font-bold text-blue-700">
+                {totalMeetings}
+              </div>
               <Text textSize="sm" color="muted">
                 Meetings/Week
               </Text>
             </div>
             <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-              <div className="text-2xl font-bold text-green-700">{totalMinutes}</div>
+              <div className="text-2xl font-bold text-green-700">
+                {totalMinutes}
+              </div>
               <Text textSize="sm" color="muted">
                 Minutes/Week
               </Text>
             </div>
             <div className="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
-              <div className="text-2xl font-bold text-purple-700">{averageLength}</div>
+              <div className="text-2xl font-bold text-purple-700">
+                {averageLength}
+              </div>
               <Text textSize="sm" color="muted">
                 Avg Minutes/Meeting
               </Text>
@@ -104,7 +116,9 @@ export function BellScheduleDisplay({ bellSchedule }: BellScheduleDisplayProps) 
                         <span className="text-gray-600"> min each</span>
                       </div>
                       <div className="text-sm font-semibold text-purple-600">
-                        {day.schedule.meetingCount * day.schedule.minutesPerMeeting} min total
+                        {day.schedule.meetingCount *
+                          day.schedule.minutesPerMeeting}{" "}
+                        min total
                       </div>
                     </div>
                   ) : (

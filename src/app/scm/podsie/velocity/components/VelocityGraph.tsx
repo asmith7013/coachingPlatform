@@ -7,21 +7,53 @@ import { ChartBarIcon } from "@heroicons/react/24/outline";
 
 // Colors for unit bar annotations (background colors with alpha)
 const UNIT_COLORS = [
-  { bg: 'rgba(59, 130, 246, 0.04)', border: 'rgba(59, 130, 246, 0.25)', text: '#1e40af' },  // blue
-  { bg: 'rgba(34, 197, 94, 0.04)', border: 'rgba(34, 197, 94, 0.25)', text: '#166534' },    // green
-  { bg: 'rgba(168, 85, 247, 0.04)', border: 'rgba(168, 85, 247, 0.25)', text: '#6b21a8' },  // purple
-  { bg: 'rgba(245, 158, 11, 0.04)', border: 'rgba(245, 158, 11, 0.25)', text: '#92400e' },  // amber
-  { bg: 'rgba(244, 63, 94, 0.04)', border: 'rgba(244, 63, 94, 0.25)', text: '#9f1239' },    // rose
-  { bg: 'rgba(6, 182, 212, 0.04)', border: 'rgba(6, 182, 212, 0.25)', text: '#0e7490' },    // cyan
-  { bg: 'rgba(249, 115, 22, 0.04)', border: 'rgba(249, 115, 22, 0.25)', text: '#9a3412' },  // orange
-  { bg: 'rgba(20, 184, 166, 0.04)', border: 'rgba(20, 184, 166, 0.25)', text: '#115e59' },  // teal
+  {
+    bg: "rgba(59, 130, 246, 0.04)",
+    border: "rgba(59, 130, 246, 0.25)",
+    text: "#1e40af",
+  }, // blue
+  {
+    bg: "rgba(34, 197, 94, 0.04)",
+    border: "rgba(34, 197, 94, 0.25)",
+    text: "#166534",
+  }, // green
+  {
+    bg: "rgba(168, 85, 247, 0.04)",
+    border: "rgba(168, 85, 247, 0.25)",
+    text: "#6b21a8",
+  }, // purple
+  {
+    bg: "rgba(245, 158, 11, 0.04)",
+    border: "rgba(245, 158, 11, 0.25)",
+    text: "#92400e",
+  }, // amber
+  {
+    bg: "rgba(244, 63, 94, 0.04)",
+    border: "rgba(244, 63, 94, 0.25)",
+    text: "#9f1239",
+  }, // rose
+  {
+    bg: "rgba(6, 182, 212, 0.04)",
+    border: "rgba(6, 182, 212, 0.25)",
+    text: "#0e7490",
+  }, // cyan
+  {
+    bg: "rgba(249, 115, 22, 0.04)",
+    border: "rgba(249, 115, 22, 0.25)",
+    text: "#9a3412",
+  }, // orange
+  {
+    bg: "rgba(20, 184, 166, 0.04)",
+    border: "rgba(20, 184, 166, 0.25)",
+    text: "#115e59",
+  }, // teal
 ];
 
 // Lazy load the heavy Chart.js component
 const VelocityLineChart = lazy(() =>
   import("./VelocityLineChart").then((module) => ({
     default: module.VelocityLineChart,
-  }))
+  })),
 );
 
 interface SectionData {
@@ -83,7 +115,7 @@ export function VelocityGraph({
   // Helper to check if a date is a weekend
   const isWeekend = (dateStr: string): boolean => {
     // Parse date string directly to avoid timezone issues
-    const [year, month, day] = dateStr.split('-').map(Number);
+    const [year, month, day] = dateStr.split("-").map(Number);
     const date = new Date(year, month - 1, day);
     const dayOfWeek = date.getDay();
     return dayOfWeek === 0 || dayOfWeek === 6;
@@ -104,12 +136,18 @@ export function VelocityGraph({
       .sort((a, b) => a.date.localeCompare(b.date));
 
     // Use the max student count as the overall class size (avoids fluctuations from attendance)
-    const overallStudentCount = Math.max(...section.data.map((d) => d.studentsPresent), 1);
+    const overallStudentCount = Math.max(
+      ...section.data.map((d) => d.studentsPresent),
+      1,
+    );
 
     // Calculate rolling 3-day average (only school days)
     const dataWithRollingAverage = filteredData.map((dataPoint, index) => {
       // Get the previous 2 school days plus the current day (3 days total)
-      const precedingDays = filteredData.slice(Math.max(0, index - 2), index + 1);
+      const precedingDays = filteredData.slice(
+        Math.max(0, index - 2),
+        index + 1,
+      );
 
       // Calculate adjusted velocity based on block type toggle, ramp up filter, and sidekick filter
       const getAdjustedVelocity = (d: DailyVelocityStats): number => {
@@ -129,7 +167,7 @@ export function VelocityGraph({
         // Always divide by overall student count (not per-day attendance)
         const rawVelocity = totalCompletions / overallStudentCount;
 
-        if (!adjustForBlockType || d.blockType !== 'double') {
+        if (!adjustForBlockType || d.blockType !== "double") {
           return rawVelocity;
         }
         // With adjustment: divide by 2 for double blocks
@@ -137,7 +175,9 @@ export function VelocityGraph({
       };
 
       // Calculate average velocity over these days
-      const rollingAverage = precedingDays.reduce((sum, d) => sum + getAdjustedVelocity(d), 0) / precedingDays.length;
+      const rollingAverage =
+        precedingDays.reduce((sum, d) => sum + getAdjustedVelocity(d), 0) /
+        precedingDays.length;
 
       return {
         ...dataPoint,
@@ -163,22 +203,25 @@ export function VelocityGraph({
   const chartData = {
     labels: sortedDates.map((dateStr) => {
       // Parse date string directly to avoid timezone issues
-      const [year, month, day] = dateStr.split('-').map(Number);
+      const [year, month, day] = dateStr.split("-").map(Number);
       const date = new Date(year, month - 1, day);
-      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
     }),
     datasets: processedSections.map((section) => {
       // Create a map for quick lookup
-      const dataMap = new Map(
-        section.processedData.map((d) => [d.date, d])
-      );
+      const dataMap = new Map(section.processedData.map((d) => [d.date, d]));
 
       return {
         label: section.shortName,
         data: sortedDates.map((dateStr) => {
           const dataPoint = dataMap.get(dateStr);
           if (!dataPoint) return null;
-          return showRollingAverage ? dataPoint.rollingAverage : dataPoint.adjustedVelocity;
+          return showRollingAverage
+            ? dataPoint.rollingAverage
+            : dataPoint.adjustedVelocity;
         }),
         borderColor: section.color,
         backgroundColor: section.color,
@@ -198,9 +241,9 @@ export function VelocityGraph({
   const maxVelocity = Math.max(
     ...processedSections.flatMap((section) =>
       section.processedData.map((d) =>
-        showRollingAverage ? d.rollingAverage : d.adjustedVelocity
-      )
-    )
+        showRollingAverage ? d.rollingAverage : d.adjustedVelocity,
+      ),
+    ),
   );
 
   // Set Y-axis max to 1.5 by default, or extend proportionally if data exceeds it
@@ -208,7 +251,11 @@ export function VelocityGraph({
 
   // Generate unit bar annotations
   const unitAnnotations = (() => {
-    if (!unitSchedules || unitSchedules.length === 0 || sortedDates.length === 0) {
+    if (
+      !unitSchedules ||
+      unitSchedules.length === 0 ||
+      sortedDates.length === 0
+    ) {
       return [];
     }
 
@@ -220,16 +267,19 @@ export function VelocityGraph({
 
     // Format dates to match chart labels (e.g., "Sep 15")
     const formatDateToLabel = (dateStr: string) => {
-      const [year, month, day] = dateStr.split('-').map(Number);
+      const [year, month, day] = dateStr.split("-").map(Number);
       const date = new Date(year, month - 1, day);
-      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
     };
 
     const chartStartDate = sortedDates[0];
     const chartEndDate = sortedDates[sortedDates.length - 1];
 
     const annotations: {
-      type: 'box';
+      type: "box";
       xMin: string;
       xMax: string;
       yMin: number;
@@ -241,9 +291,12 @@ export function VelocityGraph({
       label: {
         display: boolean;
         content: string;
-        position: { x: 'center' | 'start' | 'end'; y: 'center' | 'start' | 'end' };
+        position: {
+          x: "center" | "start" | "end";
+          y: "center" | "start" | "end";
+        };
         yAdjust: number;
-        font: { size: number; weight: 'bold' };
+        font: { size: number; weight: "bold" };
         color: string;
         backgroundColor: string;
         padding: { top: number; bottom: number; left: number; right: number };
@@ -265,7 +318,8 @@ export function VelocityGraph({
       }
 
       // Clamp to chart bounds
-      const effectiveStart = unitStart < chartStartDate ? chartStartDate : unitStart;
+      const effectiveStart =
+        unitStart < chartStartDate ? chartStartDate : unitStart;
       const effectiveEnd = unitEnd > chartEndDate ? chartEndDate : unitEnd;
 
       // Find the label index for start and end
@@ -298,7 +352,7 @@ export function VelocityGraph({
 
       // Create box annotation for the unit
       annotations.push({
-        type: 'box',
+        type: "box",
         xMin: startLabel,
         xMax: endLabel,
         yMin: 0,
@@ -310,9 +364,9 @@ export function VelocityGraph({
         label: {
           display: true,
           content: `Unit ${unit.unitNumber}`,
-          position: { x: 'center', y: 'start' },
+          position: { x: "center", y: "start" },
           yAdjust: 6,
-          font: { size: 12, weight: 'bold' },
+          font: { size: 12, weight: "bold" },
           color: colors.text,
           backgroundColor: colors.border,
           padding: { top: 2, bottom: 2, left: 6, right: 6 },
@@ -330,10 +384,10 @@ export function VelocityGraph({
     plugins: {
       legend: {
         display: true,
-        position: 'top' as const,
+        position: "top" as const,
         labels: {
           usePointStyle: true,
-          pointStyle: 'circle',
+          pointStyle: "circle",
           padding: 15,
           font: {
             size: 12,
@@ -350,19 +404,30 @@ export function VelocityGraph({
         bodyColor: "#fff",
         callbacks: {
           title: function (tooltipItems: { dataIndex: number }[]) {
-            if (tooltipItems.length === 0) return '';
+            if (tooltipItems.length === 0) return "";
             const dateStr = sortedDates[tooltipItems[0].dataIndex];
-            if (!dateStr) return '';
-            const [year, month, day] = dateStr.split('-').map(Number);
+            if (!dateStr) return "";
+            const [year, month, day] = dateStr.split("-").map(Number);
             const date = new Date(year, month - 1, day);
-            return date.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+            return date.toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "short",
+              day: "numeric",
+            });
           },
-          label: function (context: { dataset: { label?: string }; raw: unknown; datasetIndex: number; dataIndex: number }) {
+          label: function (context: {
+            dataset: { label?: string };
+            raw: unknown;
+            datasetIndex: number;
+            dataIndex: number;
+          }) {
             const sectionData = processedSections[context.datasetIndex];
             const dateStr = sortedDates[context.dataIndex];
-            const dataPoint = sectionData.processedData.find((d) => d.date === dateStr);
+            const dataPoint = sectionData.processedData.find(
+              (d) => d.date === dateStr,
+            );
 
-            if (!dataPoint) return '';
+            if (!dataPoint) return "";
 
             const value = Number(context.raw) || 0;
             const sectionLabel = context.dataset.label || sectionData.name;
@@ -374,7 +439,9 @@ export function VelocityGraph({
                 `Today's Velocity: ${dataPoint.adjustedVelocity.toFixed(2)}`,
                 `Total Completions: ${dataPoint.totalCompletions}`,
                 `Students Present: ${dataPoint.studentsPresent}`,
-                adjustForBlockType && dataPoint.blockType === 'double' ? '(Adjusted for double block)' : '',
+                adjustForBlockType && dataPoint.blockType === "double"
+                  ? "(Adjusted for double block)"
+                  : "",
               ].filter(Boolean);
             } else {
               return [
@@ -382,7 +449,9 @@ export function VelocityGraph({
                 `Daily Velocity: ${value.toFixed(2)}`,
                 `Total Completions: ${dataPoint.totalCompletions}`,
                 `Students Present: ${dataPoint.studentsPresent}`,
-                adjustForBlockType && dataPoint.blockType === 'double' ? '(Adjusted for double block)' : '',
+                adjustForBlockType && dataPoint.blockType === "double"
+                  ? "(Adjusted for double block)"
+                  : "",
               ].filter(Boolean);
             }
           },
@@ -442,9 +511,15 @@ export function VelocityGraph({
                   <span
                     key={section.id}
                     className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium animate-pulse"
-                    style={{ backgroundColor: `${section.color}20`, color: section.color }}
+                    style={{
+                      backgroundColor: `${section.color}20`,
+                      color: section.color,
+                    }}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: section.color }}></span>
+                    <span
+                      className="w-1.5 h-1.5 rounded-full animate-pulse"
+                      style={{ backgroundColor: section.color }}
+                    ></span>
                     {section.shortName}
                   </span>
                 ))}
@@ -476,7 +551,10 @@ export function VelocityGraph({
           <VelocityChartSkeleton />
         ) : (
           <Suspense fallback={<VelocityChartSkeleton />}>
-            <VelocityLineChart chartData={chartData} chartOptions={chartOptions} />
+            <VelocityLineChart
+              chartData={chartData}
+              chartOptions={chartOptions}
+            />
           </Suspense>
         )}
       </div>

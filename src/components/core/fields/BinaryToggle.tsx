@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { tv, type VariantProps } from 'tailwind-variants'
+import { tv, type VariantProps } from "tailwind-variants";
 import {
   paddingX,
   paddingY,
@@ -8,41 +8,58 @@ import {
   textSize,
   weight,
   shadows,
-  spaceBetween
-} from '@/lib/tokens/tokens'
-import {
-  textColors,
-  backgroundColors
-} from '@/lib/tokens/colors'
+  spaceBetween,
+} from "@/lib/tokens/tokens";
+import { textColors, backgroundColors } from "@/lib/tokens/colors";
 
 const binaryToggle = tv({
   slots: {
-    container: ['flex items-center', spaceBetween.x.xs, backgroundColors.light.muted, radii.lg, paddingX.xs],
-    button: ['flex items-center', spaceBetween.x.sm, paddingX.lg, paddingY.sm, textSize.sm, weight.medium, radii.md, 'transition-colors', 'cursor-pointer']
+    container: [
+      "flex items-center",
+      spaceBetween.x.xs,
+      backgroundColors.light.muted,
+      radii.lg,
+      paddingX.xs,
+    ],
+    button: [
+      "flex items-center",
+      spaceBetween.x.sm,
+      paddingX.lg,
+      paddingY.sm,
+      textSize.sm,
+      weight.medium,
+      radii.md,
+      "transition-colors",
+      "cursor-pointer",
+    ],
   },
   variants: {
     active: {
       true: {
-        button: [textColors.primary, backgroundColors.white, shadows.sm]
+        button: [textColors.primary, backgroundColors.white, shadows.sm],
       },
       false: {
-        button: [textColors.muted, `hover:${textColors.default}`, `hover:${backgroundColors.light.muted}`]
-      }
-    }
-  }
-})
+        button: [
+          textColors.muted,
+          `hover:${textColors.default}`,
+          `hover:${backgroundColors.light.muted}`,
+        ],
+      },
+    },
+  },
+});
 
 export interface BinaryToggleProps extends VariantProps<typeof binaryToggle> {
   /** Current value (true or false) */
-  value: boolean
+  value: boolean;
   /** Handle value change */
-  onChange: (value: boolean) => void
+  onChange: (value: boolean) => void;
   /** Label for true state */
-  trueLabel: string
+  trueLabel: string;
   /** Label for false state */
-  falseLabel: string
+  falseLabel: string;
   /** Optional class name */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -63,12 +80,12 @@ export function BinaryToggle({
   onChange,
   trueLabel,
   falseLabel,
-  className
+  className,
 }: BinaryToggleProps) {
-  const styles = binaryToggle()
+  const styles = binaryToggle();
 
   return (
-    <div className={`${styles.container()} ${className || ''}`}>
+    <div className={`${styles.container()} ${className || ""}`}>
       <button
         onClick={() => onChange(true)}
         className={styles.button({ active: value === true })}
@@ -86,7 +103,7 @@ export function BinaryToggle({
         <span>{falseLabel}</span>
       </button>
     </div>
-  )
+  );
 }
 
-export default BinaryToggle
+export default BinaryToggle;

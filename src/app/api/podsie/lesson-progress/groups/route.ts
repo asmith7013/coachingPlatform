@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in lesson-progress/groups GET:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

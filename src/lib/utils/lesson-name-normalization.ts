@@ -43,7 +43,7 @@ export function normalizeLessonName(name: string): {
   if (lessonMatch) {
     prefix = lessonMatch[0];
     lessonNumber = parseInt(lessonMatch[1]);
-    normalized = normalized.replace(lessonPattern, '').trim();
+    normalized = normalized.replace(lessonPattern, "").trim();
   }
 
   // Remove "Ramp Up #X:" or "Ramp Up X:" pattern
@@ -53,7 +53,7 @@ export function normalizeLessonName(name: string): {
     prefix = rampUpMatch[0];
     lessonNumber = parseInt(rampUpMatch[1]);
     isRampUp = true;
-    normalized = normalized.replace(rampUpPattern, '').trim();
+    normalized = normalized.replace(rampUpPattern, "").trim();
   }
 
   // Remove "Unit X Lesson Y:" pattern
@@ -62,7 +62,7 @@ export function normalizeLessonName(name: string): {
   if (unitLessonMatch) {
     prefix = unitLessonMatch[0];
     lessonNumber = parseInt(unitLessonMatch[2]);
-    normalized = normalized.replace(unitLessonPattern, '').trim();
+    normalized = normalized.replace(unitLessonPattern, "").trim();
   }
 
   // Remove "Module X:" pattern (Zearn-style)
@@ -70,7 +70,7 @@ export function normalizeLessonName(name: string): {
   const moduleMatch = normalized.match(modulePattern);
   if (moduleMatch) {
     prefix = moduleMatch[0];
-    normalized = normalized.replace(modulePattern, '').trim();
+    normalized = normalized.replace(modulePattern, "").trim();
   }
 
   // Remove "Section X:" pattern
@@ -78,7 +78,7 @@ export function normalizeLessonName(name: string): {
   const sectionMatch = normalized.match(sectionPattern);
   if (sectionMatch) {
     prefix = sectionMatch[0];
-    normalized = normalized.replace(sectionPattern, '').trim();
+    normalized = normalized.replace(sectionPattern, "").trim();
   }
 
   // Remove "Part X:" pattern
@@ -86,11 +86,14 @@ export function normalizeLessonName(name: string): {
   const partMatch = normalized.match(partPattern);
   if (partMatch) {
     prefix = partMatch[0];
-    normalized = normalized.replace(partPattern, '').trim();
+    normalized = normalized.replace(partPattern, "").trim();
   }
 
   // Remove leading/trailing special characters
-  normalized = normalized.replace(/^[:\-–—\s]+/, '').replace(/[:\-–—\s]+$/, '').trim();
+  normalized = normalized
+    .replace(/^[:\-–—\s]+/, "")
+    .replace(/[:\-–—\s]+$/, "")
+    .trim();
 
   return {
     normalized: normalized.toLowerCase(),
@@ -98,7 +101,7 @@ export function normalizeLessonName(name: string): {
     prefix,
     lessonNumber,
     isRampUp,
-    isMasteryCheck
+    isMasteryCheck,
   };
 }
 
@@ -119,7 +122,7 @@ export function calculateNameSimilarity(name1: string, name2: string): number {
   // Check word overlap
   const words1 = norm1.split(/\s+/);
   const words2 = norm2.split(/\s+/);
-  const commonWords = words1.filter(w => words2.includes(w));
+  const commonWords = words1.filter((w) => words2.includes(w));
 
   if (commonWords.length === 0) return 0;
 
@@ -135,7 +138,7 @@ export function calculateNameSimilarity(name1: string, name2: string): number {
 export function findBestMatch<T extends { lessonName: string }>(
   targetName: string,
   lessons: T[],
-  minSimilarity: number = 0.7
+  minSimilarity: number = 0.7,
 ): { match: T | null; similarity: number } {
   let bestMatch: T | null = null;
   let bestSimilarity = 0;

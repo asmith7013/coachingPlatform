@@ -7,12 +7,12 @@ import { chromium } from "playwright";
  */
 export async function htmlToPng(
   htmlContent: string,
-  outputPath: string
+  outputPath: string,
 ): Promise<void> {
   const browser = await chromium.launch();
   const page = await browser.newPage({
     viewport: { width: 1000, height: 100 },
-    deviceScaleFactor: 2
+    deviceScaleFactor: 2,
   });
   const fullHtml = `
 		<!DOCTYPE html>

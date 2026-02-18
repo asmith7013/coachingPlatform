@@ -1,9 +1,15 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getSectionOptions, getAssignmentContent } from "@actions/scm/podsie/section-config";
+import {
+  getSectionOptions,
+  getAssignmentContent,
+} from "@actions/scm/podsie/section-config";
 import { updateQuestionMapping } from "./actions";
-import type { AssignmentContent, PodsieQuestionMap } from "@zod-schema/scm/podsie/section-config";
+import type {
+  AssignmentContent,
+  PodsieQuestionMap,
+} from "@zod-schema/scm/podsie/section-config";
 import { Spinner } from "@/components/core/feedback/Spinner";
 
 interface SectionOption {
@@ -20,7 +26,7 @@ interface QuestionRow {
   podsieAssignmentId: string;
   unitLessonId: string;
   lessonName: string;
-  activityType: 'sidekick' | 'mastery-check' | 'assessment';
+  activityType: "sidekick" | "mastery-check" | "assessment";
   questionMapIndex: number;
   questionData: PodsieQuestionMap;
 }
@@ -51,7 +57,10 @@ export default function ManageConfigsPage() {
     setLoading(true);
     setError(null);
     try {
-      const result = await getAssignmentContent(selectedSchool, selectedSection);
+      const result = await getAssignmentContent(
+        selectedSchool,
+        selectedSection,
+      );
       if (result.success && result.data) {
         setAssignments(result.data);
       } else {
@@ -89,13 +98,17 @@ export default function ManageConfigsPage() {
           ...row.questionData,
           isRoot: newIsRoot,
           // If changing to root, clear variant fields
-          rootQuestionId: newIsRoot ? undefined : row.questionData.rootQuestionId,
+          rootQuestionId: newIsRoot
+            ? undefined
+            : row.questionData.rootQuestionId,
           variantNumber: newIsRoot ? undefined : row.questionData.variantNumber,
-        }
+        },
       );
 
       if (result.success) {
-        setSuccess(`Updated question ${row.questionData.questionId} to ${newIsRoot ? 'root' : 'variant'}`);
+        setSuccess(
+          `Updated question ${row.questionData.questionId} to ${newIsRoot ? "root" : "variant"}`,
+        );
         await loadAssignments();
         setTimeout(() => setSuccess(null), 3000);
       } else {
@@ -107,7 +120,10 @@ export default function ManageConfigsPage() {
     }
   };
 
-  const handleUpdateRootQuestion = async (row: QuestionRow, newRootQuestionId: string) => {
+  const handleUpdateRootQuestion = async (
+    row: QuestionRow,
+    newRootQuestionId: string,
+  ) => {
     try {
       const result = await updateQuestionMapping(
         selectedSchool,
@@ -118,11 +134,13 @@ export default function ManageConfigsPage() {
         {
           ...row.questionData,
           rootQuestionId: newRootQuestionId,
-        }
+        },
       );
 
       if (result.success) {
-        setSuccess(`Updated variant to link to root question ${newRootQuestionId}`);
+        setSuccess(
+          `Updated variant to link to root question ${newRootQuestionId}`,
+        );
         await loadAssignments();
         setTimeout(() => setSuccess(null), 3000);
       } else {
@@ -135,7 +153,7 @@ export default function ManageConfigsPage() {
   };
 
   const filteredSections = selectedSchool
-    ? sections.filter(s => s.school === selectedSchool)
+    ? sections.filter((s) => s.school === selectedSchool)
     : sections;
 
   // Build question rows from assignments
@@ -162,7 +180,7 @@ export default function ManageConfigsPage() {
 
   // Filter by unit if selected
   const filteredRows = selectedUnit
-    ? questionRows.filter(row => {
+    ? questionRows.filter((row) => {
         // Extract unit from unitLessonId (e.g., "3.15" -> "3", "4.RU1" -> "4")
         const unitMatch = row.unitLessonId.match(/^(\d+)\./);
         return unitMatch && unitMatch[1] === selectedUnit;
@@ -170,15 +188,19 @@ export default function ManageConfigsPage() {
     : questionRows;
 
   // Get unique units for filter
-  const units = Array.from(new Set(
-    questionRows.map(row => {
-      const unitMatch = row.unitLessonId.match(/^(\d+)\./);
-      return unitMatch ? unitMatch[1] : null;
-    }).filter((unit): unit is string => unit !== null)
-  )).sort((a, b) => parseInt(a) - parseInt(b));
+  const units = Array.from(
+    new Set(
+      questionRows
+        .map((row) => {
+          const unitMatch = row.unitLessonId.match(/^(\d+)\./);
+          return unitMatch ? unitMatch[1] : null;
+        })
+        .filter((unit): unit is string => unit !== null),
+    ),
+  ).sort((a, b) => parseInt(a) - parseInt(b));
 
   // Get all root questions for dropdown options
-  const rootQuestions = questionRows.filter(row => row.questionData.isRoot);
+  const rootQuestions = questionRows.filter((row) => row.questionData.isRoot);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -187,7 +209,8 @@ export default function ManageConfigsPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h1 className="text-3xl font-bold mb-2">Manage Question Mappings</h1>
           <p className="text-gray-600">
-            Configure individual question mappings with explicit root/variant relationships
+            Configure individual question mappings with explicit root/variant
+            relationships
           </p>
         </div>
 
@@ -231,8 +254,12 @@ export default function ManageConfigsPage() {
               >
                 <option value="">Select a section...</option>
                 {filteredSections.map((section) => (
-                  <option key={`${section.school}-${section.classSection}`} value={section.classSection}>
-                    {section.classSection} {section.teacher ? `(${section.teacher})` : ''}
+                  <option
+                    key={`${section.school}-${section.classSection}`}
+                    value={section.classSection}
+                  >
+                    {section.classSection}{" "}
+                    {section.teacher ? `(${section.teacher})` : ""}
                   </option>
                 ))}
               </select>
@@ -287,7 +314,7 @@ export default function ManageConfigsPage() {
               // Group by scopeAndSequenceId + podsieAssignmentId
               const assignmentGroups = new Map<string, QuestionRow[]>();
 
-              filteredRows.forEach(row => {
+              filteredRows.forEach((row) => {
                 const key = `${row.scopeAndSequenceId}-${row.podsieAssignmentId}`;
                 if (!assignmentGroups.has(key)) {
                   assignmentGroups.set(key, []);
@@ -296,11 +323,14 @@ export default function ManageConfigsPage() {
               });
 
               // Group by unit for header rendering
-              const unitGroups = new Map<string, Array<[string, QuestionRow[]]>>();
+              const unitGroups = new Map<
+                string,
+                Array<[string, QuestionRow[]]>
+              >();
 
               Array.from(assignmentGroups.entries()).forEach(([key, rows]) => {
                 const unitMatch = rows[0].unitLessonId.match(/^(\d+)\./);
-                const unit = unitMatch ? unitMatch[1] : 'Other';
+                const unit = unitMatch ? unitMatch[1] : "Other";
 
                 if (!unitGroups.has(unit)) {
                   unitGroups.set(unit, []);
@@ -309,11 +339,13 @@ export default function ManageConfigsPage() {
               });
 
               // Sort units numerically
-              const sortedUnits = Array.from(unitGroups.entries()).sort((a, b) => {
-                if (a[0] === 'Other') return 1;
-                if (b[0] === 'Other') return -1;
-                return parseInt(a[0]) - parseInt(b[0]);
-              });
+              const sortedUnits = Array.from(unitGroups.entries()).sort(
+                (a, b) => {
+                  if (a[0] === "Other") return 1;
+                  if (b[0] === "Other") return -1;
+                  return parseInt(a[0]) - parseInt(b[0]);
+                },
+              );
 
               return sortedUnits.map(([unit, assignments]) => (
                 <div key={unit}>
@@ -323,7 +355,8 @@ export default function ManageConfigsPage() {
                       Unit {unit}
                     </h2>
                     <p className="text-indigo-100 text-sm mt-1">
-                      {assignments.length} assignment{assignments.length !== 1 ? 's' : ''}
+                      {assignments.length} assignment
+                      {assignments.length !== 1 ? "s" : ""}
                     </p>
                   </div>
 
@@ -333,7 +366,10 @@ export default function ManageConfigsPage() {
                       const firstRow = rows[0];
 
                       return (
-                        <div key={key} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                        <div
+                          key={key}
+                          className="bg-white rounded-lg shadow-sm overflow-hidden"
+                        >
                           {/* Assignment Header */}
                           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
                             <div className="flex items-center justify-between">
@@ -342,18 +378,24 @@ export default function ManageConfigsPage() {
                                   {firstRow.unitLessonId}: {firstRow.lessonName}
                                 </h3>
                                 <div className="flex items-center gap-3 mt-1">
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    firstRow.activityType === 'mastery-check'
-                                      ? 'bg-purple-100 text-purple-800'
-                                      : 'bg-blue-100 text-blue-800'
-                                  }`}>
+                                  <span
+                                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                      firstRow.activityType === "mastery-check"
+                                        ? "bg-purple-100 text-purple-800"
+                                        : "bg-blue-100 text-blue-800"
+                                    }`}
+                                  >
                                     {firstRow.activityType}
                                   </span>
                                   <span className="text-sm text-gray-600">
-                                    Assignment ID: <span className="font-mono">{firstRow.podsieAssignmentId}</span>
+                                    Assignment ID:{" "}
+                                    <span className="font-mono">
+                                      {firstRow.podsieAssignmentId}
+                                    </span>
                                   </span>
                                   <span className="text-sm text-gray-600">
-                                    {rows.length} question{rows.length !== 1 ? 's' : ''}
+                                    {rows.length} question
+                                    {rows.length !== 1 ? "s" : ""}
                                   </span>
                                 </div>
                               </div>
@@ -385,12 +427,18 @@ export default function ManageConfigsPage() {
                               <tbody className="bg-white divide-y divide-gray-200">
                                 {rows.map((row, index) => {
                                   // Get available root questions for this assignment
-                                  const availableRootQuestions = rootQuestions.filter(
-                                    r => r.podsieAssignmentId === row.podsieAssignmentId
-                                  );
+                                  const availableRootQuestions =
+                                    rootQuestions.filter(
+                                      (r) =>
+                                        r.podsieAssignmentId ===
+                                        row.podsieAssignmentId,
+                                    );
 
                                   return (
-                                    <tr key={index} className="hover:bg-gray-50">
+                                    <tr
+                                      key={index}
+                                      className="hover:bg-gray-50"
+                                    >
                                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                         {row.questionData.questionNumber}
                                       </td>
@@ -403,15 +451,23 @@ export default function ManageConfigsPage() {
                                         <button
                                           onClick={() => handleToggleRoot(row)}
                                           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                                            row.questionData.isRoot ? 'bg-green-600' : 'bg-gray-300'
+                                            row.questionData.isRoot
+                                              ? "bg-green-600"
+                                              : "bg-gray-300"
                                           }`}
                                           role="switch"
                                           aria-checked={row.questionData.isRoot}
-                                          title={row.questionData.isRoot ? 'Root question (click to make variant)' : 'Variant (click to make root)'}
+                                          title={
+                                            row.questionData.isRoot
+                                              ? "Root question (click to make variant)"
+                                              : "Variant (click to make root)"
+                                          }
                                         >
                                           <span
                                             className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                              row.questionData.isRoot ? 'translate-x-6' : 'translate-x-1'
+                                              row.questionData.isRoot
+                                                ? "translate-x-6"
+                                                : "translate-x-1"
                                             }`}
                                           />
                                         </button>
@@ -421,28 +477,57 @@ export default function ManageConfigsPage() {
                                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                                         {!row.questionData.isRoot ? (
                                           <select
-                                            value={row.questionData.rootQuestionId || ''}
-                                            onChange={(e) => handleUpdateRootQuestion(row, e.target.value)}
+                                            value={
+                                              row.questionData.rootQuestionId ||
+                                              ""
+                                            }
+                                            onChange={(e) =>
+                                              handleUpdateRootQuestion(
+                                                row,
+                                                e.target.value,
+                                              )
+                                            }
                                             className="px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-mono"
                                           >
-                                            <option value="">Select root...</option>
-                                            {availableRootQuestions.map((rootRow) => (
-                                              <option
-                                                key={rootRow.questionData.questionId}
-                                                value={rootRow.questionData.questionId}
-                                              >
-                                                Q{rootRow.questionData.questionNumber}: {rootRow.questionData.questionId}
-                                              </option>
-                                            ))}
+                                            <option value="">
+                                              Select root...
+                                            </option>
+                                            {availableRootQuestions.map(
+                                              (rootRow) => (
+                                                <option
+                                                  key={
+                                                    rootRow.questionData
+                                                      .questionId
+                                                  }
+                                                  value={
+                                                    rootRow.questionData
+                                                      .questionId
+                                                  }
+                                                >
+                                                  Q
+                                                  {
+                                                    rootRow.questionData
+                                                      .questionNumber
+                                                  }
+                                                  :{" "}
+                                                  {
+                                                    rootRow.questionData
+                                                      .questionId
+                                                  }
+                                                </option>
+                                              ),
+                                            )}
                                           </select>
                                         ) : (
-                                          <span className="text-gray-400 text-xs">N/A</span>
+                                          <span className="text-gray-400 text-xs">
+                                            N/A
+                                          </span>
                                         )}
                                       </td>
 
                                       {/* Variant Number */}
                                       <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-600">
-                                        {row.questionData.variantNumber || '-'}
+                                        {row.questionData.variantNumber || "-"}
                                       </td>
                                     </tr>
                                   );
@@ -460,11 +545,15 @@ export default function ManageConfigsPage() {
           </div>
         ) : selectedSchool && selectedSection && !loading ? (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <p className="text-gray-600">No question mappings found for this section</p>
+            <p className="text-gray-600">
+              No question mappings found for this section
+            </p>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-            <p className="text-gray-600">Select a school and section to view question mappings</p>
+            <p className="text-gray-600">
+              Select a school and section to view question mappings
+            </p>
           </div>
         )}
       </div>

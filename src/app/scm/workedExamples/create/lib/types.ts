@@ -1,7 +1,12 @@
-import type { HtmlSlide, DeckVisualType, SvgSubtype, SlideType } from '@zod-schema/scm/worked-example';
+import type {
+  HtmlSlide,
+  DeckVisualType,
+  SvgSubtype,
+  SlideType,
+} from "@zod-schema/scm/worked-example";
 
 // Grade levels matching the schema
-export type GradeLevel = '6' | '7' | '8' | 'Algebra 1';
+export type GradeLevel = "6" | "7" | "8" | "Algebra 1";
 
 // Visual types for worked examples (from schema)
 // - 'text-only': No graphics needed (rare - pure text/equation problems)
@@ -18,16 +23,16 @@ export type { SvgSubtype };
 
 // Tape Diagram (division, multiplication, part-whole)
 export interface TapeDiagramPlan {
-  type: 'tape-diagram';
+  type: "tape-diagram";
   boxes: number;
   valuePerBox: number | string;
   total: number | string;
-  unknownPosition: 'start' | 'box' | 'total';
+  unknownPosition: "start" | "box" | "total";
 }
 
 // Double Number Line (ratios, unit rates, percentages)
 export interface DoubleNumberLinePlan {
-  type: 'double-number-line';
+  type: "double-number-line";
   quantityA: { label: string; values: (number | string)[] };
   quantityB: { label: string; values: (number | string)[] };
   highlightPair?: [number | string, number | string];
@@ -35,29 +40,29 @@ export interface DoubleNumberLinePlan {
 
 // Area Model (multiplication, distributive property)
 export interface AreaModelPlan {
-  type: 'area-model';
+  type: "area-model";
   dimensions: [number | string, number | string];
   partialProducts: (number | string)[][];
 }
 
 // Number Line (integers, inequalities, operations)
 export interface NumberLinePlan {
-  type: 'number-line';
+  type: "number-line";
   range: [number, number];
-  markedPoints: { value: number; label?: string; style: 'closed' | 'open' }[];
+  markedPoints: { value: number; label?: string; style: "closed" | "open" }[];
   arrows?: { from: number; to: number; label?: string }[];
 }
 
 // Ratio Table (equivalent ratios, scaling)
 export interface RatioTablePlan {
-  type: 'ratio-table';
+  type: "ratio-table";
   rows: { label: string; values: (number | string)[] }[];
   scaleFactors?: string[];
 }
 
 // Hanger Diagram (equation solving, balance)
 export interface HangerDiagramPlan {
-  type: 'hanger-diagram';
+  type: "hanger-diagram";
   leftSide: string;
   rightSide: string;
   shapes?: { triangle?: string; square?: string };
@@ -65,36 +70,47 @@ export interface HangerDiagramPlan {
 
 // Input-Output Table (functions, patterns, rules)
 export interface InputOutputTablePlan {
-  type: 'input-output-table';
+  type: "input-output-table";
   rule: string;
   inputs: (number | string)[];
   outputs: (number | string)[];
-  unknownPosition: 'input' | 'output' | 'both';
+  unknownPosition: "input" | "output" | "both";
 }
 
 // Grid Diagram (area by counting, decomposing shapes)
 export interface GridDiagramPlan {
-  type: 'grid-diagram';
+  type: "grid-diagram";
   rows: number;
   cols: number;
-  shadedRegions?: { startRow: number; startCol: number; endRow: number; endCol: number; color?: string }[];
+  shadedRegions?: {
+    startRow: number;
+    startCol: number;
+    endRow: number;
+    endCol: number;
+    color?: string;
+  }[];
   unitLabel: string;
   showGrid: boolean;
 }
 
 // Net Diagram (surface area, 3D→2D unfolding)
 export interface NetDiagramPlan {
-  type: 'net-diagram';
-  shapeType: 'rectangular-prism' | 'triangular-prism' | 'pyramid' | 'cube';
-  faces: { shape: 'rectangle' | 'triangle'; width: number; height: number; label?: string }[];
+  type: "net-diagram";
+  shapeType: "rectangular-prism" | "triangular-prism" | "pyramid" | "cube";
+  faces: {
+    shape: "rectangle" | "triangle";
+    width: number;
+    height: number;
+    label?: string;
+  }[];
   foldLines: boolean;
   dimensions: { length: number; width: number; height: number };
 }
 
 // Measurement Diagram (base & height, labeled dimensions)
 export interface MeasurementDiagramPlan {
-  type: 'measurement-diagram';
-  shapeType: 'triangle' | 'parallelogram' | 'trapezoid' | 'rectangle';
+  type: "measurement-diagram";
+  shapeType: "triangle" | "parallelogram" | "trapezoid" | "rectangle";
   measurements: { label: string; value: number | string; position?: string }[];
   showRightAngle?: boolean;
   showDashedHeight?: boolean;
@@ -102,27 +118,27 @@ export interface MeasurementDiagramPlan {
 
 // Discrete Diagram (objects in groups, discrete ratios)
 export interface DiscreteDiagramPlan {
-  type: 'discrete-diagram';
+  type: "discrete-diagram";
   groups: number;
   itemsPerGroup: number;
   totalItems: number;
-  visualType: 'circles' | 'squares' | 'icons';
-  arrangement: 'rows' | 'clusters';
+  visualType: "circles" | "squares" | "icons";
+  arrangement: "rows" | "clusters";
 }
 
 // Base-Ten Diagram (place value, decimal operations)
 export interface BaseTenDiagramPlan {
-  type: 'base-ten-diagram';
+  type: "base-ten-diagram";
   hundreds: number;
   tens: number;
   ones: number;
-  operation: 'none' | 'addition' | 'subtraction' | 'regrouping';
+  operation: "none" | "addition" | "subtraction" | "regrouping";
   showValues?: boolean;
 }
 
 // Dot Plot (data distributions, frequencies)
 export interface DotPlotPlan {
-  type: 'dot-plot';
+  type: "dot-plot";
   dataPoints: number[];
   axisLabel: string;
   axisRange: [number, number];
@@ -131,7 +147,7 @@ export interface DotPlotPlan {
 
 // Box Plot (quartiles, variability)
 export interface BoxPlotPlan {
-  type: 'box-plot';
+  type: "box-plot";
   min: number;
   q1: number;
   median: number;
@@ -144,17 +160,17 @@ export interface BoxPlotPlan {
 
 // Bar Graph (comparing frequencies)
 export interface BarGraphPlan {
-  type: 'bar-graph';
+  type: "bar-graph";
   categories: string[];
   values: number[];
-  orientation: 'vertical' | 'horizontal';
+  orientation: "vertical" | "horizontal";
   axisLabel: string;
   title?: string;
 }
 
 // Tree Diagram (probability, sample spaces)
 export interface TreeDiagramPlan {
-  type: 'tree-diagram';
+  type: "tree-diagram";
   levels: { outcomes: string[]; probabilities: number[] }[];
   finalOutcomes: string[];
   highlightPath?: string[];
@@ -162,37 +178,37 @@ export interface TreeDiagramPlan {
 
 // Circle Diagram (circles with labeled parts)
 export interface CircleDiagramPlan {
-  type: 'circle-diagram';
+  type: "circle-diagram";
   radius: number;
   diameter: number;
   circumference: string | number;
   showCenter?: boolean;
-  labeledParts: ('radius' | 'diameter' | 'circumference' | 'center' | 'area')[];
+  labeledParts: ("radius" | "diameter" | "circumference" | "center" | "area")[];
   unit?: string;
 }
 
 // Scale Drawing (maps, floor plans, blueprints)
 export interface ScaleDrawingPlan {
-  type: 'scale-drawing';
+  type: "scale-drawing";
   scaleFactor: string;
   drawingMeasurements: { label: string; value: number; unit: string }[];
   actualMeasurements: { label: string; value: number; unit: string }[];
-  drawingType: 'map' | 'floor-plan' | 'blueprint' | 'other';
+  drawingType: "map" | "floor-plan" | "blueprint" | "other";
 }
 
 // Scaled Figures (original vs copy comparison)
 export interface ScaledFiguresPlan {
-  type: 'scaled-figures';
+  type: "scaled-figures";
   originalDimensions: { label: string; value: number }[];
   scaleFactor: number;
   copyDimensions: { label: string; value: number }[];
-  shapeType?: 'rectangle' | 'triangle' | 'polygon';
+  shapeType?: "rectangle" | "triangle" | "polygon";
   showLabels?: boolean;
 }
 
 // Other/Custom diagrams
 export interface OtherVisualPlan {
-  type: 'other';
+  type: "other";
   description: string;
   elements?: string[];
   labels?: string[];
@@ -230,35 +246,41 @@ export type VisualPlan =
 // This captures pre-calculated mathematical data to ensure accurate graph generation
 export interface GraphPlan {
   equations: {
-    label: string;      // e.g., "Line 1", "Standard Mode"
-    equation: string;   // e.g., "y = 5x + 20"
-    slope: number;      // e.g., 5 (the 'm' in y = mx + b)
+    label: string; // e.g., "Line 1", "Standard Mode"
+    equation: string; // e.g., "y = 5x + 20"
+    slope: number; // e.g., 5 (the 'm' in y = mx + b)
     yIntercept: number; // e.g., 20 (the 'b' in y = mx + b)
-    color: string;      // e.g., "#60a5fa" (blue) or "#22c55e" (green)
+    color: string; // e.g., "#60a5fa" (blue) or "#22c55e" (green)
     // CRITICAL: Explicit line endpoints for mathematically accurate drawing
     // These define where the SVG line element starts and ends
-    startPoint: { x: number; y: number };  // Data coordinates where line enters plot (usually y-intercept)
-    endPoint: { x: number; y: number };    // Data coordinates where line exits plot (at xMax or edge)
+    startPoint: { x: number; y: number }; // Data coordinates where line enters plot (usually y-intercept)
+    endPoint: { x: number; y: number }; // Data coordinates where line exits plot (at xMax or edge)
   }[];
   scale: {
-    xMax: number;        // Rightmost x-value (e.g., 8)
-    yMax: number;        // Top y-value (e.g., 50)
+    xMax: number; // Rightmost x-value (e.g., 8)
+    yMax: number; // Top y-value (e.g., 50)
     xAxisLabels: number[]; // e.g., [0, 2, 4, 6, 8]
     yAxisLabels: number[]; // e.g., [0, 10, 20, 30, 40, 50]
   };
   // Pre-calculated key points to ensure math accuracy
   keyPoints: {
-    label: string;  // e.g., "y-intercept Line 1", "Line 1 at x=4"
-    x: number;      // data x-value
-    y: number;      // data y-value (calculated from equation)
-    dataX: number;  // same as x (for clarity in pixel calculation)
-    dataY: number;  // same as y (for clarity in pixel calculation)
+    label: string; // e.g., "y-intercept Line 1", "Line 1 at x=4"
+    x: number; // data x-value
+    y: number; // data y-value (calculated from equation)
+    dataX: number; // same as x (for clarity in pixel calculation)
+    dataY: number; // same as y (for clarity in pixel calculation)
   }[];
   annotations: {
-    type: 'y-intercept-shift' | 'parallel-label' | 'slope-comparison' | 'intersection-point' | 'slope-triangle' | 'point-label';
-    from?: number;   // Starting y-value for shift arrows
-    to?: number;     // Ending y-value for shift arrows
-    label: string;   // Text to display (e.g., "+20")
+    type:
+      | "y-intercept-shift"
+      | "parallel-label"
+      | "slope-comparison"
+      | "intersection-point"
+      | "slope-triangle"
+      | "point-label";
+    from?: number; // Starting y-value for shift arrows
+    to?: number; // Ending y-value for shift arrows
+    label: string; // Text to display (e.g., "+20")
     position?: string; // Optional position hint
   }[];
 }
@@ -401,11 +423,11 @@ export type WizardStep = 1 | 2 | 3;
 
 // Loading phase for detailed progress tracking
 export type LoadingPhase =
-  | 'idle'
-  | 'uploading'
-  | 'analyzing'
-  | 'generating'
-  | 'saving';
+  | "idle"
+  | "uploading"
+  | "analyzing"
+  | "generating"
+  | "saving";
 
 // Slide generation progress for SSE streaming
 export interface SlideProgress {
@@ -460,8 +482,8 @@ export interface WizardState {
   slides: HtmlSlide[];
   selectedSlideIndex: number;
   // Multi-slide selection for batch editing
-  slidesToEdit: number[];    // Slide indices selected for editing
-  contextSlides: number[];   // Slide indices selected as context only (read-only)
+  slidesToEdit: number[]; // Slide indices selected for editing
+  contextSlides: number[]; // Slide indices selected as context only (read-only)
 
   // Step 4: Metadata for saving
   title: string;
@@ -483,51 +505,86 @@ export interface WizardState {
 
 // Wizard actions
 export type WizardAction =
-  | { type: 'SET_STEP'; payload: WizardStep }
-  | { type: 'SET_GRADE_LEVEL'; payload: GradeLevel | null }
-  | { type: 'SET_UNIT_NUMBER'; payload: number | null }
-  | { type: 'SET_LESSON_NUMBER'; payload: number | null }
-  | { type: 'SET_LESSON_NAME'; payload: string }
-  | { type: 'SET_SECTION'; payload: string | null }
-  | { type: 'SET_SCOPE_AND_SEQUENCE_ID'; payload: string | null }
-  | { type: 'SET_PODSIE_ASSIGNMENT'; payload: { id: number | null; title: string | null } }
-  | { type: 'SET_LEARNING_GOALS'; payload: string[] }
-  | { type: 'SET_MASTERY_IMAGE'; payload: { file: File | null; preview: string | null } }
-  | { type: 'SET_UPLOADED_IMAGE_URL'; payload: string }
-  | { type: 'ADD_ADDITIONAL_IMAGE'; payload: { file: File; preview: string } }
-  | { type: 'REMOVE_ADDITIONAL_IMAGE'; payload: number }
-  | { type: 'SET_ADDITIONAL_IMAGE_URL'; payload: { index: number; url: string } }
-  | { type: 'SET_ADDITIONAL_CONTEXT'; payload: string }
-  | { type: 'SET_ANALYSIS'; payload: { problemAnalysis: ProblemAnalysis; strategyDefinition: StrategyDefinition; scenarios: Scenario[] } }
-  | { type: 'CLEAR_ANALYSIS' }
-  | { type: 'UPDATE_STRATEGY_NAME'; payload: string }
-  | { type: 'UPDATE_BIG_IDEA'; payload: string }
-  | { type: 'UPDATE_STRATEGY_MOVES'; payload: { verb: string; description: string; result: string }[] }
-  | { type: 'UPDATE_SCENARIO'; payload: { index: number; scenario: Scenario } }
-  | { type: 'SET_EDIT_SLUG'; payload: string | null }
-  | { type: 'SET_SLIDES'; payload: HtmlSlide[] }
-  | { type: 'UPDATE_SLIDE'; payload: { index: number; htmlContent: string } }
-  | { type: 'UPDATE_SLIDES_BATCH'; payload: { index: number; htmlContent: string }[] }
-  | { type: 'UPDATE_SLIDE_TYPE'; payload: { index: number; slideType: SlideType } }
-  | { type: 'SET_SELECTED_SLIDE'; payload: number }
-  | { type: 'TOGGLE_SLIDE_TO_EDIT'; payload: number }
-  | { type: 'TOGGLE_CONTEXT_SLIDE'; payload: number }
-  | { type: 'SET_SLIDE_SELECTION_MODE'; payload: { index: number; mode: 'edit' | 'context' } }
-  | { type: 'DESELECT_SLIDE'; payload: number }
-  | { type: 'CLEAR_SLIDE_SELECTIONS' }
-  | { type: 'SET_TITLE'; payload: string }
-  | { type: 'SET_SLUG'; payload: string }
-  | { type: 'SET_MATH_CONCEPT'; payload: string }
-  | { type: 'SET_MATH_STANDARD'; payload: string }
-  | { type: 'SET_IS_PUBLIC'; payload: boolean }
-  | { type: 'SET_LOADING'; payload: { isLoading: boolean; message?: string } }
-  | { type: 'SET_LOADING_PROGRESS'; payload: LoadingProgress }
-  | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'RESET' };
+  | { type: "SET_STEP"; payload: WizardStep }
+  | { type: "SET_GRADE_LEVEL"; payload: GradeLevel | null }
+  | { type: "SET_UNIT_NUMBER"; payload: number | null }
+  | { type: "SET_LESSON_NUMBER"; payload: number | null }
+  | { type: "SET_LESSON_NAME"; payload: string }
+  | { type: "SET_SECTION"; payload: string | null }
+  | { type: "SET_SCOPE_AND_SEQUENCE_ID"; payload: string | null }
+  | {
+      type: "SET_PODSIE_ASSIGNMENT";
+      payload: { id: number | null; title: string | null };
+    }
+  | { type: "SET_LEARNING_GOALS"; payload: string[] }
+  | {
+      type: "SET_MASTERY_IMAGE";
+      payload: { file: File | null; preview: string | null };
+    }
+  | { type: "SET_UPLOADED_IMAGE_URL"; payload: string }
+  | { type: "ADD_ADDITIONAL_IMAGE"; payload: { file: File; preview: string } }
+  | { type: "REMOVE_ADDITIONAL_IMAGE"; payload: number }
+  | {
+      type: "SET_ADDITIONAL_IMAGE_URL";
+      payload: { index: number; url: string };
+    }
+  | { type: "SET_ADDITIONAL_CONTEXT"; payload: string }
+  | {
+      type: "SET_ANALYSIS";
+      payload: {
+        problemAnalysis: ProblemAnalysis;
+        strategyDefinition: StrategyDefinition;
+        scenarios: Scenario[];
+      };
+    }
+  | { type: "CLEAR_ANALYSIS" }
+  | { type: "UPDATE_STRATEGY_NAME"; payload: string }
+  | { type: "UPDATE_BIG_IDEA"; payload: string }
+  | {
+      type: "UPDATE_STRATEGY_MOVES";
+      payload: { verb: string; description: string; result: string }[];
+    }
+  | { type: "UPDATE_SCENARIO"; payload: { index: number; scenario: Scenario } }
+  | { type: "SET_EDIT_SLUG"; payload: string | null }
+  | { type: "SET_SLIDES"; payload: HtmlSlide[] }
+  | { type: "UPDATE_SLIDE"; payload: { index: number; htmlContent: string } }
+  | {
+      type: "UPDATE_SLIDES_BATCH";
+      payload: { index: number; htmlContent: string }[];
+    }
+  | {
+      type: "UPDATE_SLIDE_TYPE";
+      payload: { index: number; slideType: SlideType };
+    }
+  | { type: "SET_SELECTED_SLIDE"; payload: number }
+  | { type: "TOGGLE_SLIDE_TO_EDIT"; payload: number }
+  | { type: "TOGGLE_CONTEXT_SLIDE"; payload: number }
+  | {
+      type: "SET_SLIDE_SELECTION_MODE";
+      payload: { index: number; mode: "edit" | "context" };
+    }
+  | { type: "DESELECT_SLIDE"; payload: number }
+  | { type: "CLEAR_SLIDE_SELECTIONS" }
+  | { type: "SET_TITLE"; payload: string }
+  | { type: "SET_SLUG"; payload: string }
+  | { type: "SET_MATH_CONCEPT"; payload: string }
+  | { type: "SET_MATH_STANDARD"; payload: string }
+  | { type: "SET_IS_PUBLIC"; payload: boolean }
+  | { type: "SET_LOADING"; payload: { isLoading: boolean; message?: string } }
+  | { type: "SET_LOADING_PROGRESS"; payload: LoadingProgress }
+  | { type: "SET_ERROR"; payload: string | null }
+  | { type: "RESET" };
 
 // Export status types for Step 3 slides export
-export type ExportStatus = 'idle' | 'exporting' | 'success' | 'error';
-export type ExportPhase = 'idle' | 'analyzing' | 'optimizing' | 'uploading' | 'saving' | 'complete' | 'error';
+export type ExportStatus = "idle" | "exporting" | "success" | "error";
+export type ExportPhase =
+  | "idle"
+  | "analyzing"
+  | "optimizing"
+  | "uploading"
+  | "saving"
+  | "complete"
+  | "error";
 
 export interface ExportProgress {
   status: ExportStatus;
@@ -537,7 +594,7 @@ export interface ExportProgress {
 }
 
 export interface SlideExportStatus {
-  status: 'pending' | 'analyzing' | 'optimizing' | 'done' | 'skipped' | 'error';
+  status: "pending" | "analyzing" | "optimizing" | "done" | "skipped" | "error";
   wasOptimized?: boolean;
 }
 
@@ -553,7 +610,7 @@ export const initialWizardState: WizardState = {
   gradeLevel: null,
   unitNumber: null,
   lessonNumber: null,
-  lessonName: '',
+  lessonName: "",
   section: null,
   scopeAndSequenceId: null,
   podsieAssignmentId: null,
@@ -565,7 +622,7 @@ export const initialWizardState: WizardState = {
     uploadedUrl: null,
   },
   additionalImages: [],
-  additionalContext: '',
+  additionalContext: "",
   problemAnalysis: null,
   strategyDefinition: null,
   scenarios: null,
@@ -573,17 +630,17 @@ export const initialWizardState: WizardState = {
   selectedSlideIndex: 0,
   slidesToEdit: [],
   contextSlides: [],
-  title: '',
-  slug: '',
-  mathConcept: '',
-  mathStandard: '',
+  title: "",
+  slug: "",
+  mathConcept: "",
+  mathStandard: "",
   isPublic: true,
   editSlug: null,
   isLoading: false,
-  loadingMessage: '',
+  loadingMessage: "",
   loadingProgress: {
-    phase: 'idle',
-    message: '',
+    phase: "idle",
+    message: "",
   },
   error: null,
 };

@@ -1,14 +1,17 @@
 "use server";
 
-import ExcelJS from 'exceljs';
-import { fetchStudents, updateStudent } from '@actions/scm/student/students';
-import { parseRoadmapSheet } from '../lib/parser';
-import { ImportResponse, StudentUpdateResult } from '../lib/types';
+import ExcelJS from "exceljs";
+import { fetchStudents, updateStudent } from "@actions/scm/student/students";
+import { parseRoadmapSheet } from "../lib/parser";
+import { ImportResponse, StudentUpdateResult } from "../lib/types";
 
 /**
  * Import student mastered skills from an Excel roadmap file
  */
-export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: string): Promise<ImportResponse> {
+export async function importStudentSkills(
+  fileBuffer: ArrayBuffer,
+  sheetName: string,
+): Promise<ImportResponse> {
   const errors: string[] = [];
   const studentResults: StudentUpdateResult[] = [];
 
@@ -18,7 +21,7 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
     await workbook.xlsx.load(fileBuffer);
 
     // Get sheet names
-    const sheetNames = workbook.worksheets.map(ws => ws.name);
+    const sheetNames = workbook.worksheets.map((ws) => ws.name);
 
     // Check if sheet exists
     if (!sheetNames.includes(sheetName)) {
@@ -28,7 +31,9 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
         successfulUpdates: 0,
         failedUpdates: 0,
         studentResults: [],
-        errors: [`Sheet "${sheetName}" not found. Available sheets: ${sheetNames.join(', ')}`],
+        errors: [
+          `Sheet "${sheetName}" not found. Available sheets: ${sheetNames.join(", ")}`,
+        ],
       };
     }
 
@@ -52,9 +57,9 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
       row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
         // Pad with empty strings if there are gaps
         while (rowData.length < colNumber - 1) {
-          rowData.push('');
+          rowData.push("");
         }
-        rowData.push(cell.value?.toString() ?? '');
+        rowData.push(cell.value?.toString() ?? "");
       });
       // Pad to ensure consistent array from row 1
       while (sheetData.length < rowNumber - 1) {
@@ -70,7 +75,7 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
         successfulUpdates: 0,
         failedUpdates: 0,
         studentResults: [],
-        errors: ['Sheet is empty'],
+        errors: ["Sheet is empty"],
       };
     }
 
@@ -85,7 +90,9 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
         successfulUpdates: 0,
         failedUpdates: 0,
         studentResults: [],
-        errors: [`Failed to parse sheet: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`],
+        errors: [
+          `Failed to parse sheet: ${parseError instanceof Error ? parseError.message : "Unknown error"}`,
+        ],
       };
     }
 
@@ -93,10 +100,10 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
     const studentsResponse = await fetchStudents({
       page: 1,
       limit: 1000,
-      sortBy: 'lastName',
-      sortOrder: 'asc',
+      sortBy: "lastName",
+      sortOrder: "asc",
       filters: { active: true },
-      search: '',
+      search: "",
       searchFields: [],
     });
 
@@ -108,7 +115,7 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
         successfulUpdates: 0,
         failedUpdates: 0,
         studentResults: [],
-        errors: ['Failed to fetch students from database'],
+        errors: ["Failed to fetch students from database"],
       };
     }
 
@@ -118,8 +125,9 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
     for (const studentData of parsedData.students) {
       try {
         // Find matching student by exact name match "LASTNAME, FIRSTNAME"
-        const matchingStudent = allStudents.find(student => {
-          const dbName = `${student.lastName.toUpperCase()}, ${student.firstName.toUpperCase()}`.trim();
+        const matchingStudent = allStudents.find((student) => {
+          const dbName =
+            `${student.lastName.toUpperCase()}, ${student.firstName.toUpperCase()}`.trim();
           return dbName === studentData.studentName.toUpperCase();
         });
 
@@ -129,18 +137,24 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
             success: false,
             skillsAdded: 0,
             totalMasteredSkills: 0,
-            error: 'Student not found in database',
+            error: "Student not found in database",
           });
-          errors.push(`Student "${studentData.studentName}" not found in database`);
+          errors.push(
+            `Student "${studentData.studentName}" not found in database`,
+          );
           continue;
         }
 
         // Get existing mastered skills
         const existingSkills = new Set(matchingStudent.masteredSkills || []);
-        const newSkills = studentData.masteredSkills.filter(skill => !existingSkills.has(skill));
+        const newSkills = studentData.masteredSkills.filter(
+          (skill) => !existingSkills.has(skill),
+        );
 
         // Merge with new skills
-        const updatedSkills = Array.from(new Set([...existingSkills, ...studentData.masteredSkills]));
+        const updatedSkills = Array.from(
+          new Set([...existingSkills, ...studentData.masteredSkills]),
+        );
 
         // Update student in database
         const updateResponse = await updateStudent(matchingStudent._id, {
@@ -160,12 +174,17 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
             success: false,
             skillsAdded: 0,
             totalMasteredSkills: existingSkills.size,
-            error: updateResponse.error || 'Failed to update student',
+            error: updateResponse.error || "Failed to update student",
           });
-          errors.push(`Failed to update ${studentData.studentName}: ${updateResponse.error}`);
+          errors.push(
+            `Failed to update ${studentData.studentName}: ${updateResponse.error}`,
+          );
         }
       } catch (studentError) {
-        const errorMsg = studentError instanceof Error ? studentError.message : 'Unknown error';
+        const errorMsg =
+          studentError instanceof Error
+            ? studentError.message
+            : "Unknown error";
         studentResults.push({
           studentName: studentData.studentName,
           success: false,
@@ -177,8 +196,8 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
       }
     }
 
-    const successfulUpdates = studentResults.filter(r => r.success).length;
-    const failedUpdates = studentResults.filter(r => !r.success).length;
+    const successfulUpdates = studentResults.filter((r) => r.success).length;
+    const failedUpdates = studentResults.filter((r) => !r.success).length;
 
     return {
       success: successfulUpdates > 0,
@@ -190,7 +209,8 @@ export async function importStudentSkills(fileBuffer: ArrayBuffer, sheetName: st
       errors,
     };
   } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred';
+    const errorMsg =
+      error instanceof Error ? error.message : "Unknown error occurred";
     return {
       success: false,
       totalStudentsProcessed: 0,

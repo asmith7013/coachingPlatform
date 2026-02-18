@@ -35,7 +35,11 @@ function extractYoutubeVideoId(url: string): string | null {
   return null;
 }
 
-export function YoutubePlayer({ url, title, isFullscreen = false }: YoutubePlayerProps) {
+export function YoutubePlayer({
+  url,
+  title,
+  isFullscreen = false,
+}: YoutubePlayerProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const videoId = useMemo(() => extractYoutubeVideoId(url), [url]);

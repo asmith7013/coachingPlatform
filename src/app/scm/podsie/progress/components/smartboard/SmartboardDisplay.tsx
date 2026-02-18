@@ -9,8 +9,14 @@ import { YoutubeEditor } from "./components/YoutubeEditor";
 import { groupAssignmentsByUnitLesson } from "../../utils/groupAssignments";
 import { formatLessonDisplay } from "@/lib/utils/lesson-display";
 import type { LessonType } from "@/lib/utils/lesson-display";
-import { calculateTodayProgress, calculateTodayCompletionRate } from "@/lib/utils/completion-date-helpers";
-import { getLearningContent, saveLearningContent } from "@/app/actions/scm/podsie/learning-content";
+import {
+  calculateTodayProgress,
+  calculateTodayCompletionRate,
+} from "@/lib/utils/completion-date-helpers";
+import {
+  getLearningContent,
+  saveLearningContent,
+} from "@/app/actions/scm/podsie/learning-content";
 import {
   getYoutubeLinks,
   addYoutubeLink,
@@ -19,7 +25,10 @@ import {
   copyYoutubeLinksFromSection,
   getSectionOptions,
 } from "@/app/actions/scm/podsie/section-config";
-import { SCOPE_SEQUENCE_TAG_OPTIONS, type ScopeSequenceTagType } from "@schema/enum/scm";
+import {
+  SCOPE_SEQUENCE_TAG_OPTIONS,
+  type ScopeSequenceTagType,
+} from "@schema/enum/scm";
 import type { YoutubeLink } from "@zod-schema/scm/podsie/section-config";
 
 // Type guard to validate scopeSequenceTag
@@ -54,7 +63,7 @@ interface LessonConfig {
   section?: string;
   subsection?: number;
   unitNumber: number;
-  activityType?: 'sidekick' | 'mastery-check' | 'assessment';
+  activityType?: "sidekick" | "mastery-check" | "assessment";
   hasZearnActivity?: boolean;
 }
 
@@ -118,7 +127,9 @@ export function SmartboardDisplay({
   const [textSizeLevel, setTextSizeLevel] = useState(0); // -1 = smaller, 0 = normal, 1 = larger, 2 = extra large
 
   // Effective text size: +1 when fullscreen for better readability on big screens
-  const effectiveTextSizeLevel = isFullscreen ? Math.min(textSizeLevel + 1, 2) : textSizeLevel;
+  const effectiveTextSizeLevel = isFullscreen
+    ? Math.min(textSizeLevel + 1, 2)
+    : textSizeLevel;
   const [showDailyProgress, setShowDailyProgress] = useState(true);
   const [showSidekick, setShowSidekick] = useState(false);
   const [dueDate, setDueDate] = useState<string>(() => {
@@ -136,8 +147,12 @@ export function SmartboardDisplay({
 
   // YouTube state
   const [youtubeLinks, setYoutubeLinks] = useState<YoutubeLink[]>([]);
-  const [activeYoutubeUrl, setActiveYoutubeUrlState] = useState<string | undefined>();
-  const [availableSections, setAvailableSections] = useState<Array<{ school: string; classSection: string }>>([]);
+  const [activeYoutubeUrl, setActiveYoutubeUrlState] = useState<
+    string | undefined
+  >();
+  const [availableSections, setAvailableSections] = useState<
+    Array<{ school: string; classSection: string }>
+  >([]);
 
   // Load YouTube links when section changes
   useEffect(() => {
@@ -164,7 +179,12 @@ export function SmartboardDisplay({
       try {
         const result = await getSectionOptions();
         if (result.success && result.data) {
-          setAvailableSections(result.data.map(s => ({ school: s.school, classSection: s.classSection })));
+          setAvailableSections(
+            result.data.map((s) => ({
+              school: s.school,
+              classSection: s.classSection,
+            })),
+          );
         }
       } catch (error) {
         console.error("Error loading sections:", error);
@@ -175,73 +195,96 @@ export function SmartboardDisplay({
   }, []);
 
   // YouTube handlers
-  const handleAddYoutubeLink = useCallback(async (link: YoutubeLink) => {
-    if (!school) return;
+  const handleAddYoutubeLink = useCallback(
+    async (link: YoutubeLink) => {
+      if (!school) return;
 
-    try {
-      const result = await addYoutubeLink(school, selectedSection, link);
-      if (result.success && result.data) {
-        setYoutubeLinks(result.data);
-      }
-    } catch (error) {
-      console.error("Error adding YouTube link:", error);
-    }
-  }, [school, selectedSection]);
-
-  const handleRemoveYoutubeLink = useCallback(async (url: string) => {
-    if (!school) return;
-
-    try {
-      const result = await removeYoutubeLink(school, selectedSection, url);
-      if (result.success && result.data) {
-        setYoutubeLinks(result.data);
-        // Clear active if it was the removed one
-        if (activeYoutubeUrl === url) {
-          setActiveYoutubeUrlState(undefined);
+      try {
+        const result = await addYoutubeLink(school, selectedSection, link);
+        if (result.success && result.data) {
+          setYoutubeLinks(result.data);
         }
+      } catch (error) {
+        console.error("Error adding YouTube link:", error);
       }
-    } catch (error) {
-      console.error("Error removing YouTube link:", error);
-    }
-  }, [school, selectedSection, activeYoutubeUrl]);
+    },
+    [school, selectedSection],
+  );
 
-  const handleSetActiveYoutubeUrl = useCallback(async (url: string | null) => {
-    if (!school) return;
+  const handleRemoveYoutubeLink = useCallback(
+    async (url: string) => {
+      if (!school) return;
 
-    try {
-      const result = await setActiveYoutubeUrl(school, selectedSection, url);
-      if (result.success) {
-        setActiveYoutubeUrlState(url || undefined);
+      try {
+        const result = await removeYoutubeLink(school, selectedSection, url);
+        if (result.success && result.data) {
+          setYoutubeLinks(result.data);
+          // Clear active if it was the removed one
+          if (activeYoutubeUrl === url) {
+            setActiveYoutubeUrlState(undefined);
+          }
+        }
+      } catch (error) {
+        console.error("Error removing YouTube link:", error);
       }
-    } catch (error) {
-      console.error("Error setting active YouTube URL:", error);
-    }
-  }, [school, selectedSection]);
+    },
+    [school, selectedSection, activeYoutubeUrl],
+  );
 
-  const handleCopyYoutubeLinks = useCallback(async (sourceSchool: string, sourceClassSection: string) => {
-    if (!school) return;
+  const handleSetActiveYoutubeUrl = useCallback(
+    async (url: string | null) => {
+      if (!school) return;
 
-    try {
-      const result = await copyYoutubeLinksFromSection(school, selectedSection, sourceSchool, sourceClassSection);
-      if (result.success && result.data) {
-        setYoutubeLinks(result.data);
+      try {
+        const result = await setActiveYoutubeUrl(school, selectedSection, url);
+        if (result.success) {
+          setActiveYoutubeUrlState(url || undefined);
+        }
+      } catch (error) {
+        console.error("Error setting active YouTube URL:", error);
       }
-    } catch (error) {
-      console.error("Error copying YouTube links:", error);
-    }
-  }, [school, selectedSection]);
+    },
+    [school, selectedSection],
+  );
+
+  const handleCopyYoutubeLinks = useCallback(
+    async (sourceSchool: string, sourceClassSection: string) => {
+      if (!school) return;
+
+      try {
+        const result = await copyYoutubeLinksFromSection(
+          school,
+          selectedSection,
+          sourceSchool,
+          sourceClassSection,
+        );
+        if (result.success && result.data) {
+          setYoutubeLinks(result.data);
+        }
+      } catch (error) {
+        console.error("Error copying YouTube links:", error);
+      }
+    },
+    [school, selectedSection],
+  );
 
   // Get the active video title for display
   const activeVideoTitle = useMemo(() => {
     if (!activeYoutubeUrl) return undefined;
-    const link = youtubeLinks.find(l => l.url === activeYoutubeUrl);
+    const link = youtubeLinks.find((l) => l.url === activeYoutubeUrl);
     return link?.title;
   }, [activeYoutubeUrl, youtubeLinks]);
 
   // Load learning content when unit/section changes
   useEffect(() => {
     const loadContent = async () => {
-      if (!scopeSequenceTag || !grade || !selectedUnit || !selectedLessonSection || !isValidScopeSequenceTag(scopeSequenceTag)) {
+      if (
+        !scopeSequenceTag ||
+        !grade ||
+        !selectedUnit ||
+        !selectedLessonSection ||
+        !isValidScopeSequenceTag(scopeSequenceTag)
+      ) {
         return;
       }
 
@@ -276,7 +319,13 @@ export function SmartboardDisplay({
 
   // Save learning content
   const handleSave = useCallback(async () => {
-    if (!scopeSequenceTag || !grade || !selectedUnit || !selectedLessonSection || !isValidScopeSequenceTag(scopeSequenceTag)) {
+    if (
+      !scopeSequenceTag ||
+      !grade ||
+      !selectedUnit ||
+      !selectedLessonSection ||
+      !isValidScopeSequenceTag(scopeSequenceTag)
+    ) {
       return;
     }
 
@@ -289,7 +338,7 @@ export function SmartboardDisplay({
           unit: selectedUnit,
           lessonSection: selectedLessonSection,
         },
-        learningContent
+        learningContent,
       );
 
       if (result.success) {
@@ -303,7 +352,13 @@ export function SmartboardDisplay({
     } finally {
       setIsSaving(false);
     }
-  }, [scopeSequenceTag, grade, selectedUnit, selectedLessonSection, learningContent]);
+  }, [
+    scopeSequenceTag,
+    grade,
+    selectedUnit,
+    selectedLessonSection,
+    learningContent,
+  ]);
 
   // Handle exiting edit mode - save if there are unsaved changes
   const handleToggleEditMode = useCallback(async () => {
@@ -329,10 +384,10 @@ export function SmartboardDisplay({
 
     return groupedAssignments.map(({ lesson, masteryCheck }) => {
       // Get lesson progress
-      const lessonProgressData = progressData.filter(
-        p => p.podsieAssignmentId
+      const lessonProgressData = progressData.filter((p) =>
+        p.podsieAssignmentId
           ? p.podsieAssignmentId === lesson.podsieAssignmentId
-          : p.rampUpId === lesson.unitLessonId
+          : p.rampUpId === lesson.unitLessonId,
       );
       const lessonStats = calculateSummaryStats(lessonProgressData);
 
@@ -340,19 +395,23 @@ export function SmartboardDisplay({
       const lessonTodayProgress = calculateTodayProgress(
         lessonProgressData,
         (student) => student.questions,
-        (student) => student.totalQuestions
+        (student) => student.totalQuestions,
       );
 
       // Calculate Zearn progress
       let zearnProgress = null;
       let zearnTodayProgress = 0;
       if (lesson.hasZearnActivity && lessonProgressData.length > 0) {
-        const zearnCompleted = lessonProgressData.filter(p => p.zearnCompleted).length;
-        zearnProgress = Math.round((zearnCompleted / lessonProgressData.length) * 100);
+        const zearnCompleted = lessonProgressData.filter(
+          (p) => p.zearnCompleted,
+        ).length;
+        zearnProgress = Math.round(
+          (zearnCompleted / lessonProgressData.length) * 100,
+        );
         zearnTodayProgress = calculateTodayCompletionRate(
           lessonProgressData,
           (student) => student.zearnCompleted ?? false,
-          (student) => student.zearnCompletionDate
+          (student) => student.zearnCompletionDate,
         );
       }
 
@@ -360,17 +419,17 @@ export function SmartboardDisplay({
       let masteryCheckProgress = null;
       let masteryCheckTodayProgress = 0;
       if (masteryCheck) {
-        const masteryProgressData = progressData.filter(
-          p => p.podsieAssignmentId
+        const masteryProgressData = progressData.filter((p) =>
+          p.podsieAssignmentId
             ? p.podsieAssignmentId === masteryCheck.podsieAssignmentId
-            : p.rampUpId === masteryCheck.unitLessonId
+            : p.rampUpId === masteryCheck.unitLessonId,
         );
         const masteryStats = calculateSummaryStats(masteryProgressData);
         masteryCheckProgress = masteryStats.avgCompletion;
         masteryCheckTodayProgress = calculateTodayProgress(
           masteryProgressData,
           (student) => student.questions,
-          (student) => student.totalQuestions
+          (student) => student.totalQuestions,
         );
       }
 
@@ -400,19 +459,19 @@ export function SmartboardDisplay({
   const overallPercentage = useMemo(() => {
     if (assignmentProgress.length === 0) return 0;
 
-    const totalCompletion = assignmentProgress.reduce(
-      (sum, item) => {
-        const hasSidekickAndMasteryCheck = item.lesson.activityType === 'sidekick' && item.masteryCheck && item.masteryCheckProgress !== null;
+    const totalCompletion = assignmentProgress.reduce((sum, item) => {
+      const hasSidekickAndMasteryCheck =
+        item.lesson.activityType === "sidekick" &&
+        item.masteryCheck &&
+        item.masteryCheckProgress !== null;
 
-        if (!showSidekick && hasSidekickAndMasteryCheck) {
-          const zearn = item.zearnProgress ?? 0;
-          const mastery = item.masteryCheckProgress ?? 0;
-          return sum + (zearn * 0.35 + mastery * 0.65);
-        }
-        return sum + item.lessonProgress;
-      },
-      0
-    );
+      if (!showSidekick && hasSidekickAndMasteryCheck) {
+        const zearn = item.zearnProgress ?? 0;
+        const mastery = item.masteryCheckProgress ?? 0;
+        return sum + (zearn * 0.35 + mastery * 0.65);
+      }
+      return sum + item.lessonProgress;
+    }, 0);
 
     return Math.round(totalCompletion / assignmentProgress.length);
   }, [assignmentProgress, showSidekick]);
@@ -421,46 +480,54 @@ export function SmartboardDisplay({
   const overallTodayPercentage = useMemo(() => {
     if (assignmentProgress.length === 0) return 0;
 
-    const totalTodayCompletion = assignmentProgress.reduce(
-      (sum, item) => {
-        const hasSidekickAndMasteryCheck = item.lesson.activityType === 'sidekick' && item.masteryCheck && item.masteryCheckProgress !== null;
+    const totalTodayCompletion = assignmentProgress.reduce((sum, item) => {
+      const hasSidekickAndMasteryCheck =
+        item.lesson.activityType === "sidekick" &&
+        item.masteryCheck &&
+        item.masteryCheckProgress !== null;
 
-        if (!showSidekick && hasSidekickAndMasteryCheck) {
-          const zearnToday = item.zearnTodayProgress ?? 0;
-          const masteryToday = item.masteryCheckTodayProgress ?? 0;
-          return sum + (zearnToday * 0.35 + masteryToday * 0.65);
-        }
-        return sum + item.lessonTodayProgress;
-      },
-      0
-    );
+      if (!showSidekick && hasSidekickAndMasteryCheck) {
+        const zearnToday = item.zearnTodayProgress ?? 0;
+        const masteryToday = item.masteryCheckTodayProgress ?? 0;
+        return sum + (zearnToday * 0.35 + masteryToday * 0.65);
+      }
+      return sum + item.lessonTodayProgress;
+    }, 0);
 
     return Math.round(totalTodayCompletion / assignmentProgress.length);
   }, [assignmentProgress, showSidekick]);
 
   // Format lesson section for display (handles subsection format like "A:1")
   const formattedLessonSection = useMemo(() => {
-    if (!selectedLessonSection) return '';
+    if (!selectedLessonSection) return "";
 
     // Parse composite key format: "A" or "A:1"
-    const colonIndex = selectedLessonSection.indexOf(':');
+    const colonIndex = selectedLessonSection.indexOf(":");
     let section: string;
     let subsection: number | undefined;
 
     if (colonIndex !== -1) {
       section = selectedLessonSection.substring(0, colonIndex);
-      subsection = parseInt(selectedLessonSection.substring(colonIndex + 1), 10);
+      subsection = parseInt(
+        selectedLessonSection.substring(colonIndex + 1),
+        10,
+      );
     } else {
       section = selectedLessonSection;
       subsection = undefined;
     }
 
     // Format the base name
-    const baseName = section === "Ramp Ups" || section === "Unit Assessment" || section === "all"
-      ? section === "all" ? "All Sections" : section
-      : section.length === 1 && /^[A-Z]$/i.test(section)
-        ? `Section ${section}`
-        : section;
+    const baseName =
+      section === "Ramp Ups" ||
+      section === "Unit Assessment" ||
+      section === "all"
+        ? section === "all"
+          ? "All Sections"
+          : section
+        : section.length === 1 && /^[A-Z]$/i.test(section)
+          ? `Section ${section}`
+          : section;
 
     // Add subsection part if present
     if (subsection !== undefined) {
@@ -478,19 +545,23 @@ export function SmartboardDisplay({
     zearnTodayProgress: number,
     masteryCheck: LessonConfig | null,
     masteryCheckProgress: number | null,
-    masteryCheckTodayProgress: number
+    masteryCheckTodayProgress: number,
   ) => {
     const segments = [];
-    const hasSidekickAndMasteryCheck = lesson.activityType === 'sidekick' && masteryCheck && masteryCheckProgress !== null;
-    const shouldShowZearn = zearnProgress !== null && (!showSidekick || !hasSidekickAndMasteryCheck);
+    const hasSidekickAndMasteryCheck =
+      lesson.activityType === "sidekick" &&
+      masteryCheck &&
+      masteryCheckProgress !== null;
+    const shouldShowZearn =
+      zearnProgress !== null && (!showSidekick || !hasSidekickAndMasteryCheck);
     const shouldShowSidekickBar = showSidekick || !hasSidekickAndMasteryCheck;
 
     if (shouldShowZearn) {
       segments.push({
         percentage: zearnProgress,
         todayPercentage: showDailyProgress ? zearnTodayProgress : undefined,
-        color: 'purple' as const,
-        widthPercent: 35
+        color: "purple" as const,
+        widthPercent: 35,
       });
     }
 
@@ -501,32 +572,37 @@ export function SmartboardDisplay({
         segments.push({
           percentage: lessonProgress,
           todayPercentage: showDailyProgress ? lessonTodayProgress : undefined,
-          color: 'blue' as const,
-          widthPercent: lessonWidth
+          color: "blue" as const,
+          widthPercent: lessonWidth,
         });
         segments.push({
           percentage: masteryCheckProgress,
-          todayPercentage: showDailyProgress ? masteryCheckTodayProgress : undefined,
-          color: 'green' as const,
-          widthPercent: masteryWidth
+          todayPercentage: showDailyProgress
+            ? masteryCheckTodayProgress
+            : undefined,
+          color: "green" as const,
+          widthPercent: masteryWidth,
         });
       } else {
         const masteryWidth = shouldShowZearn ? 65 : 100;
         segments.push({
           percentage: masteryCheckProgress,
-          todayPercentage: showDailyProgress ? masteryCheckTodayProgress : undefined,
-          color: 'green' as const,
-          widthPercent: masteryWidth
+          todayPercentage: showDailyProgress
+            ? masteryCheckTodayProgress
+            : undefined,
+          color: "green" as const,
+          widthPercent: masteryWidth,
         });
       }
     } else {
-      const barColor = lesson.activityType === 'mastery-check' ? 'green' : 'blue';
+      const barColor =
+        lesson.activityType === "mastery-check" ? "green" : "blue";
       const widthPercent = shouldShowZearn ? 65 : 100;
       segments.push({
         percentage: lessonProgress,
         todayPercentage: showDailyProgress ? lessonTodayProgress : undefined,
-        color: barColor as 'blue' | 'green',
-        widthPercent
+        color: barColor as "blue" | "green",
+        widthPercent,
       });
     }
 
@@ -537,16 +613,22 @@ export function SmartboardDisplay({
   const [showVideoPlayer, setShowVideoPlayer] = useState(false);
 
   // Toast notification state
-  const [toast, setToast] = useState<{ message: string; type: 'syncing' | 'success' } | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "syncing" | "success";
+  } | null>(null);
   const prevSyncingAll = useRef(syncingAll);
 
   // Auto-sync every 2 minutes when fullscreen
   useEffect(() => {
     if (!isFullscreen || !onSyncAll) return;
 
-    const intervalId = setInterval(() => {
-      onSyncAll();
-    }, 2 * 60 * 1000); // 2 minutes
+    const intervalId = setInterval(
+      () => {
+        onSyncAll();
+      },
+      2 * 60 * 1000,
+    ); // 2 minutes
 
     return () => clearInterval(intervalId);
   }, [isFullscreen, onSyncAll]);
@@ -555,11 +637,11 @@ export function SmartboardDisplay({
   useEffect(() => {
     // Sync started
     if (syncingAll && !prevSyncingAll.current) {
-      setToast({ message: 'Syncing all assignments...', type: 'syncing' });
+      setToast({ message: "Syncing all assignments...", type: "syncing" });
     }
     // Sync completed
     if (!syncingAll && prevSyncingAll.current) {
-      setToast({ message: 'Sync complete!', type: 'success' });
+      setToast({ message: "Sync complete!", type: "success" });
       const timer = setTimeout(() => setToast(null), 3000);
       return () => clearTimeout(timer);
     }
@@ -579,8 +661,12 @@ export function SmartboardDisplay({
         isFullscreen={isFullscreen}
         textSizeLevel={effectiveTextSizeLevel}
         onToggleFullscreen={() => setIsFullscreen(!isFullscreen)}
-        onTextSizeIncrease={() => setTextSizeLevel(prev => Math.min(prev + 1, 2))}
-        onTextSizeDecrease={() => setTextSizeLevel(prev => Math.max(prev - 1, -1))}
+        onTextSizeIncrease={() =>
+          setTextSizeLevel((prev) => Math.min(prev + 1, 2))
+        }
+        onTextSizeDecrease={() =>
+          setTextSizeLevel((prev) => Math.max(prev - 1, -1))
+        }
         onSyncAll={onSyncAll}
         syncingAll={syncingAll}
         activeYoutubeUrl={activeYoutubeUrl}
@@ -589,21 +675,31 @@ export function SmartboardDisplay({
       />
 
       {/* Smartboard Content - Combined Goal and Progress */}
-      <div className={`bg-indigo-800 rounded-b-xl flex gap-8 ${isFullscreen ? "p-12 flex-1" : "p-6"}`}>
+      <div
+        className={`bg-indigo-800 rounded-b-xl flex gap-8 ${isFullscreen ? "p-12 flex-1" : "p-6"}`}
+      >
         {/* Left: Class Goal + Individual Progress */}
         <div className="flex-1 space-y-6">
           {/* Class Goal - Main Progress */}
           <div className="bg-indigo-900/50 rounded-xl p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className={`bg-teal-500 text-white px-3 py-1 rounded-lg font-bold ${effectiveTextSizeLevel === 2 ? "text-lg" : effectiveTextSizeLevel === 1 ? "text-base" : effectiveTextSizeLevel === -1 ? "text-xs" : "text-sm"}`}>
+              <div
+                className={`bg-teal-500 text-white px-3 py-1 rounded-lg font-bold ${effectiveTextSizeLevel === 2 ? "text-lg" : effectiveTextSizeLevel === 1 ? "text-base" : effectiveTextSizeLevel === -1 ? "text-xs" : "text-sm"}`}
+              >
                 Class Goal
               </div>
-              <span className={`text-indigo-300 ${effectiveTextSizeLevel === 2 ? "text-lg" : effectiveTextSizeLevel === 1 ? "text-base" : effectiveTextSizeLevel === -1 ? "text-xs" : "text-sm"}`}>Complete Unit {selectedUnit}: {formattedLessonSection}</span>
+              <span
+                className={`text-indigo-300 ${effectiveTextSizeLevel === 2 ? "text-lg" : effectiveTextSizeLevel === 1 ? "text-base" : effectiveTextSizeLevel === -1 ? "text-xs" : "text-sm"}`}
+              >
+                Complete Unit {selectedUnit}: {formattedLessonSection}
+              </span>
             </div>
             <SmartboardProgressBar
               label=""
               percentage={overallPercentage}
-              todayPercentage={showDailyProgress ? overallTodayPercentage : undefined}
+              todayPercentage={
+                showDailyProgress ? overallTodayPercentage : undefined
+              }
               color="teal"
               showLabel={false}
               textSizeLevel={effectiveTextSizeLevel}
@@ -612,23 +708,8 @@ export function SmartboardDisplay({
 
           {/* Individual Assignment Progress */}
           <div className="space-y-3 pl-4 pr-32 border-l-2 border-indigo-600">
-            {assignmentProgress.map(({ lesson, lessonProgress, lessonTodayProgress, zearnProgress, zearnTodayProgress, masteryCheck, masteryCheckProgress, masteryCheckTodayProgress }) => {
-              const lessonNumber = lesson.unitLessonId.includes('.')
-                ? lesson.unitLessonId.split('.')[1]
-                : lesson.unitLessonId;
-
-              const label = formatLessonDisplay(
-                lesson.lessonName,
-                lessonNumber,
-                {
-                  showLessonNumber: selectedSection !== 'Ramp Ups' && selectedSection !== 'Unit Assessment',
-                  section: lesson.section
-                },
-                lesson.lessonType,
-                lesson.lessonTitle
-              );
-
-              const segments = buildSegments(
+            {assignmentProgress.map(
+              ({
                 lesson,
                 lessonProgress,
                 lessonTodayProgress,
@@ -636,21 +717,49 @@ export function SmartboardDisplay({
                 zearnTodayProgress,
                 masteryCheck,
                 masteryCheckProgress,
-                masteryCheckTodayProgress
-              );
+                masteryCheckTodayProgress,
+              }) => {
+                const lessonNumber = lesson.unitLessonId.includes(".")
+                  ? lesson.unitLessonId.split(".")[1]
+                  : lesson.unitLessonId;
 
-              return (
-                <div key={lesson.podsieAssignmentId} className="pl-4">
-                  <SmartboardProgressBar
-                    label={label}
-                    segments={segments}
-                    size="split"
-                    showLabel={true}
-                    textSizeLevel={effectiveTextSizeLevel}
-                  />
-                </div>
-              );
-            })}
+                const label = formatLessonDisplay(
+                  lesson.lessonName,
+                  lessonNumber,
+                  {
+                    showLessonNumber:
+                      selectedSection !== "Ramp Ups" &&
+                      selectedSection !== "Unit Assessment",
+                    section: lesson.section,
+                  },
+                  lesson.lessonType,
+                  lesson.lessonTitle,
+                );
+
+                const segments = buildSegments(
+                  lesson,
+                  lessonProgress,
+                  lessonTodayProgress,
+                  zearnProgress,
+                  zearnTodayProgress,
+                  masteryCheck,
+                  masteryCheckProgress,
+                  masteryCheckTodayProgress,
+                );
+
+                return (
+                  <div key={lesson.podsieAssignmentId} className="pl-4">
+                    <SmartboardProgressBar
+                      label={label}
+                      segments={segments}
+                      size="split"
+                      showLabel={true}
+                      textSizeLevel={effectiveTextSizeLevel}
+                    />
+                  </div>
+                );
+              },
+            )}
           </div>
         </div>
 
@@ -667,7 +776,9 @@ export function SmartboardDisplay({
           {/* YouTube Editor (Edit Mode Only) */}
           {isEditMode && (
             <div className="bg-indigo-900/50 rounded-xl p-4">
-              <h3 className={`font-semibold text-white mb-3 ${effectiveTextSizeLevel === 2 ? "text-3xl" : effectiveTextSizeLevel === 1 ? "text-2xl" : effectiveTextSizeLevel === -1 ? "text-sm" : isFullscreen ? "text-xl" : "text-base"}`}>
+              <h3
+                className={`font-semibold text-white mb-3 ${effectiveTextSizeLevel === 2 ? "text-3xl" : effectiveTextSizeLevel === 1 ? "text-2xl" : effectiveTextSizeLevel === -1 ? "text-sm" : isFullscreen ? "text-xl" : "text-base"}`}
+              >
                 Video
               </h3>
               <YoutubeEditor
@@ -688,7 +799,9 @@ export function SmartboardDisplay({
 
       {/* YouTube Player - Bottom Right (triggered by header button) */}
       {showVideoPlayer && activeYoutubeUrl && (
-        <div className={`absolute ${isFullscreen ? "bottom-8 right-8" : "bottom-4 right-4"}`}>
+        <div
+          className={`absolute ${isFullscreen ? "bottom-8 right-8" : "bottom-4 right-4"}`}
+        >
           <div
             className={`
               bg-black rounded shadow-2xl overflow-hidden
@@ -722,24 +835,52 @@ export function SmartboardDisplay({
 
       {/* Sync Toast Notification - Bottom Left */}
       {toast && (
-        <div className={`absolute ${isFullscreen ? "bottom-8 left-8" : "bottom-4 left-4"} z-50`}>
+        <div
+          className={`absolute ${isFullscreen ? "bottom-8 left-8" : "bottom-4 left-4"} z-50`}
+        >
           <div
             className={`
               flex items-center gap-2 px-4 py-2 rounded-lg shadow-lg
-              ${toast.type === 'syncing' ? 'bg-indigo-600' : 'bg-green-600'}
+              ${toast.type === "syncing" ? "bg-indigo-600" : "bg-green-600"}
               text-white font-medium
-              ${effectiveTextSizeLevel === 2 ? 'text-2xl' : effectiveTextSizeLevel === 1 ? 'text-xl' : effectiveTextSizeLevel === -1 ? 'text-xs' : isFullscreen ? 'text-lg' : 'text-sm'}
+              ${effectiveTextSizeLevel === 2 ? "text-2xl" : effectiveTextSizeLevel === 1 ? "text-xl" : effectiveTextSizeLevel === -1 ? "text-xs" : isFullscreen ? "text-lg" : "text-sm"}
             `}
           >
-            {toast.type === 'syncing' && (
-              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            {toast.type === "syncing" && (
+              <svg
+                className="animate-spin h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
             )}
-            {toast.type === 'success' && (
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            {toast.type === "success" && (
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             )}
             {toast.message}
@@ -767,11 +908,7 @@ export function SmartboardDisplay({
       )}
 
       {/* Normal Display */}
-      {!isFullscreen && (
-        <div className="relative">
-          {smartboardContent}
-        </div>
-      )}
+      {!isFullscreen && <div className="relative">{smartboardContent}</div>}
 
       {/* Fullscreen Modal */}
       {isFullscreen && (

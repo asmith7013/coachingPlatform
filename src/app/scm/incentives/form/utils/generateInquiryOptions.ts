@@ -17,7 +17,9 @@ export interface InquiryOptionGroup {
  * @param sections - Array of section letters (e.g., ["A", "B", "C"])
  * @returns Grouped options for inquiry dropdown
  */
-export function generateInquiryOptions(sections: string[]): InquiryOptionGroup[] {
+export function generateInquiryOptions(
+  sections: string[],
+): InquiryOptionGroup[] {
   const groups: InquiryOptionGroup[] = [];
 
   // Generate section checkpoints (3 questions each)
@@ -66,7 +68,7 @@ export function generateInquiryOptions(sections: string[]): InquiryOptionGroup[]
  * Flatten grouped options into a single array (for validation)
  */
 export function flattenInquiryOptions(
-  groups: InquiryOptionGroup[]
+  groups: InquiryOptionGroup[],
 ): InquiryOption[] {
   return groups.flatMap((group) => group.options);
 }
@@ -76,7 +78,7 @@ export function flattenInquiryOptions(
  */
 export function isValidInquiryQuestion(
   value: string,
-  sections: string[]
+  sections: string[],
 ): boolean {
   const groups = generateInquiryOptions(sections);
   const allOptions = flattenInquiryOptions(groups);

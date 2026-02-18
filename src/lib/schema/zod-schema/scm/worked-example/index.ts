@@ -20,10 +20,10 @@ export {
   type ProblemAnalysis,
   type StrategyDefinition,
   type Scenario,
-} from './deck';
+} from "./deck";
 
 // Slide constants (pixel dimensions)
-export { SLIDE_CONSTANTS, type SlideRegionBounds } from './slide-constants';
+export { SLIDE_CONSTANTS, type SlideRegionBounds } from "./slide-constants";
 
 // Card schemas (atomic content units)
 export {
@@ -40,7 +40,7 @@ export {
   type CfuCard,
   type AnswerCard,
   type CardDefinition,
-} from './slide-cards';
+} from "./slide-cards";
 
 // Region schemas (layout system)
 export {
@@ -54,4 +54,4 @@ export {
   type LayoutPresetName,
   type RowConfig,
   type LayoutPreset,
-} from './slide-regions';
+} from "./slide-regions";

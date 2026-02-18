@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
-import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 const lookForFields = {
   lookForIndex: { type: Number, required: true },
@@ -11,10 +14,13 @@ const lookForFields = {
   status: { type: String },
   studentFacing: { type: Boolean, required: true },
   rubricIds: [{ type: String }],
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
-const LookForSchema = new mongoose.Schema(lookForFields, { ...standardSchemaOptions, collection: 'lookfors' });
+const LookForSchema = new mongoose.Schema(lookForFields, {
+  ...standardSchemaOptions,
+  collection: "lookfors",
+});
 
 const lookForItemFields = {
   originalLookFor: { type: String, required: true },
@@ -25,15 +31,19 @@ const lookForItemFields = {
   teacherIDs: [{ type: String, required: true }],
   chosenBy: [{ type: String, required: true }],
   active: { type: Boolean, required: true },
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
-const LookForItemSchema = new mongoose.Schema(lookForItemFields, { ...standardSchemaOptions, collection: 'lookforitems' });
+const LookForItemSchema = new mongoose.Schema(lookForItemFields, {
+  ...standardSchemaOptions,
+  collection: "lookforitems",
+});
 
-export const LookForModel = mongoose.models.LookFor || 
-  mongoose.model("LookFor", LookForSchema);
+export const LookForModel =
+  mongoose.models.LookFor || mongoose.model("LookFor", LookForSchema);
 
-export const LookForItemModel = mongoose.models.LookForItem || 
+export const LookForItemModel =
+  mongoose.models.LookForItem ||
   mongoose.model("LookForItem", LookForItemSchema);
 
 export async function getLookForModel() {

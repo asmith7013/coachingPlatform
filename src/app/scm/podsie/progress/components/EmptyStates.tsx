@@ -1,4 +1,4 @@
-import { Spinner } from '@/components/core/feedback/Spinner';
+import { Spinner } from "@/components/core/feedback/Spinner";
 import { BookOpenIcon, ChartBarIcon } from "@heroicons/react/24/outline";
 
 interface LoadingStateProps {
@@ -6,7 +6,10 @@ interface LoadingStateProps {
   submessage?: string;
 }
 
-export function LoadingState({ message = "Loading...", submessage }: LoadingStateProps) {
+export function LoadingState({
+  message = "Loading...",
+  submessage,
+}: LoadingStateProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-6">
@@ -16,7 +19,9 @@ export function LoadingState({ message = "Loading...", submessage }: LoadingStat
               <Spinner size="lg" variant="primary" />
             </div>
             <div className="text-gray-600">{message}</div>
-            {submessage && <div className="text-gray-500 text-sm mt-1">{submessage}</div>}
+            {submessage && (
+              <div className="text-gray-500 text-sm mt-1">{submessage}</div>
+            )}
           </div>
         </div>
       </div>
@@ -28,7 +33,9 @@ interface ProgressLoadingStateProps {
   loadingLessons: boolean;
 }
 
-export function ProgressLoadingState({ loadingLessons }: ProgressLoadingStateProps) {
+export function ProgressLoadingState({
+  loadingLessons,
+}: ProgressLoadingStateProps) {
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
       <div className="flex flex-col items-center justify-center">
@@ -36,7 +43,7 @@ export function ProgressLoadingState({ loadingLessons }: ProgressLoadingStatePro
           <Spinner size="lg" variant="primary" />
         </div>
         <div className="text-gray-600 font-medium mb-1">
-          {loadingLessons ? 'Loading lessons...' : 'Loading progress data...'}
+          {loadingLessons ? "Loading lessons..." : "Loading progress data..."}
         </div>
         <div className="text-gray-500 text-sm">
           Please wait while we fetch the assignment data
@@ -51,12 +58,16 @@ interface NoAssignmentsStateProps {
   selectedLessonSection: string;
 }
 
-export function NoAssignmentsState({ selectedUnit, selectedLessonSection }: NoAssignmentsStateProps) {
-  const sectionDisplay = selectedLessonSection === 'all'
-    ? 'All Lessons'
-    : selectedLessonSection.length === 1
-    ? `Section ${selectedLessonSection}`
-    : selectedLessonSection;
+export function NoAssignmentsState({
+  selectedUnit,
+  selectedLessonSection,
+}: NoAssignmentsStateProps) {
+  const sectionDisplay =
+    selectedLessonSection === "all"
+      ? "All Lessons"
+      : selectedLessonSection.length === 1
+        ? `Section ${selectedLessonSection}`
+        : selectedLessonSection;
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
@@ -76,7 +87,8 @@ export function SelectFiltersState() {
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-12 text-center">
       <ChartBarIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
       <div className="text-gray-600">
-        Select a class section, unit, and lesson section to view assignment progress
+        Select a class section, unit, and lesson section to view assignment
+        progress
       </div>
     </div>
   );

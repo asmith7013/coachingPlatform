@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 
 interface LessonSelectorProps {
   section: string;
@@ -13,26 +13,26 @@ export function LessonSelector({
   section,
   selectedLessons,
   onLessonsChange,
-  getAvailableLessons
+  getAvailableLessons,
 }: LessonSelectorProps) {
   const availableLessons = getAvailableLessons();
-  
+
   const handleLessonToggle = (lessonNumber: number) => {
     if (selectedLessons.includes(lessonNumber)) {
-      onLessonsChange(selectedLessons.filter(l => l !== lessonNumber));
+      onLessonsChange(selectedLessons.filter((l) => l !== lessonNumber));
     } else {
       onLessonsChange([...selectedLessons, lessonNumber].sort((a, b) => a - b));
     }
   };
-  
+
   const handleSelectAll = () => {
     onLessonsChange(availableLessons);
   };
-  
+
   const handleSelectNone = () => {
     onLessonsChange([]);
   };
-  
+
   return (
     <div className="border rounded-lg p-4 bg-gray-50">
       <div className="flex items-center justify-between mb-3">
@@ -52,10 +52,13 @@ export function LessonSelector({
           </button>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-10 gap-2">
-        {availableLessons.map(lessonNumber => (
-          <label key={lessonNumber} className="flex items-center space-x-1 text-sm">
+        {availableLessons.map((lessonNumber) => (
+          <label
+            key={lessonNumber}
+            className="flex items-center space-x-1 text-sm"
+          >
             <input
               type="checkbox"
               checked={selectedLessons.includes(lessonNumber)}
@@ -66,13 +69,11 @@ export function LessonSelector({
           </label>
         ))}
       </div>
-      
+
       <div className="mt-2 text-xs text-gray-600">
         Selected: {selectedLessons.length} lessons
         {selectedLessons.length > 0 && (
-          <span className="ml-2">
-            ({selectedLessons.join(', ')})
-          </span>
+          <span className="ml-2">({selectedLessons.join(", ")})</span>
         )}
       </div>
     </div>

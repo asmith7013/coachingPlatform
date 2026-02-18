@@ -3,7 +3,11 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useFilterParams, slugToScopeTag } from "@/hooks/scm/useFilterParams";
-import { fetchLessonsListByScopeTag, fetchScopeAndSequenceById, fetchFullLessonsByUnit } from "@actions/scm/scope-and-sequence/scope-and-sequence";
+import {
+  fetchLessonsListByScopeTag,
+  fetchScopeAndSequenceById,
+  fetchFullLessonsByUnit,
+} from "@actions/scm/scope-and-sequence/scope-and-sequence";
 import { fetchRoadmapsSkillsByNumbers } from "@actions/scm/roadmaps/roadmaps-skills";
 import { getRoadmapUnits } from "@/app/actions/scm/roadmaps/roadmaps-units";
 import { LessonDetailView } from "./components/LessonDetailView";
@@ -46,11 +50,14 @@ export default function ScopeAndSequencePage() {
   // Read URL params directly to compute availableUnits before hook
   const searchParams = useSearchParams();
   // Support both new format (ss) and legacy format (grade)
-  const scopeTagFromUrl = slugToScopeTag(searchParams.get("ss") || "") ||
-                          slugToScopeTag(searchParams.get("grade") || "");
+  const scopeTagFromUrl =
+    slugToScopeTag(searchParams.get("ss") || "") ||
+    slugToScopeTag(searchParams.get("grade") || "");
 
   // Lightweight lesson list (for dropdowns)
-  const [lessonsListByTag, setLessonsListByTag] = useState<Record<string, LessonListItem[]>>({});
+  const [lessonsListByTag, setLessonsListByTag] = useState<
+    Record<string, LessonListItem[]>
+  >({});
   const [isLoadingList, setIsLoadingList] = useState(false);
 
   // Full lesson data for current unit (for Gantt chart)
@@ -58,35 +65,49 @@ export default function ScopeAndSequencePage() {
   const [isLoadingUnit, setIsLoadingUnit] = useState(false);
 
   // Selected lesson full data
-  const [selectedLessonFull, setSelectedLessonFull] = useState<FullLessonData | null>(null);
+  const [selectedLessonFull, setSelectedLessonFull] =
+    useState<FullLessonData | null>(null);
 
   // Other data
   const [allUnits, setAllUnits] = useState<RoadmapUnit[]>([]);
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
-  const [_selectedSkillNumber, setSelectedSkillNumber] = useState<string | null>(null);
-  const [selectedSkillData, setSelectedSkillData] = useState<RoadmapsSkill | null>(null);
+  const [_selectedSkillNumber, setSelectedSkillNumber] = useState<
+    string | null
+  >(null);
+  const [selectedSkillData, setSelectedSkillData] =
+    useState<RoadmapsSkill | null>(null);
   const [loadingSkill, setLoadingSkill] = useState(false);
-  const [selectedSkillColor, setSelectedSkillColor] = useState<'blue' | 'green' | 'orange' | 'purple'>('blue');
+  const [selectedSkillColor, setSelectedSkillColor] = useState<
+    "blue" | "green" | "orange" | "purple"
+  >("blue");
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [selectedSection, setSelectedSection] = useState<string>("");
-  const [contextSkillNumber, setContextSkillNumber] = useState<string | null>(null);
-  const [contextSkillData, setContextSkillData] = useState<RoadmapsSkill | null>(null);
+  const [contextSkillNumber, setContextSkillNumber] = useState<string | null>(
+    null,
+  );
+  const [contextSkillData, setContextSkillData] =
+    useState<RoadmapsSkill | null>(null);
   const [loadingContextSkill, setLoadingContextSkill] = useState(false);
 
   // Compute available units from cached lessons (using URL scope tag)
   const currentLessonsList = lessonsListByTag[scopeTagFromUrl] || [];
   const unitsByGrade = scopeTagFromUrl
     ? currentLessonsList
-        .filter(lesson => !lesson.lessonType || lesson.lessonType === "lesson")
-        .reduce((acc, lesson) => {
-          const grade = lesson.grade;
-          if (!acc[grade]) {
-            acc[grade] = new Set<string>();
-          }
-          acc[grade].add(lesson.unit);
-          return acc;
-        }, {} as Record<string, Set<string>>)
+        .filter(
+          (lesson) => !lesson.lessonType || lesson.lessonType === "lesson",
+        )
+        .reduce(
+          (acc, lesson) => {
+            const grade = lesson.grade;
+            if (!acc[grade]) {
+              acc[grade] = new Set<string>();
+            }
+            acc[grade].add(lesson.unit);
+            return acc;
+          },
+          {} as Record<string, Set<string>>,
+        )
     : {};
   const gradeGroups = Object.keys(unitsByGrade)
     .sort((a, b) => {
@@ -97,16 +118,16 @@ export default function ScopeAndSequencePage() {
       if (!isNaN(bNum)) return 1;
       return a.localeCompare(b);
     })
-    .map(grade => ({
+    .map((grade) => ({
       grade,
-      units: Array.from(unitsByGrade[grade]).sort()
+      units: Array.from(unitsByGrade[grade]).sort(),
     }));
-  const allAvailableUnits = gradeGroups.flatMap(g => g.units);
+  const allAvailableUnits = gradeGroups.flatMap((g) => g.units);
 
   // Build a map from unit to grade for resolving which grade a unit belongs to
   const unitToGradeMap = new Map<string, string>();
   gradeGroups.forEach(({ grade, units }) => {
-    units.forEach(unit => {
+    units.forEach((unit) => {
       // Only set if not already set (first grade wins, which handles duplicates)
       if (!unitToGradeMap.has(unit)) {
         unitToGradeMap.set(unit, grade);
@@ -123,7 +144,7 @@ export default function ScopeAndSequencePage() {
     handleUnitChange,
   } = useFilterParams({
     availableUnits: allAvailableUnits,
-    availableGrades: gradeGroups.map(g => g.grade),
+    availableGrades: gradeGroups.map((g) => g.grade),
   });
 
   // Custom handler for unit selection that extracts grade from optgroup
@@ -144,9 +165,10 @@ export default function ScopeAndSequencePage() {
   };
 
   // Compute the composite value for the currently selected unit
-  const selectedUnitComposite = selectedUnit && selectedGradeWithin
-    ? `${selectedGradeWithin}|${selectedUnit}`
-    : selectedUnit;
+  const selectedUnitComposite =
+    selectedUnit && selectedGradeWithin
+      ? `${selectedGradeWithin}|${selectedUnit}`
+      : selectedUnit;
 
   // Load roadmap units on mount
   useEffect(() => {
@@ -154,11 +176,13 @@ export default function ScopeAndSequencePage() {
       try {
         const result = await getRoadmapUnits({
           successOnly: true,
-          limit: 1000
+          limit: 1000,
         });
 
         if (result.success && result.data) {
-          setAllUnits(Array.isArray(result.data) ? result.data as RoadmapUnit[] : []);
+          setAllUnits(
+            Array.isArray(result.data) ? (result.data as RoadmapUnit[]) : [],
+          );
         }
       } catch (error) {
         console.error("Error loading units:", error);
@@ -180,9 +204,9 @@ export default function ScopeAndSequencePage() {
       try {
         const result = await fetchLessonsListByScopeTag(selectedTag);
         if (result.success && result.data) {
-          setLessonsListByTag(prev => ({
+          setLessonsListByTag((prev) => ({
             ...prev,
-            [selectedTag]: result.data
+            [selectedTag]: result.data,
           }));
         }
       } catch (error) {
@@ -248,7 +272,7 @@ export default function ScopeAndSequencePage() {
     }
 
     // Check if we already have it from unitLessons
-    const existingLesson = unitLessons.find(l => l._id === selectedLessonId);
+    const existingLesson = unitLessons.find((l) => l._id === selectedLessonId);
     if (existingLesson) {
       setSelectedLessonFull(existingLesson);
       return;
@@ -273,7 +297,10 @@ export default function ScopeAndSequencePage() {
     setSelectedLessonId(lessonId);
   };
 
-  const handleSkillClick = async (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple' = 'blue') => {
+  const handleSkillClick = async (
+    skillNumber: string,
+    color: "blue" | "green" | "orange" | "purple" = "blue",
+  ) => {
     setSelectedSkillNumber(skillNumber);
     setSelectedSkillColor(color);
     setLoadingSkill(true);
@@ -289,7 +316,7 @@ export default function ScopeAndSequencePage() {
         } as unknown as RoadmapsSkill);
       }
     } catch (error) {
-      console.error('Error fetching skill:', error);
+      console.error("Error fetching skill:", error);
       setSelectedSkillData({
         skillNumber,
         notFound: true,
@@ -314,7 +341,7 @@ export default function ScopeAndSequencePage() {
         } as unknown as RoadmapsSkill);
       }
     } catch (error) {
-      console.error('Error fetching context skill:', error);
+      console.error("Error fetching context skill:", error);
       setContextSkillData({
         skillNumber,
         notFound: true,
@@ -356,7 +383,10 @@ export default function ScopeAndSequencePage() {
             {/* Filters */}
             <div className="flex gap-4">
               <div className="w-1/3">
-                <label htmlFor="tag-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="tag-filter"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Filter by Curriculum
                 </label>
                 <select
@@ -365,8 +395,8 @@ export default function ScopeAndSequencePage() {
                   onChange={(e) => handleGradeChange(e.target.value)}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer ${
                     !selectedTag
-                      ? 'border-blue-500 ring-2 ring-blue-200'
-                      : 'border-gray-300'
+                      ? "border-blue-500 ring-2 ring-blue-200"
+                      : "border-gray-300"
                   }`}
                 >
                   {SCOPE_SEQUENCE_TAG_OPTIONS.map((option) => (
@@ -378,7 +408,10 @@ export default function ScopeAndSequencePage() {
               </div>
 
               <div className="flex-1">
-                <label htmlFor="unit-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="unit-filter"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Filter by Unit
                 </label>
                 <select
@@ -388,15 +421,20 @@ export default function ScopeAndSequencePage() {
                   disabled={!selectedTag || isLoadingList}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer ${
                     selectedTag && !selectedUnit
-                      ? 'border-blue-500 ring-2 ring-blue-200'
-                      : 'border-gray-300'
+                      ? "border-blue-500 ring-2 ring-blue-200"
+                      : "border-gray-300"
                   } disabled:bg-gray-100 disabled:cursor-not-allowed`}
                 >
-                  <option value="">{isLoadingList ? "Loading..." : "Select Unit"}</option>
+                  <option value="">
+                    {isLoadingList ? "Loading..." : "Select Unit"}
+                  </option>
                   {gradeGroups.map(({ grade, units }) => (
                     <optgroup key={grade} label={`Grade ${grade}`}>
                       {units.map((unit) => (
-                        <option key={`${grade}|${unit}`} value={`${grade}|${unit}`}>
+                        <option
+                          key={`${grade}|${unit}`}
+                          value={`${grade}|${unit}`}
+                        >
                           {unit}
                         </option>
                       ))}
@@ -407,55 +445,67 @@ export default function ScopeAndSequencePage() {
             </div>
 
             {/* Stats Summary - shown when unit is selected */}
-            {selectedTag && selectedUnit && unitLessons.length > 0 && (() => {
-              const unitNumber = unitLessons[0]?.unitNumber;
+            {selectedTag &&
+              selectedUnit &&
+              unitLessons.length > 0 &&
+              (() => {
+                const unitNumber = unitLessons[0]?.unitNumber;
 
-              const gradeMap: Record<string, string> = {
-                "Grade 6": "Illustrative Math New York - 6th Grade",
-                "Grade 7": "Illustrative Math New York - 7th Grade",
-                "Grade 8": "Illustrative Math New York - 8th Grade",
-                "Algebra 1": "Illustrative Math New York - Algebra 1",
-              };
+                const gradeMap: Record<string, string> = {
+                  "Grade 6": "Illustrative Math New York - 6th Grade",
+                  "Grade 7": "Illustrative Math New York - 7th Grade",
+                  "Grade 8": "Illustrative Math New York - 8th Grade",
+                  "Algebra 1": "Illustrative Math New York - Algebra 1",
+                };
 
-              const fullGradeName = gradeMap[selectedTag] || selectedTag;
+                const fullGradeName = gradeMap[selectedTag] || selectedTag;
 
-              const currentUnit = allUnits.find(u =>
-                u.unitNumber === unitNumber && u.grade === fullGradeName
-              );
+                const currentUnit = allUnits.find(
+                  (u) =>
+                    u.unitNumber === unitNumber && u.grade === fullGradeName,
+                );
 
-              if (!currentUnit) {
+                if (!currentUnit) {
+                  return (
+                    <div className="mt-6">
+                      <div className="text-xs text-gray-500">
+                        Loading unit data...
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <div className="mt-6">
-                    <div className="text-xs text-gray-500">Loading unit data...</div>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-skill-target">
+                          {currentUnit.targetCount || 0}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Target Skills
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-skill-essential">
+                          {currentUnit.supportCount || 0}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Essential Skills
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-skill-helpful">
+                          {currentUnit.extensionCount || 0}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Helpful Skills
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 );
-              }
-
-              return (
-                <div className="mt-6">
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-skill-target">
-                        {currentUnit.targetCount || 0}
-                      </div>
-                      <div className="text-sm text-gray-500">Target Skills</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-skill-essential">
-                        {currentUnit.supportCount || 0}
-                      </div>
-                      <div className="text-sm text-gray-500">Essential Skills</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-skill-helpful">
-                        {currentUnit.extensionCount || 0}
-                      </div>
-                      <div className="text-sm text-gray-500">Helpful Skills</div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
+              })()}
           </div>
 
           {/* Right Card: Student Filter - Only show when grade and unit are selected */}
@@ -463,12 +513,13 @@ export default function ScopeAndSequencePage() {
             <div className="w-1/4 bg-white rounded-lg shadow-sm p-6">
               <div className="mb-4">
                 <h2 className="text-lg font-semibold">Student Filter</h2>
-                <p className="text-sm text-gray-600">
-                  View mastery progress
-                </p>
+                <p className="text-sm text-gray-600">View mastery progress</p>
               </div>
               <div>
-                <label htmlFor="student-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="student-filter"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Select Students
                 </label>
                 <StudentFilter
@@ -493,20 +544,25 @@ export default function ScopeAndSequencePage() {
         )}
 
         {/* Skill Progression Visualization */}
-        {selectedTag && selectedUnit && unitLessons.length > 0 && !isLoadingUnit && (
-          <SkillGanttChart
-            lessons={unitLessons}
-            onLessonClick={handleLessonClick}
-            selectedLessonId={selectedLessonId}
-            onSkillClick={handleSkillClick}
-          />
-        )}
+        {selectedTag &&
+          selectedUnit &&
+          unitLessons.length > 0 &&
+          !isLoadingUnit && (
+            <SkillGanttChart
+              lessons={unitLessons}
+              onLessonClick={handleLessonClick}
+              selectedLessonId={selectedLessonId}
+              onSkillClick={handleSkillClick}
+            />
+          )}
 
         {/* Two-Column Layout: Adjust based on context column */}
         {!isLoading && (
           <div className="flex gap-6">
             {/* Left Column: Lesson Detail View */}
-            <div className={`transition-all ${contextSkillNumber ? 'w-1/4' : 'w-2/5'}`}>
+            <div
+              className={`transition-all ${contextSkillNumber ? "w-1/4" : "w-2/5"}`}
+            >
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                 <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10">
                   <h3 className="font-semibold text-gray-900">Lesson Skills</h3>
@@ -524,9 +580,11 @@ export default function ScopeAndSequencePage() {
             </div>
 
             {/* Middle Column: Skill Detail View */}
-            <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
-              contextSkillNumber ? 'w-2/5' : 'w-3/5'
-            }`}>
+            <div
+              className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
+                contextSkillNumber ? "w-2/5" : "w-3/5"
+              }`}
+            >
               <SkillDetailWrapper
                 skill={selectedSkillData}
                 onSkillClick={handleContextSkillClick}

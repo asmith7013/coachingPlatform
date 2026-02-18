@@ -9,10 +9,10 @@
  * Into a single utility function with validated metadata.
  */
 
-import { auth, currentUser, clerkClient } from '@clerk/nextjs/server';
-import { UserMetadataZodSchema } from '@zod-schema/core-types/auth';
-import type { UserMetadata } from '@core-types/auth';
-import type { User } from '@clerk/nextjs/server';
+import { auth, currentUser, clerkClient } from "@clerk/nextjs/server";
+import { UserMetadataZodSchema } from "@zod-schema/core-types/auth";
+import type { UserMetadata } from "@core-types/auth";
+import type { User } from "@clerk/nextjs/server";
 
 export interface AuthenticatedServerUser {
   userId: string;
@@ -35,7 +35,7 @@ export interface AuthResult {
 export interface AuthError {
   success: false;
   error: string;
-  code: 'UNAUTHORIZED' | 'USER_NOT_FOUND' | 'FETCH_ERROR';
+  code: "UNAUTHORIZED" | "USER_NOT_FOUND" | "FETCH_ERROR";
 }
 
 export type GetAuthenticatedUserResult = AuthResult | AuthError;
@@ -63,8 +63,8 @@ export async function getAuthenticatedUser(): Promise<GetAuthenticatedUserResult
     if (!userId) {
       return {
         success: false,
-        error: 'Unauthorized - please sign in',
-        code: 'UNAUTHORIZED',
+        error: "Unauthorized - please sign in",
+        code: "UNAUTHORIZED",
       };
     }
 
@@ -73,8 +73,8 @@ export async function getAuthenticatedUser(): Promise<GetAuthenticatedUserResult
     if (!user) {
       return {
         success: false,
-        error: 'User not found',
-        code: 'USER_NOT_FOUND',
+        error: "User not found",
+        code: "USER_NOT_FOUND",
       };
     }
 
@@ -83,7 +83,7 @@ export async function getAuthenticatedUser(): Promise<GetAuthenticatedUserResult
     const metadata = UserMetadataZodSchema.parse(rawMetadata);
 
     // Create case-insensitive role lookup
-    const rolesLower = new Set(metadata.roles.map(r => r.toLowerCase()));
+    const rolesLower = new Set(metadata.roles.map((r) => r.toLowerCase()));
 
     return {
       success: true,
@@ -93,18 +93,18 @@ export async function getAuthenticatedUser(): Promise<GetAuthenticatedUserResult
         email: user.emailAddresses[0]?.emailAddress || null,
         fullName: user.fullName,
         metadata,
-        isSuperAdmin: rolesLower.has('super_admin'),
-        isCoach: rolesLower.has('coach'),
-        isDirector: rolesLower.has('director'),
-        isSeniorDirector: rolesLower.has('senior director'),
+        isSuperAdmin: rolesLower.has("super_admin"),
+        isCoach: rolesLower.has("coach"),
+        isDirector: rolesLower.has("director"),
+        isSeniorDirector: rolesLower.has("senior director"),
       },
     };
   } catch (error) {
-    console.error('Error fetching authenticated user:', error);
+    console.error("Error fetching authenticated user:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch user',
-      code: 'FETCH_ERROR',
+      error: error instanceof Error ? error.message : "Failed to fetch user",
+      code: "FETCH_ERROR",
     };
   }
 }

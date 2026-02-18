@@ -45,7 +45,7 @@ interface ExportedCurriculum {
 
 function buildExportData(
   units: UnitWithLessons[],
-  skillMap: Record<string, string>
+  skillMap: Record<string, string>,
 ): ExportedUnit[] {
   return units.map((unit) => ({
     order: unit.order,
@@ -96,16 +96,14 @@ export function ExportJsonModal({
   currentSkillMap,
 }: ExportJsonModalProps) {
   const [checkedGrades, setCheckedGrades] = useState<Set<ScopeSequenceTag>>(
-    new Set()
+    new Set(),
   );
   const [exporting, setExporting] = useState(false);
 
   // Reset selection when modal opens
   useEffect(() => {
     if (isOpen) {
-      setCheckedGrades(
-        selectedGrade ? new Set([selectedGrade]) : new Set()
-      );
+      setCheckedGrades(selectedGrade ? new Set([selectedGrade]) : new Set());
     }
   }, [isOpen, selectedGrade]);
 
@@ -164,7 +162,9 @@ export function ExportJsonModal({
 
       // If selectedGrade wasn't loaded yet (no units), fetch it too
       if (alreadyLoaded.length > 0 && currentUnits.length === 0) {
-        const result = await fetchLessonsWithUnitOrder(selectedGrade as ScopeSequenceTag);
+        const result = await fetchLessonsWithUnitOrder(
+          selectedGrade as ScopeSequenceTag,
+        );
         if (result.success && result.data) {
           curricula.push({
             scopeSequenceTag: selectedGrade,
@@ -175,7 +175,7 @@ export function ExportJsonModal({
 
       // Sort curricula by tag name
       curricula.sort((a, b) =>
-        a.scopeSequenceTag.localeCompare(b.scopeSequenceTag)
+        a.scopeSequenceTag.localeCompare(b.scopeSequenceTag),
       );
 
       const exportPayload = {
@@ -186,7 +186,10 @@ export function ExportJsonModal({
       const dateStr = new Date().toISOString().slice(0, 10);
       const tagPart =
         curricula.length === 1 ? curricula[0].scopeSequenceTag : "all";
-      downloadJson(exportPayload, `scope-and-sequence-${tagPart}-${dateStr}.json`);
+      downloadJson(
+        exportPayload,
+        `scope-and-sequence-${tagPart}-${dateStr}.json`,
+      );
       onClose();
     } finally {
       setExporting(false);
@@ -247,9 +250,7 @@ export function ExportJsonModal({
                 onChange={() => toggleGrade(grade)}
                 className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <span className="text-sm font-medium text-gray-700">
-                {grade}
-              </span>
+              <span className="text-sm font-medium text-gray-700">{grade}</span>
             </label>
           ))}
         </div>

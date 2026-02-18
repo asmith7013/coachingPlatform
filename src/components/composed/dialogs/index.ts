@@ -1,4 +1,2 @@
-export * from './Dialog';
-export * from './CreateSchoolDialog';
-export * from './DataImportDialog';
-export * from './ConfirmationDialog'; 
+export * from "./Dialog";
+export * from "./ConfirmationDialog";

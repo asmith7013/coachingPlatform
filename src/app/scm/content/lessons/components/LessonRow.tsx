@@ -9,18 +9,26 @@ interface LessonRowProps {
 }
 
 // Lesson type badge colors
-const lessonTypeConfig: Record<string, { bg: string; text: string; label: string }> = {
+const lessonTypeConfig: Record<
+  string,
+  { bg: string; text: string; label: string }
+> = {
   lesson: { bg: "bg-green-50", text: "text-green-700", label: "Lesson" },
   rampUp: { bg: "bg-amber-50", text: "text-amber-700", label: "Ramp Up" },
-  assessment: { bg: "bg-purple-50", text: "text-purple-700", label: "Assessment" },
+  assessment: {
+    bg: "bg-purple-50",
+    text: "text-purple-700",
+    label: "Assessment",
+  },
 };
 
 export function LessonRow({ lesson, skillMap }: LessonRowProps) {
-  const typeConfig = lessonTypeConfig[lesson.lessonType || "lesson"] || lessonTypeConfig.lesson;
+  const typeConfig =
+    lessonTypeConfig[lesson.lessonType || "lesson"] || lessonTypeConfig.lesson;
 
   // Filter standards to exclude "buildingOn"
   const displayStandards = lesson.standards.filter(
-    (std) => std.context !== "buildingOn"
+    (std) => std.context !== "buildingOn",
   );
 
   // Format roadmap skills as "number: title"
@@ -40,7 +48,9 @@ export function LessonRow({ lesson, skillMap }: LessonRowProps) {
 
       {/* Section */}
       <div className="col-span-1">
-        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${typeConfig.bg} ${typeConfig.text}`}>
+        <span
+          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${typeConfig.bg} ${typeConfig.text}`}
+        >
           {lesson.section || "-"}
         </span>
       </div>
@@ -51,7 +61,9 @@ export function LessonRow({ lesson, skillMap }: LessonRowProps) {
           {lesson.lessonTitle || lesson.lessonName}
         </p>
         {lesson.lessonType && lesson.lessonType !== "lesson" && (
-          <span className={`inline-flex items-center mt-1 px-1.5 py-0.5 rounded text-xs ${typeConfig.bg} ${typeConfig.text}`}>
+          <span
+            className={`inline-flex items-center mt-1 px-1.5 py-0.5 rounded text-xs ${typeConfig.bg} ${typeConfig.text}`}
+          >
             {typeConfig.label}
           </span>
         )}

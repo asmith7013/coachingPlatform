@@ -1,10 +1,10 @@
-import puppeteerCore, { Browser, Page } from 'puppeteer-core';
-import { SvgLayer } from './types';
-import { HTML_WIDTH, HTML_HEIGHT } from './constants';
-import { RenderError, handlePuppeteerError } from '@error/handlers/puppeteer';
+import puppeteerCore, { Browser, Page } from "puppeteer-core";
+import { SvgLayer } from "./types";
+import { HTML_WIDTH, HTML_HEIGHT } from "./constants";
+import { RenderError, handlePuppeteerError } from "@error/handlers/puppeteer";
 
 // Re-export for convenience
-export { RenderError } from '@error/handlers/puppeteer';
+export { RenderError } from "@error/handlers/puppeteer";
 
 /**
  * Browser session for rendering multiple slides efficiently
@@ -13,10 +13,23 @@ export { RenderError } from '@error/handlers/puppeteer';
 export interface RenderSession {
   browser: Browser;
   page: Page;
-  renderSvg: (svgHtml: string, width: number, height: number) => Promise<Buffer>;
-  renderSvgLayers: (svgHtml: string, width: number, height: number, layers: string[]) => Promise<SvgLayer[]>;
+  renderSvg: (
+    svgHtml: string,
+    width: number,
+    height: number,
+  ) => Promise<Buffer>;
+  renderSvgLayers: (
+    svgHtml: string,
+    width: number,
+    height: number,
+    layers: string[],
+  ) => Promise<SvgLayer[]>;
   renderFullSlide: (html: string) => Promise<Buffer>;
-  renderTableRegion: (html: string, width: number, height: number) => Promise<Buffer>;
+  renderTableRegion: (
+    html: string,
+    width: number,
+    height: number,
+  ) => Promise<Buffer>;
   renderPrintPage: (html: string, pageIndex: number) => Promise<Buffer | null>;
   countPrintPages: (html: string) => Promise<number>;
   close: () => Promise<void>;
@@ -26,63 +39,69 @@ export interface RenderSession {
  * Get browser launch options for both local and serverless environments
  */
 async function getBrowserLaunchOptions() {
-  const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
-  console.log('[renderers] getBrowserLaunchOptions called, isServerless:', !!isServerless);
+  const isServerless =
+    process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+  console.log(
+    "[renderers] getBrowserLaunchOptions called, isServerless:",
+    !!isServerless,
+  );
 
   if (isServerless) {
     // Use @sparticuz/chromium for serverless (Vercel, AWS Lambda)
     try {
-      console.log('[renderers] Importing @sparticuz/chromium-min...');
-      const chromium = await import('@sparticuz/chromium-min');
-      console.log('[renderers] chromium-min imported, getting executablePath...');
-      const executablePath = await chromium.default.executablePath(
-        'https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar'
+      console.log("[renderers] Importing @sparticuz/chromium-min...");
+      const chromium = await import("@sparticuz/chromium-min");
+      console.log(
+        "[renderers] chromium-min imported, getting executablePath...",
       );
-      console.log('[renderers] Serverless chromium path:', executablePath);
-      console.log('[renderers] chromium.default.args:', chromium.default.args);
+      const executablePath = await chromium.default.executablePath(
+        "https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar",
+      );
+      console.log("[renderers] Serverless chromium path:", executablePath);
+      console.log("[renderers] chromium.default.args:", chromium.default.args);
       return {
         args: chromium.default.args,
         executablePath,
         headless: true,
       };
     } catch (error) {
-      console.error('[renderers] FAILED to load serverless chromium');
-      console.error('[renderers] Error:', error);
+      console.error("[renderers] FAILED to load serverless chromium");
+      console.error("[renderers] Error:", error);
       throw new RenderError(
-        handlePuppeteerError(error, 'chromium initialization'),
-        'CHROMIUM_DOWNLOAD_FAILED',
-        error
+        handlePuppeteerError(error, "chromium initialization"),
+        "CHROMIUM_DOWNLOAD_FAILED",
+        error,
       );
     }
   } else {
     // Local development - use system Chrome
     const possiblePaths = [
-      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', // macOS
-      '/usr/bin/google-chrome', // Linux
-      '/usr/bin/chromium-browser', // Linux alternative
-      'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // Windows
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", // macOS
+      "/usr/bin/google-chrome", // Linux
+      "/usr/bin/chromium-browser", // Linux alternative
+      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // Windows
     ];
 
     // Find the first existing Chrome path
-    const fs = await import('fs');
+    const fs = await import("fs");
     const executablePath = possiblePaths.find((p) => fs.existsSync(p));
 
     if (!executablePath) {
       throw new RenderError(
-        'Chrome not found. Please install Google Chrome for local development.',
-        'CHROME_NOT_FOUND'
+        "Chrome not found. Please install Google Chrome for local development.",
+        "CHROME_NOT_FOUND",
       );
     }
 
-    console.log('[renderers] Local Chrome path:', executablePath);
+    console.log("[renderers] Local Chrome path:", executablePath);
     return {
       executablePath,
       headless: true,
       args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
       ],
     };
   }
@@ -93,41 +112,44 @@ async function getBrowserLaunchOptions() {
  * Call close() when done to properly clean up Chromium
  */
 export async function createRenderSession(): Promise<RenderSession> {
-  console.log('[renderers] createRenderSession called');
+  console.log("[renderers] createRenderSession called");
   let browser: Browser;
   let page: Page;
 
   try {
-    console.log('[renderers] Getting browser launch options...');
+    console.log("[renderers] Getting browser launch options...");
     const launchOptions = await getBrowserLaunchOptions();
-    console.log('[renderers] Launch options obtained, launching browser...');
+    console.log("[renderers] Launch options obtained, launching browser...");
     browser = await puppeteerCore.launch(launchOptions);
-    console.log('[renderers] Browser launched successfully');
+    console.log("[renderers] Browser launched successfully");
   } catch (error) {
     // If already a RenderError, rethrow it
     if (error instanceof RenderError) {
-      console.error('[renderers] RenderError during browser launch:', error.message);
+      console.error(
+        "[renderers] RenderError during browser launch:",
+        error.message,
+      );
       throw error;
     }
-    console.error('[renderers] Failed to launch browser:', error);
+    console.error("[renderers] Failed to launch browser:", error);
     throw new RenderError(
-      handlePuppeteerError(error, 'browser launch'),
-      'CHROME_NOT_FOUND',
-      error
+      handlePuppeteerError(error, "browser launch"),
+      "CHROME_NOT_FOUND",
+      error,
     );
   }
 
   try {
-    console.log('[renderers] Creating new page...');
+    console.log("[renderers] Creating new page...");
     page = await browser.newPage();
-    console.log('[renderers] New page created');
+    console.log("[renderers] New page created");
   } catch (error) {
-    console.error('[renderers] Failed to create page:', error);
+    console.error("[renderers] Failed to create page:", error);
     await browser.close().catch(() => {});
     throw new RenderError(
-      handlePuppeteerError(error, 'page creation'),
-      'BROWSER_CRASHED',
-      error
+      handlePuppeteerError(error, "page creation"),
+      "BROWSER_CRASHED",
+      error,
     );
   }
 
@@ -135,7 +157,11 @@ export async function createRenderSession(): Promise<RenderSession> {
     browser,
     page,
 
-    async renderSvg(svgHtml: string, width: number, height: number): Promise<Buffer> {
+    async renderSvg(
+      svgHtml: string,
+      width: number,
+      height: number,
+    ): Promise<Buffer> {
       await page.setViewport({ width, height, deviceScaleFactor: 2 });
 
       const fullHtml = `
@@ -166,11 +192,11 @@ export async function createRenderSession(): Promise<RenderSession> {
 
       // Use domcontentloaded - faster than networkidle0 for inline content
       // Wait 500ms for D3/p5.js visualizations to complete rendering
-      await page.setContent(fullHtml, { waitUntil: 'domcontentloaded' });
+      await page.setContent(fullHtml, { waitUntil: "domcontentloaded" });
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       const screenshot = await page.screenshot({
-        type: 'png',
+        type: "png",
         clip: { x: 0, y: 0, width, height },
         omitBackground: true,
       });
@@ -178,7 +204,12 @@ export async function createRenderSession(): Promise<RenderSession> {
       return screenshot as Buffer;
     },
 
-    async renderSvgLayers(svgHtml: string, width: number, height: number, layers: string[]): Promise<SvgLayer[]> {
+    async renderSvgLayers(
+      svgHtml: string,
+      width: number,
+      height: number,
+      layers: string[],
+    ): Promise<SvgLayer[]> {
       await page.setViewport({ width, height, deviceScaleFactor: 2 });
 
       const fullHtml = `
@@ -209,12 +240,12 @@ export async function createRenderSession(): Promise<RenderSession> {
 
       // Use domcontentloaded - faster than networkidle0 for inline content
       // Wait 500ms for D3/p5.js visualizations to complete rendering
-      await page.setContent(fullHtml, { waitUntil: 'domcontentloaded' });
+      await page.setContent(fullHtml, { waitUntil: "domcontentloaded" });
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Get SVG position for calculating relative bounds
       const svgRect = await page.evaluate(() => {
-        const svg = document.querySelector('svg');
+        const svg = document.querySelector("svg");
         if (!svg) return null;
         const rect = svg.getBoundingClientRect();
         return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
@@ -230,26 +261,31 @@ export async function createRenderSession(): Promise<RenderSession> {
           (currentLayer: string, allLayers: string[]) => {
             allLayers.forEach((layer) => {
               const elements = document.querySelectorAll(
-                `[data-pptx-layer="${layer}"]`
+                `[data-pptx-layer="${layer}"]`,
               );
               elements.forEach((el) => {
                 (el as HTMLElement).style.visibility =
-                  layer === currentLayer ? 'visible' : 'hidden';
+                  layer === currentLayer ? "visible" : "hidden";
               });
             });
           },
           layerName,
-          layers
+          layers,
         );
 
         await new Promise((resolve) => setTimeout(resolve, 50));
 
         // Get bounding box of visible elements in this layer
         const layerBounds = await page.evaluate((layer: string) => {
-          const elements = document.querySelectorAll(`[data-pptx-layer="${layer}"]`);
+          const elements = document.querySelectorAll(
+            `[data-pptx-layer="${layer}"]`,
+          );
           if (elements.length === 0) return null;
 
-          let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+          let minX = Infinity,
+            minY = Infinity,
+            maxX = -Infinity,
+            maxY = -Infinity;
 
           elements.forEach((el) => {
             // Get the bounding box of all children within the layer group
@@ -262,7 +298,7 @@ export async function createRenderSession(): Promise<RenderSession> {
             }
 
             // Also check child elements for more accurate bounds
-            el.querySelectorAll('*').forEach((child) => {
+            el.querySelectorAll("*").forEach((child) => {
               const childRect = child.getBoundingClientRect();
               if (childRect.width > 0 && childRect.height > 0) {
                 minX = Math.min(minX, childRect.x);
@@ -281,11 +317,17 @@ export async function createRenderSession(): Promise<RenderSession> {
           // Apply padding and clamp to viewport
           const clipX = Math.max(0, Math.floor(layerBounds.x - PADDING));
           const clipY = Math.max(0, Math.floor(layerBounds.y - PADDING));
-          const clipW = Math.min(width - clipX, Math.ceil(layerBounds.width + PADDING * 2));
-          const clipH = Math.min(height - clipY, Math.ceil(layerBounds.height + PADDING * 2));
+          const clipW = Math.min(
+            width - clipX,
+            Math.ceil(layerBounds.width + PADDING * 2),
+          );
+          const clipH = Math.min(
+            height - clipY,
+            Math.ceil(layerBounds.height + PADDING * 2),
+          );
 
           const screenshot = await page.screenshot({
-            type: 'png',
+            type: "png",
             clip: { x: clipX, y: clipY, width: clipW, height: clipH },
             omitBackground: true,
           });
@@ -307,7 +349,7 @@ export async function createRenderSession(): Promise<RenderSession> {
         } else {
           // Fallback: full screenshot if bounds detection fails
           const screenshot = await page.screenshot({
-            type: 'png',
+            type: "png",
             clip: { x: 0, y: 0, width, height },
             omitBackground: true,
           });
@@ -323,10 +365,10 @@ export async function createRenderSession(): Promise<RenderSession> {
       await page.evaluate((allLayers: string[]) => {
         allLayers.forEach((layer) => {
           const elements = document.querySelectorAll(
-            `[data-pptx-layer="${layer}"]`
+            `[data-pptx-layer="${layer}"]`,
           );
           elements.forEach((el) => {
-            (el as HTMLElement).style.visibility = 'visible';
+            (el as HTMLElement).style.visibility = "visible";
           });
         });
       }, layers);
@@ -341,7 +383,7 @@ export async function createRenderSession(): Promise<RenderSession> {
         deviceScaleFactor: 2,
       });
 
-      const fullHtml = html.includes('<body')
+      const fullHtml = html.includes("<body")
         ? html
         : `
         <!DOCTYPE html>
@@ -369,11 +411,11 @@ export async function createRenderSession(): Promise<RenderSession> {
 
       // Use domcontentloaded - faster than networkidle0 for inline content
       // Wait 500ms for D3/p5.js visualizations to complete rendering
-      await page.setContent(fullHtml, { waitUntil: 'domcontentloaded' });
+      await page.setContent(fullHtml, { waitUntil: "domcontentloaded" });
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       const screenshot = await page.screenshot({
-        type: 'png',
+        type: "png",
         clip: { x: 0, y: 0, width: HTML_WIDTH, height: HTML_HEIGHT },
       });
 
@@ -385,7 +427,11 @@ export async function createRenderSession(): Promise<RenderSession> {
      * Tables don't convert well to native PPTX, so render as PNG
      * Includes all CSS classes from slide templates for proper rendering
      */
-    async renderTableRegion(html: string, width: number, height: number): Promise<Buffer> {
+    async renderTableRegion(
+      html: string,
+      width: number,
+      height: number,
+    ): Promise<Buffer> {
       await page.setViewport({ width, height, deviceScaleFactor: 2 });
 
       // Include template CSS classes used in slide HTML
@@ -441,11 +487,11 @@ export async function createRenderSession(): Promise<RenderSession> {
       `;
 
       // Wait 500ms for D3/p5.js visualizations to complete rendering
-      await page.setContent(fullHtml, { waitUntil: 'domcontentloaded' });
+      await page.setContent(fullHtml, { waitUntil: "domcontentloaded" });
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       const screenshot = await page.screenshot({
-        type: 'png',
+        type: "png",
         clip: { x: 0, y: 0, width, height },
       });
 
@@ -456,9 +502,9 @@ export async function createRenderSession(): Promise<RenderSession> {
      * Count how many .print-page elements are in the HTML
      */
     async countPrintPages(html: string): Promise<number> {
-      await page.setContent(html, { waitUntil: 'domcontentloaded' });
+      await page.setContent(html, { waitUntil: "domcontentloaded" });
       const count = await page.evaluate(() => {
-        return document.querySelectorAll('.print-page').length;
+        return document.querySelectorAll(".print-page").length;
       });
       return count;
     },
@@ -467,7 +513,10 @@ export async function createRenderSession(): Promise<RenderSession> {
      * Render a specific print-page from a printable slide as a landscape screenshot
      * for PPTX export (960x540 aspect ratio)
      */
-    async renderPrintPage(html: string, pageIndex: number): Promise<Buffer | null> {
+    async renderPrintPage(
+      html: string,
+      pageIndex: number,
+    ): Promise<Buffer | null> {
       // Set viewport to capture the print page at a good resolution
       // Print pages are 8.5in x 11in (portrait), but we render them to fit 16:9 slides
       const pageWidth = 816; // 8.5 inches at 96 DPI
@@ -480,12 +529,12 @@ export async function createRenderSession(): Promise<RenderSession> {
       });
 
       // Wait 500ms for D3/p5.js visualizations to complete rendering
-      await page.setContent(html, { waitUntil: 'domcontentloaded' });
+      await page.setContent(html, { waitUntil: "domcontentloaded" });
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Get the bounding rect of the specific print-page
       const bounds = await page.evaluate((idx: number) => {
-        const pages = document.querySelectorAll('.print-page');
+        const pages = document.querySelectorAll(".print-page");
         const targetPage = pages[idx];
         if (!targetPage) return null;
 
@@ -507,7 +556,7 @@ export async function createRenderSession(): Promise<RenderSession> {
 
       // Capture the specific print-page
       const screenshot = await page.screenshot({
-        type: 'png',
+        type: "png",
         clip: {
           x: Math.max(0, bounds.x),
           y: Math.max(0, bounds.y),
@@ -534,7 +583,7 @@ export async function createRenderSession(): Promise<RenderSession> {
 export async function renderSvgToImage(
   svgHtml: string,
   width: number,
-  height: number
+  height: number,
 ): Promise<Buffer> {
   const session = await createRenderSession();
   try {
@@ -551,7 +600,7 @@ export async function renderSvgLayers(
   svgHtml: string,
   width: number,
   height: number,
-  layers: string[]
+  layers: string[],
 ): Promise<SvgLayer[]> {
   const session = await createRenderSession();
   try {

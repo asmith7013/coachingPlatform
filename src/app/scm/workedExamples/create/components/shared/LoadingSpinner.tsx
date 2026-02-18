@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 /**
  * Reusable loading spinner component.
@@ -10,18 +10,21 @@
 
 interface LoadingSpinnerProps {
   /** Size preset: 'sm' (16px), 'md' (20px), 'lg' (48px) */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /** Tailwind color class for the spinner (e.g., 'text-purple-600') */
   className?: string;
 }
 
 const sizeClasses = {
-  sm: 'w-4 h-4',
-  md: 'w-5 h-5',
-  lg: 'w-12 h-12',
+  sm: "w-4 h-4",
+  md: "w-5 h-5",
+  lg: "w-12 h-12",
 };
 
-export function LoadingSpinner({ size = 'md', className = 'text-gray-600' }: LoadingSpinnerProps) {
+export function LoadingSpinner({
+  size = "md",
+  className = "text-gray-600",
+}: LoadingSpinnerProps) {
   return (
     <svg
       className={`${sizeClasses[size]} ${className} animate-spin flex-shrink-0`}

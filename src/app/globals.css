@@ -143,7 +143,7 @@
   --color-skill-target-700: #4e1abe;
   --color-skill-target-800: #3a148f;
   --color-skill-target-900: #270d5f;
-  --color-skill-target: #6320EE;
+  --color-skill-target: #6320ee;
   --color-skill-essential-50: #f8f0f8;
   --color-skill-essential-100: #f1e1f1;
   --color-skill-essential-200: #e3c3e3;
@@ -154,7 +154,7 @@
   --color-skill-essential-700: #9d439d;
   --color-skill-essential-800: #733173;
   --color-skill-essential-900: #4a1f4a;
-  --color-skill-essential: #C855C8;
+  --color-skill-essential: #c855c8;
   --color-skill-helpful-50: #e6f5f8;
   --color-skill-helpful-100: #ccebf1;
   --color-skill-helpful-200: #99d7e3;
@@ -165,7 +165,7 @@
   --color-skill-helpful-700: #007f92;
   --color-skill-helpful-800: #005f6e;
   --color-skill-helpful-900: #003f49;
-  --color-skill-helpful: #009FB7;
+  --color-skill-helpful: #009fb7;
   --color-skill-support-50: #e8f2f1;
   --color-skill-support-100: #d1e5e3;
   --color-skill-support-200: #a3cbc7;
@@ -176,7 +176,7 @@
   --color-skill-support-700: #0f574e;
   --color-skill-support-800: #0a3f3a;
   --color-skill-support-900: #052725;
-  --color-skill-support: #136F63;
+  --color-skill-support: #136f63;
 }
 
 /* Reset Tailwind styles for raw HTML content */
@@ -190,13 +190,13 @@
 }
 
 .all-initial a {
-  color: #0000EE;
+  color: #0000ee;
   text-decoration: underline;
   cursor: pointer;
 }
 
 .all-initial a:visited {
-  color: #551A8B;
+  color: #551a8b;
 }
 
 .all-initial table {

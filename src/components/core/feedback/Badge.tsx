@@ -1,8 +1,8 @@
 "use client";
 import { cn } from "@ui/utils/formatters";
 import { tv, type VariantProps } from "tailwind-variants";
-import { textSize, paddingX, paddingY, radii } from '@/lib/tokens/tokens';
-import { textColors, backgroundColors, ringColors } from '@/lib/tokens/colors';
+import { textSize, paddingX, paddingY, radii } from "@/lib/tokens/tokens";
+import { textColors, backgroundColors, ringColors } from "@/lib/tokens/colors";
 
 // Define badge variants using your semantic color system
 const badge = tv({
@@ -21,9 +21,9 @@ const badge = tv({
       muted: ``,
     },
     appearance: {
-      solid: '',
-      alt: '',
-      outline: 'bg-transparent',
+      solid: "",
+      alt: "",
+      outline: "bg-transparent",
     },
     size: {
       xs: `${textSize.xs} ${paddingX.xs} ${paddingY.xs}`,
@@ -33,80 +33,81 @@ const badge = tv({
     rounded: {
       default: radii.md,
       full: radii.full,
-      none: radii.none
+      none: radii.none,
     },
     // Add interactive variant for clickable badges
     interactive: {
-      true: 'cursor-pointer transition-opacity duration-200 hover:opacity-80 active:scale-95',
-      false: ''
-    }
+      true: "cursor-pointer transition-opacity duration-200 hover:opacity-80 active:scale-95",
+      false: "",
+    },
   },
   compoundVariants: [
     // Solid appearance
     {
-      appearance: 'solid',
-      intent: 'neutral',
+      appearance: "solid",
+      intent: "neutral",
       className: `${backgroundColors.light.muted} border-border`,
     },
     {
-      appearance: 'solid',
-      intent: 'primary',
+      appearance: "solid",
+      intent: "primary",
       className: `${backgroundColors.light.primary} ${ringColors.light.primary}`,
     },
     {
-      appearance: 'solid',
-      intent: 'secondary',
+      appearance: "solid",
+      intent: "secondary",
       className: `${backgroundColors.light.secondary} ${ringColors.light.secondary}`,
     },
     {
-      appearance: 'solid',
-      intent: 'danger',
+      appearance: "solid",
+      intent: "danger",
       className: `${backgroundColors.light.danger} ${ringColors.light.danger} border-danger text-danger`,
     },
-      {
-        appearance: 'solid',
-        intent: 'success',
-        className: `${backgroundColors.success} ${ringColors.success} border-success text-white`,
-      },
-      {
-        appearance: 'solid',
-        intent: 'mastery',
-        className: `${backgroundColors.success} ${ringColors.blue} border-blue text-white border-2 ring-2 ring-inset ring-white`,
-      },
+    {
+      appearance: "solid",
+      intent: "success",
+      className: `${backgroundColors.success} ${ringColors.success} border-success text-white`,
+    },
+    {
+      appearance: "solid",
+      intent: "mastery",
+      className: `${backgroundColors.success} ${ringColors.blue} border-blue text-white border-2 ring-2 ring-inset ring-white`,
+    },
     // Alt appearance - add more as needed
     {
-      appearance: 'alt',
-      intent: 'primary',
+      appearance: "alt",
+      intent: "primary",
       className: `${backgroundColors.light.primary} border-primary-300`,
     },
     // Outline appearance - add more as needed
     {
-      appearance: 'outline',
-      intent: 'primary',
+      appearance: "outline",
+      intent: "primary",
       className: `border-primary-300 ${textColors.primary} bg-primary-50`,
     },
     {
-      appearance: 'outline',
-      intent: 'secondary',
+      appearance: "outline",
+      intent: "secondary",
       className: `border-secondary-300 ${textColors.secondary} bg-secondary-50`,
     },
     {
-      appearance: 'outline',
-      intent: 'success',
+      appearance: "outline",
+      intent: "success",
       className: `${backgroundColors.light.success} ${textColors.success} ${ringColors.success}`,
     },
     {
-      appearance: 'outline',
-      intent: 'danger',
+      appearance: "outline",
+      intent: "danger",
       className: `${backgroundColors.light.danger} ${ringColors.light.danger} border-danger text-danger`,
     },
     {
-      appearance: 'outline',
-      intent: 'muted',
-      className: `${backgroundColors.light.secondary} ${textColors.muted} ${ringColors.secondary}`,    },
+      appearance: "outline",
+      intent: "muted",
+      className: `${backgroundColors.light.secondary} ${textColors.muted} ${ringColors.secondary}`,
+    },
     {
-      appearance: 'outline',
-      intent: 'blue',
+      appearance: "outline",
+      intent: "blue",
       className: `${backgroundColors.light.blue} ${ringColors.blue} border-blue text-blue hover:bg-blue-500 hover:text-white`,
     },
   ],
@@ -115,8 +116,8 @@ const badge = tv({
     appearance: "solid",
     size: "xs",
     rounded: "default",
-    interactive: false
-  }
+    interactive: false,
+  },
 });
 
 export type BadgeProps = {
@@ -125,8 +126,8 @@ export type BadgeProps = {
   onClick?: () => void;
 } & VariantProps<typeof badge>;
 
-export function Badge({ 
-  children, 
+export function Badge({
+  children,
   className,
   intent,
   size,
@@ -135,24 +136,24 @@ export function Badge({
   onClick,
 }: BadgeProps) {
   const isInteractive = Boolean(onClick);
-  
+
   // Use button element if interactive, span if not
-  const Component = isInteractive ? 'button' : 'span';
-  
+  const Component = isInteractive ? "button" : "span";
+
   return (
     <Component
       className={cn(
-        badge({ 
-          intent, 
-          size, 
-          rounded, 
-          appearance, 
-          interactive: isInteractive 
+        badge({
+          intent,
+          size,
+          rounded,
+          appearance,
+          interactive: isInteractive,
         }),
-        className
+        className,
       )}
       onClick={onClick}
-      type={isInteractive && Component === 'button' ? 'button' : undefined}
+      type={isInteractive && Component === "button" ? "button" : undefined}
     >
       {children}
     </Component>

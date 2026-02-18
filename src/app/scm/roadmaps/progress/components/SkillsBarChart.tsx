@@ -19,7 +19,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ChartDataLabels
+  ChartDataLabels,
 );
 
 interface SkillsBarChartProps {
@@ -31,7 +31,10 @@ interface SkillsBarChartProps {
  * Lazy-loaded Bar chart component for skills mastery
  * Separated to reduce initial bundle size
  */
-export function SkillsBarChart({ chartData, chartOptions }: SkillsBarChartProps) {
+export function SkillsBarChart({
+  chartData,
+  chartOptions,
+}: SkillsBarChartProps) {
   return (
     <div className="h-96">
       <Bar data={chartData} options={chartOptions} />

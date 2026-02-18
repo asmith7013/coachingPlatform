@@ -5,6 +5,7 @@ A simple, robust system for normalizing Google Sheets data into structured event
 ## Overview
 
 This system follows established patterns in the codebase:
+
 - **Schema-first design** with Zod validation
 - **Established error handling** using existing error handlers
 - **Simple column resilience** for real-world spreadsheet variations
@@ -13,18 +14,21 @@ This system follows established patterns in the codebase:
 ## Key Features
 
 ### ✅ Simple Column Resilience
+
 - Handles whitespace and case variations automatically
 - Supports known aliases for commonly varying column names
 - Clear error messages for missing required columns
 - Single-pass validation and transformation
 
 ### ✅ Comprehensive Error Handling
+
 - Integration with existing error handling system
 - Clear, actionable error messages
 - Batch processing with detailed error tracking
 - Graceful fallbacks and validation
 
 ### ✅ Schema-Driven Architecture
+
 - Full Zod schema validation
 - Type-safe transformations
 - Consistent data structures
@@ -35,34 +39,37 @@ This system follows established patterns in the codebase:
 ### Basic Usage
 
 ```typescript
-import { 
-  normalizeRowToEvents, 
-  normalizeMultipleRows, 
-  validateHeaders 
-} from '@/lib/integrations/google-sheets';
+import {
+  normalizeRowToEvents,
+  normalizeMultipleRows,
+  validateHeaders,
+} from "@/lib/integrations/google-sheets";
 
 // Validate headers first
 const headerValidation = validateHeaders(headers);
 if (!headerValidation.success) {
-  console.error('Invalid headers:', headerValidation.suggestions);
+  console.error("Invalid headers:", headerValidation.suggestions);
   return;
 }
 
 // Process single row
 const result = normalizeRowToEvents(rawRow, headers);
 if (result.success) {
-  console.log('Daily events:', result.data.dailyEvents);
-  console.log('Lesson completions:', result.data.lessonCompletions);
+  console.log("Daily events:", result.data.dailyEvents);
+  console.log("Lesson completions:", result.data.lessonCompletions);
 }
 
 // Process multiple rows
 const batchResult = normalizeMultipleRows(rawRows, headers);
-console.log(`Processed ${batchResult.metadata.successfulRows} of ${batchResult.metadata.totalRows} rows`);
+console.log(
+  `Processed ${batchResult.metadata.successfulRows} of ${batchResult.metadata.totalRows} rows`,
+);
 ```
 
 ### Expected Data Structure
 
 The system expects spreadsheets with these required columns:
+
 - `Date` - Date in MM/DD/YYYY format
 - `Student ID` - Numeric student identifier
 - `Name` - Student full name
@@ -72,6 +79,7 @@ The system expects spreadsheets with these required columns:
 - `Attendance` - Attendance status (✅ for present)
 
 Optional columns for lesson tracking:
+
 - `Instruction Received (Min)` - Minutes of instruction
 - `Lessons Completed ☑️` - Comma-separated lesson codes
 - `Mastery Checks Attempted ✏️` - Mastery check lesson codes
@@ -81,17 +89,18 @@ Optional columns for lesson tracking:
 
 The system handles common column name variations:
 
-| Standard Name | Accepted Aliases |
-|---------------|------------------|
-| `lessons completed ☑️` | `lessons completed`, `completed lessons`, `zearn completed` |
-| `mastery checks attempted ✏️` | `mastery attempted`, `checks attempted`, `mastery checks` |
-| `student id` | `id`, `student number`, `studentid` |
-| `student name` | `name`, `full name`, `student` |
-| `# of attempts` | `attempts`, `number of attempts`, `tries` |
+| Standard Name                 | Accepted Aliases                                            |
+| ----------------------------- | ----------------------------------------------------------- |
+| `lessons completed ☑️`        | `lessons completed`, `completed lessons`, `zearn completed` |
+| `mastery checks attempted ✏️` | `mastery attempted`, `checks attempted`, `mastery checks`   |
+| `student id`                  | `id`, `student number`, `studentid`                         |
+| `student name`                | `name`, `full name`, `student`                              |
+| `# of attempts`               | `attempts`, `number of attempts`, `tries`                   |
 
 ## Output Structure
 
 ### Successful Normalization
+
 ```typescript
 {
   success: true,
@@ -108,6 +117,7 @@ The system handles common column name variations:
 ```
 
 ### Failed Normalization
+
 ```typescript
 {
   success: false,
@@ -130,6 +140,7 @@ The system handles common column name variations:
 ## Architecture
 
 ### File Structure
+
 ```
 src/lib/integrations/google-sheets/
 ├── data-processor.ts          # Main normalization orchestration
@@ -175,6 +186,7 @@ src/lib/integrations/google-sheets/
 ## Testing
 
 The system includes comprehensive testing for:
+
 - ✅ Header validation with clear error messages
 - ✅ Single row normalization with success/failure cases
 - ✅ Batch processing with error tracking
@@ -187,4 +199,4 @@ The system includes comprehensive testing for:
 - **Single-pass processing** - No redundant validation steps
 - **Batch optimization** - Efficient handling of multiple rows
 - **Memory efficient** - Streaming-friendly architecture
-- **Fast validation** - Zod schema validation with caching 
+- **Fast validation** - Zod schema validation with caching

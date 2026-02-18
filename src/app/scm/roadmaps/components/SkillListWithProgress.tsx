@@ -7,13 +7,20 @@ import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps/roadmap
 import { fetchStudentsBySection } from "@/app/actions/scm/student/students";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon as CheckCircleOutlineIcon } from "@heroicons/react/24/outline";
-import { Legend, LegendItem, LegendGroup } from "@/components/core/feedback/Legend";
+import {
+  Legend,
+  LegendItem,
+  LegendGroup,
+} from "@/components/core/feedback/Legend";
 
 interface SkillListWithProgressProps {
   skillNumbers: string[];
   selectedSection?: string;
-  onSkillClick?: (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => void;
-  skillType?: 'target' | 'essential' | 'helpful' | 'support';
+  onSkillClick?: (
+    skillNumber: string,
+    color: "blue" | "green" | "orange" | "purple",
+  ) => void;
+  skillType?: "target" | "essential" | "helpful" | "support";
   showPrerequisites?: boolean;
   masteredSkills?: string[];
   targetSkillNumbers?: string[];
@@ -28,7 +35,7 @@ export function SkillListWithProgress({
   skillNumbers,
   selectedSection,
   onSkillClick,
-  skillType = 'target',
+  skillType = "target",
   showPrerequisites = true,
   masteredSkills = [],
   targetSkillNumbers = [],
@@ -37,7 +44,7 @@ export function SkillListWithProgress({
   allSkills = [],
 }: SkillListWithProgressProps) {
   // Use compact mode for support skills
-  const isCompactMode = skillType === 'support';
+  const isCompactMode = skillType === "support";
   const [skills, setSkills] = useState<RoadmapsSkill[]>([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
   const [sectionStudents, setSectionStudents] = useState<Student[]>([]);
@@ -57,7 +64,7 @@ export function SkillListWithProgress({
           setSkills(result.data);
         }
       } catch (error) {
-        console.error('Error fetching skills:', error);
+        console.error("Error fetching skills:", error);
       } finally {
         setLoadingSkills(false);
       }
@@ -78,31 +85,37 @@ export function SkillListWithProgress({
         const result = await fetchStudentsBySection(selectedSection);
         if (result.success && result.items) {
           // Map MongoDB documents to Student type
-          const students: Student[] = result.items.map((item: Record<string, unknown>) => ({
-            _id: (item._id as { toString(): string }).toString(),
-            ownerIds: item.ownerIds as string[],
-            studentID: item.studentID as number,
-            firstName: item.firstName as string,
-            lastName: item.lastName as string,
-            school: item.school as Student['school'],
-            section: item.section as Student['section'],
-            email: (item.email as string) || '',
-            active: item.active as boolean,
-            roadmapSkills: item.roadmapSkills as string[],
-            roadmap: item.roadmap as string,
-            studentGrade: item.studentGrade as string,
-            skillGrade: item.skillGrade as string,
-            lastAssessmentDate: item.lastAssessmentDate as string | undefined,
-            masteredSkills: (item.masteredSkills as string[]) || [],
-            classActivities: (item.classActivities as Student['classActivities']) || [],
-            skillPerformances: (item.skillPerformances as Student['skillPerformances']) || [],
-            zearnLessons: (item.zearnLessons as Student['zearnLessons']) || [],
-            podsieProgress: (item.podsieProgress as Student['podsieProgress']) || []
-          }));
+          const students: Student[] = result.items.map(
+            (item: Record<string, unknown>) => ({
+              _id: (item._id as { toString(): string }).toString(),
+              ownerIds: item.ownerIds as string[],
+              studentID: item.studentID as number,
+              firstName: item.firstName as string,
+              lastName: item.lastName as string,
+              school: item.school as Student["school"],
+              section: item.section as Student["section"],
+              email: (item.email as string) || "",
+              active: item.active as boolean,
+              roadmapSkills: item.roadmapSkills as string[],
+              roadmap: item.roadmap as string,
+              studentGrade: item.studentGrade as string,
+              skillGrade: item.skillGrade as string,
+              lastAssessmentDate: item.lastAssessmentDate as string | undefined,
+              masteredSkills: (item.masteredSkills as string[]) || [],
+              classActivities:
+                (item.classActivities as Student["classActivities"]) || [],
+              skillPerformances:
+                (item.skillPerformances as Student["skillPerformances"]) || [],
+              zearnLessons:
+                (item.zearnLessons as Student["zearnLessons"]) || [],
+              podsieProgress:
+                (item.podsieProgress as Student["podsieProgress"]) || [],
+            }),
+          );
           setSectionStudents(students);
         }
       } catch (error) {
-        console.error('Error fetching section students:', error);
+        console.error("Error fetching section students:", error);
       }
     };
 
@@ -112,36 +125,68 @@ export function SkillListWithProgress({
   // Calculate mastery percentage for a skill
   const calculateMasteryPercentage = (skillNumber: string): number => {
     if (sectionStudents.length === 0) return 0;
-    const masteredCount = sectionStudents.filter(s =>
-      s.masteredSkills?.includes(skillNumber)
+    const masteredCount = sectionStudents.filter((s) =>
+      s.masteredSkills?.includes(skillNumber),
     ).length;
     return Math.round((masteredCount / sectionStudents.length) * 100);
   };
 
   // Get students who have/haven't mastered a skill
-  const getStudentsByMastery = (skillNumber: string): { mastered: Student[]; notMastered: Student[] } => {
-    const mastered = sectionStudents.filter(s => s.masteredSkills?.includes(skillNumber));
-    const notMastered = sectionStudents.filter(s => !s.masteredSkills?.includes(skillNumber));
+  const getStudentsByMastery = (
+    skillNumber: string,
+  ): { mastered: Student[]; notMastered: Student[] } => {
+    const mastered = sectionStudents.filter((s) =>
+      s.masteredSkills?.includes(skillNumber),
+    );
+    const notMastered = sectionStudents.filter(
+      (s) => !s.masteredSkills?.includes(skillNumber),
+    );
     return { mastered, notMastered };
   };
 
   // Get color class based on skill type
-  const getSkillColor = (type: 'target' | 'essential' | 'helpful' | 'support'): {
+  const getSkillColor = (
+    type: "target" | "essential" | "helpful" | "support",
+  ): {
     bg: string;
     border: string;
     bgLight: string;
-    clickColor: 'blue' | 'green' | 'orange' | 'purple';
+    clickColor: "blue" | "green" | "orange" | "purple";
     checkColor: string;
   } => {
     switch (type) {
-      case 'target':
-        return { bg: 'bg-skill-target', border: 'border-skill-target-200', bgLight: 'bg-skill-target-50', clickColor: 'green', checkColor: 'text-skill-target' };
-      case 'essential':
-        return { bg: 'bg-skill-essential', border: 'border-skill-essential-200', bgLight: 'bg-skill-essential-50', clickColor: 'orange', checkColor: 'text-skill-essential' };
-      case 'helpful':
-        return { bg: 'bg-skill-helpful', border: 'border-skill-helpful-200', bgLight: 'bg-skill-helpful-50', clickColor: 'purple', checkColor: 'text-skill-helpful' };
-      case 'support':
-        return { bg: 'bg-skill-support', border: 'border-skill-support-200', bgLight: 'bg-skill-support-50', clickColor: 'blue', checkColor: 'text-skill-support' };
+      case "target":
+        return {
+          bg: "bg-skill-target",
+          border: "border-skill-target-200",
+          bgLight: "bg-skill-target-50",
+          clickColor: "green",
+          checkColor: "text-skill-target",
+        };
+      case "essential":
+        return {
+          bg: "bg-skill-essential",
+          border: "border-skill-essential-200",
+          bgLight: "bg-skill-essential-50",
+          clickColor: "orange",
+          checkColor: "text-skill-essential",
+        };
+      case "helpful":
+        return {
+          bg: "bg-skill-helpful",
+          border: "border-skill-helpful-200",
+          bgLight: "bg-skill-helpful-50",
+          clickColor: "purple",
+          checkColor: "text-skill-helpful",
+        };
+      case "support":
+        return {
+          bg: "bg-skill-support",
+          border: "border-skill-support-200",
+          bgLight: "bg-skill-support-50",
+          clickColor: "blue",
+          checkColor: "text-skill-support",
+        };
     }
   };
 
@@ -154,7 +199,7 @@ export function SkillListWithProgress({
   const ProgressBarWithTooltip = ({
     skillNumber,
     percentage,
-    bgColor
+    bgColor,
   }: {
     skillNumber: string;
     percentage: number;
@@ -179,7 +224,9 @@ export function SkillListWithProgress({
             <div className="grid grid-cols-2 gap-4">
               {/* Mastered column */}
               <div>
-                <div className="font-semibold mb-1 text-green-400">Mastered ({mastered.length})</div>
+                <div className="font-semibold mb-1 text-green-400">
+                  Mastered ({mastered.length})
+                </div>
                 <div className="space-y-0.5">
                   {mastered.length > 0 ? (
                     mastered.map((student) => (
@@ -194,7 +241,9 @@ export function SkillListWithProgress({
               </div>
               {/* Not Mastered column */}
               <div>
-                <div className="font-semibold mb-1 text-red-400">Not Mastered ({notMastered.length})</div>
+                <div className="font-semibold mb-1 text-red-400">
+                  Not Mastered ({notMastered.length})
+                </div>
                 <div className="space-y-0.5">
                   {notMastered.length > 0 ? (
                     notMastered.map((student) => (
@@ -228,11 +277,12 @@ export function SkillListWithProgress({
   }
 
   // Determine if we should show the legend (only if students are selected)
-  const showLegend = useMultiStudentMode || masteredSkills.length > 0 || selectedSection;
+  const showLegend =
+    useMultiStudentMode || masteredSkills.length > 0 || selectedSection;
 
   // Helper to get skill description from allSkills
   const getSkillDescription = (skillNumber: string): string | undefined => {
-    const skill = allSkills.find(s => s.skillNumber === skillNumber);
+    const skill = allSkills.find((s) => s.skillNumber === skillNumber);
     return skill?.description;
   };
 
@@ -240,10 +290,14 @@ export function SkillListWithProgress({
     <div className={isCompactMode ? "space-y-1" : "space-y-3"}>
       {skills.map((skill) => {
         const isTargetSkill = targetSkillNumbers.includes(skill.skillNumber);
-        const hasEssentialSkills = skill.essentialSkills && skill.essentialSkills.length > 0;
-        const hasHelpfulSkills = skill.helpfulSkills && skill.helpfulSkills.length > 0;
+        const hasEssentialSkills =
+          skill.essentialSkills && skill.essentialSkills.length > 0;
+        const hasHelpfulSkills =
+          skill.helpfulSkills && skill.helpfulSkills.length > 0;
         const hasPrerequisites = hasEssentialSkills || hasHelpfulSkills;
-        const masteryPercentage = selectedSection ? calculateMasteryPercentage(skill.skillNumber) : null;
+        const masteryPercentage = selectedSection
+          ? calculateMasteryPercentage(skill.skillNumber)
+          : null;
         const isMastered = masteredSkills.includes(skill.skillNumber);
 
         // Compact rendering for support skills
@@ -251,7 +305,9 @@ export function SkillListWithProgress({
           return (
             <div
               key={skill.skillNumber}
-              onClick={() => onSkillClick?.(skill.skillNumber, colorClasses.clickColor)}
+              onClick={() =>
+                onSkillClick?.(skill.skillNumber, colorClasses.clickColor)
+              }
               className={`flex items-center justify-between ${colorClasses.bgLight} border ${colorClasses.border} px-2 py-1.5 rounded gap-2 cursor-pointer hover:shadow-md hover:border-gray-400 transition-all`}
             >
               <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -263,9 +319,15 @@ export function SkillListWithProgress({
                 {masteredSkills.length > 0 && (
                   <div className="flex-shrink-0">
                     {isMastered ? (
-                      <CheckCircleIcon className="w-5 h-5 text-green-600" title="Mastered" />
+                      <CheckCircleIcon
+                        className="w-5 h-5 text-green-600"
+                        title="Mastered"
+                      />
                     ) : (
-                      <CheckCircleOutlineIcon className="w-5 h-5 text-gray-400" title="Not yet mastered" />
+                      <CheckCircleOutlineIcon
+                        className="w-5 h-5 text-gray-400"
+                        title="Not yet mastered"
+                      />
                     )}
                   </div>
                 )}
@@ -277,16 +339,22 @@ export function SkillListWithProgress({
               {useMultiStudentMode && (
                 <div className="flex items-center gap-1 flex-shrink-0">
                   {selectedStudents.map((student) => {
-                    const hasMastered = student.masteredSkills?.includes(skill.skillNumber);
+                    const hasMastered = student.masteredSkills?.includes(
+                      skill.skillNumber,
+                    );
                     return (
                       <div
                         key={student._id}
                         className="relative group cursor-help"
                       >
                         {hasMastered ? (
-                          <CheckCircleIcon className={`w-5 h-5 ${colorClasses.checkColor}`} />
+                          <CheckCircleIcon
+                            className={`w-5 h-5 ${colorClasses.checkColor}`}
+                          />
                         ) : (
-                          <CheckCircleOutlineIcon className={`w-5 h-5 ${colorClasses.checkColor}`} />
+                          <CheckCircleOutlineIcon
+                            className={`w-5 h-5 ${colorClasses.checkColor}`}
+                          />
                         )}
                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-75 z-10">
                           {student.firstName} {student.lastName}
@@ -314,14 +382,16 @@ export function SkillListWithProgress({
             key={skill.skillNumber}
             className={`border rounded-lg transition-colors ${
               isTargetSkill
-                ? 'border-skill-target-300 bg-gray-50'
-                : 'border-gray-200 bg-gray-50'
+                ? "border-skill-target-300 bg-gray-50"
+                : "border-gray-200 bg-gray-50"
             }`}
           >
             {/* Main skill card */}
             <div
               className="p-3 cursor-pointer hover:bg-gray-100 transition-all rounded-t-lg"
-              onClick={() => onSkillClick?.(skill.skillNumber, colorClasses.clickColor)}
+              onClick={() =>
+                onSkillClick?.(skill.skillNumber, colorClasses.clickColor)
+              }
             >
               <div className="flex items-center justify-between gap-3 mb-2">
                 <div className="flex items-center gap-2 flex-1">
@@ -334,9 +404,15 @@ export function SkillListWithProgress({
                   {masteredSkills.length > 0 && (
                     <div className="flex-shrink-0">
                       {isMastered ? (
-                        <CheckCircleIcon className="w-5 h-5 text-green-600" title="Mastered" />
+                        <CheckCircleIcon
+                          className="w-5 h-5 text-green-600"
+                          title="Mastered"
+                        />
                       ) : (
-                        <CheckCircleOutlineIcon className="w-5 h-5 text-gray-400" title="Not yet mastered" />
+                        <CheckCircleOutlineIcon
+                          className="w-5 h-5 text-gray-400"
+                          title="Not yet mastered"
+                        />
                       )}
                     </div>
                   )}
@@ -359,16 +435,22 @@ export function SkillListWithProgress({
                 {useMultiStudentMode && (
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {selectedStudents.map((student) => {
-                      const hasMastered = student.masteredSkills?.includes(skill.skillNumber);
+                      const hasMastered = student.masteredSkills?.includes(
+                        skill.skillNumber,
+                      );
                       return (
                         <div
                           key={student._id}
                           className="relative group cursor-help"
                         >
                           {hasMastered ? (
-                            <CheckCircleIcon className={`w-5 h-5 ${colorClasses.checkColor}`} />
+                            <CheckCircleIcon
+                              className={`w-5 h-5 ${colorClasses.checkColor}`}
+                            />
                           ) : (
-                            <CheckCircleOutlineIcon className={`w-5 h-5 ${colorClasses.checkColor}`} />
+                            <CheckCircleOutlineIcon
+                              className={`w-5 h-5 ${colorClasses.checkColor}`}
+                            />
                           )}
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-75 z-10">
                             {student.firstName} {student.lastName}
@@ -395,49 +477,71 @@ export function SkillListWithProgress({
                 {/* Essential Skills */}
                 {hasEssentialSkills && (
                   <div>
-                    <div className="text-xs font-semibold text-gray-700 mb-2">Essential Skills ({skill.essentialSkills!.length})</div>
+                    <div className="text-xs font-semibold text-gray-700 mb-2">
+                      Essential Skills ({skill.essentialSkills!.length})
+                    </div>
                     <div className="space-y-1">
                       {skill.essentialSkills!.map((essentialSkill) => {
-                        const skillNum = typeof essentialSkill === 'string' ? essentialSkill : essentialSkill.skillNumber;
-                        const skillTitle = typeof essentialSkill === 'object' ? essentialSkill.title : undefined;
-                        const skillDescription = showDescriptions ? getSkillDescription(skillNum) : undefined;
-                        const isSkillMastered = masteredSkills.includes(skillNum);
-                        const essentialMastery = selectedSection ? calculateMasteryPercentage(skillNum) : null;
+                        const skillNum =
+                          typeof essentialSkill === "string"
+                            ? essentialSkill
+                            : essentialSkill.skillNumber;
+                        const skillTitle =
+                          typeof essentialSkill === "object"
+                            ? essentialSkill.title
+                            : undefined;
+                        const skillDescription = showDescriptions
+                          ? getSkillDescription(skillNum)
+                          : undefined;
+                        const isSkillMastered =
+                          masteredSkills.includes(skillNum);
+                        const essentialMastery = selectedSection
+                          ? calculateMasteryPercentage(skillNum)
+                          : null;
 
                         return (
                           <div
                             key={skillNum}
                             onClick={(e) => {
                               e.stopPropagation();
-                              onSkillClick?.(skillNum, 'orange');
+                              onSkillClick?.(skillNum, "orange");
                             }}
                             className="bg-skill-essential-50 border border-skill-essential-200 px-2 py-1.5 rounded cursor-pointer hover:shadow-md hover:border-skill-essential-300 transition-all"
                           >
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <span
-                                  className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0"
-                                >
+                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-essential text-white font-bold text-xs flex-shrink-0">
                                   {skillNum}
                                 </span>
                                 {masteredSkills.length > 0 && (
                                   <div className="flex-shrink-0">
                                     {isSkillMastered ? (
-                                      <CheckCircleIcon className="w-4 h-4 text-green-600" title="Mastered" />
+                                      <CheckCircleIcon
+                                        className="w-4 h-4 text-green-600"
+                                        title="Mastered"
+                                      />
                                     ) : (
-                                      <CheckCircleOutlineIcon className="w-4 h-4 text-gray-400" title="Not yet mastered" />
+                                      <CheckCircleOutlineIcon
+                                        className="w-4 h-4 text-gray-400"
+                                        title="Not yet mastered"
+                                      />
                                     )}
                                   </div>
                                 )}
                                 {skillTitle && (
-                                  <span className="text-xs text-gray-900 truncate">{skillTitle}</span>
+                                  <span className="text-xs text-gray-900 truncate">
+                                    {skillTitle}
+                                  </span>
                                 )}
                               </div>
                               {/* Multi-student checkmarks for essential skills */}
                               {useMultiStudentMode && (
                                 <div className="flex items-center gap-1 flex-shrink-0">
                                   {selectedStudents.map((student) => {
-                                    const hasMastered = student.masteredSkills?.includes(skillNum);
+                                    const hasMastered =
+                                      student.masteredSkills?.includes(
+                                        skillNum,
+                                      );
                                     return (
                                       <div
                                         key={student._id}
@@ -457,19 +561,22 @@ export function SkillListWithProgress({
                                 </div>
                               )}
                               {/* Section progress bar for essential skills */}
-                              {!useMultiStudentMode && essentialMastery !== null && (
-                                <ProgressBarWithTooltip
-                                  skillNumber={skillNum}
-                                  percentage={essentialMastery}
-                                  bgColor="bg-skill-essential"
-                                />
-                              )}
+                              {!useMultiStudentMode &&
+                                essentialMastery !== null && (
+                                  <ProgressBarWithTooltip
+                                    skillNumber={skillNum}
+                                    percentage={essentialMastery}
+                                    bgColor="bg-skill-essential"
+                                  />
+                                )}
                             </div>
                             {/* Skill Description */}
                             {skillDescription && (
                               <div
                                 className="text-xs text-gray-500 mt-1 ml-10 line-clamp-2"
-                                dangerouslySetInnerHTML={{ __html: skillDescription }}
+                                dangerouslySetInnerHTML={{
+                                  __html: skillDescription,
+                                }}
                               />
                             )}
                           </div>
@@ -482,49 +589,71 @@ export function SkillListWithProgress({
                 {/* Helpful Skills */}
                 {hasHelpfulSkills && (
                   <div>
-                    <div className="text-xs font-semibold text-gray-700 mb-2">Helpful Skills ({skill.helpfulSkills!.length})</div>
+                    <div className="text-xs font-semibold text-gray-700 mb-2">
+                      Helpful Skills ({skill.helpfulSkills!.length})
+                    </div>
                     <div className="space-y-1">
                       {skill.helpfulSkills!.map((helpfulSkill) => {
-                        const skillNum = typeof helpfulSkill === 'string' ? helpfulSkill : helpfulSkill.skillNumber;
-                        const skillTitle = typeof helpfulSkill === 'object' ? helpfulSkill.title : undefined;
-                        const skillDescription = showDescriptions ? getSkillDescription(skillNum) : undefined;
-                        const isSkillMastered = masteredSkills.includes(skillNum);
-                        const helpfulMastery = selectedSection ? calculateMasteryPercentage(skillNum) : null;
+                        const skillNum =
+                          typeof helpfulSkill === "string"
+                            ? helpfulSkill
+                            : helpfulSkill.skillNumber;
+                        const skillTitle =
+                          typeof helpfulSkill === "object"
+                            ? helpfulSkill.title
+                            : undefined;
+                        const skillDescription = showDescriptions
+                          ? getSkillDescription(skillNum)
+                          : undefined;
+                        const isSkillMastered =
+                          masteredSkills.includes(skillNum);
+                        const helpfulMastery = selectedSection
+                          ? calculateMasteryPercentage(skillNum)
+                          : null;
 
                         return (
                           <div
                             key={skillNum}
                             onClick={(e) => {
                               e.stopPropagation();
-                              onSkillClick?.(skillNum, 'purple');
+                              onSkillClick?.(skillNum, "purple");
                             }}
                             className="bg-skill-helpful-50 border border-skill-helpful-200 px-2 py-1.5 rounded cursor-pointer hover:shadow-md hover:border-skill-helpful-300 transition-all"
                           >
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <span
-                                  className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0"
-                                >
+                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-skill-helpful text-white font-bold text-xs flex-shrink-0">
                                   {skillNum}
                                 </span>
                                 {masteredSkills.length > 0 && (
                                   <div className="flex-shrink-0">
                                     {isSkillMastered ? (
-                                      <CheckCircleIcon className="w-4 h-4 text-green-600" title="Mastered" />
+                                      <CheckCircleIcon
+                                        className="w-4 h-4 text-green-600"
+                                        title="Mastered"
+                                      />
                                     ) : (
-                                      <CheckCircleOutlineIcon className="w-4 h-4 text-gray-400" title="Not yet mastered" />
+                                      <CheckCircleOutlineIcon
+                                        className="w-4 h-4 text-gray-400"
+                                        title="Not yet mastered"
+                                      />
                                     )}
                                   </div>
                                 )}
                                 {skillTitle && (
-                                  <span className="text-xs text-gray-900 truncate">{skillTitle}</span>
+                                  <span className="text-xs text-gray-900 truncate">
+                                    {skillTitle}
+                                  </span>
                                 )}
                               </div>
                               {/* Multi-student checkmarks for helpful skills */}
                               {useMultiStudentMode && (
                                 <div className="flex items-center gap-1 flex-shrink-0">
                                   {selectedStudents.map((student) => {
-                                    const hasMastered = student.masteredSkills?.includes(skillNum);
+                                    const hasMastered =
+                                      student.masteredSkills?.includes(
+                                        skillNum,
+                                      );
                                     return (
                                       <div
                                         key={student._id}
@@ -544,19 +673,22 @@ export function SkillListWithProgress({
                                 </div>
                               )}
                               {/* Section progress bar for helpful skills */}
-                              {!useMultiStudentMode && helpfulMastery !== null && (
-                                <ProgressBarWithTooltip
-                                  skillNumber={skillNum}
-                                  percentage={helpfulMastery}
-                                  bgColor="bg-skill-helpful"
-                                />
-                              )}
+                              {!useMultiStudentMode &&
+                                helpfulMastery !== null && (
+                                  <ProgressBarWithTooltip
+                                    skillNumber={skillNum}
+                                    percentage={helpfulMastery}
+                                    bgColor="bg-skill-helpful"
+                                  />
+                                )}
                             </div>
                             {/* Skill Description */}
                             {skillDescription && (
                               <div
                                 className="text-xs text-gray-500 mt-1 ml-10 line-clamp-2"
-                                dangerouslySetInnerHTML={{ __html: skillDescription }}
+                                dangerouslySetInnerHTML={{
+                                  __html: skillDescription,
+                                }}
                               />
                             )}
                           </div>
@@ -580,7 +712,9 @@ export function SkillListWithProgress({
               label="Mastered"
             />
             <LegendItem
-              icon={<CheckCircleOutlineIcon className="w-5 h-5 text-gray-400" />}
+              icon={
+                <CheckCircleOutlineIcon className="w-5 h-5 text-gray-400" />
+              }
               label="Not yet mastered"
             />
           </LegendGroup>

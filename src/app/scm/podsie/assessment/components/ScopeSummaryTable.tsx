@@ -61,7 +61,10 @@ function getUnitNumberFromId(unitLessonId: string): number {
 }
 
 // Calculate class average for a section's unit assessment
-function calculateClassAverage(progressData: ProgressData[], totalQuestions: number): number | null {
+function calculateClassAverage(
+  progressData: ProgressData[],
+  totalQuestions: number,
+): number | null {
   const studentsWithData = progressData.filter((p) => p.totalQuestions > 0);
   if (studentsWithData.length === 0) return null;
 
@@ -77,17 +80,24 @@ function calculateClassAverage(progressData: ProgressData[], totalQuestions: num
   return maxPoints > 0 ? Math.round((avgPoints / maxPoints) * 100) : null;
 }
 
-export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps) {
+export function ScopeSummaryTable({
+  scopeTag,
+  sections,
+}: ScopeSummaryTableProps) {
   const [sectionData, setSectionData] = useState<SectionAssessmentData[]>([]);
   const [loading, setLoading] = useState(true);
   const [allUnits, setAllUnits] = useState<number[]>([]);
 
   // Use first section to get units (all sections in same scope have same units)
   const firstSection = sections[0];
-  const { units, sectionConfigAssignments, loading: loadingConfig } = useUnitsAndConfig(
+  const {
+    units,
+    sectionConfigAssignments,
+    loading: loadingConfig,
+  } = useUnitsAndConfig(
     scopeTag,
     firstSection?.classSection || "",
-    firstSection?.school
+    firstSection?.school,
   );
 
   // Create stable keys
@@ -97,7 +107,11 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
 
   // Load data for all sections
   useEffect(() => {
-    if (units.length === 0 || sectionConfigAssignments.length === 0 || sections.length === 0) {
+    if (
+      units.length === 0 ||
+      sectionConfigAssignments.length === 0 ||
+      sections.length === 0
+    ) {
       setSectionData([]);
       setLoading(false);
       return;
@@ -116,19 +130,24 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
         for (const unit of units) {
           const unitAssignments = sectionConfigAssignments.filter((a) => {
             const assignmentUnitNumber = getUnitNumberFromId(a.unitLessonId);
-            return assignmentUnitNumber === unit.unitNumber && a.section === "Unit Assessment";
+            return (
+              assignmentUnitNumber === unit.unitNumber &&
+              a.section === "Unit Assessment"
+            );
           });
 
           for (const assignment of unitAssignments) {
             if (isCancelled) return;
 
             const assessmentActivity = assignment.podsieActivities?.find(
-              (activity) => activity.activityType === "assessment"
+              (activity) => activity.activityType === "assessment",
             );
 
             if (!assessmentActivity) continue;
 
-            const grade = scopeTag.replace("Grade ", "").replace("Algebra 1", "8");
+            const grade = scopeTag
+              .replace("Grade ", "")
+              .replace("Algebra 1", "8");
             const unitCode = `${grade}.${unit.unitNumber}`;
 
             const result = await fetchRampUpProgress(
@@ -136,11 +155,14 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
               unitCode,
               assignment.unitLessonId,
               assessmentActivity.podsieAssignmentId,
-              section.school
+              section.school,
             );
 
             if (result.success) {
-              const avg = calculateClassAverage(result.data, assessmentActivity.totalQuestions || 0);
+              const avg = calculateClassAverage(
+                result.data,
+                assessmentActivity.totalQuestions || 0,
+              );
               if (avg !== null) {
                 unitAverages.set(unit.unitNumber, avg);
                 unitNumbers.add(unit.unitNumber);
@@ -156,7 +178,8 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
           totalPercent += percent;
           count++;
         });
-        const overallAverage = count > 0 ? Math.round(totalPercent / count) : null;
+        const overallAverage =
+          count > 0 ? Math.round(totalPercent / count) : null;
 
         results.push({
           sectionId: section.id,
@@ -184,7 +207,8 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
 
   // Generate change pairs
   const changePairs = useMemo(() => {
-    const pairs: Array<{ fromUnit: number; toUnit: number; label: string }> = [];
+    const pairs: Array<{ fromUnit: number; toUnit: number; label: string }> =
+      [];
     for (let i = 1; i < allUnits.length; i++) {
       pairs.push({
         fromUnit: allUnits[i - 1],
@@ -297,7 +321,9 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
                 return (
                   <td key={unitNum} className="px-3 py-2 text-center">
                     {avg !== undefined ? (
-                      <span className={`inline-block px-2 py-0.5 rounded text-sm font-bold ${getPercentColor(avg)}`}>
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded text-sm font-bold ${getPercentColor(avg)}`}
+                      >
                         {avg}%
                       </span>
                     ) : (
@@ -308,7 +334,9 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
               })}
               <td className="px-4 py-2 text-center bg-blue-100">
                 {overallScopeAverage !== null ? (
-                  <span className={`inline-block px-2 py-1 rounded text-sm font-bold ${getAverageColor(overallScopeAverage)}`}>
+                  <span
+                    className={`inline-block px-2 py-1 rounded text-sm font-bold ${getAverageColor(overallScopeAverage)}`}
+                  >
                     {overallScopeAverage}%
                   </span>
                 ) : (
@@ -318,10 +346,16 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
               {changePairs.map((pair) => {
                 const from = scopeAverages.get(pair.fromUnit);
                 const to = scopeAverages.get(pair.toUnit);
-                const change = from !== undefined && to !== undefined ? to - from : null;
+                const change =
+                  from !== undefined && to !== undefined ? to - from : null;
                 return (
-                  <td key={pair.label} className="px-2 py-2 text-center bg-purple-50/50">
-                    <span className={`text-xs ${change !== null ? getChangeColor(change) : "text-gray-300"}`}>
+                  <td
+                    key={pair.label}
+                    className="px-2 py-2 text-center bg-purple-50/50"
+                  >
+                    <span
+                      className={`text-xs ${change !== null ? getChangeColor(change) : "text-gray-300"}`}
+                    >
                       {formatChange(change)}
                     </span>
                   </td>
@@ -338,8 +372,12 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
               >
                 <td className="sticky left-0 bg-inherit px-4 py-2 z-10">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-900">{section.sectionName}</span>
-                    <span className="text-xs px-1.5 py-0.5 rounded bg-gray-600 text-white">{section.school}</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      {section.sectionName}
+                    </span>
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-gray-600 text-white">
+                      {section.school}
+                    </span>
                   </div>
                 </td>
                 {allUnits.map((unitNum) => {
@@ -347,7 +385,9 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
                   return (
                     <td key={unitNum} className="px-3 py-2 text-center">
                       {avg !== undefined ? (
-                        <span className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${getPercentColor(avg)}`}>
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded text-sm font-medium ${getPercentColor(avg)}`}
+                        >
                           {avg}%
                         </span>
                       ) : (
@@ -358,7 +398,9 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
                 })}
                 <td className="px-4 py-2 text-center bg-gray-100/50">
                   {section.overallAverage !== null ? (
-                    <span className={`inline-block px-2 py-0.5 rounded text-sm font-bold ${getAverageColor(section.overallAverage)}`}>
+                    <span
+                      className={`inline-block px-2 py-0.5 rounded text-sm font-bold ${getAverageColor(section.overallAverage)}`}
+                    >
                       {section.overallAverage}%
                     </span>
                   ) : (
@@ -368,10 +410,16 @@ export function ScopeSummaryTable({ scopeTag, sections }: ScopeSummaryTableProps
                 {changePairs.map((pair) => {
                   const from = section.unitAverages.get(pair.fromUnit);
                   const to = section.unitAverages.get(pair.toUnit);
-                  const change = from !== undefined && to !== undefined ? to - from : null;
+                  const change =
+                    from !== undefined && to !== undefined ? to - from : null;
                   return (
-                    <td key={pair.label} className="px-2 py-2 text-center bg-purple-50/30">
-                      <span className={`text-xs ${change !== null ? getChangeColor(change) : "text-gray-300"}`}>
+                    <td
+                      key={pair.label}
+                      className="px-2 py-2 text-center bg-purple-50/30"
+                    >
+                      <span
+                        className={`text-xs ${change !== null ? getChangeColor(change) : "text-gray-300"}`}
+                      >
                         {formatChange(change)}
                       </span>
                     </td>

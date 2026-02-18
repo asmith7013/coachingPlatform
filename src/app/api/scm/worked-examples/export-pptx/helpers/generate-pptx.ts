@@ -1,13 +1,9 @@
-import pptxgen from '@bapunhansdah/pptxgenjs';
-import {
-  SLIDE_WIDTH,
-  SLIDE_HEIGHT,
-  pxToInches,
-} from './constants';
-import { extractAllPptxElements, parseSlideHtml } from './parsers';
-import { addPptxElement } from './element-handlers';
-import { isSimpleTextContent } from './element-handlers/utils';
-import { createRenderSession, RenderSession } from './renderers';
+import pptxgen from "@bapunhansdah/pptxgenjs";
+import { SLIDE_WIDTH, SLIDE_HEIGHT, pxToInches } from "./constants";
+import { extractAllPptxElements, parseSlideHtml } from "./parsers";
+import { addPptxElement } from "./element-handlers";
+import { isSimpleTextContent } from "./element-handlers/utils";
+import { createRenderSession, RenderSession } from "./renderers";
 
 export interface SlideData {
   htmlContent: string;
@@ -18,7 +14,12 @@ export interface GeneratePptxOptions {
   title?: string;
   mathConcept?: string;
   slug?: string;
-  onProgress?: (current: number, total: number, message: string, step: string) => void;
+  onProgress?: (
+    current: number,
+    total: number,
+    message: string,
+    step: string,
+  ) => void;
 }
 
 export interface GeneratePptxResult {
@@ -38,28 +39,29 @@ export interface GeneratePptxResult {
  */
 export async function generatePptxFromSlides(
   slides: SlideData[],
-  options: GeneratePptxOptions = {}
+  options: GeneratePptxOptions = {},
 ): Promise<GeneratePptxResult> {
-  console.log('[generatePptxFromSlides] Starting...');
-  console.log('[generatePptxFromSlides] slides count:', slides.length);
+  console.log("[generatePptxFromSlides] Starting...");
+  console.log("[generatePptxFromSlides] slides count:", slides.length);
   const { title, mathConcept, slug, onProgress } = options;
-  console.log('[generatePptxFromSlides] title:', title);
-  console.log('[generatePptxFromSlides] slug:', slug);
+  console.log("[generatePptxFromSlides] title:", title);
+  console.log("[generatePptxFromSlides] slug:", slug);
 
   // Create a single browser session for all slides (efficient)
-  console.log('[generatePptxFromSlides] Creating render session...');
+  console.log("[generatePptxFromSlides] Creating render session...");
   const renderSession = await createRenderSession();
-  console.log('[generatePptxFromSlides] Render session created');
+  console.log("[generatePptxFromSlides] Render session created");
 
   try {
     // First pass: calculate total slides (including expanded print pages)
     let totalPptxSlides = 0;
-    const slideExpansions: { originalIndex: number; printPageCount: number }[] = [];
+    const slideExpansions: { originalIndex: number; printPageCount: number }[] =
+      [];
 
     for (let i = 0; i < slides.length; i++) {
-      const html = slides[i].htmlContent || '';
+      const html = slides[i].htmlContent || "";
       // Check if this is the printable slide (has .print-page elements)
-      const isPrintable = html.includes('print-page');
+      const isPrintable = html.includes("print-page");
 
       if (isPrintable) {
         // Printable slide (practice problems or lesson summary) - count print pages
@@ -72,58 +74,66 @@ export async function generatePptxFromSlides(
       }
     }
 
-    onProgress?.(0, totalPptxSlides, 'Initializing PowerPoint export...', 'init');
+    onProgress?.(
+      0,
+      totalPptxSlides,
+      "Initializing PowerPoint export...",
+      "init",
+    );
 
     // Create presentation
     const pptx = new pptxgen();
-    pptx.layout = 'LAYOUT_16x9';
-    pptx.title = title || 'Worked Example';
-    pptx.author = 'AI Coaching Platform';
-    pptx.subject = mathConcept || 'Math';
-    pptx.company = 'AI Coaching Platform';
+    pptx.layout = "LAYOUT_16x9";
+    pptx.title = title || "Worked Example";
+    pptx.author = "AI Coaching Platform";
+    pptx.subject = mathConcept || "Math";
+    pptx.company = "AI Coaching Platform";
 
     let pptxSlideIndex = 0;
 
     // Process each slide
     for (let i = 0; i < slides.length; i++) {
       const slideData = slides[i];
-      const html = slideData.htmlContent || '';
+      const html = slideData.htmlContent || "";
       const expansion = slideExpansions[i];
 
       if (expansion.printPageCount > 0) {
         // Detect if this is a lesson summary or practice problems
-        const isLessonSummary = html.includes('LESSON SUMMARY');
+        const isLessonSummary = html.includes("LESSON SUMMARY");
 
         // This is a printable slide - create a slide for each print page
         for (let pageIdx = 0; pageIdx < expansion.printPageCount; pageIdx++) {
           pptxSlideIndex++;
           const problemNumber = pageIdx + 1;
           const pageLabel = isLessonSummary
-            ? 'Lesson Summary'
+            ? "Lesson Summary"
             : `Practice Problem ${problemNumber}`;
 
           onProgress?.(
             pptxSlideIndex,
             totalPptxSlides,
             `Rendering ${pageLabel}...`,
-            'processing'
+            "processing",
           );
 
           const slide = pptx.addSlide();
-          slide.background = { color: 'FFFFFF' };
+          slide.background = { color: "FFFFFF" };
 
           // Render the specific print page as an image
-          const imageBuffer = await renderSession.renderPrintPage(html, pageIdx);
+          const imageBuffer = await renderSession.renderPrintPage(
+            html,
+            pageIdx,
+          );
 
           if (imageBuffer) {
-            const base64Image = imageBuffer.toString('base64');
+            const base64Image = imageBuffer.toString("base64");
             // Position the portrait image centered on the landscape slide
             // with some padding
             slide.addImage({
               data: `data:image/png;base64,${base64Image}`,
-              x: 1.5,  // Center horizontally on 10" slide
+              x: 1.5, // Center horizontally on 10" slide
               y: 0.2,
-              w: 4.5,  // Maintain aspect ratio (portrait)
+              w: 4.5, // Maintain aspect ratio (portrait)
               h: 5.1,
             });
           } else {
@@ -134,9 +144,9 @@ export async function generatePptxFromSlides(
               w: 9,
               h: 0.5,
               fontSize: 24,
-              fontFace: 'Arial',
-              color: '333333',
-              align: 'center',
+              fontFace: "Arial",
+              color: "333333",
+              align: "center",
             });
           }
 
@@ -147,16 +157,18 @@ export async function generatePptxFromSlides(
             w: 3.5,
             h: 0.5,
             fontSize: 20,
-            fontFace: 'Arial',
+            fontFace: "Arial",
             bold: true,
-            color: '333333',
+            color: "333333",
           });
 
           // Add "Print this" link with instructions
           if (slug) {
-            const slideNum = slideData.slideNumber || (i + 1);
+            const slideNum = slideData.slideNumber || i + 1;
             const printUrl = `https://solvescoaching.com/scm/workedExamples/viewer?view=${slug}&slide=${slideNum}`;
-            const printLabel = isLessonSummary ? 'Print this summary:' : 'Print this worksheet:';
+            const printLabel = isLessonSummary
+              ? "Print this summary:"
+              : "Print this worksheet:";
 
             slide.addText(printLabel, {
               x: 6.2,
@@ -164,33 +176,33 @@ export async function generatePptxFromSlides(
               w: 3.5,
               h: 0.3,
               fontSize: 12,
-              fontFace: 'Arial',
-              color: '666666',
+              fontFace: "Arial",
+              color: "666666",
             });
 
-            slide.addText('Open Printable Version', {
+            slide.addText("Open Printable Version", {
               x: 6.2,
               y: 1.6,
               w: 3.5,
               h: 0.35,
               fontSize: 13,
-              fontFace: 'Arial',
-              color: '1791e8',
-              underline: { style: 'sng' },
+              fontFace: "Arial",
+              color: "1791e8",
+              underline: { style: "sng" },
               hyperlink: { url: printUrl },
             });
 
             // Also add View Worked Example link
             const workedExampleUrl = `https://solvescoaching.com/scm/workedExamples/viewer?view=${slug}`;
-            slide.addText('View Worked Example', {
+            slide.addText("View Worked Example", {
               x: 6.2,
               y: 2.2,
               w: 3.5,
               h: 0.35,
               fontSize: 13,
-              fontFace: 'Arial',
-              color: '1791e8',
-              underline: { style: 'sng' },
+              fontFace: "Arial",
+              color: "1791e8",
+              underline: { style: "sng" },
               hyperlink: { url: workedExampleUrl },
             });
           }
@@ -202,25 +214,32 @@ export async function generatePptxFromSlides(
             w: 0.5,
             h: 0.3,
             fontSize: 10,
-            fontFace: 'Arial',
-            color: '999999',
-            align: 'right',
+            fontFace: "Arial",
+            color: "999999",
+            align: "right",
           });
         }
       } else {
         // Regular slide processing
         pptxSlideIndex++;
         const slide = pptx.addSlide();
-        slide.background = { color: 'FFFFFF' };
+        slide.background = { color: "FFFFFF" };
 
         onProgress?.(
           pptxSlideIndex,
           totalPptxSlides,
           `Processing slide ${pptxSlideIndex} of ${totalPptxSlides}...`,
-          'processing'
+          "processing",
         );
 
-        await processSlide(slide, html, i, totalPptxSlides, renderSession, onProgress);
+        await processSlide(
+          slide,
+          html,
+          i,
+          totalPptxSlides,
+          renderSession,
+          onProgress,
+        );
 
         // Add slide number in footer
         slide.addText(`${pptxSlideIndex}`, {
@@ -229,29 +248,39 @@ export async function generatePptxFromSlides(
           w: 0.5,
           h: 0.3,
           fontSize: 10,
-          fontFace: 'Arial',
-          color: '999999',
-          align: 'right',
+          fontFace: "Arial",
+          color: "999999",
+          align: "right",
         });
       }
     }
 
     // Generate PPTX
-    console.log('[generatePptxFromSlides] All slides processed, building PPTX...');
-    onProgress?.(totalPptxSlides, totalPptxSlides, 'Building PowerPoint file...', 'building');
+    console.log(
+      "[generatePptxFromSlides] All slides processed, building PPTX...",
+    );
+    onProgress?.(
+      totalPptxSlides,
+      totalPptxSlides,
+      "Building PowerPoint file...",
+      "building",
+    );
 
-    console.log('[generatePptxFromSlides] Calling pptx.write()...');
-    const pptxBase64 = await pptx.write({ outputType: 'base64' });
-    console.log('[generatePptxFromSlides] pptx.write() complete, base64 length:', (pptxBase64 as string).length);
+    console.log("[generatePptxFromSlides] Calling pptx.write()...");
+    const pptxBase64 = await pptx.write({ outputType: "base64" });
+    console.log(
+      "[generatePptxFromSlides] pptx.write() complete, base64 length:",
+      (pptxBase64 as string).length,
+    );
 
     // Filename is sanitized for file systems (dashes only)
-    const filename = `${(title || 'worked-example').replace(/[^a-zA-Z0-9-]/g, '-').replace(/-+/g, '-')}.pptx`;
+    const filename = `${(title || "worked-example").replace(/[^a-zA-Z0-9-]/g, "-").replace(/-+/g, "-")}.pptx`;
     // Display title is human-readable for Google Slides
-    const displayTitle = title || 'Worked Example';
-    console.log('[generatePptxFromSlides] filename:', filename);
-    console.log('[generatePptxFromSlides] displayTitle:', displayTitle);
+    const displayTitle = title || "Worked Example";
+    console.log("[generatePptxFromSlides] filename:", filename);
+    console.log("[generatePptxFromSlides] displayTitle:", displayTitle);
 
-    console.log('[generatePptxFromSlides] SUCCESS - returning result');
+    console.log("[generatePptxFromSlides] SUCCESS - returning result");
     return {
       pptxBase64: pptxBase64 as string,
       filename,
@@ -259,9 +288,9 @@ export async function generatePptxFromSlides(
     };
   } finally {
     // Always close browser session to clean up Chromium
-    console.log('[generatePptxFromSlides] Closing render session...');
+    console.log("[generatePptxFromSlides] Closing render session...");
     await renderSession.close();
-    console.log('[generatePptxFromSlides] Render session closed');
+    console.log("[generatePptxFromSlides] Render session closed");
   }
 }
 
@@ -274,7 +303,12 @@ async function processSlide(
   slideIndex: number,
   totalSlides: number,
   renderSession: RenderSession,
-  onProgress?: (current: number, total: number, message: string, step: string) => void
+  onProgress?: (
+    current: number,
+    total: number,
+    message: string,
+    step: string,
+  ) => void,
 ): Promise<void> {
   try {
     // Extract ALL elements - uses data-pptx-* attributes with structure-based fallback
@@ -282,21 +316,22 @@ async function processSlide(
 
     // Separate CFU and answer boxes to add last (ensures they're on top in z-order)
     const regularElements = pptxElements.filter(
-      el => el.regionType !== 'cfu-box' && el.regionType !== 'answer-box'
+      (el) => el.regionType !== "cfu-box" && el.regionType !== "answer-box",
     );
     const overlayBoxes = pptxElements.filter(
-      el => el.regionType === 'cfu-box' || el.regionType === 'answer-box'
+      (el) => el.regionType === "cfu-box" || el.regionType === "answer-box",
     );
     // Sort: CFU first (appears on first click), Answer second (appears on second click, overlays CFU)
     overlayBoxes.sort((a, b) => {
-      if (a.regionType === 'cfu-box' && b.regionType === 'answer-box') return -1;
-      if (a.regionType === 'answer-box' && b.regionType === 'cfu-box') return 1;
+      if (a.regionType === "cfu-box" && b.regionType === "answer-box")
+        return -1;
+      if (a.regionType === "answer-box" && b.regionType === "cfu-box") return 1;
       return 0;
     });
 
     // Render regular elements first (they'll be at the bottom of z-order)
     for (const el of regularElements) {
-      if (el.regionType === 'svg-container') continue;
+      if (el.regionType === "svg-container") continue;
       addPptxElement(slide, el);
     }
 
@@ -304,27 +339,36 @@ async function processSlide(
     const hasSvg = /<svg[\s>]/i.test(html);
     if (hasSvg) {
       const parsed = parseSlideHtml(html);
-      if (parsed.svgRegion && parsed.svgRegion.layers && parsed.svgRegion.layers.length > 1) {
+      if (
+        parsed.svgRegion &&
+        parsed.svgRegion.layers &&
+        parsed.svgRegion.layers.length > 1
+      ) {
         // SVG has multiple layers - render each layer separately for independent PPTX objects
-        onProgress?.(slideIndex + 1, totalSlides, `Rendering ${parsed.svgRegion.layers.length} SVG layers for slide ${slideIndex + 1}...`, 'rendering-svg');
+        onProgress?.(
+          slideIndex + 1,
+          totalSlides,
+          `Rendering ${parsed.svgRegion.layers.length} SVG layers for slide ${slideIndex + 1}...`,
+          "rendering-svg",
+        );
 
         const region = parsed.svgRegion;
         const layerImages = await renderSession.renderSvgLayers(
           region.html,
           region.width,
           region.height,
-          region.layers!
+          region.layers!,
         );
 
         for (const layer of layerImages) {
-          const layerBase64 = layer.buffer.toString('base64');
+          const layerBase64 = layer.buffer.toString("base64");
 
           if (layer.bounds) {
             // Position relative to SVG region origin + layer offset
-            const layerX = pxToInches(region.x + layer.bounds.x, 'w');
-            const layerY = pxToInches(region.y + layer.bounds.y, 'h');
-            const layerW = pxToInches(layer.bounds.width, 'w');
-            const layerH = pxToInches(layer.bounds.height, 'h');
+            const layerX = pxToInches(region.x + layer.bounds.x, "w");
+            const layerY = pxToInches(region.y + layer.bounds.y, "h");
+            const layerW = pxToInches(layer.bounds.width, "w");
+            const layerH = pxToInches(layer.bounds.height, "h");
 
             slide.addImage({
               data: `data:image/png;base64,${layerBase64}`,
@@ -337,31 +381,36 @@ async function processSlide(
             // Fallback: use full SVG region position
             slide.addImage({
               data: `data:image/png;base64,${layerBase64}`,
-              x: pxToInches(region.x, 'w'),
-              y: pxToInches(region.y, 'h'),
-              w: pxToInches(region.width, 'w'),
-              h: pxToInches(region.height, 'h'),
+              x: pxToInches(region.x, "w"),
+              y: pxToInches(region.y, "h"),
+              w: pxToInches(region.width, "w"),
+              h: pxToInches(region.height, "h"),
             });
           }
         }
       } else if (parsed.svgRegion) {
         // SVG without layers - render as single image
-        onProgress?.(slideIndex + 1, totalSlides, `Rendering SVG for slide ${slideIndex + 1}...`, 'rendering-svg');
+        onProgress?.(
+          slideIndex + 1,
+          totalSlides,
+          `Rendering SVG for slide ${slideIndex + 1}...`,
+          "rendering-svg",
+        );
 
         const region = parsed.svgRegion;
         const svgBuffer = await renderSession.renderSvg(
           region.html,
           region.width,
-          region.height
+          region.height,
         );
-        const svgBase64 = svgBuffer.toString('base64');
+        const svgBase64 = svgBuffer.toString("base64");
 
         slide.addImage({
           data: `data:image/png;base64,${svgBase64}`,
-          x: pxToInches(region.x, 'w'),
-          y: pxToInches(region.y, 'h'),
-          w: pxToInches(region.width, 'w'),
-          h: pxToInches(region.height, 'h'),
+          x: pxToInches(region.x, "w"),
+          y: pxToInches(region.y, "h"),
+          w: pxToInches(region.width, "w"),
+          h: pxToInches(region.height, "h"),
         });
       }
     }
@@ -371,40 +420,48 @@ async function processSlide(
     // 1. Regions with complex content (tables, nested styled divs, etc.)
     // 2. Granular visual-* layers (visual-table, visual-equation, etc.)
     if (!hasSvg) {
-      const visualElements = pptxElements.filter(el => {
+      const visualElements = pptxElements.filter((el) => {
         // Granular visual layers (from visual-card-layers pattern)
-        if (el.regionType.startsWith('visual-')) {
+        if (el.regionType.startsWith("visual-")) {
           return true;
         }
         // SVG container without SVG - screenshot it
-        if (el.regionType === 'svg-container') {
+        if (el.regionType === "svg-container") {
           return true;
         }
         // Right-column or problem-visual with complex content (tables, etc.)
-        if ((el.regionType === 'right-column' || el.regionType === 'problem-visual') &&
-            !isSimpleTextContent(el.content)) {
+        if (
+          (el.regionType === "right-column" ||
+            el.regionType === "problem-visual") &&
+          !isSimpleTextContent(el.content)
+        ) {
           return true;
         }
         return false;
       });
 
       if (visualElements.length > 0) {
-        onProgress?.(slideIndex + 1, totalSlides, `Rendering ${visualElements.length} visual(s) for slide ${slideIndex + 1}...`, 'rendering-visual');
+        onProgress?.(
+          slideIndex + 1,
+          totalSlides,
+          `Rendering ${visualElements.length} visual(s) for slide ${slideIndex + 1}...`,
+          "rendering-visual",
+        );
 
         // Screenshot each visual region separately for independent PPTX objects
         for (const visualElement of visualElements) {
-          const vizX = pxToInches(visualElement.x, 'w');
-          const vizY = pxToInches(visualElement.y, 'h');
-          const vizW = pxToInches(visualElement.w, 'w');
-          const vizH = pxToInches(visualElement.h, 'h');
+          const vizX = pxToInches(visualElement.x, "w");
+          const vizY = pxToInches(visualElement.y, "h");
+          const vizW = pxToInches(visualElement.w, "w");
+          const vizH = pxToInches(visualElement.h, "h");
 
           // Render the visual region as an image
           const vizBuffer = await renderSession.renderTableRegion(
             visualElement.content,
             visualElement.w,
-            visualElement.h
+            visualElement.h,
           );
-          const vizBase64 = vizBuffer.toString('base64');
+          const vizBase64 = vizBuffer.toString("base64");
 
           slide.addImage({
             data: `data:image/png;base64,${vizBase64}`,
@@ -422,14 +479,22 @@ async function processSlide(
       addPptxElement(slide, el);
     }
   } catch (parseError) {
-    console.error(`Error parsing slide ${slideIndex + 1}, falling back to full render:`, parseError);
+    console.error(
+      `Error parsing slide ${slideIndex + 1}, falling back to full render:`,
+      parseError,
+    );
 
-    onProgress?.(slideIndex + 1, totalSlides, `Fallback: rendering full slide ${slideIndex + 1}...`, 'fallback-render');
+    onProgress?.(
+      slideIndex + 1,
+      totalSlides,
+      `Fallback: rendering full slide ${slideIndex + 1}...`,
+      "fallback-render",
+    );
 
     // Fallback: render entire slide as image
     try {
       const imageBuffer = await renderSession.renderFullSlide(html);
-      const base64Image = imageBuffer.toString('base64');
+      const base64Image = imageBuffer.toString("base64");
 
       slide.addImage({
         data: `data:image/png;base64,${base64Image}`,
@@ -446,9 +511,9 @@ async function processSlide(
         w: 9,
         h: 0.5,
         fontSize: 14,
-        fontFace: 'Arial',
-        color: 'FF0000',
-        align: 'center',
+        fontFace: "Arial",
+        color: "FF0000",
+        align: "center",
       });
     }
   }

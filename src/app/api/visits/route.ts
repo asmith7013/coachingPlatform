@@ -1,5 +1,8 @@
 import { fetchVisitsForApi } from "@/lib/server/fetchers/domain/visits";
-import { createReferenceEndpoint, FetchFunction } from "@api-handlers/reference-endpoint";
+import {
+  createReferenceEndpoint,
+  FetchFunction,
+} from "@api-handlers/reference-endpoint";
 import { Visit } from "@zod-schema/visits/visit";
 import { BaseReference } from "@core-types/reference";
 
@@ -11,9 +14,11 @@ interface VisitReference extends BaseReference {
 }
 
 function mapVisitToReference(visit: Visit): VisitReference {
-  const visitDate = visit.date ? new Date(visit.date).toLocaleDateString() : 'No date';
-  const label = `${visitDate} - ${visit.schoolId || 'Unknown School'}`;
-  
+  const visitDate = visit.date
+    ? new Date(visit.date).toLocaleDateString()
+    : "No date";
+  const label = `${visitDate} - ${visit.schoolId || "Unknown School"}`;
+
   return {
     _id: visit._id,
     value: visit._id,
@@ -21,7 +26,7 @@ function mapVisitToReference(visit: Visit): VisitReference {
     date: visit.date ? new Date(visit.date).toISOString() : undefined,
     schoolId: visit.schoolId,
     coachId: visit.coachId,
-    purpose: visit.allowedPurpose
+    purpose: visit.allowedPurpose,
   };
 }
 
@@ -30,5 +35,5 @@ export const GET = createReferenceEndpoint({
   mapItem: mapVisitToReference,
   defaultSearchField: "date",
   defaultLimit: 20,
-  logPrefix: "Visits API"
-}); 
+  logPrefix: "Visits API",
+});

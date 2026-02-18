@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useSignIn } from '@clerk/nextjs';
-import type { WizardStateHook } from '../../hooks/useWizardState';
-import { saveWorkedExampleDeck } from '@/app/actions/worked-examples/save-deck';
-import { updateDeckMetadata } from '@/app/actions/worked-examples/update-deck-metadata';
-import type { CreateWorkedExampleDeckInput } from '@zod-schema/scm/worked-example';
+import { useState, useEffect, useCallback } from "react";
+import { useSignIn } from "@clerk/nextjs";
+import type { WizardStateHook } from "../../hooks/useWizardState";
+import { saveWorkedExampleDeck } from "@/app/actions/worked-examples/save-deck";
+import { updateDeckMetadata } from "@/app/actions/worked-examples/update-deck-metadata";
+import type { CreateWorkedExampleDeckInput } from "@zod-schema/scm/worked-example";
 
 // Session storage key for pending Google Slides export
-const PENDING_GOOGLE_EXPORT_KEY = 'pendingGoogleSlidesExport';
+const PENDING_GOOGLE_EXPORT_KEY = "pendingGoogleSlidesExport";
 
 // Error messages that indicate auth issues requiring re-authorization
 const AUTH_ERROR_PATTERNS = [
-  'expired',
-  'invalid',
-  'authorization',
-  'permissions',
-  'No Google OAuth token',
-  'sign in',
-  'sign out',
-  '401',
-  '403',
+  "expired",
+  "invalid",
+  "authorization",
+  "permissions",
+  "No Google OAuth token",
+  "sign in",
+  "sign out",
+  "401",
+  "403",
 ];
 
 interface Step4SaveProps {
@@ -54,32 +54,34 @@ export function Step4Save({ wizard }: Step4SaveProps) {
   // Check if an error message indicates an auth issue
   const isAuthError = (errorMessage: string): boolean => {
     const lowerError = errorMessage.toLowerCase();
-    return AUTH_ERROR_PATTERNS.some((pattern) => lowerError.includes(pattern.toLowerCase()));
+    return AUTH_ERROR_PATTERNS.some((pattern) =>
+      lowerError.includes(pattern.toLowerCase()),
+    );
   };
 
   // Handle re-authorization with forced consent
   const handleReauthorize = useCallback(() => {
     if (!isSignInLoaded || !signIn) {
-      setError('Sign-in not loaded. Please refresh the page.');
+      setError("Sign-in not loaded. Please refresh the page.");
       return;
     }
 
     // Store that we want to retry export after re-auth
-    sessionStorage.setItem(PENDING_GOOGLE_EXPORT_KEY, 'true');
+    sessionStorage.setItem(PENDING_GOOGLE_EXPORT_KEY, "true");
 
     // Redirect to Google OAuth with forced consent to get fresh refresh token
     signIn.authenticateWithRedirect({
-      strategy: 'oauth_google',
-      redirectUrl: '/sso-callback',
+      strategy: "oauth_google",
+      redirectUrl: "/sso-callback",
       redirectUrlComplete: window.location.pathname + window.location.search,
-      oidcPrompt: 'consent',
+      oidcPrompt: "consent",
     });
   }, [isSignInLoaded, signIn, setError]);
 
   // Handle export to PPTX
   const handleExportPptx = async () => {
     if (state.slides.length === 0) {
-      setError('No slides to export');
+      setError("No slides to export");
       return;
     }
 
@@ -87,34 +89,36 @@ export function Step4Save({ wizard }: Step4SaveProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/scm/worked-examples/export-pptx', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/scm/worked-examples/export-pptx", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           slides: state.slides,
-          title: state.title || 'worked-example',
+          title: state.title || "worked-example",
           mathConcept: state.mathConcept,
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate PPTX');
+        throw new Error(errorData.error || "Failed to generate PPTX");
       }
 
       // Download the file
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `${(state.title || 'worked-example').replace(/[^a-zA-Z0-9-]/g, '-')}.pptx`;
+      a.download = `${(state.title || "worked-example").replace(/[^a-zA-Z0-9-]/g, "-")}.pptx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error('Export error:', error);
-      setError(error instanceof Error ? error.message : 'Failed to export PPTX');
+      console.error("Export error:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to export PPTX",
+      );
     } finally {
       setIsExporting(false);
     }
@@ -123,7 +127,7 @@ export function Step4Save({ wizard }: Step4SaveProps) {
   // Handle export to Google Slides
   const handleExportGoogleSlides = useCallback(async () => {
     if (state.slides.length === 0) {
-      setError('No slides to export');
+      setError("No slides to export");
       return;
     }
 
@@ -134,19 +138,23 @@ export function Step4Save({ wizard }: Step4SaveProps) {
     setAuthErrorMessage(null);
 
     try {
-      const response = await fetch('/api/scm/worked-examples/export-google-slides', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          slides: state.slides,
-          title: state.title || 'worked-example',
-          mathConcept: state.mathConcept,
-        }),
-      });
+      const response = await fetch(
+        "/api/scm/worked-examples/export-google-slides",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            slides: state.slides,
+            title: state.title || "worked-example",
+            mathConcept: state.mathConcept,
+          }),
+        },
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        const errorMessage = errorData.error || 'Failed to export to Google Slides';
+        const errorMessage =
+          errorData.error || "Failed to export to Google Slides";
 
         // Check if this is an auth error that can be fixed by re-authorizing
         if (isAuthError(errorMessage)) {
@@ -166,10 +174,13 @@ export function Step4Save({ wizard }: Step4SaveProps) {
       sessionStorage.removeItem(PENDING_GOOGLE_EXPORT_KEY);
 
       // Open in new tab
-      window.open(data.url, '_blank');
+      window.open(data.url, "_blank");
     } catch (error) {
-      console.error('Google Slides export error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to export to Google Slides';
+      console.error("Google Slides export error:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to export to Google Slides";
 
       // Check if this is an auth error
       if (isAuthError(errorMessage)) {
@@ -186,7 +197,7 @@ export function Step4Save({ wizard }: Step4SaveProps) {
   // Check for pending Google Slides export after re-auth
   useEffect(() => {
     const pendingExport = sessionStorage.getItem(PENDING_GOOGLE_EXPORT_KEY);
-    if (pendingExport === 'true' && state.slides.length > 0) {
+    if (pendingExport === "true" && state.slides.length > 0) {
       // Clear the flag first to prevent loops
       sessionStorage.removeItem(PENDING_GOOGLE_EXPORT_KEY);
       // Small delay to ensure component is fully mounted
@@ -200,38 +211,41 @@ export function Step4Save({ wizard }: Step4SaveProps) {
   // Handle save
   const handleSave = async () => {
     if (!state.gradeLevel) {
-      setError('Grade level is required');
+      setError("Grade level is required");
       return;
     }
     if (!state.title.trim()) {
-      setError('Title is required');
+      setError("Title is required");
       return;
     }
     if (!state.slug.trim()) {
-      setError('Slug is required');
+      setError("Slug is required");
       return;
     }
     if (state.slides.length === 0) {
-      setError('No slides to save');
+      setError("No slides to save");
       return;
     }
 
-    setLoading(true, 'Saving to database...');
+    setLoading(true, "Saving to database...");
     setError(null);
 
     try {
       // Extract lesson summary slide (prefer slideType, fallback to HTML content search)
-      const lessonSummarySlide = state.slides.find(
-        (slide) => slide.slideType === 'lesson-summary',
-      ) ?? state.slides.find(
-        (slide) => slide.htmlContent.includes('LESSON SUMMARY') && slide.htmlContent.includes('print-page'),
-      );
+      const lessonSummarySlide =
+        state.slides.find((slide) => slide.slideType === "lesson-summary") ??
+        state.slides.find(
+          (slide) =>
+            slide.htmlContent.includes("LESSON SUMMARY") &&
+            slide.htmlContent.includes("print-page"),
+        );
 
       const deckData: CreateWorkedExampleDeckInput = {
         title: state.title,
         slug: state.slug,
-        mathConcept: state.mathConcept || state.problemAnalysis?.problemType || 'Math',
-        mathStandard: state.mathStandard || '',
+        mathConcept:
+          state.mathConcept || state.problemAnalysis?.problemType || "Math",
+        mathStandard: state.mathStandard || "",
         gradeLevel: state.gradeLevel,
         unitNumber: state.unitNumber ?? undefined,
         lessonNumber: state.lessonNumber ?? undefined,
@@ -247,10 +261,11 @@ export function Step4Save({ wizard }: Step4SaveProps) {
         })),
         lessonSummaryHtml: lessonSummarySlide?.htmlContent,
         lessonSummarySlideNumber: lessonSummarySlide?.slideNumber,
-        learningGoals: state.learningGoals.length > 0 ? state.learningGoals : undefined,
-        generatedBy: 'ai',
+        learningGoals:
+          state.learningGoals.length > 0 ? state.learningGoals : undefined,
+        generatedBy: "ai",
         sourceImage: state.masteryCheckImage.uploadedUrl ?? undefined,
-        createdBy: 'browser-creator', // Will be overwritten by server action with actual userId
+        createdBy: "browser-creator", // Will be overwritten by server action with actual userId
         isPublic: state.isPublic,
         files: {
           pageComponent: `src/app/scm/workedExamples/create/${state.slug}`,
@@ -261,7 +276,7 @@ export function Step4Save({ wizard }: Step4SaveProps) {
       const result = await saveWorkedExampleDeck(deckData);
 
       if (!result.success) {
-        setError(result.error || 'Failed to save deck');
+        setError(result.error || "Failed to save deck");
         setLoading(false);
         return;
       }
@@ -273,7 +288,7 @@ export function Step4Save({ wizard }: Step4SaveProps) {
         await updateDeckMetadata(finalSlug, {
           podsieAssignmentId: state.podsieAssignmentId,
           podsieAssignmentTitle: state.podsieAssignmentTitle,
-          workedExampleType: 'masteryCheck',
+          workedExampleType: "masteryCheck",
         });
       }
 
@@ -281,8 +296,8 @@ export function Step4Save({ wizard }: Step4SaveProps) {
       clearPersistedState();
       setLoading(false);
     } catch (error) {
-      console.error('Error saving deck:', error);
-      setError(error instanceof Error ? error.message : 'An error occurred');
+      console.error("Error saving deck:", error);
+      setError(error instanceof Error ? error.message : "An error occurred");
       setLoading(false);
     }
   };
@@ -298,14 +313,28 @@ export function Step4Save({ wizard }: Step4SaveProps) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6 text-center py-12 space-y-6">
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-          <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          <svg
+            className="w-8 h-8 text-green-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
+            />
           </svg>
         </div>
 
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900">Deck Saved Successfully!</h2>
-          <p className="text-gray-600 mt-2">Your worked example has been saved to the database.</p>
+          <h2 className="text-2xl font-semibold text-gray-900">
+            Deck Saved Successfully!
+          </h2>
+          <p className="text-gray-600 mt-2">
+            Your worked example has been saved to the database.
+          </p>
         </div>
 
         <div className="flex flex-col gap-3 max-w-sm mx-auto">
@@ -329,7 +358,9 @@ export function Step4Save({ wizard }: Step4SaveProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Step 4: Save Deck</h2>
+        <h2 className="text-lg font-semibold text-gray-900">
+          Step 4: Save Deck
+        </h2>
         <p className="text-gray-600 text-sm mt-1">
           Review the metadata and save your worked example to the database.
         </p>
@@ -357,16 +388,22 @@ export function Step4Save({ wizard }: Step4SaveProps) {
           <input
             type="text"
             value={state.slug}
-            onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+            onChange={(e) =>
+              setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))
+            }
             placeholder="e.g., balance-isolate-grade8"
             className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono"
           />
-          <p className="text-xs text-gray-500 mt-1">URL-safe identifier (lowercase, hyphens only)</p>
+          <p className="text-xs text-gray-500 mt-1">
+            URL-safe identifier (lowercase, hyphens only)
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Math Concept</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Math Concept
+            </label>
             <input
               type="text"
               value={state.mathConcept}
@@ -376,7 +413,9 @@ export function Step4Save({ wizard }: Step4SaveProps) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Math Standard</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Math Standard
+            </label>
             <input
               type="text"
               value={state.mathStandard}
@@ -395,7 +434,10 @@ export function Step4Save({ wizard }: Step4SaveProps) {
             onChange={(e) => setIsPublic(e.target.checked)}
             className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
           />
-          <label htmlFor="isPublic" className="text-sm text-gray-700 cursor-pointer">
+          <label
+            htmlFor="isPublic"
+            className="text-sm text-gray-700 cursor-pointer"
+          >
             Make this deck public (visible to all users)
           </label>
         </div>
@@ -406,17 +448,19 @@ export function Step4Save({ wizard }: Step4SaveProps) {
         <h3 className="text-sm font-medium text-gray-700 mb-3">Summary</h3>
         <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
           <div className="text-gray-500">Grade</div>
-          <div className="text-gray-900">{state.gradeLevel || '-'}</div>
+          <div className="text-gray-900">{state.gradeLevel || "-"}</div>
           <div className="text-gray-500">Unit/Lesson</div>
           <div className="text-gray-900">
             {state.unitNumber && state.lessonNumber
               ? `Unit ${state.unitNumber}, Lesson ${state.lessonNumber}`
-              : '-'}
+              : "-"}
           </div>
           <div className="text-gray-500">Slides</div>
           <div className="text-gray-900">{state.slides.length}</div>
           <div className="text-gray-500">Strategy</div>
-          <div className="text-gray-900">{state.strategyDefinition?.name || '-'}</div>
+          <div className="text-gray-900">
+            {state.strategyDefinition?.name || "-"}
+          </div>
         </div>
       </div>
 
@@ -424,8 +468,18 @@ export function Step4Save({ wizard }: Step4SaveProps) {
       {googleSlidesUrl && (
         <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg mt-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              className="w-5 h-5 text-green-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
             <span>Exported to Google Slides!</span>
           </div>
@@ -445,7 +499,12 @@ export function Step4Save({ wizard }: Step4SaveProps) {
         <div className="bg-amber-50 border border-amber-200 rounded-lg mt-4 p-4">
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0">
-              <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg
+                className="w-6 h-6 text-amber-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -455,13 +514,16 @@ export function Step4Save({ wizard }: Step4SaveProps) {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-semibold text-amber-800">Google Authorization Required</h3>
+              <h3 className="text-sm font-semibold text-amber-800">
+                Google Authorization Required
+              </h3>
               <p className="text-sm text-amber-700 mt-1">
-                {authErrorMessage || 'Your Google Drive access has expired.'}
+                {authErrorMessage || "Your Google Drive access has expired."}
               </p>
               <p className="text-sm text-amber-600 mt-2">
-                Click the button below to re-authorize with Google. After signing in, you&apos;ll be
-                returned here and the export will automatically retry.
+                Click the button below to re-authorize with Google. After
+                signing in, you&apos;ll be returned here and the export will
+                automatically retry.
               </p>
               <div className="mt-3 flex gap-2">
                 <button
@@ -469,7 +531,11 @@ export function Step4Save({ wizard }: Step4SaveProps) {
                   disabled={!isSignInLoaded}
                   className="bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors cursor-pointer flex items-center gap-2"
                 >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <svg
+                    className="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -510,21 +576,48 @@ export function Step4Save({ wizard }: Step4SaveProps) {
         </button>
         <button
           onClick={handleExportPptx}
-          disabled={state.isLoading || isExporting || isExportingGoogleSlides || state.slides.length === 0}
+          disabled={
+            state.isLoading ||
+            isExporting ||
+            isExportingGoogleSlides ||
+            state.slides.length === 0
+          }
           className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
         >
           {isExporting ? (
             <>
               <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
               <span>Exporting...</span>
             </>
           ) : (
             <>
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
               </svg>
               <span>Export PPTX</span>
             </>
@@ -532,14 +625,31 @@ export function Step4Save({ wizard }: Step4SaveProps) {
         </button>
         <button
           onClick={handleExportGoogleSlides}
-          disabled={state.isLoading || isExporting || isExportingGoogleSlides || state.slides.length === 0}
+          disabled={
+            state.isLoading ||
+            isExporting ||
+            isExportingGoogleSlides ||
+            state.slides.length === 0
+          }
           className="bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
         >
           {isExportingGoogleSlides ? (
             <>
               <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
               <span>Uploading...</span>
             </>
@@ -560,15 +670,37 @@ export function Step4Save({ wizard }: Step4SaveProps) {
           {state.isLoading ? (
             <>
               <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="none"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
-              <span>{state.loadingMessage || 'Saving...'}</span>
+              <span>{state.loadingMessage || "Saving..."}</span>
             </>
           ) : (
             <>
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+                />
               </svg>
               <span>Save Deck</span>
             </>

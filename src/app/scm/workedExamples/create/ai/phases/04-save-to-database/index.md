@@ -1,12 +1,15 @@
 # Phase 4: Save & Export
 
 ## Purpose
+
 Save the worked example to the database and export to PPTX or Google Slides for classroom use.
 
 ## Output Format
+
 All slides are **960×540px, light theme** (7 slides). CFU/Answer boxes use PPTX animation. See `03-generate-slides/02-technical-rules.md` for technical specs.
 
 ## Prerequisites
+
 - Phases 1-3 complete
 - All slide HTML generated
 
@@ -22,21 +25,22 @@ See: **[optimize-for-export.md](./optimize-for-export.md)** for full instruction
 
 The optimization step converts simple SVGs to HTML, resulting in **editable PPTX elements** instead of static images:
 
-| Before Optimization | After Optimization |
-|---------------------|-------------------|
+| Before Optimization                | After Optimization                |
+| ---------------------------------- | --------------------------------- |
 | SVG rect + text → Screenshot (PNG) | HTML div + p → Native shapes/text |
-| Teacher can't edit | Teacher can move/resize/edit |
+| Teacher can't edit                 | Teacher can move/resize/edit      |
 
 ### When to Convert SVGs
 
-| SVG Contains | Action |
-|--------------|--------|
+| SVG Contains                                  | Action              |
+| --------------------------------------------- | ------------------- |
 | Only `<rect>`, `<text>`, `<line>`, `<circle>` | **Convert to HTML** |
-| `<path>` with curves, gradients, graphs | Keep as SVG |
+| `<path>` with curves, gradients, graphs       | Keep as SVG         |
 
 ### Browser Wizard: Automatic Optimization
 
 The browser wizard automatically runs optimization before export:
+
 1. Click "Export to Slides"
 2. System analyzes all slides for simple SVGs
 3. Simple SVGs converted to HTML `visual-*` regions
@@ -52,10 +56,10 @@ Before saving, review each slide and convert simple SVGs manually following the 
 
 There are **two workflows** depending on how the deck was created:
 
-| Workflow | When to Use | Save Method | Export Options |
-|----------|-------------|-------------|----------------|
-| **Browser Wizard** | Created in `/scm/workedExamples/create` | Step 4 UI | PPTX download, Google Slides |
-| **CLI Mode** | Created via Claude Code skill | sync-to-db.js script | Manual PPTX export |
+| Workflow           | When to Use                             | Save Method          | Export Options               |
+| ------------------ | --------------------------------------- | -------------------- | ---------------------------- |
+| **Browser Wizard** | Created in `/scm/workedExamples/create` | Step 4 UI            | PPTX download, Google Slides |
+| **CLI Mode**       | Created via Claude Code skill           | sync-to-db.js script | Manual PPTX export           |
 
 ---
 
@@ -66,6 +70,7 @@ If slides were created using the browser wizard at `/scm/workedExamples/create`:
 ### Step 4.1: Review Metadata
 
 The wizard's Step 4 displays a form with:
+
 - **Title** (required) - Display name for the deck
 - **Slug** (required) - URL-safe identifier (lowercase, hyphens only)
 - **Math Concept** - Topic area (e.g., "Linear Equations")
@@ -79,11 +84,13 @@ The wizard's Step 4 displays a form with:
 #### Export to PPTX (Download)
 
 Generates a PowerPoint file that can be:
+
 - Edited in Microsoft PowerPoint
 - Uploaded to Google Drive manually
 - Shared via email or LMS
 
 **API Endpoint:** `POST /api/scm/worked-examples/export-pptx`
+
 ```typescript
 {
   slides: SlideData[],  // Array of { slideNumber, htmlContent }
@@ -98,10 +105,12 @@ Generates a PowerPoint file that can be:
 Uploads directly to the user's Google Drive as a Google Slides presentation.
 
 **Requirements:**
+
 - User must be signed in with Google OAuth
 - Google Drive scope must be authorized
 
 **API Endpoint:** `POST /api/scm/worked-examples/export-google-slides`
+
 ```typescript
 {
   slides: SlideData[],  // Array of { slideNumber, htmlContent }
@@ -113,6 +122,7 @@ Uploads directly to the user's Google Drive as a Google Slides presentation.
 ```
 
 **Flow:**
+
 1. Generate PPTX server-side
 2. Upload to user's Google Drive
 3. Convert to Google Slides format
@@ -122,6 +132,7 @@ Uploads directly to the user's Google Drive as a Google Slides presentation.
 ### Step 4.3: Save to Database
 
 Click "Save Deck" to:
+
 1. Create a `WorkedExampleDeck` document in MongoDB
 2. Store all HTML slides
 3. Link to Google Slides URL (if exported)
@@ -170,6 +181,7 @@ source .env.local && node .claude/skills/create-worked-example-sg/scripts/sync-t
 ```
 
 **Expected output:**
+
 ```
 ✅ HTML Deck saved successfully!
 Deck ID: [ObjectId]
@@ -188,6 +200,7 @@ npx tsx .claude/skills/create-worked-example-sg/scripts/verify-worked-example.ts
 ### Step 4.4: Clean Up Progress File
 
 After verification passes:
+
 ```bash
 rm src/app/presentations/{slug}/.worked-example-progress.json
 ```
@@ -201,37 +214,43 @@ rm src/app/presentations/{slug}/.worked-example-progress.json
 The export system uses `data-pptx-*` attributes to map HTML elements to PowerPoint shapes:
 
 ```html
-<div data-pptx-region="badge"
-     data-pptx-x="20" data-pptx-y="16" data-pptx-w="180" data-pptx-h="35"
-     style="background: #1791e8; ...">
+<div
+  data-pptx-region="badge"
+  data-pptx-x="20"
+  data-pptx-y="16"
+  data-pptx-w="180"
+  data-pptx-h="35"
+  style="background: #1791e8; ..."
+>
   <p>STEP 1</p>
 </div>
 ```
 
-| Attribute | Purpose |
-|-----------|---------|
+| Attribute          | Purpose                                                 |
+| ------------------ | ------------------------------------------------------- |
 | `data-pptx-region` | Element type (badge, title, content-box, cfu-box, etc.) |
-| `data-pptx-x` | X position in pixels (from 960px width) |
-| `data-pptx-y` | Y position in pixels (from 540px height) |
-| `data-pptx-w` | Width in pixels |
-| `data-pptx-h` | Height in pixels |
+| `data-pptx-x`      | X position in pixels (from 960px width)                 |
+| `data-pptx-y`      | Y position in pixels (from 540px height)                |
+| `data-pptx-w`      | Width in pixels                                         |
+| `data-pptx-h`      | Height in pixels                                        |
 
 ### Region Types
 
-| Region | PPTX Behavior |
-|--------|---------------|
-| `badge` | Native text box with background |
-| `title` | Native text (heading style) |
-| `subtitle` | Native text |
-| `content-box` | Text box with optional background |
-| `left-column` | Text box (left side) |
-| `svg-container` | Rendered as PNG image(s) |
-| `cfu-box` | Text box with **click animation** (appears on click) |
-| `answer-box` | Text box with **click animation** (appears on click) |
+| Region          | PPTX Behavior                                        |
+| --------------- | ---------------------------------------------------- |
+| `badge`         | Native text box with background                      |
+| `title`         | Native text (heading style)                          |
+| `subtitle`      | Native text                                          |
+| `content-box`   | Text box with optional background                    |
+| `left-column`   | Text box (left side)                                 |
+| `svg-container` | Rendered as PNG image(s)                             |
+| `cfu-box`       | Text box with **click animation** (appears on click) |
+| `answer-box`    | Text box with **click animation** (appears on click) |
 
 ### SVG Handling
 
 SVG elements are rendered to PNG using Puppeteer:
+
 1. Parse SVG from HTML
 2. Render in headless Chromium
 3. Export as PNG with transparency
@@ -242,6 +261,7 @@ SVG elements are rendered to PNG using Puppeteer:
 ### CFU/Answer Animation
 
 Elements with `data-pptx-region="cfu-box"` or `"answer-box"` are:
+
 - Added to the slide
 - Set to **appear on click** (PPTX animation)
 - Hidden when slide first displays
@@ -256,12 +276,14 @@ This eliminates the need for duplicate question/answer slides.
 ### OAuth Requirements
 
 Google Slides export requires:
+
 1. User signed in via Clerk with Google OAuth
 2. `https://www.googleapis.com/auth/drive.file` scope authorized
 
 ### Re-Authorization Flow
 
 If the OAuth token expires, the wizard:
+
 1. Shows a re-authorization prompt
 2. User clicks "Re-authorize with Google"
 3. Redirects to Google OAuth with `oidcPrompt: 'consent'`
@@ -270,6 +292,7 @@ If the OAuth token expires, the wizard:
 ### URL Persistence
 
 When a deck is exported to Google Slides:
+
 1. The Google Slides URL is returned
 2. If `slug` is provided, URL is saved to `WorkedExampleDeck.googleSlidesUrl`
 3. The deck list shows a Google Slides icon/link for decks with saved URLs
@@ -283,11 +306,10 @@ When a deck is exported to Google Slides:
 Generates and downloads a PPTX file.
 
 **Request:**
+
 ```json
 {
-  "slides": [
-    { "slideNumber": 1, "htmlContent": "<!DOCTYPE html>..." }
-  ],
+  "slides": [{ "slideNumber": 1, "htmlContent": "<!DOCTYPE html>..." }],
   "title": "Balance and Isolate",
   "mathConcept": "Linear Equations"
 }
@@ -300,6 +322,7 @@ Generates and downloads a PPTX file.
 Uploads to Google Drive and converts to Google Slides.
 
 **Request:**
+
 ```json
 {
   "slides": [...],
@@ -310,6 +333,7 @@ Uploads to Google Drive and converts to Google Slides.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -323,6 +347,7 @@ Uploads to Google Drive and converts to Google Slides.
 ## Phase 4 Completion Checklist
 
 **Browser Wizard:**
+
 - [ ] Reviewed title and slug
 - [ ] Exported to PPTX (optional)
 - [ ] Exported to Google Slides (optional)
@@ -330,6 +355,7 @@ Uploads to Google Drive and converts to Google Slides.
 - [ ] Received confirmation message
 
 **CLI Mode:**
+
 - [ ] metadata.json created with all required fields
 - [ ] Sync script ran successfully
 - [ ] Verification script passed
@@ -370,10 +396,10 @@ Uploads to Google Drive and converts to Google Slides.
 
 Phase 4 provides three output options:
 
-| Output | Format | Editable | Requires Auth |
-|--------|--------|----------|---------------|
-| **Save to DB** | HTML in MongoDB | Yes (wizard) | Clerk |
-| **Export PPTX** | PowerPoint file | Yes (desktop) | No |
-| **Export Google Slides** | Google Slides | Yes (online) | Google OAuth |
+| Output                   | Format          | Editable      | Requires Auth |
+| ------------------------ | --------------- | ------------- | ------------- |
+| **Save to DB**           | HTML in MongoDB | Yes (wizard)  | Clerk         |
+| **Export PPTX**          | PowerPoint file | Yes (desktop) | No            |
+| **Export Google Slides** | Google Slides   | Yes (online)  | Google OAuth  |
 
 The user can use any combination of these options.

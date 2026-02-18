@@ -3,10 +3,16 @@
  */
 
 // Error severity levels
-export type ErrorSeverity = 'fatal' | 'error' | 'warning' | 'info' | 'debug';
+export type ErrorSeverity = "fatal" | "error" | "warning" | "info" | "debug";
 
 // Error category types
-export type ErrorCategory = 'validation' | 'network' | 'permission' | 'business' | 'system' | 'unknown';
+export type ErrorCategory =
+  | "validation"
+  | "network"
+  | "permission"
+  | "business"
+  | "system"
+  | "unknown";
 
 // Basic error information interface
 export interface ErrorInfo {
@@ -31,4 +37,4 @@ export interface ErrorOptions {
   category?: ErrorCategory;
   source?: ErrorSource;
   meta?: Record<string, unknown>;
-} 
+}

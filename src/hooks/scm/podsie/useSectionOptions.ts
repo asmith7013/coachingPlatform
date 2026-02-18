@@ -84,7 +84,9 @@ export function useSectionOptions() {
     }
     // Sort sections within each school
     for (const school of Object.keys(grouped)) {
-      grouped[school].sort((a, b) => a.classSection.localeCompare(b.classSection));
+      grouped[school].sort((a, b) =>
+        a.classSection.localeCompare(b.classSection),
+      );
     }
     return grouped;
   }, [sectionOptions]);

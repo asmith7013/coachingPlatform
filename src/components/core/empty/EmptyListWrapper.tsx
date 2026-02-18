@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { EmptyState } from '@/components/core/empty/EmptyState';
-import { TextSizeToken } from '@ui-tokens/types';
+import React from "react";
+import { EmptyState } from "@/components/core/empty/EmptyState";
+import { TextSizeToken } from "@ui-tokens/types";
 
 interface EmptyListWrapperProps<T> {
   items: T[];
@@ -23,13 +23,16 @@ export function EmptyListWrapper<T>({
   description,
   textSize,
   icon,
-  action
+  action,
 }: EmptyListWrapperProps<T>) {
   if (items.length === 0) {
     return (
       <EmptyState
         title={title || `No ${resourceName} found`}
-        description={description || `Create your first ${resourceName} or upload a batch to get started.`}
+        description={
+          description ||
+          `Create your first ${resourceName} or upload a batch to get started.`
+        }
         textSize={textSize}
         icon={icon}
         action={action}
@@ -38,4 +41,4 @@ export function EmptyListWrapper<T>({
   }
 
   return <>{children}</>;
-} 
+}

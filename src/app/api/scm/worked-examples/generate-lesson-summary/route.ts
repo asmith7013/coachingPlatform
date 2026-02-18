@@ -201,10 +201,7 @@ export async function POST(request: NextRequest) {
   try {
     const input: GenerateLessonSummaryInput = await request.json();
 
-    const {
-      strategyName,
-      bigIdea,
-    } = input;
+    const { strategyName, bigIdea } = input;
 
     if (!strategyName || !bigIdea) {
       return NextResponse.json(

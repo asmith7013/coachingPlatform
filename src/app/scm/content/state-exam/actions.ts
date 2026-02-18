@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { handleServerError } from '@error/handlers/server';
-import { ScopeAndSequenceModel } from '@mongoose-schema/scm/scope-and-sequence/scope-and-sequence.model';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { handleServerError } from "@error/handlers/server";
+import { ScopeAndSequenceModel } from "@mongoose-schema/scm/scope-and-sequence/scope-and-sequence.model";
 
 export interface StandardWithText {
   code: string;
@@ -41,7 +41,9 @@ interface GetSectionsResult {
 /**
  * Get all units for a grade with their standards
  */
-export async function getUnitsWithStandards(grade: string): Promise<GetUnitsResult> {
+export async function getUnitsWithStandards(
+  grade: string,
+): Promise<GetUnitsResult> {
   return withDbConnection(async () => {
     try {
       // Map grade to scopeSequenceTag format
@@ -53,74 +55,80 @@ export async function getUnitsWithStandards(grade: string): Promise<GetUnitsResu
       const unitsData = await ScopeAndSequenceModel.aggregate([
         { $match: { scopeSequenceTag } },
         // Unwind standards array to filter by context
-        { $unwind: { path: '$standards', preserveNullAndEmptyArrays: true } },
+        { $unwind: { path: "$standards", preserveNullAndEmptyArrays: true } },
         // Filter to include 'current' and 'buildingTowards' standards
         {
           $match: {
             $or: [
-              { 'standards.context': 'current' },
-              { 'standards.context': 'buildingTowards' },
-              { 'standards.context': { $exists: false } },
-              { standards: null } // Handle lessons with no standards
-            ]
-          }
+              { "standards.context": "current" },
+              { "standards.context": "buildingTowards" },
+              { "standards.context": { $exists: false } },
+              { standards: null }, // Handle lessons with no standards
+            ],
+          },
         },
         {
           $group: {
-            _id: '$unitNumber',
+            _id: "$unitNumber",
             // Collect all unit names, filter out nulls, take first
-            unitNames: { $addToSet: '$unit' },
-            standards: { $addToSet: '$standards.code' },
+            unitNames: { $addToSet: "$unit" },
+            standards: { $addToSet: "$standards.code" },
             // Also collect full standard objects for text
-            standardObjects: { $push: '$standards' }
-          }
+            standardObjects: { $push: "$standards" },
+          },
         },
         {
           $project: {
-            unitNumber: '$_id',
+            unitNumber: "$_id",
             // Filter out null/empty names and take first
             unitName: {
               $first: {
                 $filter: {
-                  input: '$unitNames',
-                  cond: { $and: [{ $ne: ['$$this', null] }, { $ne: ['$$this', ''] }] }
-                }
-              }
+                  input: "$unitNames",
+                  cond: {
+                    $and: [{ $ne: ["$$this", null] }, { $ne: ["$$this", ""] }],
+                  },
+                },
+              },
             },
             // Filter out null values from standards array
             standards: {
               $filter: {
-                input: '$standards',
-                cond: { $ne: ['$$this', null] }
-              }
+                input: "$standards",
+                cond: { $ne: ["$$this", null] },
+              },
             },
             // Filter out null values from standard objects
             standardObjects: {
               $filter: {
-                input: '$standardObjects',
-                cond: { $ne: ['$$this', null] }
-              }
-            }
-          }
+                input: "$standardObjects",
+                cond: { $ne: ["$$this", null] },
+              },
+            },
+          },
         },
-        { $sort: { unitNumber: 1 } }
+        { $sort: { unitNumber: 1 } },
       ]);
 
       const units: UnitWithStandards[] = unitsData.map((u) => {
         // Deduplicate standards with text by code
         const standardsMap = new Map<string, string>();
-        (u.standardObjects || []).forEach((std: { code?: string; text?: string }) => {
-          if (std?.code && std?.text && !standardsMap.has(std.code)) {
-            standardsMap.set(std.code, std.text);
-          }
-        });
+        (u.standardObjects || []).forEach(
+          (std: { code?: string; text?: string }) => {
+            if (std?.code && std?.text && !standardsMap.has(std.code)) {
+              standardsMap.set(std.code, std.text);
+            }
+          },
+        );
 
         return {
           unitNumber: u.unitNumber,
           unitName: u.unitName,
           grade,
           standards: u.standards.filter((s: string | null) => s), // Remove nulls
-          standardsWithText: Array.from(standardsMap.entries()).map(([code, text]) => ({ code, text }))
+          standardsWithText: Array.from(standardsMap.entries()).map(
+            ([code, text]) => ({ code, text }),
+          ),
         };
       });
 
@@ -128,7 +136,7 @@ export async function getUnitsWithStandards(grade: string): Promise<GetUnitsResu
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to fetch units')
+        error: handleServerError(error, "Failed to fetch units"),
       };
     }
   });
@@ -139,7 +147,7 @@ export async function getUnitsWithStandards(grade: string): Promise<GetUnitsResu
  */
 export async function getSectionsWithStandards(
   grade: string,
-  unitNumber: number
+  unitNumber: number,
 ): Promise<GetSectionsResult> {
   return withDbConnection(async () => {
     try {
@@ -151,72 +159,72 @@ export async function getSectionsWithStandards(
         {
           $match: {
             scopeSequenceTag,
-            unitNumber
-          }
+            unitNumber,
+          },
         },
         // First, filter standards array to include current and buildingTowards
         {
           $addFields: {
             currentStandards: {
               $filter: {
-                input: '$standards',
-                as: 'std',
+                input: "$standards",
+                as: "std",
                 cond: {
                   $or: [
-                    { $eq: ['$$std.context', 'current'] },
-                    { $eq: ['$$std.context', 'buildingTowards'] },
-                    { $not: { $ifNull: ['$$std.context', false] } } // No context = current
-                  ]
-                }
-              }
-            }
-          }
+                    { $eq: ["$$std.context", "current"] },
+                    { $eq: ["$$std.context", "buildingTowards"] },
+                    { $not: { $ifNull: ["$$std.context", false] } }, // No context = current
+                  ],
+                },
+              },
+            },
+          },
         },
         {
           $group: {
-            _id: { section: '$section', subsection: '$subsection' },
+            _id: { section: "$section", subsection: "$subsection" },
             lessonCount: { $sum: 1 },
-            standards: { $push: '$currentStandards.code' }
-          }
+            standards: { $push: "$currentStandards.code" },
+          },
         },
         {
           $project: {
-            section: '$_id.section',
-            subsection: '$_id.subsection',
+            section: "$_id.section",
+            subsection: "$_id.subsection",
             lessonCount: 1,
             standards: {
               $reduce: {
-                input: '$standards',
+                input: "$standards",
                 initialValue: [],
-                in: { $setUnion: ['$$value', '$$this'] }
-              }
-            }
-          }
+                in: { $setUnion: ["$$value", "$$this"] },
+              },
+            },
+          },
         },
-        { $sort: { section: 1, subsection: 1 } }
+        { $sort: { section: 1, subsection: 1 } },
       ]);
 
       // Define section order for sorting
       const sectionOrder: Record<string, number> = {
-        'Ramp Ups': 0,
-        'A': 1,
-        'B': 2,
-        'C': 3,
-        'D': 4,
-        'E': 5,
-        'F': 6,
-        'Unit Assessment': 7
+        "Ramp Ups": 0,
+        A: 1,
+        B: 2,
+        C: 3,
+        D: 4,
+        E: 5,
+        F: 6,
+        "Unit Assessment": 7,
       };
 
       const sections: SectionWithStandards[] = sectionsData
         .map((s) => ({
-          section: s.section || 'Unknown',
+          section: s.section || "Unknown",
           subsection: s.subsection,
           displayName: s.subsection
             ? `${s.section} (Part ${s.subsection})`
-            : s.section || 'Unknown',
+            : s.section || "Unknown",
           lessonCount: s.lessonCount,
-          standards: s.standards.filter((std: string | null) => std)
+          standards: s.standards.filter((std: string | null) => std),
         }))
         .sort((a, b) => {
           const orderA = sectionOrder[a.section] ?? 99;
@@ -226,13 +234,15 @@ export async function getSectionsWithStandards(
         });
 
       // Collect all unique standards across all sections
-      const allStandards = Array.from(new Set(sections.flatMap(s => s.standards)));
+      const allStandards = Array.from(
+        new Set(sections.flatMap((s) => s.standards)),
+      );
 
       return { success: true, sections, allStandards };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to fetch sections')
+        error: handleServerError(error, "Failed to fetch sections"),
       };
     }
   });

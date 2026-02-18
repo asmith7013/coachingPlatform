@@ -15,23 +15,34 @@ interface SectionSelectorProps {
   onExportClick?: () => void;
 }
 
-export function SectionSelector({ sections, selectedSections, onToggle, sectionColors, onExportClick }: SectionSelectorProps) {
+export function SectionSelector({
+  sections,
+  selectedSections,
+  onToggle,
+  sectionColors,
+  onExportClick,
+}: SectionSelectorProps) {
   // Group sections by school
-  const sectionsBySchool = sections.reduce((acc, section) => {
-    if (!acc[section.school]) {
-      acc[section.school] = [];
-    }
-    acc[section.school].push(section);
-    return acc;
-  }, {} as Record<string, SectionOption[]>);
+  const sectionsBySchool = sections.reduce(
+    (acc, section) => {
+      if (!acc[section.school]) {
+        acc[section.school] = [];
+      }
+      acc[section.school].push(section);
+      return acc;
+    },
+    {} as Record<string, SectionOption[]>,
+  );
 
   // Handler for select all checkbox
   const handleSelectAll = (school: string, schoolSections: SectionOption[]) => {
-    const schoolSectionIds = schoolSections.map(s => s.id);
-    const allSelected = schoolSectionIds.every(id => selectedSections.includes(id));
+    const schoolSectionIds = schoolSections.map((s) => s.id);
+    const allSelected = schoolSectionIds.every((id) =>
+      selectedSections.includes(id),
+    );
 
     // If all are selected, deselect all. Otherwise, select all.
-    schoolSectionIds.forEach(id => {
+    schoolSectionIds.forEach((id) => {
       const isSelected = selectedSections.includes(id);
       if (allSelected && isSelected) {
         onToggle(id); // Deselect
@@ -43,12 +54,14 @@ export function SectionSelector({ sections, selectedSections, onToggle, sectionC
 
   // Check if all sections in a school are selected
   const isAllSelected = (schoolSections: SectionOption[]) => {
-    return schoolSections.every(s => selectedSections.includes(s.id));
+    return schoolSections.every((s) => selectedSections.includes(s.id));
   };
 
   // Check if some (but not all) sections are selected
   const isSomeSelected = (schoolSections: SectionOption[]) => {
-    const selectedCount = schoolSections.filter(s => selectedSections.includes(s.id)).length;
+    const selectedCount = schoolSections.filter((s) =>
+      selectedSections.includes(s.id),
+    ).length;
     return selectedCount > 0 && selectedCount < schoolSections.length;
   };
 
@@ -62,7 +75,9 @@ export function SectionSelector({ sections, selectedSections, onToggle, sectionC
             <fieldset>
               {/* School title and Select All checkbox on same row */}
               <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
-                <legend className="text-sm font-medium text-gray-900">{school}</legend>
+                <legend className="text-sm font-medium text-gray-900">
+                  {school}
+                </legend>
                 <div className="flex gap-2 items-center">
                   <div className="flex h-5 shrink-0 items-center">
                     <div className="group grid size-4 grid-cols-1">
@@ -72,7 +87,8 @@ export function SectionSelector({ sections, selectedSections, onToggle, sectionC
                         checked={isAllSelected(schoolSections)}
                         ref={(input) => {
                           if (input) {
-                            input.indeterminate = isSomeSelected(schoolSections);
+                            input.indeterminate =
+                              isSomeSelected(schoolSections);
                           }
                         }}
                         onChange={() => handleSelectAll(school, schoolSections)}
@@ -100,52 +116,63 @@ export function SectionSelector({ sections, selectedSections, onToggle, sectionC
                       </svg>
                     </div>
                   </div>
-                  <label htmlFor={`select-all-${school}`} className="text-xs text-gray-600 cursor-pointer">
+                  <label
+                    htmlFor={`select-all-${school}`}
+                    className="text-xs text-gray-600 cursor-pointer"
+                  >
                     Select All
                   </label>
                 </div>
               </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-3">
-                  {schoolSections.map((section, optionIdx) => {
-                    const sectionColor = sectionColors.get(section.id) || '#6B7280';
-                    return (
-                      <div key={section.id} className="flex gap-3">
-                        <div className="flex h-5 shrink-0 items-center">
-                          <div className="group grid size-4 grid-cols-1">
-                            <input
-                              id={`${school}-${optionIdx}`}
-                              type="checkbox"
-                              checked={selectedSections.includes(section.id)}
-                              onChange={() => onToggle(section.id)}
-                              className="col-start-1 row-start-1 appearance-none rounded-sm border-2 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto cursor-pointer"
-                              style={{
-                                borderColor: sectionColor,
-                                backgroundColor: selectedSections.includes(section.id) ? sectionColor : 'white',
-                              }}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-3">
+                {schoolSections.map((section, optionIdx) => {
+                  const sectionColor =
+                    sectionColors.get(section.id) || "#6B7280";
+                  return (
+                    <div key={section.id} className="flex gap-3">
+                      <div className="flex h-5 shrink-0 items-center">
+                        <div className="group grid size-4 grid-cols-1">
+                          <input
+                            id={`${school}-${optionIdx}`}
+                            type="checkbox"
+                            checked={selectedSections.includes(section.id)}
+                            onChange={() => onToggle(section.id)}
+                            className="col-start-1 row-start-1 appearance-none rounded-sm border-2 bg-white focus-visible:outline-2 focus-visible:outline-offset-2 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto cursor-pointer"
+                            style={{
+                              borderColor: sectionColor,
+                              backgroundColor: selectedSections.includes(
+                                section.id,
+                              )
+                                ? sectionColor
+                                : "white",
+                            }}
+                          />
+                          <svg
+                            fill="none"
+                            viewBox="0 0 14 14"
+                            className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
+                          >
+                            <path
+                              d="M3 8L6 11L11 3.5"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="opacity-0 group-has-checked:opacity-100"
                             />
-                            <svg
-                              fill="none"
-                              viewBox="0 0 14 14"
-                              className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                            >
-                              <path
-                                d="M3 8L6 11L11 3.5"
-                                strokeWidth={2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="opacity-0 group-has-checked:opacity-100"
-                              />
-                            </svg>
-                          </div>
+                          </svg>
                         </div>
-                        <label htmlFor={`${school}-${optionIdx}`} className="text-sm text-gray-600 cursor-pointer">
-                          {section.displayName}
-                        </label>
                       </div>
-                    );
-                  })}
-                </div>
+                      <label
+                        htmlFor={`${school}-${optionIdx}`}
+                        className="text-sm text-gray-600 cursor-pointer"
+                      >
+                        {section.displayName}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
             </fieldset>
           </div>
         ))}

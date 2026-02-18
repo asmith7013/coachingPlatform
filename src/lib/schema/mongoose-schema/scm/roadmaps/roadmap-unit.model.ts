@@ -1,6 +1,9 @@
 // src/lib/schema/mongoose-schema/scm/roadmap-unit.model.ts
-import mongoose from 'mongoose';
-import { standardSchemaOptions, standardDocumentFields } from '@mongoose-schema/shared-options';
+import mongoose from "mongoose";
+import {
+  standardSchemaOptions,
+  standardDocumentFields,
+} from "@mongoose-schema/shared-options";
 
 // =====================================
 // ROADMAP UNIT MODEL (Simplified to skill number references)
@@ -30,16 +33,17 @@ const roadmapUnitFields = {
   success: { type: Boolean, required: true, index: true },
   error: { type: String },
 
-  ...standardDocumentFields
+  ...standardDocumentFields,
 };
 
 const RoadmapUnitSchema = new mongoose.Schema(roadmapUnitFields, {
   ...standardSchemaOptions,
-  collection: 'roadmaps-units'
+  collection: "roadmaps-units",
 });
 
 // Create compound index for unique constraint on grade + unitTitle
 RoadmapUnitSchema.index({ grade: 1, unitTitle: 1 }, { unique: true });
 
-export const RoadmapUnitModel = mongoose.models.RoadmapUnit ||
-  mongoose.model('RoadmapUnit', RoadmapUnitSchema);
+export const RoadmapUnitModel =
+  mongoose.models.RoadmapUnit ||
+  mongoose.model("RoadmapUnit", RoadmapUnitSchema);

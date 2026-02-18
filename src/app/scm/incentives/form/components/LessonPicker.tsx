@@ -26,14 +26,14 @@ interface LessonPickerProps {
  * Ramp Ups come first, then A-F
  */
 const SECTION_ORDER: Record<string, number> = {
-  'Ramp Ups': 0,
-  'A': 1,
-  'B': 2,
-  'C': 3,
-  'D': 4,
-  'E': 5,
-  'F': 6,
-  'Unit Assessment': 99,
+  "Ramp Ups": 0,
+  A: 1,
+  B: 2,
+  C: 3,
+  D: 4,
+  E: 5,
+  F: 6,
+  "Unit Assessment": 99,
 };
 
 function getSectionOrder(section: string | undefined): number {
@@ -51,9 +51,9 @@ function sortLessons(lessons: Lesson[]): Lesson[] {
     if (sectionA !== sectionB) return sectionA - sectionB;
 
     // For ramp-ups, sort by the RU number in unitLessonId (e.g., "3.RU1" -> 1)
-    if (a.section === 'Ramp Ups' && b.section === 'Ramp Ups') {
-      const numA = parseInt(a.unitLessonId.replace(/.*RU/, '')) || 0;
-      const numB = parseInt(b.unitLessonId.replace(/.*RU/, '')) || 0;
+    if (a.section === "Ramp Ups" && b.section === "Ramp Ups") {
+      const numA = parseInt(a.unitLessonId.replace(/.*RU/, "")) || 0;
+      const numB = parseInt(b.unitLessonId.replace(/.*RU/, "")) || 0;
       return numA - numB;
     }
 
@@ -67,7 +67,7 @@ function sortLessons(lessons: Lesson[]): Lesson[] {
  * - Regular lessons: Show "Lesson X: Title" (e.g., "Lesson 1: Understanding Proportional Relationships")
  */
 function formatLessonDisplay(lesson: Lesson): string {
-  if (lesson.lessonType === 'rampUp' || lesson.section === 'Ramp Ups') {
+  if (lesson.lessonType === "rampUp" || lesson.section === "Ramp Ups") {
     // Ramp ups already have "Ramp Up X: Title" format in lessonName
     return lesson.lessonName;
   }
@@ -96,9 +96,13 @@ export function LessonPicker({
       setError(null);
 
       try {
-        const result = await fetchLessonsForUnit(grade, unitNumber, scopeSequenceTag);
+        const result = await fetchLessonsForUnit(
+          grade,
+          unitNumber,
+          scopeSequenceTag,
+        );
 
-        if (typeof result === 'string') {
+        if (typeof result === "string") {
           setError("Failed to load lessons");
         } else if (result.success && result.data) {
           setLessons(result.data as Lesson[]);

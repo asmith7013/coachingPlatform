@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { ReactNode } from 'react';
-import { useQueryErrorResetBoundary } from '@tanstack/react-query';
-import { ErrorBoundary } from './ErrorBoundary';
-import { createErrorContext } from '@error';
-import { ErrorContext } from '@error-types';
+import React, { ReactNode } from "react";
+import { useQueryErrorResetBoundary } from "@tanstack/react-query";
+import { ErrorBoundary } from "./ErrorBoundary";
+import { createErrorContext } from "@error";
+import { ErrorContext } from "@error-types";
 
 interface QueryErrorBoundaryProps {
   children: ReactNode;
@@ -12,7 +12,7 @@ interface QueryErrorBoundaryProps {
   context?: ErrorContext | string;
   errorComponent?: React.ComponentType<{ error: Error; reset: () => void }>;
   className?: string;
-  variant?: 'default' | 'minimal' | 'detailed';
+  variant?: "default" | "minimal" | "detailed";
 }
 
 /**
@@ -25,17 +25,18 @@ export function QueryErrorBoundary({
   context,
   errorComponent: ErrorComponent,
   className,
-  variant
+  variant,
 }: QueryErrorBoundaryProps) {
   // Get React Query's reset function
   const { reset } = useQueryErrorResetBoundary();
 
   // Create query-specific error context
-  const queryContext: ErrorContext = typeof context === 'object'
-    ? { ...context, component: context.component || 'ReactQuery' }
-    : typeof context === 'string'
-      ? createErrorContext('ReactQuery', context)
-      : createErrorContext('ReactQuery', 'boundary');
+  const queryContext: ErrorContext =
+    typeof context === "object"
+      ? { ...context, component: context.component || "ReactQuery" }
+      : typeof context === "string"
+        ? createErrorContext("ReactQuery", context)
+        : createErrorContext("ReactQuery", "boundary");
 
   return (
     <ErrorBoundary
@@ -55,7 +56,7 @@ export function QueryErrorBoundary({
         }
 
         // Use custom fallback if provided
-        if (typeof fallback === 'function') {
+        if (typeof fallback === "function") {
           return fallback(error, resetBoth);
         }
 

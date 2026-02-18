@@ -27,7 +27,7 @@ export async function getCurrentUnitsForAllSections(schoolYear: string) {
       // Fetch all unit schedules for the school year that have classSection defined
       const schedules = await UnitScheduleModel.find({
         schoolYear,
-        classSection: { $exists: true, $ne: null }
+        classSection: { $exists: true, $ne: null },
       })
         .sort({ school: 1, classSection: 1, unitNumber: 1 })
         .lean();
@@ -87,7 +87,9 @@ export async function getCurrentUnitsForAllSections(schoolYear: string) {
         // If no current unit found, check if we're past the last scheduled unit
         if (currentUnit === null && sectionScheds.length > 0) {
           // Sort by unit number descending to get the last unit
-          const sortedByUnit = [...sectionScheds].sort((a, b) => b.unitNumber - a.unitNumber);
+          const sortedByUnit = [...sectionScheds].sort(
+            (a, b) => b.unitNumber - a.unitNumber,
+          );
           const lastUnit = sortedByUnit[0];
 
           // Check if today is after the last section's end date
@@ -107,7 +109,9 @@ export async function getCurrentUnitsForAllSections(schoolYear: string) {
         }
 
         // Note: scopeSequenceTag is optional in the Mongoose schema and not in the lean() type
-        const schedWithTag = firstSched as typeof firstSched & { scopeSequenceTag?: string };
+        const schedWithTag = firstSched as typeof firstSched & {
+          scopeSequenceTag?: string;
+        };
         results.push({
           school: school || "",
           classSection: classSection || "",
@@ -115,7 +119,7 @@ export async function getCurrentUnitsForAllSections(schoolYear: string) {
           currentUnit,
           currentUnitName,
           currentSection,
-          currentSectionName
+          currentSectionName,
         });
       }
 
@@ -129,7 +133,10 @@ export async function getCurrentUnitsForAllSections(schoolYear: string) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to get current units for sections")
+        error: handleServerError(
+          error,
+          "Failed to get current units for sections",
+        ),
       };
     }
   });

@@ -1,1 +1,1 @@
-export * from './crud-factory';
+export * from "./crud-factory";

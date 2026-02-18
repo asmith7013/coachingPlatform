@@ -1,45 +1,47 @@
-'use client'
+"use client";
 
-import { Table, type TableVariants } from '../Table'
-import { tv, type VariantProps } from 'tailwind-variants'
-import { TableColumnSchema } from '@ui/table-schema'
+import { Table, type TableVariants } from "../Table";
+import { tv, type VariantProps } from "tailwind-variants";
+import { TableColumnSchema } from "@ui/table-schema";
 
 const stickyHeaderTable = tv({
   slots: {
-    root: 'overflow-auto',
+    root: "overflow-auto",
     header: [
-      'sticky top-0 z-10',
-      'bg-surface/80 backdrop-blur supports-[backdrop-filter]:bg-surface/60'
-    ]
+      "sticky top-0 z-10",
+      "bg-surface/80 backdrop-blur supports-[backdrop-filter]:bg-surface/60",
+    ],
   },
   variants: {
     maxHeight: {
-      sm: { root: 'max-h-[300px]' },
-      md: { root: 'max-h-[500px]' },
-      lg: { root: 'max-h-[700px]' }
+      sm: { root: "max-h-[300px]" },
+      md: { root: "max-h-[500px]" },
+      lg: { root: "max-h-[700px]" },
     },
     shadow: {
-      true: { header: 'shadow-sm' }
-    }
+      true: { header: "shadow-sm" },
+    },
   },
   defaultVariants: {
-    maxHeight: 'md',
-    shadow: true
-  }
-})
+    maxHeight: "md",
+    shadow: true,
+  },
+});
 
-export type StickyHeaderTableVariants = VariantProps<typeof stickyHeaderTable>
-export const stickyHeaderTableStyles = stickyHeaderTable
+export type StickyHeaderTableVariants = VariantProps<typeof stickyHeaderTable>;
+export const stickyHeaderTableStyles = stickyHeaderTable;
 
-interface StickyHeaderTableProps<T> extends TableVariants, StickyHeaderTableVariants {
-  data: T[]
-  columns: TableColumnSchema<T>[]
-  className?: string
-  title?: string
-  description?: string
-  actions?: React.ReactNode
-  onEdit?: (item: T) => void
-  emptyMessage?: string
+interface StickyHeaderTableProps<T>
+  extends TableVariants,
+    StickyHeaderTableVariants {
+  data: T[];
+  columns: TableColumnSchema<T>[];
+  className?: string;
+  title?: string;
+  description?: string;
+  actions?: React.ReactNode;
+  onEdit?: (item: T) => void;
+  emptyMessage?: string;
 }
 
 export function StickyHeaderTable<T>({
@@ -50,7 +52,7 @@ export function StickyHeaderTable<T>({
   shadow,
   ...props
 }: StickyHeaderTableProps<T>) {
-  const styles = stickyHeaderTable({ maxHeight, shadow })
+  const styles = stickyHeaderTable({ maxHeight, shadow });
 
   return (
     <div className={styles.root({ className })}>
@@ -61,5 +63,5 @@ export function StickyHeaderTable<T>({
         {...props}
       />
     </div>
-  )
+  );
 }

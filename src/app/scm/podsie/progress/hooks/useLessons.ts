@@ -16,8 +16,13 @@ export const lessonsKeys = {
     section: string,
     unit: number,
     lessonSection: string,
-    assignmentsHash: string
-  ) => [...lessonsKeys.byUnit(scopeTag, section, unit), lessonSection, assignmentsHash] as const,
+    assignmentsHash: string,
+  ) =>
+    [
+      ...lessonsKeys.byUnit(scopeTag, section, unit),
+      lessonSection,
+      assignmentsHash,
+    ] as const,
 };
 
 interface SectionOption {
@@ -32,7 +37,10 @@ interface SectionOption {
  * Parse a section filter ID into section and subsection parts
  * Format: "A" (no subsection) or "A:1" (with subsection)
  */
-function parseSectionFilterId(id: string): { section: string; subsection: number | undefined } {
+function parseSectionFilterId(id: string): {
+  section: string;
+  subsection: number | undefined;
+} {
   if (id === "all") {
     return { section: "all", subsection: undefined };
   }
@@ -46,7 +54,10 @@ function parseSectionFilterId(id: string): { section: string; subsection: number
 /**
  * Create a section filter ID from section and subsection
  */
-function createSectionFilterId(section: string, subsection: number | undefined): string {
+function createSectionFilterId(
+  section: string,
+  subsection: number | undefined,
+): string {
   if (subsection !== undefined) {
     return `${section}:${subsection}`;
   }
@@ -101,12 +112,12 @@ export function useLessons(
   selectedSection: string,
   selectedUnit: number | null,
   selectedLessonSection: string,
-  sectionConfigAssignments: AssignmentContent[]
+  sectionConfigAssignments: AssignmentContent[],
 ) {
   const enabled = Boolean(
     scopeSequenceTag &&
       selectedUnit !== null &&
-      sectionConfigAssignments.length > 0
+      sectionConfigAssignments.length > 0,
   );
 
   // Create a stable hash for assignments to use in query key
@@ -120,11 +131,12 @@ export function useLessons(
       selectedSection,
       selectedUnit || 0,
       selectedLessonSection,
-      assignmentsHash
+      assignmentsHash,
     ),
     queryFn: async (): Promise<LessonsData> => {
       // For section 802, always use "Algebra 1" scope tag
-      const actualScopeTag = selectedSection === "802" ? "Algebra 1" : scopeSequenceTag;
+      const actualScopeTag =
+        selectedSection === "802" ? "Algebra 1" : scopeSequenceTag;
       const result = await fetchRampUpsByUnit(actualScopeTag, selectedUnit!);
 
       if (!result.success) {
@@ -135,8 +147,9 @@ export function useLessons(
       const lessonsWithAssignments = result.data.filter((lesson) =>
         sectionConfigAssignments.some(
           (a) =>
-            a.unitLessonId === lesson.unitLessonId && a.lessonName === lesson.lessonName
-        )
+            a.unitLessonId === lesson.unitLessonId &&
+            a.lessonName === lesson.lessonName,
+        ),
       );
 
       // Build a map of section -> subsections from the assignments
@@ -152,7 +165,10 @@ export function useLessons(
       });
 
       // Build unique section+subsection combinations
-      const sectionSubsectionPairs: Array<{ section: string; subsection: number | undefined }> = [];
+      const sectionSubsectionPairs: Array<{
+        section: string;
+        subsection: number | undefined;
+      }> = [];
       const seenPairs = new Set<string>();
 
       lessonsWithAssignments.forEach((lesson) => {
@@ -160,7 +176,9 @@ export function useLessons(
 
         // Find matching assignment to get subsection info
         const matchingAssignment = sectionConfigAssignments.find(
-          (a) => a.unitLessonId === lesson.unitLessonId && a.lessonName === lesson.lessonName
+          (a) =>
+            a.unitLessonId === lesson.unitLessonId &&
+            a.lessonName === lesson.lessonName,
         );
         const subsection = matchingAssignment?.subsection;
         const pairKey = createSectionFilterId(lesson.section, subsection);
@@ -173,8 +191,12 @@ export function useLessons(
 
       // Sort sections according to the schema-defined order, then by subsection
       const sortedPairs = sectionSubsectionPairs.sort((a, b) => {
-        const indexA = SECTION_OPTIONS.indexOf(a.section as (typeof SECTION_OPTIONS)[number]);
-        const indexB = SECTION_OPTIONS.indexOf(b.section as (typeof SECTION_OPTIONS)[number]);
+        const indexA = SECTION_OPTIONS.indexOf(
+          a.section as (typeof SECTION_OPTIONS)[number],
+        );
+        const indexB = SECTION_OPTIONS.indexOf(
+          b.section as (typeof SECTION_OPTIONS)[number],
+        );
 
         // First sort by section order
         if (indexA !== indexB) {
@@ -205,11 +227,16 @@ export function useLessons(
       };
 
       // Count lessons for each section+subsection pair
-      const countLessons = (section: string, subsection: number | undefined) => {
+      const countLessons = (
+        section: string,
+        subsection: number | undefined,
+      ) => {
         return lessonsWithAssignments.filter((lesson) => {
           if (lesson.section !== section) return false;
           const matchingAssignment = sectionConfigAssignments.find(
-            (a) => a.unitLessonId === lesson.unitLessonId && a.lessonName === lesson.lessonName
+            (a) =>
+              a.unitLessonId === lesson.unitLessonId &&
+              a.lessonName === lesson.lessonName,
           );
           return matchingAssignment?.subsection === subsection;
         }).length;
@@ -237,14 +264,17 @@ export function useLessons(
       });
 
       // Filter lessons by selected section+subsection if one is selected (but not "all")
-      const { section: filterSection, subsection: filterSubsection } = parseSectionFilterId(selectedLessonSection || "all");
+      const { section: filterSection, subsection: filterSubsection } =
+        parseSectionFilterId(selectedLessonSection || "all");
       const filteredLessons =
         selectedLessonSection && selectedLessonSection !== "all"
           ? result.data.filter((lesson) => {
               if (lesson.section !== filterSection) return false;
               // Find matching assignment to check subsection
               const matchingAssignment = sectionConfigAssignments.find(
-                (a) => a.unitLessonId === lesson.unitLessonId && a.lessonName === lesson.lessonName
+                (a) =>
+                  a.unitLessonId === lesson.unitLessonId &&
+                  a.lessonName === lesson.lessonName,
               );
               return matchingAssignment?.subsection === filterSubsection;
             })
@@ -254,17 +284,19 @@ export function useLessons(
       const lessonConfigs: LessonConfig[] = [];
 
       const relevantScopeAndSequenceIds = new Set(
-        filteredLessons.map((l) => (l as { _id?: string })._id).filter(Boolean)
+        filteredLessons.map((l) => (l as { _id?: string })._id).filter(Boolean),
       );
 
       const relevantLessonKeys = new Set(
-        filteredLessons.map((l) => `${l.unitLessonId}|${l.lessonName}`)
+        filteredLessons.map((l) => `${l.unitLessonId}|${l.lessonName}`),
       );
 
       sectionConfigAssignments
         .filter((assignmentContent) => {
           const scopeAndSeqId = (
-            assignmentContent as AssignmentContent & { scopeAndSequenceId?: string }
+            assignmentContent as AssignmentContent & {
+              scopeAndSequenceId?: string;
+            }
           ).scopeAndSequenceId;
           if (scopeAndSeqId && relevantScopeAndSequenceIds.has(scopeAndSeqId)) {
             return true;
@@ -274,7 +306,9 @@ export function useLessons(
           if (!relevantLessonKeys.has(lessonKey)) return false;
 
           const assignmentScopeTag = (
-            assignmentContent as AssignmentContent & { scopeSequenceTag?: string }
+            assignmentContent as AssignmentContent & {
+              scopeSequenceTag?: string;
+            }
           ).scopeSequenceTag;
           return assignmentScopeTag === actualScopeTag;
         })
@@ -282,7 +316,7 @@ export function useLessons(
           const matchingLesson = filteredLessons.find(
             (l) =>
               l.unitLessonId === assignmentContent.unitLessonId &&
-              l.lessonName === assignmentContent.lessonName
+              l.lessonName === assignmentContent.lessonName,
           );
 
           assignmentContent.podsieActivities?.forEach((activity) => {
@@ -296,7 +330,9 @@ export function useLessons(
                 | "assessment"
                 | undefined,
               lessonTitle: matchingLesson?.lessonTitle,
-              grade: scopeSequenceTag.replace("Grade ", "").replace("Algebra 1", "8"),
+              grade: scopeSequenceTag
+                .replace("Grade ", "")
+                .replace("Algebra 1", "8"),
               podsieAssignmentId: activity.podsieAssignmentId,
               totalQuestions: activity.totalQuestions || 10,
               podsieQuestionMap: activity.podsieQuestionMap,
@@ -306,7 +342,8 @@ export function useLessons(
               subsection: assignmentContent.subsection,
               unitNumber: selectedUnit!,
               activityType: activity.activityType || "mastery-check",
-              hasZearnActivity: assignmentContent.zearnActivity?.active || false,
+              hasZearnActivity:
+                assignmentContent.zearnActivity?.active || false,
             });
           });
         });

@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     if (!section) {
       return NextResponse.json(
         { success: false, error: "section parameter is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in incentives recent GET:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

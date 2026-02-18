@@ -1,14 +1,22 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
-import { Alert } from '@/components/core/feedback/Alert';
-import { RoadmapsCredentials } from '../lib/types';
+import React, { useState } from "react";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/fields/Input";
+import { Alert } from "@/components/core/feedback/Alert";
+import { RoadmapsCredentials } from "../lib/types";
 
 interface RoadmapsScraperFormProps {
-  onSubmit: (credentials: RoadmapsCredentials, urls: string[], delay: number) => void;
-  onDebugSubmit: (credentials: RoadmapsCredentials, urls: string[], delay: number) => void;
+  onSubmit: (
+    credentials: RoadmapsCredentials,
+    urls: string[],
+    delay: number,
+  ) => void;
+  onDebugSubmit: (
+    credentials: RoadmapsCredentials,
+    urls: string[],
+    delay: number,
+  ) => void;
   onValidateCredentials: (credentials: RoadmapsCredentials) => void;
   isLoading: boolean;
   isValidating: boolean;
@@ -21,39 +29,39 @@ export function RoadmapsScraperForm({
   onValidateCredentials,
   isLoading,
   isValidating,
-  error
+  error,
 }: RoadmapsScraperFormProps) {
   const [credentials, setCredentials] = useState<RoadmapsCredentials>({
-    email: 'alex.smith@teachinglab.org',
-    password: 'rbx1KQD3fpv7qhd!erc'
+    email: "alex.smith@teachinglab.org",
+    password: "rbx1KQD3fpv7qhd!erc",
   });
-  
-  const [skillNumbersInput, setSkillNumbersInput] = useState('');
+
+  const [skillNumbersInput, setSkillNumbersInput] = useState("");
   const [delay, setDelay] = useState(2000);
 
   // Parse skill numbers from textarea input
   const parseSkillNumbers = (input: string): string[] => {
     return input
-      .split('\n')
-      .map(line => line.trim())
-      .map(line => {
+      .split("\n")
+      .map((line) => line.trim())
+      .map((line) => {
         // Extract just numbers from each line
         const match = line.match(/\d+/);
-        return match ? match[0] : '';
+        return match ? match[0] : "";
       })
-      .filter(num => num.length > 0)
+      .filter((num) => num.length > 0)
       .filter((num, index, self) => self.indexOf(num) === index); // Remove duplicates
   };
 
   const skillNumbers = parseSkillNumbers(skillNumbersInput);
 
   const handleRemoveSkill = (skillNumber: string) => {
-    const lines = skillNumbersInput.split('\n');
-    const updatedLines = lines.filter(line => {
+    const lines = skillNumbersInput.split("\n");
+    const updatedLines = lines.filter((line) => {
       const match = line.match(/\d+/);
       return match ? match[0] !== skillNumber : true;
     });
-    setSkillNumbersInput(updatedLines.join('\n'));
+    setSkillNumbersInput(updatedLines.join("\n"));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -63,7 +71,9 @@ export function RoadmapsScraperForm({
       return;
     }
 
-    const urls = skillNumbers.map(num => `https://roadmaps.teachtoone.org/skill/${num}`);
+    const urls = skillNumbers.map(
+      (num) => `https://roadmaps.teachtoone.org/skill/${num}`,
+    );
     onSubmit(credentials, urls, delay);
   };
 
@@ -74,7 +84,9 @@ export function RoadmapsScraperForm({
       return;
     }
 
-    const urls = skillNumbers.slice(0, 2).map(num => `https://roadmaps.teachtoone.org/skill/${num}`);
+    const urls = skillNumbers
+      .slice(0, 2)
+      .map((num) => `https://roadmaps.teachtoone.org/skill/${num}`);
     onDebugSubmit(credentials, urls, Math.max(delay, 3000));
   };
 
@@ -84,8 +96,9 @@ export function RoadmapsScraperForm({
     }
   };
 
-  const isFormValid = credentials.email && credentials.password && skillNumbers.length > 0;
-  
+  const isFormValid =
+    credentials.email && credentials.password && skillNumbers.length > 0;
+
   return (
     <div className="bg-white rounded-lg shadow p-6 space-y-6">
       <div>
@@ -96,44 +109,53 @@ export function RoadmapsScraperForm({
           Extract educational skill content from Teach to One Roadmaps platform
         </p>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Credentials Section */}
         <div className="space-y-4">
           <h3 className="text-lg font-medium text-gray-900">Authentication</h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Email"
               type="email"
               value={credentials.email}
-              onChange={(e) => setCredentials(prev => ({ ...prev, email: e.target.value }))}
+              onChange={(e) =>
+                setCredentials((prev) => ({ ...prev, email: e.target.value }))
+              }
               placeholder="your.email@example.com"
               required
             />
-            
+
             <Input
               label="Password"
               type="password"
               value={credentials.password}
-              onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+              onChange={(e) =>
+                setCredentials((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
               placeholder="Enter your password"
               required
             />
           </div>
-          
+
           <Button
             type="button"
             onClick={handleValidateCredentials}
-            disabled={!credentials.email || !credentials.password || isValidating}
+            disabled={
+              !credentials.email || !credentials.password || isValidating
+            }
             intent="secondary"
             appearance="outline"
             padding="sm"
           >
-            {isValidating ? 'Validating...' : 'Test Credentials'}
+            {isValidating ? "Validating..." : "Test Credentials"}
           </Button>
         </div>
-        
+
         {/* Skill Numbers Section */}
         <div className="space-y-4">
           <h3 className="text-lg font-medium text-gray-900">Skill Numbers</h3>
@@ -154,7 +176,8 @@ export function RoadmapsScraperForm({
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
             />
             <p className="text-sm text-gray-500">
-              Paste skill numbers, one per line. Numbers will be automatically extracted.
+              Paste skill numbers, one per line. Numbers will be automatically
+              extracted.
             </p>
           </div>
 
@@ -165,7 +188,9 @@ export function RoadmapsScraperForm({
           {/* Skill Numbers List */}
           {skillNumbers.length > 0 && (
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-3">Skills to Scrape:</h4>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">
+                Skills to Scrape:
+              </h4>
               <div className="flex flex-wrap gap-2">
                 {skillNumbers.map((skillNumber) => (
                   <div
@@ -187,11 +212,11 @@ export function RoadmapsScraperForm({
             </div>
           )}
         </div>
-        
+
         {/* Settings Section */}
         <div className="space-y-4">
           <h3 className="text-lg font-medium text-gray-900">Settings</h3>
-          
+
           <Input
             label="Delay Between Requests (ms)"
             type="number"
@@ -203,7 +228,7 @@ export function RoadmapsScraperForm({
             helpText="Recommended: 2000ms to be respectful to the server"
           />
         </div>
-        
+
         {/* Error Display */}
         {error && (
           <Alert intent="error">
@@ -211,7 +236,7 @@ export function RoadmapsScraperForm({
             <Alert.Description>{error}</Alert.Description>
           </Alert>
         )}
-        
+
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3 pt-4 border-t">
           <Button
@@ -220,9 +245,11 @@ export function RoadmapsScraperForm({
             intent="primary"
             fullWidth={false}
           >
-            {isLoading ? 'Scraping...' : `Scrape Skills (${skillNumbers.length})`}
+            {isLoading
+              ? "Scraping..."
+              : `Scrape Skills (${skillNumbers.length})`}
           </Button>
-          
+
           <Button
             type="button"
             onClick={handleDebugSubmit}
@@ -235,7 +262,7 @@ export function RoadmapsScraperForm({
           </Button>
         </div>
       </form>
-      
+
       {/* Instructions */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <h4 className="font-medium text-blue-900 mb-2">Instructions</h4>
@@ -243,8 +270,13 @@ export function RoadmapsScraperForm({
           <li>• Enter your Teach to One Roadmaps login credentials</li>
           <li>• Paste skill numbers in the textarea, one per line</li>
           <li>• Numbers will be automatically extracted from each line</li>
-          <li>• Use &quot;Test Credentials&quot; to verify login before scraping</li>
-          <li>• Use &quot;Debug Mode&quot; to test with first 2 skills and visible browser</li>
+          <li>
+            • Use &quot;Test Credentials&quot; to verify login before scraping
+          </li>
+          <li>
+            • Use &quot;Debug Mode&quot; to test with first 2 skills and visible
+            browser
+          </li>
           <li>• Results will be displayed below and can be exported as JSON</li>
         </ul>
       </div>

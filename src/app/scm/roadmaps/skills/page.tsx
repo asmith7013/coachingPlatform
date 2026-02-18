@@ -16,7 +16,10 @@ export default function RoadmapsSkillsPage() {
 
   // Data fetching with React Query hooks
   const { allSkills } = useAllSkills();
-  const { skills, loading, error } = useFilteredSkills(selectedGrade, selectedUnit);
+  const { skills, loading, error } = useFilteredSkills(
+    selectedGrade,
+    selectedUnit,
+  );
 
   // Filter skills by search query with useMemo
   const filteredSkills = useMemo(() => {
@@ -28,7 +31,7 @@ export default function RoadmapsSkillsPage() {
     return skills.filter(
       (skill) =>
         skill.skillNumber.toLowerCase().includes(query) ||
-        skill.title.toLowerCase().includes(query)
+        skill.title.toLowerCase().includes(query),
     );
   }, [searchQuery, skills]);
 
@@ -38,7 +41,7 @@ export default function RoadmapsSkillsPage() {
 
     if (trimmedQuery.length === 3 && /^\d{3}$/.test(trimmedQuery)) {
       const foundSkill = allSkills.find(
-        (skill) => skill.skillNumber === trimmedQuery
+        (skill) => skill.skillNumber === trimmedQuery,
       );
       if (foundSkill) {
         setSelectedSkillId(foundSkill._id);
@@ -81,10 +84,8 @@ export default function RoadmapsSkillsPage() {
   // Extract unique grades from all skills (not just filtered ones)
   const availableGrades = Array.from(
     new Set(
-      allSkills.flatMap(skill =>
-        skill.units.map(unit => unit.grade)
-      )
-    )
+      allSkills.flatMap((skill) => skill.units.map((unit) => unit.grade)),
+    ),
   ).sort();
 
   // Extract unique units for the selected grade
@@ -92,21 +93,21 @@ export default function RoadmapsSkillsPage() {
     ? Array.from(
         new Set(
           allSkills
-            .flatMap(skill => skill.units)
-            .filter(unit => unit.grade === selectedGrade)
-            .map(unit => unit.unitTitle)
-        )
+            .flatMap((skill) => skill.units)
+            .filter((unit) => unit.grade === selectedGrade)
+            .map((unit) => unit.unitTitle),
+        ),
       ).sort()
     : [];
 
   // Get the selected skill object
   const selectedSkill = selectedSkillId
-    ? filteredSkills.find(s => s._id === selectedSkillId) || null
+    ? filteredSkills.find((s) => s._id === selectedSkillId) || null
     : null;
 
   // Get the context skill object
   const contextSkill = contextSkillId
-    ? allSkills.find(s => s._id === contextSkillId) || null
+    ? allSkills.find((s) => s._id === contextSkillId) || null
     : null;
 
   if (loading) {
@@ -148,7 +149,7 @@ export default function RoadmapsSkillsPage() {
             <p className="text-gray-600">
               {selectedGrade
                 ? `Showing ${filteredSkills.length} skills`
-                : 'Select a grade to view skills'}
+                : "Select a grade to view skills"}
             </p>
           </div>
 
@@ -156,7 +157,10 @@ export default function RoadmapsSkillsPage() {
           <div className="flex gap-4 items-end mb-4">
             {/* Grade Filter */}
             <div className="flex-1">
-              <label htmlFor="grade-filter" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="grade-filter"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Filter by Grade
               </label>
               <select
@@ -165,12 +169,12 @@ export default function RoadmapsSkillsPage() {
                 onChange={handleGradeChange}
                 className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   !selectedGrade
-                    ? 'border-blue-500 ring-2 ring-blue-200'
-                    : 'border-gray-300'
+                    ? "border-blue-500 ring-2 ring-blue-200"
+                    : "border-gray-300"
                 }`}
               >
                 <option value="">All Grades</option>
-                {availableGrades.map(grade => (
+                {availableGrades.map((grade) => (
                   <option key={grade} value={grade}>
                     {grade}
                   </option>
@@ -180,7 +184,10 @@ export default function RoadmapsSkillsPage() {
 
             {/* Unit Filter */}
             <div className="flex-1">
-              <label htmlFor="unit-filter" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="unit-filter"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Filter by Unit
               </label>
               <select
@@ -193,7 +200,7 @@ export default function RoadmapsSkillsPage() {
                 <option value="">
                   {selectedGrade ? "All Units" : "Select a grade first"}
                 </option>
-                {availableUnits.map(unit => (
+                {availableUnits.map((unit) => (
                   <option key={unit} value={unit}>
                     {unit}
                   </option>
@@ -203,7 +210,10 @@ export default function RoadmapsSkillsPage() {
 
             {/* Search Bar */}
             <div className="flex-1">
-              <label htmlFor="skill-search" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="skill-search"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Search Skills
               </label>
               <div className="relative">
@@ -221,15 +231,35 @@ export default function RoadmapsSkillsPage() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     aria-label="Clear search"
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
                 )}
                 {!searchQuery && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
                     </svg>
                   </div>
                 )}
@@ -253,12 +283,16 @@ export default function RoadmapsSkillsPage() {
         {/* Split View Layout: Adjust based on context column */}
         <div className="flex gap-6">
           {/* Left Column: Skill List */}
-          <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
-            contextSkillId ? 'w-[12.5%]' : 'w-2/5'
-          }`}>
+          <div
+            className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
+              contextSkillId ? "w-[12.5%]" : "w-2/5"
+            }`}
+          >
             <div className="sticky top-0 bg-gray-50 border-b border-gray-200 px-4 py-3 z-10">
               <h3 className="font-semibold text-gray-900">
-                {contextSkillId ? `Skills (${filteredSkills.length})` : `Skills (${filteredSkills.length})`}
+                {contextSkillId
+                  ? `Skills (${filteredSkills.length})`
+                  : `Skills (${filteredSkills.length})`}
               </h3>
               {(selectedGrade || selectedUnit || searchQuery) && (
                 <p className="text-xs text-gray-500 mt-1">
@@ -279,8 +313,8 @@ export default function RoadmapsSkillsPage() {
                   <div className="text-gray-400 text-lg mb-2">🔍</div>
                   <div className="text-sm">
                     {searchQuery
-                      ? 'No skills match your search'
-                      : 'No skills found for this selection'}
+                      ? "No skills match your search"
+                      : "No skills found for this selection"}
                   </div>
                   {searchQuery && (
                     <button
@@ -305,15 +339,19 @@ export default function RoadmapsSkillsPage() {
           </div>
 
           {/* Middle Column: Skill Detail View */}
-          <div className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
-            contextSkillId ? 'w-[43.75%]' : 'w-3/5'
-          }`}>
+          <div
+            className={`bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden transition-all ${
+              contextSkillId ? "w-[43.75%]" : "w-3/5"
+            }`}
+          >
             <SkillDetailWrapper
               skill={selectedSkill}
               color="green"
               onSkillClick={(skillNumber) => {
                 // Find the skill by skill number in allSkills
-                const skill = allSkills.find(s => s.skillNumber === skillNumber);
+                const skill = allSkills.find(
+                  (s) => s.skillNumber === skillNumber,
+                );
                 if (skill) {
                   setContextSkillId(skill._id);
                 }
@@ -329,7 +367,9 @@ export default function RoadmapsSkillsPage() {
                 color="orange"
                 onSkillClick={(skillNumber) => {
                   // Find the skill by skill number in allSkills
-                  const skill = allSkills.find(s => s.skillNumber === skillNumber);
+                  const skill = allSkills.find(
+                    (s) => s.skillNumber === skillNumber,
+                  );
                   if (skill) {
                     setContextSkillId(skill._id);
                   }

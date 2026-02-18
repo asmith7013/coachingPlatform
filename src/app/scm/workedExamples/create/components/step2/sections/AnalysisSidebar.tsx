@@ -40,17 +40,12 @@ export function AnalysisSidebar({
         )}
 
         {/* Task Image */}
-        {(masteryCheckImage.preview ||
-          masteryCheckImage.uploadedUrl) && (
+        {(masteryCheckImage.preview || masteryCheckImage.uploadedUrl) && (
           <div className="bg-white rounded-lg p-4">
-            <h4 className="text-sm font-semibold text-gray-700 mb-3">
-              Task
-            </h4>
+            <h4 className="text-sm font-semibold text-gray-700 mb-3">Task</h4>
             <img
               src={
-                masteryCheckImage.preview ||
-                masteryCheckImage.uploadedUrl ||
-                ""
+                masteryCheckImage.preview || masteryCheckImage.uploadedUrl || ""
               }
               alt="Task"
               className="w-full rounded border border-gray-200"

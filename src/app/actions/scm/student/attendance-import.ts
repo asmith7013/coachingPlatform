@@ -2,8 +2,11 @@
 
 import { z } from "zod";
 import { withDbConnection } from "@server/db/ensure-connection";
-import { Attendance313 } from "@mongoose-schema/scm/student/attendance.model";
-import { AttendanceStatusSchema, type AttendanceInput } from "@zod-schema/scm/student/attendance";
+import { Attendance } from "@mongoose-schema/scm/student/attendance.model";
+import {
+  AttendanceStatusSchema,
+  type AttendanceInput,
+} from "@zod-schema/scm/student/attendance";
 import { handleServerError } from "@error/handlers/server";
 import { findStudentsByEmails } from "@/lib/utils/student-matching";
 
@@ -16,7 +19,7 @@ import { findStudentsByEmails } from "@/lib/utils/student-matching";
  */
 const DayAttendanceSchema = z.object({
   attendanceStatus: AttendanceStatusSchema.nullable(),
-  blockType: z.enum(['single', 'double']),
+  blockType: z.enum(["single", "double"]),
   masteryChecksPassed: z.number().int().nonnegative(),
 });
 
@@ -38,8 +41,8 @@ const AttendanceImportSchema = z.object({
       z.string().email(), // email keys
       z.record(
         z.string(), // date keys (YYYY-MM-DD)
-        DayAttendanceSchema
-      )
+        DayAttendanceSchema,
+      ),
     ),
   }),
 });
@@ -75,7 +78,7 @@ export async function importAttendanceData(jsonData: unknown, school?: string) {
 
       // Extract section from group name (e.g., "802 - Alg 1" -> "802")
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const section = group.name.split(' ')[0] as any; // Cast to any since we're extracting from dynamic data
+      const section = group.name.split(" ")[0] as any; // Cast to any since we're extracting from dynamic data
 
       // Build list of attendance records to upsert
       const attendanceRecords: AttendanceInput[] = [];
@@ -105,9 +108,9 @@ export async function importAttendanceData(jsonData: unknown, school?: string) {
 
         for (const [date, dayData] of Object.entries(dateData)) {
           // Determine status: if null, mark as "not-tracked"
-          const status = dayData.attendanceStatus ?? ('not-tracked' as const);
+          const status = dayData.attendanceStatus ?? ("not-tracked" as const);
 
-          if (status === 'not-tracked') {
+          if (status === "not-tracked") {
             notTrackedCount++;
           }
 
@@ -118,7 +121,7 @@ export async function importAttendanceData(jsonData: unknown, school?: string) {
             status,
             section,
             blockType: dayData.blockType,
-            syncedFrom: 'podsie' as const,
+            syncedFrom: "podsie" as const,
             lastSyncedAt: new Date().toISOString(),
             ownerIds: [],
           });
@@ -130,10 +133,10 @@ export async function importAttendanceData(jsonData: unknown, school?: string) {
       let createdCount = 0;
 
       for (const record of attendanceRecords) {
-        const result = await Attendance313.updateOne(
+        const result = await Attendance.updateOne(
           { studentId: record.studentId, date: record.date },
           { $set: record },
-          { upsert: true }
+          { upsert: true },
         );
 
         if (result.upsertedCount > 0) {
@@ -158,7 +161,7 @@ export async function importAttendanceData(jsonData: unknown, school?: string) {
         return {
           success: false,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          error: `Validation error: ${error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
+          error: `Validation error: ${error.issues.map((e: any) => `${e.path.join(".")}: ${e.message}`).join(", ")}`,
         };
       }
       return {
@@ -179,7 +182,7 @@ export async function importAttendanceData(jsonData: unknown, school?: string) {
 export async function getAttendanceByDateRange(
   startDate: string,
   endDate: string,
-  section?: string
+  section?: string,
 ) {
   return withDbConnection(async () => {
     try {
@@ -192,13 +195,13 @@ export async function getAttendanceByDateRange(
         query.section = section;
       }
 
-      const records = await Attendance313.find(query)
+      const records = await Attendance.find(query)
         .sort({ date: 1, studentId: 1 })
         .lean();
 
       return {
         success: true,
-        data: records.map(r => ({
+        data: records.map((r) => ({
           ...r,
           _id: r._id.toString(),
         })),
@@ -218,13 +221,13 @@ export async function getAttendanceByDateRange(
 export async function getAttendanceByStudent(studentId: number) {
   return withDbConnection(async () => {
     try {
-      const records = await Attendance313.find({ studentId })
+      const records = await Attendance.find({ studentId })
         .sort({ date: -1 })
         .lean();
 
       return {
         success: true,
-        data: records.map(r => ({
+        data: records.map((r) => ({
           ...r,
           _id: r._id.toString(),
         })),
@@ -245,17 +248,20 @@ export async function getAttendanceByStudent(studentId: number) {
 export async function getAttendanceSummary(studentId: number) {
   return withDbConnection(async () => {
     try {
-      const records = await Attendance313.find({ studentId }).lean();
+      const records = await Attendance.find({ studentId }).lean();
 
       const totalDays = records.length;
-      const presentDays = records.filter(r => r.status === 'present').length;
-      const absentDays = records.filter(r => r.status === 'absent').length;
-      const lateDays = records.filter(r => r.status === 'late').length;
-      const notTrackedDays = records.filter(r => r.status === 'not-tracked').length;
+      const presentDays = records.filter((r) => r.status === "present").length;
+      const absentDays = records.filter((r) => r.status === "absent").length;
+      const lateDays = records.filter((r) => r.status === "late").length;
+      const notTrackedDays = records.filter(
+        (r) => r.status === "not-tracked",
+      ).length;
 
       // For attendance rate, treat 'not-tracked' as present (assumption: they were there if school was in session)
       const effectivePresentDays = presentDays + notTrackedDays;
-      const attendanceRate = totalDays > 0 ? (effectivePresentDays / totalDays) * 100 : 0;
+      const attendanceRate =
+        totalDays > 0 ? (effectivePresentDays / totalDays) * 100 : 0;
 
       return {
         success: true,
@@ -272,7 +278,10 @@ export async function getAttendanceSummary(studentId: number) {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "Failed to calculate attendance summary"),
+        error: handleServerError(
+          error,
+          "Failed to calculate attendance summary",
+        ),
       };
     }
   });

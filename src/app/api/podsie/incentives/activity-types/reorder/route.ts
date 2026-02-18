@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
       return NextResponse.json(
         { success: false, error: "orderedIds must be a non-empty array" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     console.error("Error in incentives activity-types reorder:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

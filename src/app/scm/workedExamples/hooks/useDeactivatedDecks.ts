@@ -12,7 +12,9 @@ export function useDeactivatedDecks() {
     queryFn: async () => {
       const result = await listWorkedExampleDecks({ deactivated: true });
       if (!result.success) {
-        throw new Error(result.error || "Failed to load deactivated presentations");
+        throw new Error(
+          result.error || "Failed to load deactivated presentations",
+        );
       }
       return result.data as WorkedExampleDeck[];
     },

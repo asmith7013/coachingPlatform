@@ -1,4 +1,4 @@
-import { MODEL_FOR_TASK } from './models';
+import { MODEL_FOR_TASK } from "./models";
 
 /**
  * Claude API client for processing HTML content into structured markdown
@@ -9,17 +9,17 @@ class ClaudeClient {
   private apiKey: string;
 
   constructor() {
-    this.apiUrl = 'https://api.anthropic.com/v1/messages';
-    this.apiKey = process.env.ANTHROPIC_API_KEY || '';
-    
+    this.apiUrl = "https://api.anthropic.com/v1/messages";
+    this.apiKey = process.env.ANTHROPIC_API_KEY || "";
+
     if (!this.apiKey) {
-      console.warn('ANTHROPIC_API_KEY environment variable is not set');
+      console.warn("ANTHROPIC_API_KEY environment variable is not set");
     }
   }
 
   /**
    * Process HTML content into structured markdown using Claude
-   * 
+   *
    * @param htmlContent Raw HTML content to process
    * @param lessonMetadata Optional lesson metadata for context
    * @returns Processed markdown content
@@ -32,22 +32,22 @@ class ClaudeClient {
       unit: string;
       lesson: string;
       lessonNumber?: number;
-    }
+    },
   ): Promise<string> {
     try {
       if (!this.apiKey) {
-        throw new Error('Claude API key is not configured');
+        throw new Error("Claude API key is not configured");
       }
 
       const systemPrompt = this.buildSystemPrompt();
       const userPrompt = this.buildUserPrompt(htmlContent, lessonMetadata);
 
       const response = await fetch(this.apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': this.apiKey,
-          'anthropic-version': '2023-06-01'
+          "Content-Type": "application/json",
+          "x-api-key": this.apiKey,
+          "anthropic-version": "2023-06-01",
         },
         body: JSON.stringify({
           model: MODEL_FOR_TASK.PROCESSING,
@@ -55,29 +55,29 @@ class ClaudeClient {
           system: systemPrompt,
           messages: [
             {
-              role: 'user',
-              content: userPrompt
-            }
-          ]
-        })
+              role: "user",
+              content: userPrompt,
+            },
+          ],
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-          `Claude API Error (${response.status}): ${errorData.error?.message || response.statusText}`
+          `Claude API Error (${response.status}): ${errorData.error?.message || response.statusText}`,
         );
       }
 
       const result = await response.json();
-      
+
       if (result.error) {
         throw new Error(`Claude API Error: ${result.error.message}`);
       }
 
       return result.content[0].text;
     } catch (error) {
-      console.error('Claude API Request Error:', error);
+      console.error("Claude API Request Error:", error);
       throw error;
     }
   }
@@ -126,17 +126,18 @@ Return only the processed markdown content, no additional commentary.`;
       unit: string;
       lesson: string;
       lessonNumber?: number;
-    }
+    },
   ): string {
-    let prompt = 'Process this HTML content from an Illustrative Mathematics lesson:\n\n';
-    
+    let prompt =
+      "Process this HTML content from an Illustrative Mathematics lesson:\n\n";
+
     if (lessonMetadata) {
       prompt += `**Lesson Context:**
 - URL: ${lessonMetadata.url}
 - Grade: ${lessonMetadata.grade}
 - Unit: ${lessonMetadata.unit}
 - Lesson: ${lessonMetadata.lesson}
-${lessonMetadata.lessonNumber ? `- Lesson Number: ${lessonMetadata.lessonNumber}` : ''}
+${lessonMetadata.lessonNumber ? `- Lesson Number: ${lessonMetadata.lessonNumber}` : ""}
 
 `;
     }

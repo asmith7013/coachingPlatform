@@ -17,7 +17,11 @@ interface StudentGridProps {
       [activityTypeId: string]: boolean;
     };
   };
-  onCheckboxChange: (studentId: string, activityTypeId: string, checked: boolean) => void;
+  onCheckboxChange: (
+    studentId: string,
+    activityTypeId: string,
+    checked: boolean,
+  ) => void;
 }
 
 /**
@@ -40,7 +44,8 @@ export function StudentGrid({
   if (activityTypes.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        No activity types configured. Use &ldquo;Manage Columns&rdquo; to add activity types.
+        No activity types configured. Use &ldquo;Manage Columns&rdquo; to add
+        activity types.
       </div>
     );
   }
@@ -75,7 +80,10 @@ export function StudentGrid({
               >
                 <div className="flex flex-col items-center gap-1">
                   <span className="text-xl">{type.icon}</span>
-                  <span className="text-[10px] leading-tight break-words hyphens-auto" style={{ wordBreak: "break-word" }}>
+                  <span
+                    className="text-[10px] leading-tight break-words hyphens-auto"
+                    style={{ wordBreak: "break-word" }}
+                  >
                     {type.label}
                   </span>
                 </div>
@@ -95,7 +103,10 @@ export function StudentGrid({
                 className="sticky left-0 z-10 bg-inherit px-3 py-3 text-xs font-medium text-gray-900 border-r border-gray-200 overflow-hidden text-ellipsis"
                 style={{ width: "140px", minWidth: "140px", maxWidth: "140px" }}
               >
-                <div className="truncate" title={`${student.firstName} ${student.lastName}`}>
+                <div
+                  className="truncate"
+                  title={`${student.firstName} ${student.lastName}`}
+                >
                   {student.firstName} {student.lastName}
                 </div>
               </td>
@@ -110,13 +121,15 @@ export function StudentGrid({
                   <input
                     type="checkbox"
                     checked={
-                      type.typeId ? (checkedState[student._id]?.[type.typeId] || false) : false
+                      type.typeId
+                        ? checkedState[student._id]?.[type.typeId] || false
+                        : false
                     }
                     onChange={(e) =>
                       onCheckboxChange(
                         student._id,
                         type.typeId ?? "",
-                        e.target.checked
+                        e.target.checked,
                       )
                     }
                     className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer"

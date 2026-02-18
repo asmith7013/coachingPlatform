@@ -27,24 +27,33 @@ export async function fetchStudentOfTheDay(section?: string) {
         gradeLevel: "8",
         $or: [
           { activityType: "student-of-day" },
-          { activityLabel: "Student of the Day" }
-        ]
+          { activityLabel: "Student of the Day" },
+        ],
       };
 
       if (section) {
         query.section = section;
       }
 
-      console.log("🔵 [fetchStudentOfTheDay] Query:", JSON.stringify(query, null, 2));
+      console.log(
+        "🔵 [fetchStudentOfTheDay] Query:",
+        JSON.stringify(query, null, 2),
+      );
 
       const activities = await StudentActivityModel.find(query)
         .select("date studentName")
         .sort({ date: 1 })
         .lean();
 
-      console.log("🔵 [fetchStudentOfTheDay] Found activities:", activities.length);
+      console.log(
+        "🔵 [fetchStudentOfTheDay] Found activities:",
+        activities.length,
+      );
       if (activities.length > 0) {
-        console.log("🔵 [fetchStudentOfTheDay] Sample activity:", JSON.stringify(activities[0], null, 2));
+        console.log(
+          "🔵 [fetchStudentOfTheDay] Sample activity:",
+          JSON.stringify(activities[0], null, 2),
+        );
       }
 
       // Normalize dates to YYYY-MM-DD format
@@ -53,13 +62,13 @@ export async function fetchStudentOfTheDay(section?: string) {
 
         // Check if date is in MM/DD/YY format and convert to YYYY-MM-DD
         if (activity.date && activity.date.match(/^\d{1,2}\/\d{1,2}\/\d{2}$/)) {
-          const [month, day, year] = activity.date.split('/');
-          normalizedDate = `20${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+          const [month, day, year] = activity.date.split("/");
+          normalizedDate = `20${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
         }
 
         return {
           date: normalizedDate,
-          studentName: activity.studentName
+          studentName: activity.studentName,
         };
       });
 
@@ -67,7 +76,10 @@ export async function fetchStudentOfTheDay(section?: string) {
 
       return { success: true, data: records };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "fetchStudentOfTheDay") };
+      return {
+        success: false,
+        error: handleServerError(error, "fetchStudentOfTheDay"),
+      };
     }
   });
 }
@@ -86,45 +98,75 @@ export interface SmallGroupRecord {
 /**
  * Fetch small group activities (acceleration and prerequisite) for a unit
  */
-export async function fetchSmallGroupActivities(unitId: string, section?: string) {
+export async function fetchSmallGroupActivities(
+  unitId: string,
+  section?: string,
+) {
   return withDbConnection(async () => {
     try {
-      console.log("🔵 [fetchSmallGroupActivities] Called with unitId:", unitId, "section:", section);
+      console.log(
+        "🔵 [fetchSmallGroupActivities] Called with unitId:",
+        unitId,
+        "section:",
+        section,
+      );
 
       const query: Record<string, unknown> = {
         gradeLevel: "8",
         unitId,
         $or: [
-          { activityType: { $in: ["small-group-acceleration", "small-group-prerequisite"] } },
-          { activityLabel: { $in: ["Small Group (Acceleration)", "Small Group (Prerequisite)"] } }
-        ]
+          {
+            activityType: {
+              $in: ["small-group-acceleration", "small-group-prerequisite"],
+            },
+          },
+          {
+            activityLabel: {
+              $in: ["Small Group (Acceleration)", "Small Group (Prerequisite)"],
+            },
+          },
+        ],
       };
 
       if (section) {
         query.section = section;
       }
 
-      console.log("🔵 [fetchSmallGroupActivities] Query:", JSON.stringify(query, null, 2));
+      console.log(
+        "🔵 [fetchSmallGroupActivities] Query:",
+        JSON.stringify(query, null, 2),
+      );
 
       const activities = await StudentActivityModel.find(query)
         .select("studentId studentName lessonId activityType activityLabel")
         .lean();
 
-      console.log("🔵 [fetchSmallGroupActivities] Found activities:", activities.length);
+      console.log(
+        "🔵 [fetchSmallGroupActivities] Found activities:",
+        activities.length,
+      );
       if (activities.length > 0) {
-        console.log("🔵 [fetchSmallGroupActivities] Sample activity:", JSON.stringify(activities[0], null, 2));
+        console.log(
+          "🔵 [fetchSmallGroupActivities] Sample activity:",
+          JSON.stringify(activities[0], null, 2),
+        );
       }
 
       const records: SmallGroupRecord[] = activities.map((activity) => ({
         studentId: activity.studentId,
         studentName: activity.studentName,
         lessonId: activity.lessonId || "",
-        isAcceleration: activity.activityType === "small-group-acceleration" || activity.activityLabel === "Small Group (Acceleration)"
+        isAcceleration:
+          activity.activityType === "small-group-acceleration" ||
+          activity.activityLabel === "Small Group (Acceleration)",
       }));
 
       return { success: true, data: records };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "fetchSmallGroupActivities") };
+      return {
+        success: false,
+        error: handleServerError(error, "fetchSmallGroupActivities"),
+      };
     }
   });
 }
@@ -150,9 +192,9 @@ export async function fetchInquiryActivities(unitId: string, section?: string) {
         unitId,
         $or: [
           { activityType: "inquiry-activity" },
-          { activityLabel: "Inquiry Activity" }
+          { activityLabel: "Inquiry Activity" },
         ],
-        inquiryQuestion: { $exists: true, $ne: "" }
+        inquiryQuestion: { $exists: true, $ne: "" },
       };
 
       if (section) {
@@ -166,12 +208,15 @@ export async function fetchInquiryActivities(unitId: string, section?: string) {
       const records: InquiryRecord[] = activities.map((activity) => ({
         studentId: activity.studentId,
         studentName: activity.studentName,
-        inquiryQuestion: activity.inquiryQuestion || ""
+        inquiryQuestion: activity.inquiryQuestion || "",
       }));
 
       return { success: true, data: records };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "fetchInquiryActivities") };
+      return {
+        success: false,
+        error: handleServerError(error, "fetchInquiryActivities"),
+      };
     }
   });
 }
@@ -191,10 +236,21 @@ export interface ShoutoutsTeamworkRecord {
 /**
  * Fetch shoutouts and teamwork activities for a section with optional date filtering
  */
-export async function fetchShoutoutsTeamwork(section?: string, startDate?: string, endDate?: string) {
+export async function fetchShoutoutsTeamwork(
+  section?: string,
+  startDate?: string,
+  endDate?: string,
+) {
   return withDbConnection(async () => {
     try {
-      console.log("🔵 [fetchShoutoutsTeamwork] Called with section:", section, "startDate:", startDate, "endDate:", endDate);
+      console.log(
+        "🔵 [fetchShoutoutsTeamwork] Called with section:",
+        section,
+        "startDate:",
+        startDate,
+        "endDate:",
+        endDate,
+      );
 
       // Get activity type IDs
       const teamworkTypeId = "690e180b3b195af5c3d371f1";
@@ -208,8 +264,8 @@ export async function fetchShoutoutsTeamwork(section?: string, startDate?: strin
           { activityType: "student-of-day" },
           { activityLabel: "Teamwork" },
           { activityLabel: "Shoutouts" },
-          { activityLabel: "Student of the Day" }
-        ]
+          { activityLabel: "Student of the Day" },
+        ],
       };
 
       if (section) {
@@ -220,14 +276,20 @@ export async function fetchShoutoutsTeamwork(section?: string, startDate?: strin
         query.date = { $gte: startDate, $lte: endDate };
       }
 
-      console.log("🔵 [fetchShoutoutsTeamwork] Query:", JSON.stringify(query, null, 2));
+      console.log(
+        "🔵 [fetchShoutoutsTeamwork] Query:",
+        JSON.stringify(query, null, 2),
+      );
 
       const activities = await StudentActivityModel.find(query)
         .select("studentId studentName date activityType activityLabel")
         .sort({ studentName: 1, date: 1 })
         .lean();
 
-      console.log("🔵 [fetchShoutoutsTeamwork] Found activities:", activities.length);
+      console.log(
+        "🔵 [fetchShoutoutsTeamwork] Found activities:",
+        activities.length,
+      );
 
       // Group by student
       const studentMap = new Map<string, ShoutoutsTeamworkRecord>();
@@ -241,14 +303,20 @@ export async function fetchShoutoutsTeamwork(section?: string, startDate?: strin
             studentName: activity.studentName,
             shoutoutDates: [],
             teamworkDates: [],
-            studentOfDayDates: []
+            studentOfDayDates: [],
           });
         }
 
         const record = studentMap.get(key)!;
-        const isTeamwork = activity.activityType === teamworkTypeId || activity.activityLabel === "Teamwork";
-        const isShoutouts = activity.activityType === shoutoutsTypeId || activity.activityLabel === "Shoutouts";
-        const isStudentOfDay = activity.activityType === "student-of-day" || activity.activityLabel === "Student of the Day";
+        const isTeamwork =
+          activity.activityType === teamworkTypeId ||
+          activity.activityLabel === "Teamwork";
+        const isShoutouts =
+          activity.activityType === shoutoutsTypeId ||
+          activity.activityLabel === "Shoutouts";
+        const isStudentOfDay =
+          activity.activityType === "student-of-day" ||
+          activity.activityLabel === "Student of the Day";
 
         if (isTeamwork) {
           record.teamworkDates.push(activity.date);
@@ -260,14 +328,20 @@ export async function fetchShoutoutsTeamwork(section?: string, startDate?: strin
       });
 
       const records = Array.from(studentMap.values()).sort((a, b) =>
-        a.studentName.localeCompare(b.studentName)
+        a.studentName.localeCompare(b.studentName),
       );
 
-      console.log("🔵 [fetchShoutoutsTeamwork] Total students:", records.length);
+      console.log(
+        "🔵 [fetchShoutoutsTeamwork] Total students:",
+        records.length,
+      );
 
       return { success: true, data: records };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "fetchShoutoutsTeamwork") };
+      return {
+        success: false,
+        error: handleServerError(error, "fetchShoutoutsTeamwork"),
+      };
     }
   });
 }
@@ -307,12 +381,17 @@ export async function fetchLessonsForUnit(unitId: string) {
       const grade = gradeMatch ? gradeMatch[1] : "8";
       const unitNumber = unit.unitNumber;
 
-      console.log("🔵 [fetchLessonsForUnit] Unit info - grade:", grade, "unitNumber:", unitNumber);
+      console.log(
+        "🔵 [fetchLessonsForUnit] Unit info - grade:",
+        grade,
+        "unitNumber:",
+        unitNumber,
+      );
 
       // Query scope-and-sequence by grade and unitNumber
       const lessons = await ScopeAndSequenceModel.find({
         grade,
-        unitNumber
+        unitNumber,
       })
         .sort({ lessonNumber: 1 })
         .lean();
@@ -323,12 +402,15 @@ export async function fetchLessonsForUnit(unitId: string) {
       const lessonInfo: LessonInfo[] = lessons.map((lesson: any) => ({
         lessonId: lesson._id.toString(),
         lessonNumber: lesson.lessonNumber || 0,
-        lessonName: lesson.lessonName || `Lesson ${lesson.lessonNumber}`
+        lessonName: lesson.lessonName || `Lesson ${lesson.lessonNumber}`,
       }));
 
       return { success: true, data: lessonInfo };
     } catch (error) {
-      return { success: false, error: handleServerError(error, "fetchLessonsForUnit") };
+      return {
+        success: false,
+        error: handleServerError(error, "fetchLessonsForUnit"),
+      };
     }
   });
 }

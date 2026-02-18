@@ -9,7 +9,7 @@ import {
   ArrowTrendingUpIcon,
   ListBulletIcon,
   BookOpenIcon,
-} from '@heroicons/react/24/outline';
+} from "@heroicons/react/24/outline";
 
 export default function RoadmapsHomePage() {
   const pages = [
@@ -17,32 +17,36 @@ export default function RoadmapsHomePage() {
       title: "Scope & Sequence",
       href: "/scm/roadmaps/scope-and-sequence",
       Icon: ListBulletIcon,
-      description: "View all lessons in a curriculum with standards, learning targets, and skills."
+      description:
+        "View all lessons in a curriculum with standards, learning targets, and skills.",
     },
     {
       title: "Units",
       href: "/scm/roadmaps/units",
       Icon: BookOpenIcon,
-      description: "View units by grade level with their target and support skills."
+      description:
+        "View units by grade level with their target and support skills.",
     },
     {
       title: "Skills",
       href: "/scm/roadmaps/skills",
       Icon: ChartBarIcon,
-      description: "Browse individual skills with teaching resources and prerequisites."
+      description:
+        "Browse individual skills with teaching resources and prerequisites.",
     },
     {
       title: "Mastery Grid",
       href: "/scm/roadmaps/mastery-grid",
       Icon: TableCellsIcon,
-      description: "View student mastery progress by unit and section."
+      description: "View student mastery progress by unit and section.",
     },
     {
       title: "Progress",
       href: "/scm/roadmaps/progress",
       Icon: ArrowTrendingUpIcon,
-      description: "View roadmap completion progress by section with bar charts."
-    }
+      description:
+        "View roadmap completion progress by section with bar charts.",
+    },
   ];
 
   return (
@@ -60,9 +64,17 @@ export default function RoadmapsHomePage() {
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <ul role="list" className="divide-y divide-gray-100">
           {pages.map((page) => (
-            <li key={page.href} className="relative flex justify-between hover:bg-gray-50 transition-colors">
-              <Link href={page.href} className="flex flex-1 items-center gap-x-4 px-6 py-4">
-                {page.Icon && <page.Icon className="w-6 h-6 text-gray-600 flex-shrink-0" />}
+            <li
+              key={page.href}
+              className="relative flex justify-between hover:bg-gray-50 transition-colors"
+            >
+              <Link
+                href={page.href}
+                className="flex flex-1 items-center gap-x-4 px-6 py-4"
+              >
+                {page.Icon && (
+                  <page.Icon className="w-6 h-6 text-gray-600 flex-shrink-0" />
+                )}
                 <div className="min-w-0 flex-auto">
                   <p className="text-sm font-semibold text-gray-900">
                     {page.title}
@@ -71,7 +83,10 @@ export default function RoadmapsHomePage() {
                     {page.description}
                   </p>
                 </div>
-                <ChevronRightIcon aria-hidden="true" className="size-5 flex-none text-gray-400" />
+                <ChevronRightIcon
+                  aria-hidden="true"
+                  className="size-5 flex-none text-gray-400"
+                />
               </Link>
             </li>
           ))}

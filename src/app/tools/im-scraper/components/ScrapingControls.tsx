@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/fields/Input';
-import { Textarea } from '@/components/core/fields/Textarea';
-import { Select } from '@/components/core/fields/Select';
-import { Alert } from '@/components/core/feedback/Alert';
+import React, { useState } from "react";
+import { Button } from "@/components/core/Button";
+import { Input } from "@/components/core/fields/Input";
+import { Textarea } from "@/components/core/fields/Textarea";
+import { Select } from "@/components/core/fields/Select";
+import { Alert } from "@/components/core/feedback/Alert";
 // // SimpleCard removed - using custom card structure
-import { IMCredentials, IMUrlGeneration, IM_CONSTANTS } from '../lib/types';
-import { useIMUrlGenerator } from '../hooks/useIMScraper';
+import { IMCredentials, IMUrlGeneration, IM_CONSTANTS } from "../lib/types";
+import { useIMUrlGenerator } from "../hooks/useIMScraper";
 
 interface ScrapingControlsProps {
   credentials: IMCredentials;
@@ -26,7 +26,7 @@ interface ScrapingControlsProps {
   } | null;
 }
 
-type ScrapingMode = 'bulk' | 'custom';
+type ScrapingMode = "bulk" | "custom";
 
 export function ScrapingControls({
   credentials: _credentials, // Marked as unused since it's passed to actions
@@ -36,36 +36,37 @@ export function ScrapingControls({
   credentialsValid,
   onTestUrl,
   isTesting,
-  testResult
+  testResult,
 }: ScrapingControlsProps) {
-  const [mode, setMode] = useState<ScrapingMode>('bulk');
-  const [customUrls, setCustomUrls] = useState('');
-  const [testUrl, setTestUrl] = useState('');
-  const [delayBetweenRequests, setDelayBetweenRequests] = useState('2000');
-  
+  const [mode, setMode] = useState<ScrapingMode>("bulk");
+  const [customUrls, setCustomUrls] = useState("");
+  const [testUrl, setTestUrl] = useState("");
+  const [delayBetweenRequests, setDelayBetweenRequests] = useState("2000");
+
   // Bulk generation parameters
   const [bulkParams, setBulkParams] = useState<IMUrlGeneration>({
     grade: 6,
     startUnit: 1,
     endUnit: 2,
-    sectionLessons: { 'a': [1, 2, 3], 'b': [1, 2, 3] },
-    delayBetweenRequests: 2000
+    sectionLessons: { a: [1, 2, 3], b: [1, 2, 3] },
+    delayBetweenRequests: 2000,
   });
 
-  const { isGenerating, generatedUrls, generateUrls, clearUrls } = useIMUrlGenerator();
+  const { isGenerating, generatedUrls, generateUrls, clearUrls } =
+    useIMUrlGenerator();
 
   const isDisabled = !credentialsValid || isLoading;
 
   const handleCustomUrlsScrape = async () => {
     const urls = customUrls
-      .split('\n')
-      .map(url => url.trim())
-      .filter(url => url.length > 0);
-    
+      .split("\n")
+      .map((url) => url.trim())
+      .filter((url) => url.length > 0);
+
     if (urls.length === 0) {
       return;
     }
-    
+
     const delay = parseInt(delayBetweenRequests) || 2000;
     await onStartScraping(urls, delay);
   };
@@ -85,20 +86,23 @@ export function ScrapingControls({
     await onTestUrl(testUrl.trim());
   };
 
-  const gradeOptions = IM_CONSTANTS.GRADES.map(grade => ({
+  const gradeOptions = IM_CONSTANTS.GRADES.map((grade) => ({
     value: grade.toString(),
-    label: `Grade ${grade}`
+    label: `Grade ${grade}`,
   }));
 
-  const sectionOptions = IM_CONSTANTS.SECTIONS.map(section => ({
+  const sectionOptions = IM_CONSTANTS.SECTIONS.map((section) => ({
     value: section,
-    label: `Section ${section.toUpperCase()}`
+    label: `Section ${section.toUpperCase()}`,
   }));
 
-  const unitOptions = Array.from({ length: IM_CONSTANTS.MAX_UNITS }, (_, i) => ({
-    value: (i + 1).toString(),
-    label: `Unit ${i + 1}`
-  }));
+  const unitOptions = Array.from(
+    { length: IM_CONSTANTS.MAX_UNITS },
+    (_, i) => ({
+      value: (i + 1).toString(),
+      label: `Unit ${i + 1}`,
+    }),
+  );
 
   return (
     <div className="space-y-6">
@@ -109,52 +113,71 @@ export function ScrapingControls({
             SC
           </div>
           <div className="ml-4">
-            <h3 className="text-lg font-medium text-gray-900">Scraping Controls</h3>
-            <p className="text-sm text-gray-500">Choose your scraping method and configure parameters</p>
+            <h3 className="text-lg font-medium text-gray-900">
+              Scraping Controls
+            </h3>
+            <p className="text-sm text-gray-500">
+              Choose your scraping method and configure parameters
+            </p>
           </div>
         </div>
         <div className="p-6 space-y-6">
           {/* Mode Toggle */}
           <div className="flex space-x-4">
             <Button
-              onClick={() => setMode('bulk')}
-              intent={mode === 'bulk' ? 'primary' : 'secondary'}
-              appearance={mode === 'bulk' ? 'solid' : 'outline'}
+              onClick={() => setMode("bulk")}
+              intent={mode === "bulk" ? "primary" : "secondary"}
+              appearance={mode === "bulk" ? "solid" : "outline"}
             >
               Bulk Generation
             </Button>
             <Button
-              onClick={() => setMode('custom')}
-              intent={mode === 'custom' ? 'primary' : 'secondary'}
-              appearance={mode === 'custom' ? 'solid' : 'outline'}
+              onClick={() => setMode("custom")}
+              intent={mode === "custom" ? "primary" : "secondary"}
+              appearance={mode === "custom" ? "solid" : "outline"}
             >
               Custom URLs
             </Button>
           </div>
 
           {/* Bulk Generation Mode */}
-          {mode === 'bulk' && (
+          {mode === "bulk" && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Select
                   label="Grade"
                   options={gradeOptions}
                   value={bulkParams.grade.toString()}
-                  onChange={(value) => setBulkParams(prev => ({ ...prev, grade: parseInt(value) }))}
+                  onChange={(value) =>
+                    setBulkParams((prev) => ({
+                      ...prev,
+                      grade: parseInt(value),
+                    }))
+                  }
                 />
-                
+
                 <Select
                   label="Start Unit"
                   options={unitOptions}
                   value={bulkParams.startUnit.toString()}
-                  onChange={(value) => setBulkParams(prev => ({ ...prev, startUnit: parseInt(value) }))}
+                  onChange={(value) =>
+                    setBulkParams((prev) => ({
+                      ...prev,
+                      startUnit: parseInt(value),
+                    }))
+                  }
                 />
-                
+
                 <Select
                   label="End Unit"
                   options={unitOptions}
                   value={bulkParams.endUnit.toString()}
-                  onChange={(value) => setBulkParams(prev => ({ ...prev, endUnit: parseInt(value) }))}
+                  onChange={(value) =>
+                    setBulkParams((prev) => ({
+                      ...prev,
+                      endUnit: parseInt(value),
+                    }))
+                  }
                 />
               </div>
 
@@ -165,14 +188,17 @@ export function ScrapingControls({
                   value={Object.keys(bulkParams.sectionLessons || {})}
                   onChange={(value) => {
                     const newSectionLessons: Record<string, number[]> = {};
-                    (value as string[]).forEach(section => {
+                    (value as string[]).forEach((section) => {
                       newSectionLessons[section] = [1, 2, 3]; // Default lessons
                     });
-                    setBulkParams(prev => ({ ...prev, sectionLessons: newSectionLessons }));
+                    setBulkParams((prev) => ({
+                      ...prev,
+                      sectionLessons: newSectionLessons,
+                    }));
                   }}
                   multiple
                 />
-                
+
                 <Input
                   label="Default Lessons per Section"
                   type="number"
@@ -191,10 +217,13 @@ export function ScrapingControls({
                   disabled={isGenerating}
                   intent="secondary"
                 >
-                  Preview URLs ({Math.max(0, (bulkParams.endUnit - bulkParams.startUnit + 1)) * 
-                    Object.keys(bulkParams.sectionLessons || {}).length * 3})
+                  Preview URLs (
+                  {Math.max(0, bulkParams.endUnit - bulkParams.startUnit + 1) *
+                    Object.keys(bulkParams.sectionLessons || {}).length *
+                    3}
+                  )
                 </Button>
-                
+
                 <Button
                   onClick={handleBulkScrape}
                   loading={isLoading}
@@ -208,15 +237,23 @@ export function ScrapingControls({
               {generatedUrls.length > 0 && (
                 <div className="mt-4">
                   <div className="flex justify-between items-center mb-2">
-                    <h4 className="text-sm font-medium">Generated URLs ({generatedUrls.length})</h4>
-                    <Button onClick={clearUrls} intent="secondary" appearance="outline" padding="sm">
+                    <h4 className="text-sm font-medium">
+                      Generated URLs ({generatedUrls.length})
+                    </h4>
+                    <Button
+                      onClick={clearUrls}
+                      intent="secondary"
+                      appearance="outline"
+                      padding="sm"
+                    >
                       Clear
                     </Button>
                   </div>
                   <div className="max-h-40 overflow-y-auto bg-gray-50 rounded p-3">
                     <pre className="text-xs text-gray-600">
-                      {generatedUrls.slice(0, 10).join('\n')}
-                      {generatedUrls.length > 10 && `\n... and ${generatedUrls.length - 10} more`}
+                      {generatedUrls.slice(0, 10).join("\n")}
+                      {generatedUrls.length > 10 &&
+                        `\n... and ${generatedUrls.length - 10} more`}
                     </pre>
                   </div>
                 </div>
@@ -225,7 +262,7 @@ export function ScrapingControls({
           )}
 
           {/* Custom URLs Mode */}
-          {mode === 'custom' && (
+          {mode === "custom" && (
             <div className="space-y-4">
               <Textarea
                 label="Custom URLs (one per line)"
@@ -236,7 +273,7 @@ https://accessim.org/6-8/grade-6/unit-1/section-a/lesson-2?a=teacher
 ..."
                 rows={8}
               />
-              
+
               <Button
                 onClick={handleCustomUrlsScrape}
                 loading={isLoading}
@@ -244,7 +281,9 @@ https://accessim.org/6-8/grade-6/unit-1/section-a/lesson-2?a=teacher
                 intent="primary"
                 fullWidth
               >
-                Start Custom Scraping ({customUrls.split('\n').filter(url => url.trim()).length} URLs)
+                Start Custom Scraping (
+                {customUrls.split("\n").filter((url) => url.trim()).length}{" "}
+                URLs)
               </Button>
             </div>
           )}
@@ -272,8 +311,12 @@ https://accessim.org/6-8/grade-6/unit-1/section-a/lesson-2?a=teacher
             T
           </div>
           <div className="ml-4">
-            <h3 className="text-lg font-medium text-gray-900">Test Single URL</h3>
-            <p className="text-sm text-gray-500">Test scraping on a single URL before running bulk operations</p>
+            <h3 className="text-lg font-medium text-gray-900">
+              Test Single URL
+            </h3>
+            <p className="text-sm text-gray-500">
+              Test scraping on a single URL before running bulk operations
+            </p>
           </div>
         </div>
         <div className="p-6 space-y-4">
@@ -283,7 +326,7 @@ https://accessim.org/6-8/grade-6/unit-1/section-a/lesson-2?a=teacher
             onChange={(e) => setTestUrl(e.target.value)}
             placeholder="https://accessim.org/6-8/grade-6/unit-1/section-a/lesson-1?a=teacher"
           />
-          
+
           <Button
             onClick={handleTestSingleUrl}
             loading={isTesting}
@@ -298,13 +341,16 @@ https://accessim.org/6-8/grade-6/unit-1/section-a/lesson-2?a=teacher
             <div className="mt-4">
               <Alert intent={testResult.lesson?.success ? "success" : "error"}>
                 <Alert.Title>
-                  {testResult.lesson?.success ? "Test Successful" : "Test Failed"}
+                  {testResult.lesson?.success
+                    ? "Test Successful"
+                    : "Test Failed"}
                 </Alert.Title>
                 <Alert.Description>
                   {testResult.lesson?.success ? (
                     <>
                       Content found: {testResult.hasContent ? "Yes" : "No"}
-                      {testResult.contentSections && ` (${testResult.contentSections} sections)`}
+                      {testResult.contentSections &&
+                        ` (${testResult.contentSections} sections)`}
                     </>
                   ) : (
                     testResult.lesson?.error || "Unknown error"
@@ -321,7 +367,8 @@ https://accessim.org/6-8/grade-6/unit-1/section-a/lesson-2?a=teacher
         <Alert intent="warning">
           <Alert.Title>Authentication Required</Alert.Title>
           <Alert.Description>
-            Please validate your credentials before starting any scraping operations.
+            Please validate your credentials before starting any scraping
+            operations.
           </Alert.Description>
         </Alert>
       )}

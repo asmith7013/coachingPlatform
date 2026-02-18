@@ -1,12 +1,12 @@
 "use client";
 
-import React from 'react';
-import { useIMScraper } from '../hooks/useIMScraper';
-import { useDashboardState } from '../hooks/useDashboardState';
-import { DashboardHeader } from './DashboardHeader';
-import { SetupPanel } from './SetupPanel';
-import { ResultsSection } from './ResultsSection';
-import { InstructionsPanel } from './InstructionsPanel';
+import React from "react";
+import { useIMScraper } from "../hooks/useIMScraper";
+import { useDashboardState } from "../hooks/useDashboardState";
+import { DashboardHeader } from "./DashboardHeader";
+import { SetupPanel } from "./SetupPanel";
+import { ResultsSection } from "./ResultsSection";
+import { InstructionsPanel } from "./InstructionsPanel";
 
 export function IMScraperDashboard() {
   const {
@@ -20,7 +20,7 @@ export function IMScraperDashboard() {
     testUrl,
     clearResults,
     clearError,
-    reset
+    reset,
   } = useIMScraper();
 
   const {
@@ -32,16 +32,26 @@ export function IMScraperDashboard() {
     setUrlParams,
     urls,
     handleGenerateUrls,
-    handleReset
+    handleReset,
   } = useDashboardState({ clearError, reset });
 
   const handleStartScraping = async () => {
-    await scrapeCustomUrls(credentials, urls, urlParams.delayBetweenRequests, enableClaudeExport);
+    await scrapeCustomUrls(
+      credentials,
+      urls,
+      urlParams.delayBetweenRequests,
+      enableClaudeExport,
+    );
   };
 
   const handleDebugScrape = async () => {
-    console.log('🚀 Starting debug scraping session...');
-    await scrapeCustomUrlsDebug(credentials, urls.slice(0, 2), urlParams.delayBetweenRequests, enableClaudeExport);
+    console.log("🚀 Starting debug scraping session...");
+    await scrapeCustomUrlsDebug(
+      credentials,
+      urls.slice(0, 2),
+      urlParams.delayBetweenRequests,
+      enableClaudeExport,
+    );
   };
 
   const handleTestUrl = async (url: string) => {

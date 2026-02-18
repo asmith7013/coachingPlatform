@@ -9,21 +9,27 @@ This project uses two different toast notification systems. This guide explains 
 **Location:** `@/components/core/feedback/Toast`
 
 **When to use:**
+
 - When you need **multiple simultaneous toasts** displayed at once
 - When you need to show **progressive updates** or **multi-step processes**
 - When you want **precise control** over when toasts appear and disappear
 - When building **status dashboards** or **progress tracking UIs**
 
 **Example use cases:**
+
 - Multi-step import processes (fetch → process → complete)
 - Bulk operations with parallel progress tracking
 - Real-time status updates that need to persist
 - Complex workflows where multiple statuses need to be visible simultaneously
 
 **Usage:**
+
 ```tsx
 import { useToast } from "@/components/core/feedback/Toast";
-import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/solid";
 
 function MyComponent() {
   // Create separate toast instances for each concurrent notification
@@ -76,6 +82,7 @@ function MyComponent() {
 ```
 
 **Advantages:**
+
 - Multiple toasts can be displayed simultaneously
 - Full control over lifecycle (show/hide timing)
 - Consistent with the existing design system
@@ -83,6 +90,7 @@ function MyComponent() {
 - Visual progress indication with separate toasts
 
 **Limitations:**
+
 - Requires manual state management for each toast
 - Must explicitly call `showToast()` and `hideToast()`
 - Need to render `<ToastComponent />` for each instance
@@ -95,18 +103,21 @@ function MyComponent() {
 **Location:** `sonner` package
 
 **When to use:**
+
 - For **simple, single notifications** (success/error/info messages)
 - When you need **loading states** with automatic transitions
 - For **quick feedback** that doesn't require multiple concurrent toasts
 - When you want **minimal boilerplate** code
 
 **Example use cases:**
+
 - Form submission success/error messages
 - Simple validation errors
 - Quick user feedback ("Saved!", "Deleted", etc.)
 - Single-step operations with loading → success/error flow
 
 **Usage:**
+
 ```tsx
 import { toast } from "sonner";
 
@@ -137,6 +148,7 @@ function MyComponent() {
 ```
 
 **Advantages:**
+
 - Very simple API - just call `toast.success()`, `toast.error()`, etc.
 - No need to render toast components
 - Can update existing toasts by ID
@@ -144,6 +156,7 @@ function MyComponent() {
 - Built-in loading → success/error transitions
 
 **Limitations:**
+
 - Only one toast of each type visible at a time (by default)
 - Less control over positioning and styling
 - May not match your design system perfectly
@@ -153,25 +166,27 @@ function MyComponent() {
 
 ## Decision Matrix
 
-| Scenario | Use Atomic Toast | Use Sonner |
-|----------|-----------------|------------|
-| Multi-step process with visible progress | ✅ | ❌ |
-| Simple success/error message | ⚠️ (works but overkill) | ✅ |
-| Multiple simultaneous status updates | ✅ | ❌ |
-| Form validation feedback | ❌ | ✅ |
-| Bulk operations with parallel tracking | ✅ | ❌ |
-| Quick "Saved!" confirmation | ❌ | ✅ |
-| Import/sync workflows (fetch → process → done) | ✅ | ⚠️ (possible but less clear) |
-| Loading state that transitions to success/error | ⚠️ (requires manual timing) | ✅ |
+| Scenario                                        | Use Atomic Toast            | Use Sonner                   |
+| ----------------------------------------------- | --------------------------- | ---------------------------- |
+| Multi-step process with visible progress        | ✅                          | ❌                           |
+| Simple success/error message                    | ⚠️ (works but overkill)     | ✅                           |
+| Multiple simultaneous status updates            | ✅                          | ❌                           |
+| Form validation feedback                        | ❌                          | ✅                           |
+| Bulk operations with parallel tracking          | ✅                          | ❌                           |
+| Quick "Saved!" confirmation                     | ❌                          | ✅                           |
+| Import/sync workflows (fetch → process → done)  | ✅                          | ⚠️ (possible but less clear) |
+| Loading state that transitions to success/error | ⚠️ (requires manual timing) | ✅                           |
 
 ---
 
 ## Examples from Codebase
 
 ### Atomic Toast Example
+
 See: `/src/app/scm/podsie/import-attendance/page.tsx`
 
 This page uses **three separate toast instances** to show:
+
 1. Fetching data from API
 2. Processing/importing records
 3. Final result with statistics
@@ -183,6 +198,7 @@ const resultToast = useToast();
 ```
 
 ### Sonner Example
+
 For simple pages that just need success/error notifications:
 
 ```tsx

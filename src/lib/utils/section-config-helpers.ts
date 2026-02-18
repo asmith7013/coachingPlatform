@@ -4,7 +4,11 @@
  */
 
 import { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
-import { SectionConfig, ScopeAndSequenceWithAssignmentContent, AssignmentContent } from "@zod-schema/scm/podsie/section-config";
+import {
+  SectionConfig,
+  ScopeAndSequenceWithAssignmentContent,
+  AssignmentContent,
+} from "@zod-schema/scm/podsie/section-config";
 import { fetchScopeAndSequence } from "@actions/scm/scope-and-sequence/scope-and-sequence";
 import { getSectionConfig } from "@actions/scm/podsie/section-config";
 
@@ -13,10 +17,10 @@ import { getSectionConfig } from "@actions/scm/podsie/section-config";
  */
 export function joinLessonWithAssignmentContent(
   lesson: ScopeAndSequence,
-  assignmentContent: AssignmentContent | null | undefined
+  assignmentContent: AssignmentContent | null | undefined,
 ): ScopeAndSequenceWithAssignmentContent {
   return {
-    id: lesson.id || '',
+    id: lesson.id || "",
     unitLessonId: lesson.unitLessonId,
     lessonName: lesson.lessonName,
     grade: lesson.grade,
@@ -24,13 +28,15 @@ export function joinLessonWithAssignmentContent(
     section: lesson.section,
     roadmapSkills: lesson.roadmapSkills,
     targetSkills: lesson.targetSkills,
-    assignmentContent: assignmentContent ? {
-      scopeAndSequenceId: assignmentContent.scopeAndSequenceId,
-      podsieActivities: assignmentContent.podsieActivities || [],
-      zearnActivity: assignmentContent.zearnActivity,
-      active: assignmentContent.active,
-      notes: assignmentContent.notes
-    } : undefined
+    assignmentContent: assignmentContent
+      ? {
+          scopeAndSequenceId: assignmentContent.scopeAndSequenceId,
+          podsieActivities: assignmentContent.podsieActivities || [],
+          zearnActivity: assignmentContent.zearnActivity,
+          active: assignmentContent.active,
+          notes: assignmentContent.notes,
+        }
+      : undefined,
   };
 }
 
@@ -42,20 +48,22 @@ export function joinLessonWithAssignmentContent(
  */
 export function joinLessonsWithSectionConfig(
   lessons: ScopeAndSequence[],
-  sectionConfig: SectionConfig | null
+  sectionConfig: SectionConfig | null,
 ): ScopeAndSequenceWithAssignmentContent[] {
   if (!sectionConfig || !sectionConfig.assignmentContent) {
-    return lessons.map(lesson => joinLessonWithAssignmentContent(lesson, null));
+    return lessons.map((lesson) =>
+      joinLessonWithAssignmentContent(lesson, null),
+    );
   }
 
   // Create a map for quick lookup
   const assignmentMap = new Map<string, AssignmentContent>();
-  sectionConfig.assignmentContent.forEach(assignment => {
+  sectionConfig.assignmentContent.forEach((assignment) => {
     assignmentMap.set(assignment.unitLessonId, assignment);
   });
 
   // Join each lesson with its assignment
-  return lessons.map(lesson => {
+  return lessons.map((lesson) => {
     const assignment = assignmentMap.get(lesson.unitLessonId);
     return joinLessonWithAssignmentContent(lesson, assignment);
   });
@@ -74,7 +82,7 @@ export async function fetchLessonsWithSectionConfig(
     grade?: string;
     unitNumber?: number;
     scopeSequenceTag?: string;
-  }
+  },
 ) {
   try {
     // Fetch lessons and section config in parallel
@@ -82,38 +90,42 @@ export async function fetchLessonsWithSectionConfig(
       fetchScopeAndSequence({
         page: 1,
         limit: 1000,
-        sortBy: 'unitNumber',
-        sortOrder: 'asc',
+        sortBy: "unitNumber",
+        sortOrder: "asc",
         filters: filters || {},
-        search: '',
-        searchFields: []
+        search: "",
+        searchFields: [],
       }),
-      getSectionConfig(school, classSection)
+      getSectionConfig(school, classSection),
     ]);
 
     if (!lessonsResult.success) {
       return {
         success: false,
-        error: lessonsResult.error || "Failed to fetch lessons"
+        error: lessonsResult.error || "Failed to fetch lessons",
       };
     }
 
-    const lessons = (lessonsResult.items || []) as unknown as ScopeAndSequence[];
+    const lessons = (lessonsResult.items ||
+      []) as unknown as ScopeAndSequence[];
     const config = configResult.success ? configResult.data : null;
 
     // Join them
-    const joined = joinLessonsWithSectionConfig(lessons, config as SectionConfig | null);
+    const joined = joinLessonsWithSectionConfig(
+      lessons,
+      config as SectionConfig | null,
+    );
 
     return {
       success: true,
       data: joined,
-      sectionConfig: config
+      sectionConfig: config,
     };
   } catch (error) {
-    console.error('💥 Error fetching lessons with section config:', error);
+    console.error("💥 Error fetching lessons with section config:", error);
     return {
       success: false,
-      error: String(error)
+      error: String(error),
     };
   }
 }
@@ -124,13 +136,17 @@ export async function fetchLessonsWithSectionConfig(
  */
 export function getPodsieAssignmentIds(
   unitLessonId: string,
-  sectionConfig: SectionConfig | null
+  sectionConfig: SectionConfig | null,
 ): string[] {
   if (!sectionConfig || !sectionConfig.assignmentContent) return [];
   const assignment = sectionConfig.assignmentContent.find(
-    a => a.unitLessonId === unitLessonId && a.active
+    (a) => a.unitLessonId === unitLessonId && a.active,
   );
-  return assignment?.podsieActivities?.map(activity => activity.podsieAssignmentId) || [];
+  return (
+    assignment?.podsieActivities?.map(
+      (activity) => activity.podsieAssignmentId,
+    ) || []
+  );
 }
 
 /**
@@ -139,13 +155,17 @@ export function getPodsieAssignmentIds(
  */
 export function getPodsieQuestionMaps(
   unitLessonId: string,
-  sectionConfig: SectionConfig | null
+  sectionConfig: SectionConfig | null,
 ): Array<Array<{ questionNumber: number; questionId: string }>> {
   if (!sectionConfig || !sectionConfig.assignmentContent) return [];
   const assignment = sectionConfig.assignmentContent.find(
-    a => a.unitLessonId === unitLessonId && a.active
+    (a) => a.unitLessonId === unitLessonId && a.active,
   );
-  return assignment?.podsieActivities?.map(activity => activity.podsieQuestionMap || []) || [];
+  return (
+    assignment?.podsieActivities?.map(
+      (activity) => activity.podsieQuestionMap || [],
+    ) || []
+  );
 }
 
 /**
@@ -153,11 +173,15 @@ export function getPodsieQuestionMaps(
  */
 export function hasPodsieAssignment(
   unitLessonId: string,
-  sectionConfig: SectionConfig | null
+  sectionConfig: SectionConfig | null,
 ): boolean {
   if (!sectionConfig || !sectionConfig.assignmentContent) return false;
   return sectionConfig.assignmentContent.some(
-    a => a.unitLessonId === unitLessonId && a.active && a.podsieActivities && a.podsieActivities.length > 0
+    (a) =>
+      a.unitLessonId === unitLessonId &&
+      a.active &&
+      a.podsieActivities &&
+      a.podsieActivities.length > 0,
   );
 }
 
@@ -166,10 +190,10 @@ export function hasPodsieAssignment(
  */
 export function getLessonsWithAssignmentContent(
   lessons: ScopeAndSequence[],
-  sectionConfig: SectionConfig | null
+  sectionConfig: SectionConfig | null,
 ): ScopeAndSequenceWithAssignmentContent[] {
   const joined = joinLessonsWithSectionConfig(lessons, sectionConfig);
-  return joined.filter(lesson => lesson.assignmentContent !== undefined);
+  return joined.filter((lesson) => lesson.assignmentContent !== undefined);
 }
 
 /**
@@ -177,10 +201,10 @@ export function getLessonsWithAssignmentContent(
  */
 export function getLessonsWithoutAssignmentContent(
   lessons: ScopeAndSequence[],
-  sectionConfig: SectionConfig | null
+  sectionConfig: SectionConfig | null,
 ): ScopeAndSequenceWithAssignmentContent[] {
   const joined = joinLessonsWithSectionConfig(lessons, sectionConfig);
-  return joined.filter(lesson => lesson.assignmentContent === undefined);
+  return joined.filter((lesson) => lesson.assignmentContent === undefined);
 }
 
 /**
@@ -192,23 +216,29 @@ export function getSectionConfigStats(sectionConfig: SectionConfig | null) {
       totalAssignments: 0,
       activeAssignments: 0,
       totalQuestions: 0,
-      averageQuestionsPerAssignment: 0
+      averageQuestionsPerAssignment: 0,
     };
   }
 
   const assignments = sectionConfig.assignmentContent || [];
-  const activeAssignments = assignments.filter(a => a.active);
+  const activeAssignments = assignments.filter((a) => a.active);
   const totalQuestions = activeAssignments.reduce(
-    (sum, a) => sum + (a.podsieActivities?.reduce((activitySum, activity) => activitySum + (activity.totalQuestions || 0), 0) || 0),
-    0
+    (sum, a) =>
+      sum +
+      (a.podsieActivities?.reduce(
+        (activitySum, activity) => activitySum + (activity.totalQuestions || 0),
+        0,
+      ) || 0),
+    0,
   );
 
   return {
     totalAssignments: assignments.length,
     activeAssignments: activeAssignments.length,
     totalQuestions,
-    averageQuestionsPerAssignment: activeAssignments.length > 0
-      ? Math.round(totalQuestions / activeAssignments.length)
-      : 0
+    averageQuestionsPerAssignment:
+      activeAssignments.length > 0
+        ? Math.round(totalQuestions / activeAssignments.length)
+        : 0,
   };
 }

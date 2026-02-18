@@ -1,8 +1,8 @@
 // src/components/core/feedback/Spinner.tsx
-import React from 'react';
-import { tv } from 'tailwind-variants';
-import { cn } from '@ui/utils/formatters';
-import { borderWidths } from '@/lib/tokens/tokens';
+import React from "react";
+import { tv } from "tailwind-variants";
+import { cn } from "@ui/utils/formatters";
+import { borderWidths } from "@/lib/tokens/tokens";
 
 // Define spinner variants using the token-first approach
 const spinnerVariants = tv({
@@ -35,13 +35,13 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default "md"
    */
   size?: "xs" | "sm" | "md" | "lg" | "xl";
-  
+
   /**
    * The color variant of the spinner
    * @default "default"
    */
   variant?: "default" | "primary" | "success" | "warning" | "error";
-  
+
   /**
    * Optional text to be announced to screen readers
    * @default "Loading"
@@ -51,7 +51,7 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
 
 /**
  * Spinner component for indicating loading state
- * 
+ *
  * @example
  * <Spinner variant="primary" size="md" />
  */
@@ -63,7 +63,7 @@ export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
         <span className="sr-only">{srText}</span>
       </div>
     );
-  }
+  },
 );
 
 Spinner.displayName = "Spinner";

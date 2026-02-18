@@ -1,12 +1,15 @@
 # Phase 1: Collect & Analyze
 
 ## Purpose
+
 Gather all required information from the user, then deeply analyze the **mastery check question** to understand its mathematical structure and define ONE clear strategy.
 
 ## Output Format: PPTX-Compatible HTML
+
 All slides will be **PPTX-compatible HTML** (960×540px, light theme). See `03-generate-slides/02-technical-rules.md` for technical specs.
 
 ## Prerequisites
+
 - User has requested a worked example
 - You have NOT yet seen the problem image
 
@@ -17,6 +20,7 @@ All slides will be **PPTX-compatible HTML** (960×540px, light theme). See `03-g
 **The problem image the user provides is the MASTERY CHECK QUESTION** - the actual question students will answer on their exit ticket or assessment.
 
 **Your job is to create a worked example that:**
+
 1. Teaches the SAME mathematical skill
 2. Uses the SAME strategy and steps
 3. Uses a **DIFFERENT context and numbers** than the mastery check
@@ -24,6 +28,7 @@ All slides will be **PPTX-compatible HTML** (960×540px, light theme). See `03-g
 **Why different context?** Students should learn the strategy from the worked example, then apply it independently to the mastery check. If the worked example uses the same numbers/context, students can just copy the answer without learning the underlying skill.
 
 **ALL THREE SCENARIOS must use different contexts:**
+
 - Scenario 1 (Worked Example): Different context from mastery check
 - Scenario 2 (Practice): Different context from mastery check AND Scenario 1
 - Scenario 3 (Practice): Different context from all above
@@ -53,6 +58,7 @@ Once I have the required items (especially the mastery check image), I'll analyz
 ```
 
 **WAIT** for the user to provide all information. Do NOT proceed until you have:
+
 - [ ] Grade level
 - [ ] Unit number
 - [ ] Lesson number
@@ -111,11 +117,13 @@ If the teacher provided **reference images** or **notes**, incorporate them into
 ### 1.3a: Follow the Backward Planning Protocol
 
 **Read the detailed analysis instructions:**
+
 ```
 Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/analyze-problem.md
 ```
 
 Follow Steps 1-6 in that file exactly. The protocol is:
+
 1. **Deep Exit Ticket Analysis** — solve step-by-step, identify mathematical structure, articulate what correct understanding looks like
 2. **Develop Big Idea** — two drafts: detailed (know/do/understand) → simplified (one sentence + supporting patterns)
 3. **Anticipate Misconceptions** — 2-5 structured misconceptions that DRIVE the step count. Each has: misconception, studentWorkExample, rootCause, addressedInStep
@@ -124,6 +132,7 @@ Follow Steps 1-6 in that file exactly. The protocol is:
 6. **Create Scenarios** — 3 different contexts from the mastery check
 
 **The output schema is defined in:**
+
 ```
 Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/output-schema.md
 ```
@@ -136,6 +145,7 @@ Your output MUST match that JSON schema exactly. Do NOT use the old "Common Mist
 SVG is required for PPTX export compatibility. The only exception is simple HTML tables.
 
 **Visual Type Options:**
+
 - **Text-only**: No graphics needed (rare - only pure text/equation problems)
 - **HTML table**: Simple data tables with highlighting (HTML `<table>`)
 - **SVG visual**: ALL other graphics - this includes:
@@ -152,13 +162,16 @@ SVG is required for PPTX export compatibility. The only exception is simple HTML
 **IF you selected "SVG visual" above, you MUST plan your SVG now.**
 
 **For coordinate plane graphs:**
+
 ```
 Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/graph-planning.md
 ```
+
 Complete ALL steps in that file and include the GRAPH PLAN in your output below.
 
 **For other SVG types (diagrams, shapes, etc.):**
 Plan the visual elements:
+
 - What shapes/elements are needed?
 - What colors will represent each element?
 - What annotations will show the math?
@@ -173,6 +186,7 @@ Plan the visual elements:
 Create a **Diagram Evolution** showing how the visual develops step-by-step across slides. This is what teachers need to visualize before approving generation.
 
 **Reference the canonical patterns:**
+
 ```
 Read: .claude/skills/create-worked-example-sg/reference/diagram-patterns.md
 ```
@@ -180,6 +194,7 @@ Read: .claude/skills/create-worked-example-sg/reference/diagram-patterns.md
 Use the ASCII representations in that file as a guide. Generate ASCII previews that match the structure for your visual type.
 
 **Read the detailed instructions and output schema:**
+
 ```
 Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/analyze-problem.md
 Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/output-schema.md
@@ -188,6 +203,7 @@ Read: .claude/skills/create-worked-example-sg/phases/01-collect-and-analyze/outp
 See the "STEP 8: Generate Diagram Evolution Preview" section in analyze-problem.md for complete instructions and examples.
 
 **The Diagram Evolution MUST include:**
+
 1. **initialState**: ASCII showing the diagram on Problem Setup slide (empty axes, blank tape, etc.)
 2. **keyElements**: Array explaining each element and what it represents mathematically
 3. **steps**: Array with one entry per strategy move (2-5 entries), each containing:
@@ -196,6 +212,7 @@ See the "STEP 8: Generate Diagram Evolution Preview" section in analyze-problem.
    - `changes`: Array of what was added/changed from previous step
 
 **Why this matters:**
+
 - Teachers can see EXACTLY how the visual will build across slides
 - Catches issues like "wrong step order" or "missing annotation" BEFORE slide generation
 - The number of steps MUST match `strategyDefinition.moves.length`
@@ -234,6 +251,7 @@ Where `{slug}` is generated from the strategy name and grade level (e.g., `balan
 ```
 
 **IMPORTANT:**
+
 - Create the directory first: `mkdir -p src/app/presentations/{slug}`
 - This file tracks progress and enables resumption if interrupted
 - The file will be deleted at the end of Phase 4 upon successful completion
@@ -243,6 +261,7 @@ Where `{slug}` is generated from the strategy name and grade level (e.g., `balan
 ## Phase 1 Completion Checklist
 
 Before proceeding, verify you have:
+
 - [ ] All 5 required user inputs collected (grade, unit, lesson, learning goals, mastery check image)
 - [ ] (If provided) Additional context incorporated into analysis
 - [ ] Scope and sequence ID looked up (or noted as undefined)
@@ -267,6 +286,7 @@ Before proceeding, verify you have:
 **When Phase 1 is complete:**
 
 Use the Read tool to read the Phase 2 instructions:
+
 ```
 Read: .claude/skills/create-worked-example-sg/phases/02-confirm-and-plan.md
 ```

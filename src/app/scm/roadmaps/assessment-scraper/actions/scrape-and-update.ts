@@ -1,18 +1,18 @@
 "use server";
 
-import { scrapeAssessmentHistory } from './scrape-assessment-history';
-import { scrapeAssessmentHistoryBatch } from './scrape-assessment-history-batch';
-import { updateStudentData } from './update-student-data';
-import type { AssessmentScraperConfig } from '@/lib/schema/zod-schema/scm/assessment-scraper';
-import { SCRAPER_SECTION_CONFIGS } from '@/lib/schema/enum/scm';
+import { scrapeAssessmentHistory } from "./scrape-assessment-history";
+import { scrapeAssessmentHistoryBatch } from "./scrape-assessment-history-batch";
+import { updateStudentData } from "./update-student-data";
+import type { AssessmentScraperConfig } from "@/lib/schema/zod-schema/scm/assessment-scraper";
+import { SCRAPER_SECTION_CONFIGS } from "@/lib/schema/enum/scm";
 
 /**
  * Get current time in Eastern Time (ET) as ISO string
  * GitHub Actions runs in UTC, so we need to explicitly handle ET
  */
 function getEasternTime(): string {
-  return new Date().toLocaleString('en-US', {
-    timeZone: 'America/New_York'
+  return new Date().toLocaleString("en-US", {
+    timeZone: "America/New_York",
   });
 }
 
@@ -27,45 +27,49 @@ function easternTimeToISO(etString: string): string {
 /**
  * Combined action: Scrape assessment history and update student data
  */
-export async function scrapeAndUpdateAssessmentData(config: AssessmentScraperConfig) {
-  console.log('🚀 Starting scrape and update process...');
+export async function scrapeAndUpdateAssessmentData(
+  config: AssessmentScraperConfig,
+) {
+  console.log("🚀 Starting scrape and update process...");
 
   // Step 1: Scrape assessment history
-  console.log('📥 Step 1: Scraping assessment history...');
+  console.log("📥 Step 1: Scraping assessment history...");
   const scrapeResult = await scrapeAssessmentHistory(config);
 
   if (!scrapeResult.success || !scrapeResult.data) {
-    console.error('❌ Scraping failed:', scrapeResult.error);
+    console.error("❌ Scraping failed:", scrapeResult.error);
     return {
       success: false,
-      error: `Scraping failed: ${scrapeResult.error}`
+      error: `Scraping failed: ${scrapeResult.error}`,
     };
   }
 
-  console.log('✅ Scraping complete');
+  console.log("✅ Scraping complete");
   console.log(`   📊 Total rows: ${scrapeResult.data.totalRows}`);
   console.log(`   👥 Students: ${scrapeResult.data.studentsProcessed}`);
   console.log(`   🎯 Skills: ${scrapeResult.data.skillsProcessed}`);
 
   // Step 2: Update student data in MongoDB
-  console.log('💾 Step 2: Updating student data in MongoDB...');
+  console.log("💾 Step 2: Updating student data in MongoDB...");
   const updateResult = await updateStudentData({
     assessmentData: scrapeResult.data.assessmentData,
     schoolId: config.schoolId,
-    assessmentDate: easternTimeToISO(getEasternTime())
+    assessmentDate: easternTimeToISO(getEasternTime()),
   });
 
   if (!updateResult.success) {
-    console.error('❌ Update failed:', updateResult.error);
+    console.error("❌ Update failed:", updateResult.error);
     return {
       success: false,
       error: `Update failed: ${updateResult.error}`,
-      scrapedData: scrapeResult.data
+      scrapedData: scrapeResult.data,
     };
   }
 
-  console.log('✅ Update complete');
-  console.log(`   📝 Students updated: ${updateResult.data?.studentsUpdated || 0}`);
+  console.log("✅ Update complete");
+  console.log(
+    `   📝 Students updated: ${updateResult.data?.studentsUpdated || 0}`,
+  );
 
   return {
     success: true,
@@ -74,22 +78,25 @@ export async function scrapeAndUpdateAssessmentData(config: AssessmentScraperCon
         totalRows: scrapeResult.data.totalRows,
         studentsProcessed: scrapeResult.data.studentsProcessed,
         skillsProcessed: scrapeResult.data.skillsProcessed,
-        duration: scrapeResult.data.duration
+        duration: scrapeResult.data.duration,
       },
       updateResults: {
         studentsUpdated: updateResult.data?.studentsUpdated || 0,
         totalStudents: updateResult.data?.totalStudents || 0,
-        errors: updateResult.data?.errors || []
-      }
-    }
+        errors: updateResult.data?.errors || [],
+      },
+    },
   };
 }
 
 /**
  * Batch scrape and update all sections
  */
-export async function scrapeAndUpdateAllSections(credentials: { email: string; password: string }) {
-  console.log('🚀 Starting batch scrape and update for all sections...');
+export async function scrapeAndUpdateAllSections(credentials: {
+  email: string;
+  password: string;
+}) {
+  console.log("🚀 Starting batch scrape and update for all sections...");
 
   const startTime = easternTimeToISO(getEasternTime());
 
@@ -104,10 +111,10 @@ export async function scrapeAndUpdateAllSections(credentials: { email: string; p
           classes: filterConfig.classes,
           roadmap: filterConfig.roadmap,
           studentGrade: filterConfig.studentGrade as never,
-          skillGrade: filterConfig.skillGrade as never
+          skillGrade: filterConfig.skillGrade as never,
         },
-        schoolId: 'school-313',
-        delayBetweenActions: 1000
+        schoolId: "school-313",
+        delayBetweenActions: 1000,
       });
     }
   }
@@ -115,23 +122,25 @@ export async function scrapeAndUpdateAllSections(credentials: { email: string; p
   console.log(`📊 Total configurations to scrape: ${configs.length}`);
 
   // Step 1: Batch scrape all configurations
-  console.log('📥 Step 1: Batch scraping all configurations...');
+  console.log("📥 Step 1: Batch scraping all configurations...");
   const scrapeResult = await scrapeAssessmentHistoryBatch(configs);
 
   if (!scrapeResult.success || !scrapeResult.data) {
-    console.error('❌ Batch scraping failed:', scrapeResult.error);
+    console.error("❌ Batch scraping failed:", scrapeResult.error);
     return {
       success: false,
-      error: `Batch scraping failed: ${scrapeResult.error}`
+      error: `Batch scraping failed: ${scrapeResult.error}`,
     };
   }
 
-  console.log('✅ Batch scraping complete');
+  console.log("✅ Batch scraping complete");
   console.log(`   ✅ Successful: ${scrapeResult.data.successfulConfigs}`);
   console.log(`   ❌ Failed: ${scrapeResult.data.failedConfigs}`);
 
   // Step 2: Update student data for each successful scrape
-  console.log('💾 Step 2: Updating student data for all scraped configurations...');
+  console.log(
+    "💾 Step 2: Updating student data for all scraped configurations...",
+  );
 
   const updateResults = [];
   const assessmentDate = easternTimeToISO(getEasternTime());
@@ -144,23 +153,27 @@ export async function scrapeAndUpdateAllSections(credentials: { email: string; p
       continue;
     }
 
-    console.log(`  💾 Updating data for config ${i + 1}/${scrapeResult.data.results.length}...`);
+    console.log(
+      `  💾 Updating data for config ${i + 1}/${scrapeResult.data.results.length}...`,
+    );
 
     const updateResult = await updateStudentData({
       assessmentData: result.assessmentData,
-      schoolId: 'school-313',
-      assessmentDate
+      schoolId: "school-313",
+      assessmentDate,
     });
 
     updateResults.push({
       configIndex: i + 1,
       success: updateResult.success,
       studentsUpdated: updateResult.data?.studentsUpdated || 0,
-      errors: updateResult.data?.errors || []
+      errors: updateResult.data?.errors || [],
     });
 
     if (updateResult.success) {
-      console.log(`  ✅ Config ${i + 1}: ${updateResult.data?.studentsUpdated} students updated`);
+      console.log(
+        `  ✅ Config ${i + 1}: ${updateResult.data?.studentsUpdated} students updated`,
+      );
     } else {
       console.log(`  ❌ Config ${i + 1}: Update failed`);
     }
@@ -169,11 +182,14 @@ export async function scrapeAndUpdateAllSections(credentials: { email: string; p
   const endTime = easternTimeToISO(getEasternTime());
   const totalDuration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
 
-  console.log('✅ Batch scrape and update complete');
+  console.log("✅ Batch scrape and update complete");
   console.log(`   ⏱️ Total duration: ${totalDuration}`);
 
-  const totalStudentsUpdated = updateResults.reduce((sum, r) => sum + r.studentsUpdated, 0);
-  const allErrors = updateResults.flatMap(r => r.errors);
+  const totalStudentsUpdated = updateResults.reduce(
+    (sum, r) => sum + r.studentsUpdated,
+    0,
+  );
+  const allErrors = updateResults.flatMap((r) => r.errors);
 
   return {
     success: true,
@@ -182,14 +198,14 @@ export async function scrapeAndUpdateAllSections(credentials: { email: string; p
         totalConfigs: scrapeResult.data.totalConfigs,
         successfulConfigs: scrapeResult.data.successfulConfigs,
         failedConfigs: scrapeResult.data.failedConfigs,
-        duration: scrapeResult.data.duration
+        duration: scrapeResult.data.duration,
       },
       updateResults: {
         totalStudentsUpdated,
         configsProcessed: updateResults.length,
-        errors: allErrors
+        errors: allErrors,
       },
-      totalDuration
-    }
+      totalDuration,
+    },
   };
 }

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GradeLevels } from '@/lib/schema/enum/shared-enums';
+import { GradeLevels } from "@/lib/schema/enum/shared-enums";
 
 // Create Zod enum from GradeLevels
 const GradeLevelZod = z.enum([
@@ -27,16 +27,16 @@ const GradeLevelZod = z.enum([
 export const AssessmentScraperConfigZod = z.object({
   credentials: z.object({
     email: z.string().email(),
-    password: z.string().min(1)
+    password: z.string().min(1),
   }),
   filters: z.object({
     classes: z.array(z.string()).min(1), // e.g., ["804"]
     roadmap: z.string(), // e.g., "Illustrative Math New York - 8th Grade"
     studentGrade: GradeLevelZod, // e.g., "8th Grade" (with capital G)
-    skillGrade: GradeLevelZod // e.g., "8th Grade" (with capital G)
+    skillGrade: GradeLevelZod, // e.g., "8th Grade" (with capital G)
   }),
   schoolId: z.string(), // School ID for data association
-  delayBetweenActions: z.number().default(1000)
+  delayBetweenActions: z.number().default(1000),
 });
 
 /**
@@ -48,7 +48,7 @@ export const AssessmentRowZod = z.object({
   skillNumber: z.string(),
   attempt: z.number(),
   dateCompleted: z.string(),
-  result: z.string() // percentage like "80%"
+  result: z.string(), // percentage like "80%"
 });
 
 /**
@@ -63,10 +63,14 @@ export const AssessmentScraperResponseZod = z.object({
   errors: z.array(z.string()).default([]),
   startTime: z.string(),
   endTime: z.string(),
-  duration: z.string()
+  duration: z.string(),
 });
 
 // Export types
-export type AssessmentScraperConfig = z.infer<typeof AssessmentScraperConfigZod>;
+export type AssessmentScraperConfig = z.infer<
+  typeof AssessmentScraperConfigZod
+>;
 export type AssessmentRow = z.infer<typeof AssessmentRowZod>;
-export type AssessmentScraperResponse = z.infer<typeof AssessmentScraperResponseZod>;
+export type AssessmentScraperResponse = z.infer<
+  typeof AssessmentScraperResponseZod
+>;

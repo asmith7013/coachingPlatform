@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
 export interface ToggleSwitchProps {
   /** Current checked state */
-  checked: boolean
+  checked: boolean;
   /** Handle state change */
-  onChange: (checked: boolean) => void
+  onChange: (checked: boolean) => void;
   /** Label text displayed next to the switch */
-  label: string
+  label: string;
   /** Optional class name for the container */
-  className?: string
+  className?: string;
   /** Optional accent color (gray, orange) */
-  accentColor?: 'gray' | 'orange'
+  accentColor?: "gray" | "orange";
   /** Optional variant for different visual styles */
-  variant?: 'default' | 'dark'
+  variant?: "default" | "dark";
 }
 
 /**
@@ -32,21 +32,21 @@ export function ToggleSwitch({
   onChange,
   label,
   className,
-  accentColor = 'gray',
-  variant = 'default'
+  accentColor = "gray",
+  variant = "default",
 }: ToggleSwitchProps) {
   // Define color classes based on accent color
   const colorClasses = {
     gray: {
-      checked: 'bg-gray-500',
-      unchecked: 'bg-gray-300',
-      ring: 'focus:ring-gray-500'
+      checked: "bg-gray-500",
+      unchecked: "bg-gray-300",
+      ring: "focus:ring-gray-500",
     },
     orange: {
-      checked: 'bg-orange-500',
-      unchecked: 'bg-gray-300',
-      ring: 'focus:ring-orange-500'
-    }
+      checked: "bg-orange-500",
+      unchecked: "bg-gray-300",
+      ring: "focus:ring-orange-500",
+    },
   };
 
   const colors = colorClasses[accentColor];
@@ -54,19 +54,20 @@ export function ToggleSwitch({
   // Variant styles
   const variantStyles = {
     default: {
-      container: 'bg-white border border-gray-300 rounded-lg px-3 py-2',
-      label: 'text-xs font-medium text-gray-700'
+      container: "bg-white border border-gray-300 rounded-lg px-3 py-2",
+      label: "text-xs font-medium text-gray-700",
     },
     dark: {
-      container: 'bg-gray-700/80 hover:bg-gray-600/90 rounded-full px-4 h-12 flex items-center',
-      label: 'text-xs font-medium text-white'
-    }
+      container:
+        "bg-gray-700/80 hover:bg-gray-600/90 rounded-full px-4 h-12 flex items-center",
+      label: "text-xs font-medium text-white",
+    },
   };
 
   const styles = variantStyles[variant];
 
   return (
-    <div className={`${styles.container} ${className || ''}`}>
+    <div className={`${styles.container} ${className || ""}`}>
       <div className="flex items-center gap-2">
         <button
           type="button"
@@ -79,14 +80,14 @@ export function ToggleSwitch({
         >
           <span
             className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-              checked ? 'translate-x-4' : 'translate-x-0'
+              checked ? "translate-x-4" : "translate-x-0"
             }`}
           />
         </button>
         <span className={styles.label}>{label}</span>
       </div>
     </div>
-  )
+  );
 }
 
-export default ToggleSwitch
+export default ToggleSwitch;

@@ -1,4 +1,4 @@
-import type { HtmlSlide } from '@zod-schema/scm/worked-example';
+import type { HtmlSlide } from "@zod-schema/scm/worked-example";
 
 // SSE event types from the generate-slides API
 export interface SSEStartEvent {

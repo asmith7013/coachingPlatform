@@ -1,15 +1,15 @@
 /**
  * Server-side prefetching utilities for React Query
  */
-import { QueryClient } from '@tanstack/react-query';
-import { dehydrateState } from '@/query/shared-utils/hydration-utils';
-import { 
+import { QueryClient } from "@tanstack/react-query";
+import { dehydrateState } from "@/query/shared-utils/hydration-utils";
+import {
   prefetchEntityData,
-  prefetchQueriesForSSR
-} from '@query/hydration/core';
-import { createQueryClient } from '@query/core/client';
-import { CollectionResponse } from '@core-types/response';
-import { captureError, createErrorContext } from '@error';
+  prefetchQueriesForSSR,
+} from "@query/hydration/core";
+import { createQueryClient } from "@query/core/client";
+import { CollectionResponse } from "@core-types/response";
+import { captureError, createErrorContext } from "@error";
 
 /**
  * Create a query client for server-side operations
@@ -21,10 +21,10 @@ export function createServerQueryClient(): QueryClient {
 
 /**
  * Prefetches data for server rendering and returns the dehydrated state
- * 
+ *
  * @param prefetchFunctions Array of async functions that prefetch data
  * @returns The dehydrated state to pass to client components
- * 
+ *
  * @example
  * async function Page() {
  *   const state = await prefetchData([
@@ -33,7 +33,7 @@ export function createServerQueryClient(): QueryClient {
  *       queryClient.setQueryData(['schools', 'list'], data);
  *     }
  *   ]);
- *   
+ *
  *   return (
  *     <HydrationBoundary state={state}>
  *       <ClientComponent />
@@ -42,20 +42,18 @@ export function createServerQueryClient(): QueryClient {
  * }
  */
 export async function prefetchData(
-  prefetchFunctions: Array<(queryClient: QueryClient) => Promise<void>>
+  prefetchFunctions: Array<(queryClient: QueryClient) => Promise<void>>,
 ): Promise<unknown> {
   const queryClient = createServerQueryClient();
-  
+
   try {
     // Execute all prefetch functions in parallel
-    await Promise.all(
-      prefetchFunctions.map(fn => fn(queryClient))
-    );
-    
+    await Promise.all(prefetchFunctions.map((fn) => fn(queryClient)));
+
     // Return the dehydrated state
     return dehydrateState(queryClient);
   } catch (error) {
-    captureError(error, createErrorContext('ServerPrefetch', 'prefetchData'));
+    captureError(error, createErrorContext("ServerPrefetch", "prefetchData"));
     throw error;
   } finally {
     // Clean up the query client
@@ -65,7 +63,7 @@ export async function prefetchData(
 
 /**
  * Prefetches multiple queries and returns the dehydrated state
- * 
+ *
  * @param queries Array of query definitions
  * @returns The dehydrated state to pass to client components
  */
@@ -73,16 +71,19 @@ export async function prefetchQueries(
   queries: Array<{
     queryKey: unknown[];
     queryFn: () => Promise<unknown>;
-  }>
+  }>,
 ): Promise<unknown> {
   const queryClient = createServerQueryClient();
-  
+
   try {
     // Use the prefetchQueriesForSSR function from hydration
     await prefetchQueriesForSSR(queryClient, queries);
     return dehydrateState(queryClient);
   } catch (error) {
-    captureError(error, createErrorContext('ServerPrefetch', 'prefetchQueries'));
+    captureError(
+      error,
+      createErrorContext("ServerPrefetch", "prefetchQueries"),
+    );
     throw error;
   } finally {
     queryClient.clear();
@@ -91,7 +92,7 @@ export async function prefetchQueries(
 
 /**
  * Prefetches data for a specific entity using the CRUD factory pattern
- * 
+ *
  * @param queryClient The server query client
  * @param entityType The type of entity to prefetch
  * @param fetchFn The server action to fetch data
@@ -101,7 +102,7 @@ export async function prefetchEntityList<T>(
   queryClient: QueryClient,
   entityType: string,
   fetchFn: (params: Record<string, unknown>) => Promise<CollectionResponse<T>>,
-  params: Record<string, unknown> = {}
+  params: Record<string, unknown> = {},
 ): Promise<void> {
   return prefetchEntityData(queryClient, entityType, fetchFn, params);
-} 
+}

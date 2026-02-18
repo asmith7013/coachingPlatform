@@ -29,7 +29,7 @@ export function SubsectionsModal({
 }: SubsectionsModalProps) {
   // Track lessons with their current subsection assignments
   const [lessons, setLessons] = useState<LessonForSubsection[]>(() =>
-    [...initialLessons].sort((a, b) => a.lessonNumber - b.lessonNumber)
+    [...initialLessons].sort((a, b) => a.lessonNumber - b.lessonNumber),
   );
 
   // Track if this is a fresh modal open
@@ -39,13 +39,16 @@ export function SubsectionsModal({
   useEffect(() => {
     if (isOpen && !wasOpenRef.current) {
       // Modal just opened - sync with fresh initial data
-      setLessons([...initialLessons].sort((a, b) => a.lessonNumber - b.lessonNumber));
+      setLessons(
+        [...initialLessons].sort((a, b) => a.lessonNumber - b.lessonNumber),
+      );
     }
     wasOpenRef.current = isOpen;
   }, [isOpen, initialLessons]);
 
   // Track which lesson is being dragged
-  const [draggedLesson, setDraggedLesson] = useState<LessonForSubsection | null>(null);
+  const [draggedLesson, setDraggedLesson] =
+    useState<LessonForSubsection | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<number | null>(null);
 
   // Get lessons for a specific column (subsection)
@@ -53,11 +56,13 @@ export function SubsectionsModal({
     (subsection: number | null) => {
       if (subsection === null) {
         // "Unassigned" column: lessons with undefined or null subsection
-        return lessons.filter((l) => l.subsection === undefined || l.subsection === null);
+        return lessons.filter(
+          (l) => l.subsection === undefined || l.subsection === null,
+        );
       }
       return lessons.filter((l) => l.subsection === subsection);
     },
-    [lessons]
+    [lessons],
   );
 
   // Handle drag start
@@ -96,9 +101,12 @@ export function SubsectionsModal({
     setLessons((prev) =>
       prev.map((l) =>
         l.scopeAndSequenceId === draggedLesson.scopeAndSequenceId
-          ? { ...l, subsection: newSubsection === null ? undefined : newSubsection }
-          : l
-      )
+          ? {
+              ...l,
+              subsection: newSubsection === null ? undefined : newSubsection,
+            }
+          : l,
+      ),
     );
 
     setDraggedLesson(null);
@@ -111,7 +119,9 @@ export function SubsectionsModal({
 
   // Check if there are changes
   const hasChanges = lessons.some((lesson) => {
-    const original = initialLessons.find((l) => l.scopeAndSequenceId === lesson.scopeAndSequenceId);
+    const original = initialLessons.find(
+      (l) => l.scopeAndSequenceId === lesson.scopeAndSequenceId,
+    );
     return original?.subsection !== lesson.subsection;
   });
 
@@ -129,15 +139,26 @@ export function SubsectionsModal({
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 cursor-pointer"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
         {/* Instructions */}
         <div className="px-6 py-3 bg-blue-50 border-b border-blue-100 text-sm text-blue-700">
-          Drag lessons between columns to assign them to subsections. Lessons in &quot;Unassigned&quot; will appear in the main section.
+          Drag lessons between columns to assign them to subsections. Lessons in
+          &quot;Unassigned&quot; will appear in the main section.
         </div>
 
         {/* Columns */}
@@ -176,7 +197,8 @@ export function SubsectionsModal({
                         onDragStart={(e) => handleDragStart(e, lesson)}
                         onDragEnd={handleDragEnd}
                         className={`px-3 py-2 bg-white rounded border shadow-sm cursor-grab active:cursor-grabbing transition-opacity ${
-                          draggedLesson?.scopeAndSequenceId === lesson.scopeAndSequenceId
+                          draggedLesson?.scopeAndSequenceId ===
+                          lesson.scopeAndSequenceId
                             ? "opacity-50"
                             : ""
                         }`}
@@ -184,7 +206,10 @@ export function SubsectionsModal({
                         <div className="font-medium text-sm text-gray-900">
                           L{lesson.lessonNumber}
                         </div>
-                        <div className="text-xs text-gray-500 truncate" title={lesson.lessonName}>
+                        <div
+                          className="text-xs text-gray-500 truncate"
+                          title={lesson.lessonName}
+                        >
                           {lesson.lessonName}
                         </div>
                       </div>

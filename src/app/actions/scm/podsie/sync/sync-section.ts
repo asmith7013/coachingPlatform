@@ -23,17 +23,22 @@ export async function syncSectionRampUpProgress(
   rampUpId: string,
   totalQuestions: number,
   options: SyncOptions = {},
-  school?: string
+  school?: string,
 ): Promise<SyncSectionResult> {
   try {
     // Build question mapping if baseQuestionIds and variations are provided
     // BUT skip if questionIdToNumber is provided (it takes precedence for non-sequential question numbers)
     let questionMapping = options.questionMapping;
-    if (!questionMapping && options.baseQuestionIds && options.variations !== undefined && !options.questionIdToNumber) {
+    if (
+      !questionMapping &&
+      options.baseQuestionIds &&
+      options.variations !== undefined &&
+      !options.questionIdToNumber
+    ) {
       questionMapping = buildQuestionMapping(
         options.baseQuestionIds,
         options.variations,
-        options.q1HasVariations ?? false
+        options.q1HasVariations ?? false,
       );
     }
 
@@ -54,8 +59,14 @@ export async function syncSectionRampUpProgress(
         query._id = options.testStudentId;
       }
 
-      const docs = await StudentModel.find(query)
-        .lean<Array<{ _id: unknown; firstName: string; lastName: string; email?: string }>>();
+      const docs = await StudentModel.find(query).lean<
+        Array<{
+          _id: unknown;
+          firstName: string;
+          lastName: string;
+          email?: string;
+        }>
+      >();
 
       return docs.map((doc) => ({
         _id: String(doc._id),
@@ -66,9 +77,10 @@ export async function syncSectionRampUpProgress(
     });
 
     // In test mode, only use first student with email
-    const students = options.testMode && !options.testStudentId
-      ? allStudents.filter(s => s.email).slice(0, 1)
-      : allStudents;
+    const students =
+      options.testMode && !options.testStudentId
+        ? allStudents.filter((s) => s.email).slice(0, 1)
+        : allStudents;
 
     if (students.length === 0) {
       return {
@@ -109,7 +121,7 @@ export async function syncSectionRampUpProgress(
         questionMapping,
         options.baseQuestionIds,
         options.activityType,
-        options.questionIdToNumber
+        options.questionIdToNumber,
       );
 
       results.push(result);

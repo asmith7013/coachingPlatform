@@ -1,14 +1,20 @@
 import { Note } from "@zod-schema/shared/notes";
-import { formatShortDate, toDateString } from '@/lib/data-processing/transformers/utils/date-utils';
+import {
+  formatShortDate,
+  toDateString,
+} from "@/lib/data-processing/transformers/utils/date-utils";
 
 /**
  * Gets a display string for a note
  */
 export function getNoteDisplayString(note: Note): string {
-  const dateStr = typeof note.date === 'string' 
-    ? formatShortDate(note.date)
-    : note.date ? formatShortDate(toDateString(note.date)) : '';
-  
+  const dateStr =
+    typeof note.date === "string"
+      ? formatShortDate(note.date)
+      : note.date
+        ? formatShortDate(toDateString(note.date))
+        : "";
+
   return `${dateStr} - ${note.type}`;
 }
 
@@ -16,14 +22,14 @@ export function getNoteDisplayString(note: Note): string {
  * Formats subheadings as a comma-separated string with optional truncation
  */
 export function formatSubheadings(note: Note, maxLength: number = 100): string {
-  if (!note.subheading?.length) return '';
-  
-  const combined = note.subheading.join(', ');
+  if (!note.subheading?.length) return "";
+
+  const combined = note.subheading.join(", ");
   if (combined.length <= maxLength) {
     return combined;
   }
-  
-  return combined.slice(0, maxLength) + '...';
+
+  return combined.slice(0, maxLength) + "...";
 }
 
 /**
@@ -31,11 +37,11 @@ export function formatSubheadings(note: Note, maxLength: number = 100): string {
  */
 export function getNoteTypeColorClass(note: Note): string {
   const type = note.type.toLowerCase();
-  
-  if (type.includes('reflection')) return 'bg-blue-100 text-blue-800';
-  if (type.includes('observation')) return 'bg-green-100 text-green-800';
-  if (type.includes('debrief')) return 'bg-purple-100 text-purple-800';
-  if (type.includes('action')) return 'bg-amber-100 text-amber-800';
-  
-  return 'bg-gray-100 text-gray-800';
+
+  if (type.includes("reflection")) return "bg-blue-100 text-blue-800";
+  if (type.includes("observation")) return "bg-green-100 text-green-800";
+  if (type.includes("debrief")) return "bg-purple-100 text-purple-800";
+  if (type.includes("action")) return "bg-amber-100 text-amber-800";
+
+  return "bg-gray-100 text-gray-800";
 }

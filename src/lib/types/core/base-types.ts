@@ -3,7 +3,7 @@
  * These types have minimal dependencies and serve as building blocks
  */
 
-import type { Types } from 'mongoose';
+import type { Types } from "mongoose";
 
 /**
  * Base identity interface for all document-like types
@@ -26,7 +26,7 @@ export interface PaginationBase {
  */
 export interface QueryBase extends PaginationBase {
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 /**
@@ -53,4 +53,4 @@ export interface ErrorContextBase {
 export interface DocumentBase extends Identifiable {
   createdAt?: Date | string;
   updatedAt?: Date | string;
-} 
+}

@@ -76,8 +76,7 @@ export async function GET(req: NextRequest) {
             for (const activity of assignment.podsieActivities) {
               if (activity.podsieAssignmentId) {
                 assignmentDetailsMap.set(activity.podsieAssignmentId, {
-                  assignmentName:
-                    activity.podsieAssignmentName || lessonName,
+                  assignmentName: activity.podsieAssignmentName || lessonName,
                   lessonType,
                 });
               }
@@ -131,7 +130,7 @@ export async function GET(req: NextRequest) {
             const lastQuestion = progress.questions
               .filter((q) => q.completedAt)
               .sort((a, b) =>
-                (b.completedAt || "").localeCompare(a.completedAt || "")
+                (b.completedAt || "").localeCompare(a.completedAt || ""),
               )[0];
             if (lastQuestion?.completedAt) {
               completedDate = lastQuestion.completedAt;
@@ -153,12 +152,14 @@ export async function GET(req: NextRequest) {
 
           // Look up assignment details
           const assignmentDetails = assignmentDetailsMap.get(
-            progress.podsieAssignmentId || ""
+            progress.podsieAssignmentId || "",
           );
 
           completions.push({
             studentId: student.studentID,
-            studentName: `${student.firstName || ""} ${student.lastName || ""}`.trim() || "(unknown)",
+            studentName:
+              `${student.firstName || ""} ${student.lastName || ""}`.trim() ||
+              "(unknown)",
             section: student.section,
             assignmentName:
               assignmentDetails?.assignmentName ||
@@ -172,7 +173,7 @@ export async function GET(req: NextRequest) {
 
       // Sort by most recent first
       completions.sort((a, b) =>
-        b.completedDate.localeCompare(a.completedDate)
+        b.completedDate.localeCompare(a.completedDate),
       );
 
       return completions;
@@ -186,7 +187,7 @@ export async function GET(req: NextRequest) {
     console.error("Error in podsie history GET:", error);
     return NextResponse.json(
       { success: false, error: handleServerError(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

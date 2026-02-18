@@ -58,7 +58,12 @@ export function StandardAccordion({
   // Get standard description - dynamic from lessons first, then fall back to hardcoded
   const normalizedStd = normalizeStandard(standard);
   const parentStd = stripLetterSuffix(normalizedStd);
-  const description = standardDescriptions[normalizedStd] || standardDescriptions[parentStd] || STANDARD_DESCRIPTIONS[normalizedStd] || STANDARD_DESCRIPTIONS[standard] || STANDARD_DESCRIPTIONS[parentStd];
+  const description =
+    standardDescriptions[normalizedStd] ||
+    standardDescriptions[parentStd] ||
+    STANDARD_DESCRIPTIONS[normalizedStd] ||
+    STANDARD_DESCRIPTIONS[standard] ||
+    STANDARD_DESCRIPTIONS[parentStd];
 
   const containerClasses = contained
     ? "bg-white" // No border, shadow, or rounded corners when contained
@@ -69,22 +74,27 @@ export function StandardAccordion({
       {/* Accordion Header - Domain colored background */}
       <button
         type="button"
-        onClick={() => onToggle ? onToggle(standard) : setInternalOpen(!internalOpen)}
+        onClick={() =>
+          onToggle ? onToggle(standard) : setInternalOpen(!internalOpen)
+        }
         className={`w-full flex items-center justify-between px-4 py-3 text-left bg-white hover:bg-gray-50 cursor-pointer transition-colors`}
       >
         <div className="flex items-center gap-3 flex-1 mr-10">
-          <span className={`inline-flex items-center justify-center w-20 py-1.5 rounded text-base font-semibold ${colors.badge} text-white flex-shrink-0`}>
+          <span
+            className={`inline-flex items-center justify-center w-20 py-1.5 rounded text-base font-semibold ${colors.badge} text-white flex-shrink-0`}
+          >
             {standard}
           </span>
           {description && (
-            <span className={`text-sm ${colors.text}`}>
-              {description}
-            </span>
+            <span className={`text-sm ${colors.text}`}>{description}</span>
           )}
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
-          <span className={`text-sm font-medium ${colors.text} whitespace-nowrap`}>
-            {questions.length} {questions.length === 1 ? "question" : "questions"}
+          <span
+            className={`text-sm font-medium ${colors.text} whitespace-nowrap`}
+          >
+            {questions.length}{" "}
+            {questions.length === 1 ? "question" : "questions"}
           </span>
           <svg
             className={`w-5 h-5 ${colors.text} transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -92,7 +102,12 @@ export function StandardAccordion({
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </div>
       </button>
@@ -105,9 +120,13 @@ export function StandardAccordion({
               <QuestionCard
                 key={`${standard}-${question.questionId}`}
                 question={question}
-                isSecondaryOnlyMatch={isSecondaryMatch.get(question.questionId) || false}
+                isSecondaryOnlyMatch={
+                  isSecondaryMatch.get(question.questionId) || false
+                }
                 hideStandardBadge={true}
-                isSelected={selectedQuestions?.has(question.questionId) || false}
+                isSelected={
+                  selectedQuestions?.has(question.questionId) || false
+                }
                 onSelectionChange={onQuestionSelectionChange}
                 showCheckbox={showCheckboxes}
               />

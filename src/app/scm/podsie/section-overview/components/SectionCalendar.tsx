@@ -63,11 +63,31 @@ export function SectionCalendar({
   const meetingDays = useMemo(() => {
     if (!config.bellSchedule) return new Set<number>();
     const days = new Set<number>();
-    if (config.bellSchedule.monday && config.bellSchedule.monday.meetingCount > 0) days.add(1);
-    if (config.bellSchedule.tuesday && config.bellSchedule.tuesday.meetingCount > 0) days.add(2);
-    if (config.bellSchedule.wednesday && config.bellSchedule.wednesday.meetingCount > 0) days.add(3);
-    if (config.bellSchedule.thursday && config.bellSchedule.thursday.meetingCount > 0) days.add(4);
-    if (config.bellSchedule.friday && config.bellSchedule.friday.meetingCount > 0) days.add(5);
+    if (
+      config.bellSchedule.monday &&
+      config.bellSchedule.monday.meetingCount > 0
+    )
+      days.add(1);
+    if (
+      config.bellSchedule.tuesday &&
+      config.bellSchedule.tuesday.meetingCount > 0
+    )
+      days.add(2);
+    if (
+      config.bellSchedule.wednesday &&
+      config.bellSchedule.wednesday.meetingCount > 0
+    )
+      days.add(3);
+    if (
+      config.bellSchedule.thursday &&
+      config.bellSchedule.thursday.meetingCount > 0
+    )
+      days.add(4);
+    if (
+      config.bellSchedule.friday &&
+      config.bellSchedule.friday.meetingCount > 0
+    )
+      days.add(5);
     return days;
   }, [config.bellSchedule]);
 
@@ -80,7 +100,8 @@ export function SectionCalendar({
 
     const days: (Date | null)[] = [];
     for (let i = 0; i < startPadding; i++) days.push(null);
-    for (let d = 1; d <= totalDays; d++) days.push(new Date(currentYear, currentMonth, d));
+    for (let d = 1; d <= totalDays; d++)
+      days.push(new Date(currentYear, currentMonth, d));
 
     return days;
   }, [currentMonth, currentYear]);
@@ -115,7 +136,10 @@ export function SectionCalendar({
           {config.bellSchedule && (
             <>
               {" • "}
-              {BellScheduleHelpers.getTotalWeeklyMeetings(config.bellSchedule)} meetings/week
+              {BellScheduleHelpers.getTotalWeeklyMeetings(
+                config.bellSchedule,
+              )}{" "}
+              meetings/week
             </>
           )}
         </Text>
@@ -137,7 +161,10 @@ export function SectionCalendar({
           <div className="grid grid-cols-7 gap-1">
             {/* Day headers */}
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-              <div key={day} className="text-center text-xs font-semibold text-gray-600 py-2">
+              <div
+                key={day}
+                className="text-center text-xs font-semibold text-gray-600 py-2"
+              >
                 {day}
               </div>
             ))}
@@ -180,7 +207,10 @@ export function SectionCalendar({
 
                   {/* Event info */}
                   {event && (
-                    <div className="text-[10px] text-red-600 font-medium mb-1 truncate" title={event.name}>
+                    <div
+                      className="text-[10px] text-red-600 font-medium mb-1 truncate"
+                      title={event.name}
+                    >
                       {event.name}
                     </div>
                   )}
@@ -190,34 +220,44 @@ export function SectionCalendar({
                     <div className="space-y-0.5 text-[10px]">
                       <div className="flex justify-between items-center">
                         <span className="text-gray-600">Present:</span>
-                        <span className="font-semibold text-green-600">{attendance.present}</span>
+                        <span className="font-semibold text-green-600">
+                          {attendance.present}
+                        </span>
                       </div>
                       {attendance.late > 0 && (
                         <div className="flex justify-between items-center">
                           <span className="text-gray-600">Late:</span>
-                          <span className="font-semibold text-yellow-600">{attendance.late}</span>
+                          <span className="font-semibold text-yellow-600">
+                            {attendance.late}
+                          </span>
                         </div>
                       )}
                       {attendance.absent > 0 && (
                         <div className="flex justify-between items-center">
                           <span className="text-gray-600">Absent:</span>
-                          <span className="font-semibold text-red-600">{attendance.absent}</span>
+                          <span className="font-semibold text-red-600">
+                            {attendance.absent}
+                          </span>
                         </div>
                       )}
                     </div>
                   )}
 
                   {/* Velocity stats */}
-                  {velocity && !weekend && !dayOff && classDay && velocity.studentsPresent > 0 && (
-                    <div className="mt-auto pt-1 border-t border-gray-200">
-                      <div className="text-[10px] flex justify-between items-center">
-                        <span className="text-gray-600">Velocity:</span>
-                        <span className="font-bold text-blue-600">
-                          {velocity.averageVelocity.toFixed(1)}
-                        </span>
+                  {velocity &&
+                    !weekend &&
+                    !dayOff &&
+                    classDay &&
+                    velocity.studentsPresent > 0 && (
+                      <div className="mt-auto pt-1 border-t border-gray-200">
+                        <div className="text-[10px] flex justify-between items-center">
+                          <span className="text-gray-600">Velocity:</span>
+                          <span className="font-bold text-blue-600">
+                            {velocity.averageVelocity.toFixed(1)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               );
             })}

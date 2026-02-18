@@ -1,15 +1,18 @@
 "use server";
 
-import { withDbConnection } from '@server/db/ensure-connection';
-import { WorkedExampleDeck } from '@mongoose-schema/worked-example-deck.model';
-import { getAuthenticatedUser } from '@server/auth/getAuthenticatedUser';
-import { handleServerError } from '@error/handlers/server';
+import { withDbConnection } from "@server/db/ensure-connection";
+import { WorkedExampleDeck } from "@mongoose-schema/worked-example-deck.model";
+import { getAuthenticatedUser } from "@server/auth/getAuthenticatedUser";
+import { handleServerError } from "@error/handlers/server";
 
 /**
  * Toggle the deactivated status of a worked example deck.
  * Only the deck owner or super admins can deactivate/reactivate decks.
  */
-export async function toggleDeckDeactivated(slug: string, deactivated: boolean) {
+export async function toggleDeckDeactivated(
+  slug: string,
+  deactivated: boolean,
+) {
   return withDbConnection(async () => {
     try {
       const authResult = await getAuthenticatedUser();
@@ -17,7 +20,7 @@ export async function toggleDeckDeactivated(slug: string, deactivated: boolean) 
       if (!authResult.success) {
         return {
           success: false,
-          error: 'You must be logged in to modify decks',
+          error: "You must be logged in to modify decks",
         };
       }
 
@@ -28,7 +31,7 @@ export async function toggleDeckDeactivated(slug: string, deactivated: boolean) 
       if (!deck) {
         return {
           success: false,
-          error: 'Deck not found',
+          error: "Deck not found",
         };
       }
 
@@ -37,7 +40,7 @@ export async function toggleDeckDeactivated(slug: string, deactivated: boolean) 
       if (!isOwner && !isSuperAdmin) {
         return {
           success: false,
-          error: 'You do not have permission to modify this deck',
+          error: "You do not have permission to modify this deck",
         };
       }
 
@@ -55,7 +58,7 @@ export async function toggleDeckDeactivated(slug: string, deactivated: boolean) 
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, 'Failed to update deck status'),
+        error: handleServerError(error, "Failed to update deck status"),
       };
     }
   });

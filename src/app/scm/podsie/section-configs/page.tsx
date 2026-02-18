@@ -1,18 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/solid";
 import { useToast } from "@/components/core/feedback/Toast";
 import type { SchoolsType, AllSectionsType } from "@schema/enum/scm";
 import {
   getSectionConfig,
   upsertSectionConfig,
   addAssignmentContent,
-  getAssignmentContent
+  getAssignmentContent,
 } from "@/app/actions/scm/podsie/section-config";
 import {
   fetchAssignmentsForSection,
-  PodsieAssignmentInfo
+  PodsieAssignmentInfo,
 } from "@/app/actions/scm/podsie/podsie-sync";
 import { fetchScopeAndSequence } from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
 import type { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
@@ -27,13 +30,15 @@ import { Spinner } from "@/components/core/feedback/Spinner";
 interface AssignmentMatch {
   podsieAssignment: PodsieAssignmentInfo;
   matchedLesson: ScopeAndSequence | null;
-  assignmentType: 'sidekick' | 'mastery-check' | 'assessment';
+  assignmentType: "sidekick" | "mastery-check" | "assessment";
   totalQuestions?: number;
 }
 
 export default function SectionConfigsPage() {
   const [selectedSchool, setSelectedSchool] = useState<SchoolsType | "">("");
-  const [selectedSection, setSelectedSection] = useState<AllSectionsType | "">("");
+  const [selectedSection, setSelectedSection] = useState<AllSectionsType | "">(
+    "",
+  );
   const [loading, setLoading] = useState(false);
   const [fetchingPodsie, setFetchingPodsie] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -44,10 +49,14 @@ export default function SectionConfigsPage() {
   const { showToast, ToastComponent } = useToast();
 
   // Data states
-  const [podsieAssignments, setPodsieAssignments] = useState<PodsieAssignmentInfo[]>([]);
+  const [podsieAssignments, setPodsieAssignments] = useState<
+    PodsieAssignmentInfo[]
+  >([]);
   const [lessons, setLessons] = useState<ScopeAndSequence[]>([]);
   const [matches, setMatches] = useState<AssignmentMatch[]>([]);
-  const [existingAssignments, setExistingAssignments] = useState<AssignmentContent[]>([]);
+  const [existingAssignments, setExistingAssignments] = useState<
+    AssignmentContent[]
+  >([]);
 
   // Fetch lessons when school/section changes
   useEffect(() => {
@@ -61,29 +70,33 @@ export default function SectionConfigsPage() {
         setLoading(true);
 
         // Determine grade and scope tag based on section
-        const gradeLevel = selectedSection.startsWith('6') ? '6' :
-                          selectedSection.startsWith('7') ? '7' : '8';
-        const scopeTag = selectedSection === '802' ? 'Algebra 1' : `Grade ${gradeLevel}`;
+        const gradeLevel = selectedSection.startsWith("6")
+          ? "6"
+          : selectedSection.startsWith("7")
+            ? "7"
+            : "8";
+        const scopeTag =
+          selectedSection === "802" ? "Algebra 1" : `Grade ${gradeLevel}`;
 
         const result = await fetchScopeAndSequence({
           page: 1,
           limit: 1000,
-          sortBy: 'unitNumber',
-          sortOrder: 'asc',
+          sortBy: "unitNumber",
+          sortOrder: "asc",
           filters: {
             grade: gradeLevel,
-            scopeSequenceTag: scopeTag
+            scopeSequenceTag: scopeTag,
           },
-          search: '',
-          searchFields: []
+          search: "",
+          searchFields: [],
         });
 
         if (result.success && result.items) {
           setLessons(result.items as ScopeAndSequence[]);
         }
       } catch (err) {
-        console.error('Error loading lessons:', err);
-        setError('Failed to load lessons');
+        console.error("Error loading lessons:", err);
+        setError("Failed to load lessons");
       } finally {
         setLoading(false);
       }
@@ -101,14 +114,17 @@ export default function SectionConfigsPage() {
       }
 
       try {
-        const result = await getAssignmentContent(selectedSchool, selectedSection);
+        const result = await getAssignmentContent(
+          selectedSchool,
+          selectedSection,
+        );
         if (result.success && result.data) {
           setExistingAssignments(result.data);
         } else {
           setExistingAssignments([]);
         }
       } catch (err) {
-        console.error('Error loading section config:', err);
+        console.error("Error loading section config:", err);
       }
     };
 
@@ -118,7 +134,7 @@ export default function SectionConfigsPage() {
   // Fetch Podsie assignments
   const handleFetchPodsieAssignments = async () => {
     if (!selectedSection) {
-      setError('Please select a section first');
+      setError("Please select a section first");
       return;
     }
 
@@ -131,43 +147,54 @@ export default function SectionConfigsPage() {
         setPodsieAssignments(result.assignments);
 
         // Initialize matches
-        const initialMatches: AssignmentMatch[] = result.assignments.map(assignment => ({
-          podsieAssignment: assignment,
-          matchedLesson: null,
-          // Auto-detect based on module_name: if it contains "LESSONS", it's a sidekick; otherwise mastery-check
-          assignmentType: assignment.moduleName?.includes('LESSONS') ? 'sidekick' : 'mastery-check',
-        }));
+        const initialMatches: AssignmentMatch[] = result.assignments.map(
+          (assignment) => ({
+            podsieAssignment: assignment,
+            matchedLesson: null,
+            // Auto-detect based on module_name: if it contains "LESSONS", it's a sidekick; otherwise mastery-check
+            assignmentType: assignment.moduleName?.includes("LESSONS")
+              ? "sidekick"
+              : "mastery-check",
+          }),
+        );
         setMatches(initialMatches);
-        setSuccess(`Fetched ${result.assignments.length} assignments from Podsie`);
+        setSuccess(
+          `Fetched ${result.assignments.length} assignments from Podsie`,
+        );
       } else {
-        setError(result.error || 'Failed to fetch Podsie assignments');
+        setError(result.error || "Failed to fetch Podsie assignments");
       }
     } catch (err) {
-      console.error('Error fetching Podsie assignments:', err);
-      setError('Failed to fetch Podsie assignments');
+      console.error("Error fetching Podsie assignments:", err);
+      setError("Failed to fetch Podsie assignments");
     } finally {
       setFetchingPodsie(false);
     }
   };
 
   // Group lessons by unit
-  const lessonsByUnit = lessons.reduce((acc, lesson) => {
-    const unit = lesson.unit || 'Unknown Unit';
-    if (!acc[unit]) {
-      acc[unit] = [];
-    }
-    acc[unit].push(lesson);
-    return acc;
-  }, {} as Record<string, ScopeAndSequence[]>);
+  const lessonsByUnit = lessons.reduce(
+    (acc, lesson) => {
+      const unit = lesson.unit || "Unknown Unit";
+      if (!acc[unit]) {
+        acc[unit] = [];
+      }
+      acc[unit].push(lesson);
+      return acc;
+    },
+    {} as Record<string, ScopeAndSequence[]>,
+  );
 
   // Filter matches based on toggle
   const filteredMatches = showUnmatchedOnly
-    ? matches.filter(match => {
+    ? matches.filter((match) => {
         // Check if this assignment already exists in the section config
-        const alreadyExists = existingAssignments.some(existing => {
+        const alreadyExists = existingAssignments.some((existing) => {
           // Find the activity with matching podsieAssignmentId
           return existing.podsieActivities?.some(
-            activity => activity.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
+            (activity) =>
+              activity.podsieAssignmentId ===
+              String(match.podsieAssignment.assignmentId),
           );
         });
         return !alreadyExists;
@@ -176,61 +203,63 @@ export default function SectionConfigsPage() {
 
   // Auto-match by name similarity using normalization
   const handleAutoMatch = () => {
-    setMatches(prev => prev.map(match => {
-      // Use the normalization utility to find best match
-      const bestMatchResult = findBestMatch(
-        match.podsieAssignment.assignmentName,
-        lessons,
-        0.6 // Lower threshold to be more permissive
-      );
+    setMatches((prev) =>
+      prev.map((match) => {
+        // Use the normalization utility to find best match
+        const bestMatchResult = findBestMatch(
+          match.podsieAssignment.assignmentName,
+          lessons,
+          0.6, // Lower threshold to be more permissive
+        );
 
-      const matchedLesson = bestMatchResult.match || match.matchedLesson;
+        const matchedLesson = bestMatchResult.match || match.matchedLesson;
 
-      // Auto-detect assignment type based on matched lesson's lessonType
-      let assignmentType = match.assignmentType;
-      if (matchedLesson) {
-        if (matchedLesson.lessonType === 'assessment') {
-          // Unit assessments
-          assignmentType = 'assessment';
-        } else if (match.podsieAssignment.moduleName?.includes('LESSONS')) {
-          // Sidekick activities (warm-up, activities, cool-down)
-          assignmentType = 'sidekick';
-        } else {
-          // Default to mastery-check for other activities
-          assignmentType = 'mastery-check';
+        // Auto-detect assignment type based on matched lesson's lessonType
+        let assignmentType = match.assignmentType;
+        if (matchedLesson) {
+          if (matchedLesson.lessonType === "assessment") {
+            // Unit assessments
+            assignmentType = "assessment";
+          } else if (match.podsieAssignment.moduleName?.includes("LESSONS")) {
+            // Sidekick activities (warm-up, activities, cool-down)
+            assignmentType = "sidekick";
+          } else {
+            // Default to mastery-check for other activities
+            assignmentType = "mastery-check";
+          }
         }
-      }
 
-      return {
-        ...match,
-        matchedLesson,
-        assignmentType
-      };
-    }));
-    setSuccess('Auto-matched assignments by name similarity');
+        return {
+          ...match,
+          matchedLesson,
+          assignmentType,
+        };
+      }),
+    );
+    setSuccess("Auto-matched assignments by name similarity");
   };
 
   // Save individual assignment
   const handleSaveIndividual = async (match: AssignmentMatch) => {
     if (!selectedSchool || !selectedSection) {
-      const errorMsg = 'Please select school and section';
+      const errorMsg = "Please select school and section";
       setError(errorMsg);
       showToast({
-        title: 'Selection Required',
+        title: "Selection Required",
         description: errorMsg,
-        variant: 'error',
+        variant: "error",
         icon: ExclamationTriangleIcon,
       });
       return;
     }
 
     if (!match.matchedLesson) {
-      const errorMsg = 'Please select a lesson first';
+      const errorMsg = "Please select a lesson first";
       setError(errorMsg);
       showToast({
-        title: 'Lesson Required',
+        title: "Lesson Required",
         description: errorMsg,
-        variant: 'error',
+        variant: "error",
         icon: ExclamationTriangleIcon,
       });
       return;
@@ -241,32 +270,48 @@ export default function SectionConfigsPage() {
       setError(null);
 
       // First, ensure section config exists
-      const configResult = await getSectionConfig(selectedSchool, selectedSection);
+      const configResult = await getSectionConfig(
+        selectedSchool,
+        selectedSection,
+      );
 
       if (!configResult.success || !configResult.data) {
         // Create new section config
         const createResult = await upsertSectionConfig({
           school: selectedSchool,
           classSection: selectedSection,
-          gradeLevel: selectedSection.startsWith('6') ? '6' :
-                     selectedSection.startsWith('7') ? '7' : '8',
+          gradeLevel: selectedSection.startsWith("6")
+            ? "6"
+            : selectedSection.startsWith("7")
+              ? "7"
+              : "8",
           assignmentContent: [],
-          active: true
+          active: true,
         });
 
         if (!createResult.success) {
-          setError(createResult.error || 'Failed to create section config');
+          setError(createResult.error || "Failed to create section config");
           return;
         }
       }
 
       // Add assignment content - save first N questions as root questions
-      console.log('🔍 Preparing to save assignment:', match.matchedLesson.lessonName);
-      console.log('  Podsie Assignment ID:', match.podsieAssignment.assignmentId);
-      console.log('  Total question IDs from Podsie:', match.podsieAssignment.questionIds.length);
+      console.log(
+        "🔍 Preparing to save assignment:",
+        match.matchedLesson.lessonName,
+      );
+      console.log(
+        "  Podsie Assignment ID:",
+        match.podsieAssignment.assignmentId,
+      );
+      console.log(
+        "  Total question IDs from Podsie:",
+        match.podsieAssignment.questionIds.length,
+      );
 
       // Determine total questions (use totalQuestions field if set, otherwise use actual count)
-      const totalQuestionsToSave = match.totalQuestions ?? match.podsieAssignment.totalQuestions;
+      const totalQuestionsToSave =
+        match.totalQuestions ?? match.podsieAssignment.totalQuestions;
 
       // Take first N questions as root questions
       const mappedQuestions = match.podsieAssignment.questionIds
@@ -277,10 +322,10 @@ export default function SectionConfigsPage() {
           isRoot: true,
         }));
 
-      console.log('  📊 Saving questions:');
-      console.log('    - Total questions to save:', mappedQuestions.length);
-      console.log('    - All marked as root questions');
-      console.log('  📝 First 5 questions:', mappedQuestions.slice(0, 5));
+      console.log("  📊 Saving questions:");
+      console.log("    - Total questions to save:", mappedQuestions.length);
+      console.log("    - All marked as root questions");
+      console.log("  📝 First 5 questions:", mappedQuestions.slice(0, 5));
 
       const assignmentData: {
         scopeAndSequenceId: string;
@@ -288,9 +333,15 @@ export default function SectionConfigsPage() {
         lessonName: string;
         section?: string;
         grade?: string;
-        activityType: 'sidekick' | 'mastery-check' | 'assessment';
+        activityType: "sidekick" | "mastery-check" | "assessment";
         podsieAssignmentId: string;
-        podsieQuestionMap: Array<{ questionNumber: number; questionId: string; isRoot: boolean; rootQuestionId?: string; variantNumber?: number }>;
+        podsieQuestionMap: Array<{
+          questionNumber: number;
+          questionId: string;
+          isRoot: boolean;
+          rootQuestionId?: string;
+          variantNumber?: number;
+        }>;
         totalQuestions: number;
         hasZearnLesson?: boolean;
         active?: boolean;
@@ -302,76 +353,108 @@ export default function SectionConfigsPage() {
         podsieAssignmentId: String(match.podsieAssignment.assignmentId),
         // Use variant mapping to save ALL questions with proper root/variant info
         podsieQuestionMap: mappedQuestions,
-        totalQuestions: match.totalQuestions ?? match.podsieAssignment.totalQuestions,
+        totalQuestions:
+          match.totalQuestions ?? match.podsieAssignment.totalQuestions,
         hasZearnLesson: false,
-        active: true
+        active: true,
       };
 
-      if (match.matchedLesson.section) assignmentData.section = match.matchedLesson.section;
-      if (match.matchedLesson.grade) assignmentData.grade = match.matchedLesson.grade;
+      if (match.matchedLesson.section)
+        assignmentData.section = match.matchedLesson.section;
+      if (match.matchedLesson.grade)
+        assignmentData.grade = match.matchedLesson.grade;
 
-      console.log('💾 Calling addAssignmentContent...');
+      console.log("💾 Calling addAssignmentContent...");
       const result = await addAssignmentContent(
         selectedSchool,
         selectedSection,
-        assignmentData
+        assignmentData,
       );
 
       if (result.success) {
-        console.log('✅ Save successful!');
-        console.log('  Result:', result);
+        console.log("✅ Save successful!");
+        console.log("  Result:", result);
         const successMsg = `Successfully saved assignment: ${match.matchedLesson.lessonName}`;
         setSuccess(successMsg);
         showToast({
-          title: 'Assignment Saved',
+          title: "Assignment Saved",
           description: successMsg,
-          variant: 'success',
+          variant: "success",
           icon: CheckCircleIcon,
         });
 
         // Reload existing assignments
-        console.log('🔄 Reloading assignments to verify...');
-        const reloadResult = await getAssignmentContent(selectedSchool, selectedSection);
+        console.log("🔄 Reloading assignments to verify...");
+        const reloadResult = await getAssignmentContent(
+          selectedSchool,
+          selectedSection,
+        );
         if (reloadResult.success && reloadResult.data) {
-          console.log('✅ Reload successful, found', reloadResult.data.length, 'assignments');
+          console.log(
+            "✅ Reload successful, found",
+            reloadResult.data.length,
+            "assignments",
+          );
           setExistingAssignments(reloadResult.data);
 
           // Find and log the assignment we just saved
-          const savedAssignment = reloadResult.data.find(a =>
-            a.podsieActivities?.some(act => act.podsieAssignmentId === String(match.podsieAssignment.assignmentId))
+          const savedAssignment = reloadResult.data.find((a) =>
+            a.podsieActivities?.some(
+              (act) =>
+                act.podsieAssignmentId ===
+                String(match.podsieAssignment.assignmentId),
+            ),
           );
           if (savedAssignment) {
             const savedActivity = savedAssignment.podsieActivities?.find(
-              act => act.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
+              (act) =>
+                act.podsieAssignmentId ===
+                String(match.podsieAssignment.assignmentId),
             );
             if (savedActivity) {
-              console.log('📋 Verified saved question map:');
-              console.log('  Total questions:', savedActivity.podsieQuestionMap?.length);
-              console.log('  Root questions:', savedActivity.podsieQuestionMap?.filter(q => q.isRoot === true).length);
-              console.log('  Variant questions:', savedActivity.podsieQuestionMap?.filter(q => q.isRoot === false).length);
-              console.log('  First 3:', savedActivity.podsieQuestionMap?.slice(0, 3));
+              console.log("📋 Verified saved question map:");
+              console.log(
+                "  Total questions:",
+                savedActivity.podsieQuestionMap?.length,
+              );
+              console.log(
+                "  Root questions:",
+                savedActivity.podsieQuestionMap?.filter(
+                  (q) => q.isRoot === true,
+                ).length,
+              );
+              console.log(
+                "  Variant questions:",
+                savedActivity.podsieQuestionMap?.filter(
+                  (q) => q.isRoot === false,
+                ).length,
+              );
+              console.log(
+                "  First 3:",
+                savedActivity.podsieQuestionMap?.slice(0, 3),
+              );
             }
           }
         }
       } else {
-        console.log('❌ Save failed:', result.error);
-        const errorMsg = result.error || 'Failed to save assignment';
+        console.log("❌ Save failed:", result.error);
+        const errorMsg = result.error || "Failed to save assignment";
         setError(errorMsg);
         showToast({
-          title: 'Save Failed',
+          title: "Save Failed",
           description: errorMsg,
-          variant: 'error',
+          variant: "error",
           icon: ExclamationTriangleIcon,
         });
       }
     } catch (err) {
-      console.error('Error saving assignment:', err);
-      const errorMsg = 'Failed to save assignment';
+      console.error("Error saving assignment:", err);
+      const errorMsg = "Failed to save assignment";
       setError(errorMsg);
       showToast({
-        title: 'Save Error',
+        title: "Save Error",
         description: errorMsg,
-        variant: 'error',
+        variant: "error",
         icon: ExclamationTriangleIcon,
       });
     } finally {
@@ -382,25 +465,25 @@ export default function SectionConfigsPage() {
   // Save all matches to section config
   const handleSaveAll = async () => {
     if (!selectedSchool || !selectedSection) {
-      const errorMsg = 'Please select school and section';
+      const errorMsg = "Please select school and section";
       setError(errorMsg);
       showToast({
-        title: 'Selection Required',
+        title: "Selection Required",
         description: errorMsg,
-        variant: 'error',
+        variant: "error",
         icon: ExclamationTriangleIcon,
       });
       return;
     }
 
-    const validMatches = matches.filter(m => m.matchedLesson !== null);
+    const validMatches = matches.filter((m) => m.matchedLesson !== null);
     if (validMatches.length === 0) {
-      const errorMsg = 'No matches to save';
+      const errorMsg = "No matches to save";
       setError(errorMsg);
       showToast({
-        title: 'No Matches',
+        title: "No Matches",
         description: errorMsg,
-        variant: 'error',
+        variant: "error",
         icon: ExclamationTriangleIcon,
       });
       return;
@@ -411,21 +494,27 @@ export default function SectionConfigsPage() {
       setError(null);
 
       // First, ensure section config exists
-      const configResult = await getSectionConfig(selectedSchool, selectedSection);
+      const configResult = await getSectionConfig(
+        selectedSchool,
+        selectedSection,
+      );
 
       if (!configResult.success || !configResult.data) {
         // Create new section config
         const createResult = await upsertSectionConfig({
           school: selectedSchool,
           classSection: selectedSection,
-          gradeLevel: selectedSection.startsWith('6') ? '6' :
-                     selectedSection.startsWith('7') ? '7' : '8',
+          gradeLevel: selectedSection.startsWith("6")
+            ? "6"
+            : selectedSection.startsWith("7")
+              ? "7"
+              : "8",
           assignmentContent: [],
-          active: true
+          active: true,
         });
 
         if (!createResult.success) {
-          setError(createResult.error || 'Failed to create section config');
+          setError(createResult.error || "Failed to create section config");
           return;
         }
       }
@@ -436,7 +525,8 @@ export default function SectionConfigsPage() {
         if (!match.matchedLesson) continue;
 
         // Determine total questions and create question map
-        const totalQuestionsToSave = match.totalQuestions ?? match.podsieAssignment.totalQuestions;
+        const totalQuestionsToSave =
+          match.totalQuestions ?? match.podsieAssignment.totalQuestions;
         const questionMap = match.podsieAssignment.questionIds
           .slice(0, totalQuestionsToSave)
           .map((questionId, index) => ({
@@ -451,9 +541,15 @@ export default function SectionConfigsPage() {
           lessonName: string;
           section?: string;
           grade?: string;
-          activityType: 'sidekick' | 'mastery-check' | 'assessment';
+          activityType: "sidekick" | "mastery-check" | "assessment";
           podsieAssignmentId: string;
-          podsieQuestionMap: Array<{ questionNumber: number; questionId: string; isRoot: boolean; rootQuestionId?: string; variantNumber?: number }>;
+          podsieQuestionMap: Array<{
+            questionNumber: number;
+            questionId: string;
+            isRoot: boolean;
+            rootQuestionId?: string;
+            variantNumber?: number;
+          }>;
           totalQuestions: number;
           hasZearnLesson?: boolean;
           active?: boolean;
@@ -467,16 +563,18 @@ export default function SectionConfigsPage() {
           podsieQuestionMap: questionMap,
           totalQuestions: totalQuestionsToSave,
           hasZearnLesson: false,
-          active: true
+          active: true,
         };
 
-        if (match.matchedLesson.section) assignmentData.section = match.matchedLesson.section;
-        if (match.matchedLesson.grade) assignmentData.grade = match.matchedLesson.grade;
+        if (match.matchedLesson.section)
+          assignmentData.section = match.matchedLesson.section;
+        if (match.matchedLesson.grade)
+          assignmentData.grade = match.matchedLesson.grade;
 
         const result = await addAssignmentContent(
           selectedSchool,
           selectedSection,
-          assignmentData
+          assignmentData,
         );
 
         if (result.success) {
@@ -484,17 +582,20 @@ export default function SectionConfigsPage() {
         }
       }
 
-      const successMsg = `Successfully saved ${successCount} of ${validMatches.length} assignment${validMatches.length !== 1 ? 's' : ''}`;
+      const successMsg = `Successfully saved ${successCount} of ${validMatches.length} assignment${validMatches.length !== 1 ? "s" : ""}`;
       setSuccess(successMsg);
       showToast({
-        title: 'Save Complete',
+        title: "Save Complete",
         description: successMsg,
-        variant: 'success',
+        variant: "success",
         icon: CheckCircleIcon,
       });
 
       // Reload existing assignments
-      const reloadResult = await getAssignmentContent(selectedSchool, selectedSection);
+      const reloadResult = await getAssignmentContent(
+        selectedSchool,
+        selectedSection,
+      );
       if (reloadResult.success && reloadResult.data) {
         setExistingAssignments(reloadResult.data);
       }
@@ -503,13 +604,13 @@ export default function SectionConfigsPage() {
       setMatches([]);
       setPodsieAssignments([]);
     } catch (err) {
-      console.error('Error saving assignments:', err);
-      const errorMsg = 'Failed to save assignments';
+      console.error("Error saving assignments:", err);
+      const errorMsg = "Failed to save assignments";
       setError(errorMsg);
       showToast({
-        title: 'Save Error',
+        title: "Save Error",
         description: errorMsg,
-        variant: 'error',
+        variant: "error",
         icon: ExclamationTriangleIcon,
       });
     } finally {
@@ -517,7 +618,7 @@ export default function SectionConfigsPage() {
     }
   };
 
-  const matchedCount = matches.filter(m => m.matchedLesson !== null).length;
+  const matchedCount = matches.filter((m) => m.matchedLesson !== null).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -526,7 +627,8 @@ export default function SectionConfigsPage() {
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h1 className="text-3xl font-bold mb-2">Section Configuration</h1>
           <p className="text-gray-600">
-            Import Podsie assignments and match them with scope-and-sequence lessons
+            Import Podsie assignments and match them with scope-and-sequence
+            lessons
           </p>
         </div>
 
@@ -583,25 +685,36 @@ export default function SectionConfigsPage() {
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
               {filteredMatches.map((match, idx) => {
                 // Check if assignment already exists
-                const alreadyExists = existingAssignments.some(existing => {
+                const alreadyExists = existingAssignments.some((existing) => {
                   return existing.podsieActivities?.some(
-                    activity => activity.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
+                    (activity) =>
+                      activity.podsieAssignmentId ===
+                      String(match.podsieAssignment.assignmentId),
                   );
                 });
 
                 // Check if assignment has question mapping
-                const existingAssignment = existingAssignments.find(existing => {
-                  return existing.podsieActivities?.some(
-                    activity => activity.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
-                  );
-                });
-
-                const existingActivity = existingAssignment?.podsieActivities?.find(
-                  activity => activity.podsieAssignmentId === String(match.podsieAssignment.assignmentId)
+                const existingAssignment = existingAssignments.find(
+                  (existing) => {
+                    return existing.podsieActivities?.some(
+                      (activity) =>
+                        activity.podsieAssignmentId ===
+                        String(match.podsieAssignment.assignmentId),
+                    );
+                  },
                 );
 
-                const hasQuestionMapping = !!(existingActivity?.podsieQuestionMap &&
-                                         existingActivity.podsieQuestionMap.length > 0);
+                const existingActivity =
+                  existingAssignment?.podsieActivities?.find(
+                    (activity) =>
+                      activity.podsieAssignmentId ===
+                      String(match.podsieAssignment.assignmentId),
+                  );
+
+                const hasQuestionMapping = !!(
+                  existingActivity?.podsieQuestionMap &&
+                  existingActivity.podsieQuestionMap.length > 0
+                );
 
                 return (
                   <AssignmentMatchRow
@@ -614,28 +727,39 @@ export default function SectionConfigsPage() {
                     lessonsByUnit={lessonsByUnit}
                     alreadyExists={alreadyExists}
                     hasQuestionMapping={hasQuestionMapping}
-                    saving={savingIndividual === match.podsieAssignment.assignmentId}
+                    saving={
+                      savingIndividual === match.podsieAssignment.assignmentId
+                    }
                     onMatchChange={(lessonId) => {
-                      const lesson = lessons.find(l => l.id === lessonId);
-                      setMatches(prev => prev.map(m =>
-                        m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
-                          ? { ...m, matchedLesson: lesson || null }
-                          : m
-                      ));
+                      const lesson = lessons.find((l) => l.id === lessonId);
+                      setMatches((prev) =>
+                        prev.map((m) =>
+                          m.podsieAssignment.assignmentId ===
+                          match.podsieAssignment.assignmentId
+                            ? { ...m, matchedLesson: lesson || null }
+                            : m,
+                        ),
+                      );
                     }}
                     onTypeChange={(type) => {
-                      setMatches(prev => prev.map(m =>
-                        m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
-                          ? { ...m, assignmentType: type }
-                          : m
-                      ));
+                      setMatches((prev) =>
+                        prev.map((m) =>
+                          m.podsieAssignment.assignmentId ===
+                          match.podsieAssignment.assignmentId
+                            ? { ...m, assignmentType: type }
+                            : m,
+                        ),
+                      );
                     }}
                     onTotalQuestionsChange={(total) => {
-                      setMatches(prev => prev.map(m =>
-                        m.podsieAssignment.assignmentId === match.podsieAssignment.assignmentId
-                          ? { ...m, totalQuestions: total }
-                          : m
-                      ));
+                      setMatches((prev) =>
+                        prev.map((m) =>
+                          m.podsieAssignment.assignmentId ===
+                          match.podsieAssignment.assignmentId
+                            ? { ...m, totalQuestions: total }
+                            : m,
+                        ),
+                      );
                     }}
                     onSave={() => handleSaveIndividual(match)}
                   />
@@ -659,7 +783,8 @@ export default function SectionConfigsPage() {
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
             <div className="text-gray-400 text-4xl mb-4">📋</div>
             <div className="text-gray-600">
-              Click &quot;Fetch from Podsie&quot; to load assignments for {selectedSection}
+              Click &quot;Fetch from Podsie&quot; to load assignments for{" "}
+              {selectedSection}
             </div>
           </div>
         )}

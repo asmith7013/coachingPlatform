@@ -11,18 +11,24 @@ import { z } from "zod";
  * The API returns { questions: [...] } with question details
  */
 const PodsieAssignmentQuestionsSchema = z.object({
-  questions: z.array(z.object({
-    id: z.number(),
-    assignmentId: z.number(),
-    order: z.number(),
-    questionId: z.number(),
-    question: z.object({
+  questions: z.array(
+    z.object({
       id: z.number(),
-      questionContent: z.object({
-        questionText: z.string(),
-      }).passthrough(),
-    }).passthrough(),
-  })),
+      assignmentId: z.number(),
+      order: z.number(),
+      questionId: z.number(),
+      question: z
+        .object({
+          id: z.number(),
+          questionContent: z
+            .object({
+              questionText: z.string(),
+            })
+            .passthrough(),
+        })
+        .passthrough(),
+    }),
+  ),
 });
 
 // =====================================
@@ -34,12 +40,16 @@ const PodsieAssignmentQuestionsSchema = z.object({
  * These are the "base" question IDs that can be used for mapping
  */
 export async function fetchPodsieAssignmentQuestions(
-  assignmentId: string
+  assignmentId: string,
 ): Promise<{ success: boolean; questionIds: number[]; error?: string }> {
   const token = process.env.PODSIE_API_TOKEN;
 
   if (!token) {
-    return { success: false, questionIds: [], error: "PODSIE_API_TOKEN not configured" };
+    return {
+      success: false,
+      questionIds: [],
+      error: "PODSIE_API_TOKEN not configured",
+    };
   }
 
   try {
@@ -51,7 +61,7 @@ export async function fetchPodsieAssignmentQuestions(
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -66,7 +76,10 @@ export async function fetchPodsieAssignmentQuestions(
     const parseResult = PodsieAssignmentQuestionsSchema.safeParse(rawData);
 
     if (!parseResult.success) {
-      console.error("Podsie questions response validation failed:", parseResult.error.issues);
+      console.error(
+        "Podsie questions response validation failed:",
+        parseResult.error.issues,
+      );
       return {
         success: false,
         questionIds: [],
@@ -77,12 +90,18 @@ export async function fetchPodsieAssignmentQuestions(
     // Extract question IDs in order (sorted by order field)
     const data = parseResult.data;
     if (data.questions.length === 0) {
-      return { success: false, questionIds: [], error: "No questions found for this assignment" };
+      return {
+        success: false,
+        questionIds: [],
+        error: "No questions found for this assignment",
+      };
     }
 
     // Sort by order and extract the questionId (not the join table id)
-    const sortedQuestions = [...data.questions].sort((a, b) => a.order - b.order);
-    const questionIds = sortedQuestions.map(q => q.questionId);
+    const sortedQuestions = [...data.questions].sort(
+      (a, b) => a.order - b.order,
+    );
+    const questionIds = sortedQuestions.map((q) => q.questionId);
 
     return { success: true, questionIds };
   } catch (error) {

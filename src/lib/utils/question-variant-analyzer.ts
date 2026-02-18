@@ -23,17 +23,19 @@ interface VariantGroup {
  * Normalize D3 code by replacing numbers and strings with placeholders
  */
 function normalizeCode(code: string): string {
-  if (!code) return '';
+  if (!code) return "";
 
-  return code
-    // Replace all numbers with placeholder
-    .replace(/\b\d+\.?\d*\b/g, '#NUM#')
-    // Replace quoted strings (likely contextual text)
-    .replace(/"[^"]*"/g, '"#TEXT#"')
-    .replace(/'[^']*'/g, "'#TEXT#'")
-    // Normalize whitespace
-    .replace(/\s+/g, ' ')
-    .trim();
+  return (
+    code
+      // Replace all numbers with placeholder
+      .replace(/\b\d+\.?\d*\b/g, "#NUM#")
+      // Replace quoted strings (likely contextual text)
+      .replace(/"[^"]*"/g, '"#TEXT#"')
+      .replace(/'[^']*'/g, "'#TEXT#'")
+      // Normalize whitespace
+      .replace(/\s+/g, " ")
+      .trim()
+  );
 }
 
 /**
@@ -74,8 +76,8 @@ function levenshteinDistance(str1: string, str2: string): number {
       } else {
         matrix[i][j] = Math.min(
           matrix[i - 1][j - 1] + 1, // substitution
-          matrix[i][j - 1] + 1,     // insertion
-          matrix[i - 1][j] + 1      // deletion
+          matrix[i][j - 1] + 1, // insertion
+          matrix[i - 1][j] + 1, // deletion
         );
       }
     }
@@ -90,28 +92,33 @@ function levenshteinDistance(str1: string, str2: string): number {
  */
 function groupQuestionsByVariants(
   questions: QuestionData[],
-  similarityThreshold: number = 0.85
+  similarityThreshold: number = 0.85,
 ): VariantGroup[] {
   const groups: VariantGroup[] = [];
   const processed = new Set<number>();
 
   // Only process D3 questions with code
   const d3Questions = questions.filter(
-    q => q.questionContent.type === 'd3' && q.questionContent.d3Content
+    (q) => q.questionContent.type === "d3" && q.questionContent.d3Content,
   );
 
-  console.log(`🔍 Analyzing ${d3Questions.length} D3 questions for variants...`);
+  console.log(
+    `🔍 Analyzing ${d3Questions.length} D3 questions for variants...`,
+  );
 
   // Pre-normalize all codes to avoid redundant normalization
   const normalizedCodes = new Map<number, string>();
   for (const question of d3Questions) {
-    normalizedCodes.set(question.id, normalizeCode(question.questionContent.d3Content || ''));
+    normalizedCodes.set(
+      question.id,
+      normalizeCode(question.questionContent.d3Content || ""),
+    );
   }
 
   for (const question of d3Questions) {
     if (processed.has(question.id)) continue;
 
-    const normalizedCode = normalizedCodes.get(question.id) || '';
+    const normalizedCode = normalizedCodes.get(question.id) || "";
 
     // Find similar questions (including current question)
     const similarQuestions = [question.id];
@@ -121,14 +128,18 @@ function groupQuestionsByVariants(
         continue;
       }
 
-      const otherNormalizedCode = normalizedCodes.get(otherQuestion.id) || '';
+      const otherNormalizedCode = normalizedCodes.get(otherQuestion.id) || "";
 
       // Quick length check before expensive similarity calculation
-      const lengthRatio = Math.min(normalizedCode.length, otherNormalizedCode.length) /
-                         Math.max(normalizedCode.length, otherNormalizedCode.length);
+      const lengthRatio =
+        Math.min(normalizedCode.length, otherNormalizedCode.length) /
+        Math.max(normalizedCode.length, otherNormalizedCode.length);
       if (lengthRatio < 0.7) continue; // Skip if length differs too much
 
-      const similarity = calculateSimilarity(normalizedCode, otherNormalizedCode);
+      const similarity = calculateSimilarity(
+        normalizedCode,
+        otherNormalizedCode,
+      );
 
       if (similarity >= similarityThreshold) {
         similarQuestions.push(otherQuestion.id);
@@ -143,7 +154,7 @@ function groupQuestionsByVariants(
 
     groups.push({
       rootQuestionId: rootId,
-      variants
+      variants,
     });
 
     processed.add(question.id);
@@ -161,25 +172,28 @@ export function analyzeQuestionVariants(questions: QuestionData[]) {
   const groups = groupQuestionsByVariants(questions);
 
   // Create a flat mapping
-  const mapping: Record<number, {
-    type: 'root' | 'variant';
-    rootQuestionId?: number;
-    groupId: number;
-  }> = {};
+  const mapping: Record<
+    number,
+    {
+      type: "root" | "variant";
+      rootQuestionId?: number;
+      groupId: number;
+    }
+  > = {};
 
   groups.forEach((group, groupIndex) => {
     // Mark root
     mapping[group.rootQuestionId] = {
-      type: 'root',
-      groupId: groupIndex
+      type: "root",
+      groupId: groupIndex,
     };
 
     // Mark variants
-    group.variants.forEach(variantId => {
+    group.variants.forEach((variantId) => {
       mapping[variantId] = {
-        type: 'variant',
+        type: "variant",
         rootQuestionId: group.rootQuestionId,
-        groupId: groupIndex
+        groupId: groupIndex,
       };
     });
   });
@@ -196,17 +210,21 @@ export function analyzeQuestionVariants(questions: QuestionData[]) {
  */
 export function mapQuestionsToVariantInfoDynamic(
   questionIds: (number | string)[],
-  allQuestions: QuestionData[]
+  allQuestions: QuestionData[],
 ) {
-  console.log(`📊 mapQuestionsToVariantInfoDynamic called with ${questionIds.length} question IDs and ${allQuestions?.length || 0} question objects`);
+  console.log(
+    `📊 mapQuestionsToVariantInfoDynamic called with ${questionIds.length} question IDs and ${allQuestions?.length || 0} question objects`,
+  );
 
   // Safety check
   if (!allQuestions || allQuestions.length === 0) {
-    console.warn('⚠️ No question data provided, returning basic mapping without variant analysis');
+    console.warn(
+      "⚠️ No question data provided, returning basic mapping without variant analysis",
+    );
     return questionIds.map((questionId, index) => ({
       questionNumber: index + 1,
       questionId: String(questionId),
-      isRoot: true
+      isRoot: true,
     }));
   }
 
@@ -217,7 +235,7 @@ export function mapQuestionsToVariantInfoDynamic(
   return questionIds.map((questionId, index) => {
     const id = Number(questionId);
     const info = mapping[id];
-    const isRoot = !info || info.type === 'root';
+    const isRoot = !info || info.type === "root";
 
     const result: {
       questionNumber: number;
@@ -228,19 +246,22 @@ export function mapQuestionsToVariantInfoDynamic(
     } = {
       questionNumber: index + 1,
       questionId: String(questionId),
-      isRoot
+      isRoot,
     };
 
-    if (info?.type === 'variant' && info.rootQuestionId) {
+    if (info?.type === "variant" && info.rootQuestionId) {
       result.rootQuestionId = String(info.rootQuestionId);
 
       // Calculate variant number within this question list
       const sameRootVariants = questionIds
-        .filter(qid => {
+        .filter((qid) => {
           const qInfo = mapping[Number(qid)];
-          return qInfo?.type === 'variant' && qInfo.rootQuestionId === info.rootQuestionId;
+          return (
+            qInfo?.type === "variant" &&
+            qInfo.rootQuestionId === info.rootQuestionId
+          );
         })
-        .map(qid => Number(qid))
+        .map((qid) => Number(qid))
         .sort((a, b) => a - b);
 
       result.variantNumber = sameRootVariants.indexOf(id) + 1;
@@ -253,16 +274,18 @@ export function mapQuestionsToVariantInfoDynamic(
 /**
  * Get statistics about the variant analysis
  */
-export function getVariantStats(mapping: ReturnType<typeof analyzeQuestionVariants>) {
+export function getVariantStats(
+  mapping: ReturnType<typeof analyzeQuestionVariants>,
+) {
   const stats = {
     totalQuestions: Object.keys(mapping).length,
     rootQuestions: 0,
     variantQuestions: 0,
-    groups: new Set<number>()
+    groups: new Set<number>(),
   };
 
-  Object.values(mapping).forEach(info => {
-    if (info.type === 'root') {
+  Object.values(mapping).forEach((info) => {
+    if (info.type === "root") {
       stats.rootQuestions++;
     } else {
       stats.variantQuestions++;
@@ -272,6 +295,6 @@ export function getVariantStats(mapping: ReturnType<typeof analyzeQuestionVarian
 
   return {
     ...stats,
-    totalGroups: stats.groups.size
+    totalGroups: stats.groups.size,
   };
 }

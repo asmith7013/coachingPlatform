@@ -25,19 +25,22 @@ export default function RoadmapCompletionsPage() {
   // Memoize date range to avoid unnecessary re-renders
   const dateRange: DateRange = useMemo(
     () => ({ startDate, endDate }),
-    [startDate, endDate]
+    [startDate, endDate],
   );
 
   // Data fetching with React Query hooks
   const { sectionOptions, sectionColors, loading } = useSectionOptions();
-  const { roadmapData, loadingSectionIds } = useRoadmapData(selectedSections, dateRange);
+  const { roadmapData, loadingSectionIds } = useRoadmapData(
+    selectedSections,
+    dateRange,
+  );
 
   // Handle section toggle
   const handleSectionToggle = (sectionId: string) => {
     setSelectedSections((prev) =>
       prev.includes(sectionId)
         ? prev.filter((id) => id !== sectionId)
-        : [...prev, sectionId]
+        : [...prev, sectionId],
     );
   };
 
@@ -53,20 +56,21 @@ export default function RoadmapCompletionsPage() {
         key: "bar-chart",
         title: "Skills Mastered Bar Chart",
         icon: <ChartBarIcon className="h-5 w-5 text-gray-400" />,
-        content: isLoading && !data ? (
-          <div className="animate-pulse h-64 bg-gray-100 rounded" />
-        ) : data ? (
-          <RoadmapBarChart
-            sectionName={data.classSection}
-            school={data.school}
-            students={data.students}
-            color={color}
-            teacher={data.teacher}
-            className="shadow-none mb-0"
-          />
-        ) : (
-          <p className="text-gray-500 text-sm">No data available</p>
-        ),
+        content:
+          isLoading && !data ? (
+            <div className="animate-pulse h-64 bg-gray-100 rounded" />
+          ) : data ? (
+            <RoadmapBarChart
+              sectionName={data.classSection}
+              school={data.school}
+              students={data.students}
+              color={color}
+              teacher={data.teacher}
+              className="shadow-none mb-0"
+            />
+          ) : (
+            <p className="text-gray-500 text-sm">No data available</p>
+          ),
       },
     ];
 

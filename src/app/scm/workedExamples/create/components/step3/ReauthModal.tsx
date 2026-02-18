@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 interface ReauthModalProps {
   isOpen: boolean;
@@ -23,8 +23,9 @@ export function ReauthModal({ isOpen, onClose, onReauth }: ReauthModalProps) {
               Google Authorization Expired
             </h3>
             <p className="mt-2 text-sm text-gray-600">
-              Your Google connection needs to be refreshed to export to Google Slides.
-              You&apos;ll be signed out and redirected to sign back in with Google.
+              Your Google connection needs to be refreshed to export to Google
+              Slides. You&apos;ll be signed out and redirected to sign back in
+              with Google.
             </p>
             <div className="mt-4 flex gap-3">
               <button

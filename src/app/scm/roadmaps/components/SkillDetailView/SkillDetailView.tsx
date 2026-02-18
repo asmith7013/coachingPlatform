@@ -1,7 +1,13 @@
 "use client";
 
-import { RoadmapsSkill, PracticeProblem } from "@zod-schema/scm/roadmaps/roadmap-skill";
-import { MapPinIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import {
+  RoadmapsSkill,
+  PracticeProblem,
+} from "@zod-schema/scm/roadmaps/roadmap-skill";
+import {
+  MapPinIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
 import { SkillDetailHeader } from "./SkillDetailHeader";
 import { DescriptionSection } from "./DescriptionSection";
 import { StandardsSection } from "./StandardsSection";
@@ -14,7 +20,7 @@ import { CommonMisconceptionsSection } from "./CommonMisconceptionsSection";
 import { VocabularySection } from "./VocabularySection";
 import { ModelsAndManipulativesSection } from "./ModelsAndManipulativesSection";
 
-export type SkillType = 'target' | 'essential' | 'helpful';
+export type SkillType = "target" | "essential" | "helpful";
 
 /** Configuration for which sections to show in the skill detail view */
 export interface SkillDetailSections {
@@ -32,26 +38,37 @@ export interface SkillDetailSections {
 
 export interface SkillDetailViewProps {
   skill: RoadmapsSkill | null;
-  onSkillClick?: (skillNumber: string, color: 'blue' | 'green' | 'orange' | 'purple') => void;
+  onSkillClick?: (
+    skillNumber: string,
+    color: "blue" | "green" | "orange" | "purple",
+  ) => void;
   onClose?: () => void;
-  color?: 'blue' | 'green' | 'orange' | 'purple';
+  color?: "blue" | "green" | "orange" | "purple";
   /** The type of skill (target, essential, helpful) - used for proper coloring in queues */
   skillType?: SkillType;
   masteredSkills?: string[];
   /** Configure which sections to show. By default, all sections are shown. */
   sections?: SkillDetailSections;
   /** Callback to add a practice problem to the consideration queue */
-  onAddProblemToQueue?: (problem: PracticeProblem, skillNumber: string, skillTitle: string, skillType: SkillType) => void;
+  onAddProblemToQueue?: (
+    problem: PracticeProblem,
+    skillNumber: string,
+    skillTitle: string,
+    skillType: SkillType,
+  ) => void;
   /** Function to check if a practice problem is already in the queue */
-  isProblemInQueue?: (skillNumber: string, problemNumber: number | string) => boolean;
+  isProblemInQueue?: (
+    skillNumber: string,
+    problemNumber: number | string,
+  ) => boolean;
 }
 
 export function SkillDetailView({
   skill,
   onSkillClick,
   onClose,
-  color = 'blue',
-  skillType = 'target',
+  color = "blue",
+  skillType = "target",
   masteredSkills = [],
   sections,
   onAddProblemToQueue,
@@ -103,7 +120,8 @@ export function SkillDetailView({
                   Skill {skill.skillNumber} not found in database
                 </div>
                 <div className="text-sm text-yellow-800">
-                  This skill may not have been scraped yet or the skill number might be incorrect.
+                  This skill may not have been scraped yet or the skill number
+                  might be incorrect.
                 </div>
               </div>
             </div>
@@ -147,31 +165,44 @@ export function SkillDetailView({
         )}
 
         {showSection.video && skill.videoUrl && (
-          <VideoSection videoUrl={skill.videoUrl} skillNumber={skill.skillNumber} />
-        )}
-
-        {showSection.practiceProblems && skill.practiceProblems && skill.practiceProblems.length > 0 && (
-          <PracticeProblemsSection
-            practiceProblems={skill.practiceProblems as unknown as PracticeProblem[]}
+          <VideoSection
+            videoUrl={skill.videoUrl}
             skillNumber={skill.skillNumber}
-            skillTitle={skill.title}
-            skillType={skillType}
-            onAddToQueue={onAddProblemToQueue}
-            isInQueue={isProblemInQueue}
           />
         )}
 
+        {showSection.practiceProblems &&
+          skill.practiceProblems &&
+          skill.practiceProblems.length > 0 && (
+            <PracticeProblemsSection
+              practiceProblems={
+                skill.practiceProblems as unknown as PracticeProblem[]
+              }
+              skillNumber={skill.skillNumber}
+              skillTitle={skill.title}
+              skillType={skillType}
+              onAddToQueue={onAddProblemToQueue}
+              isInQueue={isProblemInQueue}
+            />
+          )}
+
         {showSection.essentialQuestion && skill.essentialQuestion && (
-          <EssentialQuestionSection essentialQuestion={skill.essentialQuestion} />
+          <EssentialQuestionSection
+            essentialQuestion={skill.essentialQuestion}
+          />
         )}
 
         {showSection.commonMisconceptions && skill.commonMisconceptions && (
-          <CommonMisconceptionsSection commonMisconceptions={skill.commonMisconceptions} />
+          <CommonMisconceptionsSection
+            commonMisconceptions={skill.commonMisconceptions}
+          />
         )}
 
-        {showSection.vocabulary && skill.vocabulary && skill.vocabulary.length > 0 && (
-          <VocabularySection vocabulary={skill.vocabulary} />
-        )}
+        {showSection.vocabulary &&
+          skill.vocabulary &&
+          skill.vocabulary.length > 0 && (
+            <VocabularySection vocabulary={skill.vocabulary} />
+          )}
 
         {showSection.modelsAndManipulatives && skill.primerHtml && (
           <ModelsAndManipulativesSection primerHtml={skill.primerHtml} />

@@ -16,9 +16,9 @@ export const SLIDE_CONSTANTS = {
 
   // Title zone (badge + title on same line, y: 0-100)
   TITLE_ZONE_HEIGHT: 100,
-  BADGE: { x: 20, y: 16, w: 100, h: 30 },      // Same line as title
-  TITLE: { x: 130, y: 16, w: 810, h: 30 },     // Same line as badge
-  SUBTITLE: { x: 20, y: 55, w: 920, h: 30 },   // Below badge+title row
+  BADGE: { x: 20, y: 16, w: 100, h: 30 }, // Same line as title
+  TITLE: { x: 130, y: 16, w: 810, h: 30 }, // Same line as badge
+  SUBTITLE: { x: 20, y: 55, w: 920, h: 30 }, // Below badge+title row
   FOOTNOTE: { x: 700, y: 8, w: 240, h: 25 },
 
   // Content zone (y: 140-500 for full width, y: 140-510 for columns)

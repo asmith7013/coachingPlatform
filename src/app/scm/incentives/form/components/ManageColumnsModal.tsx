@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { ActivityTypeConfig, ActivityTypeConfigInput, DetailType } from "@zod-schema/scm/incentives/activity-type-config";
+import {
+  ActivityTypeConfig,
+  ActivityTypeConfigInput,
+  DetailType,
+} from "@zod-schema/scm/incentives/activity-type-config";
 import {
   createActivityType,
   updateActivityType,
@@ -112,10 +116,14 @@ export function ManageColumnsModal({
 
     const result = await deleteActivityType(typeId);
 
-    if (typeof result !== 'string' && result.success) {
+    if (typeof result !== "string" && result.success) {
       onUpdate();
     } else {
-      setError(typeof result !== 'string' && result.error ? result.error : "Failed to delete activity type");
+      setError(
+        typeof result !== "string" && result.error
+          ? result.error
+          : "Failed to delete activity type",
+      );
     }
 
     setIsSubmitting(false);
@@ -143,7 +151,7 @@ export function ManageColumnsModal({
 
     const result = await createActivityType(newType);
 
-    if (typeof result !== 'string' && result.success) {
+    if (typeof result !== "string" && result.success) {
       setIsAdding(false);
       setFormData({
         label: "",
@@ -154,7 +162,11 @@ export function ManageColumnsModal({
       });
       onUpdate();
     } else {
-      setError(typeof result !== 'string' && result.error ? result.error : "Failed to create activity type");
+      setError(
+        typeof result !== "string" && result.error
+          ? result.error
+          : "Failed to create activity type",
+      );
     }
 
     setIsSubmitting(false);
@@ -179,7 +191,7 @@ export function ManageColumnsModal({
 
     const result = await updateActivityType(editingId, updates);
 
-    if (typeof result !== 'string' && result.success) {
+    if (typeof result !== "string" && result.success) {
       setEditingId(null);
       setFormData({
         label: "",
@@ -190,7 +202,11 @@ export function ManageColumnsModal({
       });
       onUpdate();
     } else {
-      setError(typeof result !== 'string' && result.error ? result.error : "Failed to update activity type");
+      setError(
+        typeof result !== "string" && result.error
+          ? result.error
+          : "Failed to update activity type",
+      );
     }
 
     setIsSubmitting(false);
@@ -220,7 +236,18 @@ export function ManageColumnsModal({
     "#06b6d4", // cyan
   ];
 
-  const emojiPresets = ["📝", "🔍", "🚀", "🎯", "⭐", "👥", "📊", "✅", "💡", "🎓"];
+  const emojiPresets = [
+    "📝",
+    "🔍",
+    "🚀",
+    "🎯",
+    "⭐",
+    "👥",
+    "📊",
+    "✅",
+    "💡",
+    "🎓",
+  ];
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -282,7 +309,8 @@ export function ManageColumnsModal({
                         {type.label}
                       </div>
                       <div className="text-xs text-gray-500">
-                        {type.detailType !== "none" && `Details: ${type.detailType}`}
+                        {type.detailType !== "none" &&
+                          `Details: ${type.detailType}`}
                         {type.isDefault && " • Default"}
                       </div>
                     </div>
@@ -365,7 +393,9 @@ export function ManageColumnsModal({
                       <button
                         key={emoji}
                         type="button"
-                        onClick={() => setFormData({ ...formData, icon: emoji })}
+                        onClick={() =>
+                          setFormData({ ...formData, icon: emoji })
+                        }
                         className="text-2xl p-2 hover:bg-gray-100 rounded transition-colors cursor-pointer"
                       >
                         {emoji}
@@ -448,9 +478,15 @@ export function ManageColumnsModal({
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="inquiry">Inquiry (nested questions)</option>
-                      <option value="lesson">Lesson (from scope-and-sequence)</option>
-                      <option value="skill">Skill (unit prerequisite skills)</option>
+                      <option value="inquiry">
+                        Inquiry (nested questions)
+                      </option>
+                      <option value="lesson">
+                        Lesson (from scope-and-sequence)
+                      </option>
+                      <option value="skill">
+                        Skill (unit prerequisite skills)
+                      </option>
                       <option value="custom">Custom (text input)</option>
                     </select>
                   </div>

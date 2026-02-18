@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
 // import { Button } from '@components/core/Button';
-import { Input } from '@components/core/fields/Input';
-import { Select } from '@components/core/fields/Select';
+import { Input } from "@components/core/fields/Input";
+import { Select } from "@components/core/fields/Select";
 // import { Text } from '@components/core/typography/Text';
-import { Card } from '@components/composed/cards/Card';
-import { Pagination } from '@components/core/navigation/Pagination';
+import { Card } from "@components/composed/cards/Card";
+import { Pagination } from "@components/core/navigation/Pagination";
 
 import { cn } from "@ui/utils/formatters";
-import debounce from 'lodash.debounce';
+import debounce from "lodash.debounce";
 
 interface ResourceHeaderProps<T> {
   page: number;
@@ -38,10 +38,11 @@ export function ResourceHeader<T extends Record<string, unknown>>({
 
   // Create debounced search function
   const debouncedSearch = useMemo(
-    () => debounce((value: string) => {
-      onSearch(value);
-    }, 300),
-    [onSearch]
+    () =>
+      debounce((value: string) => {
+        onSearch(value);
+      }, 300),
+    [onSearch],
   );
 
   // Call debounced search when input changes
@@ -53,10 +54,7 @@ export function ResourceHeader<T extends Record<string, unknown>>({
   }, [searchInput, debouncedSearch]);
 
   return (
-    <Card 
-      padding="md"
-      className={cn('bg-surface', 'border-outline')}
-    >
+    <Card padding="md" className={cn("bg-surface", "border-outline")}>
       {/* Pagination Controls */}
       <Pagination
         currentPage={page}
@@ -71,12 +69,18 @@ export function ResourceHeader<T extends Record<string, unknown>>({
           value={sortValue}
           onChange={(value) => {
             setSortValue(value);
-            const [field, order] = value.split(':');
-            onSort(field as keyof T | string, order as 'asc' | 'desc');
+            const [field, order] = value.split(":");
+            onSort(field as keyof T | string, order as "asc" | "desc");
           }}
-          options={sortOptions.flatMap(option => [
-            { value: `${String(option.key)}:asc`, label: `Sort ${option.label} A-Z` },
-            { value: `${String(option.key)}:desc`, label: `Sort ${option.label} Z-A` }
+          options={sortOptions.flatMap((option) => [
+            {
+              value: `${String(option.key)}:asc`,
+              label: `Sort ${option.label} A-Z`,
+            },
+            {
+              value: `${String(option.key)}:desc`,
+              label: `Sort ${option.label} Z-A`,
+            },
           ])}
           placeholder="Sort by..."
           textSize="base"

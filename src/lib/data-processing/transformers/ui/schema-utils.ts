@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { handleClientError } from '@error/handlers/client';
+import { z } from "zod";
+import { handleClientError } from "@error/handlers/client";
 
 /**
  * Extract field names from a Zod schema using the shape property
@@ -10,7 +10,7 @@ export function extractSchemaFields<T>(schema: z.ZodSchema<T>): string[] {
     const shape = (schema as { shape?: Record<string, z.ZodType> }).shape;
     return shape ? Object.keys(shape) : [];
   } catch (error) {
-    handleClientError(error, 'extractSchemaFields');
+    handleClientError(error, "extractSchemaFields");
     return [];
   }
 }
@@ -21,13 +21,13 @@ export function extractSchemaFields<T>(schema: z.ZodSchema<T>): string[] {
  */
 export function extractFieldSchema<T>(
   entitySchema: z.ZodSchema<T>,
-  fieldName: string
+  fieldName: string,
 ): z.ZodType | null {
   try {
     const shape = (entitySchema as { shape?: Record<string, z.ZodType> }).shape;
     return shape?.[fieldName] || null;
   } catch (error) {
-    handleClientError(error, 'extractFieldSchema');
+    handleClientError(error, "extractFieldSchema");
     return null;
   }
-} 
+}

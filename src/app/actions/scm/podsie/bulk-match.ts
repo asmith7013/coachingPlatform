@@ -4,7 +4,12 @@ import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { fetchAssignmentsForSection, PodsieAssignmentInfo } from "./index";
 import { fetchScopeAndSequence } from "@/app/actions/scm/scope-and-sequence/scope-and-sequence";
-import { getAssignmentContent, addAssignmentContent, getSectionConfig, upsertSectionConfig } from "@/app/actions/scm/podsie/section-config";
+import {
+  getAssignmentContent,
+  addAssignmentContent,
+  getSectionConfig,
+  upsertSectionConfig,
+} from "@/app/actions/scm/podsie/section-config";
 import { findBestMatch } from "@/lib/utils/lesson-name-normalization";
 import { getQuestionMapByName } from "@/app/actions/scm/podsie/podsie-question-map";
 import type { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
@@ -24,7 +29,7 @@ export interface AssignmentMatchResult {
     grade?: string;
   } | null;
   similarity: number;
-  assignmentType: 'sidekick' | 'mastery-check' | 'assessment';
+  assignmentType: "sidekick" | "mastery-check" | "assessment";
   alreadyExists: boolean;
   existingScopeSequenceId?: string;
   // Info about the existing match (when alreadyExists is true)
@@ -69,10 +74,16 @@ export interface BulkMatchResult {
 /**
  * Determine grade level and scope tag from section code
  */
-function getSectionGradeAndScope(classSection: string): { gradeLevel: string; scopeTag: string } {
-  const gradeLevel = classSection.startsWith('6') ? '6' :
-                    classSection.startsWith('7') ? '7' : '8';
-  const scopeTag = classSection === '802' ? 'Algebra 1' : `Grade ${gradeLevel}`;
+function getSectionGradeAndScope(classSection: string): {
+  gradeLevel: string;
+  scopeTag: string;
+} {
+  const gradeLevel = classSection.startsWith("6")
+    ? "6"
+    : classSection.startsWith("7")
+      ? "7"
+      : "8";
+  const scopeTag = classSection === "802" ? "Algebra 1" : `Grade ${gradeLevel}`;
   return { gradeLevel, scopeTag };
 }
 
@@ -81,15 +92,15 @@ function getSectionGradeAndScope(classSection: string): { gradeLevel: string; sc
  */
 function determineAssignmentType(
   moduleName: string | null | undefined,
-  lessonType?: string
-): 'sidekick' | 'mastery-check' | 'assessment' {
-  if (lessonType === 'assessment') {
-    return 'assessment';
+  lessonType?: string,
+): "sidekick" | "mastery-check" | "assessment" {
+  if (lessonType === "assessment") {
+    return "assessment";
   }
-  if (moduleName?.includes('LESSONS')) {
-    return 'sidekick';
+  if (moduleName?.includes("LESSONS")) {
+    return "sidekick";
   }
-  return 'mastery-check';
+  return "mastery-check";
 }
 
 // =====================================
@@ -101,7 +112,7 @@ function determineAssignmentType(
  * to scope-and-sequence entries
  */
 export async function bulkFetchAndMatch(
-  sections: { school: string; classSection: string }[]
+  sections: { school: string; classSection: string }[],
 ): Promise<{ success: boolean; results: BulkMatchResult[]; error?: string }> {
   return withDbConnection(async () => {
     try {
@@ -110,11 +121,19 @@ export async function bulkFetchAndMatch(
       // Process each section
       for (const section of sections) {
         try {
-          const result = await fetchAndMatchSection(section.school, section.classSection);
+          const result = await fetchAndMatchSection(
+            section.school,
+            section.classSection,
+          );
           results.push(result);
         } catch (error) {
-          console.error(`Error processing section ${section.classSection}:`, error);
-          const { gradeLevel, scopeTag } = getSectionGradeAndScope(section.classSection);
+          console.error(
+            `Error processing section ${section.classSection}:`,
+            error,
+          );
+          const { gradeLevel, scopeTag } = getSectionGradeAndScope(
+            section.classSection,
+          );
           results.push({
             school: section.school,
             classSection: section.classSection,
@@ -125,18 +144,18 @@ export async function bulkFetchAndMatch(
             conflicts: [],
             existingCount: 0,
             availableLessons: [],
-            error: error instanceof Error ? error.message : 'Unknown error'
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
 
       return { success: true, results };
     } catch (error) {
-      console.error('Error in bulkFetchAndMatch:', error);
+      console.error("Error in bulkFetchAndMatch:", error);
       return {
         success: false,
         results: [],
-        error: handleServerError(error, 'Failed to bulk fetch and match')
+        error: handleServerError(error, "Failed to bulk fetch and match"),
       };
     }
   });
@@ -147,7 +166,7 @@ export async function bulkFetchAndMatch(
  */
 async function fetchAndMatchSection(
   school: string,
-  classSection: string
+  classSection: string,
 ): Promise<BulkMatchResult> {
   const { gradeLevel, scopeTag } = getSectionGradeAndScope(classSection);
 
@@ -164,7 +183,7 @@ async function fetchAndMatchSection(
       conflicts: [],
       existingCount: 0,
       availableLessons: [],
-      error: podsieResult.error || 'Failed to fetch Podsie assignments'
+      error: podsieResult.error || "Failed to fetch Podsie assignments",
     };
   }
 
@@ -174,35 +193,38 @@ async function fetchAndMatchSection(
   const lessonsResult = await fetchScopeAndSequence({
     page: 1,
     limit: 1000,
-    sortBy: 'unitNumber',
-    sortOrder: 'asc',
+    sortBy: "unitNumber",
+    sortOrder: "asc",
     filters: {
       grade: gradeLevel,
-      scopeSequenceTag: scopeTag
+      scopeSequenceTag: scopeTag,
     },
-    search: '',
-    searchFields: []
+    search: "",
+    searchFields: [],
   });
 
-  const lessons = (lessonsResult.success && lessonsResult.items)
-    ? lessonsResult.items as ScopeAndSequence[]
-    : [];
+  const lessons =
+    lessonsResult.success && lessonsResult.items
+      ? (lessonsResult.items as ScopeAndSequence[])
+      : [];
 
   // 3. Get existing assignment content
   const existingResult = await getAssignmentContent(school, classSection);
-  const existingAssignments = existingResult.success && existingResult.data
-    ? existingResult.data
-    : [];
+  const existingAssignments =
+    existingResult.success && existingResult.data ? existingResult.data : [];
 
   // Build a map of podsieAssignmentId -> existing assignment info
-  const existingMap = new Map<string, { scopeAndSequenceId: string; lessonName: string; unitLessonId: string }>();
+  const existingMap = new Map<
+    string,
+    { scopeAndSequenceId: string; lessonName: string; unitLessonId: string }
+  >();
   for (const existing of existingAssignments) {
     if (existing.podsieActivities) {
       for (const activity of existing.podsieActivities) {
         existingMap.set(activity.podsieAssignmentId, {
-          scopeAndSequenceId: existing.scopeAndSequenceId || '',
+          scopeAndSequenceId: existing.scopeAndSequenceId || "",
           lessonName: existing.lessonName,
-          unitLessonId: existing.unitLessonId
+          unitLessonId: existing.unitLessonId,
         });
       }
     }
@@ -223,26 +245,31 @@ async function fetchAndMatchSection(
     const matchedLesson = matchResult.match;
 
     if (matchedLesson) {
-      const lessonId = matchedLesson.id || (matchedLesson as unknown as { _id: string })._id;
+      const lessonId =
+        matchedLesson.id || (matchedLesson as unknown as { _id: string })._id;
       const assignmentType = determineAssignmentType(
         assignment.moduleName,
-        matchedLesson.lessonType
+        matchedLesson.lessonType,
       );
 
       // Check for conflict: existing match has different scope-and-sequence ID
-      if (alreadyExists && existingInfo && existingInfo.scopeAndSequenceId !== lessonId) {
+      if (
+        alreadyExists &&
+        existingInfo &&
+        existingInfo.scopeAndSequenceId !== lessonId
+      ) {
         conflicts.push({
           podsieAssignment: assignment,
           existingLesson: {
             id: existingInfo.scopeAndSequenceId,
             name: existingInfo.lessonName,
-            unitLessonId: existingInfo.unitLessonId
+            unitLessonId: existingInfo.unitLessonId,
           },
           newMatchedLesson: {
             id: lessonId,
             name: matchedLesson.lessonName,
-            unitLessonId: matchedLesson.unitLessonId
-          }
+            unitLessonId: matchedLesson.unitLessonId,
+          },
         });
       } else {
         matches.push({
@@ -253,16 +280,18 @@ async function fetchAndMatchSection(
             lessonName: matchedLesson.lessonName,
             lessonType: matchedLesson.lessonType,
             section: matchedLesson.section,
-            grade: matchedLesson.grade
+            grade: matchedLesson.grade,
           },
           similarity: matchResult.similarity,
           assignmentType,
           alreadyExists,
           existingScopeSequenceId: existingInfo?.scopeAndSequenceId,
-          existingLesson: existingInfo ? {
-            unitLessonId: existingInfo.unitLessonId,
-            lessonName: existingInfo.lessonName
-          } : undefined
+          existingLesson: existingInfo
+            ? {
+                unitLessonId: existingInfo.unitLessonId,
+                lessonName: existingInfo.lessonName,
+              }
+            : undefined,
         });
       }
     } else {
@@ -275,26 +304,28 @@ async function fetchAndMatchSection(
           podsieAssignment: assignment,
           matchedLesson: null,
           similarity: 0,
-          assignmentType: 'mastery-check',
+          assignmentType: "mastery-check",
           alreadyExists: true,
           existingScopeSequenceId: existingInfo?.scopeAndSequenceId,
-          existingLesson: existingInfo ? {
-            unitLessonId: existingInfo.unitLessonId,
-            lessonName: existingInfo.lessonName
-          } : undefined
+          existingLesson: existingInfo
+            ? {
+                unitLessonId: existingInfo.unitLessonId,
+                lessonName: existingInfo.lessonName,
+              }
+            : undefined,
         });
       }
     }
   }
 
   // Build available lessons list for manual matching
-  const availableLessons: AvailableLesson[] = lessons.map(lesson => ({
+  const availableLessons: AvailableLesson[] = lessons.map((lesson) => ({
     id: lesson.id || (lesson as unknown as { _id: string })._id,
     unitLessonId: lesson.unitLessonId,
     lessonName: lesson.lessonName,
     lessonType: lesson.lessonType,
     section: lesson.section,
-    grade: lesson.grade
+    grade: lesson.grade,
   }));
 
   return {
@@ -306,7 +337,7 @@ async function fetchAndMatchSection(
     unmatched,
     conflicts,
     existingCount: existingAssignments.length,
-    availableLessons
+    availableLessons,
   };
 }
 
@@ -324,14 +355,14 @@ export interface SaveMatchInput {
  * Save a single match to section config
  */
 export async function saveSingleMatch(
-  input: SaveMatchInput
+  input: SaveMatchInput,
 ): Promise<{ success: boolean; error?: string; usedCurriculumMap?: boolean }> {
   return withDbConnection(async () => {
     try {
       const { school, classSection, match } = input;
 
       if (!match.matchedLesson) {
-        return { success: false, error: 'No matched lesson provided' };
+        return { success: false, error: "No matched lesson provided" };
       }
 
       // Ensure section config exists
@@ -345,10 +376,13 @@ export async function saveSingleMatch(
           gradeLevel,
           scopeSequenceTag: scopeTag,
           assignmentContent: [],
-          active: true
+          active: true,
         });
         if (!createResult.success) {
-          return { success: false, error: createResult.error || 'Failed to create section config' };
+          return {
+            success: false,
+            error: createResult.error || "Failed to create section config",
+          };
         }
       }
 
@@ -362,7 +396,9 @@ export async function saveSingleMatch(
       }>;
       let usedDatabaseMap = false;
 
-      const dbMapResult = await getQuestionMapByName(match.podsieAssignment.assignmentName);
+      const dbMapResult = await getQuestionMapByName(
+        match.podsieAssignment.assignmentName,
+      );
 
       if (dbMapResult.success && dbMapResult.data) {
         // Use the database question map with proper structure
@@ -370,20 +406,20 @@ export async function saveSingleMatch(
         usedDatabaseMap = true;
         console.log(
           `Using database question map for "${match.podsieAssignment.assignmentName}" ` +
-          `(${questionMap.length} questions, match type: ${dbMapResult.matchType || 'exact'})`
+            `(${questionMap.length} questions, match type: ${dbMapResult.matchType || "exact"})`,
         );
       } else {
         // Fallback: assume all questions are root questions
         console.warn(
           `No database question map for "${match.podsieAssignment.assignmentName}", ` +
-          `using fallback (all root questions)`
+            `using fallback (all root questions)`,
         );
         questionMap = match.podsieAssignment.questionIds
           .slice(0, match.podsieAssignment.totalQuestions)
           .map((questionId, index) => ({
             questionNumber: index + 1,
             questionId: String(questionId),
-            isRoot: true
+            isRoot: true,
           }));
       }
 
@@ -399,15 +435,15 @@ export async function saveSingleMatch(
         podsieQuestionMap: questionMap,
         totalQuestions: questionMap.length,
         hasZearnLesson: false,
-        active: true
+        active: true,
       });
 
       return { success: result.success, error: result.error, usedDatabaseMap };
     } catch (error) {
-      console.error('Error saving match:', error);
+      console.error("Error saving match:", error);
       return {
         success: false,
-        error: handleServerError(error, 'Failed to save match')
+        error: handleServerError(error, "Failed to save match"),
       };
     }
   });
@@ -419,15 +455,20 @@ export async function saveSingleMatch(
 export async function bulkSaveMatches(
   school: string,
   classSection: string,
-  matches: AssignmentMatchResult[]
-): Promise<{ success: boolean; saved: number; failed: number; errors: string[] }> {
+  matches: AssignmentMatchResult[],
+): Promise<{
+  success: boolean;
+  saved: number;
+  failed: number;
+  errors: string[];
+}> {
   return withDbConnection(async () => {
     const errors: string[] = [];
     let saved = 0;
     let failed = 0;
 
     // Filter to only matches with a matched lesson that don't already exist
-    const toSave = matches.filter(m => m.matchedLesson && !m.alreadyExists);
+    const toSave = matches.filter((m) => m.matchedLesson && !m.alreadyExists);
 
     for (const match of toSave) {
       const result = await saveSingleMatch({ school, classSection, match });
@@ -435,7 +476,9 @@ export async function bulkSaveMatches(
         saved++;
       } else {
         failed++;
-        errors.push(`${match.podsieAssignment.assignmentName}: ${result.error}`);
+        errors.push(
+          `${match.podsieAssignment.assignmentName}: ${result.error}`,
+        );
       }
     }
 
@@ -443,7 +486,7 @@ export async function bulkSaveMatches(
       success: failed === 0,
       saved,
       failed,
-      errors
+      errors,
     };
   });
 }

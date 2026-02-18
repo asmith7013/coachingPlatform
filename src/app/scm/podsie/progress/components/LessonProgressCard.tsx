@@ -8,7 +8,7 @@ interface LessonConfig {
   totalQuestions: number;
   section?: string;
   unitNumber: number;
-  activityType?: 'sidekick' | 'mastery-check' | 'assessment';
+  activityType?: "sidekick" | "mastery-check" | "assessment";
   hasZearnActivity?: boolean;
 }
 
@@ -51,18 +51,19 @@ export function LessonProgressCard({
   sectionName,
 }: LessonProgressCardProps) {
   // Extract lesson number from unitLessonId (e.g., "4.3" -> "3")
-  const lessonNumber = lesson.unitLessonId.includes('.')
-    ? lesson.unitLessonId.split('.')[1]
+  const lessonNumber = lesson.unitLessonId.includes(".")
+    ? lesson.unitLessonId.split(".")[1]
     : lesson.unitLessonId;
 
   // Check if we should show the lesson number (hide for Ramp Ups and Unit Assessment)
-  const showLessonNumber = sectionName !== 'Ramp Ups' && sectionName !== 'Unit Assessment';
+  const showLessonNumber =
+    sectionName !== "Ramp Ups" && sectionName !== "Unit Assessment";
   // Calculate lesson progress
   const lessonProgress = useMemo(() => {
-    const lessonProgressData = progressData.filter(
-      p => p.podsieAssignmentId
+    const lessonProgressData = progressData.filter((p) =>
+      p.podsieAssignmentId
         ? p.podsieAssignmentId === lesson.podsieAssignmentId
-        : p.rampUpId === lesson.unitLessonId
+        : p.rampUpId === lesson.unitLessonId,
     );
     const stats = calculateSummaryStats(lessonProgressData);
     return Math.round(stats.avgCompletion);
@@ -72,10 +73,10 @@ export function LessonProgressCard({
   const masteryCheckProgress = useMemo(() => {
     if (!masteryCheck) return null;
 
-    const masteryCheckProgressData = progressData.filter(
-      p => p.podsieAssignmentId
+    const masteryCheckProgressData = progressData.filter((p) =>
+      p.podsieAssignmentId
         ? p.podsieAssignmentId === masteryCheck.podsieAssignmentId
-        : p.rampUpId === masteryCheck.unitLessonId
+        : p.rampUpId === masteryCheck.unitLessonId,
     );
     const stats = calculateSummaryStats(masteryCheckProgressData);
     return Math.round(stats.avgCompletion);
@@ -85,15 +86,17 @@ export function LessonProgressCard({
   const zearnProgress = useMemo(() => {
     if (!lesson.hasZearnActivity) return null;
 
-    const lessonProgressData = progressData.filter(
-      p => p.podsieAssignmentId
+    const lessonProgressData = progressData.filter((p) =>
+      p.podsieAssignmentId
         ? p.podsieAssignmentId === lesson.podsieAssignmentId
-        : p.rampUpId === lesson.unitLessonId
+        : p.rampUpId === lesson.unitLessonId,
     );
 
     if (lessonProgressData.length === 0) return 0;
 
-    const zearnCompleted = lessonProgressData.filter(p => p.zearnCompleted).length;
+    const zearnCompleted = lessonProgressData.filter(
+      (p) => p.zearnCompleted,
+    ).length;
     return Math.round((zearnCompleted / lessonProgressData.length) * 100);
   }, [progressData, lesson]);
 
@@ -120,7 +123,9 @@ export function LessonProgressCard({
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs font-medium text-purple-700">Zearn</span>
-              <span className="text-xs font-bold text-purple-700">{zearnProgress}%</span>
+              <span className="text-xs font-bold text-purple-700">
+                {zearnProgress}%
+              </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
@@ -132,11 +137,15 @@ export function LessonProgressCard({
         )}
 
         {/* Sidekick Progress Bar (if lesson is sidekick) */}
-        {lesson.activityType === 'sidekick' && (
+        {lesson.activityType === "sidekick" && (
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-medium text-gray-700">Sidekick</span>
-              <span className="text-xs font-bold text-blue-700">{lessonProgress}%</span>
+              <span className="text-xs font-medium text-gray-700">
+                Sidekick
+              </span>
+              <span className="text-xs font-bold text-blue-700">
+                {lessonProgress}%
+              </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
@@ -148,11 +157,15 @@ export function LessonProgressCard({
         )}
 
         {/* Mastery Check Progress Bar (if lesson is mastery-check OR if separate masteryCheck exists) */}
-        {lesson.activityType === 'mastery-check' && (
+        {lesson.activityType === "mastery-check" && (
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-medium text-gray-700">Mastery Check</span>
-              <span className="text-xs font-bold text-green-700">{lessonProgress}%</span>
+              <span className="text-xs font-medium text-gray-700">
+                Mastery Check
+              </span>
+              <span className="text-xs font-bold text-green-700">
+                {lessonProgress}%
+              </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
@@ -167,8 +180,12 @@ export function LessonProgressCard({
         {masteryCheck && masteryCheckProgress !== null && (
           <div>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-medium text-gray-700">Mastery Check</span>
-              <span className="text-xs font-bold text-green-700">{masteryCheckProgress}%</span>
+              <span className="text-xs font-medium text-gray-700">
+                Mastery Check
+              </span>
+              <span className="text-xs font-bold text-green-700">
+                {masteryCheckProgress}%
+              </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div

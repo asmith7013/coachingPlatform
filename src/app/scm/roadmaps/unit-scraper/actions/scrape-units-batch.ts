@@ -1,16 +1,21 @@
 "use server";
 
 import { z } from "zod";
-import { chromium, Browser, BrowserContext, Page } from 'playwright';
+import { chromium, Browser, BrowserContext, Page } from "playwright";
 import {
   UnitScrapingRequestSchema,
   UnitScrapingResponseSchema,
   type UnitScrapingResponse,
-  type UnitData
-} from '../lib/types';
-import { authenticateRoadmaps } from '../../shared/lib/roadmaps-auth';
-import { extractUnitData } from '../lib/unit-extractor';
-import { navigateToUnitsPage, selectRoadmap, getAvailableUnits, selectUnit } from '../lib/dropdown-navigator';
+  type UnitData,
+} from "../lib/types";
+import { authenticateRoadmaps } from "../../shared/lib/roadmaps-auth";
+import { extractUnitData } from "../lib/unit-extractor";
+import {
+  navigateToUnitsPage,
+  selectRoadmap,
+  getAvailableUnits,
+  selectUnit,
+} from "../lib/dropdown-navigator";
 import { handleServerError } from "@error/handlers/server";
 import { handleValidationError } from "@error/handlers/validation";
 
@@ -26,32 +31,34 @@ export async function scrapeRoadmapUnits(request: unknown) {
   try {
     // Validate request data
     const validatedRequest = UnitScrapingRequestSchema.parse(request);
-    const { credentials, roadmap, delayBetweenRequests, delayBetweenUnits } = validatedRequest;
+    const { credentials, roadmap, delayBetweenRequests, delayBetweenUnits } =
+      validatedRequest;
 
-    console.log('🚀 Starting Roadmaps batch unit scraping...');
+    console.log("🚀 Starting Roadmaps batch unit scraping...");
     console.log(`📊 Roadmap: ${roadmap}`);
 
     // Initialize browser
     browser = await chromium.launch({
       headless: false,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      userAgent:
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     });
 
     page = await context.newPage();
 
     // Perform authentication
-    console.log('🔐 Performing authentication...');
+    console.log("🔐 Performing authentication...");
     const authResult = await authenticateRoadmaps(page, credentials);
 
     if (!authResult.success) {
-      throw new Error(authResult.error || 'Authentication failed');
+      throw new Error(authResult.error || "Authentication failed");
     }
 
-    console.log('✅ Authentication successful');
+    console.log("✅ Authentication successful");
 
     // Navigate to units page
     await navigateToUnitsPage(page);
@@ -79,7 +86,9 @@ export async function scrapeRoadmapUnits(request: unknown) {
     for (let i = 0; i < unitNames.length; i++) {
       const unitName = unitNames[i];
       console.log(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-      console.log(`📖 Processing unit ${i + 1}/${unitNames.length}: ${unitName}`);
+      console.log(
+        `📖 Processing unit ${i + 1}/${unitNames.length}: ${unitName}`,
+      );
       console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
 
       try {
@@ -99,11 +108,12 @@ export async function scrapeRoadmapUnits(request: unknown) {
 
         console.log(`✅ Successfully scraped: ${unitData.unitTitle}`);
         console.log(`   Target Skills: ${unitData.targetSkills.length}`);
-        console.log(`   Support Skills: ${unitData.additionalSupportSkills.length}`);
+        console.log(
+          `   Support Skills: ${unitData.additionalSupportSkills.length}`,
+        );
         console.log(`   Extension Skills: ${unitData.extensionSkills.length}`);
-
       } catch (unitError) {
-        const errorMsg = `Failed to scrape unit "${unitName}": ${unitError instanceof Error ? unitError.message : 'Unknown error'}`;
+        const errorMsg = `Failed to scrape unit "${unitName}": ${unitError instanceof Error ? unitError.message : "Unknown error"}`;
         console.error(`❌ ${errorMsg}`);
         errors.push(errorMsg);
 
@@ -119,7 +129,8 @@ export async function scrapeRoadmapUnits(request: unknown) {
           extensionSkills: [],
           scrapedAt: new Date().toISOString(),
           success: false,
-          error: unitError instanceof Error ? unitError.message : 'Unknown error'
+          error:
+            unitError instanceof Error ? unitError.message : "Unknown error",
         });
       }
 
@@ -133,16 +144,16 @@ export async function scrapeRoadmapUnits(request: unknown) {
     const endTime = new Date().toISOString();
     const duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
 
-    const successfulUnits = units.filter(u => u.success);
-    const failedUnits = units.filter(u => !u.success);
+    const successfulUnits = units.filter((u) => u.success);
+    const failedUnits = units.filter((u) => !u.success);
 
-    console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log('📊 Batch Scraping Results:');
+    console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("📊 Batch Scraping Results:");
     console.log(`   Roadmap: ${roadmap}`);
     console.log(`   ✅ Successful: ${successfulUnits.length}`);
     console.log(`   ❌ Failed: ${failedUnits.length}`);
     console.log(`   ⏱️  Duration: ${duration}`);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
     const response: UnitScrapingResponse = {
       success: true,
@@ -154,7 +165,7 @@ export async function scrapeRoadmapUnits(request: unknown) {
       errors,
       startTime,
       endTime,
-      duration
+      duration,
     };
 
     // Validate response structure
@@ -162,11 +173,10 @@ export async function scrapeRoadmapUnits(request: unknown) {
 
     return {
       success: true,
-      data: validatedResponse
+      data: validatedResponse,
     };
-
   } catch (error) {
-    console.error('💥 Error in scrapeRoadmapUnits:', error);
+    console.error("💥 Error in scrapeRoadmapUnits:", error);
 
     const endTime = new Date().toISOString();
     const duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
@@ -174,25 +184,25 @@ export async function scrapeRoadmapUnits(request: unknown) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: handleValidationError(error)
+        error: handleValidationError(error),
       };
     }
 
     return {
       success: false,
-      error: handleServerError(error, 'scrapeRoadmapUnits'),
+      error: handleServerError(error, "scrapeRoadmapUnits"),
       data: {
         success: false,
-        roadmap: '',
+        roadmap: "",
         totalUnits: 0,
         successfulUnits: 0,
         failedUnits: 0,
         units: [],
-        errors: [error instanceof Error ? error.message : 'Unknown error'],
+        errors: [error instanceof Error ? error.message : "Unknown error"],
         startTime,
         endTime,
-        duration
-      }
+        duration,
+      },
     };
   } finally {
     // Always clean up resources
@@ -200,9 +210,9 @@ export async function scrapeRoadmapUnits(request: unknown) {
       if (page) await page.close();
       if (context) await context.close();
       if (browser) await browser.close();
-      console.log('🧹 Browser resources cleaned up');
+      console.log("🧹 Browser resources cleaned up");
     } catch (cleanupError) {
-      console.error('⚠️  Error during cleanup:', cleanupError);
+      console.error("⚠️  Error during cleanup:", cleanupError);
     }
   }
 }
@@ -220,30 +230,31 @@ export async function scrapeRoadmapUnitsDebug(request: unknown) {
     const validatedRequest = UnitScrapingRequestSchema.parse(request);
     const { credentials, roadmap, delayBetweenRequests } = validatedRequest;
 
-    console.log('🚀 Starting DEBUG Roadmaps batch unit scraping...');
+    console.log("🚀 Starting DEBUG Roadmaps batch unit scraping...");
     console.log(`📊 Roadmap: ${roadmap}`);
-    console.log('⚠️  Debug mode: Will scrape only first 2 units');
+    console.log("⚠️  Debug mode: Will scrape only first 2 units");
 
     // Initialize browser in DEBUG MODE (visible, stays open)
     browser = await chromium.launch({
       headless: false,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      userAgent:
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     });
 
     page = await context.newPage();
 
     // Perform authentication
-    console.log('🔍 Debug mode: Performing authentication...');
+    console.log("🔍 Debug mode: Performing authentication...");
     const authResult = await authenticateRoadmaps(page, credentials);
     if (!authResult.success) {
-      throw new Error(authResult.error || 'Authentication failed');
+      throw new Error(authResult.error || "Authentication failed");
     }
 
-    console.log('✅ Debug authentication successful');
+    console.log("✅ Debug authentication successful");
 
     // Navigate to units page
     await navigateToUnitsPage(page);
@@ -258,7 +269,9 @@ export async function scrapeRoadmapUnitsDebug(request: unknown) {
 
     // Get list of units
     const unitNames = await getAvailableUnits(page);
-    console.log(`\n📚 Found ${unitNames.length} units (will scrape first 2 for debug)`);
+    console.log(
+      `\n📚 Found ${unitNames.length} units (will scrape first 2 for debug)`,
+    );
 
     // Limit to first 2 units for debugging
     const debugUnits = unitNames.slice(0, 2);
@@ -280,9 +293,11 @@ export async function scrapeRoadmapUnitsDebug(request: unknown) {
         units.push(unitData);
 
         console.log(`✅ Successfully scraped: ${unitData.unitTitle}`);
-        console.log(`   📝 Unit has ${unitData.targetSkills.length} target skills with nested prerequisites`);
+        console.log(
+          `   📝 Unit has ${unitData.targetSkills.length} target skills with nested prerequisites`,
+        );
       } catch (unitError) {
-        const errorMsg = `Failed to scrape unit "${unitName}": ${unitError instanceof Error ? unitError.message : 'Unknown error'}`;
+        const errorMsg = `Failed to scrape unit "${unitName}": ${unitError instanceof Error ? unitError.message : "Unknown error"}`;
         console.error(`❌ ${errorMsg}`);
         errors.push(errorMsg);
       }
@@ -300,27 +315,28 @@ export async function scrapeRoadmapUnitsDebug(request: unknown) {
       success: true,
       roadmap,
       totalUnits: debugUnits.length,
-      successfulUnits: units.filter(u => u.success).length,
-      failedUnits: units.filter(u => !u.success).length,
+      successfulUnits: units.filter((u) => u.success).length,
+      failedUnits: units.filter((u) => !u.success).length,
       units,
       errors,
       startTime,
       endTime,
-      duration
+      duration,
     };
 
     const validatedResponse = UnitScrapingResponseSchema.parse(response);
 
-    console.log('\n🎯 Debug session complete. Browser window will stay open for inspection.');
-    console.log('⚠️  Manually close the browser window when done debugging.');
+    console.log(
+      "\n🎯 Debug session complete. Browser window will stay open for inspection.",
+    );
+    console.log("⚠️  Manually close the browser window when done debugging.");
 
     return {
       success: true,
-      data: validatedResponse
+      data: validatedResponse,
     };
-
   } catch (error) {
-    console.error('💥 Error in debug scraping:', error);
+    console.error("💥 Error in debug scraping:", error);
 
     const endTime = new Date().toISOString();
     const duration = `${Math.round((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000)}s`;
@@ -328,29 +344,29 @@ export async function scrapeRoadmapUnitsDebug(request: unknown) {
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        error: handleValidationError(error)
+        error: handleValidationError(error),
       };
     }
 
     return {
       success: false,
-      error: handleServerError(error, 'scrapeRoadmapUnitsDebug'),
+      error: handleServerError(error, "scrapeRoadmapUnitsDebug"),
       data: {
         success: false,
-        roadmap: '',
+        roadmap: "",
         totalUnits: 0,
         successfulUnits: 0,
         failedUnits: 0,
         units: [],
-        errors: [error instanceof Error ? error.message : 'Unknown error'],
+        errors: [error instanceof Error ? error.message : "Unknown error"],
         startTime,
         endTime,
-        duration
-      }
+        duration,
+      },
     };
   } finally {
     // For debugging, don't automatically close
-    console.log('⏸️  Browser staying open for inspection...');
-    console.log('💡 Manually close the browser window when done debugging.');
+    console.log("⏸️  Browser staying open for inspection...");
+    console.log("💡 Manually close the browser window when done debugging.");
   }
 }

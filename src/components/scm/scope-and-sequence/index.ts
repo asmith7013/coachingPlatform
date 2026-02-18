@@ -1,5 +1,8 @@
 export { StandardsUnitMatrix } from "./StandardsUnitMatrix";
-export type { UnitWithStandards, StateTestQuestion } from "./StandardsUnitMatrix";
+export type {
+  UnitWithStandards,
+  StateTestQuestion,
+} from "./StandardsUnitMatrix";
 export {
   DOMAIN_LABELS,
   DOMAIN_COLORS,

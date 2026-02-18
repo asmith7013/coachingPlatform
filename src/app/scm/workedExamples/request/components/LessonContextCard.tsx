@@ -2,7 +2,13 @@
 
 import { ReactNode } from "react";
 import { ScopeAndSequence } from "@zod-schema/scm/scope-and-sequence/scope-and-sequence";
-import { BookOpenIcon, AcademicCapIcon, ClipboardDocumentCheckIcon, PhotoIcon, CubeIcon } from "@heroicons/react/24/outline";
+import {
+  BookOpenIcon,
+  AcademicCapIcon,
+  ClipboardDocumentCheckIcon,
+  PhotoIcon,
+  CubeIcon,
+} from "@heroicons/react/24/outline";
 
 interface LessonContextCardProps {
   lesson: ScopeAndSequence | null;
@@ -10,13 +16,18 @@ interface LessonContextCardProps {
   skillsSlot?: ReactNode;
 }
 
-export function LessonContextCard({ lesson, skillsSlot }: LessonContextCardProps) {
+export function LessonContextCard({
+  lesson,
+  skillsSlot,
+}: LessonContextCardProps) {
   if (!lesson) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           <BookOpenIcon className="w-5 h-5 text-gray-400" />
-          <h3 className="text-sm font-semibold text-gray-900">Lesson Context</h3>
+          <h3 className="text-sm font-semibold text-gray-900">
+            Lesson Context
+          </h3>
         </div>
         <div className="text-gray-400 text-sm text-center py-8">
           Select a lesson to see context
@@ -26,7 +37,8 @@ export function LessonContextCard({ lesson, skillsSlot }: LessonContextCardProps
   }
 
   const hasStandards = lesson.standards && lesson.standards.length > 0;
-  const hasLearningTargets = lesson.learningTargets && lesson.learningTargets.length > 0;
+  const hasLearningTargets =
+    lesson.learningTargets && lesson.learningTargets.length > 0;
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -69,7 +81,10 @@ export function LessonContextCard({ lesson, skillsSlot }: LessonContextCardProps
             {hasLearningTargets ? (
               <ul className="space-y-2">
                 {lesson.learningTargets!.map((target, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
+                  <li
+                    key={idx}
+                    className="flex items-start gap-2 text-xs text-gray-700"
+                  >
                     <span className="inline-flex items-center justify-center w-4 h-4 bg-green-100 text-green-600 rounded-full text-[10px] font-bold flex-shrink-0 mt-0.5">
                       {idx + 1}
                     </span>
@@ -78,7 +93,9 @@ export function LessonContextCard({ lesson, skillsSlot }: LessonContextCardProps
                 ))}
               </ul>
             ) : (
-              <p className="text-xs text-gray-400 italic">No learning targets listed</p>
+              <p className="text-xs text-gray-400 italic">
+                No learning targets listed
+              </p>
             )}
           </div>
 
@@ -99,16 +116,20 @@ export function LessonContextCard({ lesson, skillsSlot }: LessonContextCardProps
                         {standard.code}
                       </span>
                       {standard.context && (
-                        <span className={`text-xs px-1.5 py-0.5 rounded ${
-                          standard.context === 'current'
-                            ? 'bg-green-50 text-green-600'
-                            : standard.context === 'buildingOn'
-                            ? 'bg-sky-50 text-sky-600'
-                            : 'bg-purple-50 text-purple-600'
-                        }`}>
-                          {standard.context === 'current' ? 'current' :
-                            standard.context === 'buildingOn' ? 'building on' :
-                            'building towards'}
+                        <span
+                          className={`text-xs px-1.5 py-0.5 rounded ${
+                            standard.context === "current"
+                              ? "bg-green-50 text-green-600"
+                              : standard.context === "buildingOn"
+                                ? "bg-sky-50 text-sky-600"
+                                : "bg-purple-50 text-purple-600"
+                          }`}
+                        >
+                          {standard.context === "current"
+                            ? "current"
+                            : standard.context === "buildingOn"
+                              ? "building on"
+                              : "building towards"}
                         </span>
                       )}
                     </div>
@@ -121,7 +142,9 @@ export function LessonContextCard({ lesson, skillsSlot }: LessonContextCardProps
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-gray-400 italic">No standards listed</p>
+              <p className="text-xs text-gray-400 italic">
+                No standards listed
+              </p>
             )}
           </div>
         </div>
@@ -129,9 +152,7 @@ export function LessonContextCard({ lesson, skillsSlot }: LessonContextCardProps
         {/* Middle Column: Roadmap Skills (slot) */}
         <div className="overflow-hidden">
           {skillsSlot ? (
-            <div className="h-full">
-              {skillsSlot}
-            </div>
+            <div className="h-full">{skillsSlot}</div>
           ) : (
             <div className="p-5 h-full flex flex-col">
               <div className="flex items-center gap-2 mb-3">
@@ -141,7 +162,9 @@ export function LessonContextCard({ lesson, skillsSlot }: LessonContextCardProps
                 </h4>
               </div>
               <div className="flex-1 flex items-center justify-center">
-                <p className="text-xs text-gray-400 italic">No skills data provided</p>
+                <p className="text-xs text-gray-400 italic">
+                  No skills data provided
+                </p>
               </div>
             </div>
           )}
@@ -158,9 +181,7 @@ export function LessonContextCard({ lesson, skillsSlot }: LessonContextCardProps
           <div className="aspect-[4/3] bg-white rounded-lg border border-gray-200 border-dashed flex items-center justify-center">
             <div className="text-center px-4">
               <PhotoIcon className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-              <span className="text-gray-400 text-xs">
-                Preview coming soon
-              </span>
+              <span className="text-gray-400 text-xs">Preview coming soon</span>
             </div>
           </div>
         </div>

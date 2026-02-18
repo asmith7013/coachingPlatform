@@ -1,5 +1,5 @@
-import type { Field } from '@ui-types/form';
-import type { VisitInput } from '@zod-schema/visits/visit';
+import type { Field } from "@ui-types/form";
+import type { VisitInput } from "@zod-schema/visits/visit";
 
 /**
  * Simple field configuration for Visit forms
@@ -38,8 +38,8 @@ export const VisitFieldConfig: Field<VisitInput>[] = [
     options: [
       { value: "Virtual", label: "Virtual" },
       { value: "In-person", label: "In-person" },
-      { value: "Hybrid", label: "Hybrid" }
-    ]
+      { value: "Hybrid", label: "Hybrid" },
+    ],
   },
   {
     name: "status",
@@ -48,10 +48,10 @@ export const VisitFieldConfig: Field<VisitInput>[] = [
     options: [
       { value: "scheduled", label: "Scheduled" },
       { value: "completed", label: "Completed" },
-      { value: "cancelled", label: "Cancelled" }
-    ]
-  }
+      { value: "cancelled", label: "Cancelled" },
+    ],
+  },
 ];
 
 // Alias for backward compatibility
-export const visitFields = VisitFieldConfig; 
+export const visitFields = VisitFieldConfig;

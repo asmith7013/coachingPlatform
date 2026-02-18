@@ -1,18 +1,18 @@
-import { NextRequest } from 'next/server';
-import { clerkClient } from '@clerk/nextjs/server';
-import { TeachingLabStaffModel } from '@mongoose-schema/core/staff.model';
-import { TeachingLabStaffInputZodSchema } from '@zod-schema/core/staff';
-import { withDbConnection } from '@server/db/ensure-connection';
-import { handleServerError } from '@error/handlers/server';
-import { handleValidationError } from '@error/handlers/validation';
-import { z } from 'zod';
-import { PERMISSIONS, ROLE_PERMISSIONS, TL_ROLES } from '@core-types/auth';
+import { NextRequest } from "next/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import { TeachingLabStaffModel } from "@mongoose-schema/core/staff.model";
+import { TeachingLabStaffInputZodSchema } from "@zod-schema/core/staff";
+import { withDbConnection } from "@server/db/ensure-connection";
+import { handleServerError } from "@error/handlers/server";
+import { handleValidationError } from "@error/handlers/validation";
+import { z } from "zod";
+import { PERMISSIONS, ROLE_PERMISSIONS, TL_ROLES } from "@core-types/auth";
 
 // Request validation schema
 const SetupRequestSchema = z.object({
   email: z.string().email(),
   clerkUserId: z.string(),
-  fullName: z.string()
+  fullName: z.string(),
 });
 
 export async function POST(request: NextRequest) {
@@ -22,23 +22,23 @@ export async function POST(request: NextRequest) {
       const body = await request.json();
       const validatedData = SetupRequestSchema.parse(body);
       const { email, clerkUserId, fullName } = validatedData;
-      
+
       // Check if this is a Teaching Lab email
       // const isTeachingLab = email.endsWith('@teachinglab.org');
-      
+
       // Determine initial role based on email
       let initialRole = TL_ROLES.Coach;
-      let adminLevel = 'Coach';
-      
+      let adminLevel = "Coach";
+
       // Special case for specific users
-      if (email === 'alex.smith@teachinglab.org') {
+      if (email === "alex.smith@teachinglab.org") {
         initialRole = TL_ROLES.Director;
-        adminLevel = 'Director';
+        adminLevel = "Director";
       }
-      
+
       // Check for existing staff record
       let staff = await TeachingLabStaffModel.findOne({ email });
-      
+
       if (!staff) {
         // Create new staff record
         const staffData: z.infer<typeof TeachingLabStaffInputZodSchema> = {
@@ -48,12 +48,13 @@ export async function POST(request: NextRequest) {
           rolesTL: [initialRole],
           assignedDistricts: [],
           schools: [],
-          owners: []
+          owners: [],
         };
-        
+
         // Validate against schema
-        const validatedStaffData = TeachingLabStaffInputZodSchema.parse(staffData);
-        
+        const validatedStaffData =
+          TeachingLabStaffInputZodSchema.parse(staffData);
+
         // Create staff record
         staff = await TeachingLabStaffModel.create(validatedStaffData);
       } else {
@@ -64,55 +65,54 @@ export async function POST(request: NextRequest) {
           await staff.save();
         }
       }
-      
+
       // Get permissions for the role
       const rolePermissions = ROLE_PERMISSIONS[initialRole] || [];
-      
+
       // Always include dashboard access
       const permissions = [
         PERMISSIONS.DASHBOARD_VIEW,
-        ...rolePermissions
+        ...rolePermissions,
       ].filter((value, index, array) => array.indexOf(value) === index); // Remove duplicates
-      
+
       // Update Clerk user metadata
       const clerk = await clerkClient();
       await clerk.users.updateUserMetadata(clerkUserId, {
         publicMetadata: {
           staffId: staff._id.toString(),
-          staffType: 'teachinglab',
+          staffType: "teachinglab",
           roles: staff.rolesTL || [initialRole],
           permissions: permissions,
           schoolIds: staff.schools || [],
           managedSchools: [],
           districtId: staff.assignedDistricts?.[0] || null,
           onboardingCompleted: true,
-          setupCompletedAt: new Date().toISOString()
-        }
+          setupCompletedAt: new Date().toISOString(),
+        },
       });
-      
-      return Response.json({ 
+
+      return Response.json({
         success: true,
         data: {
           staffId: staff._id.toString(),
           role: initialRole,
-          permissions: permissions
-        }
+          permissions: permissions,
+        },
       });
-      
     } catch (error) {
-      console.error('Initial user setup failed:', error);
-      
+      console.error("Initial user setup failed:", error);
+
       if (error instanceof z.ZodError) {
         return Response.json(
           { success: false, error: handleValidationError(error) },
-          { status: 400 }
+          { status: 400 },
         );
       }
-      
+
       return Response.json(
         { success: false, error: handleServerError(error) },
-        { status: 500 }
+        { status: 500 },
       );
     }
   });
-} 
+}

@@ -41,11 +41,7 @@ function getYesterdayAtMidnight(): Date {
  * Convert a date to midnight in local timezone
  */
 function getDateAtMidnight(date: Date): Date {
-  return new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate()
-  );
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
 /**
@@ -54,10 +50,10 @@ function getDateAtMidnight(date: Date): Date {
 function formatTime(date: Date): string {
   let hours = date.getHours();
   const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? 'pm' : 'am';
+  const ampm = hours >= 12 ? "pm" : "am";
   hours = hours % 12;
   hours = hours ? hours : 12; // the hour '0' should be '12'
-  const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+  const minutesStr = minutes < 10 ? "0" + minutes : minutes;
   return `${hours}:${minutesStr}${ampm}`;
 }
 
@@ -132,7 +128,9 @@ export function getCompletionTiming(completedAt?: string): CompletionTiming {
  * @param completedAt ISO format date string or undefined
  * @returns CompletionDateInfo object with all date details
  */
-export function getCompletionDateInfo(completedAt?: string): CompletionDateInfo {
+export function getCompletionDateInfo(
+  completedAt?: string,
+): CompletionDateInfo {
   if (!completedAt) {
     return {
       timing: "incomplete",
@@ -190,21 +188,23 @@ export function getCompletionDateInfo(completedAt?: string): CompletionDateInfo 
  */
 export function calculateTodayProgress<T>(
   students: T[],
-  getQuestions: (student: T) => Array<{ completed: boolean; completedAt?: string }>,
-  getTotalQuestions: (student: T) => number
+  getQuestions: (
+    student: T,
+  ) => Array<{ completed: boolean; completedAt?: string }>,
+  getTotalQuestions: (student: T) => number,
 ): number {
   if (students.length === 0) return 0;
 
   let totalQuestionsCompletedToday = 0;
   let totalPossibleQuestions = 0;
 
-  students.forEach(student => {
+  students.forEach((student) => {
     const totalQuestions = getTotalQuestions(student);
     if (totalQuestions > 0) {
       totalPossibleQuestions += totalQuestions;
       const questions = getQuestions(student);
-      const questionsCompletedToday = questions.filter(q =>
-        q.completed && isCompletedToday(q.completedAt)
+      const questionsCompletedToday = questions.filter(
+        (q) => q.completed && isCompletedToday(q.completedAt),
       ).length;
       totalQuestionsCompletedToday += questionsCompletedToday;
     }
@@ -225,12 +225,12 @@ export function calculateTodayProgress<T>(
 export function calculateTodayCompletionRate<T>(
   items: T[],
   isCompleted: (item: T) => boolean,
-  getCompletedAt: (item: T) => string | undefined
+  getCompletedAt: (item: T) => string | undefined,
 ): number {
   if (items.length === 0) return 0;
 
-  const completedToday = items.filter(item =>
-    isCompleted(item) && isCompletedToday(getCompletedAt(item))
+  const completedToday = items.filter(
+    (item) => isCompleted(item) && isCompletedToday(getCompletedAt(item)),
   ).length;
 
   return Math.round((completedToday / items.length) * 100);

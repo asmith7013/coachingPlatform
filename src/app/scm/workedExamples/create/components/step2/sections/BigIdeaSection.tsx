@@ -53,21 +53,28 @@ export function BigIdeaSection({
       {/* Detailed Big Idea (visible, not collapsed) */}
       {strategyDefinition.bigIdeaDetailed && (
         <div className="mt-3 pt-3 border-t border-blue-100">
-          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Detailed</span>
-          <p className="text-sm text-gray-700 whitespace-pre-line mt-1">{strategyDefinition.bigIdeaDetailed}</p>
+          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">
+            Detailed
+          </span>
+          <p className="text-sm text-gray-700 whitespace-pre-line mt-1">
+            {strategyDefinition.bigIdeaDetailed}
+          </p>
         </div>
       )}
       {/* Supporting Patterns (visible) */}
-      {strategyDefinition.bigIdeaSupportingPatterns && strategyDefinition.bigIdeaSupportingPatterns.length > 0 && (
-        <div className="mt-2">
-          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Supporting Patterns</span>
-          <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
-            {strategyDefinition.bigIdeaSupportingPatterns.map((p, i) => (
-              <li key={i}>{p}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {strategyDefinition.bigIdeaSupportingPatterns &&
+        strategyDefinition.bigIdeaSupportingPatterns.length > 0 && (
+          <div className="mt-2">
+            <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">
+              Supporting Patterns
+            </span>
+            <ul className="list-disc list-inside text-sm text-gray-600 mt-1">
+              {strategyDefinition.bigIdeaSupportingPatterns.map((p, i) => (
+                <li key={i}>{p}</li>
+              ))}
+            </ul>
+          </div>
+        )}
     </div>
   );
 }

@@ -1,21 +1,21 @@
 /**
  * Shared Design System Variants
- * 
+ *
  * All variants and helpers combined into a single export object
  * for easier importing and usage.
  */
 
-import { tv, type VariantProps } from 'tailwind-variants';
+import { tv, type VariantProps } from "tailwind-variants";
 
 const booleanVariant = (className: string) => ({
   true: className,
-  false: '',
-})
+  false: "",
+});
 
 // Component state variants
 const disabledVariant = tv({
   variants: {
-    disabled: booleanVariant('opacity-50 pointer-events-none'),
+    disabled: booleanVariant("opacity-50 pointer-events-none"),
   },
   defaultVariants: {
     disabled: false,
@@ -24,7 +24,7 @@ const disabledVariant = tv({
 
 const loadingVariant = tv({
   variants: {
-    loading: booleanVariant('cursor-wait'),
+    loading: booleanVariant("cursor-wait"),
   },
   defaultVariants: {
     loading: false,
@@ -33,7 +33,7 @@ const loadingVariant = tv({
 
 const errorVariant = tv({
   variants: {
-    error: booleanVariant('border-danger focus:ring-danger'),
+    error: booleanVariant("border-danger focus:ring-danger"),
   },
   defaultVariants: {
     error: false,
@@ -42,7 +42,7 @@ const errorVariant = tv({
 
 const fullWidthVariant = tv({
   variants: {
-    fullWidth: booleanVariant('w-full'),
+    fullWidth: booleanVariant("w-full"),
   },
   defaultVariants: {
     fullWidth: false,
@@ -53,16 +53,16 @@ const fullWidthVariant = tv({
 const radiusVariant = tv({
   variants: {
     radius: {
-      none: 'rounded-none',
-      sm: 'rounded-sm',
-      md: 'rounded-md',
-      lg: 'rounded-lg',
-      xl: 'rounded-xl',
-      full: 'rounded-full',
+      none: "rounded-none",
+      sm: "rounded-sm",
+      md: "rounded-md",
+      lg: "rounded-lg",
+      xl: "rounded-xl",
+      full: "rounded-full",
     },
   },
   defaultVariants: {
-    radius: 'md',
+    radius: "md",
   },
 });
 
@@ -70,16 +70,16 @@ const radiusVariant = tv({
 const shadowVariant = tv({
   variants: {
     shadow: {
-      none: 'shadow-none',
-      sm: 'shadow-sm',
-      md: 'shadow',
-      lg: 'shadow-lg',
-      xl: 'shadow-xl',
-      inner: 'shadow-inner',
+      none: "shadow-none",
+      sm: "shadow-sm",
+      md: "shadow",
+      lg: "shadow-lg",
+      xl: "shadow-xl",
+      inner: "shadow-inner",
     },
   },
   defaultVariants: {
-    shadow: 'none',
+    shadow: "none",
   },
 });
 
@@ -92,7 +92,7 @@ export const sharedVariants = {
   fullWidth: fullWidthVariant.variants.fullWidth,
   radius: radiusVariant.variants.radius,
   shadow: shadowVariant.variants.shadow,
-  
+
   // Utility functions
   booleanVariant,
 };

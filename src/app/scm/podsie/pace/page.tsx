@@ -40,7 +40,8 @@ export default function PacePage() {
       school: opt.school,
       classSection: opt.classSection,
       displayName: opt.displayName,
-      specialPopulations: (opt as { specialPopulations?: string[] }).specialPopulations,
+      specialPopulations: (opt as { specialPopulations?: string[] })
+        .specialPopulations,
     }));
   }, [rawSectionOptions]);
 
@@ -52,15 +53,19 @@ export default function PacePage() {
     setSelectedSections((prev) =>
       prev.includes(sectionId)
         ? prev.filter((id) => id !== sectionId)
-        : [...prev, sectionId]
+        : [...prev, sectionId],
     );
   };
 
   // Get current unit info for a section
-  const getCurrentUnitForSection = (sectionOpt: SectionOption): CurrentUnitInfo | null => {
+  const getCurrentUnitForSection = (
+    sectionOpt: SectionOption,
+  ): CurrentUnitInfo | null => {
     return (
       currentUnits.find(
-        (cu) => cu.school === sectionOpt.school && cu.classSection === sectionOpt.classSection
+        (cu) =>
+          cu.school === sectionOpt.school &&
+          cu.classSection === sectionOpt.classSection,
       ) || null
     );
   };
@@ -75,7 +80,9 @@ export default function PacePage() {
       if (!sectionOpt) return false;
 
       const unitInfo = currentUnits.find(
-        (cu) => cu.school === sectionOpt.school && cu.classSection === sectionOpt.classSection
+        (cu) =>
+          cu.school === sectionOpt.school &&
+          cu.classSection === sectionOpt.classSection,
       );
 
       // If currentSection exists and is not "Ramp Up", section is past ramp ups
@@ -112,7 +119,14 @@ export default function PacePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <DeprecationModal links={[{ label: "Go to Pacing on Podsie", url: "https://www.podsie.org/teacher/sandbox/pacing" }]} />
+      <DeprecationModal
+        links={[
+          {
+            label: "Go to Pacing on Podsie",
+            url: "https://www.podsie.org/teacher/sandbox/pacing",
+          },
+        ]}
+      />
       <div className="mx-auto" style={{ maxWidth: "1600px" }}>
         {/* Page Title */}
         <div className="mb-6">
@@ -207,7 +221,9 @@ export default function PacePage() {
         {/* Detailed Pacing Cards for Selected Sections */}
         {selectedSectionsData.length > 0 && (
           <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-gray-900">Detailed Progress</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Detailed Progress
+            </h2>
             {selectedSectionsData.map((sectionOpt) => (
               <SectionPacingCard
                 key={sectionOpt.id}

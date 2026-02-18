@@ -6,7 +6,8 @@ import { TimesheetBatchInputSchema } from "@/lib/schema/zod-schema/scm/timesheet
 import { logError } from "@error/core/logging";
 
 // Simple API key for authentication (store in .env.local for production)
-const TIMESHEET_API_KEY = process.env.TIMESHEET_API_KEY || "timesheet-dev-key-2024";
+const TIMESHEET_API_KEY =
+  process.env.TIMESHEET_API_KEY || "timesheet-dev-key-2024";
 
 // CORS headers for cross-origin requests from Chrome extension
 const CORS_HEADERS = {
@@ -43,7 +44,9 @@ export async function OPTIONS() {
 function adjustDateForLateSubmission(dateStr: string): string {
   // Get current time in EST
   const now = new Date();
-  const estTime = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+  const estTime = new Date(
+    now.toLocaleString("en-US", { timeZone: "America/New_York" }),
+  );
   const currentHour = estTime.getHours();
 
   // If after 7pm (19:00) EST, shift to next day
@@ -69,11 +72,13 @@ export async function POST(request: NextRequest) {
     // Validate input
     const validationResult = TimesheetBatchInputSchema.safeParse(body);
     if (!validationResult.success) {
-      const fieldErrors = validationResult.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ');
+      const fieldErrors = validationResult.error.issues
+        .map((i) => `${i.path.join(".")}: ${i.message}`)
+        .join("; ");
       logError(validationResult.error, {
         component: "TimesheetAPI",
         operation: "validateInput",
-        severity: "warning"
+        severity: "warning",
       });
       return jsonResponse(
         {
@@ -82,7 +87,7 @@ export async function POST(request: NextRequest) {
           code: "VALIDATION_ERROR",
           details: validationResult.error.issues,
         },
-        400
+        400,
       );
     }
 
@@ -93,13 +98,16 @@ export async function POST(request: NextRequest) {
       logError(new Error("Invalid API key attempt"), {
         component: "TimesheetAPI",
         operation: "authenticate",
-        severity: "warning"
+        severity: "warning",
       });
-      return jsonResponse({
-        success: false,
-        error: "Authentication failed: Invalid API key",
-        code: "AUTH_ERROR"
-      }, 401);
+      return jsonResponse(
+        {
+          success: false,
+          error: "Authentication failed: Invalid API key",
+          code: "AUTH_ERROR",
+        },
+        401,
+      );
     }
 
     // Process and save entries
@@ -139,13 +147,13 @@ export async function POST(request: NextRequest) {
         message: `Saved ${savedEntries.length} timesheet entries`,
         data: savedEntries,
       },
-      201
+      201,
     );
   } catch (error) {
     const errorMessage = logError(error, {
       component: "TimesheetAPI",
       operation: "saveEntries",
-      severity: "error"
+      severity: "error",
     });
 
     return jsonResponse(
@@ -154,7 +162,7 @@ export async function POST(request: NextRequest) {
         error: `Failed to save timesheet entries: ${errorMessage}`,
         code: "DATABASE_ERROR",
       },
-      500
+      500,
     );
   }
 }
@@ -211,7 +219,7 @@ export async function GET(request: NextRequest) {
     const errorMessage = logError(error, {
       component: "TimesheetAPI",
       operation: "fetchEntries",
-      severity: "error"
+      severity: "error",
     });
 
     return jsonResponse(
@@ -220,7 +228,7 @@ export async function GET(request: NextRequest) {
         error: `Failed to fetch timesheet entries: ${errorMessage}`,
         code: "DATABASE_ERROR",
       },
-      500
+      500,
     );
   }
 }

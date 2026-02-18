@@ -39,7 +39,7 @@ export function buildQuestionMapping(
   baseQuestionIds: number[],
   variations: number,
   q1HasVariations: boolean = false,
-  rootOnly: boolean = false // NEW: When true, only include root questions (no variants)
+  rootOnly: boolean = false, // NEW: When true, only include root questions (no variants)
 ): number[][] {
   if (!baseQuestionIds || baseQuestionIds.length === 0) {
     return [];
@@ -47,13 +47,19 @@ export function buildQuestionMapping(
 
   // Validate variations
   if (variations < 0 || variations > 10) {
-    console.warn(`Invalid variations count: ${variations}. Using default of 3.`);
+    console.warn(
+      `Invalid variations count: ${variations}. Using default of 3.`,
+    );
     variations = 3;
   }
 
   const mapping: number[][] = [];
 
-  for (let questionIndex = 0; questionIndex < baseQuestionIds.length; questionIndex++) {
+  for (
+    let questionIndex = 0;
+    questionIndex < baseQuestionIds.length;
+    questionIndex++
+  ) {
     const baseId = baseQuestionIds[questionIndex];
 
     // If rootOnly mode, just use root question ID for all questions
@@ -95,7 +101,7 @@ export function buildQuestionMapping(
  */
 export function calculateTotalQuestionIds(
   baseQuestionCount: number,
-  variations: number
+  variations: number,
 ): number {
   if (baseQuestionCount === 0) return 0;
   if (baseQuestionCount === 1) return 1; // Only question 1, no variations
@@ -132,7 +138,7 @@ export function calculateTotalQuestionIds(
 export function buildEnhancedQuestionMap(
   baseQuestionIds: number[],
   variations: number,
-  q1HasVariations: boolean = false
+  q1HasVariations: boolean = false,
 ): PodsieQuestionMap[] {
   if (!baseQuestionIds || baseQuestionIds.length === 0) {
     return [];
@@ -140,13 +146,19 @@ export function buildEnhancedQuestionMap(
 
   // Validate variations
   if (variations < 0 || variations > 10) {
-    console.warn(`Invalid variations count: ${variations}. Using default of 3.`);
+    console.warn(
+      `Invalid variations count: ${variations}. Using default of 3.`,
+    );
     variations = 3;
   }
 
   const questionMap: PodsieQuestionMap[] = [];
 
-  for (let questionIndex = 0; questionIndex < baseQuestionIds.length; questionIndex++) {
+  for (
+    let questionIndex = 0;
+    questionIndex < baseQuestionIds.length;
+    questionIndex++
+  ) {
     const baseId = baseQuestionIds[questionIndex];
     const questionNumber = questionIndex + 1; // 1-based indexing
 
