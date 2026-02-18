@@ -30,14 +30,12 @@ import {
   removeAssignment,
 } from "../_actions/assignments.actions";
 import type { StaffOption } from "../_actions/assignments.actions";
-import { Schools } from "@schema/enum/scm";
-import type { CoachTeacherAssignmentDocument } from "../_types/assignment.types";
+import type { PopulatedAssignment } from "../_types/assignment.types";
 
 export function AssignmentManager() {
   const queryClient = useQueryClient();
   const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
   const [selectedTeacherIds, setSelectedTeacherIds] = useState<string[]>([]);
-  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [assigning, setAssigning] = useState(false);
   const [removeTarget, setRemoveTarget] = useState<{
     id: string;
@@ -76,7 +74,7 @@ export function AssignmentManager() {
       if (!selectedCoachId) return [];
       const result = await getCoachTeachers(selectedCoachId);
       if (!result.success) throw new Error(result.error);
-      return result.data as CoachTeacherAssignmentDocument[];
+      return result.data as PopulatedAssignment[];
     },
     enabled: !!selectedCoachId,
     staleTime: 60 * 1000,
@@ -85,9 +83,7 @@ export function AssignmentManager() {
   const assignedTeacherIds = new Set(
     (assignments || []).map((a) => {
       const t = a.teacherStaffId;
-      return typeof t === "object" && t !== null
-        ? (t as Record<string, string>)._id
-        : t;
+      return typeof t === "object" && t !== null ? t._id : t;
     }),
   );
 
@@ -105,31 +101,17 @@ export function AssignmentManager() {
     label: `${t.staffName}${t.email ? ` (${t.email})` : ""}`,
   }));
 
-  const schoolOptions = Schools.map((s) => ({
-    value: s,
-    label: s,
-  }));
-
   const selectedCoach = coaches?.find((c) => c._id === selectedCoachId);
 
   const handleAssign = async () => {
-    if (
-      !selectedCoachId ||
-      selectedTeacherIds.length === 0 ||
-      !selectedSchoolId
-    )
-      return;
+    if (!selectedCoachId || selectedTeacherIds.length === 0) return;
 
     setAssigning(true);
     let successCount = 0;
     let errorCount = 0;
 
     for (const teacherId of selectedTeacherIds) {
-      const result = await assignTeacher(
-        selectedCoachId,
-        teacherId,
-        selectedSchoolId,
-      );
+      const result = await assignTeacher(selectedCoachId, teacherId);
       if (result.success) {
         successCount++;
       } else {
@@ -225,135 +207,113 @@ export function AssignmentManager() {
         )}
 
         {coaches && coaches.length > 0 && (
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
-          {/* Left Panel: Coach Selection + Current Caseload */}
-          <Card withBorder p="lg">
-            <Stack gap="md">
-              <Title order={4}>Select Coach</Title>
-              <Select
-                placeholder="Search for a coach..."
-                searchable
-                data={coachOptions}
-                value={selectedCoachId}
-                onChange={setSelectedCoachId}
-              />
+          <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
+            {/* Left Panel: Coach Selection + Current Caseload */}
+            <Card withBorder p="lg">
+              <Stack gap="md">
+                <Title order={4}>Select Coach</Title>
+                <Select
+                  placeholder="Search for a coach..."
+                  searchable
+                  data={coachOptions}
+                  value={selectedCoachId}
+                  onChange={setSelectedCoachId}
+                />
 
-              {!selectedCoachId ? (
-                <Text c="dimmed" size="sm">
-                  Select a coach to view their caseload
-                </Text>
-              ) : assignmentsLoading ? (
-                <Center py="md">
-                  <Loader size="sm" />
-                </Center>
-              ) : !assignments || assignments.length === 0 ? (
-                <Text c="dimmed" size="sm">
-                  No teachers assigned to this coach
-                </Text>
-              ) : (
-                <Table striped highlightOnHover>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th>Teacher</Table.Th>
-                      <Table.Th>School</Table.Th>
-                      <Table.Th>Assigned</Table.Th>
-                      <Table.Th w={50} />
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {assignments.map((a) => {
-                      const teacher = a.teacherStaffId as unknown as {
-                        _id: string;
-                        staffName: string;
-                        email?: string;
-                      };
-                      const school = a.schoolId as unknown as {
-                        _id: string;
-                        schoolName: string;
-                      };
-                      const teacherName =
-                        typeof teacher === "object"
-                          ? teacher.staffName
-                          : "Unknown";
-                      const schoolName =
-                        typeof school === "object"
-                          ? school.schoolName
-                          : "Unknown";
+                {!selectedCoachId ? (
+                  <Text c="dimmed" size="sm">
+                    Select a coach to view their caseload
+                  </Text>
+                ) : assignmentsLoading ? (
+                  <Center py="md">
+                    <Loader size="sm" />
+                  </Center>
+                ) : !assignments || assignments.length === 0 ? (
+                  <Text c="dimmed" size="sm">
+                    No teachers assigned to this coach
+                  </Text>
+                ) : (
+                  <Table striped highlightOnHover>
+                    <Table.Thead>
+                      <Table.Tr>
+                        <Table.Th>Teacher</Table.Th>
+                        <Table.Th>School</Table.Th>
+                        <Table.Th>Assigned</Table.Th>
+                        <Table.Th w={50} />
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                      {assignments.map((a) => {
+                        const teacher = a.teacherStaffId;
+                        const teacherName =
+                          typeof teacher === "object"
+                            ? teacher.staffName
+                            : "Unknown";
 
-                      return (
-                        <Table.Tr key={a._id}>
-                          <Table.Td>{teacherName}</Table.Td>
-                          <Table.Td>{schoolName}</Table.Td>
-                          <Table.Td>
-                            {new Date(a.assignedAt).toLocaleDateString()}
-                          </Table.Td>
-                          <Table.Td>
-                            <ActionIcon
-                              variant="subtle"
-                              color="red"
-                              size="sm"
-                              onClick={() =>
-                                setRemoveTarget({
-                                  id: a._id,
-                                  name: teacherName,
-                                })
-                              }
-                            >
-                              <IconTrash size={14} />
-                            </ActionIcon>
-                          </Table.Td>
-                        </Table.Tr>
-                      );
-                    })}
-                  </Table.Tbody>
-                </Table>
-              )}
-            </Stack>
-          </Card>
+                        return (
+                          <Table.Tr key={a._id}>
+                            <Table.Td>{teacherName}</Table.Td>
+                            <Table.Td>{a.schoolId ?? "—"}</Table.Td>
+                            <Table.Td>
+                              {new Date(a.assignedAt).toLocaleDateString()}
+                            </Table.Td>
+                            <Table.Td>
+                              <ActionIcon
+                                variant="subtle"
+                                color="red"
+                                size="sm"
+                                onClick={() =>
+                                  setRemoveTarget({
+                                    id: a._id,
+                                    name: teacherName,
+                                  })
+                                }
+                              >
+                                <IconTrash size={14} />
+                              </ActionIcon>
+                            </Table.Td>
+                          </Table.Tr>
+                        );
+                      })}
+                    </Table.Tbody>
+                  </Table>
+                )}
+              </Stack>
+            </Card>
 
-          {/* Right Panel: Add Teachers */}
-          <Card withBorder p="lg">
-            <Stack gap="md">
-              <Title order={4}>Add Teachers</Title>
+            {/* Right Panel: Add Teachers */}
+            <Card withBorder p="lg">
+              <Stack gap="md">
+                <Title order={4}>Add Teachers</Title>
 
-              {!selectedCoachId ? (
-                <Text c="dimmed" size="sm">
-                  Select a coach first to assign teachers
-                </Text>
-              ) : (
-                <>
-                  <MultiSelect
-                    placeholder="Search and select teachers..."
-                    searchable
-                    data={teacherOptions}
-                    value={selectedTeacherIds}
-                    onChange={setSelectedTeacherIds}
-                  />
+                {!selectedCoachId ? (
+                  <Text c="dimmed" size="sm">
+                    Select a coach first to assign teachers
+                  </Text>
+                ) : (
+                  <>
+                    <MultiSelect
+                      placeholder="Search and select teachers..."
+                      searchable
+                      data={teacherOptions}
+                      value={selectedTeacherIds}
+                      onChange={setSelectedTeacherIds}
+                    />
 
-                  <Select
-                    placeholder="Select school..."
-                    searchable
-                    data={schoolOptions}
-                    value={selectedSchoolId}
-                    onChange={setSelectedSchoolId}
-                  />
-
-                  <Group justify="flex-end">
-                    <Button
-                      onClick={handleAssign}
-                      loading={assigning}
-                      disabled={
-                        selectedTeacherIds.length === 0 || !selectedSchoolId
-                      }
-                    >
-                      Assign Selected Teachers
-                    </Button>
-                  </Group>
-                </>
-              )}
-            </Stack>
-          </Card>
-        </SimpleGrid>
+                    <Group justify="flex-end">
+                      <Button
+                        onClick={handleAssign}
+                        loading={assigning}
+                        disabled={selectedTeacherIds.length === 0}
+                      >
+                        Assign Selected Teachers
+                      </Button>
+                    </Group>
+                  </>
+                )}
+              </Stack>
+            </Card>
+          </SimpleGrid>
         )}
       </Stack>
 
@@ -361,7 +321,6 @@ export function AssignmentManager() {
         opened={teacherModalOpened}
         onClose={closeTeacherModal}
         role="Teacher"
-        schoolOptions={schoolOptions}
         onCreated={() => {
           queryClient.invalidateQueries({ queryKey: ["skillshub-teachers"] });
         }}
@@ -371,7 +330,6 @@ export function AssignmentManager() {
         opened={coachModalOpened}
         onClose={closeCoachModal}
         role="Coach"
-        schoolOptions={schoolOptions}
         onCreated={() => {
           queryClient.invalidateQueries({ queryKey: ["skillshub-coaches"] });
         }}

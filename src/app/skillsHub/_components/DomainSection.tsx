@@ -37,21 +37,23 @@ export function DomainSection({
   const allSkills: TeacherSkillFlat[] = domain.subDomains.flatMap((sd) =>
     sd.skills.map((s) => ({
       ...s,
+      domainUuid: domain.uuid,
       domainId: domain.id,
       domainName: domain.name,
+      subDomainUuid: sd.uuid,
       subDomainId: sd.id,
       subDomainName: sd.name,
     })),
   );
 
   const activeCount = allSkills.filter(
-    (s) => statusMap.get(s.id)?.status === "active",
+    (s) => statusMap.get(s.uuid)?.status === "active",
   ).length;
 
   const level2Skills = allSkills.filter((s) => s.level === 2);
   const hasLevel2 = level2Skills.length > 0;
   const level2Unlocked = level2Skills.some(
-    (s) => statusMap.get(s.id)?.level2Unlocked,
+    (s) => statusMap.get(s.uuid)?.level2Unlocked,
   );
 
   return (
@@ -84,14 +86,16 @@ export function DomainSection({
               <Accordion.Panel>
                 <Stack gap={2}>
                   {level1Skills.map((skill) => {
-                    const statusDoc = statusMap.get(skill.id);
+                    const statusDoc = statusMap.get(skill.uuid);
                     return (
                       <SkillCard
                         key={skill.id}
                         skill={{
                           ...skill,
+                          domainUuid: domain.uuid,
                           domainId: domain.id,
                           domainName: domain.name,
+                          subDomainUuid: subDomain.uuid,
                           subDomainId: subDomain.id,
                           subDomainName: subDomain.name,
                         }}
@@ -109,14 +113,16 @@ export function DomainSection({
                   {sdLevel2Skills.length > 0 && (
                     <>
                       {sdLevel2Skills.map((skill) => {
-                        const statusDoc = statusMap.get(skill.id);
+                        const statusDoc = statusMap.get(skill.uuid);
                         return (
                           <SkillCard
                             key={skill.id}
                             skill={{
                               ...skill,
+                              domainUuid: domain.uuid,
                               domainId: domain.id,
                               domainName: domain.name,
+                              subDomainUuid: subDomain.uuid,
                               subDomainId: subDomain.id,
                               subDomainName: subDomain.name,
                             }}
@@ -148,7 +154,7 @@ export function DomainSection({
           color="violet"
           size="xs"
           mt="sm"
-          onClick={() => onUnlockLevel2(level2Skills.map((s) => s.id))}
+          onClick={() => onUnlockLevel2(level2Skills.map((s) => s.uuid))}
         >
           Unlock Level 2 Skills
         </Button>

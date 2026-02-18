@@ -42,8 +42,10 @@ export function getSkillById(
       if (skill) {
         return {
           ...skill,
+          domainUuid: domain.uuid,
           domainId: domain.id,
           domainName: domain.name,
+          subDomainUuid: subDomain.uuid,
           subDomainId: subDomain.id,
           subDomainName: subDomain.name,
         };
@@ -62,8 +64,10 @@ export function flattenSkills(
       for (const skill of subDomain.skills) {
         skills.push({
           ...skill,
+          domainUuid: domain.uuid,
           domainId: domain.id,
           domainName: domain.name,
+          subDomainUuid: subDomain.uuid,
           subDomainId: subDomain.id,
           subDomainName: subDomain.name,
         });

@@ -38,7 +38,7 @@ export function SkillDetailHeader({
   onStatusChanged,
 }: SkillDetailHeaderProps) {
   const handleStatusChange = async (value: string) => {
-    await updateSkillStatus(teacherStaffId, skill.id, value as SkillStatus);
+    await updateSkillStatus(teacherStaffId, skill.uuid, value as SkillStatus);
     onStatusChanged();
   };
 
