@@ -1,5 +1,5 @@
-import type { TeacherSkill } from "../_types/taxonomy.types";
-import type { TeacherSkillStatusDocument } from "../_types/skill-status.types";
+import type { TeacherSkill } from "./taxonomy.types";
+import type { TeacherSkillStatusDocument } from "./skill-status.types";
 
 /**
  * Determines whether a skill should be locked in the UI.

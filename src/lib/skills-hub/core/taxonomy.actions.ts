@@ -1,6 +1,6 @@
 "use server";
 
-import { fetchTaxonomy } from "@/app/skillsHub/_lib/taxonomy";
+import { fetchTaxonomy } from "./taxonomy";
 import type { TeacherSkillsIndex } from "./taxonomy.types";
 
 export async function fetchTaxonomyAction(): Promise<{

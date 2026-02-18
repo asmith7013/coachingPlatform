@@ -4,7 +4,7 @@ import {
   type TeacherSkillFlat,
   type TeacherSkill,
   type SkillsByLevel,
-} from "../_types/taxonomy.types";
+} from "./taxonomy.types";
 
 let cachedTaxonomy: TeacherSkillsIndex | null = null;
 let cacheTimestamp = 0;
