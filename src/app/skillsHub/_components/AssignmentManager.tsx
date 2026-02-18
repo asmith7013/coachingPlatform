@@ -30,7 +30,10 @@ import {
   removeAssignment,
 } from "../_actions/assignments.actions";
 import type { StaffOption } from "../_actions/assignments.actions";
-import type { CoachTeacherAssignmentDocument } from "../_types/assignment.types";
+import type {
+  CoachTeacherAssignmentDocument,
+  PopulatedAssignment,
+} from "../_types/assignment.types";
 
 export function AssignmentManager() {
   const queryClient = useQueryClient();
@@ -74,7 +77,7 @@ export function AssignmentManager() {
       if (!selectedCoachId) return [];
       const result = await getCoachTeachers(selectedCoachId);
       if (!result.success) throw new Error(result.error);
-      return result.data as CoachTeacherAssignmentDocument[];
+      return result.data as PopulatedAssignment[];
     },
     enabled: !!selectedCoachId,
     staleTime: 60 * 1000,
@@ -83,9 +86,7 @@ export function AssignmentManager() {
   const assignedTeacherIds = new Set(
     (assignments || []).map((a) => {
       const t = a.teacherStaffId;
-      return typeof t === "object" && t !== null
-        ? (t as Record<string, string>)._id
-        : t;
+      return typeof t === "object" && t !== null ? t._id : t;
     }),
   );
 
@@ -246,11 +247,7 @@ export function AssignmentManager() {
                     </Table.Thead>
                     <Table.Tbody>
                       {assignments.map((a) => {
-                        const teacher = a.teacherStaffId as unknown as {
-                          _id: string;
-                          staffName: string;
-                          email?: string;
-                        };
+                        const teacher = a.teacherStaffId;
                         const teacherName =
                           typeof teacher === "object"
                             ? teacher.staffName

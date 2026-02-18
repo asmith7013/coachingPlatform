@@ -11,10 +11,10 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconEye, IconClipboardPlus, IconMap } from "@tabler/icons-react";
-import type { CoachTeacherAssignmentDocument } from "../_types/assignment.types";
+import type { PopulatedAssignment } from "../_types/assignment.types";
 
 interface CaseloadTableProps {
-  teachers: CoachTeacherAssignmentDocument[];
+  teachers: PopulatedAssignment[];
   loading: boolean;
 }
 
@@ -49,9 +49,7 @@ export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
       </Table.Thead>
       <Table.Tbody>
         {teachers.map((assignment) => {
-          const teacher = assignment.teacherStaffId as unknown as
-            | { _id: string; staffName: string }
-            | string;
+          const teacher = assignment.teacherStaffId;
           const teacherName =
             typeof teacher === "object" ? teacher.staffName : "Unknown";
           const teacherId =

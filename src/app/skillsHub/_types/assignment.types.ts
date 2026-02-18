@@ -19,3 +19,14 @@ export const CoachTeacherAssignmentDocumentSchema = z.object({
 export type CoachTeacherAssignmentDocument = z.infer<
   typeof CoachTeacherAssignmentDocumentSchema
 >;
+
+export interface PopulatedTeacher {
+  _id: string;
+  staffName: string;
+  email?: string;
+}
+
+export interface PopulatedAssignment
+  extends Omit<CoachTeacherAssignmentDocument, "teacherStaffId"> {
+  teacherStaffId: PopulatedTeacher | string;
+}

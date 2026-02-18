@@ -29,7 +29,7 @@ export function CoachTeacherSelector({
   // For coaches, use their own staffId as the coach
   const coachStaffId = isAdmin
     ? (selectedCoachId ?? "")
-    : (metadata.staffId || "");
+    : metadata.staffId || "";
 
   // Fetch coaches list (admins only)
   const { data: coaches } = useQuery({
@@ -44,8 +44,7 @@ export function CoachTeacherSelector({
   });
 
   // Fetch teachers for the selected coach
-  const { teachers, loading: teachersLoading } =
-    useCoachCaseload(coachStaffId);
+  const { teachers, loading: teachersLoading } = useCoachCaseload(coachStaffId);
 
   const coachOptions = (coaches ?? []).map((c) => ({
     value: c._id,
@@ -53,9 +52,7 @@ export function CoachTeacherSelector({
   }));
 
   const teacherOptions = teachers.map((assignment) => {
-    const teacher = assignment.teacherStaffId as unknown as
-      | { _id: string; staffName: string }
-      | string;
+    const teacher = assignment.teacherStaffId;
     const name = typeof teacher === "object" ? teacher.staffName : "Unknown";
     const id = typeof teacher === "object" ? teacher._id : String(teacher);
     return { value: id, label: name };
