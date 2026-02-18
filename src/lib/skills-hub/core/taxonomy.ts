@@ -56,6 +56,29 @@ export function getSkillById(
   return null;
 }
 
+export function getSkillByUuid(
+  taxonomy: TeacherSkillsIndex,
+  uuid: string,
+): TeacherSkillFlat | null {
+  for (const domain of taxonomy.domains) {
+    for (const subDomain of domain.subDomains) {
+      const skill = subDomain.skills.find((s) => s.uuid === uuid);
+      if (skill) {
+        return {
+          ...skill,
+          domainUuid: domain.uuid,
+          domainId: domain.id,
+          domainName: domain.name,
+          subDomainUuid: subDomain.uuid,
+          subDomainId: subDomain.id,
+          subDomainName: subDomain.name,
+        };
+      }
+    }
+  }
+  return null;
+}
+
 export function groupSkillsByLevel(skills: TeacherSkill[]): SkillsByLevel {
   return {
     l1Skills: skills.filter((s) => s.level === 1),
