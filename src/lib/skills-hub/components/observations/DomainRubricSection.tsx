@@ -6,8 +6,8 @@ import { DomainOverallRating } from "./DomainOverallRating";
 import type {
   TeacherSkillDomain,
   TeacherSkillFlat,
-} from "../_types/taxonomy.types";
-import type { RatingScale } from "../_types/observation.types";
+} from "../../core/taxonomy.types";
+import type { RatingScale } from "../../coach/observations/observation.types";
 
 interface DomainRubricSectionProps {
   domain: TeacherSkillDomain;

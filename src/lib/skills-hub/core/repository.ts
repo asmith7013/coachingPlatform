@@ -24,7 +24,11 @@ export async function getAuthStaffId(): Promise<string> {
   if (!authResult.success) {
     throw new Error("Unauthorized");
   }
-  return authResult.data.metadata.staffId;
+  const staffId = authResult.data.metadata.staffId;
+  if (!staffId) {
+    throw new Error("No staffId found for authenticated user");
+  }
+  return staffId;
 }
 
 // ─── Common Queries ──────────────────────────────────────────────
@@ -64,9 +68,7 @@ export interface StaffOption {
   schoolIds?: string[];
 }
 
-export async function findStaffByRole(
-  role: string,
-): Promise<StaffOption[]> {
+export async function findStaffByRole(role: string): Promise<StaffOption[]> {
   const docs = await NYCPSStaffModel.find({ rolesNYCPS: role })
     .select("staffName email schoolIds")
     .sort({ staffName: 1 })

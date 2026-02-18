@@ -1,21 +1,22 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import { Card, Text, Stack, Center, Loader } from "@mantine/core";
+import { Card, Text, Stack, Center } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { useTaxonomy } from "../../_hooks/useTaxonomy";
+import { useTaxonomy } from "@/lib/skills-hub/hooks/useTaxonomy";
 import {
   useTeacherSkillStatuses,
   skillStatusKeys,
-} from "../../_hooks/useTeacherSkillStatuses";
-import { useActionPlans } from "../../_hooks/useActionPlans";
-import { useObservations } from "../../_hooks/useObservations";
-import { getSkillById } from "../../_lib/taxonomy";
-import { SkillDetailHeader } from "../../_components/SkillDetailHeader";
-import { SkillObservationTimeline } from "../../_components/SkillObservationTimeline";
-import { SkillNotesSection } from "../../_components/SkillNotesSection";
-import type { SkillStatus } from "../../_types/skill-status.types";
+} from "@/lib/skills-hub/hooks/useTeacherSkillStatuses";
+import { useActionPlans } from "@/lib/skills-hub/hooks/useActionPlans";
+import { useObservations } from "@/lib/skills-hub/hooks/useObservations";
+import { getSkillById } from "@/lib/skills-hub/core/taxonomy";
+import { SkillDetailHeader } from "@/lib/skills-hub/components/skills/SkillDetailHeader";
+import { SkillObservationTimeline } from "@/lib/skills-hub/components/observations/SkillObservationTimeline";
+import { SkillNotesSection } from "@/lib/skills-hub/components/notes/SkillNotesSection";
+import { SkillDetailSkeleton } from "@/lib/skills-hub/components/core/SkillsHubSkeletons";
+import type { SkillStatus } from "@/lib/skills-hub/core/skill-status.types";
 
 export default function SkillDetailPage() {
   const params = useParams();
@@ -35,11 +36,7 @@ export default function SkillDetailPage() {
   const { observations } = useObservations(teacherId);
 
   if (taxLoading || statusLoading) {
-    return (
-      <Center py="xl">
-        <Loader />
-      </Center>
-    );
+    return <SkillDetailSkeleton />;
   }
 
   if (!taxonomy) {

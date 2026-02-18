@@ -2,7 +2,7 @@
 
 import { Timeline, Text, Badge, Group, Stack } from "@mantine/core";
 import { IconEye } from "@tabler/icons-react";
-import type { ObservationDocument } from "../_types/observation.types";
+import type { ObservationDocument } from "../../coach/observations/observation.types";
 
 interface SkillObservationTimelineProps {
   observations: ObservationDocument[];

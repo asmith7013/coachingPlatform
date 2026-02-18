@@ -4,10 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { Group, Text, Badge, Select, UnstyledButton, Box } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
-import { SkillStatusBadge } from "./SkillStatusBadge";
-import { updateSkillStatus } from "../_actions/skill-status.actions";
-import type { SkillStatus } from "../_types/skill-status.types";
-import type { TeacherSkillFlat } from "../_types/taxonomy.types";
+import { SkillStatusBadge } from "../core/SkillStatusBadge";
+import { updateSkillStatus } from "../../core/skill-status.actions";
+import type { SkillStatus } from "../../core/skill-status.types";
+import type { TeacherSkillFlat } from "../../core/taxonomy.types";
 
 interface SkillCardProps {
   skill: TeacherSkillFlat;

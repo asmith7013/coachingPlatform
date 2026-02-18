@@ -4,7 +4,7 @@ import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
-import { skillsHubTheme } from "../_lib/mantine-theme";
+import { skillsHubTheme } from "../../core/mantine-theme";
 
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";

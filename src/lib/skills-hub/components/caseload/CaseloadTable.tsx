@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconEye, IconClipboardPlus, IconMap } from "@tabler/icons-react";
-import type { PopulatedAssignment } from "../_types/assignment.types";
+import type { PopulatedAssignment } from "../../admin/coaching-assignments/coaching-assignment.types";
 
 interface CaseloadTableProps {
   teachers: PopulatedAssignment[];

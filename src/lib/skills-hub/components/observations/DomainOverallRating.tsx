@@ -1,7 +1,7 @@
 "use client";
 
 import { Group, Text, SegmentedControl, Textarea, Stack } from "@mantine/core";
-import type { RatingScale } from "../_types/observation.types";
+import type { RatingScale } from "../../coach/observations/observation.types";
 
 interface DomainOverallRatingProps {
   domainId: string;

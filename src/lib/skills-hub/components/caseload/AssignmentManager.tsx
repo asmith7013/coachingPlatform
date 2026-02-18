@@ -28,9 +28,9 @@ import {
   getCoachTeachers,
   assignTeacher,
   removeAssignment,
-} from "../_actions/assignments.actions";
-import type { StaffOption } from "../_actions/assignments.actions";
-import type { PopulatedAssignment } from "../_types/assignment.types";
+} from "../../admin/coaching-assignments/coaching-assignment.actions";
+import type { StaffOption } from "../../admin/coaching-assignments/coaching-assignment.actions";
+import type { PopulatedAssignment } from "../../admin/coaching-assignments/coaching-assignment.types";
 
 export function AssignmentManager() {
   const queryClient = useQueryClient();

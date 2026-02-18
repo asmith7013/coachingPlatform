@@ -7,7 +7,6 @@ import {
   Button,
   Group,
   Center,
-  Loader,
   Text,
   Table,
   Badge,
@@ -16,11 +15,15 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { ObservationHeader } from "./ObservationHeader";
-import { useTaxonomy } from "../_hooks/useTaxonomy";
-import { useTeacherSkillStatuses } from "../_hooks/useTeacherSkillStatuses";
-import { createObservation } from "../_actions/observation.actions";
-import type { RatingScale, ObservationType } from "../_types/observation.types";
-import type { TeacherSkillSubDomain } from "../_types/taxonomy.types";
+import { ObservationGuideSkeleton } from "../core/SkillsHubSkeletons";
+import { useTaxonomy } from "../../hooks/useTaxonomy";
+import { useTeacherSkillStatuses } from "../../hooks/useTeacherSkillStatuses";
+import { createObservation } from "../../coach/observations/observation.actions";
+import type {
+  RatingScale,
+  ObservationType,
+} from "../../coach/observations/observation.types";
+import type { TeacherSkillSubDomain } from "../../core/taxonomy.types";
 
 const DOMAIN_COLORS: Array<{ bg: string; c: string }> = [
   { bg: "yellow.0", c: "yellow.9" },
@@ -209,11 +212,7 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
   };
 
   if (taxLoading || statusLoading) {
-    return (
-      <Center py="xl">
-        <Loader />
-      </Center>
-    );
+    return <ObservationGuideSkeleton />;
   }
 
   if (!taxonomy) {

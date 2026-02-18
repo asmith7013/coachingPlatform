@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { Title, Text, Card } from "@mantine/core";
-import { ObservationGuide } from "../../../_components/ObservationGuide";
+import { ObservationGuide } from "@/lib/skills-hub/components/observations/ObservationGuide";
 
 export default function ObservePage() {
   const params = useParams();

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Textarea, Button, Stack, Group } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { createNote } from "../_actions/notes.actions";
+import { createNote } from "../../coach/notes/notes.actions";
 
 interface NoteEditorProps {
   teacherStaffId: string;

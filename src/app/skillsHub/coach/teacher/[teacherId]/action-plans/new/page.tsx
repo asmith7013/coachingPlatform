@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { Title, Text, Card } from "@mantine/core";
-import { ActionPlanForm } from "../../../../_components/ActionPlanForm";
+import { ActionPlanForm } from "@/lib/skills-hub/components/action-plans/ActionPlanForm";
 
 export default function NewActionPlanPage() {
   const params = useParams();

@@ -5,7 +5,7 @@ import { Modal, TextInput, Select, Button, Stack, Alert } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { Schools } from "@schema/enum/scm";
-import { createStaffMember } from "../_actions/assignments.actions";
+import { createStaffMember } from "../../admin/coaching-assignments/coaching-assignment.actions";
 
 const schoolOptions = Schools.map((s) => ({ value: s, label: s }));
 

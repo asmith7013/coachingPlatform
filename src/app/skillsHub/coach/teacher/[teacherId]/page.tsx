@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Group, Title, Button, Text, Card } from "@mantine/core";
 import { IconClipboardPlus, IconEye } from "@tabler/icons-react";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { SkillMap } from "../../_components/SkillMap";
+import { SkillMap } from "@/lib/skills-hub/components/skills/SkillMap";
 
 export default function TeacherSkillMapPage() {
   const params = useParams();

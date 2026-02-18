@@ -10,10 +10,10 @@ import {
   Anchor,
 } from "@mantine/core";
 import Link from "next/link";
-import { SkillStatusBadge } from "./SkillStatusBadge";
-import { updateSkillStatus } from "../_actions/skill-status.actions";
-import type { SkillStatus } from "../_types/skill-status.types";
-import type { TeacherSkillFlat } from "../_types/taxonomy.types";
+import { SkillStatusBadge } from "../core/SkillStatusBadge";
+import { updateSkillStatus } from "../../core/skill-status.actions";
+import type { SkillStatus } from "../../core/skill-status.types";
+import type { TeacherSkillFlat } from "../../core/taxonomy.types";
 
 interface SkillDetailHeaderProps {
   skill: TeacherSkillFlat;

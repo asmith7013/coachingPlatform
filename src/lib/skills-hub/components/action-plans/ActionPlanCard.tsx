@@ -15,12 +15,12 @@ import {
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { getActionSteps } from "../_actions/action-step.actions";
-import { completeActionStep } from "../_actions/action-step.actions";
-import { closeActionPlan } from "../_actions/action-plan.actions";
-import { actionPlanKeys } from "../_hooks/useActionPlans";
-import type { ActionPlanDocument } from "../_types/action-plan.types";
-import type { ActionStepDocument } from "../_types/action-step.types";
+import { getActionSteps } from "../../coach/action-plans/action-step.actions";
+import { completeActionStep } from "../../coach/action-plans/action-step.actions";
+import { closeActionPlan } from "../../coach/action-plans/action-plan.actions";
+import { actionPlanKeys } from "../../hooks/useActionPlans";
+import type { ActionPlanDocument } from "../../coach/action-plans/action-plan.types";
+import type { ActionStepDocument } from "../../coach/action-plans/action-step.types";
 
 interface ActionPlanCardProps {
   plan: ActionPlanDocument;

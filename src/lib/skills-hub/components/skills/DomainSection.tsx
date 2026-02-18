@@ -11,16 +11,16 @@ import {
   Box,
 } from "@mantine/core";
 import { SkillCard } from "./SkillCard";
-import { groupSkillsByLevel } from "../_lib/taxonomy";
-import { isSkillLocked } from "../_lib/skill-lock";
-import { SkillStatusEnum } from "../_types/skill-status.types";
+import { groupSkillsByLevel } from "../../core/taxonomy";
+import { isSkillLocked } from "../../core/skill-lock";
+import { SkillStatusEnum } from "../../core/skill-status.types";
 import type {
   TeacherSkillDomain,
   TeacherSkillSubDomain,
   TeacherSkill,
   TeacherSkillFlat,
-} from "../_types/taxonomy.types";
-import type { TeacherSkillStatusDocument } from "../_types/skill-status.types";
+} from "../../core/taxonomy.types";
+import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
 
 interface DomainSectionProps {
   domain: TeacherSkillDomain;

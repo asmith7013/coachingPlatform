@@ -2,7 +2,7 @@
 
 import { Group, Select, Textarea, Stack } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
-import type { ObservationType } from "../_types/observation.types";
+import type { ObservationType } from "../../coach/observations/observation.types";
 
 interface ObservationHeaderProps {
   date: string | null;

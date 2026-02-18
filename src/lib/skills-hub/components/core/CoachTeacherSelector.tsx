@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { Card, Group, Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
-import { useCoachCaseload } from "../_hooks/useCoachCaseload";
-import { getCoaches } from "../_actions/assignments.actions";
-import type { StaffOption } from "../_actions/assignments.actions";
+import { useCoachCaseload } from "../../hooks/useCoachCaseload";
+import { getCoaches } from "../../admin/coaching-assignments/coaching-assignment.actions";
+import type { StaffOption } from "../../admin/coaching-assignments/coaching-assignment.actions";
 
 interface CoachTeacherSelectorProps {
   selectedTeacherId: string | null;

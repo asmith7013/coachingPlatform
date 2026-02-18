@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Stack, SegmentedControl, Text, Center, Loader } from "@mantine/core";
+import { Stack, SegmentedControl, Text } from "@mantine/core";
 import { ActionPlanCard } from "./ActionPlanCard";
-import type { ActionPlanDocument } from "../_types/action-plan.types";
+import { ActionPlanListSkeleton } from "../core/SkillsHubSkeletons";
+import type { ActionPlanDocument } from "../../coach/action-plans/action-plan.types";
 
 interface ActionPlanListProps {
   plans: ActionPlanDocument[];
@@ -19,11 +20,7 @@ export function ActionPlanList({
   const [filter, setFilter] = useState("open");
 
   if (loading) {
-    return (
-      <Center py="xl">
-        <Loader />
-      </Center>
-    );
+    return <ActionPlanListSkeleton />;
   }
 
   const filtered =

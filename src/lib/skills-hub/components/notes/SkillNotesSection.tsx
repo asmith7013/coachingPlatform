@@ -3,8 +3,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack, Text, Card, Group, Loader, Center } from "@mantine/core";
 import { NoteEditor } from "./NoteEditor";
-import { getNotes } from "../_actions/notes.actions";
-import type { SkillNoteDocument } from "../_types/note.types";
+import { getNotes } from "../../coach/notes/notes.actions";
+import type { SkillNoteDocument } from "../../coach/notes/note.types";
 
 interface SkillNotesSectionProps {
   teacherStaffId: string;

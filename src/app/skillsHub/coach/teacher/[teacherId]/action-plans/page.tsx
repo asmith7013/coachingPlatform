@@ -4,8 +4,8 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Title, Text, Card, Group, Button } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
-import { useActionPlans } from "../../../_hooks/useActionPlans";
-import { ActionPlanList } from "../../../_components/ActionPlanList";
+import { useActionPlans } from "@/lib/skills-hub/hooks/useActionPlans";
+import { ActionPlanList } from "@/lib/skills-hub/components/action-plans/ActionPlanList";
 
 export default function ActionPlansPage() {
   const params = useParams();

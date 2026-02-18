@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@mantine/core";
-import type { SkillStatus } from "../_types/skill-status.types";
+import type { SkillStatus } from "../../core/skill-status.types";
 
 const STATUS_CONFIG: Record<SkillStatus, { color: string; label: string }> = {
   not_started: { color: "gray", label: "Not Started" },
