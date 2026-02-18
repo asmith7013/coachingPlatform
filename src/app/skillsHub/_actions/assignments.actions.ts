@@ -151,9 +151,11 @@ export async function assignTeacher(
       });
 
       // Auto-derive school from the teacher's record
-      const teacher = await NYCPSStaffModel.findById(
+      const teacher = (await NYCPSStaffModel.findById(
         validated.teacherStaffId,
-      ).select("schoolIds").lean();
+      )
+        .select("schoolIds")
+        .lean()) as { schoolIds?: string[] } | null;
       const schoolId =
         teacher && Array.isArray(teacher.schoolIds) && teacher.schoolIds.length > 0
           ? String(teacher.schoolIds[0])
