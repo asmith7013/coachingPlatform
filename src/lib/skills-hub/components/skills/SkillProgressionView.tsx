@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { DomainAccordion } from "./DomainAccordion";
 import { ProgressStatsRow } from "./ProgressStatsRow";
-import { SkillDetailDrawer } from "./SkillDetailDrawer";
+import { SkillDetailPanel } from "./SkillDetailPanel";
 import { useStatusLegend } from "../core/StatusLegendContext";
 import { SkillMapSkeleton } from "../core/SkillsHubSkeletons";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
@@ -14,10 +14,12 @@ import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
 
 interface SkillProgressionViewProps {
   teacherStaffId: string;
+  teacherName?: string;
 }
 
 export function SkillProgressionView({
   teacherStaffId,
+  teacherName,
 }: SkillProgressionViewProps) {
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const { show, hide } = useStatusLegend();
@@ -88,31 +90,36 @@ export function SkillProgressionView({
   );
 
   return (
-    <Stack gap="lg">
-      <ProgressStatsRow taxonomy={taxonomy} statusMap={statusMap} />
+    <div style={{ display: "flex", gap: 16 }}>
+      <Stack gap="lg" style={{ flex: 1, minWidth: 0 }}>
+        <ProgressStatsRow taxonomy={taxonomy} statusMap={statusMap} />
 
-      <Group justify="space-between" align="baseline">
-        <Text fw={700} size="lg">
-          Skill Progression
-        </Text>
-        <Anchor component={Link} href="/skillsHub/skills" size="sm">
-          View all skills
-        </Anchor>
-      </Group>
+        <Group justify="space-between" align="baseline">
+          <Text fw={700} size="lg">
+            Skill Progression
+          </Text>
+          <Anchor component={Link} href="/skillsHub/skills" size="sm">
+            View all skills
+          </Anchor>
+        </Group>
 
-      <DomainAccordion
-        domains={domainsWithSkills}
-        statusMap={statusMap}
-        defaultExpandedSubDomainsByDomain={expandedSubDomainsByDomain}
-        onSkillClick={setSelectedSkillId}
-      />
+        <DomainAccordion
+          domains={domainsWithSkills}
+          statusMap={statusMap}
+          defaultExpandedSubDomainsByDomain={expandedSubDomainsByDomain}
+          onSkillClick={setSelectedSkillId}
+        />
+      </Stack>
 
-      <SkillDetailDrawer
-        skillId={selectedSkillId}
-        teacherStaffId={teacherStaffId}
-        opened={selectedSkillId !== null}
-        onClose={() => setSelectedSkillId(null)}
-      />
-    </Stack>
+      {selectedSkillId && (
+        <SkillDetailPanel
+          skillId={selectedSkillId}
+          teacherStaffId={teacherStaffId}
+          teacherName={teacherName}
+          onSkillClick={setSelectedSkillId}
+          onClose={() => setSelectedSkillId(null)}
+        />
+      )}
+    </div>
   );
 }

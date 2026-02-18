@@ -148,10 +148,10 @@ export function SkillsHubNav() {
             label: "Coaching",
             Icon: ClipboardDocumentCheckIcon,
             items: [
-              { href: "/skillsHub/caseload", label: "Caseload" },
-              { href: "/skillsHub/skill-map", label: "Skill Map" },
-              { href: "/skillsHub/observations", label: "Observations" },
-              { href: "/skillsHub/action-plans", label: "Action Plans" },
+              { href: "/skillsHub/coach/caseload", label: "Caseload" },
+              { href: "/skillsHub/coach/skill-map", label: "Skill Map" },
+              { href: "/skillsHub/coach/observations", label: "Observations" },
+              { href: "/skillsHub/coach/action-plans", label: "Action Plans" },
             ],
           },
         ]
