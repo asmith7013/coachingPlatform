@@ -86,24 +86,22 @@ export function SkillsHubNav() {
       Icon: MapIcon,
       items: [
         { href: "/skillsHub", label: "Hub" },
+        { href: "/skillsHub/skills", label: "All Skills" },
         ...(isTeacher
           ? [{ href: teacherSkillsHref, label: "My Skill Map" }]
-          : [{ href: "/skillsHub/caseload", label: "Caseload" }]),
+          : []),
       ],
     },
     {
       label: "Coaching",
       Icon: ClipboardDocumentCheckIcon,
       items: [
-        { href: "/skillsHub/caseload", label: "My Caseload" },
         ...(isTeacher
           ? []
-          : [
-              {
-                href: "/skillsHub/caseload",
-                label: "Observations",
-              },
-            ]),
+          : [{ href: "/skillsHub/caseload", label: "Caseload" }]),
+        ...(isTeacher
+          ? []
+          : [{ href: "/skillsHub/caseload", label: "Observations" }]),
       ],
     },
     {
