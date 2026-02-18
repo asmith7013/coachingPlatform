@@ -12,7 +12,7 @@ import type { TeacherSkillFlat } from "../_types/taxonomy.types";
 interface SkillCardProps {
   skill: TeacherSkillFlat;
   status: SkillStatus;
-  level2Unlocked: boolean;
+  isLocked: boolean;
   teacherStaffId: string;
   isCoachView: boolean;
   onStatusChanged?: () => void;
@@ -28,15 +28,13 @@ const STATUS_OPTIONS = [
 export function SkillCard({
   skill,
   status,
-  level2Unlocked,
+  isLocked,
   teacherStaffId,
   isCoachView,
   onStatusChanged,
 }: SkillCardProps) {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  const isLocked = skill.level === 2 && !level2Unlocked;
   const isActive = status === "active";
 
   const handleStatusChange = async (newStatus: string | null) => {

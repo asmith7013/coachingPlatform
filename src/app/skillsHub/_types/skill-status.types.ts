@@ -11,7 +11,6 @@ export type SkillStatus = z.infer<typeof SkillStatusEnum>;
 export const TeacherSkillStatusInputSchema = z.object({
   skillId: z.string(),
   status: SkillStatusEnum,
-  level2Unlocked: z.boolean().optional(),
 });
 export type TeacherSkillStatusInput = z.infer<
   typeof TeacherSkillStatusInputSchema
@@ -22,7 +21,6 @@ export const TeacherSkillStatusDocumentSchema = z.object({
   teacherStaffId: z.string(),
   skillId: z.string(),
   status: SkillStatusEnum,
-  level2Unlocked: z.boolean(),
   updatedBy: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
