@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { MantineShell } from "@/lib/skills-hub/components/layout/MantineShell";
 import { SkillsHubNav } from "@/lib/skills-hub/components/layout/SkillsHubNav";
+import { StatusLegendProvider } from "@/lib/skills-hub/components/core/StatusLegendContext";
+import { StatusLegendFooter } from "@/lib/skills-hub/components/core/StatusLegendFooter";
 import { ViewAsProvider } from "@/lib/skills-hub/components/layout/ViewAsContext";
 
 export const metadata: Metadata = {
@@ -75,10 +77,13 @@ export default async function SkillsHubLayout({
   return (
     <MantineShell>
       <ViewAsProvider>
-        <div className="min-h-screen bg-gray-50">
-          <SkillsHubNav />
-          <div className="p-6">{children}</div>
-        </div>
+        <StatusLegendProvider>
+          <div className="min-h-screen bg-gray-50 pb-12">
+            <SkillsHubNav />
+            <div className="p-6">{children}</div>
+            <StatusLegendFooter />
+          </div>
+        </StatusLegendProvider>
       </ViewAsProvider>
     </MantineShell>
   );
