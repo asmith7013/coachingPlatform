@@ -4,8 +4,7 @@ import {
   GradeLevelsSupportedZod,
   SubjectsZod,
   SpecialGroupsZod,
-  RolesNYCPSZod,
-  RolesTLZod,
+  RolesZod,
   AdminLevelZod,
 } from "@enums";
 import { BaseDocumentSchema, toInputSchema } from "@zod-schema/base-schemas";
@@ -38,8 +37,9 @@ export const ExperienceZodSchema = z.object({
   years: z.number().nonnegative().default(0),
 });
 
-// Base StaffMember Fields Schema
-export const StaffMemberFieldsSchema = z.object({
+// Unified Staff Fields Schema
+export const StaffFieldsSchema = z.object({
+  // Core fields
   staffName: z.string().default(""),
   email: z.string().email().default(""),
   schoolIds: z
@@ -50,18 +50,13 @@ export const StaffMemberFieldsSchema = z.object({
   mondayUser: MondayUserZodSchema.optional().describe(
     "Monday.com user integration data for bi-directional sync",
   ),
-});
+  roles: z
+    .array(RolesZod)
+    .optional()
+    .default([])
+    .describe("Staff role classifications (Teacher, Coach, Director, etc.)"),
 
-// Base StaffMember Full Schema
-export const StaffMemberZodSchema = BaseDocumentSchema.merge(
-  StaffMemberFieldsSchema,
-);
-
-// Base StaffMember Input Schema
-export const StaffMemberInputZodSchema = toInputSchema(StaffMemberZodSchema);
-
-// NYCPS Staff Fields Schema
-export const NYCPSStaffFieldsSchema = StaffMemberFieldsSchema.extend({
+  // Teacher-specific fields
   gradeLevelsSupported: z
     .array(GradeLevelsSupportedZod)
     .default([])
@@ -74,89 +69,31 @@ export const NYCPSStaffFieldsSchema = StaffMemberFieldsSchema.extend({
     .array(SpecialGroupsZod)
     .default([])
     .describe("Special education or specialized student groups served"),
-  rolesNYCPS: z
-    .array(RolesNYCPSZod)
-    .optional()
-    .default([])
-    .describe("Official NYCPS role classifications (Teacher, AP, etc.)"),
   pronunciation: z.string().optional().default(""),
   notes: z.array(NoteZodSchema).optional().default([]),
   experience: z.array(ExperienceZodSchema).optional().default([]),
-});
 
-// NYCPS Staff Full Schema
-export const NYCPSStaffZodSchema = BaseDocumentSchema.merge(
-  NYCPSStaffFieldsSchema,
-);
-
-// NYCPS Staff Input Schema
-export const NYCPSStaffInputZodSchema = toInputSchema(NYCPSStaffZodSchema);
-
-// Teaching Lab Staff Fields Schema
-export const TeachingLabStaffFieldsSchema = StaffMemberFieldsSchema.extend({
+  // Admin/TL-specific fields
   adminLevel: AdminLevelZod.optional(),
   assignedDistricts: z
     .array(z.string())
     .optional()
     .default([])
-    .describe("Array of district names this TL staff member supports"),
-  rolesTL: z
-    .array(RolesTLZod)
-    .optional()
-    .default([])
-    .describe("Teaching Lab role classifications (Coach, Manager, etc.)"),
+    .describe("Array of district names this staff member supports"),
 });
 
-// Teaching Lab Staff Full Schema
-export const TeachingLabStaffZodSchema = BaseDocumentSchema.merge(
-  TeachingLabStaffFieldsSchema,
-);
+// Staff Full Schema
+export const StaffZodSchema = BaseDocumentSchema.merge(StaffFieldsSchema);
 
-// Teaching Lab Staff Input Schema
-export const TeachingLabStaffInputZodSchema = toInputSchema(
-  TeachingLabStaffZodSchema,
-);
+// Staff Input Schema
+export const StaffInputZodSchema = toInputSchema(StaffZodSchema);
 
 // Staff Reference Schema
 export const StaffReferenceZodSchema = BaseReferenceZodSchema.merge(
-  StaffMemberFieldsSchema.pick({
+  StaffFieldsSchema.pick({
     email: true,
     staffName: true,
-  }).partial(),
-).extend({
-  schoolCount: z.number().optional(),
-  isMondayConnected: z.boolean().optional(),
-  mondayName: z.string().optional(),
-  mondayTitle: z.string().optional(),
-  lastSynced: z.string().optional(),
-});
-
-// Staff Reference Transformer
-export const staffToReference = createReferenceTransformer<
-  StaffMember,
-  StaffReference
->(
-  (staff: StaffMember) => staff.staffName,
-  (staff: StaffMember) => ({
-    email: staff.email,
-    staffName: staff.staffName,
-    schoolCount: staff.schoolIds?.length || 0,
-    isMondayConnected: staff.mondayUser?.isConnected || false,
-    mondayName: staff.mondayUser?.name,
-    mondayTitle: staff.mondayUser?.title,
-    lastSynced: staff.mondayUser?.lastSynced
-      ? new Date(staff.mondayUser.lastSynced).toLocaleString()
-      : undefined,
-  }),
-  StaffReferenceZodSchema,
-);
-
-// NYCPS Staff Reference Schema
-export const NYCPSStaffReferenceZodSchema = BaseReferenceZodSchema.merge(
-  NYCPSStaffFieldsSchema.pick({
-    email: true,
-    staffName: true,
-    rolesNYCPS: true,
+    roles: true,
     gradeLevelsSupported: true,
   }).partial(),
 ).extend({
@@ -171,21 +108,29 @@ export const NYCPSStaffReferenceZodSchema = BaseReferenceZodSchema.merge(
   lastSynced: z.string().optional(),
 });
 
-// NYCPS Staff Reference Transformer
-export const nycpsStaffToReference = createReferenceTransformer<
-  NYCPSStaff,
-  NYCPSStaffReference
+// Auto-generate TypeScript types
+export type StaffInput = z.infer<typeof StaffInputZodSchema>;
+export type Staff = z.infer<typeof StaffZodSchema>;
+export type StaffReference = z.infer<typeof StaffReferenceZodSchema>;
+
+export type Experience = z.infer<typeof ExperienceZodSchema>;
+export type MondayUser = z.infer<typeof MondayUserZodSchema>;
+
+// Staff Reference Transformer
+export const staffToReference = createReferenceTransformer<
+  Staff,
+  StaffReference
 >(
-  (staff: NYCPSStaff) => staff.staffName,
-  (staff: NYCPSStaff) => ({
+  (staff: Staff) => staff.staffName,
+  (staff: Staff) => ({
     email: staff.email,
     staffName: staff.staffName,
-    rolesNYCPS: staff.rolesNYCPS,
+    roles: staff.roles,
     gradeLevelsSupported: staff.gradeLevelsSupported?.slice(0, 2),
     schoolCount: staff.schoolIds?.length || 0,
     subjectsCount: staff.subjects?.length || 0,
     gradeLevel: staff.gradeLevelsSupported?.[0] || "",
-    role: staff.rolesNYCPS?.[0] || "",
+    role: staff.roles?.[0] || "",
     experienceYears:
       staff.experience?.reduce(
         (sum: number, exp: Experience) => sum + exp.years,
@@ -198,86 +143,14 @@ export const nycpsStaffToReference = createReferenceTransformer<
       ? new Date(staff.mondayUser.lastSynced).toLocaleString()
       : undefined,
   }),
-  NYCPSStaffReferenceZodSchema,
+  StaffReferenceZodSchema,
 );
 
-// Teaching Lab Staff Reference Schema
-export const TeachingLabStaffReferenceZodSchema = BaseReferenceZodSchema.merge(
-  TeachingLabStaffFieldsSchema.pick({
-    email: true,
-    staffName: true,
-    adminLevel: true,
-    rolesTL: true,
-  }).partial(),
-).extend({
-  schoolCount: z.number().optional(),
-  districtsCount: z.number().optional(),
-  role: z.string().optional(),
-  isMondayConnected: z.boolean().optional(),
-  mondayName: z.string().optional(),
-  mondayTitle: z.string().optional(),
-  lastSynced: z.string().optional(),
-});
-
-// Teaching Lab Staff Reference Transformer
-export const teachingLabStaffToReference = createReferenceTransformer<
-  TeachingLabStaff,
-  TeachingLabStaffReference
->(
-  (staff) => staff.staffName,
-  (staff) => ({
-    email: staff.email,
-    staffName: staff.staffName,
-    adminLevel: staff.adminLevel,
-    rolesTL: staff.rolesTL,
-    schoolCount: staff.schoolIds?.length || 0,
-    districtsCount: staff.assignedDistricts?.length || 0,
-    role: staff.rolesTL?.[0] || "",
-    isMondayConnected: staff.mondayUser?.isConnected || false,
-    mondayName: staff.mondayUser?.name,
-    mondayTitle: staff.mondayUser?.title,
-    lastSynced: staff.mondayUser?.lastSynced
-      ? new Date(staff.mondayUser.lastSynced).toLocaleString()
-      : undefined,
-  }),
-  TeachingLabStaffReferenceZodSchema,
-);
-
-// Auto-generate TypeScript types
-export type StaffMemberInput = z.infer<typeof StaffMemberInputZodSchema>;
-export type StaffMember = z.infer<typeof StaffMemberZodSchema>;
-export type StaffReference = z.infer<typeof StaffReferenceZodSchema>;
-
-export type NYCPSStaffInput = z.infer<typeof NYCPSStaffInputZodSchema>;
-export type NYCPSStaff = z.infer<typeof NYCPSStaffZodSchema>;
-export type NYCPSStaffReference = z.infer<typeof NYCPSStaffReferenceZodSchema>;
-
-export type TeachingLabStaffInput = z.infer<
-  typeof TeachingLabStaffInputZodSchema
->;
-export type TeachingLabStaff = z.infer<typeof TeachingLabStaffZodSchema>;
-export type TeachingLabStaffReference = z.infer<
-  typeof TeachingLabStaffReferenceZodSchema
->;
-
-export type Experience = z.infer<typeof ExperienceZodSchema>;
-export type MondayUser = z.infer<typeof MondayUserZodSchema>;
-
-// Add helper for schema-driven defaults
-export function createNYCPSStaffDefaults(
-  overrides: Partial<NYCPSStaffInput> = {},
-): NYCPSStaffInput {
+export function createStaffDefaults(
+  overrides: Partial<StaffInput> = {},
+): StaffInput {
   return {
-    ...NYCPSStaffInputZodSchema.parse({}),
-    ...overrides,
-  };
-}
-
-export function createTeachingLabStaffDefaults(
-  overrides: Partial<TeachingLabStaffInput> = {},
-): TeachingLabStaffInput {
-  return {
-    ...TeachingLabStaffInputZodSchema.parse({}),
+    ...StaffInputZodSchema.parse({}),
     ...overrides,
   };
 }

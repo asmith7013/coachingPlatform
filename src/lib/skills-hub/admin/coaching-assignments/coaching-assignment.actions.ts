@@ -5,7 +5,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { SkillsHubCoachTeacherAssignment } from "./coaching-assignment.model";
-import { NYCPSStaffModel } from "@mongoose-schema/core/staff.model";
+import { StaffModel } from "@mongoose-schema/core/staff.model";
 import {
   CoachTeacherAssignmentInputSchema,
   type CoachTeacherAssignmentDocument,
@@ -29,8 +29,8 @@ export async function getCoaches(): Promise<{
 }> {
   return withDbConnection(async () => {
     try {
-      const docs = await NYCPSStaffModel.find({
-        rolesNYCPS: "Coach",
+      const docs = await StaffModel.find({
+        roles: "Coach",
       })
         .select("staffName email schoolIds")
         .sort({ staffName: 1 })
@@ -55,8 +55,8 @@ export async function getTeachers(): Promise<{
 }> {
   return withDbConnection(async () => {
     try {
-      const docs = await NYCPSStaffModel.find({
-        rolesNYCPS: "Teacher",
+      const docs = await StaffModel.find({
+        roles: "Teacher",
       })
         .select("staffName email schoolIds")
         .sort({ staffName: 1 })
@@ -150,7 +150,7 @@ export async function assignTeacher(
       });
 
       // Auto-derive school from the teacher's record
-      const teacher = (await NYCPSStaffModel.findById(validated.teacherStaffId)
+      const teacher = (await StaffModel.findById(validated.teacherStaffId)
         .select("schoolIds")
         .lean()) as { schoolIds?: string[] } | null;
       const schoolId =
@@ -206,7 +206,7 @@ export async function createStaffMember(data: {
       }
 
       // Check for duplicate email
-      const existing = await NYCPSStaffModel.findOne({ email: email.trim() });
+      const existing = await StaffModel.findOne({ email: email.trim() });
       if (existing) {
         return {
           success: false,
@@ -214,10 +214,10 @@ export async function createStaffMember(data: {
         };
       }
 
-      const doc = await NYCPSStaffModel.create({
+      const doc = await StaffModel.create({
         staffName: staffName.trim(),
         email: email.trim(),
-        rolesNYCPS: [role],
+        roles: [role],
         schoolIds: schoolId ? [schoolId] : [],
         gradeLevelsSupported: [],
         subjects: [],

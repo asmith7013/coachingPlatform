@@ -2,7 +2,7 @@ import type {
   TeacherSchedule,
   BellSchedule,
 } from "@zod-schema/schedules/schedule-documents";
-import type { NYCPSStaff } from "@zod-schema/core/staff";
+import type { Staff } from "@zod-schema/core/staff";
 
 /**
  * Get teacher schedule by teacher ID
@@ -27,7 +27,7 @@ export function hasBellSchedule(bellSchedule: BellSchedule | null): boolean {
  * Check if staff data exists
  * Consistent validation logic
  */
-export function hasStaff(staff: NYCPSStaff[]): boolean {
+export function hasStaff(staff: Staff[]): boolean {
   return staff.length > 0;
 }
 
@@ -43,7 +43,7 @@ export function formatScheduleTime(startTime: string, endTime: string): string {
  * Get teacher name by ID
  * Helper to avoid repeated teacher lookup logic
  */
-export function getTeacherName(staff: NYCPSStaff[], teacherId: string): string {
+export function getTeacherName(staff: Staff[], teacherId: string): string {
   const teacher = staff.find((t) => t._id === teacherId);
   return teacher ? teacher.staffName : "Unknown Teacher";
 }
@@ -53,7 +53,7 @@ export function getTeacherName(staff: NYCPSStaff[], teacherId: string): string {
  * Combines name and schedule info for display
  */
 export function getTeacherDisplayInfo(
-  staff: NYCPSStaff[],
+  staff: Staff[],
   teacherSchedules: TeacherSchedule[],
   teacherId: string,
 ) {

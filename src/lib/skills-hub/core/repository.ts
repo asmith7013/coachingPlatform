@@ -1,6 +1,6 @@
 import mongoose, { type Model } from "mongoose";
 import { getAuthenticatedUser } from "@/lib/server/auth";
-import { NYCPSStaffModel } from "@mongoose-schema/core/staff.model";
+import { StaffModel } from "@mongoose-schema/core/staff.model";
 
 /**
  * Shared repository helpers for SkillsHub server actions.
@@ -69,7 +69,7 @@ export interface StaffOption {
 }
 
 export async function findStaffByRole(role: string): Promise<StaffOption[]> {
-  const docs = await NYCPSStaffModel.find({ rolesNYCPS: role })
+  const docs = await StaffModel.find({ roles: role })
     .select("staffName email schoolIds")
     .sort({ staffName: 1 })
     .lean();

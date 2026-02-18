@@ -5,8 +5,7 @@ import {
 } from "@clerk/nextjs/server";
 import { UserMetadataZodSchema } from "@zod-schema/core-types/auth";
 import type { UserMetadata } from "@core-types/auth";
-import { NYCPSStaffModel } from "@mongoose-schema/core/staff.model";
-import { TeachingLabStaffModel } from "@mongoose-schema/core/staff.model";
+import { StaffModel } from "@mongoose-schema/core/staff.model";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { validateSafe } from "@/lib/data-processing/validation/zod-validation";
 import { captureError, createErrorContext, handleServerError } from "@error";
@@ -70,34 +69,26 @@ export async function handleUserCreation(
       }
 
       // Check for existing staff member by email
-      const [nycpsStaff, tlStaff] = await Promise.all([
-        NYCPSStaffModel.findOne({ email: primaryEmail }),
-        TeachingLabStaffModel.findOne({ email: primaryEmail }),
-      ]);
-
-      const existingStaff = nycpsStaff || tlStaff;
+      const existingStaff = await StaffModel.findOne({ email: primaryEmail });
 
       if (existingStaff) {
-        const staffType = nycpsStaff ? "nycps" : "teachinglab";
-
         // Update Clerk metadata with staff connection
         await updateClerkUserMetadata(data.id, {
           staffId: existingStaff._id.toString(),
-          staffType,
-          roles: extractRolesFromStaff(existingStaff, staffType),
+          staffType: "nycps",
+          roles: (existingStaff.roles as string[]) || [],
           schoolIds: extractSchoolIds(existingStaff),
           onboardingCompleted: true,
         });
 
         console.log(
-          `Linked Clerk user ${data.id} to ${staffType} staff ${existingStaff._id}`,
+          `Linked Clerk user ${data.id} to staff ${existingStaff._id}`,
         );
 
         return {
           success: true,
           data: {
             staffId: existingStaff._id.toString(),
-            staffType,
             action: "user_linked_to_existing_staff",
           },
         };
@@ -166,31 +157,12 @@ export async function handleUserSync(
         };
       }
 
-      // Determine the correct model
-      const StaffModel =
-        metadata.staffType === "nycps"
-          ? NYCPSStaffModel
-          : TeachingLabStaffModel;
-
       // Prepare update data
       const updateData = {
         email: data.email_addresses?.[0]?.email_address,
-        // Map Clerk roles to staff roles
-        ...(metadata.staffType === "nycps" &&
-          metadata.roles &&
+        ...(metadata.roles &&
           metadata.roles.length > 0 && {
-            rolesNYCPS: metadata.roles.filter((role: string) =>
-              ["Teacher", "Principal", "AP", "Coach", "Administrator"].includes(
-                role,
-              ),
-            ),
-          }),
-        ...(metadata.staffType === "teachinglab" &&
-          metadata.roles &&
-          metadata.roles.length > 0 && {
-            rolesTL: metadata.roles.filter((role: string) =>
-              ["Coach", "CPM", "Director", "Senior Director"].includes(role),
-            ),
+            roles: metadata.roles,
           }),
       };
 
@@ -350,16 +322,6 @@ export async function handleSessionCreated(
 // ✅ NEW: Helper functions for staff-to-user linking
 
 // Helper functions to extract data from staff records
-function extractRolesFromStaff(
-  staff: Record<string, unknown>,
-  staffType: "nycps" | "teachinglab",
-): string[] {
-  if (staffType === "nycps") {
-    return (staff.rolesNYCPS as string[]) || [];
-  }
-  return (staff.rolesTL as string[]) || [];
-}
-
 function extractSchoolIds(staff: Record<string, unknown>): string[] {
   const schools = staff.schools as Array<{ toString(): string }> | undefined;
   return schools?.map((school) => school.toString()) || [];

@@ -1,11 +1,10 @@
 import type { Field } from "@ui-types/form";
-import type { NYCPSStaffInput } from "@zod-schema/core/staff";
+import type { StaffInput } from "@zod-schema/core/staff";
 
 /**
- * Simple field configuration for NYCPS Staff forms
- * Following the new domain-specific pattern
+ * Field configuration for Staff forms
  */
-export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
+export const StaffFieldConfig: Field<StaffInput>[] = [
   {
     name: "staffName",
     label: "Full Name",
@@ -19,17 +18,10 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
     placeholder: "Enter email address",
   },
   {
-    name: "schools",
+    name: "schoolIds",
     label: "Assigned Schools",
     type: "reference",
     url: "/api/schools",
-    multiple: true,
-  },
-  {
-    name: "owners",
-    label: "Owners",
-    type: "reference",
-    url: "/api/staff",
     multiple: true,
   },
   {
@@ -74,8 +66,8 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
     ],
   },
   {
-    name: "rolesNYCPS",
-    label: "NYCPS Roles",
+    name: "roles",
+    label: "Roles",
     type: "select",
     multiple: true,
     options: [
@@ -84,6 +76,9 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
       { value: "AP", label: "Assistant Principal" },
       { value: "Coach", label: "Coach" },
       { value: "Administrator", label: "Administrator" },
+      { value: "CPM", label: "CPM" },
+      { value: "Director", label: "Director" },
+      { value: "Senior Director", label: "Senior Director" },
     ],
   },
   {
@@ -93,3 +88,6 @@ export const NYCPSStaffFieldConfig: Field<NYCPSStaffInput>[] = [
     placeholder: "Phonetic pronunciation guide",
   },
 ];
+
+/** @deprecated Use StaffFieldConfig */
+export const NYCPSStaffFieldConfig = StaffFieldConfig;
