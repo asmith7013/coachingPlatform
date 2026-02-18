@@ -3,17 +3,17 @@
 import { Title, Text, Card } from "@mantine/core";
 import { useSkillsHubFilters } from "@/lib/skills-hub/hooks/useSkillsHubFilters";
 import { CoachTeacherSelector } from "@/lib/skills-hub/components/core/CoachTeacherSelector";
-import { SkillMap } from "@/lib/skills-hub/components/skills/SkillMap";
+import { ObservationGuide } from "@/lib/skills-hub/components/observations/ObservationGuide";
 
-export default function TeacherDashboardPage() {
+export default function ObservationsPage() {
   const { selectedTeacherId, setSelectedTeacherId } = useSkillsHubFilters();
 
   return (
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
       <Card shadow="sm" p="lg" mb="lg">
-        <Title order={2}>My Skills</Title>
+        <Title order={2}>Observations</Title>
         <Text size="sm" c="dimmed">
-          Your skill progression across all domains
+          Record classroom observations using the coaching guide
         </Text>
       </Card>
 
@@ -23,11 +23,11 @@ export default function TeacherDashboardPage() {
       />
 
       {selectedTeacherId ? (
-        <SkillMap teacherStaffId={selectedTeacherId} isCoachView={false} />
+        <ObservationGuide teacherStaffId={selectedTeacherId} />
       ) : (
         <Card shadow="sm" p="lg">
           <Text c="dimmed" ta="center" py="xl">
-            Select a teacher to view their skill map
+            Select a teacher to begin an observation
           </Text>
         </Card>
       )}

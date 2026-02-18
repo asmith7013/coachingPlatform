@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { getAuthenticatedUser } from "@/lib/server/auth";
-import { MantineShell } from "./_components/MantineShell";
-import { SkillsHubNav } from "./_components/SkillsHubNav";
+import { MantineShell } from "@/lib/skills-hub/components/layout/MantineShell";
+import { SkillsHubNav } from "@/lib/skills-hub/components/layout/SkillsHubNav";
 
 export const metadata: Metadata = {
   title: "Skills Hub",

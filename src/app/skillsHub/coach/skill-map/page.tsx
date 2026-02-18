@@ -1,19 +1,24 @@
 "use client";
 
 import { Title, Text, Card } from "@mantine/core";
+import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 import { useSkillsHubFilters } from "@/lib/skills-hub/hooks/useSkillsHubFilters";
 import { CoachTeacherSelector } from "@/lib/skills-hub/components/core/CoachTeacherSelector";
 import { SkillMap } from "@/lib/skills-hub/components/skills/SkillMap";
 
-export default function TeacherDashboardPage() {
+export default function SkillMapPage() {
+  const { hasRole } = useAuthenticatedUser();
+  const isCoach =
+    hasRole("coach") || hasRole("super_admin") || hasRole("director");
+
   const { selectedTeacherId, setSelectedTeacherId } = useSkillsHubFilters();
 
   return (
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
       <Card shadow="sm" p="lg" mb="lg">
-        <Title order={2}>My Skills</Title>
+        <Title order={2}>Skill Map</Title>
         <Text size="sm" c="dimmed">
-          Your skill progression across all domains
+          Teacher skill progression across all domains
         </Text>
       </Card>
 
@@ -23,7 +28,7 @@ export default function TeacherDashboardPage() {
       />
 
       {selectedTeacherId ? (
-        <SkillMap teacherStaffId={selectedTeacherId} isCoachView={false} />
+        <SkillMap teacherStaffId={selectedTeacherId} isCoachView={isCoach} />
       ) : (
         <Card shadow="sm" p="lg">
           <Text c="dimmed" ta="center" py="xl">
