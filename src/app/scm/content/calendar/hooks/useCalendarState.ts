@@ -749,6 +749,8 @@ export function useCalendarState() {
     legendEntries,
     scopeTag,
     scopeSequenceData,
+    daysOff,
+    sectionDaysOff,
 
     // Loading states
     isInitialLoading,

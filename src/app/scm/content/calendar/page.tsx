@@ -105,6 +105,8 @@ export default function Calendar2Page() {
         onAddDayOff={state.handleAddDayOff}
         addDayOffPending={state.addDayOffPending}
         addDayOffDefaultDate={state.addEventDate ?? undefined}
+        daysOff={state.daysOff}
+        sectionDaysOff={state.sectionDaysOff}
         showDeleteDayOffModal={state.showDeleteDayOffModal}
         onCloseDeleteDayOff={() => {
           state.setShowDeleteDayOffModal(false);

@@ -21,9 +21,13 @@ const SECTION_COLORS = [
 function MiniCalendar({
   date,
   unitSchedules,
+  daysOff,
+  sectionDaysOff,
 }: {
   date: string;
   unitSchedules: UnitScheduleLocal[];
+  daysOff?: string[];
+  sectionDaysOff?: Array<{ date: string; name: string }>;
 }) {
   const parsed = new Date(date + "T12:00:00");
   const year = parsed.getFullYear();
@@ -37,11 +41,21 @@ function MiniCalendar({
   for (let i = 0; i < startPadding; i++) days.push(null);
   for (let d = 1; d <= totalDays; d++) days.push(d);
 
-  // Build a map of dateStr → section color index for this month
+  const daysOffSet = useMemo(() => new Set(daysOff ?? []), [daysOff]);
+  const sectionDaysOffMap = useMemo(() => {
+    const map = new Map<string, boolean>();
+    for (const e of sectionDaysOff ?? []) {
+      map.set(e.date, true);
+    }
+    return map;
+  }, [sectionDaysOff]);
+
+  // Build a map of dateStr → section color, resetting color index per unit
+  // to match the main calendar's per-unit color assignment
   const dateColorMap = useMemo(() => {
     const map = new Map<string, { base: string; light: string }>();
-    let colorIdx = 0;
     for (const unit of unitSchedules) {
+      let colorIdx = 0;
       for (const section of unit.sections) {
         const color = SECTION_COLORS[colorIdx % SECTION_COLORS.length];
         if (section.startDate && section.endDate) {
@@ -86,17 +100,18 @@ function MiniCalendar({
           const isSelected = ds === date;
           const dayOfWeek = new Date(year, month, day).getDay();
           const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+          const isGlobalDayOff = daysOffSet.has(ds);
+          const isSectionDayOff = sectionDaysOffMap.has(ds);
+          const isOff = isWeekend || isGlobalDayOff || isSectionDayOff;
 
           return (
             <div
               key={ds}
               className={`h-5 flex items-center justify-center text-[10px] rounded ${
                 isSelected ? "ring-2 ring-amber-500 font-bold" : ""
-              } ${isWeekend ? "text-gray-300" : "text-gray-700"}`}
+              } ${isOff ? "text-gray-300 bg-gray-100" : "text-gray-700"}`}
               style={
-                color && !isWeekend
-                  ? { backgroundColor: color.light }
-                  : undefined
+                color && !isOff ? { backgroundColor: color.light } : undefined
               }
             >
               {day}
@@ -123,6 +138,8 @@ interface AddDayOffModalProps {
   allSections: SectionConfigOption[];
   unitSchedules: UnitScheduleLocal[];
   defaultDate?: string;
+  daysOff?: string[];
+  sectionDaysOff?: Array<{ date: string; name: string }>;
 }
 
 export function AddDayOffModal({
@@ -134,6 +151,8 @@ export function AddDayOffModal({
   allSections,
   unitSchedules,
   defaultDate,
+  daysOff,
+  sectionDaysOff,
 }: AddDayOffModalProps) {
   const [date, setDate] = useState(defaultDate ?? "");
   const [name, setName] = useState("");
@@ -216,7 +235,14 @@ export function AddDayOffModal({
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
             />
-            {date && <MiniCalendar date={date} unitSchedules={unitSchedules} />}
+            {date && (
+              <MiniCalendar
+                date={date}
+                unitSchedules={unitSchedules}
+                daysOff={daysOff}
+                sectionDaysOff={sectionDaysOff}
+              />
+            )}
           </div>
 
           {/* Name of Event */}
@@ -243,7 +269,7 @@ export function AddDayOffModal({
               <label
                 className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
                   !hasMathClass
-                    ? "border-gray-400 bg-gray-100"
+                    ? "border-gray-300 bg-gray-100 text-gray-500"
                     : "border-gray-200 hover:bg-gray-50"
                 }`}
               >
@@ -255,10 +281,14 @@ export function AddDayOffModal({
                   className="h-4 w-4 text-gray-600 cursor-pointer"
                 />
                 <div>
-                  <div className="text-sm font-medium text-gray-900">
+                  <div
+                    className={`text-sm font-medium ${!hasMathClass ? "text-gray-600" : "text-gray-900"}`}
+                  >
                     No Math Class
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div
+                    className={`text-xs ${!hasMathClass ? "text-gray-400" : "text-gray-500"}`}
+                  >
                     Testing, assembly, no school
                   </div>
                 </div>
@@ -266,7 +296,7 @@ export function AddDayOffModal({
               <label
                 className={`flex-1 flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
                   hasMathClass
-                    ? "border-gray-600 bg-gray-50"
+                    ? "border-gray-500 bg-gray-500 text-white"
                     : "border-gray-200 hover:bg-gray-50"
                 }`}
               >
@@ -275,13 +305,17 @@ export function AddDayOffModal({
                   name="mathClass"
                   checked={hasMathClass}
                   onChange={() => setHasMathClass(true)}
-                  className="h-4 w-4 text-gray-600 cursor-pointer"
+                  className={`h-4 w-4 cursor-pointer ${hasMathClass ? "text-white" : "text-gray-600"}`}
                 />
                 <div>
-                  <div className="text-sm font-medium text-gray-900">
+                  <div
+                    className={`text-sm font-medium ${hasMathClass ? "text-white" : "text-gray-900"}`}
+                  >
                     Math Class Happens
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div
+                    className={`text-xs ${hasMathClass ? "text-gray-200" : "text-gray-500"}`}
+                  >
                     Pop quiz, special lesson
                   </div>
                 </div>

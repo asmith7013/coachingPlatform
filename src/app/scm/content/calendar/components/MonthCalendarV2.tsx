@@ -213,16 +213,19 @@ export function MonthCalendarV2({
               title={title}
             >
               {canAddEvent && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAddEvent(dateStr);
-                  }}
-                  className="absolute top-0 right-0 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-amber-600 cursor-pointer z-10"
-                  title="Add event"
-                >
-                  <PlusIcon className="h-3 w-3" />
-                </button>
+                <div className="absolute top-0 right-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Tooltip content="Add Event" position="top" delay={0}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAddEvent(dateStr);
+                      }}
+                      className="p-0.5 text-gray-400 hover:text-amber-600 cursor-pointer"
+                    >
+                      <PlusIcon className="h-3 w-3" />
+                    </button>
+                  </Tooltip>
+                </div>
               )}
               {hasScheduleBadge && (
                 <div
