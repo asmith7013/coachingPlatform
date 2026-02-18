@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Table, Text, Skeleton, Stack } from "@mantine/core";
+import Link from "next/link";
+import { Table, Text, Skeleton, Stack, Group, ActionIcon, Tooltip } from "@mantine/core";
+import { IconEye, IconClipboardPlus, IconMap } from "@tabler/icons-react";
 import type { CoachTeacherAssignmentDocument } from "../_types/assignment.types";
 
 interface CaseloadTableProps {
@@ -10,8 +11,6 @@ interface CaseloadTableProps {
 }
 
 export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
-  const router = useRouter();
-
   if (loading) {
     return (
       <Stack gap="xs">
@@ -37,6 +36,7 @@ export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
           <Table.Th>Teacher Name</Table.Th>
           <Table.Th>School</Table.Th>
           <Table.Th>Assigned</Table.Th>
+          <Table.Th ta="center">Actions</Table.Th>
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
@@ -50,28 +50,59 @@ export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
             typeof teacher === "object" ? teacher._id : String(teacher);
 
           return (
-          <Table.Tr
-            key={assignment._id}
-            style={{ cursor: "pointer" }}
-            onClick={() =>
-              router.push(`/skillsHub/teacher/${teacherId}`)
-            }
-          >
-            <Table.Td>
-              <Text size="sm" fw={500}>
-                {teacherName}
-              </Text>
-            </Table.Td>
-            <Table.Td>
-              <Text size="sm">{assignment.schoolId}</Text>
-            </Table.Td>
-            <Table.Td>
-              <Text size="sm" c="dimmed">
-                {new Date(assignment.assignedAt).toLocaleDateString()}
-              </Text>
-            </Table.Td>
-          </Table.Tr>
-        );
+            <Table.Tr key={assignment._id}>
+              <Table.Td>
+                <Text size="sm" fw={500}>
+                  {teacherName}
+                </Text>
+              </Table.Td>
+              <Table.Td>
+                <Text size="sm">{assignment.schoolId}</Text>
+              </Table.Td>
+              <Table.Td>
+                <Text size="sm" c="dimmed">
+                  {new Date(assignment.assignedAt).toLocaleDateString()}
+                </Text>
+              </Table.Td>
+              <Table.Td>
+                <Group gap="xs" justify="center">
+                  <Tooltip label="Skill Map">
+                    <ActionIcon
+                      component={Link}
+                      href={`/skillsHub/teacher/${teacherId}`}
+                      variant="light"
+                      color="blue"
+                      size="sm"
+                    >
+                      <IconMap size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Observe">
+                    <ActionIcon
+                      component={Link}
+                      href={`/skillsHub/teacher/${teacherId}/observe`}
+                      variant="light"
+                      color="green"
+                      size="sm"
+                    >
+                      <IconEye size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                  <Tooltip label="Action Plan">
+                    <ActionIcon
+                      component={Link}
+                      href={`/skillsHub/teacher/${teacherId}/action-plans`}
+                      variant="light"
+                      color="violet"
+                      size="sm"
+                    >
+                      <IconClipboardPlus size={14} />
+                    </ActionIcon>
+                  </Tooltip>
+                </Group>
+              </Table.Td>
+            </Table.Tr>
+          );
         })}
       </Table.Tbody>
     </Table>
