@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Title, Text, Card, Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
+import { useSkillsHubFilters } from "../_hooks/useSkillsHubFilters";
 import { useCoachCaseload } from "../_hooks/useCoachCaseload";
 import { CaseloadTable } from "../_components/CaseloadTable";
 import { getCoaches } from "../_actions/assignments.actions";
@@ -13,7 +13,7 @@ export default function CaseloadPage() {
   const { metadata, hasRole } = useAuthenticatedUser();
   const isAdmin = hasRole("super_admin") || hasRole("director");
 
-  const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
+  const { selectedCoachId, setSelectedCoachId } = useSkillsHubFilters();
 
   const { data: coaches } = useQuery({
     queryKey: ["skillshub-coaches"],

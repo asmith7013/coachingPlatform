@@ -1,8 +1,9 @@
 "use client";
 
-import { SimpleGrid, Loader, Text, Center } from "@mantine/core";
+import { SimpleGrid, Text, Center } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { DomainSection } from "./DomainSection";
+import { SkillMapSkeleton } from "./skeletons/SkillsHubSkeletons";
 import { useTaxonomy } from "../_hooks/useTaxonomy";
 import {
   useTeacherSkillStatuses,
@@ -26,11 +27,7 @@ export function SkillMap({ teacherStaffId, isCoachView }: SkillMapProps) {
   const queryClient = useQueryClient();
 
   if (taxLoading || statusLoading) {
-    return (
-      <Center py="xl">
-        <Loader />
-      </Center>
-    );
+    return <SkillMapSkeleton />;
   }
 
   if (taxError || statusError) {

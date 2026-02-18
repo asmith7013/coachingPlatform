@@ -1,26 +1,15 @@
 "use client";
 
-import {
-  Title,
-  Text,
-  Table,
-  Stack,
-  Container,
-  Center,
-  Loader,
-} from "@mantine/core";
+import { Title, Text, Table, Stack, Container, Center } from "@mantine/core";
 import { useTaxonomy } from "../_hooks/useTaxonomy";
 import { groupSkillsByLevel } from "../_lib/taxonomy";
+import { TaxonomyTableSkeleton } from "../_components/skeletons/SkillsHubSkeletons";
 
 export default function SkillsPage() {
   const { taxonomy, loading, error } = useTaxonomy();
 
   if (loading) {
-    return (
-      <Center py="xl">
-        <Loader />
-      </Center>
-    );
+    return <TaxonomyTableSkeleton />;
   }
 
   if (error || !taxonomy) {

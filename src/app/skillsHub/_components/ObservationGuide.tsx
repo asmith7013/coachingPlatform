@@ -7,7 +7,6 @@ import {
   Button,
   Group,
   Center,
-  Loader,
   Text,
   Table,
   Badge,
@@ -16,6 +15,7 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { ObservationHeader } from "./ObservationHeader";
+import { ObservationGuideSkeleton } from "./skeletons/SkillsHubSkeletons";
 import { useTaxonomy } from "../_hooks/useTaxonomy";
 import { useTeacherSkillStatuses } from "../_hooks/useTeacherSkillStatuses";
 import { createObservation } from "../_actions/observation.actions";
@@ -209,11 +209,7 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
   };
 
   if (taxLoading || statusLoading) {
-    return (
-      <Center py="xl">
-        <Loader />
-      </Center>
-    );
+    return <ObservationGuideSkeleton />;
   }
 
   if (!taxonomy) {

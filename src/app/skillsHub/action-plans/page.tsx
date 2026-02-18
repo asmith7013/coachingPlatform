@@ -1,17 +1,20 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Title, Text, Card, Group, Button } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
+import { useSkillsHubFilters } from "../_hooks/useSkillsHubFilters";
 import { CoachTeacherSelector } from "../_components/CoachTeacherSelector";
 import { ActionPlanList } from "../_components/ActionPlanList";
 import { useActionPlans } from "../_hooks/useActionPlans";
 
 export default function ActionPlansPage() {
-  const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(
-    null,
-  );
+  const {
+    selectedCoachId,
+    selectedTeacherId,
+    setSelectedCoachId,
+    setSelectedTeacherId,
+  } = useSkillsHubFilters();
 
   const { plans, loading, error } = useActionPlans(selectedTeacherId ?? "");
 
@@ -38,6 +41,8 @@ export default function ActionPlansPage() {
       </Card>
 
       <CoachTeacherSelector
+        selectedCoachId={selectedCoachId}
+        onCoachChange={setSelectedCoachId}
         selectedTeacherId={selectedTeacherId}
         onTeacherChange={setSelectedTeacherId}
       />

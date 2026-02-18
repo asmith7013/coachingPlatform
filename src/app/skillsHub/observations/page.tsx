@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import { Title, Text, Card } from "@mantine/core";
+import { useSkillsHubFilters } from "../_hooks/useSkillsHubFilters";
 import { CoachTeacherSelector } from "../_components/CoachTeacherSelector";
 import { ObservationGuide } from "../_components/ObservationGuide";
 
 export default function ObservationsPage() {
-  const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(
-    null,
-  );
+  const {
+    selectedCoachId,
+    selectedTeacherId,
+    setSelectedCoachId,
+    setSelectedTeacherId,
+  } = useSkillsHubFilters();
 
   return (
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
@@ -20,6 +23,8 @@ export default function ObservationsPage() {
       </Card>
 
       <CoachTeacherSelector
+        selectedCoachId={selectedCoachId}
+        onCoachChange={setSelectedCoachId}
         selectedTeacherId={selectedTeacherId}
         onTeacherChange={setSelectedTeacherId}
       />

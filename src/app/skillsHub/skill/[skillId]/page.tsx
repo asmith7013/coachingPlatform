@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import { Card, Text, Stack, Center, Loader } from "@mantine/core";
+import { Card, Text, Stack, Center } from "@mantine/core";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
 import { useTaxonomy } from "../../_hooks/useTaxonomy";
@@ -15,6 +15,7 @@ import { getSkillById } from "../../_lib/taxonomy";
 import { SkillDetailHeader } from "../../_components/SkillDetailHeader";
 import { SkillObservationTimeline } from "../../_components/SkillObservationTimeline";
 import { SkillNotesSection } from "../../_components/SkillNotesSection";
+import { SkillDetailSkeleton } from "../../_components/skeletons/SkillsHubSkeletons";
 import type { SkillStatus } from "../../_types/skill-status.types";
 
 export default function SkillDetailPage() {
@@ -35,11 +36,7 @@ export default function SkillDetailPage() {
   const { observations } = useObservations(teacherId);
 
   if (taxLoading || statusLoading) {
-    return (
-      <Center py="xl">
-        <Loader />
-      </Center>
-    );
+    return <SkillDetailSkeleton />;
   }
 
   if (!taxonomy) {

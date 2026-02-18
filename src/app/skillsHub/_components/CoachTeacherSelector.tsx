@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Card, Group, Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
@@ -9,11 +9,15 @@ import { getCoaches } from "../_actions/assignments.actions";
 import type { StaffOption } from "../_actions/assignments.actions";
 
 interface CoachTeacherSelectorProps {
+  selectedCoachId: string | null;
+  onCoachChange: (coachId: string | null) => void;
   selectedTeacherId: string | null;
   onTeacherChange: (teacherId: string | null) => void;
 }
 
 export function CoachTeacherSelector({
+  selectedCoachId,
+  onCoachChange,
   selectedTeacherId,
   onTeacherChange,
 }: CoachTeacherSelectorProps) {
@@ -23,8 +27,6 @@ export function CoachTeacherSelector({
   const isAdmin = isSuperAdmin || isDirector;
   const isCoach = hasRole("coach");
   const isTeacher = !isAdmin && !isCoach;
-
-  const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
 
   // For coaches, use their own staffId as the coach
   const coachStaffId = isAdmin
@@ -65,12 +67,6 @@ export function CoachTeacherSelector({
     }
   }, [isTeacher, metadata.staffId, onTeacherChange]);
 
-  // Clear teacher when coach changes
-  const handleCoachChange = (coachId: string | null) => {
-    setSelectedCoachId(coachId);
-    onTeacherChange(null);
-  };
-
   // Teachers don't see the selector
   if (isTeacher) return null;
 
@@ -84,7 +80,7 @@ export function CoachTeacherSelector({
             searchable
             data={coachOptions}
             value={selectedCoachId}
-            onChange={handleCoachChange}
+            onChange={onCoachChange}
           />
         )}
         <Select
