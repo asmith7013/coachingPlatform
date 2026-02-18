@@ -4,12 +4,12 @@ import mongoose from "mongoose";
 import { clerkClient } from "@clerk/nextjs/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
-import { SkillsHubCoachTeacherAssignment } from "@mongoose-schema/skills-hub/coach-teacher-assignment.model";
+import { SkillsHubCoachTeacherAssignment } from "./coaching-assignment.model";
 import { NYCPSStaffModel } from "@mongoose-schema/core/staff.model";
 import {
   CoachTeacherAssignmentInputSchema,
   type CoachTeacherAssignmentDocument,
-} from "../_types/assignment.types";
+} from "./coaching-assignment.types";
 
 function isValidObjectId(id: string): boolean {
   return mongoose.Types.ObjectId.isValid(id);

@@ -3,12 +3,12 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
-import { SkillsHubActionStep } from "@mongoose-schema/skills-hub/action-step.model";
+import { SkillsHubActionStep } from "./action-step.model";
 import {
   ActionStepInputSchema,
   type ActionStepInput,
   type ActionStepDocument,
-} from "../_types/action-step.types";
+} from "./action-step.types";
 
 export async function getActionSteps(actionPlanId: string): Promise<{
   success: boolean;

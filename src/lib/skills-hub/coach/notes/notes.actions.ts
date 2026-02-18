@@ -3,12 +3,12 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
-import { SkillsHubSkillNote } from "@mongoose-schema/skills-hub/skill-note.model";
+import { SkillsHubSkillNote } from "./skill-note.model";
 import {
   SkillNoteInputSchema,
   type SkillNoteInput,
   type SkillNoteDocument,
-} from "../_types/note.types";
+} from "./note.types";
 
 export async function getNotes(
   teacherStaffId: string,
