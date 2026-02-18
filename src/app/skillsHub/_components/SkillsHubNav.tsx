@@ -80,18 +80,22 @@ export function SkillsHubNav() {
     ? `/skillsHub/teacher/${metadata.staffId}`
     : "/skillsHub";
 
+  // Standalone nav links (not in dropdowns)
+  const standaloneLinks: NavItem[] = [
+    { href: "/skillsHub", label: "Home" },
+    { href: "/skillsHub/skills", label: "All Skills" },
+  ];
+
   const categories: NavCategory[] = [
-    {
-      label: "Skills",
-      Icon: MapIcon,
-      items: [
-        { href: "/skillsHub", label: "Hub" },
-        { href: "/skillsHub/skills", label: "All Skills" },
-        ...(isTeacher
-          ? [{ href: teacherSkillsHref, label: "My Skill Map" }]
-          : []),
-      ],
-    },
+    ...(isTeacher
+      ? [
+          {
+            label: "My Skills",
+            Icon: MapIcon,
+            items: [{ href: teacherSkillsHref, label: "My Skill Map" }],
+          },
+        ]
+      : []),
     {
       label: "Coaching",
       Icon: ClipboardDocumentCheckIcon,
@@ -99,9 +103,6 @@ export function SkillsHubNav() {
         ...(isTeacher
           ? []
           : [{ href: "/skillsHub/caseload", label: "Caseload" }]),
-        ...(isTeacher
-          ? []
-          : [{ href: "/skillsHub/caseload", label: "Observations" }]),
       ],
     },
     {
@@ -166,6 +167,25 @@ export function SkillsHubNav() {
 
           {/* Desktop navigation */}
           <div className="hidden lg:flex gap-2 relative">
+            {standaloneLinks.map((link) => {
+              const active =
+                pathname === link.href ||
+                (link.href !== "/skillsHub" &&
+                  pathname.startsWith(link.href + "/"));
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                    active
+                      ? "bg-gray-700 text-white"
+                      : "text-gray-300 hover:text-white hover:bg-gray-800"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             {visibleCategories.map((category) => {
               const isActive = isActiveCategory(category);
               const isOpen = openDropdown === category.label;
@@ -259,6 +279,26 @@ export function SkillsHubNav() {
       {mobileOpen && (
         <div className="lg:hidden">
           <div className="space-y-1 px-3 pb-4 pt-2">
+            {standaloneLinks.map((link) => {
+              const active =
+                pathname === link.href ||
+                (link.href !== "/skillsHub" &&
+                  pathname.startsWith(link.href + "/"));
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`block px-3 py-2 rounded-md text-base font-medium ${
+                    active
+                      ? "bg-gray-700 text-white"
+                      : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             {visibleCategories.map((category) => {
               const isActive = isActiveCategory(category);
               const isExpanded = mobileExpandedCategory === category.label;

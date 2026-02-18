@@ -13,9 +13,9 @@ import {
 } from "@mantine/core";
 import {
   IconMap,
-  IconClipboardCheck,
   IconUsers,
   IconSettings,
+  IconList,
   IconChevronRight,
 } from "@tabler/icons-react";
 import { useAuthenticatedUser } from "@/hooks/auth/useAuthenticatedUser";
@@ -26,6 +26,8 @@ type HubCard = {
   icon: React.ReactNode;
   links: { href: string; label: string }[];
   adminOnly?: boolean;
+  coachOnly?: boolean;
+  teacherOnly?: boolean;
 };
 
 export default function SkillsHubPage() {
@@ -34,53 +36,41 @@ export default function SkillsHubPage() {
   const isSuperAdmin = hasRole("super_admin");
   const isDirector = hasRole("director");
   const isAdmin = isSuperAdmin || isDirector;
-  const isTeacher = !isAdmin && !hasRole("coach");
+  const isCoach = hasRole("coach");
+  const isTeacher = !isAdmin && !isCoach;
 
   const cards: HubCard[] = [
     {
-      title: "My Caseload",
-      description: "View and manage your assigned teachers",
+      title: "Caseload",
+      description:
+        "View assigned teachers, observe, and create action plans",
       icon: <IconUsers size={24} />,
       links: [{ href: "/skillsHub/caseload", label: "View Caseload" }],
+      coachOnly: true,
     },
     {
-      title: "Skill Maps",
-      description: "View teacher skill progression across all domains",
+      title: "My Skill Map",
+      description: "View your skill progression and coaching feedback",
       icon: <IconMap size={24} />,
-      links: [
-        ...(isTeacher && metadata.staffId
-          ? [
-              {
-                href: `/skillsHub/teacher/${metadata.staffId}`,
-                label: "My Skills",
-              },
-            ]
-          : [
-              {
-                href: "/skillsHub/caseload",
-                label: "Select Teacher",
-              },
-            ]),
-      ],
+      links: metadata.staffId
+        ? [
+            {
+              href: `/skillsHub/teacher/${metadata.staffId}`,
+              label: "View My Skills",
+            },
+          ]
+        : [],
+      teacherOnly: true,
     },
     {
-      title: "Observations",
-      description: "Record and review classroom observations",
-      icon: <IconClipboardCheck size={24} />,
-      links: [
-        ...(isTeacher
-          ? []
-          : [
-              {
-                href: "/skillsHub/caseload",
-                label: "Select Teacher",
-              },
-            ]),
-      ],
+      title: "All Skills",
+      description: "Browse the full teacher skills taxonomy",
+      icon: <IconList size={24} />,
+      links: [{ href: "/skillsHub/skills", label: "View All Skills" }],
     },
     {
-      title: "Admin",
-      description: "Manage coach-teacher assignments",
+      title: "Assignments",
+      description: "Manage coach-teacher pairings",
       icon: <IconSettings size={24} />,
       links: [
         {
@@ -92,7 +82,12 @@ export default function SkillsHubPage() {
     },
   ];
 
-  const visibleCards = cards.filter((c) => !c.adminOnly || isAdmin);
+  const visibleCards = cards.filter((c) => {
+    if (c.adminOnly && !isAdmin) return false;
+    if (c.coachOnly && isTeacher) return false;
+    if (c.teacherOnly && !isTeacher) return false;
+    return true;
+  });
 
   return (
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
