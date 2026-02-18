@@ -94,6 +94,7 @@ function SubDomainSkills({
                 l1={{
                   skillId: item.l1.id,
                   skillName: item.l1.name,
+                  description: item.l1.description,
                   status: getStatus(statusMap, item.l1.uuid),
                   isLocked: false,
                   level: 1,
@@ -101,6 +102,7 @@ function SubDomainSkills({
                 l2={{
                   skillId: item.l2.id,
                   skillName: item.l2.name,
+                  description: item.l2.description,
                   status: getStatus(statusMap, item.l2.uuid),
                   isLocked: isSkillLocked(item.l2, statusMap, subDomain.skills),
                   level: 2,
@@ -116,6 +118,7 @@ function SubDomainSkills({
             key={item.skill.uuid}
             skillId={item.skill.id}
             skillName={item.skill.name}
+            description={item.skill.description}
             status={getStatus(statusMap, item.skill.uuid)}
             isLocked={isSkillLocked(item.skill, statusMap, subDomain.skills)}
             teacherStaffId={teacherStaffId}

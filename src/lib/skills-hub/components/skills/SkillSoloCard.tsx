@@ -10,6 +10,7 @@ import type { SkillStatus } from "../../core/skill-status.types";
 interface SkillSoloCardProps {
   skillId: string;
   skillName: string;
+  description: string;
   status: SkillStatus;
   isLocked: boolean;
   teacherStaffId: string;
@@ -18,6 +19,7 @@ interface SkillSoloCardProps {
 export function SkillSoloCard({
   skillId,
   skillName,
+  description,
   status,
   isLocked,
   teacherStaffId,
@@ -61,9 +63,16 @@ export function SkillSoloCard({
               <Icon size={18} stroke={1.5} />
             )}
           </Box>
-          <Text size="sm" fw={500} lineClamp={2}>
-            {skillName}
-          </Text>
+          <div style={{ minWidth: 0 }}>
+            <Text size="sm" fw={500} lineClamp={2}>
+              {skillName}
+            </Text>
+            {description && (
+              <Text size="xs" c="dimmed" lineClamp={2} mt={2}>
+                {description}
+              </Text>
+            )}
+          </div>
         </Group>
         {!isLocked && <SkillStatusDot status={status} />}
       </Group>

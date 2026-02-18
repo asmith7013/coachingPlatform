@@ -10,6 +10,7 @@ import type { SkillStatus } from "../../core/skill-status.types";
 interface SkillHalf {
   skillId: string;
   skillName: string;
+  description: string;
   status: SkillStatus;
   isLocked: boolean;
   level: 1 | 2;
@@ -74,6 +75,11 @@ function SkillHalfContent({
             <Text size="sm" fw={500} lineClamp={2}>
               {skill.skillName}
             </Text>
+            {skill.description && (
+              <Text size="xs" c="dimmed" lineClamp={2} mt={2}>
+                {skill.description}
+              </Text>
+            )}
           </div>
         </Group>
         {!skill.isLocked && <SkillStatusDot status={skill.status} />}
