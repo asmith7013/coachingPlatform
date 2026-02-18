@@ -202,8 +202,8 @@ export async function upsertUnitSchedule(data: {
         {
           $set: {
             unitName: data.unitName,
-            startDate: data.startDate || "",
-            endDate: data.endDate || "",
+            ...(data.startDate !== undefined && { startDate: data.startDate }),
+            ...(data.endDate !== undefined && { endDate: data.endDate }),
             sections: data.sections.map((s) => ({
               sectionId: s.sectionId,
               subsection: s.subsection,
@@ -215,6 +215,8 @@ export async function upsertUnitSchedule(data: {
             updatedAt: new Date().toISOString(),
           },
           $setOnInsert: {
+            ...(data.startDate === undefined && { startDate: "" }),
+            ...(data.endDate === undefined && { endDate: "" }),
             createdAt: new Date().toISOString(),
             ownerIds: [],
           },
@@ -427,8 +429,8 @@ export async function upsertSectionUnitSchedule(data: {
         {
           $set: {
             unitName: data.unitName,
-            startDate: data.startDate || "",
-            endDate: data.endDate || "",
+            ...(data.startDate !== undefined && { startDate: data.startDate }),
+            ...(data.endDate !== undefined && { endDate: data.endDate }),
             sections: data.sections.map((s) => ({
               sectionId: s.sectionId,
               subsection: s.subsection,
@@ -440,6 +442,8 @@ export async function upsertSectionUnitSchedule(data: {
             updatedAt: new Date().toISOString(),
           },
           $setOnInsert: {
+            ...(data.startDate === undefined && { startDate: "" }),
+            ...(data.endDate === undefined && { endDate: "" }),
             createdAt: new Date().toISOString(),
             ownerIds: [],
           },

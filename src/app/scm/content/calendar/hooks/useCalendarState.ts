@@ -89,6 +89,9 @@ export function useCalendarState() {
   // Selection state for interactive date picking
   const [selectionMode, setSelectionMode] = useState<SelectionMode>(null);
 
+  // Date preloaded when clicking + on a calendar cell
+  const [addEventDate, setAddEventDate] = useState<string | null>(null);
+
   // Current month for calendar navigation
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
@@ -644,6 +647,11 @@ export function useCalendarState() {
     );
   };
 
+  const handleAddEvent = useCallback((dateStr: string) => {
+    setAddEventDate(dateStr);
+    setShowAddDayOffModal(true);
+  }, []);
+
   const handleSectionDayOffClick = useCallback(
     (event: { date: string; name: string }) => {
       setDayOffToDelete(event);
@@ -748,6 +756,11 @@ export function useCalendarState() {
     isContentLoading,
     isMutating,
     pendingSectionKey,
+
+    // Add event from cell
+    addEventDate,
+    setAddEventDate,
+    handleAddEvent,
 
     // Modal state
     showCopyModal,

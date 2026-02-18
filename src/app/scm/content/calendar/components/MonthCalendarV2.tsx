@@ -8,6 +8,7 @@ import {
 } from "../../calendar-old/components/types";
 import type { CalendarEvent } from "@zod-schema/calendar";
 import { Tooltip } from "@/components/core/feedback/Tooltip";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 // Same section colors as SimplifiedUnitView
 const SECTION_COLORS = [
@@ -63,6 +64,7 @@ interface MonthCalendarV2Props {
   isWeekend: (date: Date) => boolean;
   onDateClick: (dateStr: string) => void;
   onSectionDayOffClick: (event: { date: string; name: string }) => void;
+  onAddEvent?: (dateStr: string) => void;
 }
 
 export function MonthCalendarV2({
@@ -77,6 +79,7 @@ export function MonthCalendarV2({
   isWeekend,
   onDateClick,
   onSectionDayOffClick,
+  onAddEvent,
 }: MonthCalendarV2Props) {
   const year = monthDate.getFullYear();
   const month = monthDate.getMonth();
@@ -194,12 +197,14 @@ export function MonthCalendarV2({
             hasSectionEvent || hasScheduleBadge ? "h-10" : "h-7";
 
           const badgeColor = dateColor?.base ?? "#9CA3AF";
+          const canAddEvent =
+            onAddEvent && !weekend && !dayOff && !sectionDayOffInfo.isDayOff;
 
           return (
             <div
               key={date.toISOString()}
               onClick={handleClick}
-              className={`${cellHeight} rounded text-xs flex flex-col items-center justify-start pt-0.5 relative ${bgColor} ${textColor} ${cursor} ${
+              className={`group ${cellHeight} rounded text-xs flex flex-col items-center justify-start pt-0.5 relative ${bgColor} ${textColor} ${cursor} ${
                 isSelecting && !weekend && !dayOff
                   ? "hover:ring-2 hover:ring-blue-400"
                   : ""
@@ -207,6 +212,18 @@ export function MonthCalendarV2({
               style={customBgStyle}
               title={title}
             >
+              {canAddEvent && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAddEvent(dateStr);
+                  }}
+                  className="absolute top-0 right-0 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-amber-600 cursor-pointer z-10"
+                  title="Add event"
+                >
+                  <PlusIcon className="h-3 w-3" />
+                </button>
+              )}
               {hasScheduleBadge && (
                 <div
                   className="absolute top-0 left-0 right-0 h-0.5"
