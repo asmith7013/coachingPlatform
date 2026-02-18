@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Card, Text, Box, Group, UnstyledButton, Divider } from "@mantine/core";
+import { Card, Text, Box, Group, UnstyledButton } from "@mantine/core";
 import { IconLock } from "@tabler/icons-react";
 import { SkillStatusDot } from "./SkillStatusDot";
 import { getSkillIcon } from "../../core/skill-icons";
@@ -19,15 +18,15 @@ interface SkillHalf {
 interface SkillPairCardProps {
   l1: SkillHalf;
   l2: SkillHalf;
-  teacherStaffId: string;
+  onSkillClick?: (skillId: string) => void;
 }
 
 function SkillHalfContent({
   skill,
-  teacherStaffId,
+  onSkillClick,
 }: {
   skill: SkillHalf;
-  teacherStaffId: string;
+  onSkillClick?: (skillId: string) => void;
 }) {
   const Icon = getSkillIcon(skill.skillId);
 
@@ -37,7 +36,6 @@ function SkillHalfContent({
       style={{
         opacity: skill.isLocked ? 0.5 : 1,
         cursor: skill.isLocked ? "default" : "pointer",
-        flex: 1,
         minWidth: 0,
       }}
     >
@@ -93,23 +91,33 @@ function SkillHalfContent({
 
   return (
     <UnstyledButton
-      component={Link}
-      href={`/skillsHub/skill/${skill.skillId}?teacherId=${teacherStaffId}`}
-      style={{ flex: 1, minWidth: 0 }}
+      onClick={() => onSkillClick?.(skill.skillId)}
+      style={{ minWidth: 0, display: "block" }}
     >
       {inner}
     </UnstyledButton>
   );
 }
 
-export function SkillPairCard({ l1, l2, teacherStaffId }: SkillPairCardProps) {
+export function SkillPairCard({ l1, l2, onSkillClick }: SkillPairCardProps) {
   return (
     <Card shadow="xs" withBorder p={0}>
-      <Group gap={0} wrap="nowrap" align="stretch">
-        <SkillHalfContent skill={l1} teacherStaffId={teacherStaffId} />
-        <Divider orientation="vertical" />
-        <SkillHalfContent skill={l2} teacherStaffId={teacherStaffId} />
-      </Group>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          borderCollapse: "collapse",
+        }}
+      >
+        <SkillHalfContent skill={l1} onSkillClick={onSkillClick} />
+        <Box
+          style={{
+            borderLeft: "1px solid var(--mantine-color-gray-3)",
+          }}
+        >
+          <SkillHalfContent skill={l2} onSkillClick={onSkillClick} />
+        </Box>
+      </div>
     </Card>
   );
 }

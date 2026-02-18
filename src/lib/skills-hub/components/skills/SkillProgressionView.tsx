@@ -2,9 +2,10 @@
 
 import { Group, Stack, Text, Center, Anchor } from "@mantine/core";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DomainCard } from "./DomainAccordion";
 import { ProgressStatsRow } from "./ProgressStatsRow";
+import { SkillDetailDrawer } from "./SkillDetailDrawer";
 import { SkillMapSkeleton } from "../core/SkillsHubSkeletons";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
 import { useTeacherSkillStatuses } from "../../hooks/useTeacherSkillStatuses";
@@ -17,6 +18,7 @@ interface SkillProgressionViewProps {
 export function SkillProgressionView({
   teacherStaffId,
 }: SkillProgressionViewProps) {
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const { taxonomy, loading: taxLoading, error: taxError } = useTaxonomy();
   const {
     statuses,
@@ -97,13 +99,20 @@ export function SkillProgressionView({
             domain={domain}
             domainIndex={index}
             statusMap={statusMap}
-            teacherStaffId={teacherStaffId}
             defaultExpandedSubDomains={
               expandedSubDomainsByDomain.get(domain.id) ?? []
             }
+            onSkillClick={setSelectedSkillId}
           />
         ))}
       </Stack>
+
+      <SkillDetailDrawer
+        skillId={selectedSkillId}
+        teacherStaffId={teacherStaffId}
+        opened={selectedSkillId !== null}
+        onClose={() => setSelectedSkillId(null)}
+      />
     </Stack>
   );
 }

@@ -25,8 +25,8 @@ interface DomainCardProps {
   domain: TeacherSkillDomain;
   domainIndex: number;
   statusMap: Map<string, TeacherSkillStatusDocument>;
-  teacherStaffId: string;
   defaultExpandedSubDomains: string[];
+  onSkillClick?: (skillId: string) => void;
 }
 
 type SkillItem =
@@ -73,11 +73,11 @@ function groupSkillsIntoPairsAndSolos(skills: TeacherSkill[]): SkillItem[] {
 function SubDomainSkills({
   subDomain,
   statusMap,
-  teacherStaffId,
+  onSkillClick,
 }: {
   subDomain: TeacherSkillSubDomain;
   statusMap: Map<string, TeacherSkillStatusDocument>;
-  teacherStaffId: string;
+  onSkillClick?: (skillId: string) => void;
 }) {
   const items = groupSkillsIntoPairsAndSolos(subDomain.skills);
 
@@ -107,22 +107,29 @@ function SubDomainSkills({
                   isLocked: isSkillLocked(item.l2, statusMap, subDomain.skills),
                   level: 2,
                 }}
-                teacherStaffId={teacherStaffId}
+                onSkillClick={onSkillClick}
               />
             </Box>
           );
         }
 
         return (
-          <SkillSoloCard
+          <Box
             key={item.skill.uuid}
-            skillId={item.skill.id}
-            skillName={item.skill.name}
-            description={item.skill.description}
-            status={getStatus(statusMap, item.skill.uuid)}
-            isLocked={isSkillLocked(item.skill, statusMap, subDomain.skills)}
-            teacherStaffId={teacherStaffId}
-          />
+            style={{
+              gridColumn: item.skill.level === 1 ? 1 : 2,
+            }}
+          >
+            <SkillSoloCard
+              skillId={item.skill.id}
+              skillName={item.skill.name}
+              description={item.skill.description}
+              level={item.skill.level as 1 | 2}
+              status={getStatus(statusMap, item.skill.uuid)}
+              isLocked={isSkillLocked(item.skill, statusMap, subDomain.skills)}
+              onSkillClick={onSkillClick}
+            />
+          </Box>
         );
       })}
     </SimpleGrid>
@@ -133,8 +140,8 @@ export function DomainCard({
   domain,
   domainIndex,
   statusMap,
-  teacherStaffId,
   defaultExpandedSubDomains,
+  onSkillClick,
 }: DomainCardProps) {
   const allSkills = domain.subDomains.flatMap((sd) => sd.skills);
   const totalSkills = allSkills.length;
@@ -213,7 +220,7 @@ export function DomainCard({
               <SubDomainSkills
                 subDomain={subDomain}
                 statusMap={statusMap}
-                teacherStaffId={teacherStaffId}
+                onSkillClick={onSkillClick}
               />
             </Accordion.Panel>
           </Accordion.Item>

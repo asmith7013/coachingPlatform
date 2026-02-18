@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Card, Text, Box, Group, UnstyledButton } from "@mantine/core";
 import { IconLock } from "@tabler/icons-react";
 import { SkillStatusDot } from "./SkillStatusDot";
@@ -11,18 +10,20 @@ interface SkillSoloCardProps {
   skillId: string;
   skillName: string;
   description: string;
+  level: 1 | 2;
   status: SkillStatus;
   isLocked: boolean;
-  teacherStaffId: string;
+  onSkillClick?: (skillId: string) => void;
 }
 
 export function SkillSoloCard({
   skillId,
   skillName,
   description,
+  level,
   status,
   isLocked,
-  teacherStaffId,
+  onSkillClick,
 }: SkillSoloCardProps) {
   const Icon = getSkillIcon(skillId);
 
@@ -64,6 +65,9 @@ export function SkillSoloCard({
             )}
           </Box>
           <div style={{ minWidth: 0 }}>
+            <Text size="xs" c="dimmed" fw={500}>
+              Level {level}
+            </Text>
             <Text size="sm" fw={500} lineClamp={2}>
               {skillName}
             </Text>
@@ -84,11 +88,7 @@ export function SkillSoloCard({
   }
 
   return (
-    <UnstyledButton
-      component={Link}
-      href={`/skillsHub/skill/${skillId}?teacherId=${teacherStaffId}`}
-      w="100%"
-    >
+    <UnstyledButton onClick={() => onSkillClick?.(skillId)} w="100%">
       {content}
     </UnstyledButton>
   );
