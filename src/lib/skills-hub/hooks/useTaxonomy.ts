@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchTaxonomyAction } from "../_actions/taxonomy.actions";
+import { fetchTaxonomyAction } from "../core/taxonomy.actions";
 
 export const taxonomyKeys = {
   all: ["skills-hub-taxonomy"] as const,

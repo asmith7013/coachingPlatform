@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getObservations } from "../_actions/observation.actions";
+import { getObservations } from "../coach/observations/observation.actions";
 
 export const observationKeys = {
   all: ["observations"] as const,
