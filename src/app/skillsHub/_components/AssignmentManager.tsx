@@ -30,14 +30,12 @@ import {
   removeAssignment,
 } from "../_actions/assignments.actions";
 import type { StaffOption } from "../_actions/assignments.actions";
-import { Schools } from "@schema/enum/scm";
 import type { CoachTeacherAssignmentDocument } from "../_types/assignment.types";
 
 export function AssignmentManager() {
   const queryClient = useQueryClient();
   const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
   const [selectedTeacherIds, setSelectedTeacherIds] = useState<string[]>([]);
-  const [selectedSchoolId, setSelectedSchoolId] = useState<string | null>(null);
   const [assigning, setAssigning] = useState(false);
   const [removeTarget, setRemoveTarget] = useState<{
     id: string;
@@ -105,31 +103,17 @@ export function AssignmentManager() {
     label: `${t.staffName}${t.email ? ` (${t.email})` : ""}`,
   }));
 
-  const schoolOptions = Schools.map((s) => ({
-    value: s,
-    label: s,
-  }));
-
   const selectedCoach = coaches?.find((c) => c._id === selectedCoachId);
 
   const handleAssign = async () => {
-    if (
-      !selectedCoachId ||
-      selectedTeacherIds.length === 0 ||
-      !selectedSchoolId
-    )
-      return;
+    if (!selectedCoachId || selectedTeacherIds.length === 0) return;
 
     setAssigning(true);
     let successCount = 0;
     let errorCount = 0;
 
     for (const teacherId of selectedTeacherIds) {
-      const result = await assignTeacher(
-        selectedCoachId,
-        teacherId,
-        selectedSchoolId,
-      );
+      const result = await assignTeacher(selectedCoachId, teacherId);
       if (result.success) {
         successCount++;
       } else {
@@ -267,23 +251,15 @@ export function AssignmentManager() {
                         staffName: string;
                         email?: string;
                       };
-                      const school = a.schoolId as unknown as {
-                        _id: string;
-                        schoolName: string;
-                      };
                       const teacherName =
                         typeof teacher === "object"
                           ? teacher.staffName
-                          : "Unknown";
-                      const schoolName =
-                        typeof school === "object"
-                          ? school.schoolName
                           : "Unknown";
 
                       return (
                         <Table.Tr key={a._id}>
                           <Table.Td>{teacherName}</Table.Td>
-                          <Table.Td>{schoolName}</Table.Td>
+                          <Table.Td>{a.schoolId ?? "—"}</Table.Td>
                           <Table.Td>
                             {new Date(a.assignedAt).toLocaleDateString()}
                           </Table.Td>
@@ -330,21 +306,11 @@ export function AssignmentManager() {
                     onChange={setSelectedTeacherIds}
                   />
 
-                  <Select
-                    placeholder="Select school..."
-                    searchable
-                    data={schoolOptions}
-                    value={selectedSchoolId}
-                    onChange={setSelectedSchoolId}
-                  />
-
                   <Group justify="flex-end">
                     <Button
                       onClick={handleAssign}
                       loading={assigning}
-                      disabled={
-                        selectedTeacherIds.length === 0 || !selectedSchoolId
-                      }
+                      disabled={selectedTeacherIds.length === 0}
                     >
                       Assign Selected Teachers
                     </Button>
@@ -361,7 +327,6 @@ export function AssignmentManager() {
         opened={teacherModalOpened}
         onClose={closeTeacherModal}
         role="Teacher"
-        schoolOptions={schoolOptions}
         onCreated={() => {
           queryClient.invalidateQueries({ queryKey: ["skillshub-teachers"] });
         }}
@@ -371,7 +336,6 @@ export function AssignmentManager() {
         opened={coachModalOpened}
         onClose={closeCoachModal}
         role="Coach"
-        schoolOptions={schoolOptions}
         onCreated={() => {
           queryClient.invalidateQueries({ queryKey: ["skillshub-coaches"] });
         }}

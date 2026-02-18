@@ -11,13 +11,15 @@ import {
 } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { Schools } from "@schema/enum/scm";
 import { createStaffMember } from "../_actions/assignments.actions";
+
+const schoolOptions = Schools.map((s) => ({ value: s, label: s }));
 
 interface CreateStaffModalProps {
   opened: boolean;
   onClose: () => void;
   role: "Teacher" | "Coach";
-  schoolOptions: { value: string; label: string }[];
   onCreated: () => void;
 }
 
@@ -25,7 +27,6 @@ export function CreateStaffModal({
   opened,
   onClose,
   role,
-  schoolOptions,
   onCreated,
 }: CreateStaffModalProps) {
   const [name, setName] = useState("");
@@ -103,18 +104,20 @@ export function CreateStaffModal({
 
         <Select
           label="School"
-          placeholder="Select a school (optional)"
+          placeholder={role === "Teacher" ? "Select a school" : "Select a school (optional)"}
           data={schoolOptions}
           value={schoolId}
           onChange={setSchoolId}
           searchable
-          clearable
+          clearable={role !== "Teacher"}
+          required={role === "Teacher"}
+          withAsterisk={role === "Teacher"}
         />
 
         <Button
           onClick={handleSubmit}
           loading={saving}
-          disabled={!name.trim() || !email.trim()}
+          disabled={!name.trim() || !email.trim() || (role === "Teacher" && !schoolId)}
           fullWidth
         >
           Create {role}

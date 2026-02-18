@@ -91,7 +91,6 @@ export async function getCoachTeachers(coachStaffId: string): Promise<{
         removedAt: null,
       })
         .populate("teacherStaffId", "staffName email")
-        .populate("schoolId", "schoolName")
         .lean();
       const data = docs.map((d) =>
         JSON.parse(JSON.stringify(d)),
@@ -139,7 +138,6 @@ export async function getTeacherCoaches(teacherStaffId: string): Promise<{
 export async function assignTeacher(
   coachStaffId: string,
   teacherStaffId: string,
-  schoolId: string,
 ): Promise<{
   success: boolean;
   data?: CoachTeacherAssignmentDocument;
@@ -150,8 +148,16 @@ export async function assignTeacher(
       const validated = CoachTeacherAssignmentInputSchema.parse({
         coachStaffId,
         teacherStaffId,
-        schoolId,
       });
+
+      // Auto-derive school from the teacher's record
+      const teacher = await NYCPSStaffModel.findById(
+        validated.teacherStaffId,
+      ).select("schoolIds").lean();
+      const schoolId =
+        teacher && Array.isArray(teacher.schoolIds) && teacher.schoolIds.length > 0
+          ? String(teacher.schoolIds[0])
+          : undefined;
 
       // Check for existing active assignment
       const existing = await SkillsHubCoachTeacherAssignment.findOne({
@@ -167,7 +173,10 @@ export async function assignTeacher(
         };
       }
 
-      const doc = await SkillsHubCoachTeacherAssignment.create(validated);
+      const doc = await SkillsHubCoachTeacherAssignment.create({
+        ...validated,
+        schoolId,
+      });
       const data = JSON.parse(
         JSON.stringify(doc.toObject()),
       ) as CoachTeacherAssignmentDocument;

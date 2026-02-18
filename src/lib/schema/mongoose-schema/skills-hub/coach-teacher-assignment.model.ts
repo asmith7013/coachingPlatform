@@ -17,9 +17,8 @@ const CoachTeacherAssignmentSchema = new mongoose.Schema(
       required: true,
     },
     schoolId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "School",
-      required: true,
+      type: String,
+      default: null,
     },
     assignedAt: { type: Date, default: Date.now },
     removedAt: { type: Date, default: null },
