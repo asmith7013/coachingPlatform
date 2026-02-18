@@ -9,7 +9,7 @@ export default function NewActionPlanPage() {
   const teacherId = params.teacherId as string;
 
   return (
-    <div className="mx-auto" style={{ maxWidth: "900px" }}>
+    <div className="mx-auto" style={{ maxWidth: "1200px" }}>
       <Card shadow="sm" p="lg" mb="lg">
         <Title order={2}>Create Action Plan</Title>
         <Text size="sm" c="dimmed">
@@ -17,9 +17,7 @@ export default function NewActionPlanPage() {
         </Text>
       </Card>
 
-      <Card shadow="sm" p="lg">
-        <ActionPlanForm teacherStaffId={teacherId} />
-      </Card>
+      <ActionPlanForm teacherStaffId={teacherId} />
     </div>
   );
 }
