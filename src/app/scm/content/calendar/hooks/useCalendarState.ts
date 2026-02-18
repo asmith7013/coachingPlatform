@@ -98,8 +98,11 @@ export function useCalendarState() {
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
 
-  // Track pending section restore
+  // Track pending section and unit restore from URL
   const [pendingSectionKey, setPendingSectionKey] = useState<string | null>(
+    null,
+  );
+  const [pendingUnitNumber, setPendingUnitNumber] = useState<number | null>(
     null,
   );
   const [hasAttemptedRestore, setHasAttemptedRestore] = useState(false);
@@ -109,11 +112,13 @@ export function useCalendarState() {
     const urlParams = new URLSearchParams(window.location.search);
     const urlGrade = urlParams.get("g");
     const urlSection = urlParams.get("section");
+    const urlUnit = urlParams.get("unit");
 
     if (urlGrade) {
       const grade = urlGrade === "alg-1" ? "Algebra 1" : urlGrade;
       setSelectedGrade(grade);
       if (urlSection) setPendingSectionKey(urlSection);
+      if (urlUnit) setPendingUnitNumber(parseInt(urlUnit, 10));
       return;
     }
 
@@ -151,13 +156,19 @@ export function useCalendarState() {
     } else {
       params.delete("section");
     }
+    const currentUnit = unitSchedules[selectedUnitIndex];
+    if (currentUnit) {
+      params.set("unit", String(currentUnit.unitNumber));
+    } else {
+      params.delete("unit");
+    }
     const qs = params.toString();
     window.history.replaceState(
       null,
       "",
       `${window.location.pathname}${qs ? `?${qs}` : ""}`,
     );
-  }, [selectedGrade, selectedSection]);
+  }, [selectedGrade, selectedSection, selectedUnitIndex, unitSchedules]);
 
   // Restore pending section once configs are loaded
   useEffect(() => {
@@ -193,8 +204,24 @@ export function useCalendarState() {
     setHasAttemptedRestore(true);
   }, [pendingSectionKey, sectionConfigs, selectedGrade, hasAttemptedRestore]);
 
-  // Restore saved unit index when section changes, or reset to 0
+  // Restore saved unit index from URL (priority) or localStorage
   useEffect(() => {
+    // URL unit param takes priority
+    if (
+      pendingUnitNumber !== null &&
+      unitSchedules.length > 0 &&
+      selectedSection
+    ) {
+      const idx = unitSchedules.findIndex(
+        (u) => u.unitNumber === pendingUnitNumber,
+      );
+      if (idx >= 0) {
+        setSelectedUnitIndex(idx);
+        setPendingUnitNumber(null);
+        return;
+      }
+    }
+
     if (selectedSection) {
       try {
         const sectionKey = `${selectedSection.school}|${selectedSection.classSection}`;
@@ -212,7 +239,7 @@ export function useCalendarState() {
       }
     }
     setSelectedUnitIndex(0);
-  }, [selectedGrade, selectedSection]);
+  }, [selectedGrade, selectedSection, pendingUnitNumber, unitSchedules]);
 
   // Save unit index per section to localStorage
   useEffect(() => {
