@@ -65,9 +65,6 @@ export function SkillCard({
         <Group justify="space-between" wrap="nowrap">
           <Group gap="xs" wrap="nowrap">
             <Text size="sm">{skill.name}</Text>
-            <Badge size="xs" variant="outline" color="violet">
-              L2
-            </Badge>
             <Badge size="xs" variant="light" color="gray">
               Locked
             </Badge>
@@ -110,13 +107,6 @@ export function SkillCard({
     <Group justify="space-between" wrap="nowrap">
       <Group gap="xs" wrap="nowrap">
         <Text size="sm">{skill.name}</Text>
-        <Badge
-          size="xs"
-          variant="outline"
-          color={skill.level === 1 ? "blue" : "violet"}
-        >
-          L{skill.level}
-        </Badge>
         <SkillStatusBadge status={status} />
       </Group>
       <IconChevronRight size={14} color="gray" />

@@ -8,8 +8,11 @@ import {
   Accordion,
   Stack,
   Button,
+  SimpleGrid,
+  Box,
 } from "@mantine/core";
 import { SkillCard } from "./SkillCard";
+import { groupSkillsByLevel } from "../_lib/taxonomy";
 import type {
   TeacherSkillDomain,
   TeacherSkillFlat,
@@ -73,8 +76,10 @@ export function DomainSection({
 
       <Accordion variant="separated" mt="sm">
         {domain.subDomains.map((subDomain) => {
-          const level1Skills = subDomain.skills.filter((s) => s.level === 1);
-          const sdLevel2Skills = subDomain.skills.filter((s) => s.level === 2);
+          const { l1Skills, l2Skills: sdL2Skills } = groupSkillsByLevel(
+            subDomain.skills,
+          );
+          const hasL2 = sdL2Skills.length > 0;
 
           return (
             <Accordion.Item key={subDomain.id} value={subDomain.id}>
@@ -84,35 +89,20 @@ export function DomainSection({
                 </Text>
               </Accordion.Control>
               <Accordion.Panel>
-                <Stack gap={2}>
-                  {level1Skills.map((skill) => {
-                    const statusDoc = statusMap.get(skill.uuid);
-                    return (
-                      <SkillCard
-                        key={skill.id}
-                        skill={{
-                          ...skill,
-                          domainUuid: domain.uuid,
-                          domainId: domain.id,
-                          domainName: domain.name,
-                          subDomainUuid: subDomain.uuid,
-                          subDomainId: subDomain.id,
-                          subDomainName: subDomain.name,
-                        }}
-                        status={
-                          (statusDoc?.status as SkillStatus) || "not_started"
-                        }
-                        level2Unlocked={true}
-                        teacherStaffId={teacherStaffId}
-                        isCoachView={isCoachView}
-                        onStatusChanged={onStatusChanged}
-                      />
-                    );
-                  })}
-
-                  {sdLevel2Skills.length > 0 && (
-                    <>
-                      {sdLevel2Skills.map((skill) => {
+                <SimpleGrid cols={hasL2 ? { base: 1, sm: 2 } : 1} spacing="md">
+                  <Box>
+                    <Text
+                      size="xs"
+                      fw={600}
+                      c="blue.7"
+                      tt="uppercase"
+                      mb="xs"
+                      px="sm"
+                    >
+                      Level 1
+                    </Text>
+                    <Stack gap={2}>
+                      {l1Skills.map((skill) => {
                         const statusDoc = statusMap.get(skill.uuid);
                         return (
                           <SkillCard
@@ -130,18 +120,60 @@ export function DomainSection({
                               (statusDoc?.status as SkillStatus) ||
                               "not_started"
                             }
-                            level2Unlocked={
-                              statusDoc?.level2Unlocked || level2Unlocked
-                            }
+                            level2Unlocked={true}
                             teacherStaffId={teacherStaffId}
                             isCoachView={isCoachView}
                             onStatusChanged={onStatusChanged}
                           />
                         );
                       })}
-                    </>
+                    </Stack>
+                  </Box>
+
+                  {hasL2 && (
+                    <Box>
+                      <Text
+                        size="xs"
+                        fw={600}
+                        c="violet.7"
+                        tt="uppercase"
+                        mb="xs"
+                        px="sm"
+                      >
+                        Level 2
+                      </Text>
+                      <Stack gap={2}>
+                        {sdL2Skills.map((skill) => {
+                          const statusDoc = statusMap.get(skill.uuid);
+                          return (
+                            <SkillCard
+                              key={skill.id}
+                              skill={{
+                                ...skill,
+                                domainUuid: domain.uuid,
+                                domainId: domain.id,
+                                domainName: domain.name,
+                                subDomainUuid: subDomain.uuid,
+                                subDomainId: subDomain.id,
+                                subDomainName: subDomain.name,
+                              }}
+                              status={
+                                (statusDoc?.status as SkillStatus) ||
+                                "not_started"
+                              }
+                              level2Unlocked={
+                                statusDoc?.level2Unlocked || level2Unlocked
+                              }
+                              teacherStaffId={teacherStaffId}
+                              isCoachView={isCoachView}
+                              onStatusChanged={onStatusChanged}
+                            />
+                          );
+                        })}
+                      </Stack>
+                    </Box>
                   )}
-                </Stack>
+                </SimpleGrid>
               </Accordion.Panel>
             </Accordion.Item>
           );

@@ -2,14 +2,15 @@ import {
   TeacherSkillsIndexSchema,
   type TeacherSkillsIndex,
   type TeacherSkillFlat,
+  type TeacherSkill,
+  type SkillsByLevel,
 } from "../_types/taxonomy.types";
 
 let cachedTaxonomy: TeacherSkillsIndex | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
-const MATHKCS_API_URL =
-  process.env.MATHKCS_API_URL || "https://mathkcs.vercel.app";
+const MATHKCS_API_URL = process.env.MATHKCS_API_URL || "https://scm.podsie.org";
 
 export async function fetchTaxonomy(): Promise<TeacherSkillsIndex> {
   if (cachedTaxonomy && Date.now() - cacheTimestamp < CACHE_TTL) {
@@ -53,6 +54,13 @@ export function getSkillById(
     }
   }
   return null;
+}
+
+export function groupSkillsByLevel(skills: TeacherSkill[]): SkillsByLevel {
+  return {
+    l1Skills: skills.filter((s) => s.level === 1),
+    l2Skills: skills.filter((s) => s.level === 2),
+  };
 }
 
 export function flattenSkills(
