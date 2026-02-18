@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getTeacherSkillStatuses } from "../_actions/skill-status.actions";
+import { getTeacherSkillStatuses } from "../core/skill-status.actions";
 
 export const skillStatusKeys = {
   all: ["skill-statuses"] as const,

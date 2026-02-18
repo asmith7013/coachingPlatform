@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getActionPlans } from "../_actions/action-plan.actions";
+import { getActionPlans } from "../coach/action-plans/action-plan.actions";
 
 export const actionPlanKeys = {
   all: ["action-plans"] as const,

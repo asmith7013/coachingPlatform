@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCoachTeachers } from "../_actions/assignments.actions";
-import type { PopulatedAssignment } from "../_types/assignment.types";
+import { getCoachTeachers } from "../admin/coaching-assignments/coaching-assignment.actions";
+import type { PopulatedAssignment } from "../admin/coaching-assignments/coaching-assignment.types";
 
 export const caseloadKeys = {
   all: ["coach-caseload"] as const,
