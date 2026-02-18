@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { ChartBarIcon, CalendarIcon } from "@heroicons/react/24/outline";
 import {
   SectionVisualizationLayout,
@@ -12,20 +12,33 @@ import { RoadmapBarChart } from "./components/RoadmapBarChart";
 import { SectionComparisonChart } from "./components/SectionComparisonChart";
 import { useSectionOptions, useRoadmapData } from "@/hooks/scm";
 import type { DateRange } from "@/hooks/scm/roadmaps/useRoadmapData";
+import { useUrlSyncedState } from "@/hooks/scm/useUrlSyncedState";
 
 // Default date range: Sept 1, 2025 to today
 const DEFAULT_START_DATE = "2025-09-01";
 const getDefaultEndDate = () => new Date().toISOString().split("T")[0];
 
 export default function RoadmapCompletionsPage() {
-  const [selectedSections, setSelectedSections] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState(DEFAULT_START_DATE);
-  const [endDate, setEndDate] = useState(getDefaultEndDate);
+  const [sectionsParam, setSectionsParam] = useUrlSyncedState("sections", {
+    storageKey: "scm-progress-sections",
+  });
+  const selectedSections = sectionsParam
+    ? sectionsParam.split(",").filter(Boolean)
+    : [];
+  const [startDate, setStartDate] = useUrlSyncedState("start", {
+    storageKey: "scm-progress-start",
+  });
+  const [endDate, setEndDate] = useUrlSyncedState("end", {
+    storageKey: "scm-progress-end",
+  });
+  // Use defaults when URL/localStorage are empty
+  const effectiveStartDate = startDate || DEFAULT_START_DATE;
+  const effectiveEndDate = endDate || getDefaultEndDate();
 
   // Memoize date range to avoid unnecessary re-renders
   const dateRange: DateRange = useMemo(
-    () => ({ startDate, endDate }),
-    [startDate, endDate],
+    () => ({ startDate: effectiveStartDate, endDate: effectiveEndDate }),
+    [effectiveStartDate, effectiveEndDate],
   );
 
   // Data fetching with React Query hooks
@@ -37,11 +50,10 @@ export default function RoadmapCompletionsPage() {
 
   // Handle section toggle
   const handleSectionToggle = (sectionId: string) => {
-    setSelectedSections((prev) =>
-      prev.includes(sectionId)
-        ? prev.filter((id) => id !== sectionId)
-        : [...prev, sectionId],
-    );
+    const updated = selectedSections.includes(sectionId)
+      ? selectedSections.filter((id) => id !== sectionId)
+      : [...selectedSections, sectionId];
+    setSectionsParam(updated.join(","));
   };
 
   // Render section content using the shared SectionAccordion
@@ -97,7 +109,7 @@ export default function RoadmapCompletionsPage() {
         <input
           type="date"
           id="startDate"
-          value={startDate}
+          value={effectiveStartDate}
           onChange={(e) => setStartDate(e.target.value)}
           className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
@@ -109,7 +121,7 @@ export default function RoadmapCompletionsPage() {
         <input
           type="date"
           id="endDate"
-          value={endDate}
+          value={effectiveEndDate}
           onChange={(e) => setEndDate(e.target.value)}
           className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />

@@ -11,6 +11,8 @@ import { fetchRoadmapsSkillsByNumbers } from "@/app/actions/scm/roadmaps/roadmap
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { AcademicCapIcon, BookOpenIcon } from "@heroicons/react/24/outline";
 import { useRoadmapUnits } from "@/hooks/scm";
+import { useUrlSyncedState } from "@/hooks/scm/useUrlSyncedState";
+import { fullGradeToSlug, slugToFullGrade } from "@/hooks/scm/useFilterParams";
 
 const GRADE_OPTIONS = [
   { value: "", label: "Select Grade" },
@@ -23,7 +25,11 @@ const GRADE_OPTIONS = [
 ];
 
 export default function RoadmapUnitsPage() {
-  const [selectedGrade, setSelectedGrade] = useState("");
+  const [selectedGrade, setSelectedGrade] = useUrlSyncedState("ss", {
+    storageKey: "scm-units-grade",
+    toSlug: fullGradeToSlug,
+    fromSlug: slugToFullGrade,
+  });
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
