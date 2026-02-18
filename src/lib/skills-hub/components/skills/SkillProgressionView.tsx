@@ -2,10 +2,11 @@
 
 import { Group, Stack, Text, Center, Anchor } from "@mantine/core";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { DomainCard } from "./DomainAccordion";
+import { useEffect, useMemo, useState } from "react";
+import { DomainAccordion } from "./DomainAccordion";
 import { ProgressStatsRow } from "./ProgressStatsRow";
 import { SkillDetailDrawer } from "./SkillDetailDrawer";
+import { useStatusLegend } from "../core/StatusLegendContext";
 import { SkillMapSkeleton } from "../core/SkillsHubSkeletons";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
 import { useTeacherSkillStatuses } from "../../hooks/useTeacherSkillStatuses";
@@ -19,6 +20,13 @@ export function SkillProgressionView({
   teacherStaffId,
 }: SkillProgressionViewProps) {
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+  const { show, hide } = useStatusLegend();
+
+  useEffect(() => {
+    show();
+    return () => hide();
+  }, [show, hide]);
+
   const { taxonomy, loading: taxLoading, error: taxError } = useTaxonomy();
   const {
     statuses,
@@ -92,20 +100,12 @@ export function SkillProgressionView({
         </Anchor>
       </Group>
 
-      <Stack gap="lg">
-        {domainsWithSkills.map((domain, index) => (
-          <DomainCard
-            key={domain.id}
-            domain={domain}
-            domainIndex={index}
-            statusMap={statusMap}
-            defaultExpandedSubDomains={
-              expandedSubDomainsByDomain.get(domain.id) ?? []
-            }
-            onSkillClick={setSelectedSkillId}
-          />
-        ))}
-      </Stack>
+      <DomainAccordion
+        domains={domainsWithSkills}
+        statusMap={statusMap}
+        defaultExpandedSubDomainsByDomain={expandedSubDomainsByDomain}
+        onSkillClick={setSelectedSkillId}
+      />
 
       <SkillDetailDrawer
         skillId={selectedSkillId}

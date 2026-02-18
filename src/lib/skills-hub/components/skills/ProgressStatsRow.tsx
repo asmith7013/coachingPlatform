@@ -17,12 +17,9 @@ function computeStats(
   let proficientCount = 0;
   let activeCount = 0;
   let domainsCompleted = 0;
-  let currentLevel = 0;
-
-  taxonomy.domains.forEach((domain, index) => {
+  taxonomy.domains.forEach((domain) => {
     let domainTotal = 0;
     let domainProficient = 0;
-    let domainHasActivity = false;
 
     for (const subDomain of domain.subDomains) {
       for (const skill of subDomain.skills) {
@@ -33,24 +30,18 @@ function computeStats(
         if (status === "proficient") {
           proficientCount++;
           domainProficient++;
-          domainHasActivity = true;
         } else if (status === "active" || status === "developing") {
           activeCount++;
-          domainHasActivity = true;
         }
       }
     }
 
-    if (domainHasActivity) {
-      currentLevel = Math.max(currentLevel, index + 1);
-    }
     if (domainTotal > 0 && domainProficient === domainTotal) {
       domainsCompleted++;
     }
   });
 
   return {
-    currentLevel,
     proficientCount,
     totalSkills,
     activeCount,
@@ -67,7 +58,6 @@ export function ProgressStatsRow({
   const stats = computeStats(taxonomy, statusMap);
 
   const cards = [
-    { label: "Current Level", value: `Level ${stats.currentLevel || 1}` },
     {
       label: "Skills Mastered",
       value: `${stats.proficientCount} of ${stats.totalSkills}`,
@@ -80,7 +70,7 @@ export function ProgressStatsRow({
   ];
 
   return (
-    <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="md">
+    <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="md">
       {cards.map((card) => (
         <Card key={card.label} shadow="sm" withBorder p="md">
           <Text size="xs" c="dimmed" tt="uppercase" fw={500}>

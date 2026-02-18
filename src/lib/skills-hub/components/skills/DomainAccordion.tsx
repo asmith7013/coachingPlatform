@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Accordion,
-  Badge,
-  Card,
-  Group,
-  SimpleGrid,
-  Text,
-  Box,
-} from "@mantine/core";
+import { Accordion, Badge, Group, SimpleGrid, Text, Box } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { SkillPairCard } from "./SkillPairCard";
 import { SkillSoloCard } from "./SkillSoloCard";
@@ -21,11 +13,10 @@ import type {
 } from "../../core/taxonomy.types";
 import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
 
-interface DomainCardProps {
-  domain: TeacherSkillDomain;
-  domainIndex: number;
+interface DomainAccordionProps {
+  domains: TeacherSkillDomain[];
   statusMap: Map<string, TeacherSkillStatusDocument>;
-  defaultExpandedSubDomains: string[];
+  defaultExpandedSubDomainsByDomain: Map<string, string[]>;
   onSkillClick?: (skillId: string) => void;
 }
 
@@ -136,96 +127,135 @@ function SubDomainSkills({
   );
 }
 
-export function DomainCard({
+function DomainHeader({
   domain,
   domainIndex,
   statusMap,
-  defaultExpandedSubDomains,
-  onSkillClick,
-}: DomainCardProps) {
+}: {
+  domain: TeacherSkillDomain;
+  domainIndex: number;
+  statusMap: Map<string, TeacherSkillStatusDocument>;
+}) {
   const allSkills = domain.subDomains.flatMap((sd) => sd.skills);
   const totalSkills = allSkills.length;
-
   const proficientCount = allSkills.filter(
     (s) => getStatus(statusMap, s.uuid) === "proficient",
   ).length;
-
   const hasActive = allSkills.some((s) => {
     const st = getStatus(statusMap, s.uuid);
     return st === "active" || st === "developing";
   });
-
   const allComplete = totalSkills > 0 && proficientCount === totalSkills;
 
-  if (totalSkills === 0) return null;
+  return (
+    <Group justify="space-between" wrap="nowrap" style={{ flex: 1 }}>
+      <Group gap="sm" wrap="nowrap">
+        <Box
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: "50%",
+            backgroundColor: allComplete
+              ? "var(--mantine-color-teal-6)"
+              : "var(--mantine-color-gray-2)",
+            color: allComplete ? "white" : "var(--mantine-color-dark-4)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: 700,
+            fontSize: 13,
+            flexShrink: 0,
+          }}
+        >
+          {domainIndex + 1}
+        </Box>
+        <div>
+          <Text fw={600}>{domain.name}</Text>
+          <Text size="xs" c="dimmed">
+            {proficientCount} of {totalSkills} skills completed
+          </Text>
+        </div>
+      </Group>
+      <Group gap="xs">
+        {allComplete && (
+          <IconCircleCheck size={20} color="var(--mantine-color-teal-6)" />
+        )}
+        {hasActive && !allComplete && (
+          <Badge size="sm" variant="light" color="teal">
+            In Progress
+          </Badge>
+        )}
+      </Group>
+    </Group>
+  );
+}
+
+export function DomainAccordion({
+  domains,
+  statusMap,
+  defaultExpandedSubDomainsByDomain,
+  onSkillClick,
+}: DomainAccordionProps) {
+  // Domains with active/developing skills are expanded by default
+  const defaultExpandedDomains = domains
+    .filter((d) => defaultExpandedSubDomainsByDomain.has(d.id))
+    .map((d) => d.id);
 
   return (
-    <Card shadow="sm" withBorder>
-      <Card.Section withBorder inheritPadding py="sm">
-        <Group justify="space-between" wrap="nowrap">
-          <Group gap="sm" wrap="nowrap">
-            <Box
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: "50%",
-                backgroundColor: allComplete
-                  ? "var(--mantine-color-teal-6)"
-                  : "var(--mantine-color-gray-2)",
-                color: allComplete ? "white" : "var(--mantine-color-dark-4)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: 700,
-                fontSize: 13,
-                flexShrink: 0,
-              }}
-            >
-              {domainIndex + 1}
-            </Box>
-            <div>
-              <Text fw={600}>{domain.name}</Text>
-              <Text size="xs" c="dimmed">
-                {proficientCount} of {totalSkills} skills completed
-              </Text>
-            </div>
-          </Group>
-          <Group gap="xs">
-            {allComplete && (
-              <IconCircleCheck size={20} color="var(--mantine-color-teal-6)" />
-            )}
-            {hasActive && !allComplete && (
-              <Badge size="sm" variant="light" color="teal">
-                In Progress
-              </Badge>
-            )}
-          </Group>
-        </Group>
-      </Card.Section>
+    <Accordion
+      multiple
+      defaultValue={defaultExpandedDomains}
+      variant="separated"
+    >
+      {domains.map((domain, index) => {
+        const totalSkills = domain.subDomains.flatMap((sd) => sd.skills).length;
+        if (totalSkills === 0) return null;
 
-      <Accordion
-        multiple
-        defaultValue={defaultExpandedSubDomains}
-        variant="separated"
-        mt="sm"
-      >
-        {domain.subDomains.map((subDomain) => (
-          <Accordion.Item key={subDomain.id} value={subDomain.id}>
+        const expandedSubDomains =
+          defaultExpandedSubDomainsByDomain.get(domain.id) ?? [];
+
+        return (
+          <Accordion.Item
+            key={domain.id}
+            value={domain.id}
+            style={{
+              backgroundColor: "var(--mantine-color-white)",
+            }}
+          >
             <Accordion.Control>
-              <Text size="sm" fw={500}>
-                {subDomain.name}
-              </Text>
+              <DomainHeader
+                domain={domain}
+                domainIndex={index}
+                statusMap={statusMap}
+              />
             </Accordion.Control>
             <Accordion.Panel>
-              <SubDomainSkills
-                subDomain={subDomain}
-                statusMap={statusMap}
-                onSkillClick={onSkillClick}
-              />
+              <Accordion
+                multiple
+                defaultValue={expandedSubDomains}
+                variant="separated"
+              >
+                {domain.subDomains.map((subDomain) => (
+                  <Accordion.Item key={subDomain.id} value={subDomain.id}>
+                    <Accordion.Control>
+                      <Text size="sm" fw={500}>
+                        {subDomain.name}
+                      </Text>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                      <SubDomainSkills
+                        subDomain={subDomain}
+                        statusMap={statusMap}
+                        onSkillClick={onSkillClick}
+                      />
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
             </Accordion.Panel>
           </Accordion.Item>
-        ))}
-      </Accordion>
-    </Card>
+        );
+      })}
+    </Accordion>
   );
 }
