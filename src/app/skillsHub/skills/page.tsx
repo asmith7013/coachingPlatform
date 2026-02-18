@@ -10,20 +10,7 @@ import {
   Loader,
 } from "@mantine/core";
 import { useTaxonomy } from "../_hooks/useTaxonomy";
-import type { TeacherSkill } from "../_types/taxonomy.types";
-
-function pairSkills(
-  skills: TeacherSkill[],
-): { l1: TeacherSkill | null; l2: TeacherSkill | null }[] {
-  const l1 = skills.filter((s) => s.level === 1);
-  const l2 = skills.filter((s) => s.level === 2);
-  const rows: { l1: TeacherSkill | null; l2: TeacherSkill | null }[] = [];
-  const maxLen = Math.max(l1.length, l2.length);
-  for (let i = 0; i < maxLen; i++) {
-    rows.push({ l1: l1[i] ?? null, l2: l2[i] ?? null });
-  }
-  return rows;
-}
+import { groupSkillsByLevel } from "../_lib/taxonomy";
 
 export default function SkillsPage() {
   const { taxonomy, loading, error } = useTaxonomy();
@@ -100,7 +87,17 @@ export default function SkillsPage() {
                   </Table.Thead>
                   <Table.Tbody>
                     {domain.subDomains.map((sub) => {
-                      const rows = pairSkills(sub.skills);
+                      const { l1Skills, l2Skills } = groupSkillsByLevel(
+                        sub.skills,
+                      );
+                      const rowCount = Math.max(
+                        l1Skills.length,
+                        l2Skills.length,
+                      );
+                      const rows = Array.from({ length: rowCount }, (_, i) => ({
+                        l1: l1Skills[i] ?? null,
+                        l2: l2Skills[i] ?? null,
+                      }));
                       return rows.map((row, i) => (
                         <Table.Tr key={`${sub.id}-${i}`}>
                           {i === 0 && (

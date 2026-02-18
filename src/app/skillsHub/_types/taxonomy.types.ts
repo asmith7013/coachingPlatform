@@ -42,3 +42,8 @@ export type TeacherSkillFlat = TeacherSkill & {
   subDomainId: string;
   subDomainName: string;
 };
+
+export type SkillsByLevel = {
+  l1Skills: TeacherSkill[];
+  l2Skills: TeacherSkill[];
+};
