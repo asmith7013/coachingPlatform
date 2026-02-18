@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import { useUrlSyncedState } from "@/hooks/scm/useUrlSyncedState";
 import Link from "next/link";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { Spinner } from "@/components/core/feedback/Spinner";
@@ -24,7 +25,11 @@ import {
 import { getStateTestQuestions } from "@/app/tools/state-test-scraper/actions/scrape";
 
 export default function LessonsOverviewPage() {
-  const [selectedGrade, setSelectedGrade] = useState<ScopeSequenceTag | "">("");
+  const [gradeParam, setGradeParam] = useUrlSyncedState("ss", {
+    storageKey: "scm-content-lessons-grade",
+  });
+  const selectedGrade = gradeParam as ScopeSequenceTag | "";
+  const setSelectedGrade = setGradeParam;
   const [availableGrades, setAvailableGrades] = useState<ScopeSequenceTag[]>(
     [],
   );

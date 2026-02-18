@@ -44,6 +44,49 @@ export const slugToGrade = (slug: string): string => {
   return slug;
 };
 
+// Generic "Grade X" slug conversions (works for any grade number)
+// "Grade 3" <-> "g3", "Grade 8" <-> "g8", "Algebra 1" <-> "alg-1"
+export const simpleGradeToSlug = (grade: string): string => {
+  if (!grade) return "";
+  if (grade === "Algebra 1") return "alg-1";
+  const match = grade.match(/Grade\s+(\d+)/);
+  if (match) return `g${match[1]}`;
+  return grade.toLowerCase().replace(/\s+/g, "-");
+};
+
+export const slugToSimpleGrade = (slug: string): string => {
+  if (!slug) return "";
+  if (slug === "alg-1") return "Algebra 1";
+  const match = slug.match(/^g(\d+)$/);
+  if (match) return `Grade ${match[1]}`;
+  return slug;
+};
+
+// Full Illustrative Math grade string slug conversions
+// Maps "Illustrative Math New York - 8th Grade" <-> "g8"
+const FULL_GRADE_TO_SLUG: Record<string, string> = {
+  "Illustrative Math New York - 4th Grade": "g4",
+  "Illustrative Math New York - 5th Grade": "g5",
+  "Illustrative Math New York - 6th Grade": "g6",
+  "Illustrative Math New York - 7th Grade": "g7",
+  "Illustrative Math New York - 8th Grade": "g8",
+  "Illustrative Math New York - Algebra 1": "alg-1",
+};
+
+const SLUG_TO_FULL_GRADE: Record<string, string> = Object.fromEntries(
+  Object.entries(FULL_GRADE_TO_SLUG).map(([k, v]) => [v, k]),
+);
+
+export const fullGradeToSlug = (fullGrade: string): string => {
+  if (!fullGrade) return "";
+  return FULL_GRADE_TO_SLUG[fullGrade] || fullGrade;
+};
+
+export const slugToFullGrade = (slug: string): string => {
+  if (!slug) return "";
+  return SLUG_TO_FULL_GRADE[slug] || slug;
+};
+
 // Unit slug conversions
 export const unitToSlug = (unit: string): string => {
   if (!unit) return "";

@@ -1,23 +1,18 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useMemo } from "react";
 import { useRoadmapUnits } from "@/hooks/scm";
 import type { RoadmapUnit as Unit } from "@zod-schema/scm/roadmaps/roadmap-unit";
 import { TrackingTables } from "./TrackingTables";
+import { useUrlSyncedState } from "@/hooks/scm/useUrlSyncedState";
 
 export default function IncentivesDataPage() {
-  // Load saved filters from localStorage (shared with form page)
-  const [section, setSection] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("incentives-form-section") || "";
-    }
-    return "";
+  // Filters synced to URL + localStorage (shared keys with form/table pages)
+  const [section, setSection] = useUrlSyncedState("section", {
+    storageKey: "incentives-form-section",
   });
-  const [unitId, setUnitId] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("incentives-form-current-unit") || "";
-    }
-    return "";
+  const [unitId, setUnitId] = useUrlSyncedState("unit", {
+    storageKey: "incentives-form-current-unit",
   });
 
   // Data fetching with React Query
@@ -27,27 +22,6 @@ export default function IncentivesDataPage() {
   const units = useMemo(() => {
     return allUnits.filter((u: Unit) => u.grade.includes("8th Grade"));
   }, [allUnits]);
-
-  // Save section and unitId to localStorage when they change (shared with form page)
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (section) {
-        localStorage.setItem("incentives-form-section", section);
-      } else {
-        localStorage.removeItem("incentives-form-section");
-      }
-    }
-  }, [section]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (unitId) {
-        localStorage.setItem("incentives-form-current-unit", unitId);
-      } else {
-        localStorage.removeItem("incentives-form-current-unit");
-      }
-    }
-  }, [unitId]);
 
   const clearFilters = () => {
     setSection("");

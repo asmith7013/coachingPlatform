@@ -6,11 +6,20 @@ import { SkillDetailWrapper } from "../components/SkillDetailWrapper";
 import { Alert } from "@/components/core/feedback/Alert";
 import { Spinner } from "@/components/core/feedback/Spinner";
 import { useAllSkills, useFilteredSkills } from "@/hooks/scm";
+import { useUrlSyncedState } from "@/hooks/scm/useUrlSyncedState";
+import {
+  simpleGradeToSlug,
+  slugToSimpleGrade,
+} from "@/hooks/scm/useFilterParams";
 
 export default function RoadmapsSkillsPage() {
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedGrade, setSelectedGrade] = useState<string>("");
+  const [selectedGrade, setSelectedGrade] = useUrlSyncedState("ss", {
+    storageKey: "scm-skills-grade",
+    toSlug: simpleGradeToSlug,
+    fromSlug: slugToSimpleGrade,
+  });
   const [selectedUnit, setSelectedUnit] = useState<string>("");
   const [contextSkillId, setContextSkillId] = useState<string | null>(null);
 
