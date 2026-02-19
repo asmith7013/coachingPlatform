@@ -13,20 +13,20 @@ export async function seedSkillStatuses(staff: StaffIds): Promise<void> {
   }> = [];
 
   for (const plan of Object.values(ACTION_PLANS)) {
-    for (const skillId of plan.skillIds) {
+    for (const uuid of plan.skillUuids) {
       records.push({
         teacherStaffId: staff.teacherId,
-        skillId,
+        skillId: uuid,
         status: plan.targetStatus,
         updatedBy: staff.coachId,
       });
     }
   }
 
-  for (const skillId of EXTRA_PROFICIENT_SKILLS) {
+  for (const uuid of EXTRA_PROFICIENT_SKILLS) {
     records.push({
       teacherStaffId: staff.teacherId,
-      skillId,
+      skillId: uuid,
       status: "proficient",
       updatedBy: staff.coachId,
     });

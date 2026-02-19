@@ -4,16 +4,16 @@ import {
   standardDocumentFields,
 } from "@mongoose-schema/shared-options";
 
-const ActionPlanSchema = new mongoose.Schema(
+const SkillProgressionSchema = new mongoose.Schema(
   {
     teacherStaffId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Staff",
+      ref: "NYCPSStaff",
       required: true,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Staff",
+      ref: "NYCPSStaff",
       required: true,
     },
     title: { type: String, required: true },
@@ -34,9 +34,9 @@ const ActionPlanSchema = new mongoose.Schema(
   },
 );
 
-ActionPlanSchema.index({ teacherStaffId: 1, status: 1 });
-ActionPlanSchema.index({ createdBy: 1 });
+SkillProgressionSchema.index({ teacherStaffId: 1, status: 1 });
+SkillProgressionSchema.index({ createdBy: 1 });
 
 export const SkillsHubActionPlan =
   mongoose.models.SkillsHubActionPlan ||
-  mongoose.model("SkillsHubActionPlan", ActionPlanSchema);
+  mongoose.model("SkillsHubActionPlan", SkillProgressionSchema);

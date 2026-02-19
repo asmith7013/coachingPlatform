@@ -4,27 +4,27 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Title, Text, Card, Group, Button } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
-import { useActionPlans } from "@/lib/skills-hub/hooks/useActionPlans";
-import { ActionPlanList } from "@/lib/skills-hub/components/action-plans/ActionPlanList";
+import { useSkillProgressions } from "@/lib/skills-hub/hooks/useSkillProgressions";
+import { SkillProgressionList } from "@/lib/skills-hub/components/skill-progressions/SkillProgressionList";
 
-export default function ActionPlansPage() {
+export default function SkillProgressionsPage() {
   const params = useParams();
   const teacherId = params.teacherId as string;
-  const { plans, loading, error } = useActionPlans(teacherId);
+  const { plans, loading, error } = useSkillProgressions(teacherId);
 
   return (
     <div className="mx-auto" style={{ maxWidth: "1200px" }}>
       <Card shadow="sm" p="lg" mb="lg">
         <Group justify="space-between">
           <div>
-            <Title order={2}>Action Plans</Title>
+            <Title order={2}>Skill Progressions</Title>
             <Text size="sm" c="dimmed">
-              Coaching action plans and steps
+              Coaching skill progressions and steps
             </Text>
           </div>
           <Button
             component={Link}
-            href={`/skillsHub/teacher/${teacherId}/action-plans/new`}
+            href={`/skillsHub/coach/teacher/${teacherId}/skill-progressions/new`}
             leftSection={<IconPlus size={16} />}
           >
             New Plan
@@ -35,7 +35,7 @@ export default function ActionPlansPage() {
       {error ? (
         <Text c="red">{error}</Text>
       ) : (
-        <ActionPlanList
+        <SkillProgressionList
           plans={plans}
           loading={loading}
           teacherStaffId={teacherId}

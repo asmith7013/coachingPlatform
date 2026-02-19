@@ -106,9 +106,7 @@ export function SkillsHubNav() {
     : "/skillsHub";
 
   // Standalone nav links (not in dropdowns)
-  const standaloneLinks: NavItem[] = [
-    { href: "/skillsHub/skills", label: "All Skills" },
-  ];
+  const standaloneLinks: NavItem[] = [];
 
   const categories: NavCategory[] = [
     ...(isTeacher
@@ -129,7 +127,10 @@ export function SkillsHubNav() {
               { href: "/skillsHub/coach/caseload", label: "Caseload" },
               { href: "/skillsHub/coach/skill-map", label: "Skill Map" },
               { href: "/skillsHub/coach/observations", label: "Observations" },
-              { href: "/skillsHub/coach/action-plans", label: "Action Plans" },
+              {
+                href: "/skillsHub/coach/skill-progressions",
+                label: "Skill Progressions",
+              },
             ],
           },
         ]

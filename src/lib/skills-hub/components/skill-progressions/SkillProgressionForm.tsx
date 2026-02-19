@@ -25,11 +25,11 @@ import {
   IconHeart,
 } from "@tabler/icons-react";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
-import { createActionPlanWithSteps } from "../../coach/action-plans/action-plan.actions";
+import { createSkillProgressionWithSteps } from "../../coach/skill-progressions/skill-progression.actions";
 import { CoachTeacherSelector } from "../core/CoachTeacherSelector";
 import type { TeacherSkillDomain } from "../../core/taxonomy.types";
 
-interface ActionPlanFormProps {
+interface SkillProgressionFormProps {
   teacherStaffId: string;
 }
 
@@ -43,7 +43,9 @@ const DOMAIN_ICONS: Record<string, React.ReactNode> = {
   Culture: <IconHeart size={18} />,
 };
 
-export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
+export function SkillProgressionForm({
+  teacherStaffId,
+}: SkillProgressionFormProps) {
   const router = useRouter();
   const { taxonomy } = useTaxonomy();
   const [domainIds, setDomainIds] = useState<string[]>([]);
@@ -105,7 +107,7 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
 
     setSubmitting(true);
 
-    const result = await createActionPlanWithSteps({
+    const result = await createSkillProgressionWithSteps({
       plan: {
         teacherStaffId: selectedTeacherId,
         title,
@@ -121,10 +123,10 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
     if (result.success) {
       notifications.show({
         title: "Success",
-        message: "Action plan created",
+        message: "Skill progression created",
         color: "teal",
       });
-      router.push(`/skillsHub/teacher/${selectedTeacherId}/action-plans`);
+      router.push(`/skillsHub/teacher/${selectedTeacherId}/skill-progressions`);
     } else {
       notifications.show({
         title: "Error",

@@ -94,10 +94,10 @@ export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
                       <IconEye size={14} />
                     </ActionIcon>
                   </Tooltip>
-                  <Tooltip label="Action Plan">
+                  <Tooltip label="Skill Progressions">
                     <ActionIcon
                       component={Link}
-                      href={`/skillsHub/teacher/${teacherId}/action-plans`}
+                      href={`/skillsHub/teacher/${teacherId}/skill-progressions`}
                       variant="light"
                       color="violet"
                       size="sm"

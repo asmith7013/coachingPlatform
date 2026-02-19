@@ -1,18 +1,22 @@
 import { z } from "zod";
 
-export const ActionPlanStatusEnum = z.enum(["open", "closed", "archived"]);
-export type ActionPlanStatus = z.infer<typeof ActionPlanStatusEnum>;
+export const SkillProgressionStatusEnum = z.enum([
+  "open",
+  "closed",
+  "archived",
+]);
+export type SkillProgressionStatus = z.infer<typeof SkillProgressionStatusEnum>;
 
-export const ActionPlanInputSchema = z.object({
+export const SkillProgressionInputSchema = z.object({
   teacherStaffId: z.string(),
   title: z.string().min(1, "Title is required"),
   skillIds: z.array(z.string()).default([]),
   why: z.string().optional(),
   actionStep: z.string().optional(),
 });
-export type ActionPlanInput = z.infer<typeof ActionPlanInputSchema>;
+export type SkillProgressionInput = z.infer<typeof SkillProgressionInputSchema>;
 
-export const ActionPlanDocumentSchema = z.object({
+export const SkillProgressionDocumentSchema = z.object({
   _id: z.string(),
   teacherStaffId: z.string(),
   createdBy: z.string(),
@@ -20,9 +24,11 @@ export const ActionPlanDocumentSchema = z.object({
   skillIds: z.array(z.string()),
   why: z.string().optional(),
   actionStep: z.string().optional(),
-  status: ActionPlanStatusEnum,
+  status: SkillProgressionStatusEnum,
   closedAt: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
-export type ActionPlanDocument = z.infer<typeof ActionPlanDocumentSchema>;
+export type SkillProgressionDocument = z.infer<
+  typeof SkillProgressionDocumentSchema
+>;

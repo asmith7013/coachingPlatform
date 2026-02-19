@@ -3,16 +3,16 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
-import { SkillsHubActionStep } from "./action-step.model";
+import { SkillsHubActionStep } from "./progression-step.model";
 import {
-  ActionStepInputSchema,
-  type ActionStepInput,
-  type ActionStepDocument,
-} from "./action-step.types";
+  ProgressionStepInputSchema,
+  type ProgressionStepInput,
+  type ProgressionStepDocument,
+} from "./progression-step.types";
 
-export async function getActionSteps(actionPlanId: string): Promise<{
+export async function getProgressionSteps(actionPlanId: string): Promise<{
   success: boolean;
-  data?: ActionStepDocument[];
+  data?: ProgressionStepDocument[];
   error?: string;
 }> {
   return withDbConnection(async () => {
@@ -22,40 +22,42 @@ export async function getActionSteps(actionPlanId: string): Promise<{
         .lean();
       const data = docs.map((d) =>
         JSON.parse(JSON.stringify(d)),
-      ) as ActionStepDocument[];
+      ) as ProgressionStepDocument[];
       return { success: true, data };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "getActionSteps"),
+        error: handleServerError(error, "getProgressionSteps"),
       };
     }
   });
 }
 
-export async function createActionStep(input: ActionStepInput): Promise<{
+export async function createProgressionStep(
+  input: ProgressionStepInput,
+): Promise<{
   success: boolean;
-  data?: ActionStepDocument;
+  data?: ProgressionStepDocument;
   error?: string;
 }> {
   return withDbConnection(async () => {
     try {
-      const validated = ActionStepInputSchema.parse(input);
+      const validated = ProgressionStepInputSchema.parse(input);
       const doc = await SkillsHubActionStep.create(validated);
       const data = JSON.parse(
         JSON.stringify(doc.toObject()),
-      ) as ActionStepDocument;
+      ) as ProgressionStepDocument;
       return { success: true, data };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "createActionStep"),
+        error: handleServerError(error, "createProgressionStep"),
       };
     }
   });
 }
 
-export async function completeActionStep(
+export async function completeProgressionStep(
   stepId: string,
 ): Promise<{ success: boolean; error?: string }> {
   return withDbConnection(async () => {
@@ -76,15 +78,15 @@ export async function completeActionStep(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "completeActionStep"),
+        error: handleServerError(error, "completeProgressionStep"),
       };
     }
   });
 }
 
-export async function updateActionStep(
+export async function updateProgressionStep(
   stepId: string,
-  input: Partial<ActionStepInput>,
+  input: Partial<ProgressionStepInput>,
 ): Promise<{ success: boolean; error?: string }> {
   return withDbConnection(async () => {
     try {
@@ -93,7 +95,7 @@ export async function updateActionStep(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "updateActionStep"),
+        error: handleServerError(error, "updateProgressionStep"),
       };
     }
   });

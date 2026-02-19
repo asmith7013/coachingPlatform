@@ -2,29 +2,32 @@
 
 import { useState } from "react";
 import {
-  Stack,
   Card,
   Text,
   Badge,
   Group,
-  Button,
-  Collapse,
-  Checkbox,
-  UnstyledButton,
   Progress,
+  Collapse,
+  Stack,
+  Checkbox,
+  Button,
+  UnstyledButton,
   Divider,
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { getActionSteps } from "../../coach/action-plans/action-step.actions";
-import { completeActionStep } from "../../coach/action-plans/action-step.actions";
-import { closeActionPlan } from "../../coach/action-plans/action-plan.actions";
-import { actionPlanKeys } from "../../hooks/useActionPlans";
-import type { ActionPlanDocument } from "../../coach/action-plans/action-plan.types";
-import type { ActionStepDocument } from "../../coach/action-plans/action-step.types";
+import { useTaxonomy } from "../../hooks/useTaxonomy";
+import { getSkillByUuid } from "../../core/taxonomy";
+import { getProgressionSteps } from "../../coach/skill-progressions/progression-step.actions";
+import { completeProgressionStep } from "../../coach/skill-progressions/progression-step.actions";
+import { closeSkillProgression } from "../../coach/skill-progressions/skill-progression.actions";
+import { skillProgressionKeys } from "../../hooks/useSkillProgressions";
+import type { TeacherSkillsIndex } from "../../core/taxonomy.types";
+import type { SkillProgressionDocument } from "../../coach/skill-progressions/skill-progression.types";
+import type { ProgressionStepDocument } from "../../coach/skill-progressions/progression-step.types";
 
-interface PanelActionPlanSectionProps {
-  plans: ActionPlanDocument[];
+interface SkillProgressionCardProps {
+  plan: SkillProgressionDocument;
   teacherStaffId: string;
 }
 
@@ -34,23 +37,29 @@ const STATUS_COLORS: Record<string, string> = {
   archived: "dimmed",
 };
 
-function PlanCard({
+function resolveSkillName(
+  taxonomy: TeacherSkillsIndex | null,
+  id: string,
+): string {
+  if (!taxonomy) return id;
+  const skill = getSkillByUuid(taxonomy, id);
+  return skill?.name ?? id;
+}
+
+export function SkillProgressionCard({
   plan,
   teacherStaffId,
-}: {
-  plan: ActionPlanDocument;
-  teacherStaffId: string;
-}) {
+}: SkillProgressionCardProps) {
   const [expanded, setExpanded] = useState(false);
-  const [steps, setSteps] = useState<ActionStepDocument[]>([]);
+  const [steps, setSteps] = useState<ProgressionStepDocument[]>([]);
   const [loadingSteps, setLoadingSteps] = useState(false);
-  const [closing, setClosing] = useState(false);
   const queryClient = useQueryClient();
+  const { taxonomy } = useTaxonomy();
 
   const handleExpand = async () => {
     if (!expanded && steps.length === 0) {
       setLoadingSteps(true);
-      const result = await getActionSteps(plan._id);
+      const result = await getProgressionSteps(plan._id);
       if (result.success && result.data) {
         setSteps(result.data);
       }
@@ -59,9 +68,13 @@ function PlanCard({
     setExpanded(!expanded);
   };
 
+  const completedCount = steps.filter((s) => s.completed).length;
+  const totalSteps = steps.length;
+  const progress = totalSteps > 0 ? (completedCount / totalSteps) * 100 : 0;
+
   const handleToggleStep = async (stepId: string, completed: boolean) => {
     if (!completed) {
-      await completeActionStep(stepId);
+      await completeProgressionStep(stepId);
       setSteps((prev) =>
         prev.map((s) =>
           s._id === stepId
@@ -73,51 +86,56 @@ function PlanCard({
   };
 
   const handleClosePlan = async () => {
-    setClosing(true);
-    await closeActionPlan(plan._id);
+    await closeSkillProgression(plan._id);
     queryClient.invalidateQueries({
-      queryKey: actionPlanKeys.byTeacher(teacherStaffId),
+      queryKey: skillProgressionKeys.byTeacher(teacherStaffId),
     });
-    setClosing(false);
   };
 
-  const completedCount = steps.filter((s) => s.completed).length;
-  const totalSteps = steps.length;
-  const progress = totalSteps > 0 ? (completedCount / totalSteps) * 100 : 0;
-
   return (
-    <Card withBorder p="sm" radius="sm">
+    <Card shadow="sm" withBorder>
       <UnstyledButton onClick={handleExpand} w="100%">
         <Group justify="space-between" wrap="nowrap">
           <div style={{ flex: 1, minWidth: 0 }}>
             <Group gap="xs" align="center">
-              <Text size="sm" fw={500} lineClamp={1}>
-                {plan.title}
-              </Text>
+              <Text fw={600}>{plan.title}</Text>
               <Badge
                 color={STATUS_COLORS[plan.status]}
-                size="xs"
+                size="sm"
                 variant="light"
               >
                 {plan.status}
               </Badge>
             </Group>
+            {plan.skillIds.length > 0 && (
+              <Group gap={4} mt={6} wrap="wrap">
+                <Text size="xs" c="dimmed" fw={500}>
+                  Skills:
+                </Text>
+                {plan.skillIds.map((id) => (
+                  <Badge key={id} variant="light" color="blue" size="xs">
+                    {resolveSkillName(taxonomy, id)}
+                  </Badge>
+                ))}
+              </Group>
+            )}
           </div>
           {expanded ? (
-            <IconChevronUp size={14} />
+            <IconChevronUp size={16} />
           ) : (
-            <IconChevronDown size={14} />
+            <IconChevronDown size={16} />
           )}
         </Group>
+
         {totalSteps > 0 && (
-          <Group gap="xs" mt={4} align="center">
+          <Group gap="xs" mt="sm" align="center">
             <Progress
               value={progress}
-              size="xs"
+              size="sm"
               color="teal"
               style={{ flex: 1 }}
             />
-            <Text size="xs" c="dimmed">
+            <Text size="xs" c="dimmed" fw={500}>
               {completedCount}/{totalSteps}
             </Text>
           </Group>
@@ -125,7 +143,7 @@ function PlanCard({
       </UnstyledButton>
 
       <Collapse in={expanded}>
-        <Stack gap="xs" mt="sm">
+        <Stack gap="xs" mt="md">
           {plan.why && (
             <div>
               <Text size="xs" fw={500} c="dimmed">
@@ -144,53 +162,63 @@ function PlanCard({
             </div>
           )}
 
-          {(plan.why || plan.actionStep) && steps.length > 0 && <Divider />}
+          {(plan.why || plan.actionStep) && <Divider />}
 
           {loadingSteps ? (
-            <Text size="xs" c="dimmed">
+            <Text size="sm" c="dimmed">
               Loading steps...
             </Text>
-          ) : steps.length > 0 ? (
+          ) : steps.length === 0 ? (
+            <Text size="sm" c="dimmed">
+              No steps yet
+            </Text>
+          ) : (
             <>
-              <Text size="xs" fw={500} c="dimmed" tt="uppercase">
+              <Text size="xs" fw={600} c="dimmed" tt="uppercase">
                 Steps
               </Text>
               {steps.map((step) => (
-                <Group key={step._id} gap="xs" wrap="nowrap" align="flex-start">
+                <Group key={step._id} gap="sm" wrap="nowrap" align="flex-start">
                   <Checkbox
                     checked={step.completed}
                     onChange={() => handleToggleStep(step._id, step.completed)}
                     disabled={step.completed}
-                    size="xs"
                     mt={2}
                   />
                   <div style={{ flex: 1 }}>
                     <Text
-                      size="xs"
+                      size="sm"
                       td={step.completed ? "line-through" : undefined}
                       c={step.completed ? "dimmed" : undefined}
                     >
                       {step.description}
                     </Text>
-                    {step.dueDate && (
-                      <Text size="xs" c="dimmed">
-                        Due: {new Date(step.dueDate).toLocaleDateString()}
-                      </Text>
-                    )}
+                    <Group gap={4} mt={2} wrap="wrap">
+                      {step.dueDate && (
+                        <Badge size="xs" variant="light">
+                          Due: {new Date(step.dueDate).toLocaleDateString()}
+                        </Badge>
+                      )}
+                      {step.skillIds.length > 0 &&
+                        step.skillIds.map((id) => (
+                          <Badge key={id} size="xs" variant="dot" color="blue">
+                            {resolveSkillName(taxonomy, id)}
+                          </Badge>
+                        ))}
+                    </Group>
                   </div>
                 </Group>
               ))}
             </>
-          ) : null}
+          )}
 
           {plan.status === "open" && (
-            <Group justify="flex-end" mt={4}>
+            <Group justify="flex-end" mt="sm">
               <Button
                 size="xs"
                 variant="light"
                 color="gray"
                 onClick={handleClosePlan}
-                loading={closing}
               >
                 Close Plan
               </Button>
@@ -199,34 +227,5 @@ function PlanCard({
         </Stack>
       </Collapse>
     </Card>
-  );
-}
-
-export function PanelActionPlanSection({
-  plans,
-  teacherStaffId,
-}: PanelActionPlanSectionProps) {
-  return (
-    <div>
-      <Text fw={600} size="sm" mb="xs">
-        Action Plans
-      </Text>
-
-      <Stack gap="xs">
-        {plans.length > 0 ? (
-          plans.map((plan) => (
-            <PlanCard
-              key={plan._id}
-              plan={plan}
-              teacherStaffId={teacherStaffId}
-            />
-          ))
-        ) : (
-          <Text size="xs" c="dimmed">
-            No action plans for this skill
-          </Text>
-        )}
-      </Stack>
-    </div>
   );
 }

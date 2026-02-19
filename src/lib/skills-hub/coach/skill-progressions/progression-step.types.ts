@@ -1,15 +1,15 @@
 import { z } from "zod";
 
-export const ActionStepInputSchema = z.object({
+export const ProgressionStepInputSchema = z.object({
   actionPlanId: z.string().optional(),
   description: z.string().min(1, "Description is required"),
   dueDate: z.string().nullable().optional(),
   evidenceOfCompletion: z.string().nullable().optional(),
   skillIds: z.array(z.string()).min(1, "At least one skill is required"),
 });
-export type ActionStepInput = z.infer<typeof ActionStepInputSchema>;
+export type ProgressionStepInput = z.infer<typeof ProgressionStepInputSchema>;
 
-export const ActionStepDocumentSchema = z.object({
+export const ProgressionStepDocumentSchema = z.object({
   _id: z.string(),
   actionPlanId: z.string(),
   description: z.string(),
@@ -21,4 +21,6 @@ export const ActionStepDocumentSchema = z.object({
   completedBy: z.string().nullable(),
   createdAt: z.string(),
 });
-export type ActionStepDocument = z.infer<typeof ActionStepDocumentSchema>;
+export type ProgressionStepDocument = z.infer<
+  typeof ProgressionStepDocumentSchema
+>;

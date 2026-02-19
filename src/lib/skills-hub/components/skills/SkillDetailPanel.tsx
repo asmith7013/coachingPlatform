@@ -22,7 +22,7 @@ import {
   useTeacherSkillStatuses,
   skillStatusKeys,
 } from "../../hooks/useTeacherSkillStatuses";
-import { useActionPlans } from "../../hooks/useActionPlans";
+import { useSkillProgressions } from "../../hooks/useSkillProgressions";
 import { useObservations } from "../../hooks/useObservations";
 import { getSkillById, getSkillByUuid } from "../../core/taxonomy";
 import { isSkillLocked } from "../../core/skill-lock";
@@ -30,7 +30,7 @@ import { updateSkillStatus } from "../../core/skill-status.actions";
 import { SkillStatusDot } from "./SkillStatusDot";
 import { SkillObservationTimeline } from "../observations/SkillObservationTimeline";
 // import { SkillNotesSection } from "../notes/SkillNotesSection";
-import { PanelActionPlanSection } from "../action-plans/PanelActionPlanSection";
+import { PanelSkillProgressionSection } from "../skill-progressions/PanelSkillProgressionSection";
 import { DetailDrawer } from "../core/DetailDrawer";
 import { getSkillIcon } from "../../core/skill-icons";
 import type { SkillStatus } from "../../core/skill-status.types";
@@ -141,7 +141,7 @@ export function SkillDetailPanel({
   const { taxonomy, loading: taxLoading } = useTaxonomy();
   const { statuses, loading: statusLoading } =
     useTeacherSkillStatuses(teacherStaffId);
-  const { plans } = useActionPlans(teacherStaffId);
+  const { plans } = useSkillProgressions(teacherStaffId);
   const { observations } = useObservations(teacherStaffId);
 
   const skill = taxonomy ? getSkillById(taxonomy, skillId) : null;
@@ -304,7 +304,7 @@ export function SkillDetailPanel({
 
           <Divider />
 
-          <PanelActionPlanSection
+          <PanelSkillProgressionSection
             plans={linkedPlans}
             teacherStaffId={teacherStaffId}
           />

@@ -65,7 +65,7 @@ export function formatSegmentName(segment: string): string {
     schoolList: "Schools",
     classroomNotes: "Classroom Notes",
     lookForList: "Look Fors",
-    "coaching-action-plans": "Coaching Plans",
+    "coaching-skill-progressions": "Skill Progressions",
     teachingLab: "Teaching Lab",
     nycps: "NYCPS",
   };

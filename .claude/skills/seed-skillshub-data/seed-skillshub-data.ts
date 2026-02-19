@@ -14,8 +14,8 @@ import {
   connectAndLookupStaff,
   cleanupExistingData,
   seedCoachingAssignment,
-  seedActionPlans,
-  seedActionSteps,
+  seedSkillProgressions,
+  seedProgressionSteps,
   seedSkillStatuses,
   seedObservations,
   seedNotes,
@@ -34,11 +34,11 @@ async function seed() {
   // 3. Create coaching assignment
   await seedCoachingAssignment(staff);
 
-  // 4. Seed action plans (drive skill statuses)
-  const plans = await seedActionPlans(staff);
+  // 4. Seed skill progressions (drive skill statuses)
+  const plans = await seedSkillProgressions(staff);
 
-  // 5. Seed action steps
-  await seedActionSteps(staff, plans);
+  // 5. Seed progression steps
+  await seedProgressionSteps(staff, plans);
 
   // 6. Seed skill statuses (derived from action plans)
   await seedSkillStatuses(staff);

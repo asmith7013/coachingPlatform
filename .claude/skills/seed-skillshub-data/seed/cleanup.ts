@@ -1,6 +1,6 @@
 import { SkillsHubTeacherSkillStatus } from "@lib/skills-hub/core/teacher-skill-status.model";
-import { SkillsHubActionPlan } from "@lib/skills-hub/coach/action-plans/action-plan.model";
-import { SkillsHubActionStep } from "@lib/skills-hub/coach/action-plans/action-step.model";
+import { SkillsHubActionPlan } from "@lib/skills-hub/coach/skill-progressions/skill-progression.model";
+import { SkillsHubActionStep } from "@lib/skills-hub/coach/skill-progressions/progression-step.model";
 import { SkillsHubObservation } from "@lib/skills-hub/coach/observations/observation.model";
 import { SkillsHubSkillNote } from "@lib/skills-hub/coach/notes/skill-note.model";
 import { SkillsHubCoachTeacherAssignment } from "@lib/skills-hub/admin/coaching-assignments/coaching-assignment.model";

@@ -11,34 +11,34 @@ import {
 import { DatePickerInput } from "@mantine/dates";
 import { IconTrash } from "@tabler/icons-react";
 
-export interface ActionStepFormData {
+export interface ProgressionStepFormData {
   description: string;
   dueDate: string | null;
   evidenceOfCompletion: string;
   skillIds: string[];
 }
 
-interface ActionStepFieldsProps {
-  step: ActionStepFormData;
+interface ProgressionStepFieldsProps {
+  step: ProgressionStepFormData;
   index: number;
   skillOptions: { value: string; label: string; group?: string }[];
   canRemove: boolean;
   onChange: (
     index: number,
-    field: keyof ActionStepFormData,
+    field: keyof ProgressionStepFormData,
     value: unknown,
   ) => void;
   onRemove: (index: number) => void;
 }
 
-export function ActionStepFields({
+export function ProgressionStepFields({
   step,
   index,
   skillOptions,
   canRemove,
   onChange,
   onRemove,
-}: ActionStepFieldsProps) {
+}: ProgressionStepFieldsProps) {
   return (
     <Stack
       gap="sm"
