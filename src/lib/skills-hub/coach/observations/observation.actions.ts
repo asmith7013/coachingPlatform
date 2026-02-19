@@ -3,6 +3,7 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
+import { serialize, serializeMany } from "../../core/repository";
 import { SkillsHubObservation } from "./observation.model";
 import {
   ObservationInputSchema,
@@ -35,9 +36,7 @@ export async function createObservation(input: ObservationInput): Promise<{
         observerId: authResult.data.metadata.staffId,
       });
 
-      const data = JSON.parse(
-        JSON.stringify(doc.toObject()),
-      ) as ObservationDocument;
+      const data = serialize<ObservationDocument>(doc.toObject());
       return { success: true, data };
     } catch (error) {
       return {
@@ -59,9 +58,7 @@ export async function getObservations(teacherStaffId: string): Promise<{
         .sort({ date: -1 })
         .limit(50)
         .lean();
-      const data = docs.map((d) =>
-        JSON.parse(JSON.stringify(d)),
-      ) as ObservationDocument[];
+      const data = serializeMany<ObservationDocument>(docs);
       return { success: true, data };
     } catch (error) {
       return {
@@ -83,7 +80,7 @@ export async function getObservation(observationId: string): Promise<{
       if (!doc) {
         return { success: false, error: "Observation not found" };
       }
-      const data = JSON.parse(JSON.stringify(doc)) as ObservationDocument;
+      const data = serialize<ObservationDocument>(doc);
       return { success: true, data };
     } catch (error) {
       return {

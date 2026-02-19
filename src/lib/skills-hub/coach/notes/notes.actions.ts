@@ -3,6 +3,7 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
+import { serialize, serializeMany } from "../../core/repository";
 import { SkillsHubSkillNote } from "./skill-note.model";
 import {
   SkillNoteInputSchema,
@@ -32,9 +33,7 @@ export async function getNotes(
       const docs = await SkillsHubSkillNote.find(query)
         .sort({ createdAt: -1 })
         .lean();
-      const data = docs.map((d) =>
-        JSON.parse(JSON.stringify(d)),
-      ) as SkillNoteDocument[];
+      const data = serializeMany<SkillNoteDocument>(docs);
       return { success: true, data };
     } catch (error) {
       return {
@@ -64,9 +63,7 @@ export async function createNote(input: SkillNoteInput): Promise<{
         authorId: authResult.data.metadata.staffId,
       });
 
-      const data = JSON.parse(
-        JSON.stringify(doc.toObject()),
-      ) as SkillNoteDocument;
+      const data = serialize<SkillNoteDocument>(doc.toObject());
       return { success: true, data };
     } catch (error) {
       return {

@@ -1,46 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
   SimpleGrid,
   Card,
   Text,
   Stack,
   Group,
-  Badge,
   Box,
-  Checkbox,
   Divider,
-  Progress,
   RingProgress,
 } from "@mantine/core";
 import { useSkillProgressions } from "../../hooks/useSkillProgressions";
-import {
-  getProgressionSteps,
-  completeProgressionStep,
-  uncompleteProgressionStep,
-} from "../../coach/skill-progressions/progression-step.actions";
-import type {
-  TeacherSkillsIndex,
-  TeacherSkill,
-} from "../../core/taxonomy.types";
-import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
-import type { ProgressionStepDocument } from "../../coach/skill-progressions/progression-step.types";
-import { formatDueDate } from "../../core/format-due-date";
+import { useProgressionSteps } from "../../hooks/useProgressionSteps";
+import { StepChecklist } from "../skill-progressions/StepChecklist";
 import { SkillSoloCard } from "./SkillSoloCard";
+import { collectActiveSkills } from "../../core/active-skills";
+import type { TeacherSkillsIndex } from "../../core/taxonomy.types";
+import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
 
 interface ProgressStatsRowProps {
   taxonomy: TeacherSkillsIndex;
   statusMap: Map<string, TeacherSkillStatusDocument>;
   teacherStaffId: string;
   onSkillClick?: (skillId: string) => void;
-}
-
-interface ActiveSkillInfo {
-  skill: TeacherSkill;
-  domainName: string;
-  subDomainName: string;
-  subDomainSkills: TeacherSkill[];
 }
 
 const STATUS_RING_COLORS = {
@@ -177,28 +159,6 @@ export function SkillProgressRing({
   );
 }
 
-export function collectActiveSkills(
-  taxonomy: TeacherSkillsIndex,
-  statusMap: Map<string, TeacherSkillStatusDocument>,
-): ActiveSkillInfo[] {
-  const active: ActiveSkillInfo[] = [];
-  for (const domain of taxonomy.domains) {
-    for (const subDomain of domain.subDomains) {
-      for (const skill of subDomain.skills) {
-        if (statusMap.get(skill.uuid)?.status === "active") {
-          active.push({
-            skill,
-            domainName: domain.name,
-            subDomainName: subDomain.name,
-            subDomainSkills: subDomain.skills,
-          });
-        }
-      }
-    }
-  }
-  return active;
-}
-
 export function ProgressionOverviewContent({
   taxonomy,
   statusMap,
@@ -208,57 +168,17 @@ export function ProgressionOverviewContent({
   const { plans } = useSkillProgressions(teacherStaffId);
   const openPlan = plans.find((p) => p.status === "open") ?? null;
 
-  const [steps, setSteps] = useState<ProgressionStepDocument[]>([]);
-  const [loadingSteps, setLoadingSteps] = useState(false);
-
-  useEffect(() => {
-    if (!openPlan) {
-      setSteps([]);
-      return;
-    }
-    let cancelled = false;
-    setLoadingSteps(true);
-    getProgressionSteps(openPlan._id).then((result) => {
-      if (cancelled) return;
-      if (result.success && result.data) {
-        setSteps(result.data);
-      }
-      setLoadingSteps(false);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [openPlan]);
+  const {
+    steps,
+    loadingSteps,
+    handleToggleStep,
+    completedCount,
+    totalSteps,
+    progress,
+  } = useProgressionSteps(openPlan?._id ?? null);
 
   const activeSkills = collectActiveSkills(taxonomy, statusMap);
   const activeCount = activeSkills.length;
-  const completedCount = steps.filter((s) => s.completed).length;
-  const totalSteps = steps.length;
-  const progress = totalSteps > 0 ? (completedCount / totalSteps) * 100 : 0;
-
-  const handleToggleStep = async (stepId: string, completed: boolean) => {
-    const previousSteps = steps;
-    // Optimistic update
-    setSteps((prev) =>
-      prev.map((s) =>
-        s._id === stepId
-          ? completed
-            ? { ...s, completed: false, completedAt: null }
-            : { ...s, completed: true, completedAt: new Date().toISOString() }
-          : s,
-      ),
-    );
-    try {
-      const result = completed
-        ? await uncompleteProgressionStep(stepId)
-        : await completeProgressionStep(stepId);
-      if (!result.success) {
-        setSteps(previousSteps);
-      }
-    } catch {
-      setSteps(previousSteps);
-    }
-  };
 
   if (!openPlan) {
     return null;
@@ -322,59 +242,15 @@ export function ProgressionOverviewContent({
 
       <Divider />
 
-      {loadingSteps ? (
-        <Text size="sm" c="dimmed">
-          Loading steps...
-        </Text>
-      ) : totalSteps > 0 ? (
-        <div>
-          <Group gap="xs" mb="xs" align="center">
-            <Text size="xs" fw={600} c="dimmed" tt="uppercase">
-              Steps
-            </Text>
-            <Progress
-              value={progress}
-              size="sm"
-              color="blue"
-              style={{ flex: 1 }}
-            />
-            <Text size="xs" c="dimmed" fw={500}>
-              {completedCount}/{totalSteps}
-            </Text>
-          </Group>
-          <Stack gap="xs">
-            {steps.map((step) => (
-              <Group key={step._id} gap="sm" wrap="nowrap" align="flex-start">
-                <Checkbox
-                  color="blue"
-                  checked={step.completed}
-                  onChange={() => handleToggleStep(step._id, step.completed)}
-                  mt={2}
-                  styles={{ input: { cursor: "pointer" } }}
-                />
-                <Text
-                  size="sm"
-                  td={step.completed ? "line-through" : undefined}
-                  c={step.completed ? "dimmed" : undefined}
-                  style={{ flex: 1, minWidth: 0 }}
-                >
-                  {step.description}
-                </Text>
-                {step.dueDate && (
-                  <Badge
-                    size="sm"
-                    variant="light"
-                    color="blue"
-                    style={{ flexShrink: 0 }}
-                  >
-                    {formatDueDate(step.dueDate)}
-                  </Badge>
-                )}
-              </Group>
-            ))}
-          </Stack>
-        </div>
-      ) : null}
+      <StepChecklist
+        steps={steps}
+        completedCount={completedCount}
+        totalSteps={totalSteps}
+        progress={progress}
+        loadingSteps={loadingSteps}
+        onToggleStep={handleToggleStep}
+        emptyMessage={null}
+      />
     </Stack>
   );
 }

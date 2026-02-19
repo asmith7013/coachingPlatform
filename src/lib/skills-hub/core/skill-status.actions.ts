@@ -3,6 +3,7 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
+import { serialize, serializeMany } from "./repository";
 import { SkillsHubTeacherSkillStatus } from "./teacher-skill-status.model";
 import {
   SkillStatusEnum,
@@ -20,9 +21,7 @@ export async function getTeacherSkillStatuses(teacherStaffId: string): Promise<{
       const docs = await SkillsHubTeacherSkillStatus.find({
         teacherStaffId,
       }).lean();
-      const data = docs.map((d) =>
-        JSON.parse(JSON.stringify(d)),
-      ) as TeacherSkillStatusDocument[];
+      const data = serializeMany<TeacherSkillStatusDocument>(docs);
       return { success: true, data };
     } catch (error) {
       return {
@@ -67,9 +66,7 @@ export async function updateSkillStatus(
         { upsert: true, new: true, runValidators: true },
       );
 
-      const data = JSON.parse(
-        JSON.stringify(doc.toObject()),
-      ) as TeacherSkillStatusDocument;
+      const data = serialize<TeacherSkillStatusDocument>(doc.toObject());
       return { success: true, data };
     } catch (error) {
       return {

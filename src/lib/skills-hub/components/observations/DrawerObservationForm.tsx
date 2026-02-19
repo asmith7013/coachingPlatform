@@ -14,7 +14,7 @@ import {
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { SkillSoloCard } from "../skills/SkillSoloCard";
-import { collectActiveSkills } from "../skills/ProgressStatsRow";
+import { collectActiveSkills } from "../../core/active-skills";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
 import { useTeacherSkillStatuses } from "../../hooks/useTeacherSkillStatuses";
 import { useObservationForm } from "../../hooks/useObservationForm";

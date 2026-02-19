@@ -107,7 +107,7 @@ export function CaseloadTable({
                   <Tooltip label="Observe">
                     <ActionIcon
                       component={Link}
-                      href={`/skillsHub/teacher/${teacherId}/observe`}
+                      href={`/skillsHub/coach/teacher/${teacherId}/observe`}
                       variant="light"
                       color="green"
                       size="sm"
