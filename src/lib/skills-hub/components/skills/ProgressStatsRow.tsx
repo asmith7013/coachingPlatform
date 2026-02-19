@@ -302,7 +302,7 @@ export function ProgressionOverviewContent({
                   {step.description}
                 </Text>
                 {step.dueDate && (
-                  <Badge size="xs" variant="light" style={{ flexShrink: 0 }}>
+                  <Badge size="sm" variant="light" style={{ flexShrink: 0 }}>
                     {formatDueDate(step.dueDate)}
                   </Badge>
                 )}

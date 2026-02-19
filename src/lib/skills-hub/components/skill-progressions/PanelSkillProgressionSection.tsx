@@ -175,7 +175,7 @@ function PlanCard({
                       {step.description}
                     </Text>
                     {step.dueDate && (
-                      <Badge size="xs" variant="light">
+                      <Badge size="sm" variant="light">
                         {formatDueDate(step.dueDate)}
                       </Badge>
                     )}

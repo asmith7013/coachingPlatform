@@ -4,7 +4,6 @@ import { Stack, Text, Center, Group } from "@mantine/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DomainAccordion } from "./DomainAccordion";
 import {
-  ProgressStatsRow,
   ProgressionOverviewContent,
   SkillProgressRing,
 } from "./ProgressStatsRow";
@@ -235,13 +234,6 @@ export function SkillProgressionView({
           </div>
           <SkillProgressRing taxonomy={taxonomy} statusMap={statusMap} />
         </Group>
-
-        <ProgressStatsRow
-          taxonomy={taxonomy}
-          statusMap={statusMap}
-          teacherStaffId={teacherStaffId}
-          onSkillClick={handleSkillClick}
-        />
 
         <DomainAccordion
           domains={domainsWithSkills}
