@@ -1,7 +1,7 @@
 /**
  * Seed Skills Hub Data - Main Entry Point
  *
- * Populates realistic mock data for teacher ccardona across all Skills Hub collections.
+ * Populates realistic mock data for teacher Jane Doe across all Skills Hub collections.
  * Action plans drive skill statuses for internally consistent coaching progression.
  *
  * ONLY runs against local database (localhost/127.0.0.1).
