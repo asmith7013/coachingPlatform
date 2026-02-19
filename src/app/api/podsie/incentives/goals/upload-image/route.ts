@@ -29,6 +29,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid file type. Allowed: JPEG, PNG, GIF, WebP",
+        },
+        { status: 400 },
+      );
+    }
+
+    // Validate file size (5MB limit)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return NextResponse.json(
+        { success: false, error: "File too large. Maximum size: 5MB" },
+        { status: 400 },
+      );
+    }
+
     const timestamp = Date.now();
     const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
     const blobFileName = `student-goals/${sanitizedName}-${timestamp}`;

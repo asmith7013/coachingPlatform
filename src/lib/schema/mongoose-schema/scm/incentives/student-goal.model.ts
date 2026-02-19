@@ -44,6 +44,7 @@ const studentGoalSchemaFields = {
     type: Number,
     required: true,
     min: 0,
+    // Note: Integer validation happens via Zod schema; MongoDB stores as Number
   },
   goalImageUrl: {
     type: String,

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { validateApiKey } from "@server/auth/api-key";
 import { handleServerError } from "@error/handlers/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { StudentGoalModel } from "@mongoose-schema/scm/incentives";
+import { StudentGoalInputZodSchema } from "@zod-schema/scm/incentives";
 
 /**
  * API endpoint for managing student goals (per-student incentive goals).
@@ -71,47 +73,51 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await withDbConnection(async () => {
-      const operations = goals.map(
-        (goal: {
-          podsieGroupId: number;
-          podsieStudentProfileId: string;
-          studentName: string;
-          studentEmail: string;
-          goalName: string;
-          goalCost: number;
-          goalImageUrl?: string | null;
-          unitMultipliers?: Array<{
-            podsieModuleId: number;
-            multiplierPercent: number;
-          }>;
-          ownerIds?: string[];
-        }) => ({
-          updateOne: {
-            filter: {
-              podsieGroupId: goal.podsieGroupId,
-              podsieStudentProfileId: goal.podsieStudentProfileId,
-            },
-            update: {
-              $set: {
-                studentName: goal.studentName,
-                studentEmail: goal.studentEmail,
-                goalName: goal.goalName,
-                goalCost: goal.goalCost,
-                goalImageUrl: goal.goalImageUrl ?? null,
-                unitMultipliers: goal.unitMultipliers ?? [],
-                ownerIds: goal.ownerIds ?? [],
-              },
-            },
-            upsert: true,
-          },
-        }),
+    // Validate input with Zod
+    const GoalsArraySchema = z.array(StudentGoalInputZodSchema);
+    const parsed = GoalsArraySchema.safeParse(goals);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: "Invalid goal data: " + parsed.error.message },
+        { status: 400 },
       );
+    }
+
+    // Validate all goals belong to the same group
+    const groupId = parsed.data[0].podsieGroupId;
+    const mixedGroups = parsed.data.some((g) => g.podsieGroupId !== groupId);
+    if (mixedGroups) {
+      return NextResponse.json(
+        { success: false, error: "All goals must belong to the same group" },
+        { status: 400 },
+      );
+    }
+
+    const result = await withDbConnection(async () => {
+      const operations = parsed.data.map((goal) => ({
+        updateOne: {
+          filter: {
+            podsieGroupId: goal.podsieGroupId,
+            podsieStudentProfileId: goal.podsieStudentProfileId,
+          },
+          update: {
+            $set: {
+              studentName: goal.studentName,
+              studentEmail: goal.studentEmail,
+              goalName: goal.goalName,
+              goalCost: goal.goalCost,
+              goalImageUrl: goal.goalImageUrl ?? null,
+              unitMultipliers: goal.unitMultipliers ?? [],
+              ownerIds: goal.ownerIds ?? [],
+            },
+          },
+          upsert: true,
+        },
+      }));
 
       await StudentGoalModel.bulkWrite(operations);
 
-      // Fetch the updated goals
-      const groupId = goals[0].podsieGroupId;
+      // Fetch the updated goals for this group
       const docs = await StudentGoalModel.find({
         podsieGroupId: groupId,
       }).lean();
