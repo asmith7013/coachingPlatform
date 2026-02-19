@@ -3,6 +3,7 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
+import { serialize, serializeMany } from "../../core/repository";
 import { SkillsHubActionPlan } from "./skill-progression.model";
 import { SkillsHubActionStep } from "./progression-step.model";
 import {
@@ -22,9 +23,7 @@ export async function getSkillProgressions(teacherStaffId: string): Promise<{
       const docs = await SkillsHubActionPlan.find({ teacherStaffId })
         .sort({ createdAt: -1 })
         .lean();
-      const data = docs.map((d) =>
-        JSON.parse(JSON.stringify(d)),
-      ) as SkillProgressionDocument[];
+      const data = serializeMany<SkillProgressionDocument>(docs);
       return { success: true, data };
     } catch (error) {
       return {
@@ -46,7 +45,7 @@ export async function getSkillProgressionById(planId: string): Promise<{
       if (!doc) {
         return { success: false, error: "Skill progression not found" };
       }
-      const data = JSON.parse(JSON.stringify(doc)) as SkillProgressionDocument;
+      const data = serialize<SkillProgressionDocument>(doc);
       return { success: true, data };
     } catch (error) {
       return {
@@ -87,9 +86,7 @@ export async function createSkillProgressionWithSteps(input: {
         await SkillsHubActionStep.insertMany(stepsToCreate);
       }
 
-      const data = JSON.parse(
-        JSON.stringify(plan.toObject()),
-      ) as SkillProgressionDocument;
+      const data = serialize<SkillProgressionDocument>(plan.toObject());
       return { success: true, data };
     } catch (error) {
       return {

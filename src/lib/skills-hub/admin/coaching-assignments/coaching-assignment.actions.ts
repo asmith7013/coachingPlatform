@@ -1,26 +1,23 @@
 "use server";
 
-import mongoose from "mongoose";
 import { clerkClient } from "@clerk/nextjs/server";
 import { withDbConnection } from "@server/db/ensure-connection";
 import { handleServerError } from "@error/handlers/server";
 import { SkillsHubCoachTeacherAssignment } from "./coaching-assignment.model";
 import { StaffModel } from "@mongoose-schema/core/staff.model";
 import {
+  serialize,
+  serializeMany,
+  isValidObjectId,
+  findStaffByRole,
+  type StaffOption,
+} from "../../core/repository";
+import {
   CoachTeacherAssignmentInputSchema,
   type CoachTeacherAssignmentDocument,
 } from "./coaching-assignment.types";
 
-function isValidObjectId(id: string): boolean {
-  return mongoose.Types.ObjectId.isValid(id);
-}
-
-export interface StaffOption {
-  _id: string;
-  staffName: string;
-  email?: string;
-  schoolIds?: string[];
-}
+export type { StaffOption };
 
 export async function getCoaches(): Promise<{
   success: boolean;
@@ -29,15 +26,7 @@ export async function getCoaches(): Promise<{
 }> {
   return withDbConnection(async () => {
     try {
-      const docs = await StaffModel.find({
-        roles: "Coach",
-      })
-        .select("staffName email schoolIds")
-        .sort({ staffName: 1 })
-        .lean();
-      const data = docs.map((d: Record<string, unknown>) =>
-        JSON.parse(JSON.stringify(d)),
-      ) as StaffOption[];
+      const data = await findStaffByRole("Coach");
       return { success: true, data };
     } catch (error) {
       return {
@@ -55,15 +44,7 @@ export async function getTeachers(): Promise<{
 }> {
   return withDbConnection(async () => {
     try {
-      const docs = await StaffModel.find({
-        roles: "Teacher",
-      })
-        .select("staffName email schoolIds")
-        .sort({ staffName: 1 })
-        .lean();
-      const data = docs.map((d: Record<string, unknown>) =>
-        JSON.parse(JSON.stringify(d)),
-      ) as StaffOption[];
+      const data = await findStaffByRole("Teacher");
       return { success: true, data };
     } catch (error) {
       return {
@@ -91,9 +72,7 @@ export async function getCoachTeachers(coachStaffId: string): Promise<{
       })
         .populate("teacherStaffId", "staffName email")
         .lean();
-      const data = docs.map((d) =>
-        JSON.parse(JSON.stringify(d)),
-      ) as CoachTeacherAssignmentDocument[];
+      const data = serializeMany<CoachTeacherAssignmentDocument>(docs);
       return { success: true, data };
     } catch (error) {
       return {
@@ -121,9 +100,7 @@ export async function getTeacherCoaches(teacherStaffId: string): Promise<{
       })
         .populate("coachStaffId", "staffName email")
         .lean();
-      const data = docs.map((d) =>
-        JSON.parse(JSON.stringify(d)),
-      ) as CoachTeacherAssignmentDocument[];
+      const data = serializeMany<CoachTeacherAssignmentDocument>(docs);
       return { success: true, data };
     } catch (error) {
       return {
@@ -178,9 +155,7 @@ export async function assignTeacher(
         ...validated,
         schoolId,
       });
-      const data = JSON.parse(
-        JSON.stringify(doc.toObject()),
-      ) as CoachTeacherAssignmentDocument;
+      const data = serialize<CoachTeacherAssignmentDocument>(doc.toObject());
       return { success: true, data };
     } catch (error) {
       return {
@@ -250,14 +225,7 @@ export async function createStaffMember(data: {
         );
       }
 
-      const staff: StaffOption = {
-        _id: doc._id.toString(),
-        staffName: doc.staffName,
-        email: doc.email,
-        schoolIds: doc.schoolIds?.map((id: mongoose.Types.ObjectId) =>
-          id.toString(),
-        ),
-      };
+      const staff = serialize<StaffOption>(doc.toObject());
       return { success: true, data: staff };
     } catch (error) {
       return {

@@ -16,9 +16,16 @@ import type { PopulatedAssignment } from "../../admin/coaching-assignments/coach
 interface CaseloadTableProps {
   teachers: PopulatedAssignment[];
   loading: boolean;
+  selectedTeacherId?: string | null;
+  onSelectTeacher?: (teacherId: string | null) => void;
 }
 
-export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
+export function CaseloadTable({
+  teachers,
+  loading,
+  selectedTeacherId,
+  onSelectTeacher,
+}: CaseloadTableProps) {
   if (loading) {
     return (
       <Stack gap="xs">
@@ -54,9 +61,19 @@ export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
             typeof teacher === "object" ? teacher.staffName : "Unknown";
           const teacherId =
             typeof teacher === "object" ? teacher._id : String(teacher);
+          const isSelected = teacherId === selectedTeacherId;
 
           return (
-            <Table.Tr key={assignment._id}>
+            <Table.Tr
+              key={assignment._id}
+              onClick={() => onSelectTeacher?.(isSelected ? null : teacherId)}
+              style={{
+                cursor: onSelectTeacher ? "pointer" : undefined,
+                backgroundColor: isSelected
+                  ? "var(--mantine-color-blue-0)"
+                  : undefined,
+              }}
+            >
               <Table.Td>
                 <Text size="sm" fw={500}>
                   {teacherName}
@@ -71,7 +88,11 @@ export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
                 </Text>
               </Table.Td>
               <Table.Td>
-                <Group gap="xs" justify="center">
+                <Group
+                  gap="xs"
+                  justify="center"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <Tooltip label="Skill Map">
                     <ActionIcon
                       component={Link}
@@ -86,7 +107,7 @@ export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
                   <Tooltip label="Observe">
                     <ActionIcon
                       component={Link}
-                      href={`/skillsHub/teacher/${teacherId}/observe`}
+                      href={`/skillsHub/coach/teacher/${teacherId}/observe`}
                       variant="light"
                       color="green"
                       size="sm"
@@ -97,7 +118,7 @@ export function CaseloadTable({ teachers, loading }: CaseloadTableProps) {
                   <Tooltip label="Skill Progressions">
                     <ActionIcon
                       component={Link}
-                      href={`/skillsHub/teacher/${teacherId}/skill-progressions`}
+                      href={`/skillsHub/coach/teacher/${teacherId}/skill-progressions`}
                       variant="light"
                       color="violet"
                       size="sm"

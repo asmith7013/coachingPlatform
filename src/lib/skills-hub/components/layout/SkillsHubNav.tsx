@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import {
   ClipboardDocumentCheckIcon,
   Cog6ToothIcon,
@@ -13,6 +13,7 @@ import {
   WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline";
 import { useViewAs, useSkillsHubAuth, type ViewRole } from "./ViewAsContext";
+import { useClickOutside } from "../../hooks/useClickOutside";
 
 type NavItem = { href: string; label: string };
 
@@ -57,49 +58,12 @@ export function SkillsHubNav() {
         .slice(0, 2)
     : "?";
 
-  // Close FAB when clicking outside
-  useEffect(() => {
-    function handleClickOutsideFab(event: MouseEvent) {
-      if (fabRef.current && !fabRef.current.contains(event.target as Node)) {
-        setFabOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutsideFab);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutsideFab);
-  }, []);
-
-  // Close profile dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutsideProfile(event: MouseEvent) {
-      if (
-        profileRef.current &&
-        !profileRef.current.contains(event.target as Node)
-      ) {
-        setProfileOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutsideProfile);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutsideProfile);
-  }, []);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setOpenDropdown(null);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const closeFab = useCallback(() => setFabOpen(false), []);
+  const closeProfile = useCallback(() => setProfileOpen(false), []);
+  const closeDropdown = useCallback(() => setOpenDropdown(null), []);
+  useClickOutside(fabRef, closeFab);
+  useClickOutside(profileRef, closeProfile);
+  useClickOutside(dropdownRef, closeDropdown);
 
   const teacherSkillsHref = mockUser.metadata.staffId
     ? `/skillsHub/teacher/${mockUser.metadata.staffId}`
@@ -121,11 +85,9 @@ export function SkillsHubNav() {
             Icon: ClipboardDocumentCheckIcon,
             items: [
               { href: "/skillsHub/coach/caseload", label: "Caseload" },
-              { href: "/skillsHub/coach/skill-map", label: "Skill Map" },
-              { href: "/skillsHub/coach/observations", label: "Observations" },
               {
-                href: "/skillsHub/coach/skill-progressions",
-                label: "Skill Progressions",
+                href: "/skillsHub/coach/active-skills",
+                label: "Active Skills",
               },
             ],
           },

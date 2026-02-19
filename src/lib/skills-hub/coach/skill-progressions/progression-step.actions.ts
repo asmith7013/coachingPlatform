@@ -3,6 +3,7 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
+import { serialize, serializeMany } from "../../core/repository";
 import { SkillsHubActionStep } from "./progression-step.model";
 import {
   ProgressionStepInputSchema,
@@ -20,9 +21,7 @@ export async function getProgressionSteps(actionPlanId: string): Promise<{
       const docs = await SkillsHubActionStep.find({ actionPlanId })
         .sort({ createdAt: 1 })
         .lean();
-      const data = docs.map((d) =>
-        JSON.parse(JSON.stringify(d)),
-      ) as ProgressionStepDocument[];
+      const data = serializeMany<ProgressionStepDocument>(docs);
       return { success: true, data };
     } catch (error) {
       return {
@@ -44,9 +43,7 @@ export async function createProgressionStep(
     try {
       const validated = ProgressionStepInputSchema.parse(input);
       const doc = await SkillsHubActionStep.create(validated);
-      const data = JSON.parse(
-        JSON.stringify(doc.toObject()),
-      ) as ProgressionStepDocument;
+      const data = serialize<ProgressionStepDocument>(doc.toObject());
       return { success: true, data };
     } catch (error) {
       return {

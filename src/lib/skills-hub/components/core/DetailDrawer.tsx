@@ -10,6 +10,7 @@ export interface DrawerTab {
   id: string;
   label: string;
   pinned?: boolean;
+  closable?: boolean;
 }
 
 export interface DrawerTabsConfig {
@@ -21,6 +22,7 @@ export interface DrawerTabsConfig {
 
 interface DetailDrawerProps {
   onClose: () => void;
+  showCloseButton?: boolean;
   subtitle?: string;
   header?: React.ReactNode;
   tabs?: DrawerTabsConfig;
@@ -104,7 +106,7 @@ function DrawerTabStrip({ tabs }: { tabs: DrawerTabsConfig }) {
             >
               {tab.label}
             </Text>
-            {!tab.pinned && (
+            {tab.closable !== false && (
               <CloseButton
                 size="xs"
                 variant="subtle"
@@ -124,6 +126,7 @@ function DrawerTabStrip({ tabs }: { tabs: DrawerTabsConfig }) {
 
 export function DetailDrawer({
   onClose,
+  showCloseButton = true,
   subtitle,
   header,
   tabs,
@@ -150,12 +153,18 @@ export function DetailDrawer({
       }}
       p="md"
     >
-      <CloseButton
-        onClick={onClose}
-        style={{ position: "absolute", top: 12, right: 12, zIndex: 1 }}
-      />
+      {showCloseButton && (
+        <CloseButton
+          onClick={onClose}
+          style={{ position: "absolute", top: 12, right: 12, zIndex: 1 }}
+        />
+      )}
       {hasHeader && (
-        <Group mb="xs" wrap="nowrap" style={{ paddingRight: 32 }}>
+        <Group
+          mb={4}
+          wrap="nowrap"
+          style={showCloseButton ? { paddingRight: 32 } : undefined}
+        >
           {tabs ? (
             <DrawerTabStrip tabs={tabs} />
           ) : (
@@ -170,7 +179,7 @@ export function DetailDrawer({
           )}
         </Group>
       )}
-      {hasHeader && <Divider mb="md" />}
+      {hasHeader && <Divider mb="sm" />}
       {children}
     </Box>
   );

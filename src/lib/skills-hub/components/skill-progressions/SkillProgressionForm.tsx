@@ -106,7 +106,9 @@ export function SkillProgressionForm({
         message: "Skill progression created",
         color: "teal",
       });
-      router.push(`/skillsHub/teacher/${selectedTeacherId}/skill-progressions`);
+      router.push(
+        `/skillsHub/coach/teacher/${selectedTeacherId}/skill-progressions`,
+      );
     } else {
       notifications.show({
         title: "Error",

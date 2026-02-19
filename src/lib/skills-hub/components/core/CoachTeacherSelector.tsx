@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, Group, Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useSkillsHubAuth } from "../layout/ViewAsContext";
@@ -12,12 +12,15 @@ interface CoachTeacherSelectorProps {
   selectedTeacherId: string | null;
   onTeacherChange: (teacherId: string | null) => void;
   onTeacherNameChange?: (name: string | null) => void;
+  /** Skip the Card wrapper (for embedding in a parent Card) */
+  noCard?: boolean;
 }
 
 export function CoachTeacherSelector({
   selectedTeacherId,
   onTeacherChange,
   onTeacherNameChange,
+  noCard = false,
 }: CoachTeacherSelectorProps) {
   const { metadata, hasRole } = useSkillsHubAuth();
   const isSuperAdmin = hasRole("super_admin");
@@ -53,12 +56,17 @@ export function CoachTeacherSelector({
     label: `${c.staffName}${c.email ? ` (${c.email})` : ""}`,
   }));
 
-  const teacherOptions = teachers.map((assignment) => {
-    const teacher = assignment.teacherStaffId;
-    const name = typeof teacher === "object" ? teacher.staffName : "Unknown";
-    const id = typeof teacher === "object" ? teacher._id : String(teacher);
-    return { value: id, label: name };
-  });
+  const teacherOptions = useMemo(
+    () =>
+      teachers.map((assignment) => {
+        const teacher = assignment.teacherStaffId;
+        const name =
+          typeof teacher === "object" ? teacher.staffName : "Unknown";
+        const id = typeof teacher === "object" ? teacher._id : String(teacher);
+        return { value: id, label: name };
+      }),
+    [teachers],
+  );
 
   // Notify parent of teacher name changes
   useEffect(() => {
@@ -87,35 +95,41 @@ export function CoachTeacherSelector({
   // Teachers don't see the selector
   if (isTeacher) return null;
 
+  const content = (
+    <Group grow>
+      {isAdmin && (
+        <Select
+          label="Coach"
+          placeholder="Select a coach..."
+          searchable
+          data={coachOptions}
+          value={selectedCoachId}
+          onChange={handleCoachChange}
+        />
+      )}
+      <Select
+        label="Select Teacher"
+        placeholder={
+          !coachStaffId
+            ? "Select a coach first"
+            : teachersLoading
+              ? "Loading..."
+              : "Select a teacher..."
+        }
+        searchable
+        data={teacherOptions}
+        value={selectedTeacherId}
+        onChange={onTeacherChange}
+        disabled={!coachStaffId || teachersLoading}
+      />
+    </Group>
+  );
+
+  if (noCard) return content;
+
   return (
     <Card shadow="sm" p="lg" mb="lg">
-      <Group grow>
-        {isAdmin && (
-          <Select
-            label="Coach"
-            placeholder="Select a coach..."
-            searchable
-            data={coachOptions}
-            value={selectedCoachId}
-            onChange={handleCoachChange}
-          />
-        )}
-        <Select
-          label="Teacher"
-          placeholder={
-            !coachStaffId
-              ? "Select a coach first"
-              : teachersLoading
-                ? "Loading..."
-                : "Select a teacher..."
-          }
-          searchable
-          data={teacherOptions}
-          value={selectedTeacherId}
-          onChange={onTeacherChange}
-          disabled={!coachStaffId || teachersLoading}
-        />
-      </Group>
+      {content}
     </Card>
   );
 }

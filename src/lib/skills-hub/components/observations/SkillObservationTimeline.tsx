@@ -2,19 +2,13 @@
 
 import { Timeline, Text, Badge, Group, Stack } from "@mantine/core";
 import { IconEye } from "@tabler/icons-react";
+import { RATING_COLORS } from "../../coach/observations/observation.constants";
 import type { ObservationDocument } from "../../coach/observations/observation.types";
 
 interface SkillObservationTimelineProps {
   observations: ObservationDocument[];
   skillId: string;
 }
-
-const RATING_COLORS: Record<string, string> = {
-  not_observed: "gray",
-  partial: "orange",
-  mostly: "yellow",
-  fully: "green",
-};
 
 export function SkillObservationTimeline({
   observations,
