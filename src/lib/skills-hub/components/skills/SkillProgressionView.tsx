@@ -1,7 +1,6 @@
 "use client";
 
-import { Group, Stack, Text, Center, Anchor } from "@mantine/core";
-import Link from "next/link";
+import { Stack, Text, Center } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import { DomainAccordion } from "./DomainAccordion";
 import { ProgressStatsRow } from "./ProgressStatsRow";
@@ -95,14 +94,9 @@ export function SkillProgressionView({
       <Stack gap="lg" style={{ flex: 1, minWidth: 0 }}>
         <ProgressStatsRow taxonomy={taxonomy} statusMap={statusMap} />
 
-        <Group justify="space-between" align="baseline">
-          <Text fw={700} size="lg">
-            Skill Progression
-          </Text>
-          <Anchor component={Link} href="/skillsHub/skills" size="sm">
-            View all skills
-          </Anchor>
-        </Group>
+        <Text fw={700} size="lg">
+          Skill Progression
+        </Text>
 
         <DomainAccordion
           domains={domainsWithSkills}
