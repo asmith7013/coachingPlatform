@@ -12,13 +12,17 @@ import {
   Checkbox,
   Button,
   UnstyledButton,
+  Divider,
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTaxonomy } from "../../hooks/useTaxonomy";
+import { getSkillByUuid } from "../../core/taxonomy";
 import { getActionSteps } from "../../coach/action-plans/action-step.actions";
 import { completeActionStep } from "../../coach/action-plans/action-step.actions";
 import { closeActionPlan } from "../../coach/action-plans/action-plan.actions";
 import { actionPlanKeys } from "../../hooks/useActionPlans";
+import type { TeacherSkillsIndex } from "../../core/taxonomy.types";
 import type { ActionPlanDocument } from "../../coach/action-plans/action-plan.types";
 import type { ActionStepDocument } from "../../coach/action-plans/action-step.types";
 
@@ -33,11 +37,21 @@ const STATUS_COLORS: Record<string, string> = {
   archived: "dimmed",
 };
 
+function resolveSkillName(
+  taxonomy: TeacherSkillsIndex | null,
+  id: string,
+): string {
+  if (!taxonomy) return id;
+  const skill = getSkillByUuid(taxonomy, id);
+  return skill?.name ?? id;
+}
+
 export function ActionPlanCard({ plan, teacherStaffId }: ActionPlanCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [steps, setSteps] = useState<ActionStepDocument[]>([]);
   const [loadingSteps, setLoadingSteps] = useState(false);
   const queryClient = useQueryClient();
+  const { taxonomy } = useTaxonomy();
 
   const handleExpand = async () => {
     if (!expanded && steps.length === 0) {
@@ -78,19 +92,30 @@ export function ActionPlanCard({ plan, teacherStaffId }: ActionPlanCardProps) {
   return (
     <Card shadow="sm" withBorder>
       <UnstyledButton onClick={handleExpand} w="100%">
-        <Group justify="space-between">
-          <div>
-            <Text fw={600}>{plan.title}</Text>
-            <Group gap="xs" mt={4}>
-              <Badge color={STATUS_COLORS[plan.status]} size="sm">
+        <Group justify="space-between" wrap="nowrap">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <Group gap="xs" align="center">
+              <Text fw={600}>{plan.title}</Text>
+              <Badge
+                color={STATUS_COLORS[plan.status]}
+                size="sm"
+                variant="light"
+              >
                 {plan.status}
               </Badge>
-              {plan.skillIds.map((id) => (
-                <Badge key={id} variant="outline" size="xs">
-                  {id}
-                </Badge>
-              ))}
             </Group>
+            {plan.skillIds.length > 0 && (
+              <Group gap={4} mt={6} wrap="wrap">
+                <Text size="xs" c="dimmed" fw={500}>
+                  Skills:
+                </Text>
+                {plan.skillIds.map((id) => (
+                  <Badge key={id} variant="light" color="blue" size="xs">
+                    {resolveSkillName(taxonomy, id)}
+                  </Badge>
+                ))}
+              </Group>
+            )}
           </div>
           {expanded ? (
             <IconChevronUp size={16} />
@@ -100,12 +125,42 @@ export function ActionPlanCard({ plan, teacherStaffId }: ActionPlanCardProps) {
         </Group>
 
         {totalSteps > 0 && (
-          <Progress value={progress} mt="sm" size="sm" color="teal" />
+          <Group gap="xs" mt="sm" align="center">
+            <Progress
+              value={progress}
+              size="sm"
+              color="teal"
+              style={{ flex: 1 }}
+            />
+            <Text size="xs" c="dimmed" fw={500}>
+              {completedCount}/{totalSteps}
+            </Text>
+          </Group>
         )}
       </UnstyledButton>
 
       <Collapse in={expanded}>
         <Stack gap="xs" mt="md">
+          {plan.why && (
+            <div>
+              <Text size="xs" fw={500} c="dimmed">
+                Why
+              </Text>
+              <Text size="sm">{plan.why}</Text>
+            </div>
+          )}
+
+          {plan.actionStep && (
+            <div>
+              <Text size="xs" fw={500} c="dimmed">
+                Action Step
+              </Text>
+              <Text size="sm">{plan.actionStep}</Text>
+            </div>
+          )}
+
+          {(plan.why || plan.actionStep) && <Divider />}
+
           {loadingSteps ? (
             <Text size="sm" c="dimmed">
               Loading steps...
@@ -115,37 +170,43 @@ export function ActionPlanCard({ plan, teacherStaffId }: ActionPlanCardProps) {
               No steps yet
             </Text>
           ) : (
-            steps.map((step) => (
-              <Group key={step._id} gap="sm" wrap="nowrap" align="flex-start">
-                <Checkbox
-                  checked={step.completed}
-                  onChange={() => handleToggleStep(step._id, step.completed)}
-                  disabled={step.completed}
-                  mt={2}
-                />
-                <div style={{ flex: 1 }}>
-                  <Text
-                    size="sm"
-                    td={step.completed ? "line-through" : undefined}
-                    c={step.completed ? "dimmed" : undefined}
-                  >
-                    {step.description}
-                  </Text>
-                  <Group gap="xs" mt={2}>
-                    {step.dueDate && (
-                      <Badge size="xs" variant="light">
-                        Due: {new Date(step.dueDate).toLocaleDateString()}
-                      </Badge>
-                    )}
-                    {step.skillIds.map((id) => (
-                      <Badge key={id} size="xs" variant="dot">
-                        {id}
-                      </Badge>
-                    ))}
-                  </Group>
-                </div>
-              </Group>
-            ))
+            <>
+              <Text size="xs" fw={600} c="dimmed" tt="uppercase">
+                Action Steps
+              </Text>
+              {steps.map((step) => (
+                <Group key={step._id} gap="sm" wrap="nowrap" align="flex-start">
+                  <Checkbox
+                    checked={step.completed}
+                    onChange={() => handleToggleStep(step._id, step.completed)}
+                    disabled={step.completed}
+                    mt={2}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <Text
+                      size="sm"
+                      td={step.completed ? "line-through" : undefined}
+                      c={step.completed ? "dimmed" : undefined}
+                    >
+                      {step.description}
+                    </Text>
+                    <Group gap={4} mt={2} wrap="wrap">
+                      {step.dueDate && (
+                        <Badge size="xs" variant="light">
+                          Due: {new Date(step.dueDate).toLocaleDateString()}
+                        </Badge>
+                      )}
+                      {step.skillIds.length > 0 &&
+                        step.skillIds.map((id) => (
+                          <Badge key={id} size="xs" variant="dot" color="blue">
+                            {resolveSkillName(taxonomy, id)}
+                          </Badge>
+                        ))}
+                    </Group>
+                  </div>
+                </Group>
+              ))}
+            </>
           )}
 
           {plan.status === "open" && (

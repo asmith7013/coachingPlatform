@@ -6,13 +6,11 @@ import {
   Badge,
   Group,
   Stack,
-  Card,
   Box,
   Divider,
   SegmentedControl,
   Center,
   Loader,
-  CloseButton,
   UnstyledButton,
 } from "@mantine/core";
 import { IconLock } from "@tabler/icons-react";
@@ -32,6 +30,8 @@ import { SkillStatusBadge } from "../core/SkillStatusBadge";
 import { SkillStatusDot } from "./SkillStatusDot";
 import { SkillObservationTimeline } from "../observations/SkillObservationTimeline";
 import { SkillNotesSection } from "../notes/SkillNotesSection";
+import { PanelActionPlanSection } from "../action-plans/PanelActionPlanSection";
+import { DetailDrawer } from "../core/DetailDrawer";
 import { getSkillIcon } from "../../core/skill-icons";
 import type { SkillStatus } from "../../core/skill-status.types";
 import type { TeacherSkillFlat } from "../../core/taxonomy.types";
@@ -195,32 +195,11 @@ export function SkillDetailPanel({
         : { l1: pairedSkill, l2: skill }
       : null;
 
-  return (
-    <Box
-      style={{
-        width: 420,
-        flexShrink: 0,
-        borderLeft: "1px solid var(--mantine-color-gray-3)",
-        backgroundColor: "var(--mantine-color-white)",
-        overflowY: "auto",
-        height: "calc(100vh - 60px)",
-        position: "sticky",
-        top: 60,
-      }}
-      p="md"
-    >
-      {/* Header with close button */}
-      <Group justify="space-between" mb="md">
-        <div>
-          {isCoach && teacherName && (
-            <Text size="xs" c="dimmed">
-              Reviewing: {teacherName}
-            </Text>
-          )}
-        </div>
-        <CloseButton onClick={onClose} />
-      </Group>
+  const subtitle =
+    isCoach && teacherName ? `Reviewing: ${teacherName}` : undefined;
 
+  return (
+    <DetailDrawer onClose={onClose} subtitle={subtitle}>
       {(taxLoading || statusLoading) && (
         <Center py="xl">
           <Loader size="sm" />
@@ -317,25 +296,13 @@ export function SkillDetailPanel({
 
           <Divider />
 
-          {linkedPlans.length > 0 && (
-            <div>
-              <Text fw={600} size="sm" mb="xs">
-                Action Plans
-              </Text>
-              <Stack gap="xs">
-                {linkedPlans.map((plan) => (
-                  <Card key={plan._id} withBorder p="sm">
-                    <Text size="sm" fw={500}>
-                      {plan.title}
-                    </Text>
-                    <Text size="xs" c="dimmed">
-                      Status: {plan.status}
-                    </Text>
-                  </Card>
-                ))}
-              </Stack>
-            </div>
-          )}
+          <PanelActionPlanSection
+            plans={linkedPlans}
+            skillUuid={skill.uuid}
+            skillDomainName={skill.domainName}
+            teacherStaffId={teacherStaffId}
+            isCoach={isCoach}
+          />
 
           <div>
             <Text fw={600} size="sm" mb="xs">
@@ -359,6 +326,6 @@ export function SkillDetailPanel({
           </div>
         </Stack>
       )}
-    </Box>
+    </DetailDrawer>
   );
 }

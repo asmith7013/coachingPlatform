@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Title, Text, Card, Group, Button } from "@mantine/core";
-import { IconPlus } from "@tabler/icons-react";
+import { Title, Text, Card } from "@mantine/core";
 import { useSkillsHubFilters } from "@/lib/skills-hub/hooks/useSkillsHubFilters";
 import { CoachTeacherSelector } from "@/lib/skills-hub/components/core/CoachTeacherSelector";
 import { ActionPlanList } from "@/lib/skills-hub/components/action-plans/ActionPlanList";
@@ -16,23 +14,10 @@ export default function ActionPlansPage() {
   return (
     <div className="mx-auto" style={{ maxWidth: "1200px" }}>
       <Card shadow="sm" p="lg" mb="lg">
-        <Group justify="space-between">
-          <div>
-            <Title order={2}>Action Plans</Title>
-            <Text size="sm" c="dimmed">
-              Coaching action plans and steps
-            </Text>
-          </div>
-          {selectedTeacherId && (
-            <Button
-              component={Link}
-              href={`/skillsHub/teacher/${selectedTeacherId}/action-plans/new`}
-              leftSection={<IconPlus size={16} />}
-            >
-              New Plan
-            </Button>
-          )}
-        </Group>
+        <Title order={2}>Action Plans</Title>
+        <Text size="sm" c="dimmed">
+          Coaching action plans and steps
+        </Text>
       </Card>
 
       <CoachTeacherSelector

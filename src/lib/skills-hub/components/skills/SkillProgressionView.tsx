@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DomainAccordion } from "./DomainAccordion";
 import { ProgressStatsRow } from "./ProgressStatsRow";
 import { SkillDetailPanel } from "./SkillDetailPanel";
+import { DETAIL_DRAWER_WIDTH } from "../core/DetailDrawer";
 import { useStatusLegend } from "../core/StatusLegendContext";
 import { SkillMapSkeleton } from "../core/SkillsHubSkeletons";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
@@ -112,13 +113,16 @@ export function SkillProgressionView({
       </Stack>
 
       {selectedSkillId && (
-        <SkillDetailPanel
-          skillId={selectedSkillId}
-          teacherStaffId={teacherStaffId}
-          teacherName={teacherName}
-          onSkillClick={setSelectedSkillId}
-          onClose={() => setSelectedSkillId(null)}
-        />
+        <>
+          <div style={{ width: DETAIL_DRAWER_WIDTH, flexShrink: 0 }} />
+          <SkillDetailPanel
+            skillId={selectedSkillId}
+            teacherStaffId={teacherStaffId}
+            teacherName={teacherName}
+            onSkillClick={setSelectedSkillId}
+            onClose={() => setSelectedSkillId(null)}
+          />
+        </>
       )}
     </div>
   );

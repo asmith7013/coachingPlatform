@@ -11,11 +11,13 @@ import type { StaffOption } from "../../admin/coaching-assignments/coaching-assi
 interface CoachTeacherSelectorProps {
   selectedTeacherId: string | null;
   onTeacherChange: (teacherId: string | null) => void;
+  onTeacherNameChange?: (name: string | null) => void;
 }
 
 export function CoachTeacherSelector({
   selectedTeacherId,
   onTeacherChange,
+  onTeacherNameChange,
 }: CoachTeacherSelectorProps) {
   const { metadata, hasRole } = useSkillsHubAuth();
   const isSuperAdmin = hasRole("super_admin");
@@ -57,6 +59,17 @@ export function CoachTeacherSelector({
     const id = typeof teacher === "object" ? teacher._id : String(teacher);
     return { value: id, label: name };
   });
+
+  // Notify parent of teacher name changes
+  useEffect(() => {
+    if (!onTeacherNameChange) return;
+    if (!selectedTeacherId) {
+      onTeacherNameChange(null);
+      return;
+    }
+    const option = teacherOptions.find((t) => t.value === selectedTeacherId);
+    onTeacherNameChange(option?.label ?? null);
+  }, [selectedTeacherId, teacherOptions, onTeacherNameChange]);
 
   // Teachers auto-select themselves
   useEffect(() => {
