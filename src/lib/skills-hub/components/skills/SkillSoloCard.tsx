@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, Text, Box, Group, UnstyledButton } from "@mantine/core";
+import { Card, Text, Box, Group, Badge, UnstyledButton } from "@mantine/core";
 import { IconLock } from "@tabler/icons-react";
 import { getSkillIcon } from "../../core/skill-icons";
 import { SKILL_STATUS_COLORS } from "../../core/skill-status-colors";
@@ -13,6 +13,7 @@ interface SkillSoloCardProps {
   level: 1 | 2;
   status: SkillStatus;
   isLocked: boolean;
+  domainName?: string;
   onSkillClick?: (skillId: string) => void;
 }
 
@@ -23,6 +24,7 @@ export function SkillSoloCard({
   level,
   status,
   isLocked,
+  domainName,
   onSkillClick,
 }: SkillSoloCardProps) {
   const Icon = getSkillIcon(skillId);
@@ -72,6 +74,11 @@ export function SkillSoloCard({
             <Text size="xs" c="dimmed" lineClamp={2} mt={2}>
               {description}
             </Text>
+          )}
+          {domainName && (
+            <Badge size="xs" variant="light" color="blue" mt={4}>
+              {domainName}
+            </Badge>
           )}
         </div>
       </Group>

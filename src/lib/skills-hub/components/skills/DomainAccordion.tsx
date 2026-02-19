@@ -141,11 +141,18 @@ function DomainHeader({
   const proficientCount = allSkills.filter(
     (s) => getStatus(statusMap, s.uuid) === "proficient",
   ).length;
-  const hasActive = allSkills.some((s) => {
-    const st = getStatus(statusMap, s.uuid);
-    return st === "active" || st === "developing";
-  });
+  const hasActive = allSkills.some(
+    (s) => getStatus(statusMap, s.uuid) === "active",
+  );
   const allComplete = totalSkills > 0 && proficientCount === totalSkills;
+
+  const circleBg = allComplete
+    ? "var(--mantine-color-teal-6)"
+    : hasActive
+      ? "var(--mantine-color-blue-5)"
+      : "var(--mantine-color-gray-2)";
+  const circleColor =
+    allComplete || hasActive ? "white" : "var(--mantine-color-dark-4)";
 
   return (
     <Group justify="space-between" wrap="nowrap" style={{ flex: 1 }}>
@@ -155,10 +162,8 @@ function DomainHeader({
             width: 28,
             height: 28,
             borderRadius: "50%",
-            backgroundColor: allComplete
-              ? "var(--mantine-color-teal-6)"
-              : "var(--mantine-color-gray-2)",
-            color: allComplete ? "white" : "var(--mantine-color-dark-4)",
+            backgroundColor: circleBg,
+            color: circleColor,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -176,16 +181,9 @@ function DomainHeader({
           </Text>
         </div>
       </Group>
-      <Group gap="xs">
-        {allComplete && (
-          <IconCircleCheck size={20} color="var(--mantine-color-teal-6)" />
-        )}
-        {hasActive && !allComplete && (
-          <Badge size="sm" variant="light" color="teal">
-            In Progress
-          </Badge>
-        )}
-      </Group>
+      {allComplete && (
+        <IconCircleCheck size={20} color="var(--mantine-color-teal-6)" />
+      )}
     </Group>
   );
 }
@@ -196,23 +194,11 @@ export function DomainAccordion({
   defaultExpandedSubDomainsByDomain,
   onSkillClick,
 }: DomainAccordionProps) {
-  // Domains with active/developing skills are expanded by default
-  const defaultExpandedDomains = domains
-    .filter((d) => defaultExpandedSubDomainsByDomain.has(d.id))
-    .map((d) => d.id);
-
   return (
-    <Accordion
-      multiple
-      defaultValue={defaultExpandedDomains}
-      variant="separated"
-    >
+    <Accordion multiple defaultValue={[]} variant="separated">
       {domains.map((domain, index) => {
         const totalSkills = domain.subDomains.flatMap((sd) => sd.skills).length;
         if (totalSkills === 0) return null;
-
-        const expandedSubDomains =
-          defaultExpandedSubDomainsByDomain.get(domain.id) ?? [];
 
         return (
           <Accordion.Item
@@ -230,17 +216,29 @@ export function DomainAccordion({
               />
             </Accordion.Control>
             <Accordion.Panel>
-              <Accordion
-                multiple
-                defaultValue={expandedSubDomains}
-                variant="separated"
-              >
-                {domain.subDomains.map((subDomain) => (
+              <Accordion multiple defaultValue={[]} variant="separated">
+                {domain.subDomains.map((subDomain) => {
+                  const activeSkills = subDomain.skills.filter(
+                    (s) => getStatus(statusMap, s.uuid) === "active",
+                  );
+                  return (
                   <Accordion.Item key={subDomain.id} value={subDomain.id}>
                     <Accordion.Control>
-                      <Text size="sm" fw={500}>
-                        {subDomain.name}
-                      </Text>
+                      <Group gap="xs" wrap="nowrap">
+                        <Text size="sm" fw={500}>
+                          {subDomain.name}
+                        </Text>
+                        {activeSkills.map((s) => (
+                          <Badge
+                            key={s.uuid}
+                            size="xs"
+                            variant="light"
+                            color="blue"
+                          >
+                            {s.name}
+                          </Badge>
+                        ))}
+                      </Group>
                     </Accordion.Control>
                     <Accordion.Panel>
                       <SubDomainSkills
@@ -250,7 +248,8 @@ export function DomainAccordion({
                       />
                     </Accordion.Panel>
                   </Accordion.Item>
-                ))}
+                  );
+                })}
               </Accordion>
             </Accordion.Panel>
           </Accordion.Item>

@@ -1,12 +1,19 @@
 "use client";
 
-import { SimpleGrid, Card, Text, Title } from "@mantine/core";
-import type { TeacherSkillsIndex } from "../../core/taxonomy.types";
+import { SimpleGrid, Card, Text, Title, Stack } from "@mantine/core";
+import { SkillSoloCard } from "./SkillSoloCard";
+import type { TeacherSkillsIndex, TeacherSkill } from "../../core/taxonomy.types";
 import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
 
 interface ProgressStatsRowProps {
   taxonomy: TeacherSkillsIndex;
   statusMap: Map<string, TeacherSkillStatusDocument>;
+  onSkillClick?: (skillId: string) => void;
+}
+
+interface ActiveSkillInfo {
+  skill: TeacherSkill;
+  domainName: string;
 }
 
 function computeStats(
@@ -30,7 +37,7 @@ function computeStats(
         if (status === "proficient") {
           proficientCount++;
           domainProficient++;
-        } else if (status === "active" || status === "developing") {
+        } else if (status === "active") {
           activeCount++;
         }
       }
@@ -51,11 +58,30 @@ function computeStats(
   };
 }
 
+function collectActiveSkills(
+  taxonomy: TeacherSkillsIndex,
+  statusMap: Map<string, TeacherSkillStatusDocument>,
+): ActiveSkillInfo[] {
+  const active: ActiveSkillInfo[] = [];
+  for (const domain of taxonomy.domains) {
+    for (const subDomain of domain.subDomains) {
+      for (const skill of subDomain.skills) {
+        if (statusMap.get(skill.uuid)?.status === "active") {
+          active.push({ skill, domainName: domain.name });
+        }
+      }
+    }
+  }
+  return active;
+}
+
 export function ProgressStatsRow({
   taxonomy,
   statusMap,
+  onSkillClick,
 }: ProgressStatsRowProps) {
   const stats = computeStats(taxonomy, statusMap);
+  const activeSkills = collectActiveSkills(taxonomy, statusMap);
 
   const cards = [
     {
@@ -70,17 +96,37 @@ export function ProgressStatsRow({
   ];
 
   return (
-    <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="md">
-      {cards.map((card) => (
-        <Card key={card.label} withBorder p="md">
-          <Text size="xs" c="dimmed" tt="uppercase" fw={500}>
-            {card.label}
-          </Text>
-          <Title order={3} mt={4}>
-            {card.value}
-          </Title>
-        </Card>
-      ))}
-    </SimpleGrid>
+    <Stack gap="md">
+      <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="md">
+        {cards.map((card) => (
+          <Card key={card.label} withBorder p="md">
+            <Text size="xs" c="dimmed" tt="uppercase" fw={500}>
+              {card.label}
+            </Text>
+            <Title order={3} mt={4}>
+              {card.value}
+            </Title>
+          </Card>
+        ))}
+      </SimpleGrid>
+
+      {activeSkills.length > 0 && (
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
+          {activeSkills.map(({ skill, domainName }) => (
+            <SkillSoloCard
+              key={skill.uuid}
+              skillId={skill.uuid}
+              skillName={skill.name}
+              description={skill.description}
+              level={skill.level}
+              status="active"
+              isLocked={false}
+              domainName={domainName}
+              onSkillClick={onSkillClick}
+            />
+          ))}
+        </SimpleGrid>
+      )}
+    </Stack>
   );
 }

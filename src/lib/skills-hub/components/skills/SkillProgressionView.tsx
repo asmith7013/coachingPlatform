@@ -54,7 +54,7 @@ export function SkillProgressionView({
         .filter((sd) =>
           sd.skills.some((skill) => {
             const status = statusMap.get(skill.uuid)?.status;
-            return status === "active" || status === "developing";
+            return status === "active";
           }),
         )
         .map((sd) => sd.id);
@@ -92,7 +92,7 @@ export function SkillProgressionView({
   return (
     <div style={{ display: "flex", gap: 16 }}>
       <Stack gap="lg" style={{ flex: 1, minWidth: 0 }}>
-        <ProgressStatsRow taxonomy={taxonomy} statusMap={statusMap} />
+        <ProgressStatsRow taxonomy={taxonomy} statusMap={statusMap} onSkillClick={setSelectedSkillId} />
 
         <Text fw={700} size="lg">
           Skill Progression
