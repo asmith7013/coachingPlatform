@@ -30,6 +30,8 @@ import { SkillPairCard } from "./SkillPairCard";
 import { DomainAccordion } from "./DomainAccordion";
 import { SkillDetailContent } from "./SkillDetailPanel";
 import { DetailDrawer, DETAIL_DRAWER_WIDTH } from "../core/DetailDrawer";
+import type { DrawerTab } from "../core/DetailDrawer";
+import { DrawerObservationForm } from "../observations/DrawerObservationForm";
 import { formatDueDate } from "../../core/format-due-date";
 import { getSkillIcon } from "../../core/skill-icons";
 import { SKILL_STATUS_COLORS } from "../../core/skill-status-colors";
@@ -38,14 +40,23 @@ import {
   getSkillStatus,
   type TeacherSkillStatusDocument,
 } from "../../core/skill-status.types";
+import { getSkillByUuid } from "../../core/taxonomy";
 import type { ProgressionStepDocument } from "../../coach/skill-progressions/progression-step.types";
 import type { TeacherSkill } from "../../core/taxonomy.types";
 
+const MAX_TABS = 4;
+const DOMAINS_TAB_ID = "__domains__";
+const OBSERVE_TAB_ID = "__observe__";
+
 interface ActiveSkillsViewProps {
   teacherStaffId: string;
+  showObservations?: boolean;
 }
 
-export function ActiveSkillsView({ teacherStaffId }: ActiveSkillsViewProps) {
+export function ActiveSkillsView({
+  teacherStaffId,
+  showObservations = false,
+}: ActiveSkillsViewProps) {
   const { taxonomy, loading: taxLoading } = useTaxonomy();
   const { statuses, loading: statusLoading } =
     useTeacherSkillStatuses(teacherStaffId);
@@ -63,8 +74,28 @@ export function ActiveSkillsView({ teacherStaffId }: ActiveSkillsViewProps) {
 
   const [steps, setSteps] = useState<ProgressionStepDocument[]>([]);
   const [loadingSteps, setLoadingSteps] = useState(false);
+
+  // Simple drawer state (no tabs mode)
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+
+  // Tabbed drawer state (observations mode)
+  const pinnedTabIds = useMemo(
+    () =>
+      showObservations ? [DOMAINS_TAB_ID, OBSERVE_TAB_ID] : [DOMAINS_TAB_ID],
+    [showObservations],
+  );
+  const pinnedSet = useMemo(() => new Set(pinnedTabIds), [pinnedTabIds]);
+  const [openTabs, setOpenTabs] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+
+  // Initialize tabs when in observations mode
+  useEffect(() => {
+    if (showObservations && openTabs.length === 0) {
+      setOpenTabs([...pinnedTabIds]);
+      setActiveTab(DOMAINS_TAB_ID);
+    }
+  }, [showObservations, pinnedTabIds, openTabs.length]);
 
   useEffect(() => {
     if (!openPlan) {
@@ -85,7 +116,6 @@ export function ActiveSkillsView({ teacherStaffId }: ActiveSkillsViewProps) {
     };
   }, [openPlan]);
 
-  // For each active skill, find its paired skill (if any) so we can render SkillPairCard
   const enrichedActiveSkills = useMemo(() => {
     if (!taxonomy) return [];
     const activeSkills = collectActiveSkills(taxonomy, statusMap);
@@ -142,19 +172,82 @@ export function ActiveSkillsView({ teacherStaffId }: ActiveSkillsViewProps) {
     return result;
   }, [taxonomy, statusMap]);
 
-  const handleSkillClick = useCallback((skillId: string) => {
-    setSelectedSkillId(skillId);
-    setDrawerOpen(true);
-  }, []);
+  // Skill click handler — simple mode vs tabbed mode
+  const handleSkillClick = useCallback(
+    (skillId: string) => {
+      if (!showObservations) {
+        setSelectedSkillId(skillId);
+        setDrawerOpen(true);
+        return;
+      }
+
+      // Tabbed mode: open skill in a tab
+      setOpenTabs((prev) => {
+        if (prev.includes(skillId)) {
+          setActiveTab(skillId);
+          return prev;
+        }
+        if (prev.length < MAX_TABS) {
+          setActiveTab(skillId);
+          return [...prev, skillId];
+        }
+        // At max — replace the active tab if it's not pinned
+        setActiveTab((currentActive) => {
+          const replaceId =
+            currentActive && !pinnedSet.has(currentActive)
+              ? currentActive
+              : prev.findLast((id) => !pinnedSet.has(id));
+          if (!replaceId) return currentActive;
+          setOpenTabs((p) => p.map((id) => (id === replaceId ? skillId : id)));
+          return skillId;
+        });
+        return prev;
+      });
+    },
+    [showObservations, pinnedSet],
+  );
 
   const handleDrawerClose = useCallback(() => {
-    setDrawerOpen(false);
-    setSelectedSkillId(null);
-  }, []);
+    if (!showObservations) {
+      setDrawerOpen(false);
+      setSelectedSkillId(null);
+      return;
+    }
+    // Tabbed mode: reset to pinned tabs
+    setOpenTabs([...pinnedTabIds]);
+    setActiveTab(pinnedTabIds[0]);
+  }, [showObservations, pinnedTabIds]);
+
+  const handleTabClose = useCallback(
+    (tabId: string) => {
+      if (pinnedSet.has(tabId)) return;
+      setOpenTabs((prev) => {
+        const idx = prev.indexOf(tabId);
+        const next = prev.filter((id) => id !== tabId);
+        setActiveTab((current) => {
+          if (current !== tabId) return current;
+          if (next.length === 0) return null;
+          return next[Math.min(idx, next.length - 1)];
+        });
+        return next;
+      });
+    },
+    [pinnedSet],
+  );
+
+  const resolveTabName = useCallback(
+    (tabId: string): string => {
+      if (tabId === DOMAINS_TAB_ID) return "Domains";
+      if (tabId === OBSERVE_TAB_ID) return "Observe";
+      if (!taxonomy) return "Loading…";
+      const skill = getSkillByUuid(taxonomy, tabId);
+      return skill?.name ?? "Unknown Skill";
+    },
+    [taxonomy],
+  );
 
   const handleToggleStep = async (stepId: string, completed: boolean) => {
     const previousSteps = steps;
-    // Optimistic update
     setSteps((prev) =>
       prev.map((s) =>
         s._id === stepId
@@ -189,6 +282,44 @@ export function ActiveSkillsView({ teacherStaffId }: ActiveSkillsViewProps) {
       <Center py="xl">
         <Text c="dimmed">No taxonomy data available</Text>
       </Center>
+    );
+  }
+
+  // Tabbed drawer content
+  const tabItems: DrawerTab[] = showObservations
+    ? openTabs.map((tabId) => ({
+        id: tabId,
+        label: resolveTabName(tabId),
+        pinned: pinnedSet.has(tabId),
+      }))
+    : [];
+
+  const showTabbedDrawer = showObservations && openTabs.length > 0 && activeTab;
+  const showSimpleDrawer = !showObservations && drawerOpen;
+
+  function renderDrawerContent(tabId: string) {
+    if (tabId === OBSERVE_TAB_ID) {
+      return <DrawerObservationForm teacherStaffId={teacherStaffId} />;
+    }
+    if (tabId === DOMAINS_TAB_ID) {
+      return (
+        <Stack gap="md">
+          <Text fw={700} size="lg">
+            Skill Domains
+          </Text>
+          <DomainAccordion
+            domains={domainsWithSkills}
+            statusMap={statusMap}
+            defaultExpandedSubDomainsByDomain={expandedSubDomainsByDomain}
+            compact
+            onSkillClick={handleSkillClick}
+          />
+        </Stack>
+      );
+    }
+    // Skill detail tab
+    return (
+      <SkillDetailContent skillId={tabId} teacherStaffId={teacherStaffId} />
     );
   }
 
@@ -430,8 +561,30 @@ export function ActiveSkillsView({ teacherStaffId }: ActiveSkillsViewProps) {
         )}
       </Stack>
 
-      {/* Panel: DomainAccordion or SkillDetailContent */}
-      {drawerOpen && (
+      {/* Tabbed drawer (observations mode) */}
+      {showTabbedDrawer && (
+        <>
+          <div style={{ width: DETAIL_DRAWER_WIDTH, flexShrink: 0 }} />
+          <DetailDrawer
+            onClose={handleDrawerClose}
+            tabs={
+              openTabs.length > 1
+                ? {
+                    items: tabItems,
+                    activeId: activeTab,
+                    onChange: setActiveTab,
+                    onClose: handleTabClose,
+                  }
+                : undefined
+            }
+          >
+            {renderDrawerContent(activeTab)}
+          </DetailDrawer>
+        </>
+      )}
+
+      {/* Simple drawer (default mode) */}
+      {showSimpleDrawer && (
         <>
           <div style={{ width: DETAIL_DRAWER_WIDTH, flexShrink: 0 }} />
           <DetailDrawer onClose={handleDrawerClose}>

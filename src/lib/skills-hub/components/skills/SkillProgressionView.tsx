@@ -158,26 +158,11 @@ export function SkillProgressionView({
     [taxonomy],
   );
 
-  // Compute which subDomains have active/developing skills to auto-expand
-  const expandedSubDomainsByDomain = useMemo(() => {
-    if (!taxonomy) return new Map<string, string[]>();
-
-    const result = new Map<string, string[]>();
-    for (const domain of taxonomy.domains) {
-      const expanded = domain.subDomains
-        .filter((sd) =>
-          sd.skills.some((skill) => {
-            const status = statusMap.get(skill.uuid)?.status;
-            return status === "active";
-          }),
-        )
-        .map((sd) => sd.id);
-      if (expanded.length > 0) {
-        result.set(domain.id, expanded);
-      }
-    }
-    return result;
-  }, [taxonomy, statusMap]);
+  // All subdomains collapsed by default
+  const expandedSubDomainsByDomain = useMemo(
+    () => new Map<string, string[]>(),
+    [],
+  );
 
   if (taxLoading || statusLoading) {
     return <SkillMapSkeleton />;

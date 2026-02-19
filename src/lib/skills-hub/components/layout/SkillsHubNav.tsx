@@ -121,11 +121,9 @@ export function SkillsHubNav() {
             Icon: ClipboardDocumentCheckIcon,
             items: [
               { href: "/skillsHub/coach/caseload", label: "Caseload" },
-              { href: "/skillsHub/coach/skill-map", label: "Skill Map" },
-              { href: "/skillsHub/coach/observations", label: "Observations" },
               {
-                href: "/skillsHub/coach/skill-progressions",
-                label: "Skill Progressions",
+                href: "/skillsHub/coach/active-skills",
+                label: "Active Skills",
               },
             ],
           },

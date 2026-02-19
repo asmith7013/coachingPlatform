@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { Title, Text, Card, Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useSkillsHubAuth } from "@/lib/skills-hub/components/layout/ViewAsContext";
 import { useSkillsHubFilters } from "@/lib/skills-hub/hooks/useSkillsHubFilters";
 import { useCoachCaseload } from "@/lib/skills-hub/hooks/useCoachCaseload";
 import { CaseloadTable } from "@/lib/skills-hub/components/caseload/CaseloadTable";
+import { ActiveSkillsView } from "@/lib/skills-hub/components/skills/ActiveSkillsView";
 import { getCoaches } from "@/lib/skills-hub/admin/coaching-assignments/coaching-assignment.actions";
 import type { StaffOption } from "@/lib/skills-hub/admin/coaching-assignments/coaching-assignment.actions";
 
@@ -14,6 +16,9 @@ export default function CaseloadPage() {
   const isAdmin = hasRole("super_admin") || hasRole("director");
 
   const { selectedCoachId, setSelectedCoachId } = useSkillsHubFilters();
+  const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(
+    null,
+  );
 
   const { data: coaches } = useQuery({
     queryKey: ["skillshub-coaches"],
@@ -36,6 +41,11 @@ export default function CaseloadPage() {
     label: `${c.staffName}${c.email ? ` (${c.email})` : ""}`,
   }));
 
+  const handleCoachChange = (coachId: string | null) => {
+    setSelectedCoachId(coachId);
+    setSelectedTeacherId(null);
+  };
+
   return (
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
       <Card shadow="sm" p="lg" mb="lg">
@@ -53,7 +63,7 @@ export default function CaseloadPage() {
             searchable
             data={coachOptions}
             value={selectedCoachId}
-            onChange={setSelectedCoachId}
+            onChange={handleCoachChange}
           />
         </Card>
       )}
@@ -67,9 +77,25 @@ export default function CaseloadPage() {
           </Text>
         </Card>
       ) : (
-        <Card shadow="sm" p="lg">
-          <CaseloadTable teachers={teachers} loading={loading} />
-        </Card>
+        <>
+          <Card shadow="sm" p="lg">
+            <CaseloadTable
+              teachers={teachers}
+              loading={loading}
+              selectedTeacherId={selectedTeacherId}
+              onSelectTeacher={setSelectedTeacherId}
+            />
+          </Card>
+
+          {selectedTeacherId && (
+            <Card shadow="sm" p="lg" mt="lg">
+              <ActiveSkillsView
+                key={selectedTeacherId}
+                teacherStaffId={selectedTeacherId}
+              />
+            </Card>
+          )}
+        </>
       )}
     </div>
   );
