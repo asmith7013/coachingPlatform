@@ -1,9 +1,10 @@
 "use client";
 
-import { Accordion, Badge, Group, SimpleGrid, Text, Box } from "@mantine/core";
+import { Accordion, Group, SimpleGrid, Text, Box } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { SkillPairCard } from "./SkillPairCard";
 import { SkillSoloCard } from "./SkillSoloCard";
+import { getDomainIcon } from "../../core/domain-icons";
 import { isSkillLocked } from "../../core/skill-lock";
 import { SkillStatusEnum } from "../../core/skill-status.types";
 import type {
@@ -129,11 +130,9 @@ function SubDomainSkills({
 
 function DomainHeader({
   domain,
-  domainIndex,
   statusMap,
 }: {
   domain: TeacherSkillDomain;
-  domainIndex: number;
   statusMap: Map<string, TeacherSkillStatusDocument>;
 }) {
   const allSkills = domain.subDomains.flatMap((sd) => sd.skills);
@@ -141,18 +140,20 @@ function DomainHeader({
   const proficientCount = allSkills.filter(
     (s) => getStatus(statusMap, s.uuid) === "proficient",
   ).length;
-  const hasActive = allSkills.some(
+  const activeCount = allSkills.filter(
     (s) => getStatus(statusMap, s.uuid) === "active",
-  );
+  ).length;
   const allComplete = totalSkills > 0 && proficientCount === totalSkills;
 
   const circleBg = allComplete
     ? "var(--mantine-color-teal-6)"
-    : hasActive
+    : activeCount > 0
       ? "var(--mantine-color-blue-5)"
       : "var(--mantine-color-gray-2)";
   const circleColor =
-    allComplete || hasActive ? "white" : "var(--mantine-color-dark-4)";
+    allComplete || activeCount > 0 ? "white" : "var(--mantine-color-dark-4)";
+
+  const DomainIcon = getDomainIcon(domain.name);
 
   return (
     <Group justify="space-between" wrap="nowrap" style={{ flex: 1 }}>
@@ -167,12 +168,12 @@ function DomainHeader({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            flexShrink: 0,
             fontWeight: 700,
             fontSize: 13,
-            flexShrink: 0,
           }}
         >
-          {domainIndex + 1}
+          {activeCount > 0 ? activeCount : <DomainIcon size={16} color={circleColor} />}
         </Box>
         <div>
           <Text fw={600}>{domain.name}</Text>
@@ -191,12 +192,12 @@ function DomainHeader({
 export function DomainAccordion({
   domains,
   statusMap,
-  defaultExpandedSubDomainsByDomain,
+  defaultExpandedSubDomainsByDomain: _defaultExpandedSubDomainsByDomain,
   onSkillClick,
 }: DomainAccordionProps) {
   return (
     <Accordion multiple defaultValue={[]} variant="separated">
-      {domains.map((domain, index) => {
+      {domains.map((domain) => {
         const totalSkills = domain.subDomains.flatMap((sd) => sd.skills).length;
         if (totalSkills === 0) return null;
 
@@ -211,7 +212,6 @@ export function DomainAccordion({
             <Accordion.Control>
               <DomainHeader
                 domain={domain}
-                domainIndex={index}
                 statusMap={statusMap}
               />
             </Accordion.Control>
@@ -228,16 +228,25 @@ export function DomainAccordion({
                         <Text size="sm" fw={500}>
                           {subDomain.name}
                         </Text>
-                        {activeSkills.map((s) => (
-                          <Badge
-                            key={s.uuid}
-                            size="xs"
-                            variant="light"
-                            color="blue"
+                        {activeSkills.length > 0 && (
+                          <Box
+                            style={{
+                              width: 20,
+                              height: 20,
+                              borderRadius: "50%",
+                              backgroundColor: "var(--mantine-color-blue-5)",
+                              color: "white",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: 11,
+                              fontWeight: 700,
+                              flexShrink: 0,
+                            }}
                           >
-                            {s.name}
-                          </Badge>
-                        ))}
+                            {activeSkills.length}
+                          </Box>
+                        )}
                       </Group>
                     </Accordion.Control>
                     <Accordion.Panel>

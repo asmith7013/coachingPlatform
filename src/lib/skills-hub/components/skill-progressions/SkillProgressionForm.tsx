@@ -15,16 +15,8 @@ import {
   Box,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import {
-  IconBook,
-  IconRocket,
-  IconUsers,
-  IconUsersGroup,
-  IconBulb,
-  IconFlag,
-  IconHeart,
-} from "@tabler/icons-react";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
+import { getDomainIcon } from "../../core/domain-icons";
 import { createSkillProgressionWithSteps } from "../../coach/skill-progressions/skill-progression.actions";
 import { CoachTeacherSelector } from "../core/CoachTeacherSelector";
 import type { TeacherSkillDomain } from "../../core/taxonomy.types";
@@ -32,16 +24,6 @@ import type { TeacherSkillDomain } from "../../core/taxonomy.types";
 interface SkillProgressionFormProps {
   teacherStaffId: string;
 }
-
-const DOMAIN_ICONS: Record<string, React.ReactNode> = {
-  "Intellectual Preparation": <IconBook size={18} />,
-  "Lesson Launch": <IconRocket size={18} />,
-  "1:1 Coaching": <IconUsers size={18} />,
-  "Small Group Instruction": <IconUsersGroup size={18} />,
-  "Inquiry Groups": <IconBulb size={18} />,
-  "Lesson Closing": <IconFlag size={18} />,
-  Culture: <IconHeart size={18} />,
-};
 
 export function SkillProgressionForm({
   teacherStaffId,
@@ -160,10 +142,12 @@ export function SkillProgressionForm({
               />
             </Card>
 
-            {selectedDomains.map((domain) => (
+            {selectedDomains.map((domain) => {
+              const DomainIcon = getDomainIcon(domain.name);
+              return (
               <Card key={domain.uuid} shadow="sm" p="lg" withBorder>
                 <Group gap="xs" mb="md">
-                  {DOMAIN_ICONS[domain.name]}
+                  <DomainIcon size={18} />
                   <Text fw={600} size="lg">
                     {domain.name}
                   </Text>
@@ -191,7 +175,8 @@ export function SkillProgressionForm({
                   ))}
                 </Stack>
               </Card>
-            ))}
+              );
+            })}
 
             <Group justify="flex-end">
               <Button

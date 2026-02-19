@@ -92,7 +92,7 @@ export function SkillProgressionView({
   return (
     <div style={{ display: "flex", gap: 16 }}>
       <Stack gap="lg" style={{ flex: 1, minWidth: 0 }}>
-        <ProgressStatsRow taxonomy={taxonomy} statusMap={statusMap} onSkillClick={setSelectedSkillId} />
+        <ProgressStatsRow taxonomy={taxonomy} statusMap={statusMap} teacherStaffId={teacherStaffId} onSkillClick={setSelectedSkillId} />
 
         <Text fw={700} size="lg">
           Skill Progression

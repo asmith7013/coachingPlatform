@@ -45,7 +45,7 @@ import {
   IconWriting,
 } from "@tabler/icons-react";
 
-type IconComponent = ComponentType<{
+export type IconComponent = ComponentType<{
   size?: number;
   stroke?: number;
   color?: string;
