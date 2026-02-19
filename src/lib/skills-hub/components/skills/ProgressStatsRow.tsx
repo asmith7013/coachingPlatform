@@ -72,7 +72,7 @@ export function ProgressStatsRow({
   return (
     <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="md">
       {cards.map((card) => (
-        <Card key={card.label} shadow="sm" withBorder p="md">
+        <Card key={card.label} withBorder p="md">
           <Text size="xs" c="dimmed" tt="uppercase" fw={500}>
             {card.label}
           </Text>

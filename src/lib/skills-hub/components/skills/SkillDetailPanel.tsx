@@ -3,7 +3,8 @@
 import {
   Text,
   Title,
-  Badge,
+  Breadcrumbs,
+  Anchor,
   Group,
   Stack,
   Box,
@@ -26,10 +27,9 @@ import { useObservations } from "../../hooks/useObservations";
 import { getSkillById, getSkillByUuid } from "../../core/taxonomy";
 import { isSkillLocked } from "../../core/skill-lock";
 import { updateSkillStatus } from "../../core/skill-status.actions";
-import { SkillStatusBadge } from "../core/SkillStatusBadge";
 import { SkillStatusDot } from "./SkillStatusDot";
 import { SkillObservationTimeline } from "../observations/SkillObservationTimeline";
-import { SkillNotesSection } from "../notes/SkillNotesSection";
+// import { SkillNotesSection } from "../notes/SkillNotesSection";
 import { PanelActionPlanSection } from "../action-plans/PanelActionPlanSection";
 import { DetailDrawer } from "../core/DetailDrawer";
 import { getSkillIcon } from "../../core/skill-icons";
@@ -198,8 +198,29 @@ export function SkillDetailPanel({
   const subtitle =
     isCoach && teacherName ? `Reviewing: ${teacherName}` : undefined;
 
+  const headerContent = skill ? (
+    <div>
+      {subtitle && (
+        <Text size="xs" c="dimmed" mb={2}>
+          {subtitle}
+        </Text>
+      )}
+      <Breadcrumbs
+        separator="›"
+        styles={{ separator: { color: "var(--mantine-color-dimmed)" } }}
+      >
+        <Anchor size="xs" c="dimmed" underline="never">
+          {skill.domainName}
+        </Anchor>
+        <Anchor size="xs" c="dimmed" underline="never">
+          {skill.subDomainName}
+        </Anchor>
+      </Breadcrumbs>
+    </div>
+  ) : undefined;
+
   return (
-    <DetailDrawer onClose={onClose} subtitle={subtitle}>
+    <DetailDrawer onClose={onClose} header={headerContent}>
       {(taxLoading || statusLoading) && (
         <Center py="xl">
           <Loader size="sm" />
@@ -214,6 +235,7 @@ export function SkillDetailPanel({
 
       {skill && (
         <Stack gap="md">
+
           {/* Pair row */}
           {pairTiles && (
             <div
@@ -256,19 +278,6 @@ export function SkillDetailPanel({
               <Icon size={20} stroke={1.5} />
               <Title order={4}>{skill.name}</Title>
             </Group>
-            <Group gap="xs" mb="xs">
-              <Badge
-                variant="outline"
-                color={skill.level === 1 ? "blue" : "violet"}
-                size="sm"
-              >
-                Level {skill.level}
-              </Badge>
-              <SkillStatusBadge status={currentStatus} />
-            </Group>
-            <Text size="sm" c="dimmed">
-              {skill.domainName} &rsaquo; {skill.subDomainName}
-            </Text>
             {skill.description && (
               <Text size="sm" mt="xs">
                 {skill.description}
@@ -314,6 +323,7 @@ export function SkillDetailPanel({
             />
           </div>
 
+          {/* Notes section temporarily hidden
           <div>
             <Text fw={600} size="sm" mb="xs">
               Notes
@@ -324,6 +334,7 @@ export function SkillDetailPanel({
               isCoachView={isCoach}
             />
           </div>
+          */}
         </Stack>
       )}
     </DetailDrawer>
