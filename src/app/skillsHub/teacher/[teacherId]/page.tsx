@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { Container } from "@mantine/core";
-import { SkillProgressionView } from "@/lib/skills-hub/components/skills/SkillProgressionView";
+import { ActiveSkillsView } from "@/lib/skills-hub/components/skills/ActiveSkillsView";
 
 export default function TeacherDashboardPage() {
   const params = useParams();
@@ -10,7 +10,7 @@ export default function TeacherDashboardPage() {
 
   return (
     <Container size="xl" py="lg">
-      <SkillProgressionView teacherStaffId={teacherId} />
+      <ActiveSkillsView teacherStaffId={teacherId} />
     </Container>
   );
 }

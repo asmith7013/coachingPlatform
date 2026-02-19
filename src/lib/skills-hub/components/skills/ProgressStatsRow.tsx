@@ -38,6 +38,9 @@ interface ProgressStatsRowProps {
 
 interface ActiveSkillInfo {
   skill: TeacherSkill;
+  domainName: string;
+  subDomainName: string;
+  subDomainSkills: TeacherSkill[];
 }
 
 const STATUS_RING_COLORS = {
@@ -142,12 +145,12 @@ export function SkillProgressRing({
   return (
     <Group gap="md" wrap="nowrap">
       <RingProgress
-        size={80}
-        thickness={8}
+        size={100}
+        thickness={10}
         roundCaps
         sections={sections}
         label={
-          <Text ta="center" size="xs" fw={700}>
+          <Text ta="center" size="sm" fw={700}>
             {stats.proficientCount}/{stats.totalSkills}
           </Text>
         }
@@ -183,7 +186,12 @@ export function collectActiveSkills(
     for (const subDomain of domain.subDomains) {
       for (const skill of subDomain.skills) {
         if (statusMap.get(skill.uuid)?.status === "active") {
-          active.push({ skill });
+          active.push({
+            skill,
+            domainName: domain.name,
+            subDomainName: subDomain.name,
+            subDomainSkills: subDomain.skills,
+          });
         }
       }
     }
@@ -272,7 +280,7 @@ export function ProgressionOverviewContent({
           </Box>
         )}
         <Text fw={700} size="lg">
-          Current Skill Progression
+          Active Skills
         </Text>
       </Group>
 

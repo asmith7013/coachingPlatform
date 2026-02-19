@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import {
-  MapIcon,
   ClipboardDocumentCheckIcon,
   Cog6ToothIcon,
   Bars3Icon,
@@ -107,18 +106,14 @@ export function SkillsHubNav() {
     : "/skillsHub";
 
   // Standalone nav links (not in dropdowns)
-  const standaloneLinks: NavItem[] = [];
+  const standaloneLinks: NavItem[] = isTeacher
+    ? [
+        { href: teacherSkillsHref, label: "Home" },
+        { href: `${teacherSkillsHref}/skillProgress`, label: "Skill Progress" },
+      ]
+    : [];
 
   const categories: NavCategory[] = [
-    ...(isTeacher
-      ? [
-          {
-            label: "My Skills",
-            Icon: MapIcon,
-            items: [{ href: teacherSkillsHref, label: "My Skill Map" }],
-          },
-        ]
-      : []),
     ...(!isTeacher
       ? [
           {

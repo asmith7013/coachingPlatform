@@ -18,6 +18,7 @@ interface SkillHalf {
 interface SkillPairCardProps {
   l1: SkillHalf;
   l2: SkillHalf;
+  compact?: boolean;
   onSkillClick?: (skillId: string) => void;
 }
 
@@ -91,21 +92,28 @@ function SkillHalfContent({
   );
 }
 
-export function SkillPairCard({ l1, l2, onSkillClick }: SkillPairCardProps) {
+export function SkillPairCard({
+  l1,
+  l2,
+  compact,
+  onSkillClick,
+}: SkillPairCardProps) {
   return (
     <Card shadow="xs" withBorder p={0}>
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          gridTemplateColumns: compact ? "1fr" : "1fr 1fr",
           borderCollapse: "collapse",
         }}
       >
         <SkillHalfContent skill={l1} onSkillClick={onSkillClick} />
         <Box
-          style={{
-            borderLeft: "1px solid var(--mantine-color-gray-3)",
-          }}
+          style={
+            compact
+              ? { borderTop: "1px solid var(--mantine-color-gray-3)" }
+              : { borderLeft: "1px solid var(--mantine-color-gray-3)" }
+          }
         >
           <SkillHalfContent skill={l2} onSkillClick={onSkillClick} />
         </Box>
