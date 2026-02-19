@@ -306,10 +306,7 @@ export function SkillDetailPanel({
 
           <PanelActionPlanSection
             plans={linkedPlans}
-            skillUuid={skill.uuid}
-            skillDomainName={skill.domainName}
             teacherStaffId={teacherStaffId}
-            isCoach={isCoach}
           />
 
           <div>

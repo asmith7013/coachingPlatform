@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Box, CloseButton, Group, Text } from "@mantine/core";
 import { useDrawerPortal } from "./DrawerPortalContext";
@@ -17,7 +17,7 @@ export const DETAIL_DRAWER_WIDTH = 420;
 function useLayoutOffsets() {
   const [offsets, setOffsets] = useState({ top: 0, bottom: 0 });
 
-  useEffect(() => {
+  const measure = useCallback(() => {
     const nav = document.querySelector("nav");
     const footer = document.querySelector("footer");
     setOffsets({
@@ -25,6 +25,15 @@ function useLayoutOffsets() {
       bottom: footer ? footer.offsetHeight : 0,
     });
   }, []);
+
+  useLayoutEffect(() => {
+    measure();
+
+    // Re-measure when footer appears/disappears
+    const observer = new MutationObserver(measure);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [measure]);
 
   return offsets;
 }
