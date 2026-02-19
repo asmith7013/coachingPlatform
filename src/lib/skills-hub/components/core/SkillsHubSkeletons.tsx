@@ -31,26 +31,39 @@ export function ActionPlanListSkeleton() {
   );
 }
 
-/** Skeleton for SkillMap — 2-col grid of domain cards */
+/** Skeleton for SkillProgressionView — stats row + domain accordions */
 export function SkillMapSkeleton() {
   return (
-    <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
-      {[1, 2, 3, 4].map((i) => (
-        <Card key={i} shadow="sm" withBorder>
-          <Card.Section withBorder inheritPadding py="sm">
-            <Group justify="space-between">
-              <Skeleton height={22} width="50%" />
-              <Skeleton height={20} width={70} radius="xl" />
-            </Group>
-          </Card.Section>
-          <Stack gap="xs" mt="sm" p="md">
-            {[1, 2, 3].map((j) => (
-              <Skeleton key={j} height={40} radius="sm" />
-            ))}
-          </Stack>
+    <Stack gap="lg">
+      {/* Stats row */}
+      <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="md">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} shadow="sm" withBorder p="md">
+            <Skeleton height={12} width="60%" mb={8} />
+            <Skeleton height={28} width="40%" />
+          </Card>
+        ))}
+      </SimpleGrid>
+
+      {/* Header */}
+      <Group justify="space-between">
+        <Skeleton height={22} width={160} />
+        <Skeleton height={16} width={90} />
+      </Group>
+
+      {/* Domain accordion items */}
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Card key={i} shadow="sm" withBorder p="md">
+          <Group gap="sm">
+            <Skeleton height={28} width={28} circle />
+            <div style={{ flex: 1 }}>
+              <Skeleton height={18} width="40%" mb={4} />
+              <Skeleton height={12} width="25%" />
+            </div>
+          </Group>
         </Card>
       ))}
-    </SimpleGrid>
+    </Stack>
   );
 }
 

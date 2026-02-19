@@ -323,7 +323,7 @@ export async function handleSessionCreated(
 
 // Helper functions to extract data from staff records
 function extractSchoolIds(staff: Record<string, unknown>): string[] {
-  const schools = staff.schools as Array<{ toString(): string }> | undefined;
+  const schools = staff.schoolIds as Array<{ toString(): string }> | undefined;
   return schools?.map((school) => school.toString()) || [];
 }
 

@@ -170,9 +170,9 @@ export function SkillDetailPanel({
 
   // Get all skills in subdomain for lock check
   const subDomainSkills = taxonomy
-    ? taxonomy.domains
+    ? (taxonomy.domains
         .flatMap((d) => d.subDomains)
-        .find((sd) => sd.id === skill?.subDomainId)?.skills ?? []
+        .find((sd) => sd.id === skill?.subDomainId)?.skills ?? [])
     : [];
 
   const pairedIsLocked = pairedSkill
