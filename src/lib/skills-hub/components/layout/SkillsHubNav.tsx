@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import {
   MapIcon,
@@ -32,7 +32,8 @@ const ROLE_LABELS: Record<ViewRole, string> = {
 
 export function SkillsHubNav() {
   const pathname = usePathname();
-  const { viewRole, setViewRole } = useViewAs();
+  const router = useRouter();
+  const { viewRole, setViewRole, teacherStaffId } = useViewAs();
   const mockUser = useSkillsHubAuth();
   const [fabOpen, setFabOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -434,22 +435,32 @@ export function SkillsHubNav() {
             <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-3">
               View as
             </p>
-            {(["teacher", "coach", "admin"] as ViewRole[]).map((role) => (
-              <button
-                key={role}
-                onClick={() => {
-                  setViewRole(role);
-                  setFabOpen(false);
-                }}
-                className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${
-                  viewRole === role
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-300 hover:bg-gray-800"
-                }`}
-              >
-                {ROLE_LABELS[role]}
-              </button>
-            ))}
+            {(["teacher", "coach", "admin"] as ViewRole[]).map((role) => {
+              const roleHome: Record<ViewRole, string> = {
+                teacher: teacherStaffId
+                  ? `/skillsHub/teacher/${teacherStaffId}`
+                  : "/skillsHub",
+                coach: "/skillsHub/coach/caseload",
+                admin: "/skillsHub/admin/assignments",
+              };
+              return (
+                <button
+                  key={role}
+                  onClick={() => {
+                    setViewRole(role);
+                    router.push(roleHome[role]);
+                    setFabOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${
+                    viewRole === role
+                      ? "bg-indigo-600 text-white"
+                      : "text-gray-300 hover:bg-gray-800"
+                  }`}
+                >
+                  {ROLE_LABELS[role]}
+                </button>
+              );
+            })}
           </div>
         )}
         <button
