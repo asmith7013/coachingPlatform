@@ -46,10 +46,22 @@ const STATUS_RING_COLORS = {
 };
 
 const STATUS_LEGEND = [
-  { key: "proficient", label: "Proficient", color: "var(--mantine-color-green-6)" },
-  { key: "developing", label: "Developing", color: "var(--mantine-color-yellow-5)" },
+  {
+    key: "proficient",
+    label: "Proficient",
+    color: "var(--mantine-color-green-6)",
+  },
+  {
+    key: "developing",
+    label: "Developing",
+    color: "var(--mantine-color-yellow-5)",
+  },
   { key: "active", label: "Active", color: "var(--mantine-color-blue-5)" },
-  { key: "not_started", label: "Not Started", color: "var(--mantine-color-gray-4)" },
+  {
+    key: "not_started",
+    label: "Not Started",
+    color: "var(--mantine-color-gray-4)",
+  },
 ] as const;
 
 function computeStats(
@@ -72,12 +84,19 @@ function computeStats(
     }
   });
 
-  const notStartedCount = totalSkills - proficientCount - activeCount - developingCount;
+  const notStartedCount =
+    totalSkills - proficientCount - activeCount - developingCount;
 
-  return { totalSkills, proficientCount, activeCount, developingCount, notStartedCount };
+  return {
+    totalSkills,
+    proficientCount,
+    activeCount,
+    developingCount,
+    notStartedCount,
+  };
 }
 
-function SkillProgressRing({
+export function SkillProgressRing({
   taxonomy,
   statusMap,
 }: {
@@ -88,11 +107,35 @@ function SkillProgressRing({
   const total = stats.totalSkills || 1;
 
   const sections = [
-    { value: (stats.proficientCount / total) * 100, color: STATUS_RING_COLORS.proficient },
-    { value: (stats.developingCount / total) * 100, color: STATUS_RING_COLORS.developing },
-    { value: (stats.activeCount / total) * 100, color: STATUS_RING_COLORS.active },
-    { value: (stats.notStartedCount / total) * 100, color: STATUS_RING_COLORS.not_started },
+    {
+      value: (stats.proficientCount / total) * 100,
+      color: STATUS_RING_COLORS.proficient,
+    },
+    {
+      value: (stats.developingCount / total) * 100,
+      color: STATUS_RING_COLORS.developing,
+    },
+    {
+      value: (stats.activeCount / total) * 100,
+      color: STATUS_RING_COLORS.active,
+    },
+    {
+      value: (stats.notStartedCount / total) * 100,
+      color: STATUS_RING_COLORS.not_started,
+    },
   ].filter((s) => s.value > 0);
+
+  const legendItems = STATUS_LEGEND.map(({ key, label, color }) => {
+    const count =
+      key === "proficient"
+        ? stats.proficientCount
+        : key === "developing"
+          ? stats.developingCount
+          : key === "active"
+            ? stats.activeCount
+            : stats.notStartedCount;
+    return { key, label, color, count };
+  });
 
   return (
     <Group gap="md" wrap="nowrap">
@@ -107,31 +150,24 @@ function SkillProgressRing({
           </Text>
         }
       />
-      <Stack gap={4}>
-        {STATUS_LEGEND.map(({ key, label, color }) => {
-          const count =
-            key === "proficient" ? stats.proficientCount
-            : key === "developing" ? stats.developingCount
-            : key === "active" ? stats.activeCount
-            : stats.notStartedCount;
-          return (
-            <Group key={key} gap={6} wrap="nowrap">
-              <Box
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  backgroundColor: color,
-                  flexShrink: 0,
-                }}
-              />
-              <Text size="xs" c="dimmed">
-                {label} ({count})
-              </Text>
-            </Group>
-          );
-        })}
-      </Stack>
+      <SimpleGrid cols={2} spacing={4} verticalSpacing={4}>
+        {legendItems.map(({ key, label, color, count }) => (
+          <Group key={key} gap={6} wrap="nowrap">
+            <Box
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                backgroundColor: color,
+                flexShrink: 0,
+              }}
+            />
+            <Text size="xs" c="dimmed">
+              {label} ({count})
+            </Text>
+          </Group>
+        ))}
+      </SimpleGrid>
     </Group>
   );
 }
@@ -153,10 +189,7 @@ function collectActiveSkills(
   return active;
 }
 
-function resolveSkillName(
-  taxonomy: TeacherSkillsIndex,
-  uuid: string,
-): string {
+function resolveSkillName(taxonomy: TeacherSkillsIndex, uuid: string): string {
   const skill = getSkillByUuid(taxonomy, uuid);
   return skill?.name ?? uuid;
 }
@@ -185,7 +218,7 @@ export function ProgressStatsRow({
       }
       setLoadingSteps(false);
     });
-  }, [openPlan?._id]);
+  }, [openPlan]);
 
   const activeSkills = collectActiveSkills(taxonomy, statusMap);
 
@@ -207,33 +240,19 @@ export function ProgressStatsRow({
   };
 
   if (!openPlan) {
-    return (
-      <Card shadow="sm" withBorder p="lg">
-        <Group justify="space-between" align="center">
-          <Text fw={700} size="lg">
-            Skill Progress
-          </Text>
-          <SkillProgressRing taxonomy={taxonomy} statusMap={statusMap} />
-        </Group>
-      </Card>
-    );
+    return null;
   }
 
   return (
     <Card shadow="sm" withBorder p="lg">
       <Stack gap="md">
-        <Group justify="space-between" align="flex-start" wrap="nowrap">
-          <div>
-            <Group gap="xs" align="center">
-              <Text fw={700} size="lg">
-                Current Skill Progression
-              </Text>
-              <Badge color="blue" size="sm" variant="light">
-                {openPlan.title}
-              </Badge>
-            </Group>
-          </div>
-          <SkillProgressRing taxonomy={taxonomy} statusMap={statusMap} />
+        <Group gap="xs" align="center">
+          <Text fw={700} size="lg">
+            Current Skill Progression
+          </Text>
+          <Badge color="blue" size="sm" variant="light">
+            {openPlan.title}
+          </Badge>
         </Group>
 
         {openPlan.why && (
@@ -278,17 +297,10 @@ export function ProgressStatsRow({
             </Group>
             <Stack gap="xs">
               {steps.map((step) => (
-                <Group
-                  key={step._id}
-                  gap="sm"
-                  wrap="nowrap"
-                  align="flex-start"
-                >
+                <Group key={step._id} gap="sm" wrap="nowrap" align="flex-start">
                   <Checkbox
                     checked={step.completed}
-                    onChange={() =>
-                      handleToggleStep(step._id, step.completed)
-                    }
+                    onChange={() => handleToggleStep(step._id, step.completed)}
                     disabled={step.completed}
                     mt={2}
                   />
@@ -303,17 +315,11 @@ export function ProgressStatsRow({
                     <Group gap={4} mt={2} wrap="wrap">
                       {step.dueDate && (
                         <Badge size="xs" variant="light">
-                          Due:{" "}
-                          {new Date(step.dueDate).toLocaleDateString()}
+                          Due: {new Date(step.dueDate).toLocaleDateString()}
                         </Badge>
                       )}
                       {step.skillIds.map((id) => (
-                        <Badge
-                          key={id}
-                          size="xs"
-                          variant="dot"
-                          color="blue"
-                        >
+                        <Badge key={id} size="xs" variant="dot" color="blue">
                           {resolveSkillName(taxonomy, id)}
                         </Badge>
                       ))}

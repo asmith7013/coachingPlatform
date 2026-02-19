@@ -173,7 +173,11 @@ function DomainHeader({
             fontSize: 13,
           }}
         >
-          {activeCount > 0 ? activeCount : <DomainIcon size={16} color={circleColor} />}
+          {activeCount > 0 ? (
+            activeCount
+          ) : (
+            <DomainIcon size={16} color={circleColor} />
+          )}
         </Box>
         <div>
           <Text fw={600}>{domain.name}</Text>
@@ -210,10 +214,7 @@ export function DomainAccordion({
             }}
           >
             <Accordion.Control>
-              <DomainHeader
-                domain={domain}
-                statusMap={statusMap}
-              />
+              <DomainHeader domain={domain} statusMap={statusMap} />
             </Accordion.Control>
             <Accordion.Panel>
               <Accordion multiple defaultValue={[]} variant="separated">
@@ -222,41 +223,41 @@ export function DomainAccordion({
                     (s) => getStatus(statusMap, s.uuid) === "active",
                   );
                   return (
-                  <Accordion.Item key={subDomain.id} value={subDomain.id}>
-                    <Accordion.Control>
-                      <Group gap="xs" wrap="nowrap">
-                        <Text size="sm" fw={500}>
-                          {subDomain.name}
-                        </Text>
-                        {activeSkills.length > 0 && (
-                          <Box
-                            style={{
-                              width: 20,
-                              height: 20,
-                              borderRadius: "50%",
-                              backgroundColor: "var(--mantine-color-blue-5)",
-                              color: "white",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontSize: 11,
-                              fontWeight: 700,
-                              flexShrink: 0,
-                            }}
-                          >
-                            {activeSkills.length}
-                          </Box>
-                        )}
-                      </Group>
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                      <SubDomainSkills
-                        subDomain={subDomain}
-                        statusMap={statusMap}
-                        onSkillClick={onSkillClick}
-                      />
-                    </Accordion.Panel>
-                  </Accordion.Item>
+                    <Accordion.Item key={subDomain.id} value={subDomain.id}>
+                      <Accordion.Control>
+                        <Group gap="xs" wrap="nowrap">
+                          <Text size="sm" fw={500}>
+                            {subDomain.name}
+                          </Text>
+                          {activeSkills.length > 0 && (
+                            <Box
+                              style={{
+                                width: 20,
+                                height: 20,
+                                borderRadius: "50%",
+                                backgroundColor: "var(--mantine-color-blue-5)",
+                                color: "white",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: 11,
+                                fontWeight: 700,
+                                flexShrink: 0,
+                              }}
+                            >
+                              {activeSkills.length}
+                            </Box>
+                          )}
+                        </Group>
+                      </Accordion.Control>
+                      <Accordion.Panel>
+                        <SubDomainSkills
+                          subDomain={subDomain}
+                          statusMap={statusMap}
+                          onSkillClick={onSkillClick}
+                        />
+                      </Accordion.Panel>
+                    </Accordion.Item>
                   );
                 })}
               </Accordion>

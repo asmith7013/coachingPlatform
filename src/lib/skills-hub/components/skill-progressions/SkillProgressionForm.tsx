@@ -145,36 +145,36 @@ export function SkillProgressionForm({
             {selectedDomains.map((domain) => {
               const DomainIcon = getDomainIcon(domain.name);
               return (
-              <Card key={domain.uuid} shadow="sm" p="lg" withBorder>
-                <Group gap="xs" mb="md">
-                  <DomainIcon size={18} />
-                  <Text fw={600} size="lg">
-                    {domain.name}
-                  </Text>
-                </Group>
+                <Card key={domain.uuid} shadow="sm" p="lg" withBorder>
+                  <Group gap="xs" mb="md">
+                    <DomainIcon size={18} />
+                    <Text fw={600} size="lg">
+                      {domain.name}
+                    </Text>
+                  </Group>
 
-                <Stack gap="sm">
-                  {domain.subDomains.map((sd) => (
-                    <div key={sd.uuid}>
-                      <Text size="sm" c="dimmed" fw={500} mb={4}>
-                        {sd.name}
-                      </Text>
-                      <Group gap="xs">
-                        {sd.skills.map((skill) => (
-                          <Chip
-                            key={skill.uuid}
-                            checked={skillIds.includes(skill.uuid)}
-                            onChange={() => toggleSkill(skill.uuid)}
-                            size="sm"
-                          >
-                            {skill.name}
-                          </Chip>
-                        ))}
-                      </Group>
-                    </div>
-                  ))}
-                </Stack>
-              </Card>
+                  <Stack gap="sm">
+                    {domain.subDomains.map((sd) => (
+                      <div key={sd.uuid}>
+                        <Text size="sm" c="dimmed" fw={500} mb={4}>
+                          {sd.name}
+                        </Text>
+                        <Group gap="xs">
+                          {sd.skills.map((skill) => (
+                            <Chip
+                              key={skill.uuid}
+                              checked={skillIds.includes(skill.uuid)}
+                              onChange={() => toggleSkill(skill.uuid)}
+                              size="sm"
+                            >
+                              {skill.name}
+                            </Chip>
+                          ))}
+                        </Group>
+                      </div>
+                    ))}
+                  </Stack>
+                </Card>
               );
             })}
 
