@@ -138,11 +138,6 @@ export function SkillProgressionView({
     [pinnedSet],
   );
 
-  const handleInTabNavigate = useCallback((oldId: string, newId: string) => {
-    setOpenTabs((prev) => prev.map((id) => (id === oldId ? newId : id)));
-    setActiveTab(newId);
-  }, []);
-
   const handleCloseAll = useCallback(() => {
     if (allPinnedIds.length > 0) {
       setOpenTabs([...allPinnedIds]);
@@ -265,7 +260,6 @@ export function SkillProgressionView({
                 skillId={activeTab}
                 teacherStaffId={teacherStaffId}
                 teacherName={teacherName}
-                onSkillClick={(newId) => handleInTabNavigate(activeTab, newId)}
               />
             )}
           </DetailDrawer>

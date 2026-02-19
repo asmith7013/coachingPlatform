@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { Box, CloseButton, Group, Text, UnstyledButton } from "@mantine/core";
+import { Box, CloseButton, Divider, Group, Text } from "@mantine/core";
 import { IconPinFilled } from "@tabler/icons-react";
 import { useDrawerPortal } from "./DrawerPortalContext";
 
@@ -59,11 +59,17 @@ function DrawerTabStrip({ tabs }: { tabs: DrawerTabsConfig }) {
       {tabs.items.map((tab) => {
         const isActive = tab.id === tabs.activeId;
         return (
-          <UnstyledButton
+          <div
             key={tab.id}
+            role="button"
+            tabIndex={0}
             onClick={() => tabs.onChange(tab.id)}
-            px={8}
-            py={4}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                tabs.onChange(tab.id);
+              }
+            }}
             style={{
               borderRadius: "var(--mantine-radius-sm)",
               backgroundColor: isActive
@@ -78,6 +84,8 @@ function DrawerTabStrip({ tabs }: { tabs: DrawerTabsConfig }) {
               maxWidth: 160,
               flexShrink: 1,
               minWidth: 0,
+              padding: "4px 8px",
+              cursor: "pointer",
             }}
           >
             {tab.pinned && (
@@ -107,7 +115,7 @@ function DrawerTabStrip({ tabs }: { tabs: DrawerTabsConfig }) {
                 style={{ flexShrink: 0 }}
               />
             )}
-          </UnstyledButton>
+          </div>
         );
       })}
     </Group>
@@ -162,6 +170,7 @@ export function DetailDrawer({
           )}
         </Group>
       )}
+      {hasHeader && <Divider mb="md" />}
       {children}
     </Box>
   );

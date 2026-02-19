@@ -28,7 +28,6 @@ interface SkillDetailContentProps {
   skillId: string;
   teacherStaffId: string;
   teacherName?: string;
-  onSkillClick: (skillId: string) => void;
 }
 
 interface SkillDetailPanelProps extends SkillDetailContentProps {
@@ -39,7 +38,6 @@ export function SkillDetailContent({
   skillId,
   teacherStaffId,
   teacherName,
-  onSkillClick,
 }: SkillDetailContentProps) {
   const { hasRole } = useSkillsHubAuth();
 
@@ -145,7 +143,6 @@ export function SkillDetailPanel({
   skillId,
   teacherStaffId,
   teacherName,
-  onSkillClick,
   onClose,
 }: SkillDetailPanelProps) {
   return (
@@ -154,7 +151,6 @@ export function SkillDetailPanel({
         skillId={skillId}
         teacherStaffId={teacherStaffId}
         teacherName={teacherName}
-        onSkillClick={onSkillClick}
       />
     </DetailDrawer>
   );

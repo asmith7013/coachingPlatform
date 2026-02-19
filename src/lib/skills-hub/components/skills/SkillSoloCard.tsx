@@ -125,7 +125,10 @@ export function SkillSoloCard({
   }
 
   return (
-    <UnstyledButton onClick={() => onSkillClick?.(skillId)} w={compact ? undefined : "100%"}>
+    <UnstyledButton
+      onClick={() => onSkillClick?.(skillId)}
+      w={compact ? undefined : "100%"}
+    >
       {content}
     </UnstyledButton>
   );
