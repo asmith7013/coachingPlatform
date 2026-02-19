@@ -1,6 +1,14 @@
 "use client";
 
-import { Stack, Group, Text, Progress, Checkbox, Badge } from "@mantine/core";
+import {
+  Stack,
+  Group,
+  Text,
+  Progress,
+  Checkbox,
+  Badge,
+  Tooltip,
+} from "@mantine/core";
 import { formatDueDate } from "../../core/format-due-date";
 import type { ProgressionStepDocument } from "../../coach/skill-progressions/progression-step.types";
 
@@ -70,14 +78,16 @@ export function StepChecklist({
               {step.description}
             </Text>
             {step.dueDate && (
-              <Badge
-                size="sm"
-                variant="light"
-                color="blue"
-                style={{ flexShrink: 0 }}
-              >
-                {formatDueDate(step.dueDate)}
-              </Badge>
+              <Tooltip label="Due date">
+                <Badge
+                  size="sm"
+                  variant="light"
+                  color="blue"
+                  style={{ flexShrink: 0 }}
+                >
+                  {formatDueDate(step.dueDate)}
+                </Badge>
+              </Tooltip>
             )}
           </Group>
         ))}

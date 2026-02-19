@@ -113,7 +113,14 @@ export function ActiveSkillsSummary({
           Target Skills
         </Text>
         {enrichedActiveSkills.length > 0 ? (
-          <Accordion multiple variant="separated" defaultValue={[]}>
+          <Accordion
+            multiple
+            variant="separated"
+            defaultValue={[]}
+            styles={{
+              item: { backgroundColor: "var(--mantine-color-white)" },
+            }}
+          >
             {enrichedActiveSkills.map(
               ({
                 skill,

@@ -30,12 +30,14 @@ interface ActiveSkillsViewProps {
   teacherStaffId: string;
   showObservations?: boolean;
   headerContent?: React.ReactNode;
+  teacherName?: string | null;
 }
 
 export function ActiveSkillsView({
   teacherStaffId,
   showObservations = false,
   headerContent,
+  teacherName,
 }: ActiveSkillsViewProps) {
   const { taxonomy, loading: taxLoading } = useTaxonomy();
   const { statuses, loading: statusLoading } =
@@ -228,15 +230,12 @@ export function ActiveSkillsView({
   return (
     <div style={{ display: "flex", gap: 16 }}>
       <Stack gap="lg" style={{ flex: 1, minWidth: 0 }}>
-        {/* Header: Title left, Ring right */}
+        {/* Header: selector above, title + ring */}
+        {headerContent}
         <Group justify="space-between" align="center" wrap="nowrap">
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <Title order={2}>Active Skills</Title>
-            <Text size="sm" c="dimmed">
-              Your current focus and next steps
-            </Text>
-            {headerContent}
-          </div>
+          <Title order={2}>
+            {teacherName ? `Active Skills for ${teacherName}` : "Active Skills"}
+          </Title>
           <SkillProgressRing taxonomy={taxonomy} statusMap={statusMap} />
         </Group>
 

@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import {
   Stack,
-  Accordion,
+  Card,
   Select,
   Group,
   Textarea,
@@ -14,7 +14,7 @@ import {
   Loader,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
-import { SkillSoloCard } from "../skills/SkillSoloCard";
+import { SkillIconCircle } from "../skills/SkillIconCircle";
 import { collectActiveSkills } from "../../core/active-skills";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
 import { useTeacherSkillStatuses } from "../../hooks/useTeacherSkillStatuses";
@@ -87,6 +87,7 @@ export function DrawerObservationForm({
           onChange={form.setDate}
           size="xs"
           maxDate={new Date()}
+          withAsterisk
         />
         <Select
           label="Type"
@@ -105,35 +106,43 @@ export function DrawerObservationForm({
         Active Skills
       </Text>
 
-      <Accordion multiple variant="separated">
+      <Stack gap="sm">
         {activeSkills.map(({ skill }) => {
           const skillData = form.skillRatings.get(skill.uuid);
           const currentRating = skillData?.rating ?? null;
 
           return (
-            <SkillSoloCard
-              key={skill.uuid}
-              accordion
-              skillId={skill.uuid}
-              skillName={skill.name}
-              description={skill.description}
-              level={skill.level}
-              status="active"
-              isLocked={false}
-              rightSection={
-                currentRating && currentRating !== "not_observed" ? (
-                  <Badge
-                    size="xs"
-                    variant="light"
-                    color={RATING_COLORS[currentRating]}
-                    style={{ flexShrink: 0 }}
-                  >
-                    {currentRating}
-                  </Badge>
-                ) : undefined
-              }
-            >
+            <Card key={skill.uuid} withBorder p="sm">
               <Stack gap="xs">
+                <Group gap="xs" wrap="nowrap">
+                  <SkillIconCircle
+                    skillId={skill.uuid}
+                    status="active"
+                    isLocked={false}
+                    size={28}
+                  />
+                  <Text
+                    size="sm"
+                    fw={500}
+                    lineClamp={1}
+                    style={{ flex: 1, minWidth: 0 }}
+                  >
+                    {skill.name}
+                  </Text>
+                  {currentRating && currentRating !== "not_observed" && (
+                    <Badge
+                      size="xs"
+                      variant="light"
+                      color={RATING_COLORS[currentRating]}
+                      style={{ flexShrink: 0 }}
+                    >
+                      {currentRating}
+                    </Badge>
+                  )}
+                  <Text size="xs" c="dimmed" fw={500} style={{ flexShrink: 0 }}>
+                    L{skill.level}
+                  </Text>
+                </Group>
                 <Textarea
                   placeholder="Evidence..."
                   size="xs"
@@ -147,22 +156,30 @@ export function DrawerObservationForm({
                     )
                   }
                 />
-                <RatingPills
-                  options={RATING_PILL_OPTIONS}
-                  value={currentRating}
-                  onChange={(val) =>
-                    form.handleSkillRatingChange(
-                      skill.uuid,
-                      (val as RatingScale) || null,
-                    )
-                  }
-                  size="xs"
-                />
+                <div>
+                  <Text size="xs" fw={500} mb={4}>
+                    Rating{" "}
+                    <span style={{ color: "var(--mantine-color-red-6)" }}>
+                      *
+                    </span>
+                  </Text>
+                  <RatingPills
+                    options={RATING_PILL_OPTIONS}
+                    value={currentRating}
+                    onChange={(val) =>
+                      form.handleSkillRatingChange(
+                        skill.uuid,
+                        (val as RatingScale) || null,
+                      )
+                    }
+                    size="xs"
+                  />
+                </div>
               </Stack>
-            </SkillSoloCard>
+            </Card>
           );
         })}
-      </Accordion>
+      </Stack>
 
       <Textarea
         label="Notes"

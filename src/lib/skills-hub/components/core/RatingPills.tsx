@@ -42,7 +42,9 @@ export function RatingPills({
               paddingInline: px,
               paddingBlock: py,
               backgroundColor: isSelected
-                ? `var(--mantine-color-${option.color}-light)`
+                ? option.color === "gray"
+                  ? "var(--mantine-color-gray-3)"
+                  : `var(--mantine-color-${option.color}-light)`
                 : "var(--mantine-color-gray-1)",
               transition: "background-color 150ms ease",
             }}
@@ -52,7 +54,9 @@ export function RatingPills({
               fw={isSelected ? 600 : 400}
               c={
                 isSelected
-                  ? `var(--mantine-color-${option.color}-light-color)`
+                  ? option.color === "gray"
+                    ? "var(--mantine-color-gray-8)"
+                    : `var(--mantine-color-${option.color}-light-color)`
                   : "dark"
               }
               lh={1}
