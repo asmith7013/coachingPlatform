@@ -4,3 +4,4 @@
  */
 
 export { ActivityTypeConfigModel } from "./activity-type-config.model";
+export { StudentGoalModel } from "./student-goal.model";
