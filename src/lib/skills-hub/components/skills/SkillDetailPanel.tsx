@@ -235,7 +235,6 @@ export function SkillDetailPanel({
 
       {skill && (
         <Stack gap="md">
-
           {/* Pair row */}
           {pairTiles && (
             <div

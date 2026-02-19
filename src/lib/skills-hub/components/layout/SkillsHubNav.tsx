@@ -37,8 +37,6 @@ export function SkillsHubNav() {
   const [fabOpen, setFabOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExpandedCategory, setMobileExpandedCategory] = useState<
     string | null
@@ -103,26 +101,6 @@ export function SkillsHubNav() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle scroll to show/hide navigation
-  useEffect(() => {
-    function handleScroll() {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY < 10) {
-        setIsVisible(true);
-      } else if (currentScrollY < lastScrollY) {
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY) {
-        setIsVisible(false);
-      }
-
-      setLastScrollY(currentScrollY);
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
-
   const teacherSkillsHref = mockUser.metadata.staffId
     ? `/skillsHub/teacher/${mockUser.metadata.staffId}`
     : "/skillsHub";
@@ -186,12 +164,7 @@ export function SkillsHubNav() {
 
   return (
     <>
-      <nav
-        ref={dropdownRef}
-        className={`bg-gray-900 shadow-lg sticky top-0 z-50 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
+      <nav ref={dropdownRef} className="bg-gray-900 sticky top-0 z-50">
         <div
           className="mx-auto px-4 lg:px-6 py-3"
           style={{ maxWidth: "1600px" }}
@@ -454,10 +427,10 @@ export function SkillsHubNav() {
       </nav>
 
       {/* Floating role-switcher FAB */}
-      <div ref={fabRef} className="fixed bottom-6 right-6 z-[100]">
+      <div ref={fabRef} className="fixed bottom-6 right-6 z-[200]">
         {fabOpen && (
-          <div className="absolute bottom-14 right-0 bg-gray-900 rounded-lg shadow-xl border border-gray-700 p-3 min-w-[160px]">
-            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-2">
+          <div className="absolute bottom-14 right-0 bg-gray-900 rounded-lg shadow-xl border border-gray-700 p-5 min-w-[180px]">
+            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-3">
               View as
             </p>
             {(["teacher", "coach", "admin"] as ViewRole[]).map((role) => (
