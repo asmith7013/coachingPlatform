@@ -7,6 +7,7 @@ import {
   Text,
   Stack,
   Group,
+  Badge,
   Box,
   Checkbox,
   Divider,
@@ -26,6 +27,7 @@ import type {
 } from "../../core/taxonomy.types";
 import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
 import type { ProgressionStepDocument } from "../../coach/skill-progressions/progression-step.types";
+import { formatDueDate } from "../../core/format-due-date";
 
 interface ProgressStatsRowProps {
   taxonomy: TeacherSkillsIndex;
@@ -300,13 +302,9 @@ export function ProgressionOverviewContent({
                   {step.description}
                 </Text>
                 {step.dueDate && (
-                  <Text
-                    size="xs"
-                    c="dimmed"
-                    style={{ flexShrink: 0, whiteSpace: "nowrap" }}
-                  >
-                    {new Date(step.dueDate).toLocaleDateString()}
-                  </Text>
+                  <Badge size="xs" variant="light" style={{ flexShrink: 0 }}>
+                    {formatDueDate(step.dueDate)}
+                  </Badge>
                 )}
               </Group>
             ))}

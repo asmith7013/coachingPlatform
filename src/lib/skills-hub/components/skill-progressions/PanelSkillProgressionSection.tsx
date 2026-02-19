@@ -25,6 +25,7 @@ import { closeSkillProgression } from "../../coach/skill-progressions/skill-prog
 import { skillProgressionKeys } from "../../hooks/useSkillProgressions";
 import type { SkillProgressionDocument } from "../../coach/skill-progressions/skill-progression.types";
 import type { ProgressionStepDocument } from "../../coach/skill-progressions/progression-step.types";
+import { formatDueDate } from "../../core/format-due-date";
 
 interface PanelSkillProgressionSectionProps {
   plans: SkillProgressionDocument[];
@@ -174,9 +175,9 @@ function PlanCard({
                       {step.description}
                     </Text>
                     {step.dueDate && (
-                      <Text size="xs" c="dimmed">
-                        Due: {new Date(step.dueDate).toLocaleDateString()}
-                      </Text>
+                      <Badge size="xs" variant="light">
+                        {formatDueDate(step.dueDate)}
+                      </Badge>
                     )}
                   </div>
                 </Group>
