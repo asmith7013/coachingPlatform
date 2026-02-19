@@ -7,7 +7,6 @@ import {
   Text,
   Stack,
   Group,
-  Badge,
   Box,
   Checkbox,
   Divider,
@@ -227,9 +226,7 @@ export function ProgressionOverviewContent({
       await uncompleteProgressionStep(stepId);
       setSteps((prev) =>
         prev.map((s) =>
-          s._id === stepId
-            ? { ...s, completed: false, completedAt: undefined }
-            : s,
+          s._id === stepId ? { ...s, completed: false, completedAt: null } : s,
         ),
       );
     } else {
@@ -291,25 +288,26 @@ export function ProgressionOverviewContent({
                 <Checkbox
                   checked={step.completed}
                   onChange={() => handleToggleStep(step._id, step.completed)}
-                  disabled={step.completed}
                   mt={2}
+                  styles={{ input: { cursor: "pointer" } }}
                 />
-                <div style={{ flex: 1 }}>
+                <Text
+                  size="sm"
+                  td={step.completed ? "line-through" : undefined}
+                  c={step.completed ? "dimmed" : undefined}
+                  style={{ flex: 1, minWidth: 0 }}
+                >
+                  {step.description}
+                </Text>
+                {step.dueDate && (
                   <Text
-                    size="sm"
-                    td={step.completed ? "line-through" : undefined}
-                    c={step.completed ? "dimmed" : undefined}
+                    size="xs"
+                    c="dimmed"
+                    style={{ flexShrink: 0, whiteSpace: "nowrap" }}
                   >
-                    {step.description}
+                    {new Date(step.dueDate).toLocaleDateString()}
                   </Text>
-                  {step.dueDate && (
-                    <Group gap={4} mt={2} wrap="wrap">
-                      <Badge size="xs" variant="light">
-                        Due: {new Date(step.dueDate).toLocaleDateString()}
-                      </Badge>
-                    </Group>
-                  )}
-                </div>
+                )}
               </Group>
             ))}
           </Stack>
@@ -322,7 +320,7 @@ export function ProgressionOverviewContent({
           <Text size="xs" fw={600} c="dimmed" tt="uppercase">
             Active Skills
           </Text>
-          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+          <Stack gap="xs">
             {activeSkills.map(({ skill }) => (
               <SkillSoloCard
                 key={skill.uuid}
@@ -336,7 +334,7 @@ export function ProgressionOverviewContent({
                 onSkillClick={onSkillClick}
               />
             ))}
-          </SimpleGrid>
+          </Stack>
         </>
       )}
     </Stack>

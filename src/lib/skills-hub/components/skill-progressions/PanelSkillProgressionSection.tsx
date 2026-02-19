@@ -16,8 +16,11 @@ import {
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { getProgressionSteps } from "../../coach/skill-progressions/progression-step.actions";
-import { completeProgressionStep } from "../../coach/skill-progressions/progression-step.actions";
+import {
+  getProgressionSteps,
+  completeProgressionStep,
+  uncompleteProgressionStep,
+} from "../../coach/skill-progressions/progression-step.actions";
 import { closeSkillProgression } from "../../coach/skill-progressions/skill-progression.actions";
 import { skillProgressionKeys } from "../../hooks/useSkillProgressions";
 import type { SkillProgressionDocument } from "../../coach/skill-progressions/skill-progression.types";
@@ -60,7 +63,14 @@ function PlanCard({
   };
 
   const handleToggleStep = async (stepId: string, completed: boolean) => {
-    if (!completed) {
+    if (completed) {
+      await uncompleteProgressionStep(stepId);
+      setSteps((prev) =>
+        prev.map((s) =>
+          s._id === stepId ? { ...s, completed: false, completedAt: null } : s,
+        ),
+      );
+    } else {
       await completeProgressionStep(stepId);
       setSteps((prev) =>
         prev.map((s) =>
@@ -151,9 +161,9 @@ function PlanCard({
                   <Checkbox
                     checked={step.completed}
                     onChange={() => handleToggleStep(step._id, step.completed)}
-                    disabled={step.completed}
                     size="xs"
                     mt={2}
+                    styles={{ input: { cursor: "pointer" } }}
                   />
                   <div style={{ flex: 1 }}>
                     <Text
