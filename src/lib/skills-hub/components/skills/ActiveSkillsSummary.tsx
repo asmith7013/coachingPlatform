@@ -113,11 +113,7 @@ export function ActiveSkillsSummary({
           Target Skills
         </Text>
         {enrichedActiveSkills.length > 0 ? (
-          <Accordion
-            multiple
-            variant="separated"
-            defaultValue={enrichedActiveSkills.map((a) => a.skill.uuid)}
-          >
+          <Accordion multiple variant="separated" defaultValue={[]}>
             {enrichedActiveSkills.map(
               ({
                 skill,

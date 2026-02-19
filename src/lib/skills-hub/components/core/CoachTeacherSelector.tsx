@@ -12,12 +12,15 @@ interface CoachTeacherSelectorProps {
   selectedTeacherId: string | null;
   onTeacherChange: (teacherId: string | null) => void;
   onTeacherNameChange?: (name: string | null) => void;
+  /** Skip the Card wrapper (for embedding in a parent Card) */
+  noCard?: boolean;
 }
 
 export function CoachTeacherSelector({
   selectedTeacherId,
   onTeacherChange,
   onTeacherNameChange,
+  noCard = false,
 }: CoachTeacherSelectorProps) {
   const { metadata, hasRole } = useSkillsHubAuth();
   const isSuperAdmin = hasRole("super_admin");
@@ -87,35 +90,41 @@ export function CoachTeacherSelector({
   // Teachers don't see the selector
   if (isTeacher) return null;
 
+  const content = (
+    <Group grow>
+      {isAdmin && (
+        <Select
+          label="Coach"
+          placeholder="Select a coach..."
+          searchable
+          data={coachOptions}
+          value={selectedCoachId}
+          onChange={handleCoachChange}
+        />
+      )}
+      <Select
+        label="Teacher"
+        placeholder={
+          !coachStaffId
+            ? "Select a coach first"
+            : teachersLoading
+              ? "Loading..."
+              : "Select a teacher..."
+        }
+        searchable
+        data={teacherOptions}
+        value={selectedTeacherId}
+        onChange={onTeacherChange}
+        disabled={!coachStaffId || teachersLoading}
+      />
+    </Group>
+  );
+
+  if (noCard) return content;
+
   return (
     <Card shadow="sm" p="lg" mb="lg">
-      <Group grow>
-        {isAdmin && (
-          <Select
-            label="Coach"
-            placeholder="Select a coach..."
-            searchable
-            data={coachOptions}
-            value={selectedCoachId}
-            onChange={handleCoachChange}
-          />
-        )}
-        <Select
-          label="Teacher"
-          placeholder={
-            !coachStaffId
-              ? "Select a coach first"
-              : teachersLoading
-                ? "Loading..."
-                : "Select a teacher..."
-          }
-          searchable
-          data={teacherOptions}
-          value={selectedTeacherId}
-          onChange={onTeacherChange}
-          disabled={!coachStaffId || teachersLoading}
-        />
-      </Group>
+      {content}
     </Card>
   );
 }

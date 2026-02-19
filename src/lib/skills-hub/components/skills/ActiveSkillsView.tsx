@@ -29,11 +29,13 @@ const OBSERVE_TAB_ID = "__observe__";
 interface ActiveSkillsViewProps {
   teacherStaffId: string;
   showObservations?: boolean;
+  headerContent?: React.ReactNode;
 }
 
 export function ActiveSkillsView({
   teacherStaffId,
   showObservations = false,
+  headerContent,
 }: ActiveSkillsViewProps) {
   const { taxonomy, loading: taxLoading } = useTaxonomy();
   const { statuses, loading: statusLoading } =
@@ -94,21 +96,27 @@ export function ActiveSkillsView({
       }
 
       // Tabbed mode: open skill in a tab
+      const maxSkillTabs = MAX_TABS - pinnedTabIds.length;
+
       setOpenTabs((prev) => {
         if (prev.includes(skillId)) {
           setActiveTab(skillId);
           return prev;
         }
-        if (prev.length < MAX_TABS) {
+
+        const skillTabs = prev.filter((id) => !pinnedSet.has(id));
+
+        if (skillTabs.length < maxSkillTabs) {
           setActiveTab(skillId);
           return [...prev, skillId];
         }
-        // At max — replace the active tab if it's not pinned
+
+        // One-in-one-out: replace active skill tab, or last skill tab
         setActiveTab((currentActive) => {
           const replaceId =
             currentActive && !pinnedSet.has(currentActive)
               ? currentActive
-              : prev.findLast((id) => !pinnedSet.has(id));
+              : skillTabs[skillTabs.length - 1];
           if (!replaceId) return currentActive;
           setOpenTabs((p) => p.map((id) => (id === replaceId ? skillId : id)));
           return skillId;
@@ -116,7 +124,7 @@ export function ActiveSkillsView({
         return prev;
       });
     },
-    [showObservations, pinnedSet],
+    [showObservations, pinnedSet, pinnedTabIds.length],
   );
 
   const handleDrawerClose = useCallback(() => {
@@ -130,22 +138,26 @@ export function ActiveSkillsView({
     setActiveTab(pinnedTabIds[0]);
   }, [showObservations, pinnedTabIds]);
 
-  const handleTabClose = useCallback((tabId: string) => {
-    setOpenTabs((prev) => {
-      const idx = prev.indexOf(tabId);
-      const next = prev.filter((id) => id !== tabId);
-      if (next.length === 0) {
-        setDrawerOpen(false);
-        setActiveTab(null);
-      } else {
-        setActiveTab((current) => {
-          if (current !== tabId) return current;
-          return next[Math.min(idx, next.length - 1)];
-        });
-      }
-      return next;
-    });
-  }, []);
+  const handleTabClose = useCallback(
+    (tabId: string) => {
+      if (pinnedSet.has(tabId)) return;
+      setOpenTabs((prev) => {
+        const idx = prev.indexOf(tabId);
+        const next = prev.filter((id) => id !== tabId);
+        if (next.length === 0) {
+          setDrawerOpen(false);
+          setActiveTab(null);
+        } else {
+          setActiveTab((current) => {
+            if (current !== tabId) return current;
+            return next[Math.min(idx, next.length - 1)];
+          });
+        }
+        return next;
+      });
+    },
+    [pinnedSet],
+  );
 
   const resolveTabName = useCallback(
     (tabId: string): string => {
@@ -180,6 +192,7 @@ export function ActiveSkillsView({
         id: tabId,
         label: resolveTabName(tabId),
         pinned: pinnedSet.has(tabId),
+        closable: !pinnedSet.has(tabId),
       }))
     : [];
 
@@ -217,11 +230,12 @@ export function ActiveSkillsView({
       <Stack gap="lg" style={{ flex: 1, minWidth: 0 }}>
         {/* Header: Title left, Ring right */}
         <Group justify="space-between" align="center" wrap="nowrap">
-          <div>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <Title order={2}>Active Skills</Title>
             <Text size="sm" c="dimmed">
               Your current focus and next steps
             </Text>
+            {headerContent}
           </div>
           <SkillProgressRing taxonomy={taxonomy} statusMap={statusMap} />
         </Group>
@@ -237,6 +251,7 @@ export function ActiveSkillsView({
           <div style={{ width: DETAIL_DRAWER_WIDTH, flexShrink: 0 }} />
           <DetailDrawer
             onClose={handleDrawerClose}
+            showCloseButton={false}
             tabs={
               openTabs.length > 1
                 ? {

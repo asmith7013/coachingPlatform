@@ -1,7 +1,6 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { Title, Text, Card } from "@mantine/core";
 import { CoachTeacherSelector } from "@/lib/skills-hub/components/core/CoachTeacherSelector";
 import { ActiveSkillsView } from "@/lib/skills-hub/components/skills/ActiveSkillsView";
 
@@ -20,22 +19,17 @@ export default function ActiveSkillsTeacherPage() {
 
   return (
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
-      <Card shadow="sm" p="lg" mb="lg">
-        <Title order={2}>Active Skills</Title>
-        <Text size="sm" c="dimmed">
-          Teacher skill progression and observations
-        </Text>
-      </Card>
-
-      <CoachTeacherSelector
-        selectedTeacherId={teacherId}
-        onTeacherChange={handleTeacherChange}
-      />
-
       <ActiveSkillsView
         key={teacherId}
         teacherStaffId={teacherId}
         showObservations
+        headerContent={
+          <CoachTeacherSelector
+            noCard
+            selectedTeacherId={teacherId}
+            onTeacherChange={handleTeacherChange}
+          />
+        }
       />
     </div>
   );

@@ -5,6 +5,7 @@ import {
   Stack,
   Accordion,
   Select,
+  Group,
   Textarea,
   Button,
   Text,
@@ -23,10 +24,17 @@ import {
   RATING_OPTIONS,
   RATING_COLORS,
 } from "../../coach/observations/observation.constants";
+import { RatingPills } from "../core/RatingPills";
+import type { RatingPillOption } from "../core/RatingPills";
 import type {
   RatingScale,
   ObservationType,
 } from "../../coach/observations/observation.types";
+
+const RATING_PILL_OPTIONS: RatingPillOption[] = RATING_OPTIONS.map((opt) => ({
+  ...opt,
+  color: RATING_COLORS[opt.value as RatingScale],
+}));
 
 interface DrawerObservationFormProps {
   teacherStaffId: string;
@@ -72,35 +80,26 @@ export function DrawerObservationForm({
 
   return (
     <Stack gap="md">
-      <DatePickerInput
-        label="Date"
-        value={form.date}
-        onChange={form.setDate}
-        size="xs"
-        maxDate={new Date()}
-      />
-
-      <Select
-        label="Type"
-        placeholder="Select type..."
-        size="xs"
-        data={OBSERVATION_TYPE_OPTIONS}
-        value={form.observationType}
-        onChange={(val) =>
-          form.setObservationType((val as ObservationType) || null)
-        }
-        clearable
-      />
-
-      <Textarea
-        label="Notes"
-        placeholder="General notes..."
-        size="xs"
-        autosize
-        minRows={2}
-        value={form.notes}
-        onChange={(e) => form.setNotes(e.currentTarget.value)}
-      />
+      <Group grow>
+        <DatePickerInput
+          label="Date"
+          value={form.date}
+          onChange={form.setDate}
+          size="xs"
+          maxDate={new Date()}
+        />
+        <Select
+          label="Type"
+          placeholder="Select type..."
+          size="xs"
+          data={OBSERVATION_TYPE_OPTIONS}
+          value={form.observationType}
+          onChange={(val) =>
+            form.setObservationType((val as ObservationType) || null)
+          }
+          clearable
+        />
+      </Group>
 
       <Text size="xs" fw={600} c="dimmed" tt="uppercase">
         Active Skills
@@ -148,10 +147,8 @@ export function DrawerObservationForm({
                     )
                   }
                 />
-                <Select
-                  placeholder="Rating..."
-                  size="xs"
-                  data={RATING_OPTIONS}
+                <RatingPills
+                  options={RATING_PILL_OPTIONS}
                   value={currentRating}
                   onChange={(val) =>
                     form.handleSkillRatingChange(
@@ -159,13 +156,23 @@ export function DrawerObservationForm({
                       (val as RatingScale) || null,
                     )
                   }
-                  clearable
+                  size="xs"
                 />
               </Stack>
             </SkillSoloCard>
           );
         })}
       </Accordion>
+
+      <Textarea
+        label="Notes"
+        placeholder="General notes..."
+        size="xs"
+        autosize
+        minRows={2}
+        value={form.notes}
+        onChange={(e) => form.setNotes(e.currentTarget.value)}
+      />
 
       <Button
         onClick={() => form.handleSubmit({ onSuccess: form.reset })}
