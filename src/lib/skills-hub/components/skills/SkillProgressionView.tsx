@@ -116,9 +116,7 @@ export function SkillProgressionView({
               ? currentActive
               : prev.findLast((id) => !pinnedSet.has(id));
           if (!replaceId) return currentActive;
-          setOpenTabs((p) =>
-            p.map((id) => (id === replaceId ? skillId : id)),
-          );
+          setOpenTabs((p) => p.map((id) => (id === replaceId ? skillId : id)));
           return skillId;
         });
         return prev;
@@ -281,9 +279,7 @@ export function SkillProgressionView({
                 skillId={activeTab}
                 teacherStaffId={teacherStaffId}
                 teacherName={teacherName}
-                onSkillClick={(newId) =>
-                  handleInTabNavigate(activeTab, newId)
-                }
+                onSkillClick={(newId) => handleInTabNavigate(activeTab, newId)}
               />
             )}
           </DetailDrawer>

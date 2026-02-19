@@ -84,6 +84,25 @@ export async function completeProgressionStep(
   });
 }
 
+export async function uncompleteProgressionStep(
+  stepId: string,
+): Promise<{ success: boolean; error?: string }> {
+  return withDbConnection(async () => {
+    try {
+      await SkillsHubActionStep.findByIdAndUpdate(stepId, {
+        $set: { completed: false },
+        $unset: { completedAt: 1, completedBy: 1 },
+      });
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: handleServerError(error, "uncompleteProgressionStep"),
+      };
+    }
+  });
+}
+
 export async function updateProgressionStep(
   stepId: string,
   input: Partial<ProgressionStepInput>,

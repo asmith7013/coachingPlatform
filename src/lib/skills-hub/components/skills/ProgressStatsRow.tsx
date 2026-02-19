@@ -16,8 +16,11 @@ import {
 } from "@mantine/core";
 import { SkillSoloCard } from "./SkillSoloCard";
 import { useSkillProgressions } from "../../hooks/useSkillProgressions";
-import { getProgressionSteps } from "../../coach/skill-progressions/progression-step.actions";
-import { completeProgressionStep } from "../../coach/skill-progressions/progression-step.actions";
+import {
+  getProgressionSteps,
+  completeProgressionStep,
+  uncompleteProgressionStep,
+} from "../../coach/skill-progressions/progression-step.actions";
 import type {
   TeacherSkillsIndex,
   TeacherSkill,
@@ -220,7 +223,16 @@ export function ProgressionOverviewContent({
   const progress = totalSteps > 0 ? (completedCount / totalSteps) * 100 : 0;
 
   const handleToggleStep = async (stepId: string, completed: boolean) => {
-    if (!completed) {
+    if (completed) {
+      await uncompleteProgressionStep(stepId);
+      setSteps((prev) =>
+        prev.map((s) =>
+          s._id === stepId
+            ? { ...s, completed: false, completedAt: undefined }
+            : s,
+        ),
+      );
+    } else {
       await completeProgressionStep(stepId);
       setSteps((prev) =>
         prev.map((s) =>
