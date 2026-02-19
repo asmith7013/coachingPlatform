@@ -57,7 +57,7 @@ async function seed() {
   console.log(`Coach: ${staff.coachName} (${COACH_EMAIL})`);
   console.log(`\nCollections populated:`);
   console.log(`  Coaching assignments: 1`);
-  console.log(`  Skill statuses: 18 (5 active, 5 developing, 8 proficient)`);
+  console.log(`  Skill statuses: 22 (3 active, 6 developing, 13 proficient)`);
   console.log(`  Action plans: 3 (1 open, 1 closed, 1 archived)`);
   console.log(`  Action steps: 8 (3 + 3 + 2)`);
   console.log(`  Observations: 4`);
