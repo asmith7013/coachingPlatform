@@ -1,6 +1,7 @@
 "use client";
 
 import { Group, Text, SegmentedControl, Textarea, Stack } from "@mantine/core";
+import { RATING_OPTIONS_SHORT } from "../../coach/observations/observation.constants";
 import type { RatingScale } from "../../coach/observations/observation.types";
 
 interface DomainOverallRatingProps {
@@ -11,13 +12,6 @@ interface DomainOverallRatingProps {
   onRatingChange: (domainId: string, rating: RatingScale | null) => void;
   onEvidenceChange: (domainId: string, evidence: string) => void;
 }
-
-const RATING_OPTIONS = [
-  { label: "N/O", value: "not_observed" },
-  { label: "Partial", value: "partial" },
-  { label: "Mostly", value: "mostly" },
-  { label: "Fully", value: "fully" },
-];
 
 export function DomainOverallRating({
   domainId,
@@ -43,7 +37,7 @@ export function DomainOverallRating({
         </Text>
         <SegmentedControl
           size="xs"
-          data={RATING_OPTIONS}
+          data={RATING_OPTIONS_SHORT}
           value={rating || ""}
           onChange={(val) =>
             onRatingChange(domainId, (val as RatingScale) || null)

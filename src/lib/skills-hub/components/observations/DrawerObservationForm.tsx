@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import {
   Stack,
   Accordion,
@@ -13,37 +13,20 @@ import {
   Loader,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
-import { notifications } from "@mantine/notifications";
 import { SkillSoloCard } from "../skills/SkillSoloCard";
 import { collectActiveSkills } from "../skills/ProgressStatsRow";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
 import { useTeacherSkillStatuses } from "../../hooks/useTeacherSkillStatuses";
-import { createObservation } from "../../coach/observations/observation.actions";
+import { useObservationForm } from "../../hooks/useObservationForm";
+import {
+  OBSERVATION_TYPE_OPTIONS,
+  RATING_OPTIONS,
+  RATING_COLORS,
+} from "../../coach/observations/observation.constants";
 import type {
   RatingScale,
   ObservationType,
 } from "../../coach/observations/observation.types";
-
-const OBSERVATION_TYPE_OPTIONS = [
-  { value: "classroom_visit", label: "Classroom Visit" },
-  { value: "debrief", label: "Debrief" },
-  { value: "one_on_one", label: "One-on-One" },
-  { value: "quick_update", label: "Quick Update" },
-];
-
-const RATING_OPTIONS = [
-  { value: "not_observed", label: "Not Observed" },
-  { value: "partial", label: "Partial" },
-  { value: "mostly", label: "Mostly" },
-  { value: "fully", label: "Fully" },
-];
-
-const RATING_COLORS: Record<RatingScale, string> = {
-  not_observed: "gray",
-  partial: "orange",
-  mostly: "yellow",
-  fully: "green",
-};
 
 interface DrawerObservationFormProps {
   teacherStaffId: string;
@@ -56,17 +39,7 @@ export function DrawerObservationForm({
   const { statuses, loading: statusLoading } =
     useTeacherSkillStatuses(teacherStaffId);
 
-  const [date, setDate] = useState<string | null>(
-    new Date().toISOString().split("T")[0],
-  );
-  const [observationType, setObservationType] =
-    useState<ObservationType | null>(null);
-  const [notes, setNotes] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  const [skillRatings, setSkillRatings] = useState<
-    Map<string, { rating: RatingScale | null; evidence: string }>
-  >(new Map());
+  const form = useObservationForm(teacherStaffId);
 
   const statusMap = useMemo(() => {
     const map = new Map<string, (typeof statuses)[number]>();
@@ -80,83 +53,6 @@ export function DrawerObservationForm({
     if (!taxonomy) return [];
     return collectActiveSkills(taxonomy, statusMap);
   }, [taxonomy, statusMap]);
-
-  const handleRatingChange = (skillId: string, rating: RatingScale | null) => {
-    setSkillRatings((prev) => {
-      const next = new Map(prev);
-      const existing = next.get(skillId) || { rating: null, evidence: "" };
-      next.set(skillId, { ...existing, rating });
-      return next;
-    });
-  };
-
-  const handleEvidenceChange = (skillId: string, evidence: string) => {
-    setSkillRatings((prev) => {
-      const next = new Map(prev);
-      const existing = next.get(skillId) || { rating: null, evidence: "" };
-      next.set(skillId, { ...existing, evidence });
-      return next;
-    });
-  };
-
-  const handleSubmit = async () => {
-    if (!date) {
-      notifications.show({
-        title: "Validation",
-        message: "Date is required",
-        color: "red",
-      });
-      return;
-    }
-
-    const ratedSkills = Array.from(skillRatings.entries())
-      .filter(([, v]) => v.rating && v.rating !== "not_observed")
-      .map(([skillId, v]) => ({
-        skillId,
-        rating: v.rating!,
-        evidence: v.evidence || null,
-      }));
-
-    if (ratedSkills.length === 0) {
-      notifications.show({
-        title: "Validation",
-        message: "Rate at least one skill before submitting",
-        color: "red",
-      });
-      return;
-    }
-
-    setSubmitting(true);
-
-    const result = await createObservation({
-      teacherStaffId,
-      date: new Date(date).toISOString(),
-      type: observationType,
-      notes: notes || null,
-      ratings: ratedSkills,
-      domainRatings: [],
-    });
-
-    setSubmitting(false);
-
-    if (result.success) {
-      notifications.show({
-        title: "Success",
-        message: "Observation recorded",
-        color: "teal",
-      });
-      // Reset form
-      setSkillRatings(new Map());
-      setNotes("");
-      setObservationType(null);
-    } else {
-      notifications.show({
-        title: "Error",
-        message: result.error || "Failed to save observation",
-        color: "red",
-      });
-    }
-  };
 
   if (taxLoading || statusLoading) {
     return (
@@ -178,8 +74,8 @@ export function DrawerObservationForm({
     <Stack gap="md">
       <DatePickerInput
         label="Date"
-        value={date}
-        onChange={setDate}
+        value={form.date}
+        onChange={form.setDate}
         size="xs"
         maxDate={new Date()}
       />
@@ -189,8 +85,10 @@ export function DrawerObservationForm({
         placeholder="Select type..."
         size="xs"
         data={OBSERVATION_TYPE_OPTIONS}
-        value={observationType}
-        onChange={(val) => setObservationType((val as ObservationType) || null)}
+        value={form.observationType}
+        onChange={(val) =>
+          form.setObservationType((val as ObservationType) || null)
+        }
         clearable
       />
 
@@ -200,8 +98,8 @@ export function DrawerObservationForm({
         size="xs"
         autosize
         minRows={2}
-        value={notes}
-        onChange={(e) => setNotes(e.currentTarget.value)}
+        value={form.notes}
+        onChange={(e) => form.setNotes(e.currentTarget.value)}
       />
 
       <Text size="xs" fw={600} c="dimmed" tt="uppercase">
@@ -210,7 +108,7 @@ export function DrawerObservationForm({
 
       <Accordion multiple variant="separated">
         {activeSkills.map(({ skill }) => {
-          const skillData = skillRatings.get(skill.uuid);
+          const skillData = form.skillRatings.get(skill.uuid);
           const currentRating = skillData?.rating ?? null;
 
           return (
@@ -244,7 +142,10 @@ export function DrawerObservationForm({
                   minRows={2}
                   value={skillData?.evidence ?? ""}
                   onChange={(e) =>
-                    handleEvidenceChange(skill.uuid, e.currentTarget.value)
+                    form.handleSkillEvidenceChange(
+                      skill.uuid,
+                      e.currentTarget.value,
+                    )
                   }
                 />
                 <Select
@@ -253,7 +154,10 @@ export function DrawerObservationForm({
                   data={RATING_OPTIONS}
                   value={currentRating}
                   onChange={(val) =>
-                    handleRatingChange(skill.uuid, (val as RatingScale) || null)
+                    form.handleSkillRatingChange(
+                      skill.uuid,
+                      (val as RatingScale) || null,
+                    )
                   }
                   clearable
                 />
@@ -263,7 +167,11 @@ export function DrawerObservationForm({
         })}
       </Accordion>
 
-      <Button onClick={handleSubmit} loading={submitting} fullWidth>
+      <Button
+        onClick={() => form.handleSubmit({ onSuccess: form.reset })}
+        loading={form.submitting}
+        fullWidth
+      >
         Save Observation
       </Button>
     </Stack>

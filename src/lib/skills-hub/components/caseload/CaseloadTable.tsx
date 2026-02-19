@@ -118,7 +118,7 @@ export function CaseloadTable({
                   <Tooltip label="Skill Progressions">
                     <ActionIcon
                       component={Link}
-                      href={`/skillsHub/teacher/${teacherId}/skill-progressions`}
+                      href={`/skillsHub/coach/teacher/${teacherId}/skill-progressions`}
                       variant="light"
                       color="violet"
                       size="sm"

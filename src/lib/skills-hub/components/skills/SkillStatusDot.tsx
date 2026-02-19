@@ -2,14 +2,8 @@
 
 import { Box } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
+import { SKILL_STATUS_CONFIG } from "../../core/skill-status-colors";
 import type { SkillStatus } from "../../core/skill-status.types";
-
-const DOT_COLORS: Record<SkillStatus, string> = {
-  not_started: "var(--mantine-color-gray-4)",
-  active: "var(--mantine-color-blue-5)",
-  developing: "var(--mantine-color-yellow-5)",
-  proficient: "var(--mantine-color-green-6)",
-};
 
 interface SkillStatusDotProps {
   status: SkillStatus;
@@ -17,7 +11,7 @@ interface SkillStatusDotProps {
 }
 
 export function SkillStatusDot({ status, size = 14 }: SkillStatusDotProps) {
-  const color = DOT_COLORS[status];
+  const color = SKILL_STATUS_CONFIG[status].dotColor;
 
   if (status === "proficient") {
     return (
@@ -44,10 +38,7 @@ export function SkillStatusDot({ status, size = 14 }: SkillStatusDotProps) {
         height: size,
         borderRadius: "50%",
         backgroundColor: status === "not_started" ? "transparent" : color,
-        border:
-          status === "not_started"
-            ? `2px solid ${color}`
-            : `2px solid ${color}`,
+        border: `2px solid ${color}`,
       }}
     />
   );

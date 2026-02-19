@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import { SkillStatusBadge } from "../core/SkillStatusBadge";
 import { updateSkillStatus } from "../../core/skill-status.actions";
+import { SKILL_STATUS_OPTIONS } from "../../core/skill-status-colors";
 import type { SkillStatus } from "../../core/skill-status.types";
 import type { TeacherSkillFlat } from "../../core/taxonomy.types";
 
@@ -22,13 +23,6 @@ interface SkillDetailHeaderProps {
   isCoachView: boolean;
   onStatusChanged: () => void;
 }
-
-const STATUS_OPTIONS = [
-  { label: "Not Started", value: "not_started" },
-  { label: "Active", value: "active" },
-  { label: "Developing", value: "developing" },
-  { label: "Proficient", value: "proficient" },
-];
 
 export function SkillDetailHeader({
   skill,
@@ -75,7 +69,7 @@ export function SkillDetailHeader({
 
         {isCoachView && (
           <SegmentedControl
-            data={STATUS_OPTIONS}
+            data={SKILL_STATUS_OPTIONS}
             value={status}
             onChange={handleStatusChange}
             size="xs"

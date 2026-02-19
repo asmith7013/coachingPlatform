@@ -13,16 +13,13 @@ import {
   Textarea,
   Select,
 } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
 import { ObservationHeader } from "./ObservationHeader";
 import { ObservationGuideSkeleton } from "../core/SkillsHubSkeletons";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
 import { useTeacherSkillStatuses } from "../../hooks/useTeacherSkillStatuses";
-import { createObservation } from "../../coach/observations/observation.actions";
-import type {
-  RatingScale,
-  ObservationType,
-} from "../../coach/observations/observation.types";
+import { useObservationForm } from "../../hooks/useObservationForm";
+import { RATING_OPTIONS } from "../../coach/observations/observation.constants";
+import type { RatingScale } from "../../coach/observations/observation.types";
 import type { TeacherSkillSubDomain } from "../../core/taxonomy.types";
 
 const DOMAIN_COLORS: Array<{ bg: string; c: string }> = [
@@ -32,13 +29,6 @@ const DOMAIN_COLORS: Array<{ bg: string; c: string }> = [
   { bg: "violet.0", c: "violet.9" },
   { bg: "teal.0", c: "teal.9" },
   { bg: "orange.0", c: "orange.9" },
-];
-
-const RATING_OPTIONS = [
-  { value: "not_observed", label: "Not Observed" },
-  { value: "partial", label: "Partial" },
-  { value: "mostly", label: "Mostly" },
-  { value: "fully", label: "Fully" },
 ];
 
 interface ObservationGuideProps {
@@ -51,23 +41,11 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
   const { statuses, loading: statusLoading } =
     useTeacherSkillStatuses(teacherStaffId);
 
-  const [date, setDate] = useState<string | null>(
-    new Date().toISOString().split("T")[0],
-  );
-  const [observationType, setObservationType] =
-    useState<ObservationType | null>(null);
-  const [notes, setNotes] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const form = useObservationForm(teacherStaffId);
+
   const [expandedDomains, setExpandedDomains] = useState<Set<string>>(
     new Set(),
   );
-
-  const [skillRatings, setSkillRatings] = useState<
-    Map<string, { rating: RatingScale | null; evidence: string }>
-  >(new Map());
-  const [domainRatings, setDomainRatings] = useState<
-    Map<string, { rating: RatingScale | null; evidence: string }>
-  >(new Map());
 
   const activeSkillIds = useMemo(
     () =>
@@ -91,13 +69,8 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
     subDomain: TeacherSkillSubDomain,
     rating: RatingScale | null,
   ) => {
-    setSkillRatings((prev) => {
-      const next = new Map(prev);
-      subDomain.skills.forEach((skill) => {
-        const existing = next.get(skill.uuid) || { rating: null, evidence: "" };
-        next.set(skill.uuid, { ...existing, rating });
-      });
-      return next;
+    subDomain.skills.forEach((skill) => {
+      form.handleSkillRatingChange(skill.uuid, rating);
     });
   };
 
@@ -106,13 +79,8 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
     subDomain: TeacherSkillSubDomain,
     evidence: string,
   ) => {
-    setSkillRatings((prev) => {
-      const next = new Map(prev);
-      subDomain.skills.forEach((skill) => {
-        const existing = next.get(skill.uuid) || { rating: null, evidence: "" };
-        next.set(skill.uuid, { ...existing, evidence });
-      });
-      return next;
+    subDomain.skills.forEach((skill) => {
+      form.handleSkillEvidenceChange(skill.uuid, evidence);
     });
   };
 
@@ -121,94 +89,12 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
     subDomain: TeacherSkillSubDomain,
   ): RatingScale | null => {
     const first = subDomain.skills[0];
-    return first ? (skillRatings.get(first.uuid)?.rating ?? null) : null;
+    return first ? (form.skillRatings.get(first.uuid)?.rating ?? null) : null;
   };
 
   const getSubDomainEvidence = (subDomain: TeacherSkillSubDomain): string => {
     const first = subDomain.skills[0];
-    return first ? (skillRatings.get(first.uuid)?.evidence ?? "") : "";
-  };
-
-  const handleDomainRating = (domainId: string, rating: RatingScale | null) => {
-    setDomainRatings((prev) => {
-      const next = new Map(prev);
-      const existing = next.get(domainId) || { rating: null, evidence: "" };
-      next.set(domainId, { ...existing, rating });
-      return next;
-    });
-  };
-
-  const handleDomainEvidence = (domainId: string, evidence: string) => {
-    setDomainRatings((prev) => {
-      const next = new Map(prev);
-      const existing = next.get(domainId) || { rating: null, evidence: "" };
-      next.set(domainId, { ...existing, evidence });
-      return next;
-    });
-  };
-
-  const handleSubmit = async () => {
-    if (!date) {
-      notifications.show({
-        title: "Validation",
-        message: "Date is required",
-        color: "red",
-      });
-      return;
-    }
-
-    const ratedSkills = Array.from(skillRatings.entries())
-      .filter(([, v]) => v.rating && v.rating !== "not_observed")
-      .map(([skillId, v]) => ({
-        skillId,
-        rating: v.rating!,
-        evidence: v.evidence || null,
-      }));
-
-    if (ratedSkills.length === 0) {
-      notifications.show({
-        title: "Validation",
-        message: "Rate at least one look-for before submitting",
-        color: "red",
-      });
-      return;
-    }
-
-    const ratedDomains = Array.from(domainRatings.entries())
-      .filter(([, v]) => v.rating)
-      .map(([domainId, v]) => ({
-        domainId,
-        overallRating: v.rating,
-        evidence: v.evidence || null,
-      }));
-
-    setSubmitting(true);
-
-    const result = await createObservation({
-      teacherStaffId,
-      date: new Date(date).toISOString(),
-      type: observationType,
-      notes: notes || null,
-      ratings: ratedSkills,
-      domainRatings: ratedDomains,
-    });
-
-    setSubmitting(false);
-
-    if (result.success) {
-      notifications.show({
-        title: "Success",
-        message: "Observation recorded",
-        color: "teal",
-      });
-      router.push(`/skillsHub/teacher/${teacherStaffId}`);
-    } else {
-      notifications.show({
-        title: "Error",
-        message: result.error || "Failed to save observation",
-        color: "red",
-      });
-    }
+    return first ? (form.skillRatings.get(first.uuid)?.evidence ?? "") : "";
   };
 
   if (taxLoading || statusLoading) {
@@ -226,12 +112,12 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
   return (
     <Stack gap="lg">
       <ObservationHeader
-        date={date}
-        observationType={observationType}
-        notes={notes}
-        onDateChange={setDate}
-        onTypeChange={setObservationType}
-        onNotesChange={setNotes}
+        date={form.date}
+        observationType={form.observationType}
+        notes={form.notes}
+        onDateChange={form.setDate}
+        onTypeChange={form.setObservationType}
+        onNotesChange={form.setNotes}
       />
 
       <div style={{ overflowX: "auto" }}>
@@ -285,7 +171,7 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
                 (hasShowMore ? 1 : 0) +
                 (showCollapse ? 1 : 0);
 
-              const domainRating = domainRatings.get(domain.id) ?? {
+              const domainRating = form.domainRatings.get(domain.id) ?? {
                 rating: null,
                 evidence: "",
               };
@@ -406,7 +292,7 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
                               data={RATING_OPTIONS}
                               value={domainRating.rating}
                               onChange={(val) =>
-                                handleDomainRating(
+                                form.handleDomainRatingChange(
                                   domain.id,
                                   (val as RatingScale) || null,
                                 )
@@ -422,7 +308,7 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
                                   minRows={2}
                                   value={domainRating.evidence}
                                   onChange={(e) =>
-                                    handleDomainEvidence(
+                                    form.handleDomainEvidenceChange(
                                       domain.id,
                                       e.currentTarget.value,
                                     )
@@ -480,11 +366,21 @@ export function ObservationGuide({ teacherStaffId }: ObservationGuideProps) {
         <Button
           variant="default"
           onClick={() => router.back()}
-          disabled={submitting}
+          disabled={form.submitting}
         >
           Cancel
         </Button>
-        <Button onClick={handleSubmit} loading={submitting}>
+        <Button
+          onClick={() =>
+            form.handleSubmit({
+              emptyRatingMessage:
+                "Rate at least one look-for before submitting",
+              onSuccess: () =>
+                router.push(`/skillsHub/teacher/${teacherStaffId}`),
+            })
+          }
+          loading={form.submitting}
+        >
           Save Observation
         </Button>
       </Group>
