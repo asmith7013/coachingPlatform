@@ -45,7 +45,11 @@ import {
   IconWriting,
 } from "@tabler/icons-react";
 
-type IconComponent = ComponentType<{ size?: number; stroke?: number }>;
+type IconComponent = ComponentType<{
+  size?: number;
+  stroke?: number;
+  color?: string;
+}>;
 
 /**
  * Maps skill IDs from the taxonomy to Tabler icon components.

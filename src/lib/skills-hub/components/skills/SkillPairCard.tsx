@@ -2,8 +2,8 @@
 
 import { Card, Text, Box, Group, UnstyledButton } from "@mantine/core";
 import { IconLock } from "@tabler/icons-react";
-import { SkillStatusDot } from "./SkillStatusDot";
 import { getSkillIcon } from "../../core/skill-icons";
+import { SKILL_STATUS_COLORS } from "../../core/skill-status-colors";
 import type { SkillStatus } from "../../core/skill-status.types";
 
 interface SkillHalf {
@@ -29,6 +29,7 @@ function SkillHalfContent({
   onSkillClick?: (skillId: string) => void;
 }) {
   const Icon = getSkillIcon(skill.skillId);
+  const colors = SKILL_STATUS_COLORS[skill.status];
 
   const inner = (
     <Box
@@ -37,50 +38,45 @@ function SkillHalfContent({
         opacity: skill.isLocked ? 0.5 : 1,
         cursor: skill.isLocked ? "default" : "pointer",
         minWidth: 0,
+        borderLeft:
+          skill.status !== "not_started"
+            ? `3px solid ${colors.cardBorder}`
+            : "3px solid transparent",
       }}
     >
-      <Group justify="space-between" align="flex-start" wrap="nowrap">
-        <Group gap="sm" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
-          <Box
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              backgroundColor:
-                skill.status === "proficient"
-                  ? "var(--mantine-color-teal-1)"
-                  : "var(--mantine-color-gray-1)",
-              border:
-                skill.status === "active" || skill.status === "developing"
-                  ? "2px solid var(--mantine-color-teal-5)"
-                  : "2px solid transparent",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            {skill.isLocked ? (
-              <IconLock size={18} color="var(--mantine-color-gray-5)" />
-            ) : (
-              <Icon size={18} stroke={1.5} />
-            )}
-          </Box>
-          <div style={{ minWidth: 0 }}>
-            <Text size="xs" c="dimmed" fw={500}>
-              Level {skill.level}
+      <Group gap="sm" wrap="nowrap">
+        <Box
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            backgroundColor: colors.iconBg,
+            border: `2px solid ${colors.iconBorder}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          {skill.isLocked ? (
+            <IconLock size={18} color="var(--mantine-color-gray-5)" />
+          ) : (
+            <Icon size={18} stroke={1.5} color={colors.iconColor} />
+          )}
+        </Box>
+        <div style={{ minWidth: 0 }}>
+          <Text size="xs" c="dimmed" fw={500}>
+            Level {skill.level}
+          </Text>
+          <Text size="sm" fw={500} lineClamp={2}>
+            {skill.skillName}
+          </Text>
+          {skill.description && (
+            <Text size="xs" c="dimmed" lineClamp={2} mt={2}>
+              {skill.description}
             </Text>
-            <Text size="sm" fw={500} lineClamp={2}>
-              {skill.skillName}
-            </Text>
-            {skill.description && (
-              <Text size="xs" c="dimmed" lineClamp={2} mt={2}>
-                {skill.description}
-              </Text>
-            )}
-          </div>
-        </Group>
-        {!skill.isLocked && <SkillStatusDot status={skill.status} />}
+          )}
+        </div>
       </Group>
     </Box>
   );
