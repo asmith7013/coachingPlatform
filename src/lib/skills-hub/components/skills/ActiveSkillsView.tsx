@@ -233,9 +233,14 @@ export function ActiveSkillsView({
         {/* Header: selector above, title + ring */}
         {headerContent}
         <Group justify="space-between" align="center" wrap="nowrap">
-          <Title order={2}>
-            {teacherName ? `Active Skills for ${teacherName}` : "Active Skills"}
-          </Title>
+          <div>
+            <Title order={2}>Active Skills</Title>
+            {teacherName && (
+              <Text size="sm" c="dimmed">
+                for {teacherName}
+              </Text>
+            )}
+          </div>
           <SkillProgressRing taxonomy={taxonomy} statusMap={statusMap} />
         </Group>
 

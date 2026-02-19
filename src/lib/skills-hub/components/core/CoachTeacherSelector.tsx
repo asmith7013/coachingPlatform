@@ -103,7 +103,7 @@ export function CoachTeacherSelector({
         />
       )}
       <Select
-        label="Teacher"
+        label="Select Teacher"
         placeholder={
           !coachStaffId
             ? "Select a coach first"
