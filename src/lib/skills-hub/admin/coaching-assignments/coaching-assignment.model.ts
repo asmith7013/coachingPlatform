@@ -8,12 +8,12 @@ const CoachTeacherAssignmentSchema = new mongoose.Schema(
   {
     coachStaffId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       required: true,
     },
     teacherStaffId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       required: true,
     },
     schoolId: {

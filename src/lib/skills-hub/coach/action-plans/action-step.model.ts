@@ -19,7 +19,7 @@ const ActionStepSchema = new mongoose.Schema(
     completedAt: { type: Date, default: null },
     completedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       default: null,
     },
     ...standardDocumentFields,

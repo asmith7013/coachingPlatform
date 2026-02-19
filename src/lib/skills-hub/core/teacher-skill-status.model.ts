@@ -8,7 +8,7 @@ const TeacherSkillStatusSchema = new mongoose.Schema(
   {
     teacherStaffId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       required: true,
     },
     skillId: { type: String, required: true },
@@ -19,7 +19,7 @@ const TeacherSkillStatusSchema = new mongoose.Schema(
     },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       default: null,
     },
     ...standardDocumentFields,

@@ -8,12 +8,12 @@ const ActionPlanSchema = new mongoose.Schema(
   {
     teacherStaffId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       required: true,
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       required: true,
     },
     title: { type: String, required: true },
