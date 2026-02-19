@@ -3,11 +3,7 @@
 import { Stack, Text, Center, Group } from "@mantine/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DomainAccordion } from "./DomainAccordion";
-import {
-  ProgressionOverviewContent,
-  collectActiveSkills,
-} from "./ProgressStatsRow";
-import { SkillSoloCard } from "./SkillSoloCard";
+import { ProgressionOverviewContent } from "./ProgressStatsRow";
 import { SkillDetailContent } from "./SkillDetailPanel";
 import { DetailDrawer, DETAIL_DRAWER_WIDTH } from "../core/DetailDrawer";
 import type { DrawerTab } from "../core/DetailDrawer";
@@ -208,8 +204,6 @@ export function SkillProgressionView({
     );
   }
 
-  const activeSkills = collectActiveSkills(taxonomy, statusMap);
-
   const domainsWithSkills = taxonomy.domains.filter((d) =>
     d.subDomains.some((sd) => sd.skills.length > 0),
   );
@@ -234,29 +228,6 @@ export function SkillProgressionView({
             Your progression across all domains
           </Text>
         </Group>
-
-        {activeSkills.length > 0 && (
-          <div>
-            <Text size="xs" fw={600} c="dimmed" tt="uppercase" mb="xs">
-              Active Skills
-            </Text>
-            <Group gap="sm">
-              {activeSkills.map(({ skill }) => (
-                <SkillSoloCard
-                  key={skill.uuid}
-                  skillId={skill.uuid}
-                  skillName={skill.name}
-                  description={skill.description}
-                  level={skill.level}
-                  status="active"
-                  isLocked={false}
-                  compact
-                  onSkillClick={handleSkillClick}
-                />
-              ))}
-            </Group>
-          </div>
-        )}
 
         <DomainAccordion
           domains={domainsWithSkills}

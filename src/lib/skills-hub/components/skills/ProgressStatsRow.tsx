@@ -27,6 +27,7 @@ import type {
 import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
 import type { ProgressionStepDocument } from "../../coach/skill-progressions/progression-step.types";
 import { formatDueDate } from "../../core/format-due-date";
+import { SkillSoloCard } from "./SkillSoloCard";
 
 interface ProgressStatsRowProps {
   taxonomy: TeacherSkillsIndex;
@@ -194,6 +195,7 @@ export function ProgressionOverviewContent({
   taxonomy,
   statusMap,
   teacherStaffId,
+  onSkillClick,
 }: ProgressStatsRowProps) {
   const { plans } = useSkillProgressions(teacherStaffId);
   const openPlan = plans.find((p) => p.status === "open") ?? null;
@@ -215,7 +217,8 @@ export function ProgressionOverviewContent({
     });
   }, [openPlan]);
 
-  const activeCount = collectActiveSkills(taxonomy, statusMap).length;
+  const activeSkills = collectActiveSkills(taxonomy, statusMap);
+  const activeCount = activeSkills.length;
   const completedCount = steps.filter((s) => s.completed).length;
   const totalSteps = steps.length;
   const progress = totalSteps > 0 ? (completedCount / totalSteps) * 100 : 0;
@@ -272,6 +275,24 @@ export function ProgressionOverviewContent({
           Current Skill Progression
         </Text>
       </Group>
+
+      {activeSkills.length > 0 && (
+        <Stack gap="xs">
+          {activeSkills.map(({ skill }) => (
+            <SkillSoloCard
+              key={skill.uuid}
+              skillId={skill.uuid}
+              skillName={skill.name}
+              description={skill.description}
+              level={skill.level}
+              status="active"
+              isLocked={false}
+              compact
+              onSkillClick={onSkillClick}
+            />
+          ))}
+        </Stack>
+      )}
 
       {openPlan.why && (
         <div>
