@@ -174,7 +174,7 @@ export function SkillProgressRing({
   );
 }
 
-function collectActiveSkills(
+export function collectActiveSkills(
   taxonomy: TeacherSkillsIndex,
   statusMap: Map<string, TeacherSkillStatusDocument>,
 ): ActiveSkillInfo[] {
@@ -216,8 +216,6 @@ export function ProgressionOverviewContent({
       setLoadingSteps(false);
     });
   }, [openPlan]);
-
-  const activeSkills = collectActiveSkills(taxonomy, statusMap);
 
   const completedCount = steps.filter((s) => s.completed).length;
   const totalSteps = steps.length;
@@ -312,29 +310,6 @@ export function ProgressionOverviewContent({
         </div>
       ) : null}
 
-      {activeSkills.length > 0 && (
-        <>
-          <Divider />
-          <Text size="xs" fw={600} c="dimmed" tt="uppercase">
-            Active Skills
-          </Text>
-          <Stack gap="xs">
-            {activeSkills.map(({ skill }) => (
-              <SkillSoloCard
-                key={skill.uuid}
-                skillId={skill.uuid}
-                skillName={skill.name}
-                description={skill.description}
-                level={skill.level}
-                status="active"
-                isLocked={false}
-                compact
-                onSkillClick={onSkillClick}
-              />
-            ))}
-          </Stack>
-        </>
-      )}
     </Stack>
   );
 }

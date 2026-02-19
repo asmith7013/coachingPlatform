@@ -124,6 +124,8 @@ export function DetailDrawer({
   const portalTarget = useDrawerPortal();
   const { top, bottom } = useLayoutOffsets();
 
+  const hasHeader = !!(tabs || header || subtitle);
+
   const drawer = (
     <Box
       style={{
@@ -140,21 +142,26 @@ export function DetailDrawer({
       }}
       p="md"
     >
-      <Group justify="space-between" mb="md" wrap="nowrap">
-        {tabs ? (
-          <DrawerTabStrip tabs={tabs} />
-        ) : (
-          <div style={{ flex: 1, minWidth: 0 }}>
-            {header}
-            {!header && subtitle && (
-              <Text size="xs" c="dimmed">
-                {subtitle}
-              </Text>
-            )}
-          </div>
-        )}
-        <CloseButton onClick={onClose} />
-      </Group>
+      <CloseButton
+        onClick={onClose}
+        style={{ position: "absolute", top: 12, right: 12, zIndex: 1 }}
+      />
+      {hasHeader && (
+        <Group mb="xs" wrap="nowrap" style={{ paddingRight: 32 }}>
+          {tabs ? (
+            <DrawerTabStrip tabs={tabs} />
+          ) : (
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {header}
+              {!header && subtitle && (
+                <Text size="xs" c="dimmed">
+                  {subtitle}
+                </Text>
+              )}
+            </div>
+          )}
+        </Group>
+      )}
       {children}
     </Box>
   );
