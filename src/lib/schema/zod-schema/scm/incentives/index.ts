@@ -4,3 +4,4 @@
  */
 
 export * from "./activity-type-config";
+export * from "./student-goal";
