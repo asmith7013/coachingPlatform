@@ -109,7 +109,10 @@ export async function updateProgressionStep(
 ): Promise<{ success: boolean; error?: string }> {
   return withDbConnection(async () => {
     try {
-      await SkillsHubActionStep.findByIdAndUpdate(stepId, { $set: input });
+      const validated = ProgressionStepInputSchema.partial().parse(input);
+      await SkillsHubActionStep.findByIdAndUpdate(stepId, {
+        $set: validated,
+      });
       return { success: true };
     } catch (error) {
       return {

@@ -71,13 +71,18 @@ export function ActiveSkillsView({ teacherStaffId }: ActiveSkillsViewProps) {
       setSteps([]);
       return;
     }
+    let cancelled = false;
     setLoadingSteps(true);
     getProgressionSteps(openPlan._id).then((result) => {
+      if (cancelled) return;
       if (result.success && result.data) {
         setSteps(result.data);
       }
       setLoadingSteps(false);
     });
+    return () => {
+      cancelled = true;
+    };
   }, [openPlan]);
 
   // For each active skill, find its paired skill (if any) so we can render SkillPairCard
@@ -148,22 +153,26 @@ export function ActiveSkillsView({ teacherStaffId }: ActiveSkillsViewProps) {
   }, []);
 
   const handleToggleStep = async (stepId: string, completed: boolean) => {
-    if (completed) {
-      await uncompleteProgressionStep(stepId);
-      setSteps((prev) =>
-        prev.map((s) =>
-          s._id === stepId ? { ...s, completed: false, completedAt: null } : s,
-        ),
-      );
-    } else {
-      await completeProgressionStep(stepId);
-      setSteps((prev) =>
-        prev.map((s) =>
-          s._id === stepId
-            ? { ...s, completed: true, completedAt: new Date().toISOString() }
-            : s,
-        ),
-      );
+    const previousSteps = steps;
+    // Optimistic update
+    setSteps((prev) =>
+      prev.map((s) =>
+        s._id === stepId
+          ? completed
+            ? { ...s, completed: false, completedAt: null }
+            : { ...s, completed: true, completedAt: new Date().toISOString() }
+          : s,
+      ),
+    );
+    try {
+      const result = completed
+        ? await uncompleteProgressionStep(stepId)
+        : await completeProgressionStep(stepId);
+      if (!result.success) {
+        setSteps(previousSteps);
+      }
+    } catch {
+      setSteps(previousSteps);
     }
   };
 
