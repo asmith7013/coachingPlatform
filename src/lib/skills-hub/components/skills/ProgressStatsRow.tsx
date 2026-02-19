@@ -14,7 +14,6 @@ import {
   Progress,
   RingProgress,
 } from "@mantine/core";
-import { SkillSoloCard } from "./SkillSoloCard";
 import { useSkillProgressions } from "../../hooks/useSkillProgressions";
 import {
   getProgressionSteps,
@@ -195,7 +194,6 @@ export function ProgressionOverviewContent({
   taxonomy,
   statusMap,
   teacherStaffId,
-  onSkillClick,
 }: ProgressStatsRowProps) {
   const { plans } = useSkillProgressions(teacherStaffId);
   const openPlan = plans.find((p) => p.status === "open") ?? null;
@@ -217,6 +215,7 @@ export function ProgressionOverviewContent({
     });
   }, [openPlan]);
 
+  const activeCount = collectActiveSkills(taxonomy, statusMap).length;
   const completedCount = steps.filter((s) => s.completed).length;
   const totalSteps = steps.length;
   const progress = totalSteps > 0 ? (completedCount / totalSteps) * 100 : 0;
@@ -247,13 +246,36 @@ export function ProgressionOverviewContent({
 
   return (
     <Stack gap="md">
-      <Text fw={700} size="lg">
-        Current Skill Progression
-      </Text>
+      <SkillProgressRing taxonomy={taxonomy} statusMap={statusMap} />
+
+      <Divider size="md" />
+
+      <Group gap="sm" align="center">
+        {activeCount > 0 && (
+          <Box
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              backgroundColor: "var(--mantine-color-blue-5)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text size="xs" fw={700} c="white">
+              {activeCount}
+            </Text>
+          </Box>
+        )}
+        <Text fw={700} size="lg">
+          Current Skill Progression
+        </Text>
+      </Group>
 
       {openPlan.why && (
         <div>
-          <Text size="xs" fw={500} c="dimmed">
+          <Text size="xs" fw={600} c="dimmed" tt="uppercase">
             Why
           </Text>
           <Text size="sm">{openPlan.why}</Text>
@@ -275,7 +297,7 @@ export function ProgressionOverviewContent({
             <Progress
               value={progress}
               size="sm"
-              color="teal"
+              color="blue"
               style={{ flex: 1 }}
             />
             <Text size="xs" c="dimmed" fw={500}>
@@ -286,6 +308,7 @@ export function ProgressionOverviewContent({
             {steps.map((step) => (
               <Group key={step._id} gap="sm" wrap="nowrap" align="flex-start">
                 <Checkbox
+                  color="blue"
                   checked={step.completed}
                   onChange={() => handleToggleStep(step._id, step.completed)}
                   mt={2}
@@ -300,7 +323,12 @@ export function ProgressionOverviewContent({
                   {step.description}
                 </Text>
                 {step.dueDate && (
-                  <Badge size="sm" variant="light" style={{ flexShrink: 0 }}>
+                  <Badge
+                    size="sm"
+                    variant="light"
+                    color="blue"
+                    style={{ flexShrink: 0 }}
+                  >
                     {formatDueDate(step.dueDate)}
                   </Badge>
                 )}
@@ -309,7 +337,6 @@ export function ProgressionOverviewContent({
           </Stack>
         </div>
       ) : null}
-
     </Stack>
   );
 }

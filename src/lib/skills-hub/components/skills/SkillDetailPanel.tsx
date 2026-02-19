@@ -3,30 +3,25 @@
 import {
   Text,
   Title,
+  Badge,
   Breadcrumbs,
   Anchor,
   Group,
   Stack,
   Box,
   Divider,
-  SegmentedControl,
   Center,
   Loader,
   UnstyledButton,
 } from "@mantine/core";
 import { IconLock } from "@tabler/icons-react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useSkillsHubAuth } from "../layout/ViewAsContext";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
-import {
-  useTeacherSkillStatuses,
-  skillStatusKeys,
-} from "../../hooks/useTeacherSkillStatuses";
+import { useTeacherSkillStatuses } from "../../hooks/useTeacherSkillStatuses";
 import { useSkillProgressions } from "../../hooks/useSkillProgressions";
 import { useObservations } from "../../hooks/useObservations";
 import { getSkillByUuid } from "../../core/taxonomy";
 import { isSkillLocked } from "../../core/skill-lock";
-import { updateSkillStatus } from "../../core/skill-status.actions";
 import { SkillStatusDot } from "./SkillStatusDot";
 import { SkillObservationTimeline } from "../observations/SkillObservationTimeline";
 // import { SkillNotesSection } from "../notes/SkillNotesSection";
@@ -48,78 +43,6 @@ interface SkillDetailPanelProps extends SkillDetailContentProps {
   onClose: () => void;
 }
 
-const STATUS_OPTIONS = [
-  { label: "Not Started", value: "not_started" },
-  { label: "Active", value: "active" },
-  { label: "Developing", value: "developing" },
-  { label: "Proficient", value: "proficient" },
-];
-
-function PairTile({
-  skill,
-  status,
-  isSelected,
-  locked,
-  onClick,
-}: {
-  skill: TeacherSkillFlat;
-  status: SkillStatus;
-  isSelected: boolean;
-  locked: boolean;
-  onClick?: () => void;
-}) {
-  const Icon = getSkillIcon(skill.uuid);
-
-  const content = (
-    <Box
-      p="xs"
-      style={{
-        borderRadius: "var(--mantine-radius-sm)",
-        border: isSelected
-          ? "2px solid var(--mantine-color-teal-5)"
-          : "1px solid var(--mantine-color-gray-3)",
-        backgroundColor: isSelected
-          ? "var(--mantine-color-teal-0)"
-          : "var(--mantine-color-white)",
-        opacity: locked ? 0.5 : 1,
-        cursor: isSelected || locked ? "default" : "pointer",
-      }}
-    >
-      <Group gap={6} wrap="nowrap">
-        <Box
-          style={{
-            width: 24,
-            height: 24,
-            borderRadius: "50%",
-            backgroundColor: "var(--mantine-color-gray-1)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          {locked ? (
-            <IconLock size={12} color="var(--mantine-color-gray-5)" />
-          ) : (
-            <Icon size={12} stroke={1.5} />
-          )}
-        </Box>
-        <Text size="xs" fw={500} lineClamp={1} style={{ flex: 1, minWidth: 0 }}>
-          {skill.name}
-        </Text>
-        <SkillStatusDot status={status} size={10} />
-      </Group>
-      <Text size="xs" c="dimmed" mt={2}>
-        Level {skill.level}
-      </Text>
-    </Box>
-  );
-
-  if (isSelected || locked) return content;
-
-  return <UnstyledButton onClick={onClick}>{content}</UnstyledButton>;
-}
-
 function getStatusFromMap(
   statuses: TeacherSkillStatusDocument[],
   skillUuid: string,
@@ -135,7 +58,6 @@ export function SkillDetailContent({
   onSkillClick,
 }: SkillDetailContentProps) {
   const { hasRole } = useSkillsHubAuth();
-  const queryClient = useQueryClient();
 
   const isCoach =
     hasRole("coach") || hasRole("super_admin") || hasRole("director");
@@ -180,14 +102,6 @@ export function SkillDetailContent({
   const pairedIsLocked = pairedSkill
     ? isSkillLocked(pairedSkill, statusMap, subDomainSkills)
     : false;
-
-  const handleStatusChange = async (value: string) => {
-    if (!skill) return;
-    await updateSkillStatus(teacherStaffId, skill.uuid, value as SkillStatus);
-    queryClient.invalidateQueries({
-      queryKey: skillStatusKeys.byTeacher(teacherStaffId),
-    });
-  };
 
   // Order pair tiles: L1 first, L2 second
   const pairTiles =
@@ -235,66 +149,30 @@ export function SkillDetailContent({
         </Breadcrumbs>
       </div>
 
-      {/* Pair row */}
-      {pairTiles && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 8,
-          }}
-        >
-          <PairTile
-            skill={pairTiles.l1}
-            status={
-              pairTiles.l1.uuid === skill.uuid ? currentStatus : pairedStatus
-            }
-            isSelected={pairTiles.l1.uuid === skill.uuid}
-            locked={false}
-            onClick={() => onSkillClick(pairTiles.l1.uuid)}
-          />
-          <PairTile
-            skill={pairTiles.l2}
-            status={
-              pairTiles.l2.uuid === skill.uuid ? currentStatus : pairedStatus
-            }
-            isSelected={pairTiles.l2.uuid === skill.uuid}
-            locked={pairTiles.l2.uuid !== skill.uuid ? pairedIsLocked : false}
-            onClick={() => onSkillClick(pairTiles.l2.uuid)}
-          />
-        </div>
-      )}
-
       {/* Skill detail */}
       <div>
-        <Group gap="sm" mb="xs">
-          <Icon size={20} stroke={1.5} />
-          <Title order={4}>{skill.name}</Title>
-        </Group>
-        {skill.description && (
-          <Text size="sm" mt="xs">
-            {skill.description}
-          </Text>
-        )}
-      </div>
-
-      {isCoach && (
-        <>
-          <Divider />
-          <div>
-            <Text size="xs" fw={500} mb="xs">
-              Status
-            </Text>
-            <SegmentedControl
-              data={STATUS_OPTIONS}
-              value={currentStatus}
-              onChange={handleStatusChange}
-              size="xs"
-              fullWidth
-            />
+        <Group gap="sm" wrap="nowrap" align="flex-start">
+          <Box style={{ flexShrink: 0, marginTop: 4 }}>
+            <Icon size={20} stroke={1.5} />
+          </Box>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <Title order={4}>{skill.name}</Title>
+            {skill.description && (
+              <Text size="sm" c="dimmed" mt={4}>
+                {skill.description}
+              </Text>
+            )}
           </div>
-        </>
-      )}
+          <Badge
+            size="sm"
+            variant="light"
+            color="gray"
+            style={{ flexShrink: 0, marginTop: 4 }}
+          >
+            L{skill.level}
+          </Badge>
+        </Group>
+      </div>
 
       <Divider />
 

@@ -38,10 +38,6 @@ function SkillHalfContent({
         opacity: skill.isLocked ? 0.5 : 1,
         cursor: skill.isLocked ? "default" : "pointer",
         minWidth: 0,
-        borderLeft:
-          skill.status !== "not_started"
-            ? `3px solid ${colors.cardBorder}`
-            : "3px solid transparent",
       }}
     >
       <Group gap="sm" wrap="nowrap">

@@ -41,16 +41,14 @@ export function SkillSoloCard({
       style={{
         opacity: isLocked ? 0.5 : 1,
         cursor: isLocked ? "default" : "pointer",
-        borderColor: status !== "not_started" ? colors.cardBorder : undefined,
-        borderWidth: status !== "not_started" ? 2 : undefined,
       }}
     >
       {compact ? (
         <Group gap="xs" wrap="nowrap">
           <Box
             style={{
-              width: 28,
-              height: 28,
+              width: 34,
+              height: 34,
               borderRadius: "50%",
               backgroundColor: colors.iconBg,
               border: `2px solid ${colors.iconBorder}`,
@@ -61,9 +59,9 @@ export function SkillSoloCard({
             }}
           >
             {isLocked ? (
-              <IconLock size={14} color="var(--mantine-color-gray-5)" />
+              <IconLock size={16} color="var(--mantine-color-gray-5)" />
             ) : (
-              <Icon size={14} stroke={1.5} color={colors.iconColor} />
+              <Icon size={16} stroke={1.5} color={colors.iconColor} />
             )}
           </Box>
           <Text
@@ -127,7 +125,7 @@ export function SkillSoloCard({
   }
 
   return (
-    <UnstyledButton onClick={() => onSkillClick?.(skillId)} w="100%">
+    <UnstyledButton onClick={() => onSkillClick?.(skillId)} w={compact ? undefined : "100%"}>
       {content}
     </UnstyledButton>
   );
