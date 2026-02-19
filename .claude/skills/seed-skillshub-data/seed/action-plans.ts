@@ -39,7 +39,6 @@ export async function seedSkillProgressions(staff: StaffIds): Promise<PlanDocs> 
       title: plan.title,
       skillIds: plan.skillUuids,
       why: plan.why,
-      actionStep: plan.actionStep,
       status: plan.status,
       closedAt,
     });

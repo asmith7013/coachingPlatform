@@ -33,7 +33,6 @@ export function SkillProgressionForm({
   const [domainIds, setDomainIds] = useState<string[]>([]);
   const [skillIds, setSkillIds] = useState<string[]>([]);
   const [why, setWhy] = useState("");
-  const [actionStep, setActionStep] = useState("");
   const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(
     teacherStaffId,
   );
@@ -95,7 +94,6 @@ export function SkillProgressionForm({
         title,
         skillIds,
         why: why.trim() || undefined,
-        actionStep: actionStep.trim() || undefined,
       },
       steps: [],
     });
@@ -208,15 +206,6 @@ export function SkillProgressionForm({
                   placeholder="Why should this teacher develop these skills?"
                   value={why}
                   onChange={(e) => setWhy(e.currentTarget.value)}
-                  autosize
-                  minRows={4}
-                />
-
-                <Textarea
-                  label="Action Step"
-                  placeholder="How should the teacher implement this?"
-                  value={actionStep}
-                  onChange={(e) => setActionStep(e.currentTarget.value)}
                   autosize
                   minRows={4}
                 />

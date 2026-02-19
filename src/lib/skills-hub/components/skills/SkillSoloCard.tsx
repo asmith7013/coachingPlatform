@@ -14,6 +14,7 @@ interface SkillSoloCardProps {
   status: SkillStatus;
   isLocked: boolean;
   domainName?: string;
+  compact?: boolean;
   onSkillClick?: (skillId: string) => void;
 }
 
@@ -25,6 +26,7 @@ export function SkillSoloCard({
   status,
   isLocked,
   domainName,
+  compact,
   onSkillClick,
 }: SkillSoloCardProps) {
   const Icon = getSkillIcon(skillId);
@@ -43,45 +45,80 @@ export function SkillSoloCard({
         borderWidth: status !== "not_started" ? 2 : undefined,
       }}
     >
-      <Group gap="sm" wrap="nowrap">
-        <Box
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: "50%",
-            backgroundColor: colors.iconBg,
-            border: `2px solid ${colors.iconBorder}`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          {isLocked ? (
-            <IconLock size={18} color="var(--mantine-color-gray-5)" />
-          ) : (
-            <Icon size={18} stroke={1.5} color={colors.iconColor} />
-          )}
-        </Box>
-        <div style={{ minWidth: 0 }}>
-          <Text size="xs" c="dimmed" fw={500}>
-            Level {level}
-          </Text>
-          <Text size="sm" fw={500} lineClamp={2}>
+      {compact ? (
+        <Group gap="xs" wrap="nowrap">
+          <Box
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              backgroundColor: colors.iconBg,
+              border: `2px solid ${colors.iconBorder}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            {isLocked ? (
+              <IconLock size={14} color="var(--mantine-color-gray-5)" />
+            ) : (
+              <Icon size={14} stroke={1.5} color={colors.iconColor} />
+            )}
+          </Box>
+          <Text
+            size="sm"
+            fw={500}
+            lineClamp={1}
+            style={{ flex: 1, minWidth: 0 }}
+          >
             {skillName}
           </Text>
-          {description && (
-            <Text size="xs" c="dimmed" lineClamp={2} mt={2}>
-              {description}
+          <Text size="xs" c="dimmed" fw={500} style={{ flexShrink: 0 }}>
+            L{level}
+          </Text>
+        </Group>
+      ) : (
+        <Group gap="sm" wrap="nowrap">
+          <Box
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: "50%",
+              backgroundColor: colors.iconBg,
+              border: `2px solid ${colors.iconBorder}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            {isLocked ? (
+              <IconLock size={18} color="var(--mantine-color-gray-5)" />
+            ) : (
+              <Icon size={18} stroke={1.5} color={colors.iconColor} />
+            )}
+          </Box>
+          <div style={{ minWidth: 0 }}>
+            <Text size="xs" c="dimmed" fw={500}>
+              Level {level}
             </Text>
-          )}
-          {domainName && (
-            <Badge size="xs" variant="light" color="blue" mt={4}>
-              {domainName}
-            </Badge>
-          )}
-        </div>
-      </Group>
+            <Text size="sm" fw={500} lineClamp={2}>
+              {skillName}
+            </Text>
+            {description && (
+              <Text size="xs" c="dimmed" lineClamp={2} mt={2}>
+                {description}
+              </Text>
+            )}
+            {domainName && (
+              <Badge size="xs" variant="light" color="blue" mt={4}>
+                {domainName}
+              </Badge>
+            )}
+          </div>
+        </Group>
+      )}
     </Card>
   );
 

@@ -135,16 +135,7 @@ function PlanCard({
             </div>
           )}
 
-          {plan.actionStep && (
-            <div>
-              <Text size="xs" fw={500} c="dimmed">
-                Action Step
-              </Text>
-              <Text size="sm">{plan.actionStep}</Text>
-            </div>
-          )}
-
-          {(plan.why || plan.actionStep) && steps.length > 0 && <Divider />}
+          {plan.why && steps.length > 0 && <Divider />}
 
           {loadingSteps ? (
             <Text size="xs" c="dimmed">

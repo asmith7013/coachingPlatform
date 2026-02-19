@@ -24,7 +24,7 @@ import {
 } from "../../hooks/useTeacherSkillStatuses";
 import { useSkillProgressions } from "../../hooks/useSkillProgressions";
 import { useObservations } from "../../hooks/useObservations";
-import { getSkillById, getSkillByUuid } from "../../core/taxonomy";
+import { getSkillByUuid } from "../../core/taxonomy";
 import { isSkillLocked } from "../../core/skill-lock";
 import { updateSkillStatus } from "../../core/skill-status.actions";
 import { SkillStatusDot } from "./SkillStatusDot";
@@ -37,11 +37,14 @@ import type { SkillStatus } from "../../core/skill-status.types";
 import type { TeacherSkillFlat } from "../../core/taxonomy.types";
 import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
 
-interface SkillDetailPanelProps {
+interface SkillDetailContentProps {
   skillId: string;
   teacherStaffId: string;
   teacherName?: string;
   onSkillClick: (skillId: string) => void;
+}
+
+interface SkillDetailPanelProps extends SkillDetailContentProps {
   onClose: () => void;
 }
 
@@ -65,7 +68,7 @@ function PairTile({
   locked: boolean;
   onClick?: () => void;
 }) {
-  const Icon = getSkillIcon(skill.id);
+  const Icon = getSkillIcon(skill.uuid);
 
   const content = (
     <Box
@@ -125,13 +128,12 @@ function getStatusFromMap(
   return (doc?.status as SkillStatus) || "not_started";
 }
 
-export function SkillDetailPanel({
+export function SkillDetailContent({
   skillId,
   teacherStaffId,
   teacherName,
   onSkillClick,
-  onClose,
-}: SkillDetailPanelProps) {
+}: SkillDetailContentProps) {
   const { hasRole } = useSkillsHubAuth();
   const queryClient = useQueryClient();
 
@@ -144,7 +146,7 @@ export function SkillDetailPanel({
   const { plans } = useSkillProgressions(teacherStaffId);
   const { observations } = useObservations(teacherStaffId);
 
-  const skill = taxonomy ? getSkillById(taxonomy, skillId) : null;
+  const skill = taxonomy ? getSkillByUuid(taxonomy, skillId) : null;
   const pairedSkill =
     taxonomy && skill?.pairedSkillId
       ? getSkillByUuid(taxonomy, skill.pairedSkillId)
@@ -160,7 +162,7 @@ export function SkillDetailPanel({
   const linkedPlans = skill
     ? plans.filter((p) => p.skillIds.includes(skill.uuid))
     : [];
-  const Icon = getSkillIcon(skillId);
+  const Icon = getSkillIcon(skill?.uuid ?? "");
 
   // Build statusMap for isSkillLocked check
   const statusMap = new Map<string, TeacherSkillStatusDocument>();
@@ -195,144 +197,140 @@ export function SkillDetailPanel({
         : { l1: pairedSkill, l2: skill }
       : null;
 
-  const subtitle =
-    isCoach && teacherName ? `Reviewing: ${teacherName}` : undefined;
+  if (taxLoading || statusLoading) {
+    return (
+      <Center py="xl">
+        <Loader size="sm" />
+      </Center>
+    );
+  }
 
-  const headerContent = skill ? (
-    <div>
-      {subtitle && (
-        <Text size="xs" c="dimmed" mb={2}>
-          {subtitle}
-        </Text>
-      )}
-      <Breadcrumbs
-        separator="›"
-        styles={{ separator: { color: "var(--mantine-color-dimmed)" } }}
-      >
-        <Anchor size="xs" c="dimmed" underline="never">
-          {skill.domainName}
-        </Anchor>
-        <Anchor size="xs" c="dimmed" underline="never">
-          {skill.subDomainName}
-        </Anchor>
-      </Breadcrumbs>
-    </div>
-  ) : undefined;
+  if (!skill) {
+    return (
+      <Center py="xl">
+        <Text c="dimmed">Skill not found</Text>
+      </Center>
+    );
+  }
 
   return (
-    <DetailDrawer onClose={onClose} header={headerContent}>
-      {(taxLoading || statusLoading) && (
-        <Center py="xl">
-          <Loader size="sm" />
-        </Center>
-      )}
+    <Stack gap="md">
+      {/* Breadcrumb header */}
+      <div>
+        {isCoach && teacherName && (
+          <Text size="xs" c="dimmed" mb={2}>
+            Reviewing: {teacherName}
+          </Text>
+        )}
+        <Breadcrumbs
+          separator="›"
+          styles={{ separator: { color: "var(--mantine-color-dimmed)" } }}
+        >
+          <Anchor size="xs" c="dimmed" underline="never">
+            {skill.domainName}
+          </Anchor>
+          <Anchor size="xs" c="dimmed" underline="never">
+            {skill.subDomainName}
+          </Anchor>
+        </Breadcrumbs>
+      </div>
 
-      {!taxLoading && !statusLoading && !skill && (
-        <Center py="xl">
-          <Text c="dimmed">Skill not found</Text>
-        </Center>
-      )}
-
-      {skill && (
-        <Stack gap="md">
-          {/* Pair row */}
-          {pairTiles && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 8,
-              }}
-            >
-              <PairTile
-                skill={pairTiles.l1}
-                status={
-                  pairTiles.l1.uuid === skill.uuid
-                    ? currentStatus
-                    : pairedStatus
-                }
-                isSelected={pairTiles.l1.uuid === skill.uuid}
-                locked={false}
-                onClick={() => onSkillClick(pairTiles.l1.id)}
-              />
-              <PairTile
-                skill={pairTiles.l2}
-                status={
-                  pairTiles.l2.uuid === skill.uuid
-                    ? currentStatus
-                    : pairedStatus
-                }
-                isSelected={pairTiles.l2.uuid === skill.uuid}
-                locked={
-                  pairTiles.l2.uuid !== skill.uuid ? pairedIsLocked : false
-                }
-                onClick={() => onSkillClick(pairTiles.l2.id)}
-              />
-            </div>
-          )}
-
-          {/* Skill detail */}
-          <div>
-            <Group gap="sm" mb="xs">
-              <Icon size={20} stroke={1.5} />
-              <Title order={4}>{skill.name}</Title>
-            </Group>
-            {skill.description && (
-              <Text size="sm" mt="xs">
-                {skill.description}
-              </Text>
-            )}
-          </div>
-
-          {isCoach && (
-            <>
-              <Divider />
-              <div>
-                <Text size="xs" fw={500} mb="xs">
-                  Status
-                </Text>
-                <SegmentedControl
-                  data={STATUS_OPTIONS}
-                  value={currentStatus}
-                  onChange={handleStatusChange}
-                  size="xs"
-                  fullWidth
-                />
-              </div>
-            </>
-          )}
-
-          <Divider />
-
-          <PanelSkillProgressionSection
-            plans={linkedPlans}
-            teacherStaffId={teacherStaffId}
+      {/* Pair row */}
+      {pairTiles && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 8,
+          }}
+        >
+          <PairTile
+            skill={pairTiles.l1}
+            status={
+              pairTiles.l1.uuid === skill.uuid ? currentStatus : pairedStatus
+            }
+            isSelected={pairTiles.l1.uuid === skill.uuid}
+            locked={false}
+            onClick={() => onSkillClick(pairTiles.l1.uuid)}
           />
-
-          <div>
-            <Text fw={600} size="sm" mb="xs">
-              Observation History
-            </Text>
-            <SkillObservationTimeline
-              observations={observations}
-              skillId={skill.uuid}
-            />
-          </div>
-
-          {/* Notes section temporarily hidden
-          <div>
-            <Text fw={600} size="sm" mb="xs">
-              Notes
-            </Text>
-            <SkillNotesSection
-              teacherStaffId={teacherStaffId}
-              skillId={skill.uuid}
-              isCoachView={isCoach}
-            />
-          </div>
-          */}
-        </Stack>
+          <PairTile
+            skill={pairTiles.l2}
+            status={
+              pairTiles.l2.uuid === skill.uuid ? currentStatus : pairedStatus
+            }
+            isSelected={pairTiles.l2.uuid === skill.uuid}
+            locked={pairTiles.l2.uuid !== skill.uuid ? pairedIsLocked : false}
+            onClick={() => onSkillClick(pairTiles.l2.uuid)}
+          />
+        </div>
       )}
+
+      {/* Skill detail */}
+      <div>
+        <Group gap="sm" mb="xs">
+          <Icon size={20} stroke={1.5} />
+          <Title order={4}>{skill.name}</Title>
+        </Group>
+        {skill.description && (
+          <Text size="sm" mt="xs">
+            {skill.description}
+          </Text>
+        )}
+      </div>
+
+      {isCoach && (
+        <>
+          <Divider />
+          <div>
+            <Text size="xs" fw={500} mb="xs">
+              Status
+            </Text>
+            <SegmentedControl
+              data={STATUS_OPTIONS}
+              value={currentStatus}
+              onChange={handleStatusChange}
+              size="xs"
+              fullWidth
+            />
+          </div>
+        </>
+      )}
+
+      <Divider />
+
+      <PanelSkillProgressionSection
+        plans={linkedPlans}
+        teacherStaffId={teacherStaffId}
+      />
+
+      <div>
+        <Text fw={600} size="sm" mb="xs">
+          Observation History
+        </Text>
+        <SkillObservationTimeline
+          observations={observations}
+          skillId={skill.uuid}
+        />
+      </div>
+    </Stack>
+  );
+}
+
+export function SkillDetailPanel({
+  skillId,
+  teacherStaffId,
+  teacherName,
+  onSkillClick,
+  onClose,
+}: SkillDetailPanelProps) {
+  return (
+    <DetailDrawer onClose={onClose}>
+      <SkillDetailContent
+        skillId={skillId}
+        teacherStaffId={teacherStaffId}
+        teacherName={teacherName}
+        onSkillClick={onSkillClick}
+      />
     </DetailDrawer>
   );
 }

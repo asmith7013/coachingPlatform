@@ -12,7 +12,6 @@ export const SkillProgressionInputSchema = z.object({
   title: z.string().min(1, "Title is required"),
   skillIds: z.array(z.string()).default([]),
   why: z.string().optional(),
-  actionStep: z.string().optional(),
 });
 export type SkillProgressionInput = z.infer<typeof SkillProgressionInputSchema>;
 
@@ -23,7 +22,6 @@ export const SkillProgressionDocumentSchema = z.object({
   title: z.string(),
   skillIds: z.array(z.string()),
   why: z.string().optional(),
-  actionStep: z.string().optional(),
   status: SkillProgressionStatusEnum,
   closedAt: z.string().nullable(),
   createdAt: z.string(),

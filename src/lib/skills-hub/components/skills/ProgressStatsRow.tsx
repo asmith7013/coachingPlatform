@@ -18,7 +18,6 @@ import { SkillSoloCard } from "./SkillSoloCard";
 import { useSkillProgressions } from "../../hooks/useSkillProgressions";
 import { getProgressionSteps } from "../../coach/skill-progressions/progression-step.actions";
 import { completeProgressionStep } from "../../coach/skill-progressions/progression-step.actions";
-import { getSkillByUuid } from "../../core/taxonomy";
 import type {
   TeacherSkillsIndex,
   TeacherSkill,
@@ -35,7 +34,6 @@ interface ProgressStatsRowProps {
 
 interface ActiveSkillInfo {
   skill: TeacherSkill;
-  domainName: string;
 }
 
 const STATUS_RING_COLORS = {
@@ -181,7 +179,7 @@ function collectActiveSkills(
     for (const subDomain of domain.subDomains) {
       for (const skill of subDomain.skills) {
         if (statusMap.get(skill.uuid)?.status === "active") {
-          active.push({ skill, domainName: domain.name });
+          active.push({ skill });
         }
       }
     }
@@ -189,12 +187,7 @@ function collectActiveSkills(
   return active;
 }
 
-function resolveSkillName(taxonomy: TeacherSkillsIndex, uuid: string): string {
-  const skill = getSkillByUuid(taxonomy, uuid);
-  return skill?.name ?? uuid;
-}
-
-export function ProgressStatsRow({
+export function ProgressionOverviewContent({
   taxonomy,
   statusMap,
   teacherStaffId,
@@ -244,117 +237,104 @@ export function ProgressStatsRow({
   }
 
   return (
-    <Card shadow="sm" withBorder p="lg">
-      <Stack gap="md">
-        <Group gap="xs" align="center">
-          <Text fw={700} size="lg">
-            Current Skill Progression
+    <Stack gap="md">
+      <Text fw={700} size="lg">
+        Current Skill Progression
+      </Text>
+
+      {openPlan.why && (
+        <div>
+          <Text size="xs" fw={500} c="dimmed">
+            Why
           </Text>
-          <Badge color="blue" size="sm" variant="light">
-            {openPlan.title}
-          </Badge>
-        </Group>
+          <Text size="sm">{openPlan.why}</Text>
+        </div>
+      )}
 
-        {openPlan.why && (
-          <div>
-            <Text size="xs" fw={500} c="dimmed">
-              Why
-            </Text>
-            <Text size="sm">{openPlan.why}</Text>
-          </div>
-        )}
+      <Divider />
 
-        {openPlan.actionStep && (
-          <div>
-            <Text size="xs" fw={500} c="dimmed">
-              Action Step
-            </Text>
-            <Text size="sm">{openPlan.actionStep}</Text>
-          </div>
-        )}
-
-        <Divider />
-
-        {loadingSteps ? (
-          <Text size="sm" c="dimmed">
-            Loading steps...
-          </Text>
-        ) : totalSteps > 0 ? (
-          <div>
-            <Group gap="xs" mb="xs" align="center">
-              <Text size="xs" fw={600} c="dimmed" tt="uppercase">
-                Steps
-              </Text>
-              <Progress
-                value={progress}
-                size="sm"
-                color="teal"
-                style={{ flex: 1 }}
-              />
-              <Text size="xs" c="dimmed" fw={500}>
-                {completedCount}/{totalSteps}
-              </Text>
-            </Group>
-            <Stack gap="xs">
-              {steps.map((step) => (
-                <Group key={step._id} gap="sm" wrap="nowrap" align="flex-start">
-                  <Checkbox
-                    checked={step.completed}
-                    onChange={() => handleToggleStep(step._id, step.completed)}
-                    disabled={step.completed}
-                    mt={2}
-                  />
-                  <div style={{ flex: 1 }}>
-                    <Text
-                      size="sm"
-                      td={step.completed ? "line-through" : undefined}
-                      c={step.completed ? "dimmed" : undefined}
-                    >
-                      {step.description}
-                    </Text>
-                    <Group gap={4} mt={2} wrap="wrap">
-                      {step.dueDate && (
-                        <Badge size="xs" variant="light">
-                          Due: {new Date(step.dueDate).toLocaleDateString()}
-                        </Badge>
-                      )}
-                      {step.skillIds.map((id) => (
-                        <Badge key={id} size="xs" variant="dot" color="blue">
-                          {resolveSkillName(taxonomy, id)}
-                        </Badge>
-                      ))}
-                    </Group>
-                  </div>
-                </Group>
-              ))}
-            </Stack>
-          </div>
-        ) : null}
-
-        {activeSkills.length > 0 && (
-          <>
-            <Divider />
+      {loadingSteps ? (
+        <Text size="sm" c="dimmed">
+          Loading steps...
+        </Text>
+      ) : totalSteps > 0 ? (
+        <div>
+          <Group gap="xs" mb="xs" align="center">
             <Text size="xs" fw={600} c="dimmed" tt="uppercase">
-              Active Skills
+              Steps
             </Text>
-            <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="md">
-              {activeSkills.map(({ skill, domainName }) => (
-                <SkillSoloCard
-                  key={skill.uuid}
-                  skillId={skill.uuid}
-                  skillName={skill.name}
-                  description={skill.description}
-                  level={skill.level}
-                  status="active"
-                  isLocked={false}
-                  domainName={domainName}
-                  onSkillClick={onSkillClick}
+            <Progress
+              value={progress}
+              size="sm"
+              color="teal"
+              style={{ flex: 1 }}
+            />
+            <Text size="xs" c="dimmed" fw={500}>
+              {completedCount}/{totalSteps}
+            </Text>
+          </Group>
+          <Stack gap="xs">
+            {steps.map((step) => (
+              <Group key={step._id} gap="sm" wrap="nowrap" align="flex-start">
+                <Checkbox
+                  checked={step.completed}
+                  onChange={() => handleToggleStep(step._id, step.completed)}
+                  disabled={step.completed}
+                  mt={2}
                 />
-              ))}
-            </SimpleGrid>
-          </>
-        )}
-      </Stack>
+                <div style={{ flex: 1 }}>
+                  <Text
+                    size="sm"
+                    td={step.completed ? "line-through" : undefined}
+                    c={step.completed ? "dimmed" : undefined}
+                  >
+                    {step.description}
+                  </Text>
+                  {step.dueDate && (
+                    <Group gap={4} mt={2} wrap="wrap">
+                      <Badge size="xs" variant="light">
+                        Due: {new Date(step.dueDate).toLocaleDateString()}
+                      </Badge>
+                    </Group>
+                  )}
+                </div>
+              </Group>
+            ))}
+          </Stack>
+        </div>
+      ) : null}
+
+      {activeSkills.length > 0 && (
+        <>
+          <Divider />
+          <Text size="xs" fw={600} c="dimmed" tt="uppercase">
+            Active Skills
+          </Text>
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+            {activeSkills.map(({ skill }) => (
+              <SkillSoloCard
+                key={skill.uuid}
+                skillId={skill.uuid}
+                skillName={skill.name}
+                description={skill.description}
+                level={skill.level}
+                status="active"
+                isLocked={false}
+                compact
+                onSkillClick={onSkillClick}
+              />
+            ))}
+          </SimpleGrid>
+        </>
+      )}
+    </Stack>
+  );
+}
+
+export function ProgressStatsRow(props: ProgressStatsRowProps) {
+  return (
+    <Card shadow="sm" withBorder p="lg">
+      <ProgressionOverviewContent {...props} />
     </Card>
   );
 }

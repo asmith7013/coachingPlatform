@@ -84,7 +84,7 @@ function SubDomainSkills({
             >
               <SkillPairCard
                 l1={{
-                  skillId: item.l1.id,
+                  skillId: item.l1.uuid,
                   skillName: item.l1.name,
                   description: item.l1.description,
                   status: getStatus(statusMap, item.l1.uuid),
@@ -92,7 +92,7 @@ function SubDomainSkills({
                   level: 1,
                 }}
                 l2={{
-                  skillId: item.l2.id,
+                  skillId: item.l2.uuid,
                   skillName: item.l2.name,
                   description: item.l2.description,
                   status: getStatus(statusMap, item.l2.uuid),
@@ -113,7 +113,7 @@ function SubDomainSkills({
             }}
           >
             <SkillSoloCard
-              skillId={item.skill.id}
+              skillId={item.skill.uuid}
               skillName={item.skill.name}
               description={item.skill.description}
               level={item.skill.level as 1 | 2}

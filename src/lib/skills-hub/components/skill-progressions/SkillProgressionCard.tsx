@@ -153,16 +153,7 @@ export function SkillProgressionCard({
             </div>
           )}
 
-          {plan.actionStep && (
-            <div>
-              <Text size="xs" fw={500} c="dimmed">
-                Action Step
-              </Text>
-              <Text size="sm">{plan.actionStep}</Text>
-            </div>
-          )}
-
-          {(plan.why || plan.actionStep) && <Divider />}
+          {plan.why && <Divider />}
 
           {loadingSteps ? (
             <Text size="sm" c="dimmed">

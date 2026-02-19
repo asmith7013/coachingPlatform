@@ -10,7 +10,6 @@ export const ACTION_PLANS = {
     title: "Small Group Facilitation",
     status: "open" as const,
     why: "The teacher needs to strengthen their ability to facilitate meaningful student-to-student interactions during small group instruction.",
-    actionStep: "Focus on implementing turn-and-talk routines and promoting growth mindset language during small group sessions.",
     skillUuids: [
       "73f2a400-7bc9-4c7d-a5eb-d7dc68e6ee58", // facilitate-student-to-student-relationships (L2)
       "1358ca7c-7e8b-452c-8a52-5f3041f65533", // lead-turn-and-talk (L2)
@@ -30,7 +29,6 @@ export const ACTION_PLANS = {
     title: "Lesson Launch Routines",
     status: "closed" as const,
     why: "Establishing consistent lesson launch routines to maximize instructional time.",
-    actionStep: "Implement minute drills and warm-up routines at the start of every class period.",
     skillUuids: [
       "3a12be8f-d52f-496a-8457-04ad148e7054", // minute-drills (L1)
       "7564cdd4-a8f3-4879-a9cb-38ea07de3f2b", // lead-whole-class-warm-up-nyse (L2)
@@ -51,7 +49,6 @@ export const ACTION_PLANS = {
     title: "Classroom Culture Foundations",
     status: "archived" as const,
     why: "Building a positive and inclusive classroom culture where students feel seen and celebrated.",
-    actionStep: "Learn and use every student's name, implement daily celebrations, and practice affirming language.",
     skillUuids: [
       "59d53eee-90e4-4031-9763-99129e34b678", // address-students-by-name (L1)
       "0eb74b47-131e-4ff6-9cd2-72b973eb72e3", // celebrate-using-specific-praise (L1)
