@@ -1,9 +1,9 @@
 "use client";
 
-import { Card, Text, Box, Group, UnstyledButton } from "@mantine/core";
+import { Card, Text, Box, Group, Badge, UnstyledButton } from "@mantine/core";
 import { IconLock } from "@tabler/icons-react";
-import { SkillStatusDot } from "./SkillStatusDot";
 import { getSkillIcon } from "../../core/skill-icons";
+import { SKILL_STATUS_COLORS } from "../../core/skill-status-colors";
 import type { SkillStatus } from "../../core/skill-status.types";
 
 interface SkillSoloCardProps {
@@ -13,6 +13,8 @@ interface SkillSoloCardProps {
   level: 1 | 2;
   status: SkillStatus;
   isLocked: boolean;
+  domainName?: string;
+  compact?: boolean;
   onSkillClick?: (skillId: string) => void;
 }
 
@@ -23,9 +25,13 @@ export function SkillSoloCard({
   level,
   status,
   isLocked,
+  domainName,
+  compact,
   onSkillClick,
 }: SkillSoloCardProps) {
   const Icon = getSkillIcon(skillId);
+
+  const colors = SKILL_STATUS_COLORS[status];
 
   const content = (
     <Card
@@ -37,21 +43,48 @@ export function SkillSoloCard({
         cursor: isLocked ? "default" : "pointer",
       }}
     >
-      <Group justify="space-between" align="flex-start" wrap="nowrap">
-        <Group gap="sm" wrap="nowrap" style={{ flex: 1, minWidth: 0 }}>
+      {compact ? (
+        <Group gap="xs" wrap="nowrap">
+          <Box
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: "50%",
+              backgroundColor: colors.iconBg,
+              border: `2px solid ${colors.iconBorder}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            {isLocked ? (
+              <IconLock size={16} color="var(--mantine-color-gray-5)" />
+            ) : (
+              <Icon size={16} stroke={1.5} color={colors.iconColor} />
+            )}
+          </Box>
+          <Text
+            size="sm"
+            fw={500}
+            lineClamp={1}
+            style={{ flex: 1, minWidth: 0 }}
+          >
+            {skillName}
+          </Text>
+          <Text size="xs" c="dimmed" fw={500} style={{ flexShrink: 0 }}>
+            L{level}
+          </Text>
+        </Group>
+      ) : (
+        <Group gap="sm" wrap="nowrap">
           <Box
             style={{
               width: 40,
               height: 40,
               borderRadius: "50%",
-              backgroundColor:
-                status === "proficient"
-                  ? "var(--mantine-color-teal-1)"
-                  : "var(--mantine-color-gray-1)",
-              border:
-                status === "active" || status === "developing"
-                  ? "2px solid var(--mantine-color-teal-5)"
-                  : "2px solid transparent",
+              backgroundColor: colors.iconBg,
+              border: `2px solid ${colors.iconBorder}`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -61,7 +94,7 @@ export function SkillSoloCard({
             {isLocked ? (
               <IconLock size={18} color="var(--mantine-color-gray-5)" />
             ) : (
-              <Icon size={18} stroke={1.5} />
+              <Icon size={18} stroke={1.5} color={colors.iconColor} />
             )}
           </Box>
           <div style={{ minWidth: 0 }}>
@@ -76,10 +109,14 @@ export function SkillSoloCard({
                 {description}
               </Text>
             )}
+            {domainName && (
+              <Badge size="xs" variant="light" color="blue" mt={4}>
+                {domainName}
+              </Badge>
+            )}
           </div>
         </Group>
-        {!isLocked && <SkillStatusDot status={status} />}
-      </Group>
+      )}
     </Card>
   );
 
@@ -88,7 +125,10 @@ export function SkillSoloCard({
   }
 
   return (
-    <UnstyledButton onClick={() => onSkillClick?.(skillId)} w="100%">
+    <UnstyledButton
+      onClick={() => onSkillClick?.(skillId)}
+      w={compact ? undefined : "100%"}
+    >
       {content}
     </UnstyledButton>
   );

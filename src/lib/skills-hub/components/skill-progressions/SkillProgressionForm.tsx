@@ -15,41 +15,24 @@ import {
   Box,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import {
-  IconBook,
-  IconRocket,
-  IconUsers,
-  IconUsersGroup,
-  IconBulb,
-  IconFlag,
-  IconHeart,
-} from "@tabler/icons-react";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
-import { createActionPlanWithSteps } from "../../coach/action-plans/action-plan.actions";
+import { getDomainIcon } from "../../core/domain-icons";
+import { createSkillProgressionWithSteps } from "../../coach/skill-progressions/skill-progression.actions";
 import { CoachTeacherSelector } from "../core/CoachTeacherSelector";
 import type { TeacherSkillDomain } from "../../core/taxonomy.types";
 
-interface ActionPlanFormProps {
+interface SkillProgressionFormProps {
   teacherStaffId: string;
 }
 
-const DOMAIN_ICONS: Record<string, React.ReactNode> = {
-  "Intellectual Preparation": <IconBook size={18} />,
-  "Lesson Launch": <IconRocket size={18} />,
-  "1:1 Coaching": <IconUsers size={18} />,
-  "Small Group Instruction": <IconUsersGroup size={18} />,
-  "Inquiry Groups": <IconBulb size={18} />,
-  "Lesson Closing": <IconFlag size={18} />,
-  Culture: <IconHeart size={18} />,
-};
-
-export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
+export function SkillProgressionForm({
+  teacherStaffId,
+}: SkillProgressionFormProps) {
   const router = useRouter();
   const { taxonomy } = useTaxonomy();
   const [domainIds, setDomainIds] = useState<string[]>([]);
   const [skillIds, setSkillIds] = useState<string[]>([]);
   const [why, setWhy] = useState("");
-  const [actionStep, setActionStep] = useState("");
   const [selectedTeacherId, setSelectedTeacherId] = useState<string | null>(
     teacherStaffId,
   );
@@ -105,13 +88,12 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
 
     setSubmitting(true);
 
-    const result = await createActionPlanWithSteps({
+    const result = await createSkillProgressionWithSteps({
       plan: {
         teacherStaffId: selectedTeacherId,
         title,
         skillIds,
         why: why.trim() || undefined,
-        actionStep: actionStep.trim() || undefined,
       },
       steps: [],
     });
@@ -121,10 +103,10 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
     if (result.success) {
       notifications.show({
         title: "Success",
-        message: "Action plan created",
+        message: "Skill progression created",
         color: "teal",
       });
-      router.push(`/skillsHub/teacher/${selectedTeacherId}/action-plans`);
+      router.push(`/skillsHub/teacher/${selectedTeacherId}/skill-progressions`);
     } else {
       notifications.show({
         title: "Error",
@@ -158,38 +140,41 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
               />
             </Card>
 
-            {selectedDomains.map((domain) => (
-              <Card key={domain.uuid} shadow="sm" p="lg" withBorder>
-                <Group gap="xs" mb="md">
-                  {DOMAIN_ICONS[domain.name]}
-                  <Text fw={600} size="lg">
-                    {domain.name}
-                  </Text>
-                </Group>
+            {selectedDomains.map((domain) => {
+              const DomainIcon = getDomainIcon(domain.name);
+              return (
+                <Card key={domain.uuid} shadow="sm" p="lg" withBorder>
+                  <Group gap="xs" mb="md">
+                    <DomainIcon size={18} />
+                    <Text fw={600} size="lg">
+                      {domain.name}
+                    </Text>
+                  </Group>
 
-                <Stack gap="sm">
-                  {domain.subDomains.map((sd) => (
-                    <div key={sd.uuid}>
-                      <Text size="sm" c="dimmed" fw={500} mb={4}>
-                        {sd.name}
-                      </Text>
-                      <Group gap="xs">
-                        {sd.skills.map((skill) => (
-                          <Chip
-                            key={skill.uuid}
-                            checked={skillIds.includes(skill.uuid)}
-                            onChange={() => toggleSkill(skill.uuid)}
-                            size="sm"
-                          >
-                            {skill.name}
-                          </Chip>
-                        ))}
-                      </Group>
-                    </div>
-                  ))}
-                </Stack>
-              </Card>
-            ))}
+                  <Stack gap="sm">
+                    {domain.subDomains.map((sd) => (
+                      <div key={sd.uuid}>
+                        <Text size="sm" c="dimmed" fw={500} mb={4}>
+                          {sd.name}
+                        </Text>
+                        <Group gap="xs">
+                          {sd.skills.map((skill) => (
+                            <Chip
+                              key={skill.uuid}
+                              checked={skillIds.includes(skill.uuid)}
+                              onChange={() => toggleSkill(skill.uuid)}
+                              size="sm"
+                            >
+                              {skill.name}
+                            </Chip>
+                          ))}
+                        </Group>
+                      </div>
+                    ))}
+                  </Stack>
+                </Card>
+              );
+            })}
 
             <Group justify="flex-end">
               <Button
@@ -221,15 +206,6 @@ export function ActionPlanForm({ teacherStaffId }: ActionPlanFormProps) {
                   placeholder="Why should this teacher develop these skills?"
                   value={why}
                   onChange={(e) => setWhy(e.currentTarget.value)}
-                  autosize
-                  minRows={4}
-                />
-
-                <Textarea
-                  label="Action Step"
-                  placeholder="How should the teacher implement this?"
-                  value={actionStep}
-                  onChange={(e) => setActionStep(e.currentTarget.value)}
                   autosize
                   minRows={4}
                 />

@@ -17,6 +17,7 @@ interface ViewAsContextValue {
   viewRole: ViewRole;
   setViewRole: (role: ViewRole) => void;
   mockUser: AuthenticatedUser;
+  teacherStaffId: string | null;
   isLoading: boolean;
 }
 
@@ -129,9 +130,11 @@ export function ViewAsProvider({ children }: { children: React.ReactNode }) {
     [viewRole, staffData],
   );
 
+  const teacherStaffId = staffData?.teacher?.staffId ?? null;
+
   return (
     <ViewAsContext.Provider
-      value={{ viewRole, setViewRole, mockUser, isLoading }}
+      value={{ viewRole, setViewRole, mockUser, teacherStaffId, isLoading }}
     >
       {children}
     </ViewAsContext.Provider>

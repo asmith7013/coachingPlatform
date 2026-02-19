@@ -1,7 +1,7 @@
 /**
  * Seed Skills Hub Data - Main Entry Point
  *
- * Populates realistic mock data for teacher ccardona across all Skills Hub collections.
+ * Populates realistic mock data for teacher Jane Doe across all Skills Hub collections.
  * Action plans drive skill statuses for internally consistent coaching progression.
  *
  * ONLY runs against local database (localhost/127.0.0.1).
@@ -14,8 +14,8 @@ import {
   connectAndLookupStaff,
   cleanupExistingData,
   seedCoachingAssignment,
-  seedActionPlans,
-  seedActionSteps,
+  seedSkillProgressions,
+  seedProgressionSteps,
   seedSkillStatuses,
   seedObservations,
   seedNotes,
@@ -34,11 +34,11 @@ async function seed() {
   // 3. Create coaching assignment
   await seedCoachingAssignment(staff);
 
-  // 4. Seed action plans (drive skill statuses)
-  const plans = await seedActionPlans(staff);
+  // 4. Seed skill progressions (drive skill statuses)
+  const plans = await seedSkillProgressions(staff);
 
-  // 5. Seed action steps
-  await seedActionSteps(staff, plans);
+  // 5. Seed progression steps
+  await seedProgressionSteps(staff, plans);
 
   // 6. Seed skill statuses (derived from action plans)
   await seedSkillStatuses(staff);
@@ -57,7 +57,7 @@ async function seed() {
   console.log(`Coach: ${staff.coachName} (${COACH_EMAIL})`);
   console.log(`\nCollections populated:`);
   console.log(`  Coaching assignments: 1`);
-  console.log(`  Skill statuses: 18 (5 active, 5 developing, 8 proficient)`);
+  console.log(`  Skill statuses: 22 (3 active, 6 developing, 13 proficient)`);
   console.log(`  Action plans: 3 (1 open, 1 closed, 1 archived)`);
   console.log(`  Action steps: 8 (3 + 3 + 2)`);
   console.log(`  Observations: 4`);

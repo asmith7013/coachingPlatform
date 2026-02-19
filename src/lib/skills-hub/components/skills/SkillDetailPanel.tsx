@@ -4,361 +4,154 @@ import {
   Text,
   Title,
   Badge,
+  Breadcrumbs,
+  Anchor,
   Group,
   Stack,
-  Card,
   Box,
   Divider,
-  SegmentedControl,
   Center,
   Loader,
-  CloseButton,
-  UnstyledButton,
 } from "@mantine/core";
-import { IconLock } from "@tabler/icons-react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useSkillsHubAuth } from "../layout/ViewAsContext";
 import { useTaxonomy } from "../../hooks/useTaxonomy";
-import {
-  useTeacherSkillStatuses,
-  skillStatusKeys,
-} from "../../hooks/useTeacherSkillStatuses";
-import { useActionPlans } from "../../hooks/useActionPlans";
+import { useTeacherSkillStatuses } from "../../hooks/useTeacherSkillStatuses";
+import { useSkillProgressions } from "../../hooks/useSkillProgressions";
 import { useObservations } from "../../hooks/useObservations";
-import { getSkillById, getSkillByUuid } from "../../core/taxonomy";
-import { isSkillLocked } from "../../core/skill-lock";
-import { updateSkillStatus } from "../../core/skill-status.actions";
-import { SkillStatusBadge } from "../core/SkillStatusBadge";
-import { SkillStatusDot } from "./SkillStatusDot";
+import { getSkillByUuid } from "../../core/taxonomy";
 import { SkillObservationTimeline } from "../observations/SkillObservationTimeline";
-import { SkillNotesSection } from "../notes/SkillNotesSection";
+import { PanelSkillProgressionSection } from "../skill-progressions/PanelSkillProgressionSection";
+import { DetailDrawer } from "../core/DetailDrawer";
 import { getSkillIcon } from "../../core/skill-icons";
-import type { SkillStatus } from "../../core/skill-status.types";
-import type { TeacherSkillFlat } from "../../core/taxonomy.types";
-import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
 
-interface SkillDetailPanelProps {
+interface SkillDetailContentProps {
   skillId: string;
   teacherStaffId: string;
   teacherName?: string;
-  onSkillClick: (skillId: string) => void;
+}
+
+interface SkillDetailPanelProps extends SkillDetailContentProps {
   onClose: () => void;
 }
 
-const STATUS_OPTIONS = [
-  { label: "Not Started", value: "not_started" },
-  { label: "Active", value: "active" },
-  { label: "Developing", value: "developing" },
-  { label: "Proficient", value: "proficient" },
-];
+export function SkillDetailContent({
+  skillId,
+  teacherStaffId,
+  teacherName,
+}: SkillDetailContentProps) {
+  const { hasRole } = useSkillsHubAuth();
 
-function PairTile({
-  skill,
-  status,
-  isSelected,
-  locked,
-  onClick,
-}: {
-  skill: TeacherSkillFlat;
-  status: SkillStatus;
-  isSelected: boolean;
-  locked: boolean;
-  onClick?: () => void;
-}) {
-  const Icon = getSkillIcon(skill.id);
+  const isCoach =
+    hasRole("coach") || hasRole("super_admin") || hasRole("director");
 
-  const content = (
-    <Box
-      p="xs"
-      style={{
-        borderRadius: "var(--mantine-radius-sm)",
-        border: isSelected
-          ? "2px solid var(--mantine-color-teal-5)"
-          : "1px solid var(--mantine-color-gray-3)",
-        backgroundColor: isSelected
-          ? "var(--mantine-color-teal-0)"
-          : "var(--mantine-color-white)",
-        opacity: locked ? 0.5 : 1,
-        cursor: isSelected || locked ? "default" : "pointer",
-      }}
-    >
-      <Group gap={6} wrap="nowrap">
-        <Box
-          style={{
-            width: 24,
-            height: 24,
-            borderRadius: "50%",
-            backgroundColor: "var(--mantine-color-gray-1)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
+  const { taxonomy, loading: taxLoading } = useTaxonomy();
+  const { loading: statusLoading } = useTeacherSkillStatuses(teacherStaffId);
+  const { plans } = useSkillProgressions(teacherStaffId);
+  const { observations } = useObservations(teacherStaffId);
+
+  const skill = taxonomy ? getSkillByUuid(taxonomy, skillId) : null;
+
+  const linkedPlans = skill
+    ? plans.filter((p) => p.skillIds.includes(skill.uuid))
+    : [];
+  const Icon = getSkillIcon(skill?.uuid ?? "");
+
+  if (taxLoading || statusLoading) {
+    return (
+      <Center py="xl">
+        <Loader size="sm" />
+      </Center>
+    );
+  }
+
+  if (!skill) {
+    return (
+      <Center py="xl">
+        <Text c="dimmed">Skill not found</Text>
+      </Center>
+    );
+  }
+
+  return (
+    <Stack gap="md">
+      {/* Breadcrumb header */}
+      <div>
+        {isCoach && teacherName && (
+          <Text size="xs" c="dimmed" mb={2}>
+            Reviewing: {teacherName}
+          </Text>
+        )}
+        <Breadcrumbs
+          separator="›"
+          styles={{ separator: { color: "var(--mantine-color-dimmed)" } }}
         >
-          {locked ? (
-            <IconLock size={12} color="var(--mantine-color-gray-5)" />
-          ) : (
-            <Icon size={12} stroke={1.5} />
-          )}
-        </Box>
-        <Text size="xs" fw={500} lineClamp={1} style={{ flex: 1, minWidth: 0 }}>
-          {skill.name}
+          <Anchor size="xs" c="dimmed" underline="never">
+            {skill.domainName}
+          </Anchor>
+          <Anchor size="xs" c="dimmed" underline="never">
+            {skill.subDomainName}
+          </Anchor>
+        </Breadcrumbs>
+      </div>
+
+      {/* Skill detail */}
+      <div>
+        <Group gap="sm" wrap="nowrap" align="flex-start">
+          <Box style={{ flexShrink: 0, marginTop: 4 }}>
+            <Icon size={20} stroke={1.5} />
+          </Box>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <Title order={4}>{skill.name}</Title>
+            {skill.description && (
+              <Text size="sm" c="dimmed" mt={4}>
+                {skill.description}
+              </Text>
+            )}
+          </div>
+          <Badge
+            size="sm"
+            variant="light"
+            color="gray"
+            style={{ flexShrink: 0, marginTop: 4 }}
+          >
+            L{skill.level}
+          </Badge>
+        </Group>
+      </div>
+
+      <Divider />
+
+      <PanelSkillProgressionSection
+        plans={linkedPlans}
+        teacherStaffId={teacherStaffId}
+      />
+
+      <div>
+        <Text fw={600} size="sm" mb="xs">
+          Observation History
         </Text>
-        <SkillStatusDot status={status} size={10} />
-      </Group>
-      <Text size="xs" c="dimmed" mt={2}>
-        Level {skill.level}
-      </Text>
-    </Box>
+        <SkillObservationTimeline
+          observations={observations}
+          skillId={skill.uuid}
+        />
+      </div>
+    </Stack>
   );
-
-  if (isSelected || locked) return content;
-
-  return <UnstyledButton onClick={onClick}>{content}</UnstyledButton>;
-}
-
-function getStatusFromMap(
-  statuses: TeacherSkillStatusDocument[],
-  skillUuid: string,
-): SkillStatus {
-  const doc = statuses.find((s) => s.skillId === skillUuid);
-  return (doc?.status as SkillStatus) || "not_started";
 }
 
 export function SkillDetailPanel({
   skillId,
   teacherStaffId,
   teacherName,
-  onSkillClick,
   onClose,
 }: SkillDetailPanelProps) {
-  const { hasRole } = useSkillsHubAuth();
-  const queryClient = useQueryClient();
-
-  const isCoach =
-    hasRole("coach") || hasRole("super_admin") || hasRole("director");
-
-  const { taxonomy, loading: taxLoading } = useTaxonomy();
-  const { statuses, loading: statusLoading } =
-    useTeacherSkillStatuses(teacherStaffId);
-  const { plans } = useActionPlans(teacherStaffId);
-  const { observations } = useObservations(teacherStaffId);
-
-  const skill = taxonomy ? getSkillById(taxonomy, skillId) : null;
-  const pairedSkill =
-    taxonomy && skill?.pairedSkillId
-      ? getSkillByUuid(taxonomy, skill.pairedSkillId)
-      : null;
-
-  const currentStatus = skill
-    ? getStatusFromMap(statuses, skill.uuid)
-    : "not_started";
-  const pairedStatus = pairedSkill
-    ? getStatusFromMap(statuses, pairedSkill.uuid)
-    : "not_started";
-
-  const linkedPlans = skill
-    ? plans.filter((p) => p.skillIds.includes(skill.uuid))
-    : [];
-  const Icon = getSkillIcon(skillId);
-
-  // Build statusMap for isSkillLocked check
-  const statusMap = new Map<string, TeacherSkillStatusDocument>();
-  for (const s of statuses) {
-    statusMap.set(s.skillId, s);
-  }
-
-  // Get all skills in subdomain for lock check
-  const subDomainSkills = taxonomy
-    ? (taxonomy.domains
-        .flatMap((d) => d.subDomains)
-        .find((sd) => sd.id === skill?.subDomainId)?.skills ?? [])
-    : [];
-
-  const pairedIsLocked = pairedSkill
-    ? isSkillLocked(pairedSkill, statusMap, subDomainSkills)
-    : false;
-
-  const handleStatusChange = async (value: string) => {
-    if (!skill) return;
-    await updateSkillStatus(teacherStaffId, skill.uuid, value as SkillStatus);
-    queryClient.invalidateQueries({
-      queryKey: skillStatusKeys.byTeacher(teacherStaffId),
-    });
-  };
-
-  // Order pair tiles: L1 first, L2 second
-  const pairTiles =
-    skill && pairedSkill
-      ? skill.level === 1
-        ? { l1: skill, l2: pairedSkill }
-        : { l1: pairedSkill, l2: skill }
-      : null;
-
   return (
-    <Box
-      style={{
-        width: 420,
-        flexShrink: 0,
-        borderLeft: "1px solid var(--mantine-color-gray-3)",
-        backgroundColor: "var(--mantine-color-white)",
-        overflowY: "auto",
-        height: "calc(100vh - 60px)",
-        position: "sticky",
-        top: 60,
-      }}
-      p="md"
-    >
-      {/* Header with close button */}
-      <Group justify="space-between" mb="md">
-        <div>
-          {isCoach && teacherName && (
-            <Text size="xs" c="dimmed">
-              Reviewing: {teacherName}
-            </Text>
-          )}
-        </div>
-        <CloseButton onClick={onClose} />
-      </Group>
-
-      {(taxLoading || statusLoading) && (
-        <Center py="xl">
-          <Loader size="sm" />
-        </Center>
-      )}
-
-      {!taxLoading && !statusLoading && !skill && (
-        <Center py="xl">
-          <Text c="dimmed">Skill not found</Text>
-        </Center>
-      )}
-
-      {skill && (
-        <Stack gap="md">
-          {/* Pair row */}
-          {pairTiles && (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 8,
-              }}
-            >
-              <PairTile
-                skill={pairTiles.l1}
-                status={
-                  pairTiles.l1.uuid === skill.uuid
-                    ? currentStatus
-                    : pairedStatus
-                }
-                isSelected={pairTiles.l1.uuid === skill.uuid}
-                locked={false}
-                onClick={() => onSkillClick(pairTiles.l1.id)}
-              />
-              <PairTile
-                skill={pairTiles.l2}
-                status={
-                  pairTiles.l2.uuid === skill.uuid
-                    ? currentStatus
-                    : pairedStatus
-                }
-                isSelected={pairTiles.l2.uuid === skill.uuid}
-                locked={
-                  pairTiles.l2.uuid !== skill.uuid ? pairedIsLocked : false
-                }
-                onClick={() => onSkillClick(pairTiles.l2.id)}
-              />
-            </div>
-          )}
-
-          {/* Skill detail */}
-          <div>
-            <Group gap="sm" mb="xs">
-              <Icon size={20} stroke={1.5} />
-              <Title order={4}>{skill.name}</Title>
-            </Group>
-            <Group gap="xs" mb="xs">
-              <Badge
-                variant="outline"
-                color={skill.level === 1 ? "blue" : "violet"}
-                size="sm"
-              >
-                Level {skill.level}
-              </Badge>
-              <SkillStatusBadge status={currentStatus} />
-            </Group>
-            <Text size="sm" c="dimmed">
-              {skill.domainName} &rsaquo; {skill.subDomainName}
-            </Text>
-            {skill.description && (
-              <Text size="sm" mt="xs">
-                {skill.description}
-              </Text>
-            )}
-          </div>
-
-          {isCoach && (
-            <>
-              <Divider />
-              <div>
-                <Text size="xs" fw={500} mb="xs">
-                  Status
-                </Text>
-                <SegmentedControl
-                  data={STATUS_OPTIONS}
-                  value={currentStatus}
-                  onChange={handleStatusChange}
-                  size="xs"
-                  fullWidth
-                />
-              </div>
-            </>
-          )}
-
-          <Divider />
-
-          {linkedPlans.length > 0 && (
-            <div>
-              <Text fw={600} size="sm" mb="xs">
-                Action Plans
-              </Text>
-              <Stack gap="xs">
-                {linkedPlans.map((plan) => (
-                  <Card key={plan._id} withBorder p="sm">
-                    <Text size="sm" fw={500}>
-                      {plan.title}
-                    </Text>
-                    <Text size="xs" c="dimmed">
-                      Status: {plan.status}
-                    </Text>
-                  </Card>
-                ))}
-              </Stack>
-            </div>
-          )}
-
-          <div>
-            <Text fw={600} size="sm" mb="xs">
-              Observation History
-            </Text>
-            <SkillObservationTimeline
-              observations={observations}
-              skillId={skill.uuid}
-            />
-          </div>
-
-          <div>
-            <Text fw={600} size="sm" mb="xs">
-              Notes
-            </Text>
-            <SkillNotesSection
-              teacherStaffId={teacherStaffId}
-              skillId={skill.uuid}
-              isCoachView={isCoach}
-            />
-          </div>
-        </Stack>
-      )}
-    </Box>
+    <DetailDrawer onClose={onClose}>
+      <SkillDetailContent
+        skillId={skillId}
+        teacherStaffId={teacherStaffId}
+        teacherName={teacherName}
+      />
+    </DetailDrawer>
   );
 }

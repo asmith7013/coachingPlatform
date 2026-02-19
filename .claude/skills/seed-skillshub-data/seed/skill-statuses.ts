@@ -1,36 +1,39 @@
-import mongoose from "mongoose";
 import { SkillsHubTeacherSkillStatus } from "@lib/skills-hub/core/teacher-skill-status.model";
-import { ACTION_PLANS, EXTRA_PROFICIENT_SKILLS, type StaffIds } from "./config";
+import { ACTION_PLANS, EXTRA_PROFICIENT_SKILLS, L1_PREREQS, type StaffIds } from "./config";
 
 export async function seedSkillStatuses(staff: StaffIds): Promise<void> {
   console.log("Creating skill statuses (aligned to action plans)...");
 
-  const records: Array<{
-    teacherStaffId: mongoose.Types.ObjectId;
-    skillId: string;
-    status: string;
-    updatedBy: mongoose.Types.ObjectId;
-  }> = [];
+  // Use a Map to dedup — proficient prereqs won't be downgraded by plan statuses
+  const statusMap = new Map<string, string>();
 
+  // 1. L1 prereqs → proficient (must come first so they aren't overridden)
+  for (const uuid of L1_PREREQS) {
+    statusMap.set(uuid, "proficient");
+  }
+
+  // 2. Extra proficient skills
+  for (const uuid of EXTRA_PROFICIENT_SKILLS) {
+    statusMap.set(uuid, "proficient");
+  }
+
+  // 3. Plan-based statuses (per-skill from skillStatuses map)
+  //    Only set if not already proficient (don't downgrade prereqs)
   for (const plan of Object.values(ACTION_PLANS)) {
-    for (const skillId of plan.skillIds) {
-      records.push({
-        teacherStaffId: staff.teacherId,
-        skillId,
-        status: plan.targetStatus,
-        updatedBy: staff.coachId,
-      });
+    const skillStatuses = plan.skillStatuses as Record<string, string>;
+    for (const [uuid, status] of Object.entries(skillStatuses)) {
+      if (statusMap.get(uuid) !== "proficient") {
+        statusMap.set(uuid, status);
+      }
     }
   }
 
-  for (const skillId of EXTRA_PROFICIENT_SKILLS) {
-    records.push({
-      teacherStaffId: staff.teacherId,
-      skillId,
-      status: "proficient",
-      updatedBy: staff.coachId,
-    });
-  }
+  const records = Array.from(statusMap.entries()).map(([skillId, status]) => ({
+    teacherStaffId: staff.teacherId,
+    skillId,
+    status,
+    updatedBy: staff.coachId,
+  }));
 
   await SkillsHubTeacherSkillStatus.insertMany(records);
 

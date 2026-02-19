@@ -4,7 +4,7 @@ import {
   standardDocumentFields,
 } from "@mongoose-schema/shared-options";
 
-const ActionStepSchema = new mongoose.Schema(
+const ProgressionStepSchema = new mongoose.Schema(
   {
     actionPlanId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -19,7 +19,7 @@ const ActionStepSchema = new mongoose.Schema(
     completedAt: { type: Date, default: null },
     completedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       default: null,
     },
     ...standardDocumentFields,
@@ -30,8 +30,8 @@ const ActionStepSchema = new mongoose.Schema(
   },
 );
 
-ActionStepSchema.index({ actionPlanId: 1 });
+ProgressionStepSchema.index({ actionPlanId: 1 });
 
 export const SkillsHubActionStep =
   mongoose.models.SkillsHubActionStep ||
-  mongoose.model("SkillsHubActionStep", ActionStepSchema);
+  mongoose.model("SkillsHubActionStep", ProgressionStepSchema);

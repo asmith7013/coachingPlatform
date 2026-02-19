@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import {
-  MapIcon,
   ClipboardDocumentCheckIcon,
   Cog6ToothIcon,
   Bars3Icon,
@@ -32,13 +31,12 @@ const ROLE_LABELS: Record<ViewRole, string> = {
 
 export function SkillsHubNav() {
   const pathname = usePathname();
-  const { viewRole, setViewRole } = useViewAs();
+  const router = useRouter();
+  const { viewRole, setViewRole, teacherStaffId } = useViewAs();
   const mockUser = useSkillsHubAuth();
   const [fabOpen, setFabOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExpandedCategory, setMobileExpandedCategory] = useState<
     string | null
@@ -103,45 +101,19 @@ export function SkillsHubNav() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle scroll to show/hide navigation
-  useEffect(() => {
-    function handleScroll() {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY < 10) {
-        setIsVisible(true);
-      } else if (currentScrollY < lastScrollY) {
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY) {
-        setIsVisible(false);
-      }
-
-      setLastScrollY(currentScrollY);
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
-
   const teacherSkillsHref = mockUser.metadata.staffId
     ? `/skillsHub/teacher/${mockUser.metadata.staffId}`
     : "/skillsHub";
 
   // Standalone nav links (not in dropdowns)
-  const standaloneLinks: NavItem[] = [
-    { href: "/skillsHub/skills", label: "All Skills" },
-  ];
+  const standaloneLinks: NavItem[] = isTeacher
+    ? [
+        { href: teacherSkillsHref, label: "Home" },
+        { href: `${teacherSkillsHref}/skillProgress`, label: "Skill Progress" },
+      ]
+    : [];
 
   const categories: NavCategory[] = [
-    ...(isTeacher
-      ? [
-          {
-            label: "My Skills",
-            Icon: MapIcon,
-            items: [{ href: teacherSkillsHref, label: "My Skill Map" }],
-          },
-        ]
-      : []),
     ...(!isTeacher
       ? [
           {
@@ -151,7 +123,10 @@ export function SkillsHubNav() {
               { href: "/skillsHub/coach/caseload", label: "Caseload" },
               { href: "/skillsHub/coach/skill-map", label: "Skill Map" },
               { href: "/skillsHub/coach/observations", label: "Observations" },
-              { href: "/skillsHub/coach/action-plans", label: "Action Plans" },
+              {
+                href: "/skillsHub/coach/skill-progressions",
+                label: "Skill Progressions",
+              },
             ],
           },
         ]
@@ -186,12 +161,7 @@ export function SkillsHubNav() {
 
   return (
     <>
-      <nav
-        ref={dropdownRef}
-        className={`bg-gray-900 shadow-lg sticky top-0 z-50 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
+      <nav ref={dropdownRef} className="bg-gray-900 sticky top-0 z-50">
         <div
           className="mx-auto px-4 lg:px-6 py-3"
           style={{ maxWidth: "1600px" }}
@@ -454,28 +424,38 @@ export function SkillsHubNav() {
       </nav>
 
       {/* Floating role-switcher FAB */}
-      <div ref={fabRef} className="fixed bottom-6 right-6 z-[100]">
+      <div ref={fabRef} className="fixed bottom-6 right-6 z-[200]">
         {fabOpen && (
-          <div className="absolute bottom-14 right-0 bg-gray-900 rounded-lg shadow-xl border border-gray-700 p-3 min-w-[160px]">
-            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-2">
+          <div className="absolute bottom-14 right-0 bg-gray-900 rounded-lg shadow-xl border border-gray-700 p-5 min-w-[180px]">
+            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-3">
               View as
             </p>
-            {(["teacher", "coach", "admin"] as ViewRole[]).map((role) => (
-              <button
-                key={role}
-                onClick={() => {
-                  setViewRole(role);
-                  setFabOpen(false);
-                }}
-                className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${
-                  viewRole === role
-                    ? "bg-indigo-600 text-white"
-                    : "text-gray-300 hover:bg-gray-800"
-                }`}
-              >
-                {ROLE_LABELS[role]}
-              </button>
-            ))}
+            {(["teacher", "coach", "admin"] as ViewRole[]).map((role) => {
+              const roleHome: Record<ViewRole, string> = {
+                teacher: teacherStaffId
+                  ? `/skillsHub/teacher/${teacherStaffId}`
+                  : "/skillsHub",
+                coach: "/skillsHub/coach/caseload",
+                admin: "/skillsHub/admin/assignments",
+              };
+              return (
+                <button
+                  key={role}
+                  onClick={() => {
+                    setViewRole(role);
+                    router.push(roleHome[role]);
+                    setFabOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors ${
+                    viewRole === role
+                      ? "bg-indigo-600 text-white"
+                      : "text-gray-300 hover:bg-gray-800"
+                  }`}
+                >
+                  {ROLE_LABELS[role]}
+                </button>
+              );
+            })}
           </div>
         )}
         <button

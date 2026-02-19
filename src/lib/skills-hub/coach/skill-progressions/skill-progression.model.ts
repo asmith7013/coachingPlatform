@@ -4,7 +4,7 @@ import {
   standardDocumentFields,
 } from "@mongoose-schema/shared-options";
 
-const ActionPlanSchema = new mongoose.Schema(
+const SkillProgressionSchema = new mongoose.Schema(
   {
     teacherStaffId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -19,7 +19,6 @@ const ActionPlanSchema = new mongoose.Schema(
     title: { type: String, required: true },
     skillIds: [{ type: String }],
     why: { type: String },
-    actionStep: { type: String },
     status: {
       type: String,
       enum: ["open", "closed", "archived"],
@@ -34,9 +33,9 @@ const ActionPlanSchema = new mongoose.Schema(
   },
 );
 
-ActionPlanSchema.index({ teacherStaffId: 1, status: 1 });
-ActionPlanSchema.index({ createdBy: 1 });
+SkillProgressionSchema.index({ teacherStaffId: 1, status: 1 });
+SkillProgressionSchema.index({ createdBy: 1 });
 
 export const SkillsHubActionPlan =
   mongoose.models.SkillsHubActionPlan ||
-  mongoose.model("SkillsHubActionPlan", ActionPlanSchema);
+  mongoose.model("SkillsHubActionPlan", SkillProgressionSchema);

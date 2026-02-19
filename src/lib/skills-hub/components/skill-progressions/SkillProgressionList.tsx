@@ -2,21 +2,21 @@
 
 import { useState } from "react";
 import { Stack, SegmentedControl, Text } from "@mantine/core";
-import { ActionPlanCard } from "./ActionPlanCard";
+import { SkillProgressionCard } from "./SkillProgressionCard";
 import { ActionPlanListSkeleton } from "../core/SkillsHubSkeletons";
-import type { ActionPlanDocument } from "../../coach/action-plans/action-plan.types";
+import type { SkillProgressionDocument } from "../../coach/skill-progressions/skill-progression.types";
 
-interface ActionPlanListProps {
-  plans: ActionPlanDocument[];
+interface SkillProgressionListProps {
+  plans: SkillProgressionDocument[];
   loading: boolean;
   teacherStaffId: string;
 }
 
-export function ActionPlanList({
+export function SkillProgressionList({
   plans,
   loading,
   teacherStaffId,
-}: ActionPlanListProps) {
+}: SkillProgressionListProps) {
   const [filter, setFilter] = useState("open");
 
   if (loading) {
@@ -40,11 +40,11 @@ export function ActionPlanList({
 
       {filtered.length === 0 ? (
         <Text c="dimmed" ta="center" py="lg">
-          No {filter === "all" ? "" : filter} action plans yet
+          No {filter === "all" ? "" : filter} skill progressions yet
         </Text>
       ) : (
         filtered.map((plan) => (
-          <ActionPlanCard
+          <SkillProgressionCard
             key={plan._id}
             plan={plan}
             teacherStaffId={teacherStaffId}

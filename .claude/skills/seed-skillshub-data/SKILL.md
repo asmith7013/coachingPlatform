@@ -1,6 +1,6 @@
 ---
 name: seed-skillshub-data
-description: Populates Skills Hub mock data for teacher ccardona. Creates skill statuses, action plans, observations, and notes in the LOCAL MongoDB database.
+description: Populates Skills Hub mock data for teacher Jane Doe (jane.doe@schools.nyc.gov). Creates skill statuses, action plans, observations, and notes in the LOCAL MongoDB database.
 allowed-tools: Read, Bash, Grep, Glob
 allowedCommands:
   - "~/solves-coaching/.claude/skills/seed-skillshub-data/run.sh"
@@ -8,7 +8,7 @@ allowedCommands:
 
 # Seed Skills Hub Data
 
-Populates realistic mock data for the Skills Hub feature in the **local MongoDB database**. Seeds data for teacher ccardona (`ccardona@schools.nyc.gov`) with coach alex.smith (`alex.smith@teachinglab.org`).
+Populates realistic mock data for the Skills Hub feature in the **local MongoDB database**. Seeds data for teacher Jane Doe (`jane.doe@schools.nyc.gov`) with coach Alex Smith (`alex.smith@teachinglab.org`).
 
 ## Usage
 
@@ -20,8 +20,8 @@ Populates realistic mock data for the Skills Hub feature in the **local MongoDB 
 
 | Collection | Count | Details |
 |---|---|---|
-| `skillshub_coach_teacher_assignments` | 1 | alex.smith → ccardona |
-| `skillshub_teacher_skill_statuses` | 18 | 8 proficient, 5 developing, 5 active |
+| `skillshub_coach_teacher_assignments` | 1 | alex.smith → Jane Doe |
+| `skillshub_teacher_skill_statuses` | 22 | 13 proficient, 6 developing, 3 active |
 | `skillshub_action_plans` | 3 | open, closed, archived |
 | `skillshub_action_steps` | 7-8 | 2-3 per plan |
 | `skillshub_observations` | 4 | Various types over past month |
@@ -29,11 +29,12 @@ Populates realistic mock data for the Skills Hub feature in the **local MongoDB 
 
 ### Action Plans Drive Skill Statuses
 
-Skill statuses are aligned to action plans for realistic coaching progression:
+Skill statuses are aligned to action plans with L1/L2 prereq enforcement:
 
-- **Open plan** ("Small Group Facilitation") → skills set to `active`
-- **Closed plan** ("Lesson Launch Routines") → skills set to `developing`
-- **Archived plan** ("Classroom Culture Foundations") → skills set to `proficient`
+- **Open plan** ("Small Group Facilitation") → 3 active, 2 developing (L1 prereqs auto-proficient)
+- **Closed plan** ("Lesson Launch Routines") → 4 developing, 1 proficient (L1 pair of L2 skill)
+- **Archived plan** ("Classroom Culture Foundations") → all proficient
+- 4 L1 prereqs for open plan L2 skills → `proficient`
 - 3 additional Intellectual Prep skills → `proficient` (mastered independently)
 
 ### Observations
@@ -54,4 +55,4 @@ The script uses `DATABASE_URL` from `.env.local`. It will abort if the variable 
 
 ## Re-running
 
-Safe to re-run — the script deletes all existing `skillshub_*` data for ccardona before inserting fresh data.
+Safe to re-run — the script deletes all existing `skillshub_*` data for Jane Doe before inserting fresh data.

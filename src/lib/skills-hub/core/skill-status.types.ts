@@ -28,3 +28,14 @@ export const TeacherSkillStatusDocumentSchema = z.object({
 export type TeacherSkillStatusDocument = z.infer<
   typeof TeacherSkillStatusDocumentSchema
 >;
+
+/**
+ * Safely resolves a skill's status from the status map, defaulting to "not_started".
+ */
+export function getSkillStatus(
+  statusMap: Map<string, TeacherSkillStatusDocument>,
+  skillUuid: string,
+): SkillStatus {
+  const parsed = SkillStatusEnum.safeParse(statusMap.get(skillUuid)?.status);
+  return parsed.success ? parsed.data : "not_started";
+}

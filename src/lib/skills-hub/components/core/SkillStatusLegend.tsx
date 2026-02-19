@@ -13,7 +13,12 @@ const STATUS_LABELS: { status: SkillStatus; label: string }[] = [
 
 export function SkillStatusLegend() {
   return (
-    <Group gap="lg" justify="center" py="md">
+    <Group
+      gap="lg"
+      py="sm"
+      px="md"
+      style={{ maxWidth: 1320, margin: "0 auto" }}
+    >
       {STATUS_LABELS.map(({ status, label }) => (
         <Group key={status} gap={6}>
           <SkillStatusDot status={status} size={12} />

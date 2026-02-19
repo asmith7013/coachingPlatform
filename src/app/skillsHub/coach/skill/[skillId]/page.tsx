@@ -9,7 +9,7 @@ import {
   useTeacherSkillStatuses,
   skillStatusKeys,
 } from "@/lib/skills-hub/hooks/useTeacherSkillStatuses";
-import { useActionPlans } from "@/lib/skills-hub/hooks/useActionPlans";
+import { useSkillProgressions } from "@/lib/skills-hub/hooks/useSkillProgressions";
 import { useObservations } from "@/lib/skills-hub/hooks/useObservations";
 import { getSkillById } from "@/lib/skills-hub/core/taxonomy";
 import { SkillDetailHeader } from "@/lib/skills-hub/components/skills/SkillDetailHeader";
@@ -32,7 +32,7 @@ export default function SkillDetailPage() {
   const { taxonomy, loading: taxLoading } = useTaxonomy();
   const { statuses, loading: statusLoading } =
     useTeacherSkillStatuses(teacherId);
-  const { plans } = useActionPlans(teacherId);
+  const { plans } = useSkillProgressions(teacherId);
   const { observations } = useObservations(teacherId);
 
   if (taxLoading || statusLoading) {
@@ -84,7 +84,7 @@ export default function SkillDetailPage() {
         {linkedPlans.length > 0 && (
           <Card shadow="sm" p="lg">
             <Text fw={600} mb="sm">
-              Action Plans
+              Skill Progressions
             </Text>
             <Stack gap="xs">
               {linkedPlans.map((plan) => (

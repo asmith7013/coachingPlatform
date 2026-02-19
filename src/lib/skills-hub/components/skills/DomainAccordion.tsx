@@ -1,36 +1,32 @@
 "use client";
 
-import { Accordion, Badge, Group, SimpleGrid, Text, Box } from "@mantine/core";
+import { Accordion, Group, SimpleGrid, Stack, Text, Box } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
 import { SkillPairCard } from "./SkillPairCard";
 import { SkillSoloCard } from "./SkillSoloCard";
+import { getDomainIcon } from "../../core/domain-icons";
 import { isSkillLocked } from "../../core/skill-lock";
-import { SkillStatusEnum } from "../../core/skill-status.types";
+import {
+  getSkillStatus,
+  type TeacherSkillStatusDocument,
+} from "../../core/skill-status.types";
 import type {
   TeacherSkill,
   TeacherSkillDomain,
   TeacherSkillSubDomain,
 } from "../../core/taxonomy.types";
-import type { TeacherSkillStatusDocument } from "../../core/skill-status.types";
 
 interface DomainAccordionProps {
   domains: TeacherSkillDomain[];
   statusMap: Map<string, TeacherSkillStatusDocument>;
   defaultExpandedSubDomainsByDomain: Map<string, string[]>;
+  compact?: boolean;
   onSkillClick?: (skillId: string) => void;
 }
 
 type SkillItem =
   | { type: "pair"; l1: TeacherSkill; l2: TeacherSkill }
   | { type: "solo"; skill: TeacherSkill };
-
-function getStatus(
-  statusMap: Map<string, TeacherSkillStatusDocument>,
-  skillUuid: string,
-) {
-  const parsed = SkillStatusEnum.safeParse(statusMap.get(skillUuid)?.status);
-  return parsed.success ? parsed.data : ("not_started" as const);
-}
 
 /**
  * Groups skills into pairs (L1+L2 linked by pairedSkillId) and solo skills.
@@ -64,13 +60,60 @@ function groupSkillsIntoPairsAndSolos(skills: TeacherSkill[]): SkillItem[] {
 function SubDomainSkills({
   subDomain,
   statusMap,
+  compact,
   onSkillClick,
 }: {
   subDomain: TeacherSkillSubDomain;
   statusMap: Map<string, TeacherSkillStatusDocument>;
+  compact?: boolean;
   onSkillClick?: (skillId: string) => void;
 }) {
   const items = groupSkillsIntoPairsAndSolos(subDomain.skills);
+
+  const renderItem = (item: SkillItem) => {
+    if (item.type === "pair") {
+      return (
+        <SkillPairCard
+          key={`${item.l1.uuid}-${item.l2.uuid}`}
+          compact={compact}
+          l1={{
+            skillId: item.l1.uuid,
+            skillName: item.l1.name,
+            description: item.l1.description,
+            status: getSkillStatus(statusMap, item.l1.uuid),
+            isLocked: false,
+            level: 1,
+          }}
+          l2={{
+            skillId: item.l2.uuid,
+            skillName: item.l2.name,
+            description: item.l2.description,
+            status: getSkillStatus(statusMap, item.l2.uuid),
+            isLocked: isSkillLocked(item.l2, statusMap, subDomain.skills),
+            level: 2,
+          }}
+          onSkillClick={onSkillClick}
+        />
+      );
+    }
+
+    return (
+      <SkillSoloCard
+        key={item.skill.uuid}
+        skillId={item.skill.uuid}
+        skillName={item.skill.name}
+        description={item.skill.description}
+        level={item.skill.level as 1 | 2}
+        status={getSkillStatus(statusMap, item.skill.uuid)}
+        isLocked={isSkillLocked(item.skill, statusMap, subDomain.skills)}
+        onSkillClick={onSkillClick}
+      />
+    );
+  };
+
+  if (compact) {
+    return <Stack gap="sm">{items.map(renderItem)}</Stack>;
+  }
 
   return (
     <SimpleGrid cols={2} spacing="sm">
@@ -81,25 +124,7 @@ function SubDomainSkills({
               key={`${item.l1.uuid}-${item.l2.uuid}`}
               style={{ gridColumn: "span 2" }}
             >
-              <SkillPairCard
-                l1={{
-                  skillId: item.l1.id,
-                  skillName: item.l1.name,
-                  description: item.l1.description,
-                  status: getStatus(statusMap, item.l1.uuid),
-                  isLocked: false,
-                  level: 1,
-                }}
-                l2={{
-                  skillId: item.l2.id,
-                  skillName: item.l2.name,
-                  description: item.l2.description,
-                  status: getStatus(statusMap, item.l2.uuid),
-                  isLocked: isSkillLocked(item.l2, statusMap, subDomain.skills),
-                  level: 2,
-                }}
-                onSkillClick={onSkillClick}
-              />
+              {renderItem(item)}
             </Box>
           );
         }
@@ -111,15 +136,7 @@ function SubDomainSkills({
               gridColumn: item.skill.level === 1 ? 1 : 2,
             }}
           >
-            <SkillSoloCard
-              skillId={item.skill.id}
-              skillName={item.skill.name}
-              description={item.skill.description}
-              level={item.skill.level as 1 | 2}
-              status={getStatus(statusMap, item.skill.uuid)}
-              isLocked={isSkillLocked(item.skill, statusMap, subDomain.skills)}
-              onSkillClick={onSkillClick}
-            />
+            {renderItem(item)}
           </Box>
         );
       })}
@@ -129,23 +146,30 @@ function SubDomainSkills({
 
 function DomainHeader({
   domain,
-  domainIndex,
   statusMap,
 }: {
   domain: TeacherSkillDomain;
-  domainIndex: number;
   statusMap: Map<string, TeacherSkillStatusDocument>;
 }) {
   const allSkills = domain.subDomains.flatMap((sd) => sd.skills);
   const totalSkills = allSkills.length;
   const proficientCount = allSkills.filter(
-    (s) => getStatus(statusMap, s.uuid) === "proficient",
+    (s) => getSkillStatus(statusMap, s.uuid) === "proficient",
   ).length;
-  const hasActive = allSkills.some((s) => {
-    const st = getStatus(statusMap, s.uuid);
-    return st === "active" || st === "developing";
-  });
+  const activeCount = allSkills.filter(
+    (s) => getSkillStatus(statusMap, s.uuid) === "active",
+  ).length;
   const allComplete = totalSkills > 0 && proficientCount === totalSkills;
+
+  const circleBg = allComplete
+    ? "var(--mantine-color-teal-6)"
+    : activeCount > 0
+      ? "var(--mantine-color-blue-5)"
+      : "var(--mantine-color-gray-2)";
+  const circleColor =
+    allComplete || activeCount > 0 ? "white" : "var(--mantine-color-dark-4)";
+
+  const DomainIcon = getDomainIcon(domain.name);
 
   return (
     <Group justify="space-between" wrap="nowrap" style={{ flex: 1 }}>
@@ -155,19 +179,21 @@ function DomainHeader({
             width: 28,
             height: 28,
             borderRadius: "50%",
-            backgroundColor: allComplete
-              ? "var(--mantine-color-teal-6)"
-              : "var(--mantine-color-gray-2)",
-            color: allComplete ? "white" : "var(--mantine-color-dark-4)",
+            backgroundColor: circleBg,
+            color: circleColor,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            flexShrink: 0,
             fontWeight: 700,
             fontSize: 13,
-            flexShrink: 0,
           }}
         >
-          {domainIndex + 1}
+          {activeCount > 0 ? (
+            activeCount
+          ) : (
+            <DomainIcon size={16} color={circleColor} />
+          )}
         </Box>
         <div>
           <Text fw={600}>{domain.name}</Text>
@@ -176,16 +202,9 @@ function DomainHeader({
           </Text>
         </div>
       </Group>
-      <Group gap="xs">
-        {allComplete && (
-          <IconCircleCheck size={20} color="var(--mantine-color-teal-6)" />
-        )}
-        {hasActive && !allComplete && (
-          <Badge size="sm" variant="light" color="teal">
-            In Progress
-          </Badge>
-        )}
-      </Group>
+      {allComplete && (
+        <IconCircleCheck size={20} color="var(--mantine-color-teal-6)" />
+      )}
     </Group>
   );
 }
@@ -194,12 +213,12 @@ export function DomainAccordion({
   domains,
   statusMap,
   defaultExpandedSubDomainsByDomain,
+  compact,
   onSkillClick,
 }: DomainAccordionProps) {
-  // Domains with active/developing skills are expanded by default
-  const defaultExpandedDomains = domains
-    .filter((d) => defaultExpandedSubDomainsByDomain.has(d.id))
-    .map((d) => d.id);
+  const defaultExpandedDomains = Array.from(
+    defaultExpandedSubDomainsByDomain.keys(),
+  );
 
   return (
     <Accordion
@@ -207,11 +226,11 @@ export function DomainAccordion({
       defaultValue={defaultExpandedDomains}
       variant="separated"
     >
-      {domains.map((domain, index) => {
+      {domains.map((domain) => {
         const totalSkills = domain.subDomains.flatMap((sd) => sd.skills).length;
         if (totalSkills === 0) return null;
 
-        const expandedSubDomains =
+        const defaultExpandedSubDomains =
           defaultExpandedSubDomainsByDomain.get(domain.id) ?? [];
 
         return (
@@ -223,34 +242,57 @@ export function DomainAccordion({
             }}
           >
             <Accordion.Control>
-              <DomainHeader
-                domain={domain}
-                domainIndex={index}
-                statusMap={statusMap}
-              />
+              <DomainHeader domain={domain} statusMap={statusMap} />
             </Accordion.Control>
             <Accordion.Panel>
               <Accordion
                 multiple
-                defaultValue={expandedSubDomains}
+                defaultValue={defaultExpandedSubDomains}
                 variant="separated"
               >
-                {domain.subDomains.map((subDomain) => (
-                  <Accordion.Item key={subDomain.id} value={subDomain.id}>
-                    <Accordion.Control>
-                      <Text size="sm" fw={500}>
-                        {subDomain.name}
-                      </Text>
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                      <SubDomainSkills
-                        subDomain={subDomain}
-                        statusMap={statusMap}
-                        onSkillClick={onSkillClick}
-                      />
-                    </Accordion.Panel>
-                  </Accordion.Item>
-                ))}
+                {domain.subDomains.map((subDomain) => {
+                  const activeSkills = subDomain.skills.filter(
+                    (s) => getSkillStatus(statusMap, s.uuid) === "active",
+                  );
+                  return (
+                    <Accordion.Item key={subDomain.id} value={subDomain.id}>
+                      <Accordion.Control>
+                        <Group gap="xs" wrap="nowrap">
+                          <Text size="sm" fw={500}>
+                            {subDomain.name}
+                          </Text>
+                          {activeSkills.length > 0 && (
+                            <Box
+                              style={{
+                                width: 20,
+                                height: 20,
+                                borderRadius: "50%",
+                                backgroundColor: "var(--mantine-color-blue-5)",
+                                color: "white",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: 11,
+                                fontWeight: 700,
+                                flexShrink: 0,
+                              }}
+                            >
+                              {activeSkills.length}
+                            </Box>
+                          )}
+                        </Group>
+                      </Accordion.Control>
+                      <Accordion.Panel>
+                        <SubDomainSkills
+                          subDomain={subDomain}
+                          statusMap={statusMap}
+                          compact={compact}
+                          onSkillClick={onSkillClick}
+                        />
+                      </Accordion.Panel>
+                    </Accordion.Item>
+                  );
+                })}
               </Accordion>
             </Accordion.Panel>
           </Accordion.Item>

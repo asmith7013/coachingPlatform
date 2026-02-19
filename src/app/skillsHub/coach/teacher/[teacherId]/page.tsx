@@ -3,17 +3,12 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Group, Title, Button, Text, Card } from "@mantine/core";
-import { IconClipboardPlus, IconEye } from "@tabler/icons-react";
-import { useSkillsHubAuth } from "@/lib/skills-hub/components/layout/ViewAsContext";
-import { SkillMap } from "@/lib/skills-hub/components/skills/SkillMap";
+import { IconEye } from "@tabler/icons-react";
+import { SkillProgressionView } from "@/lib/skills-hub/components/skills/SkillProgressionView";
 
 export default function TeacherSkillMapPage() {
   const params = useParams();
   const teacherId = params.teacherId as string;
-  const { hasRole } = useSkillsHubAuth();
-
-  const isCoach =
-    hasRole("coach") || hasRole("super_admin") || hasRole("director");
 
   return (
     <div className="mx-auto" style={{ maxWidth: "1600px" }}>
@@ -26,31 +21,20 @@ export default function TeacherSkillMapPage() {
             </Text>
           </div>
 
-          {isCoach && (
-            <Group>
-              <Button
-                component={Link}
-                href={`/skillsHub/teacher/${teacherId}/action-plans/new`}
-                leftSection={<IconClipboardPlus size={16} />}
-                variant="light"
-                size="sm"
-              >
-                Action Plan
-              </Button>
-              <Button
-                component={Link}
-                href={`/skillsHub/teacher/${teacherId}/observe`}
-                leftSection={<IconEye size={16} />}
-                size="sm"
-              >
-                Observe
-              </Button>
-            </Group>
-          )}
+          <Group>
+            <Button
+              component={Link}
+              href={`/skillsHub/coach/teacher/${teacherId}/observe`}
+              leftSection={<IconEye size={16} />}
+              size="sm"
+            >
+              Observe
+            </Button>
+          </Group>
         </Group>
       </Card>
 
-      <SkillMap teacherStaffId={teacherId} isCoachView={isCoach} />
+      <SkillProgressionView teacherStaffId={teacherId} />
     </div>
   );
 }

@@ -21,12 +21,12 @@ const SkillNoteSchema = new mongoose.Schema(
   {
     authorId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       required: true,
     },
     teacherStaffId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       required: true,
     },
     content: { type: String, required: true },

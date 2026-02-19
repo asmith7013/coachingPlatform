@@ -3,18 +3,18 @@
 import { withDbConnection } from "@server/db/ensure-connection";
 import { getAuthenticatedUser } from "@/lib/server/auth";
 import { handleServerError } from "@error/handlers/server";
-import { SkillsHubActionPlan } from "./action-plan.model";
-import { SkillsHubActionStep } from "./action-step.model";
+import { SkillsHubActionPlan } from "./skill-progression.model";
+import { SkillsHubActionStep } from "./progression-step.model";
 import {
-  ActionPlanInputSchema,
-  type ActionPlanInput,
-  type ActionPlanDocument,
-} from "./action-plan.types";
-import type { ActionStepInput } from "./action-step.types";
+  SkillProgressionInputSchema,
+  type SkillProgressionInput,
+  type SkillProgressionDocument,
+} from "./skill-progression.types";
+import type { ProgressionStepInput } from "./progression-step.types";
 
-export async function getActionPlans(teacherStaffId: string): Promise<{
+export async function getSkillProgressions(teacherStaffId: string): Promise<{
   success: boolean;
-  data?: ActionPlanDocument[];
+  data?: SkillProgressionDocument[];
   error?: string;
 }> {
   return withDbConnection(async () => {
@@ -24,45 +24,45 @@ export async function getActionPlans(teacherStaffId: string): Promise<{
         .lean();
       const data = docs.map((d) =>
         JSON.parse(JSON.stringify(d)),
-      ) as ActionPlanDocument[];
+      ) as SkillProgressionDocument[];
       return { success: true, data };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "getActionPlans"),
+        error: handleServerError(error, "getSkillProgressions"),
       };
     }
   });
 }
 
-export async function getActionPlanById(planId: string): Promise<{
+export async function getSkillProgressionById(planId: string): Promise<{
   success: boolean;
-  data?: ActionPlanDocument;
+  data?: SkillProgressionDocument;
   error?: string;
 }> {
   return withDbConnection(async () => {
     try {
       const doc = await SkillsHubActionPlan.findById(planId).lean();
       if (!doc) {
-        return { success: false, error: "Action plan not found" };
+        return { success: false, error: "Skill progression not found" };
       }
-      const data = JSON.parse(JSON.stringify(doc)) as ActionPlanDocument;
+      const data = JSON.parse(JSON.stringify(doc)) as SkillProgressionDocument;
       return { success: true, data };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "getActionPlanById"),
+        error: handleServerError(error, "getSkillProgressionById"),
       };
     }
   });
 }
 
-export async function createActionPlanWithSteps(input: {
-  plan: ActionPlanInput;
-  steps: ActionStepInput[];
+export async function createSkillProgressionWithSteps(input: {
+  plan: SkillProgressionInput;
+  steps: ProgressionStepInput[];
 }): Promise<{
   success: boolean;
-  data?: ActionPlanDocument;
+  data?: SkillProgressionDocument;
   error?: string;
 }> {
   return withDbConnection(async () => {
@@ -72,7 +72,7 @@ export async function createActionPlanWithSteps(input: {
         return { success: false, error: "Unauthorized" };
       }
 
-      const validatedPlan = ActionPlanInputSchema.parse(input.plan);
+      const validatedPlan = SkillProgressionInputSchema.parse(input.plan);
 
       const plan = await SkillsHubActionPlan.create({
         ...validatedPlan,
@@ -89,18 +89,18 @@ export async function createActionPlanWithSteps(input: {
 
       const data = JSON.parse(
         JSON.stringify(plan.toObject()),
-      ) as ActionPlanDocument;
+      ) as SkillProgressionDocument;
       return { success: true, data };
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "createActionPlanWithSteps"),
+        error: handleServerError(error, "createSkillProgressionWithSteps"),
       };
     }
   });
 }
 
-export async function closeActionPlan(
+export async function closeSkillProgression(
   planId: string,
 ): Promise<{ success: boolean; error?: string }> {
   return withDbConnection(async () => {
@@ -112,13 +112,13 @@ export async function closeActionPlan(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "closeActionPlan"),
+        error: handleServerError(error, "closeSkillProgression"),
       };
     }
   });
 }
 
-export async function archiveActionPlan(
+export async function archiveSkillProgression(
   planId: string,
 ): Promise<{ success: boolean; error?: string }> {
   return withDbConnection(async () => {
@@ -130,7 +130,7 @@ export async function archiveActionPlan(
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "archiveActionPlan"),
+        error: handleServerError(error, "archiveSkillProgression"),
       };
     }
   });

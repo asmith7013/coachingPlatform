@@ -1,8 +1,8 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { Title, Text, Container } from "@mantine/core";
-import { SkillProgressionView } from "@/lib/skills-hub/components/skills/SkillProgressionView";
+import { Container } from "@mantine/core";
+import { ActiveSkillsView } from "@/lib/skills-hub/components/skills/ActiveSkillsView";
 
 export default function TeacherDashboardPage() {
   const params = useParams();
@@ -10,13 +10,7 @@ export default function TeacherDashboardPage() {
 
   return (
     <Container size="xl" py="lg">
-      <div>
-        <Title order={2}>My Skills</Title>
-        <Text size="sm" c="dimmed" mb="lg">
-          Your skill progression across all domains
-        </Text>
-      </div>
-      <SkillProgressionView teacherStaffId={teacherId} />
+      <ActiveSkillsView teacherStaffId={teacherId} />
     </Container>
   );
 }

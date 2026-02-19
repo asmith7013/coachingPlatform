@@ -1,12 +1,4 @@
-import {
-  Card,
-  Stack,
-  Group,
-  Skeleton,
-  SimpleGrid,
-  Table,
-  Container,
-} from "@mantine/core";
+import { Card, Stack, Group, Skeleton, Table, Container } from "@mantine/core";
 
 /** Skeleton for ActionPlanList — segmented control + card list */
 export function ActionPlanListSkeleton() {
@@ -31,25 +23,30 @@ export function ActionPlanListSkeleton() {
   );
 }
 
-/** Skeleton for SkillProgressionView — stats row + domain accordions */
+/** Skeleton for SkillProgressionView — header with active skills + domain accordions */
 export function SkillMapSkeleton() {
   return (
     <Stack gap="lg">
-      {/* Stats row */}
-      <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="md">
-        {[1, 2, 3].map((i) => (
-          <Card key={i} shadow="sm" withBorder p="md">
-            <Skeleton height={12} width="60%" mb={8} />
-            <Skeleton height={28} width="40%" />
-          </Card>
-        ))}
-      </SimpleGrid>
-
-      {/* Header */}
-      <Group justify="space-between">
+      {/* Title row */}
+      <Group gap="xs" align="baseline">
         <Skeleton height={22} width={160} />
-        <Skeleton height={16} width={90} />
+        <Skeleton height={14} width={220} />
       </Group>
+
+      {/* Active skills */}
+      <div>
+        <Skeleton height={12} width={90} mb="xs" />
+        <Group gap="sm">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} shadow="xs" withBorder p="xs" w={160}>
+              <Group gap="xs" wrap="nowrap">
+                <Skeleton height={28} width={28} circle />
+                <Skeleton height={14} width="70%" />
+              </Group>
+            </Card>
+          ))}
+        </Group>
+      </div>
 
       {/* Domain accordion items */}
       {[1, 2, 3, 4, 5].map((i) => (

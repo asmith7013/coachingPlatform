@@ -34,12 +34,12 @@ const ObservationSchema = new mongoose.Schema(
   {
     teacherStaffId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       required: true,
     },
     observerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "NYCPSStaff",
+      ref: "Staff",
       required: true,
     },
     date: { type: Date, required: true },
