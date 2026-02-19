@@ -25,6 +25,7 @@ import { getSkillByUuid } from "../../core/taxonomy";
 const MAX_TABS = 4;
 const DOMAINS_TAB_ID = "__domains__";
 const OBSERVE_TAB_ID = "__observe__";
+const EMPTY_SUBDOMAIN_MAP = new Map<string, string[]>();
 
 interface ActiveSkillsViewProps {
   teacherStaffId: string;
@@ -61,10 +62,7 @@ export function ActiveSkillsView({
     [taxonomy],
   );
 
-  const expandedSubDomainsByDomain = useMemo(
-    () => new Map<string, string[]>(),
-    [],
-  );
+  const expandedSubDomainsByDomain = EMPTY_SUBDOMAIN_MAP;
 
   // Simple drawer state (no tabs mode)
   const [drawerOpen, setDrawerOpen] = useState(true);

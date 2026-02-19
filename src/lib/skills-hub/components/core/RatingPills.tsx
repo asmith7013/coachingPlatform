@@ -41,6 +41,7 @@ export function RatingPills({
               borderRadius: 999,
               paddingInline: px,
               paddingBlock: py,
+              cursor: "pointer",
               backgroundColor: isSelected
                 ? option.color === "gray"
                   ? "var(--mantine-color-gray-3)"

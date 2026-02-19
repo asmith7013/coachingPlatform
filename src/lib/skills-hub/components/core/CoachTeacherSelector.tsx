@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, Group, Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useSkillsHubAuth } from "../layout/ViewAsContext";
@@ -56,12 +56,17 @@ export function CoachTeacherSelector({
     label: `${c.staffName}${c.email ? ` (${c.email})` : ""}`,
   }));
 
-  const teacherOptions = teachers.map((assignment) => {
-    const teacher = assignment.teacherStaffId;
-    const name = typeof teacher === "object" ? teacher.staffName : "Unknown";
-    const id = typeof teacher === "object" ? teacher._id : String(teacher);
-    return { value: id, label: name };
-  });
+  const teacherOptions = useMemo(
+    () =>
+      teachers.map((assignment) => {
+        const teacher = assignment.teacherStaffId;
+        const name =
+          typeof teacher === "object" ? teacher.staffName : "Unknown";
+        const id = typeof teacher === "object" ? teacher._id : String(teacher);
+        return { value: id, label: name };
+      }),
+    [teachers],
+  );
 
   // Notify parent of teacher name changes
   useEffect(() => {

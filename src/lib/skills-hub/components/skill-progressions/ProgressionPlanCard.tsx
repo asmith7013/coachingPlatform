@@ -73,22 +73,28 @@ export function ProgressionPlanCard({
   };
 
   const handleToggleStep = async (stepId: string, completed: boolean) => {
-    if (completed && canUncomplete) {
-      await uncompleteProgressionStep(stepId);
-      setSteps((prev) =>
-        prev.map((s) =>
-          s._id === stepId ? { ...s, completed: false, completedAt: null } : s,
-        ),
-      );
-    } else if (!completed) {
-      await completeProgressionStep(stepId);
-      setSteps((prev) =>
-        prev.map((s) =>
-          s._id === stepId
-            ? { ...s, completed: true, completedAt: new Date().toISOString() }
-            : s,
-        ),
-      );
+    if (completed && !canUncomplete) return;
+
+    const previousSteps = steps;
+    // Optimistic update
+    setSteps((prev) =>
+      prev.map((s) =>
+        s._id === stepId
+          ? completed
+            ? { ...s, completed: false, completedAt: null }
+            : { ...s, completed: true, completedAt: new Date().toISOString() }
+          : s,
+      ),
+    );
+    try {
+      const result = completed
+        ? await uncompleteProgressionStep(stepId)
+        : await completeProgressionStep(stepId);
+      if (!result.success) {
+        setSteps(previousSteps);
+      }
+    } catch {
+      setSteps(previousSteps);
     }
   };
 
