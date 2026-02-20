@@ -1,4 +1,4 @@
-export { connectAndLookupStaff } from "./connect";
+export { connectToDb, lookupCoach, lookupOrCreateTeacher } from "./connect";
 export { cleanupExistingData } from "./cleanup";
 export { seedCoachingAssignment, seedSkillProgressions, seedProgressionSteps } from "./action-plans";
 export type { PlanDocs } from "./action-plans";

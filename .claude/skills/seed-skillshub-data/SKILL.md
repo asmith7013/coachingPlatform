@@ -1,6 +1,6 @@
 ---
 name: seed-skillshub-data
-description: Populates Skills Hub mock data for teacher Jane Doe (jane.doe@schools.nyc.gov). Creates skill statuses, action plans, observations, and notes in the LOCAL MongoDB database.
+description: Populates Skills Hub mock data for 3 teachers (Jane Doe, Maria Santos, Marcus Williams). Creates skill statuses, action plans, observations, and notes in the LOCAL MongoDB database.
 allowed-tools: Read, Bash, Grep, Glob
 allowedCommands:
   - "~/solves-coaching/.claude/skills/seed-skillshub-data/run.sh"
@@ -8,7 +8,7 @@ allowedCommands:
 
 # Seed Skills Hub Data
 
-Populates realistic mock data for the Skills Hub feature in the **local MongoDB database**. Seeds data for teacher Jane Doe (`jane.doe@schools.nyc.gov`) with coach Alex Smith (`alex.smith@teachinglab.org`).
+Populates realistic mock data for the Skills Hub feature in the **local MongoDB database**. Seeds data for 3 teachers with coach Alex Smith (`alex.smith@teachinglab.org`).
 
 ## Usage
 
@@ -16,38 +16,58 @@ Populates realistic mock data for the Skills Hub feature in the **local MongoDB 
 ~/solves-coaching/.claude/skills/seed-skillshub-data/run.sh
 ```
 
-## What It Creates
+## Teachers
+
+### 1. Jane Doe (`jane.doe@schools.nyc.gov`)
+
+Mid-coaching teacher working on small group facilitation.
 
 | Collection | Count | Details |
 |---|---|---|
-| `skillshub_coach_teacher_assignments` | 1 | alex.smith → Jane Doe |
-| `skillshub_teacher_skill_statuses` | 22 | 13 proficient, 6 developing, 3 active |
-| `skillshub_action_plans` | 3 | open, closed, archived |
-| `skillshub_action_steps` | 7-8 | 2-3 per plan |
-| `skillshub_observations` | 4 | Various types over past month |
-| `skillshub_skill_notes` | 5 | Tagged to skills and plans |
+| Coaching assignments | 1 | alex.smith → Jane Doe (60 days) |
+| Skill statuses | 22 | 3 active, 6 developing, 13 proficient |
+| Action plans | 3 | open, closed, archived |
+| Action steps | 8 | 3 + 3 + 2 |
+| Observations | 4 | classroom_visit, debrief, one_on_one, quick_update |
+| Skill notes | 5 | Tagged to skills and plans |
 
-### Action Plans Drive Skill Statuses
+**Plans:** Small Group Facilitation (open) → Lesson Launch Routines (closed) → Classroom Culture Foundations (archived)
 
-Skill statuses are aligned to action plans with L1/L2 prereq enforcement:
+### 2. Maria Santos (`maria.santos@schools.nyc.gov`)
 
-- **Open plan** ("Small Group Facilitation") → 3 active, 2 developing (L1 prereqs auto-proficient)
-- **Closed plan** ("Lesson Launch Routines") → 4 developing, 1 proficient (L1 pair of L2 skill)
-- **Archived plan** ("Classroom Culture Foundations") → all proficient
-- 4 L1 prereqs for open plan L2 skills → `proficient`
-- 3 additional Intellectual Prep skills → `proficient` (mastered independently)
+Experienced teacher transitioning to inquiry-based instruction.
 
-### Observations
+| Collection | Count | Details |
+|---|---|---|
+| Coaching assignments | 1 | alex.smith → Maria Santos (90 days) |
+| Skill statuses | 17 | 3 active, 5 developing, 9 proficient |
+| Action plans | 3 | open, closed, archived |
+| Action steps | 8 | 3 + 3 + 2 |
+| Observations | 3 | classroom_visit, one_on_one, quick_update |
+| Skill notes | 4 | Tagged to skills and plans |
 
-4 observations spread across the past month:
-- Classroom visit with skill ratings
-- Debrief session with notes
-- One-on-one with domain ratings
-- Quick update with brief notes
+**Plans:** Inquiry Group Facilitation (open) → Effective Directions & Routines (closed) → Lesson Launch Foundations (archived)
 
-### Notes
+### 3. Marcus Williams (`marcus.williams@schools.nyc.gov`)
 
-5 coaching notes tagged to relevant skills and action plans.
+First-year teacher building classroom management foundations.
+
+| Collection | Count | Details |
+|---|---|---|
+| Coaching assignments | 1 | alex.smith → Marcus Williams (30 days) |
+| Skill statuses | 12 | 3 active, 4 developing, 5 proficient |
+| Action plans | 2 | open, closed |
+| Action steps | 6 | 3 + 3 |
+| Observations | 3 | classroom_visit, debrief, one_on_one |
+| Skill notes | 3 | Tagged to skills and plans |
+
+**Plans:** Classroom Management Foundations (open) → Building Student Relationships (closed)
+
+## How It Works
+
+- **Action plans drive skill statuses** — skill statuses are aligned to plans with L1/L2 prereq enforcement
+- **Teachers are created if missing** — if a teacher email doesn't exist in the `staff` collection, a minimal record is created
+- **Per-teacher configs** live in `seed/teachers/` — one file per teacher with all plans, steps, observations, and notes
 
 ## Safety
 
@@ -55,4 +75,4 @@ The script uses `DATABASE_URL` from `.env.local`. It will abort if the variable 
 
 ## Re-running
 
-Safe to re-run — the script deletes all existing `skillshub_*` data for Jane Doe before inserting fresh data.
+Safe to re-run — the script deletes all existing `skillshub_*` data for each teacher before inserting fresh data.

@@ -1,50 +1,53 @@
-document.getElementById('fillBtn').addEventListener('click', async () => {
-  const statusDiv = document.getElementById('status');
-  statusDiv.textContent = 'Filling form and enabling tracking...';
-  statusDiv.className = 'status';
+const DAY_TYPES = {
+  coaching: [
+    { task: "Lead coaching activities: 1-1 coaching sessions, micro group PL, or walkthrough", project: "PH_Studio Classroom Project", hours: 6 },
+    { task: "Lead coaching activities: 1-1 coaching sessions, micro group PL, or walkthrough", project: "PH_Studio Classroom Project", hours: 1 },
+    { task: "Content Development", project: "PH_Studio Classroom Project", hours: 1 },
+    { task: "Site Context + Support: Meetings and collaborations with project team members and/or partners to support the overall project success", project: "PH_Studio Classroom Project", hours: 1 }
+  ],
+  remote: [
+    { task: "Site Context + Support: Meetings and collaborations with project team members and/or partners to support the overall project success", project: "PH_Studio Classroom Project", hours: 1 },
+    { task: "Content Development", project: "PH_Studio Classroom Project", hours: 6 }
+  ],
+  pd: [
+    { task: "Lead Facilitation of group Professional Learning course", project: "NY_NYC Solves HS Transfer", hours: 6 },
+    { task: "Content Development", project: "PH_Studio Classroom Project", hours: 1 },
+    { task: "Site Context + Support: Meetings and collaborations with project team members and/or partners to support the overall project success", project: "PH_Studio Classroom Project", hours: 1 }
+  ],
+  weekend: [
+    { task: "Content Development", project: "PH_Studio Classroom Project", hours: 2 }
+  ]
+};
 
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+document.querySelectorAll('[data-day-type]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const dayType = btn.dataset.dayType;
+    const entries = DAY_TYPES[dayType];
+    const statusDiv = document.getElementById('status');
+    statusDiv.textContent = `Filling ${btn.textContent}...`;
+    statusDiv.className = 'status';
 
-    // Execute both functions: fill the form AND setup the submit interceptor
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: fillTimecardFormAndSetupTracking
-    });
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-    statusDiv.textContent = 'Form filled & tracking enabled!';
-    statusDiv.className = 'status success';
-  } catch (error) {
-    statusDiv.textContent = 'Error: ' + error.message;
-    statusDiv.className = 'status error';
-  }
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: fillTimecardFormAndSetupTracking,
+        args: [entries]
+      });
+
+      statusDiv.textContent = 'Form filled & tracking enabled!';
+      statusDiv.className = 'status success';
+    } catch (error) {
+      statusDiv.textContent = 'Error: ' + error.message;
+      statusDiv.className = 'status error';
+    }
+  });
 });
 
 // Combined function: fills the form AND sets up submit tracking
-function fillTimecardFormAndSetupTracking() {
-  // Configuration - modify these values for your specific tasks
-  const entries = [
-    {
-      task: "Lead coaching activities: 1-1 coaching sessions, micro group PL, or walkthrough",
-      project: "PH_Studio Classroom Project",
-      hours: 6
-    },
-    {
-      task: "Lead coaching activities: 1-1 coaching sessions, micro group PL, or walkthrough",
-      project: "PH_Studio Classroom Project",
-      hours: 1
-    },
-    {
-      task: "Content Development",
-      project: "PH_Studio Classroom Project",
-      hours: 1
-    },
-    {
-      task: "Site Context + Support: Meetings and collaborations with project team members and/or partners to support the overall project success",
-      project: "PH_Studio Classroom Project",
-      hours: 1
-    }
-  ];
+// entries parameter is passed via chrome.scripting.executeScript args
+function fillTimecardFormAndSetupTracking(entries) {
 
   // Helper function to wait
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
