@@ -11,7 +11,13 @@ export function MantineErrorFallback(error: Error, resetError: () => void) {
     >
       <Stack gap="sm">
         <Text size="sm">{error.message || "An unexpected error occurred"}</Text>
-        <Button size="xs" variant="light" color="red" onClick={resetError} className="cursor-pointer">
+        <Button
+          size="xs"
+          variant="light"
+          color="red"
+          onClick={resetError}
+          className="cursor-pointer"
+        >
           Try Again
         </Button>
       </Stack>
