@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { notifications } from "@mantine/notifications";
 import {
   getProgressionSteps,
   completeProgressionStep,
@@ -27,6 +28,12 @@ export function useProgressionSteps(planId: string | null) {
       if (cancelled) return;
       if (result.success && result.data) {
         setSteps(result.data);
+      } else {
+        notifications.show({
+          title: "Error",
+          message: "Failed to load steps",
+          color: "red",
+        });
       }
       setLoadingSteps(false);
     });
@@ -52,9 +59,19 @@ export function useProgressionSteps(planId: string | null) {
         : await completeProgressionStep(stepId);
       if (!result.success) {
         setSteps(previousSteps);
+        notifications.show({
+          title: "Error",
+          message: "Failed to update step",
+          color: "red",
+        });
       }
     } catch {
       setSteps(previousSteps);
+      notifications.show({
+        title: "Error",
+        message: "Failed to update step",
+        color: "red",
+      });
     }
   };
 

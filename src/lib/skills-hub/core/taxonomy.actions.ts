@@ -1,5 +1,6 @@
 "use server";
 
+import { handleServerError } from "@error/handlers/server";
 import { fetchTaxonomy } from "./taxonomy";
 import type { TeacherSkillsIndex } from "./taxonomy.types";
 
@@ -12,11 +13,9 @@ export async function fetchTaxonomyAction(): Promise<{
     const taxonomy = await fetchTaxonomy();
     return { success: true, data: taxonomy };
   } catch (error) {
-    console.error("Error fetching taxonomy:", error);
     return {
       success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to fetch taxonomy",
+      error: handleServerError(error, "fetchTaxonomyAction"),
     };
   }
 }
