@@ -15,7 +15,7 @@ export async function cleanupExistingData(staff: StaffIds): Promise<void> {
     SkillsHubObservation.deleteMany({ teacherStaffId: staff.teacherId }),
     SkillsHubSkillNote.deleteMany({ teacherStaffId: staff.teacherId }),
     SkillsHubCoachTeacherAssignment.deleteMany({
-      $or: [{ coachStaffId: staff.coachId }, { teacherStaffId: staff.teacherId }],
+      teacherStaffId: staff.teacherId,
     }),
   ]);
   console.log(

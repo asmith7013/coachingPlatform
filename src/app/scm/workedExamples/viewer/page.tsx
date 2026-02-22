@@ -26,114 +26,6 @@ import { deactivateDeck } from "@/app/actions/worked-examples";
 import Link from "next/link";
 import { PLANNING_STEPS } from "../presentations/planningSteps";
 
-// Choice modal for decks with Google Slides
-function ViewChoiceModal({
-  deck,
-  onOpenSlides,
-  onOpenHtml,
-  onClose,
-}: {
-  deck: WorkedExampleDeck;
-  onOpenSlides: () => void;
-  onOpenHtml: () => void;
-  onClose: () => void;
-}) {
-  return (
-    <div
-      className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full mx-4"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
-            {deck.gradeLevel === "Algebra 1"
-              ? "Algebra 1"
-              : `Grade ${deck.gradeLevel}`}
-          </span>
-          {deck.unitNumber !== undefined && (
-            <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
-              Unit {deck.unitNumber}
-            </span>
-          )}
-          {deck.lessonNumber !== undefined && (
-            <span className="inline-block px-2 py-1 text-xs font-semibold text-indigo-600 bg-indigo-100 rounded">
-              Lesson {deck.lessonNumber}
-            </span>
-          )}
-        </div>
-        <h2 className="text-xl font-bold text-gray-900 mb-2 text-center">
-          {deck.title}
-        </h2>
-        <p className="text-gray-500 text-sm text-center mb-6">
-          Choose how to view this presentation
-        </p>
-
-        <div className="grid grid-cols-2 gap-4">
-          {/* HTML Viewer Option */}
-          <button
-            onClick={onOpenHtml}
-            className="flex flex-col items-center gap-3 p-6 bg-gray-50 border-2 border-gray-200 rounded-xl hover:bg-gray-100 hover:border-gray-300 transition-colors cursor-pointer"
-          >
-            <div className="w-16 h-16 flex items-center justify-center bg-gray-600 rounded-xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="white"
-                className="w-8 h-8"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"
-                />
-              </svg>
-            </div>
-            <div className="text-center">
-              <div className="font-semibold text-gray-900">HTML Viewer</div>
-              <div className="text-xs text-gray-500 mt-1">
-                View on this site
-              </div>
-            </div>
-          </button>
-
-          {/* Google Slides Option */}
-          <button
-            onClick={onOpenSlides}
-            className="flex flex-col items-center gap-3 p-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl hover:bg-yellow-100 hover:border-yellow-300 transition-colors cursor-pointer"
-          >
-            <div className="w-16 h-16 flex items-center justify-center bg-yellow-400 rounded-xl">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="white"
-                viewBox="0 0 24 24"
-                className="w-8 h-8"
-              >
-                <path d="M19.5 3h-15A1.5 1.5 0 003 4.5v15A1.5 1.5 0 004.5 21h15a1.5 1.5 0 001.5-1.5v-15A1.5 1.5 0 0019.5 3zm-9 15H6v-4.5h4.5V18zm0-6H6v-4.5h4.5V12zm6 6h-4.5v-4.5H16.5V18zm0-6h-4.5v-4.5H16.5V12z" />
-              </svg>
-            </div>
-            <div className="text-center">
-              <div className="font-semibold text-gray-900">Google Slides</div>
-              <div className="text-xs text-gray-500 mt-1">Opens in new tab</div>
-            </div>
-          </button>
-        </div>
-
-        <button
-          onClick={onClose}
-          className="mt-6 w-full py-2 text-sm text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // Map URL param to scopeSequenceTag in database
 const GRADE_OPTIONS = [
   { value: "", label: "All Grades", scopeSequenceTag: "" },
@@ -262,8 +154,6 @@ function PlanningGuide() {
 }
 
 export default function PresentationsList() {
-  const [choiceModalDeck, setChoiceModalDeck] =
-    useState<WorkedExampleDeck | null>(null);
   const [deactivateModalDeck, setDeactivateModalDeck] =
     useState<WorkedExampleDeck | null>(null);
   const [isDeactivating, setIsDeactivating] = useState(false);
@@ -335,27 +225,15 @@ export default function PresentationsList() {
   };
 
   const handleCardClick = (deck: WorkedExampleDeck) => {
-    // If deck has Google Slides, show choice modal
-    if (deck.googleSlidesUrl) {
-      setChoiceModalDeck(deck);
-    } else {
-      // No Google Slides, open HTML viewer directly
-      handleOpenPresentation(deck.slug);
-    }
+    handleOpenPresentation(deck.slug);
   };
 
   const handleOpenPresentation = (slug: string) => {
-    setChoiceModalDeck(null); // Close choice modal if open
     const params = new URLSearchParams(searchParams.toString());
     params.set("view", slug);
     router.push(`/scm/workedExamples/viewer?${params.toString()}`, {
       scroll: false,
     });
-  };
-
-  const handleOpenGoogleSlides = (url: string) => {
-    setChoiceModalDeck(null);
-    window.open(url, "_blank");
   };
 
   const handleClosePresentation = () => {
@@ -779,18 +657,6 @@ export default function PresentationsList() {
           </div>
         )}
       </div>
-
-      {/* View Choice Modal */}
-      {choiceModalDeck && (
-        <ViewChoiceModal
-          deck={choiceModalDeck}
-          onOpenSlides={() =>
-            handleOpenGoogleSlides(choiceModalDeck.googleSlidesUrl!)
-          }
-          onOpenHtml={() => handleOpenPresentation(choiceModalDeck.slug)}
-          onClose={() => setChoiceModalDeck(null)}
-        />
-      )}
 
       {/* Presentation Modal */}
       {openSlug && (

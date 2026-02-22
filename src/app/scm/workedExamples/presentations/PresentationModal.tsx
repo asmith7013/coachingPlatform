@@ -26,6 +26,7 @@ export function PresentationModal({
 }: PresentationModalProps) {
   const router = useRouter();
   const [showPlanningGuide, setShowPlanningGuide] = useState(false);
+  const [showStopwatch, setShowStopwatch] = useState(false);
   const {
     deck,
     currentSlide,
@@ -147,11 +148,25 @@ export function PresentationModal({
               onNextSlide={nextSlide}
             />
 
-            {/* Center: Stopwatch */}
-            <Stopwatch currentSlide={currentSlide} isActive={isOpen} />
-
-            {/* Right: Planning Guide & Settings */}
+            {/* Right: Stopwatch toggle, Planning Guide & Settings */}
             <div className="flex items-center gap-2">
+              {showStopwatch && (
+                <Stopwatch currentSlide={currentSlide} isActive={isOpen} />
+              )}
+              <button
+                onClick={() => setShowStopwatch(!showStopwatch)}
+                className={`p-2 rounded-lg transition-colors cursor-pointer ${showStopwatch ? "bg-gray-200 text-gray-700" : "text-gray-500 hover:bg-gray-100"}`}
+                title={showStopwatch ? "Hide stopwatch" : "Show stopwatch"}
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.962 8.962 0 0012 4c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" />
+                </svg>
+              </button>
+
               <PlanningGuideButton
                 isActive={showPlanningGuide}
                 onToggle={() => setShowPlanningGuide(!showPlanningGuide)}

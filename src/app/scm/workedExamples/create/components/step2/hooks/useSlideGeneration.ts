@@ -369,8 +369,8 @@ export function useSlideGeneration({
             detail: "Generating printable practice worksheet",
             startTime,
             slideProgress: {
-              currentSlide: 7,
-              estimatedTotal: 7,
+              currentSlide: mainSlideCount + 1,
+              estimatedTotal: totalSlideCount,
             },
           });
 
@@ -480,8 +480,8 @@ export function useSlideGeneration({
             detail: "Generating printable lesson summary reference",
             startTime,
             slideProgress: {
-              currentSlide: 8,
-              estimatedTotal: 8,
+              currentSlide: mainSlideCount + 2,
+              estimatedTotal: totalSlideCount,
             },
           });
 

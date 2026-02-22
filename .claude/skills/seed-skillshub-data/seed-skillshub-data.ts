@@ -1,7 +1,7 @@
 /**
  * Seed Skills Hub Data - Main Entry Point
  *
- * Populates realistic mock data for teacher Jane Doe across all Skills Hub collections.
+ * Populates realistic mock data for multiple teachers across all Skills Hub collections.
  * Action plans drive skill statuses for internally consistent coaching progression.
  *
  * ONLY runs against local database (localhost/127.0.0.1).
@@ -11,7 +11,9 @@
 
 import mongoose from "mongoose";
 import {
-  connectAndLookupStaff,
+  connectToDb,
+  lookupCoach,
+  lookupOrCreateTeacher,
   cleanupExistingData,
   seedCoachingAssignment,
   seedSkillProgressions,
@@ -20,49 +22,54 @@ import {
   seedObservations,
   seedNotes,
 } from "./seed";
-import { TEACHER_EMAIL, COACH_EMAIL } from "./seed/config";
+import { COACH_EMAIL, type StaffIds } from "./seed/config";
+import { TEACHER_CONFIGS } from "./seed/teachers";
 
 async function seed() {
   console.log("Starting Skills Hub data seed...\n");
 
-  // 1. Connect and find staff
-  const staff = await connectAndLookupStaff();
+  // 1. Connect and find coach
+  await connectToDb();
+  const coach = await lookupCoach();
 
-  // 2. Clean up existing data
-  await cleanupExistingData(staff);
+  // 2. Seed each teacher
+  for (const teacherConfig of TEACHER_CONFIGS) {
+    console.log("=".repeat(60));
+    console.log(`Seeding: ${teacherConfig.displayName} (${teacherConfig.email})`);
+    console.log("=".repeat(60) + "\n");
 
-  // 3. Create coaching assignment
-  await seedCoachingAssignment(staff);
+    const teacher = await lookupOrCreateTeacher(
+      teacherConfig.email,
+      teacherConfig.displayName,
+    );
+    const staff: StaffIds = {
+      teacherId: teacher._id,
+      coachId: coach._id,
+      teacherName: teacher.staffName,
+      coachName: coach.staffName,
+    };
 
-  // 4. Seed skill progressions (drive skill statuses)
-  const plans = await seedSkillProgressions(staff);
+    await cleanupExistingData(staff);
+    await seedCoachingAssignment(staff, teacherConfig.coachingDaysAgo);
+    const plans = await seedSkillProgressions(staff, teacherConfig.actionPlans);
+    await seedProgressionSteps(staff, plans, teacherConfig.actionPlans, teacherConfig.actionSteps);
+    await seedSkillStatuses(staff, teacherConfig);
+    await seedObservations(staff, teacherConfig.observations);
+    await seedNotes(staff, plans, teacherConfig.notes);
 
-  // 5. Seed progression steps
-  await seedProgressionSteps(staff, plans);
+    console.log(`  Done: ${teacherConfig.displayName}\n`);
+    console.log(`  View at: /skillsHub/coach/teacher/${staff.teacherId}\n`);
+  }
 
-  // 6. Seed skill statuses (derived from action plans)
-  await seedSkillStatuses(staff);
-
-  // 7. Seed observations
-  await seedObservations(staff);
-
-  // 8. Seed skill notes
-  await seedNotes(staff, plans);
-
-  // Summary
+  // Final summary
   console.log("=".repeat(60));
   console.log("Skills Hub seed complete!");
   console.log("=".repeat(60));
-  console.log(`\nTeacher: ${staff.teacherName} (${TEACHER_EMAIL})`);
-  console.log(`Coach: ${staff.coachName} (${COACH_EMAIL})`);
-  console.log(`\nCollections populated:`);
-  console.log(`  Coaching assignments: 1`);
-  console.log(`  Skill statuses: 22 (3 active, 6 developing, 13 proficient)`);
-  console.log(`  Action plans: 3 (1 open, 1 closed, 1 archived)`);
-  console.log(`  Action steps: 8 (3 + 3 + 2)`);
-  console.log(`  Observations: 4`);
-  console.log(`  Skill notes: 5`);
-  console.log(`\nView at: /skillsHub/coach/teacher/${staff.teacherId}`);
+  console.log(`\nCoach: ${coach.staffName} (${COACH_EMAIL})`);
+  console.log(`Teachers seeded: ${TEACHER_CONFIGS.length}`);
+  for (const tc of TEACHER_CONFIGS) {
+    console.log(`  - ${tc.displayName} (${tc.email})`);
+  }
 
   await mongoose.disconnect();
   process.exit(0);

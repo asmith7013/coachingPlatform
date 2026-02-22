@@ -15,6 +15,7 @@ import {
   Divider,
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 import { useQueryClient } from "@tanstack/react-query";
 import { getProgressionSteps } from "../../coach/skill-progressions/progression-step.actions";
 import {
@@ -66,6 +67,12 @@ export function ProgressionPlanCard({
       const result = await getProgressionSteps(plan._id);
       if (result.success && result.data) {
         setSteps(result.data);
+      } else {
+        notifications.show({
+          title: "Error",
+          message: "Failed to load steps",
+          color: "red",
+        });
       }
       setLoadingSteps(false);
     }
@@ -92,18 +99,36 @@ export function ProgressionPlanCard({
         : await completeProgressionStep(stepId);
       if (!result.success) {
         setSteps(previousSteps);
+        notifications.show({
+          title: "Error",
+          message: "Failed to update step",
+          color: "red",
+        });
       }
     } catch {
       setSteps(previousSteps);
+      notifications.show({
+        title: "Error",
+        message: "Failed to update step",
+        color: "red",
+      });
     }
   };
 
   const handleClosePlan = async () => {
     setClosing(true);
-    await closeSkillProgression(plan._id);
-    queryClient.invalidateQueries({
-      queryKey: skillProgressionKeys.byTeacher(teacherStaffId),
-    });
+    const result = await closeSkillProgression(plan._id);
+    if (result.success) {
+      queryClient.invalidateQueries({
+        queryKey: skillProgressionKeys.byTeacher(teacherStaffId),
+      });
+    } else {
+      notifications.show({
+        title: "Error",
+        message: result.error || "Failed to close plan",
+        color: "red",
+      });
+    }
     setClosing(false);
   };
 

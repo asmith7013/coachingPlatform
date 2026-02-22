@@ -14,17 +14,21 @@
     button {
       width: 100%;
       padding: 10px;
-      background-color: #0053B3;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       font-size: 14px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
-    button:hover {
-      background-color: #004B9F;
-    }
+    .btn-coaching { background-color: #0053B3; }
+    .btn-coaching:hover { background-color: #004B9F; }
+    .btn-remote { background-color: #2E7D32; }
+    .btn-remote:hover { background-color: #1B5E20; }
+    .btn-pd { background-color: #7B1FA2; }
+    .btn-pd:hover { background-color: #6A1B9A; }
+    .btn-weekend { background-color: #E65100; }
+    .btn-weekend:hover { background-color: #BF360C; }
     .status {
       margin-top: 10px;
       padding: 10px;
@@ -43,7 +47,10 @@
 </head>
 <body>
   <h3>Timecard Auto-Filler</h3>
-  <button id="fillBtn">Fill Timecard</button>
+  <button class="btn-coaching" data-day-type="coaching">Coaching Day</button>
+  <button class="btn-remote" data-day-type="remote">Remote Day</button>
+  <button class="btn-pd" data-day-type="pd">PD Day</button>
+  <button class="btn-weekend" data-day-type="weekend">Weekend</button>
   <div id="status"></div>
   <script src="popup.js"></script>
 </body>

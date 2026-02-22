@@ -83,7 +83,12 @@ export async function createSkillProgressionWithSteps(input: {
           ...step,
           actionPlanId: plan._id,
         }));
-        await SkillsHubActionStep.insertMany(stepsToCreate);
+        try {
+          await SkillsHubActionStep.insertMany(stepsToCreate);
+        } catch (stepError) {
+          await SkillsHubActionPlan.findByIdAndDelete(plan._id);
+          throw stepError;
+        }
       }
 
       const data = serialize<SkillProgressionDocument>(plan.toObject());
@@ -91,7 +96,17 @@ export async function createSkillProgressionWithSteps(input: {
     } catch (error) {
       return {
         success: false,
-        error: handleServerError(error, "createSkillProgressionWithSteps"),
+        error: handleServerError(error, {
+          operation: "createSkillProgressionWithSteps",
+          metadata: {
+            teacherStaffId: input.plan.teacherStaffId,
+            stepCount: input.steps.length,
+          },
+          tags: {
+            feature: "skills-hub",
+            action: "create-progression",
+          },
+        }),
       };
     }
   });
