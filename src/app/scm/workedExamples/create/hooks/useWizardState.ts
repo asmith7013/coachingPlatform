@@ -13,6 +13,7 @@ import type {
 import type { SlideType } from "@zod-schema/scm/worked-example";
 import { initialWizardState } from "../lib/types";
 import { updateDeckSlides } from "@/app/actions/worked-examples";
+import { getSlideCount } from "../lib/utils";
 
 // Local storage key prefix for persisting wizard state (per session)
 const STORAGE_KEY_PREFIX = "worked-example-wizard-";
@@ -649,10 +650,11 @@ export function useWizardState() {
     if (persisted.slug) dispatch({ type: "SET_SLUG", payload: persisted.slug });
 
     // Jump to appropriate step based on progress:
-    // - If all 9 slides exist (6 main + 2 practice previews + 1 printable), go straight to Step 3 (review slides)
+    // - If all slides exist (dynamic based on strategy moves), go straight to Step 3 (review slides)
     // - Otherwise, restore the saved step
-    const EXPECTED_SLIDE_COUNT = 9;
-    if (persisted.slides?.length >= EXPECTED_SLIDE_COUNT) {
+    const numMoves = persisted.strategyDefinition?.moves?.length ?? 3;
+    const { totalSlideCount } = getSlideCount(numMoves);
+    if (persisted.slides?.length >= totalSlideCount) {
       dispatch({ type: "SET_STEP", payload: 3 });
     } else if (persisted.currentStep) {
       dispatch({ type: "SET_STEP", payload: persisted.currentStep });
